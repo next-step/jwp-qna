@@ -7,11 +7,11 @@ spring:
       connection-test-query: select 1
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate.format_sql: true
-      hibernate.dialect: org.hibernate.dialect.MySQL57Dialect
+      hibernate.dialect: org.hibernate.dialect.H2Dialect
   h2:
     console:
       enabled: true
