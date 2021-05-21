@@ -1,19 +1,10 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Question {
     private Long id;
-
     private String title;
-
     private String contents;
-
-    private User writer;
-
-    private List<Answer> answers = new ArrayList<>();
-
+    private Long writerId;
     private boolean deleted = false;
 
     public Question(String title, String contents) {
@@ -26,61 +17,67 @@ public class Question {
         this.contents = contents;
     }
 
-    public long getId() {
+    public Question writeBy(User writer) {
+        this.writerId = writer.getId();
+        return this;
+    }
+
+    public boolean isOwner(User writer) {
+        return this.writerId.equals(writer.getId());
+    }
+
+    public void addAnswer(Answer answer) {
+        answer.toQuestion(this);
+    }
+
+    public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public Question setTitle(String title) {
+    public void setTitle(String title) {
         this.title = title;
-        return this;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public Question setContents(String contents) {
+    public void setContents(String contents) {
         this.contents = contents;
-        return this;
     }
 
-    public User getWriter() {
-        return writer;
+    public Long getWriterId() {
+        return writerId;
     }
 
-    public Question writeBy(User loginUser) {
-        this.writer = loginUser;
-        return this;
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-        answers.add(answer);
-    }
-
-    public boolean isOwner(User loginUser) {
-        return writer.equals(loginUser);
-    }
-
-    public Question setDeleted(boolean deleted) {
-        this.deleted = deleted;
-        return this;
+    public void setWriterId(Long writerId) {
+        this.writerId = writerId;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override
     public String toString() {
-        return "Question [id=" + getId() + ", title=" + title + ", contents=" + contents + ", writer=" + writer + "]";
+        return "Question{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", contents='" + contents + '\'' +
+                ", writerId=" + writerId +
+                ", deleted=" + deleted +
+                '}';
     }
 }

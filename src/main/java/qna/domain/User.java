@@ -8,16 +8,12 @@ public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     private Long id;
-
     private String userId;
-
     private String password;
-
     private String name;
-
     private String email;
 
-    public User() {
+    private User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -25,58 +21,19 @@ public class User {
     }
 
     public User(Long id, String userId, String password, String name, String email) {
+        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public User setUserId(String userId) {
-        this.userId = userId;
-        return this;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public User setPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public User setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public User setEmail(String email) {
-        this.email = email;
-        return this;
     }
 
     public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.getUserId())) {
+        if (!matchUserId(loginUser.userId)) {
             throw new UnAuthorizedException();
         }
 
-        if (!matchPassword(target.getPassword())) {
+        if (!matchPassword(target.password)) {
             throw new UnAuthorizedException();
         }
 
@@ -89,7 +46,7 @@ public class User {
     }
 
     public boolean matchPassword(String targetPassword) {
-        return password.equals(targetPassword);
+        return this.password.equals(targetPassword);
     }
 
     public boolean equalsNameAndEmail(User target) {
@@ -105,15 +62,61 @@ public class User {
         return false;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userId='" + userId + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+
     private static class GuestUser extends User {
         @Override
         public boolean isGuestUser() {
             return true;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
     }
 }
