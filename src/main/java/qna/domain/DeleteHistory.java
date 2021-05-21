@@ -2,13 +2,35 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import org.springframework.data.annotation.CreatedDate;
 
+@Entity
 public class DeleteHistory {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Long id;
+
+    @Column
     private ContentType contentType;
+
+    @Column
     private Long contentId;
+
+    @Column
     private Long deletedById;
-    private LocalDateTime createDate = LocalDateTime.now();
+
+    @CreatedDate
+    private LocalDateTime createDate;
+
+    public DeleteHistory() { }
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;

@@ -1,11 +1,29 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class Question extends BaseEntity{
+
+    @Id
+    @Column
     private Long id;
+
+    @Column(length = 100)
     private String title;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String contents;
+
+    @Column
     private Long writerId;
+
+    @Column
     private boolean deleted = false;
+
+    public Question() { }
 
     public Question(String title, String contents) {
         this(null, title, contents);
