@@ -38,8 +38,7 @@ class QuestionRepositoryTest {
   @Test
   void findByIdAndDeletedFalseTest() {
     assertAll(
-        () -> questionRepository.findByIdAndDeletedFalse(saved.getId())
-            .ifPresent(question -> assertThat(question).isEqualTo(saved)),
+        () -> assertThat(questionRepository.findByIdAndDeletedFalse(saved.getId())).hasValue(saved),
         () -> saved.setDeleted(true),
         () -> questionRepository.save(saved),
         () -> assertThat(questionRepository.findByIdAndDeletedFalse(saved.getId())).isNotPresent()
