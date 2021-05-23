@@ -1,16 +1,37 @@
 package qna.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
-public class Answer {
+@Entity
+public class Answer extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Long id;
+
+    @Column
     private Long writerId;
+
+    @Column
     private Long questionId;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String contents;
+
+    @Column
     private boolean deleted = false;
+
+    public Answer() { }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -88,6 +109,6 @@ public class Answer {
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
-                '}';
+                "}, " + super.toString();
     }
 }
