@@ -26,6 +26,9 @@ public abstract class BaseTimeEntity {
 	}
 
 	protected boolean isUpdatedBefore(LocalDateTime localDateTime) {
+		if (updatedAt == null) {
+			return false;
+		}
 		return updatedAt.isBefore(localDateTime);
 	}
 }
