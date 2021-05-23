@@ -2,8 +2,8 @@
 
 -[x] Answer 엔티티 매핑 하기
 -[x] AnswerRepository 학습 테스트 해보기
--[ ] DeleteHistory 엔티티 매핑 하기
--[ ] DeleteHistoryRepository 학습 테스트 해보기
+-[x] DeleteHistory 엔티티 매핑 하기
+-[x] DeleteHistoryRepository 학습 테스트 해보기
 -[ ] Question 엔티티 매핑 하기
 -[ ] QuestionRepository 학습 테스트 해보기
 -[ ] User 엔티티 매핑 하기
