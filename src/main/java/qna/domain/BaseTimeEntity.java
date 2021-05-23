@@ -16,10 +16,10 @@ public abstract class BaseTimeEntity {
 
 	@CreatedDate
 	@Column(nullable = false)
-	protected LocalDateTime createdAt;
+	private LocalDateTime createdAt;
 
 	@LastModifiedDate
-	protected LocalDateTime updatedAt;
+	private LocalDateTime updatedAt;
 
 	protected boolean isCreatedBefore(LocalDateTime localDateTime) {
 		return createdAt.isBefore(localDateTime);

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static qna.domain.QuestionTest.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,12 +34,12 @@ class AnswerRepositoryTest {
 	void findByIdAndDeletedFalseTest() {
 		Long answerId = answer.getId();
 
-		Optional<Answer> findAnswer = answers.findByIdAndDeletedFalse(answerId);
+		Answer findAnswer = answers.findByIdAndDeletedFalse(answerId)
+			.orElseThrow(IllegalArgumentException::new);
 
 		assertAll(
-			() -> assertThat(findAnswer.isPresent()).isTrue(),
-			() -> assertThat(findAnswer.get().getId()).isEqualTo(answer.getId()),
-			() -> assertThat(findAnswer.get().isDeleted()).isFalse()
+			() -> assertThat(findAnswer.getId()).isEqualTo(answer.getId()),
+			() -> assertThat(findAnswer.isDeleted()).isFalse()
 		);
 	}
 
