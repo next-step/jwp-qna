@@ -35,7 +35,10 @@ class AnswerRepositoryTest {
   @DisplayName("저장 후 반환 값은 원본과 같다.")
   @Test
   void saveTest() {
+    //given
     Answer given = new Answer(savedUser, savedQuestion, "Answers Contents1");
+
+    //when & then
     Answer saved = answerRepository.save(given);
     assertAll(
         () -> assertThat(saved.getId()).isNotNull(),
@@ -48,7 +51,10 @@ class AnswerRepositoryTest {
   @DisplayName("deleted가 false인 데이터는 id로 조회할 수 있다.")
   @Test
   void findByIdAndDeletedFalseTest() {
+    //given
     Answer given = new Answer(savedUser, savedQuestion, "Answers Contents1");
+
+    //when & then
     Answer saved = answerRepository.save(given);
     assertAll(
         () -> assertThat(answerRepository.findByIdAndDeletedFalse(saved.getId())).hasValue(saved),
@@ -63,8 +69,9 @@ class AnswerRepositoryTest {
   void findByQuestionIdAndDeletedFalseTest() {
     //given
     Answer givenAnswer = new Answer(savedUser, savedQuestion, "Answers Contents1");
-    Answer savedAnswer = answerRepository.save(givenAnswer);
 
+    //when & then
+    Answer savedAnswer = answerRepository.save(givenAnswer);
     assertAll(
         () -> assertThat(answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId())).contains(savedAnswer),
         () -> savedAnswer.setDeleted(true),
