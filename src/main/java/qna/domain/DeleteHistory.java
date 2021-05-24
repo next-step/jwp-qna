@@ -1,6 +1,8 @@
 package qna.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,6 +24,7 @@ public class DeleteHistory {
     /**
      * 삭제 컨텐츠 유형.
      */
+    @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
     /**
@@ -59,6 +62,10 @@ public class DeleteHistory {
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
                 Objects.equals(deletedById, that.deletedById);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
