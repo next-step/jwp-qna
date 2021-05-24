@@ -31,14 +31,12 @@ public class QnAService {
         this.deleteHistoryService = deleteHistoryService;
     }
 
-    @Transactional(readOnly = true)
-    public Question findQuestionById(Long id) {
-        return questionRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(NotFoundException::new);
-    }
-
     @Transactional
     public void deleteQuestion(User loginUser, Question question) throws CannotDeleteException {
+
+        if (question.isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 질문입니다.");
+        }
 
         if (!question.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");

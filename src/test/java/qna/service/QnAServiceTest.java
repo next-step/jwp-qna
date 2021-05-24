@@ -63,6 +63,13 @@ class QnAServiceTest {
     }
 
     @Test
+    public void delete_이미_삭제된_질문() throws Exception {
+        question.setDeleted(true);
+        assertThatThrownBy(() -> qnAService.deleteQuestion(UserTest.SANJIGI, question))
+            .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
     public void delete_다른_사람이_쓴_글() throws Exception {
         assertThatThrownBy(() -> qnAService.deleteQuestion(UserTest.SANJIGI, question))
                 .isInstanceOf(CannotDeleteException.class);
