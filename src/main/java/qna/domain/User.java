@@ -2,6 +2,7 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,6 +26,7 @@ public class User {
     /**
      * 식별키.
      */
+    @Column(unique = true)
     private String userId;
     /**
      * 비밀 번호.
