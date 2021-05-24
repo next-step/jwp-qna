@@ -42,7 +42,7 @@ public class Answer {
     private boolean deleted = false;
 
     protected Answer() {
-        this(null, null, null);
+        this(new User(), new Question(), null);
     }
 
     public Answer(User writer, Question question, String contents) {
