@@ -1,7 +1,5 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import qna.config.TestDataSourceConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.UserTest.JAVAJIGI;
@@ -64,13 +63,14 @@ public class AnswerTest {
         assertEquals(answer1.getQuestion(), saved.getQuestion());
     }
 
-    @DisplayName("findById 검증")
+    @DisplayName("삭제되지 않은 데이터 찾아오기")
     @Test
     void findByIdAndDeletedFalseTest() {
         Answer expected = answerRepository.save(answer2);
         Answer actual = answerRepository.findByIdAndDeletedFalse(expected.getId())
                                         .orElseThrow(EntityNotFoundException::new);
 
+        assertFalse(actual.isDeleted());
         equals(expected, actual);
     }
 

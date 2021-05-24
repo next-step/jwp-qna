@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import qna.config.TestDataSourceConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
@@ -40,7 +41,7 @@ public class QuestionTest {
         assertEquals(Q1.getContents(), saved.getContents());
     }
 
-    @DisplayName("findByIdAndDeletedFalse 검증")
+    @DisplayName("삭제되지 않은 데이터 찾아오기")
     @Test
     void findByIdAndDeletedFalseTest() {
 
@@ -48,6 +49,7 @@ public class QuestionTest {
         Question actual = questionRepository.findByIdAndDeletedFalse(expected.getId())
                                             .orElseThrow(IllegalArgumentException::new);
 
+        assertFalse(actual.isDeleted());
         equals(expected, actual);
     }
 
@@ -62,6 +64,7 @@ public class QuestionTest {
         List<Question> actual = questionRepository.findByDeletedFalse();
 
         for (int i = 0; i < expected.size(); i++) {
+            assertFalse(actual.get(i).isDeleted());
             equals(expected.get(i), actual.get(i));
         }
     }

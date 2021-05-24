@@ -10,9 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import org.hibernate.annotations.Where;
 
 @Entity
 public class Question extends BaseEntity implements Serializable {
@@ -30,12 +29,11 @@ public class Question extends BaseEntity implements Serializable {
     @Column(columnDefinition = "LONGTEXT")
     private String contents;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
     @OneToMany(mappedBy = "question")
-    @Where(clause = "deleted = false")
     private List<Answer> answers = new ArrayList<>();
 
     @Column

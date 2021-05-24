@@ -2,7 +2,6 @@ package qna.domain;
 
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -28,7 +27,7 @@ public class UserTest {
 
     @DisplayName("save & findByUserId 검증")
     @MethodSource("testcase")
-    @ParameterizedTest()
+    @ParameterizedTest
     void findByUserIdTest(User user) {
         userRepository.save(user);
         equals(user, userRepository.findByUserId(user.getUserId())
