@@ -1,5 +1,7 @@
 package qna.domain;
 
+import com.sun.istack.NotNull;
+import org.springframework.lang.NonNull;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -7,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -34,11 +38,24 @@ public class Answer {
     /**
      * 본문.
      */
+    @Lob
     private String contents;
+    /**
+     * 생성시간.
+     */
+    @NotNull
+    private LocalDateTime createAt = LocalDateTime.now();
+
+    /**
+     * 수정시간.
+     */
+    private LocalDateTime updatedAt;
+
 
     /**
      * 삭제된 답변이라면 true, 삭제되지 않았다면 false.
      */
+    @NotNull
     private boolean deleted = false;
 
     protected Answer() {

@@ -1,5 +1,6 @@
 package qna.domain;
 
+import com.sun.istack.NotNull;
 import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
@@ -7,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -26,20 +28,34 @@ public class User {
     /**
      * 식별키.
      */
-    @Column(unique = true)
+    @Column(nullable = false, unique = true, length = 20)
     private String userId;
     /**
      * 비밀 번호.
      */
+    @Column(nullable = false, length = 20)
     private String password;
     /**
      * 사용자 이름.
      */
+    @Column(nullable = false, length = 20)
     private String name;
     /**
      * 이메일.
      */
+    @Column(length = 50)
     private String email;
+
+    /**
+     * 생성시간.
+     */
+    @NotNull
+    private LocalDateTime createAt = LocalDateTime.now();
+
+    /**
+     * 수정시간.
+     */
+    private LocalDateTime updatedAt;
 
     protected User() {
         this(null, null, null, null);

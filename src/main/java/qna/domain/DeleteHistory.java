@@ -1,5 +1,6 @@
 package qna.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -40,7 +41,7 @@ public class DeleteHistory {
     /**
      * 생성일.
      */
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
 
     protected DeleteHistory() {
         this(null, null, null, null);

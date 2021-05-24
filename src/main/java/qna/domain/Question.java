@@ -1,9 +1,14 @@
 package qna.domain;
 
+import com.sun.istack.NotNull;
+import org.springframework.lang.NonNull;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
+import java.time.LocalDateTime;
 
 /**
  * 질문.
@@ -21,11 +26,13 @@ public class Question {
     /**
      * 제목.
      */
+    @NotNull
     private String title;
 
     /**
      * 본문.
      */
+    @Lob
     private String contents;
     /**
      * 작성자 식별자.
@@ -35,7 +42,20 @@ public class Question {
     /**
      * 삭제되었다면 true, 삭제되지 않았다면 false.
      */
+    @NotNull
     private boolean deleted = false;
+
+    /**
+     * 생성시간.
+     */
+    @NotNull
+    private LocalDateTime createAt = LocalDateTime.now();
+
+    /**
+     * 수정시간.
+     */
+    private LocalDateTime updatedAt;
+
 
     protected Question() {
         this(null, null, null);
