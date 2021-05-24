@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +11,9 @@ import qna.UnAuthorizedException;
 import java.util.Objects;
 
 @Entity
-public class User extends BaseEntity {
+public class User extends BaseEntity implements Serializable {
+
+    private static final long serialVersionUID = -5500334453386717865L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -129,7 +132,29 @@ public class User extends BaseEntity {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(userId, user.userId)
+            && Objects.equals(password, user.password) && Objects.equals(name,
+                                                                         user.name)
+            && Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email);
+    }
+
     private static class GuestUser extends User {
+
+        private static final long serialVersionUID = -7143590176109620407L;
 
         public static final GuestUser GUEST_USER = new GuestUser();
 
