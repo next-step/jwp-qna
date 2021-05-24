@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import qna.domain.utils.UserJpaTest;
+import qna.domain.utils.JpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,14 +22,13 @@ class UserRepositoryTest {
 
         @Nested
         @DisplayName("사용자 정보가 주어지면")
-        class Context_with_user_data extends UserJpaTest {
+        class Context_with__data extends JpaTest {
             final User expected = user;
-            User actual;
 
             @Test
             @DisplayName("사용자 정보를 저장하고, 사용자 객체를 리턴한다")
             void it_saves_user_and_returns_user() {
-                actual = getUserRepository().save(expected);
+                User actual = getUserRepository().save(expected);
 
                 assertThat(actual).isEqualTo(expected);
             }
@@ -42,7 +41,7 @@ class UserRepositoryTest {
 
         @Nested
         @DisplayName("저장된 사용자 정보와 사용자 식별키가 주어지면")
-        class Context_with_user extends UserJpaTest {
+        class Context_with_ extends JpaTest {
             User givenUser;
             final String userKey = USER_ID;
 
