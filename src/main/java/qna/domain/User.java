@@ -23,7 +23,7 @@ public class User {
     private Long id;
 
     /**
-     * 사용자 식별자.
+     * 식별키.
      */
     private String userId;
     /**
