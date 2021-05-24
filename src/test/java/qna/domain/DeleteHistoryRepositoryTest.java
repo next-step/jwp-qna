@@ -41,7 +41,6 @@ class DeleteHistoryRepositoryTest {
         @DisplayName("저장된 삭제 이력과 식별자가 주어지면 ")
         class Context_with_deleted_history_and_id extends JpaTest {
             DeleteHistory givenDeleteHistory;
-
             long givenId() {
                 return givenDeleteHistory.getId();
             }
@@ -61,5 +60,4 @@ class DeleteHistoryRepositoryTest {
             }
         }
     }
-
 }
