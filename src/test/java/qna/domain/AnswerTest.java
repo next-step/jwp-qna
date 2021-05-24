@@ -2,14 +2,10 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 import javax.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import qna.config.TestDataSourceConfig;
 
@@ -21,6 +17,7 @@ import static qna.domain.UserTest.SANJIGI;
 
 @TestDataSourceConfig
 public class AnswerTest {
+
     public static final Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
 
@@ -33,64 +30,48 @@ public class AnswerTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    private Answer answer1;
+    private Answer answer2;
+
+    private Question question;
+
     @BeforeEach
     void setUp() {
 
         User javajigi = userRepository.save(JAVAJIGI);
         User sanjigi = userRepository.save(SANJIGI);
 
-        Q1.setWriter(javajigi);
-        Question question = questionRepository.save(Q1);
+        question = new Question("title1", "contents1").writeBy(javajigi);
+        question = questionRepository.save(question);
 
-        A1.setWriter(javajigi);
-        A2.setWriter(sanjigi);
+        answer1 = new Answer(javajigi, question, "Answers Contents1");
+        answer2 = new Answer(sanjigi, question, "Answers Contents2");
 
-        A1.toQuestion(question);
-        A2.toQuestion(question);
+        question.setWriter(javajigi);
+
+        answer1.setWriter(javajigi);
+        answer2.setWriter(sanjigi);
     }
 
     @DisplayName("Answer entity 저장 검증")
-    @MethodSource("testcase")
-    @ParameterizedTest
-    void saveTest(Answer answer) {
-        Answer saved = answerRepository.save(answer);
+    @Test
+    void saveTest() {
+        question.addAnswer(answer1);
+        Answer saved = answerRepository.save(answer1);
         assertNotNull(saved.getId());
 
-        assertEquals(answer.getWriter(), saved.getWriter());
-        assertEquals(answer.getQuestion(), saved.getQuestion());
+        assertEquals(answer1.getWriter(), saved.getWriter());
+        assertEquals(answer1.getQuestion(), saved.getQuestion());
     }
 
     @DisplayName("findById 검증")
-    @MethodSource("testcase")
-    @ParameterizedTest
-    void findByIdAndDeletedFalseTest(Answer answer) {
-        Answer expected = answerRepository.save(answer);
+    @Test
+    void findByIdAndDeletedFalseTest() {
+        Answer expected = answerRepository.save(answer2);
         Answer actual = answerRepository.findByIdAndDeletedFalse(expected.getId())
                                         .orElseThrow(EntityNotFoundException::new);
 
         equals(expected, actual);
-    }
-
-    @SuppressWarnings("unused")
-    private static Stream<Arguments> testcase() {
-        return Stream.of(Arguments.of(A1), Arguments.of(A2));
-    }
-
-    @DisplayName("findByQuestionIdAndDeletedFalse 검증")
-    @Test
-    void findByQuestionIdAndDeletedFalseTest() {
-
-        Question question = A1.getQuestion();
-
-        List<Answer> expected = new ArrayList<>();
-        expected.add(answerRepository.save(A1));
-        expected.add(answerRepository.save(A2));
-
-        List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
-
-        for (int i = 0; i < expected.size(); i++) {
-            equals(expected.get(i), actual.get(i));
-        }
     }
 
     private void equals(Answer expected, Answer actual) {

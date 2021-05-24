@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import org.hibernate.annotations.Where;
 
 @Entity
 public class Question extends BaseEntity implements Serializable {
@@ -34,6 +35,7 @@ public class Question extends BaseEntity implements Serializable {
     private User writer;
 
     @OneToMany(mappedBy = "question")
+    @Where(clause = "deleted = false")
     private List<Answer> answers = new ArrayList<>();
 
     @Column
@@ -57,11 +59,12 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public Long getId() {
@@ -94,6 +97,10 @@ public class Question extends BaseEntity implements Serializable {
 
     public void setWriter(User writer) {
         this.writer = writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public boolean isDeleted() {
