@@ -4,40 +4,58 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.AnswerTest.A1;
 
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 class AnswerRepositoryTest {
 
   @Autowired
   private AnswerRepository answerRepository;
+  @Autowired
+  private QuestionRepository questionRepository;
+  @Autowired
+  private UserRepository userRepository;
 
-  private Answer saved;
+  private User savedUser;
+  private Question savedQuestion;
 
   @BeforeEach
   void setUp() {
-    saved = answerRepository.save(A1);
+    User toSaveUser = new User("ted", "password", "name", "enemfk777@gmail.com");
+    savedUser = userRepository.save(toSaveUser);
+    Question toSaveQuestion = new Question("tedTitle1", "tedContent1").writeBy(savedUser);
+    savedQuestion = questionRepository.save(toSaveQuestion);
   }
 
   @DisplayName("저장 후 반환 값은 원본과 같다.")
   @Test
   void saveTest() {
+    //given
+    Answer given = new Answer(savedUser, savedQuestion, "Answers Contents1");
+
+    //when & then
+    Answer saved = answerRepository.save(given);
     assertAll(
         () -> assertThat(saved.getId()).isNotNull(),
-        () -> assertThat(saved.getWriterId()).isEqualTo(A1.getWriterId()),
-        () -> assertThat(saved.getContents()).isEqualTo(A1.getContents()),
-        () -> assertThat(saved.getQuestionId()).isEqualTo(A1.getQuestionId())
+        () -> assertThat(saved.getWriter()).isEqualTo(given.getWriter()),
+        () -> assertThat(saved.getContents()).isEqualTo(given.getContents()),
+        () -> assertThat(saved.getQuestion()).isEqualTo(given.getQuestion())
     );
   }
 
   @DisplayName("deleted가 false인 데이터는 id로 조회할 수 있다.")
   @Test
   void findByIdAndDeletedFalseTest() {
+    //given
+    Answer given = new Answer(savedUser, savedQuestion, "Answers Contents1");
 
+    //when & then
+    Answer saved = answerRepository.save(given);
     assertAll(
         () -> assertThat(answerRepository.findByIdAndDeletedFalse(saved.getId())).hasValue(saved),
         () -> saved.setDeleted(true),
@@ -50,16 +68,15 @@ class AnswerRepositoryTest {
   @Test
   void findByQuestionIdAndDeletedFalseTest() {
     //given
-    Question givenQuestion = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    givenQuestion.setId(1L);
-    Answer givenAnswer = new Answer(UserTest.JAVAJIGI, givenQuestion, "Answers Contents1");
-    Answer savedAnswer = answerRepository.save(givenAnswer);
+    Answer givenAnswer = new Answer(savedUser, savedQuestion, "Answers Contents1");
 
+    //when & then
+    Answer savedAnswer = answerRepository.save(givenAnswer);
     assertAll(
-        () -> assertThat(answerRepository.findByQuestionIdAndDeletedFalse(givenAnswer.getQuestionId())).contains(savedAnswer),
+        () -> assertThat(answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId())).contains(savedAnswer),
         () -> savedAnswer.setDeleted(true),
         () -> answerRepository.save(savedAnswer),
-        () -> assertThat(answerRepository.findByQuestionIdAndDeletedFalse(givenAnswer.getQuestionId())).isEmpty()
+        () -> assertThat(answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId())).isEmpty()
     );
   }
 
