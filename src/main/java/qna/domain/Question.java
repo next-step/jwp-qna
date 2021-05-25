@@ -7,7 +7,7 @@ import javax.persistence.Id;
 public class Question {
     @Id
     private Long id;
-    
+
     private String title;
     private String contents;
     private Long writerId;
