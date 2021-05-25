@@ -5,7 +5,7 @@
     - [X] save -> findById
   - [X] 객체 맵핑
 - DeleteHistory
-  - [ ] Repository Test 작성
-    - [ ] save -> findById
-  - [ ] 객체 맵핑
+  - [X] Repository Test 작성
+    - [X] save -> findById
+  - [X] 객체 맵핑
 - [ ] BaseEntity를 만들어 create, modified 처리하기
