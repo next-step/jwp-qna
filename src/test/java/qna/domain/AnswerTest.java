@@ -63,6 +63,9 @@ public class AnswerTest {
 
     @Test
     void delete() {
+        Answer expected = answerRepository.save(A1);
+        answerRepository.delete(expected);
 
+        assertThat(answerRepository.findById(expected.getId())).isNotPresent();
     }
 }
