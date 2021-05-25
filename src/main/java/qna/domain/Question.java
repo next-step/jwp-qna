@@ -2,7 +2,9 @@ package qna.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -12,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import org.hibernate.annotations.Where;
 
 @Entity
 public class Question extends BaseEntity implements Serializable {
@@ -34,7 +37,8 @@ public class Question extends BaseEntity implements Serializable {
     private User writer;
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Where(clause = "deleted = 0")
+    private Set<Answer> answers = new HashSet<>();
 
     @Column
     private boolean deleted = false;
@@ -61,7 +65,6 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
         answers.add(answer);
     }
 
@@ -98,7 +101,11 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return new ArrayList<>(answers);
+    }
+
+    public void deleteAnswer(Answer answer) {
+        answers.remove(answer);
     }
 
     public boolean isDeleted() {

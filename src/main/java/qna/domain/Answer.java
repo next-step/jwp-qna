@@ -63,10 +63,6 @@ public class Answer extends BaseEntity implements Serializable {
         return this.writer.getId().equals(writer.getId());
     }
 
-    public void toQuestion(Question question) {
-        this.question = question;
-    }
-
     public Long getId() {
         return id;
     }
@@ -88,6 +84,7 @@ public class Answer extends BaseEntity implements Serializable {
     }
 
     public void setQuestion(Question question) {
+        question.addAnswer(this);
         this.question = question;
     }
 
@@ -105,6 +102,26 @@ public class Answer extends BaseEntity implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+        if (deleted) {
+            question.deleteAnswer(this);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Answer answer = (Answer) o;
+        return id.equals(answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

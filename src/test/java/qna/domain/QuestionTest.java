@@ -25,6 +25,9 @@ public class QuestionTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AnswerRepository answerRepository;
+
     @BeforeEach
     void setUp() {
         Q1.writeBy(userRepository.save(JAVAJIGI));
@@ -67,6 +70,28 @@ public class QuestionTest {
             assertFalse(actual.get(i).isDeleted());
             equals(expected.get(i), actual.get(i));
         }
+    }
+
+    @DisplayName("")
+    @Test
+    void getAnswersTest() {
+
+        User user = new User("id", "pwd", "name", "email");
+        user = userRepository.save(user);
+
+        Question question = new Question("title", "contents");
+        question = questionRepository.save(question);
+
+        Answer answer1 = new Answer(user, question, "contents1");
+        answer1 = answerRepository.save(answer1);
+        answer1.setQuestion(question);
+
+        Answer answer2 = new Answer(user, question, "contents2");
+        answer2 = answerRepository.save(answer2);
+        answer2.setQuestion(question);
+        answer2.setDeleted(true);
+
+        System.out.println(question);
     }
 
     private void equals(Question expected, Question actual) {
