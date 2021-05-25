@@ -23,7 +23,6 @@ public class QuestionRepositoryTest {
         Question savedQuestion = questionRepository.save(QuestionTest.Q1);
         Question foundQuestion = questionRepository.findById(savedQuestion.getId()).orElseThrow(EntityNotFoundException::new);
 
-        assertSame(QuestionTest.Q1, savedQuestion);
         assertSame(savedQuestion, foundQuestion);
     }
 

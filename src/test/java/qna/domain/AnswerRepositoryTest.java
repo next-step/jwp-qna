@@ -25,7 +25,6 @@ public class AnswerRepositoryTest {
         Answer savedAnswer = answerRepository.save(AnswerTest.A1);
         Answer foundAnswer = answerRepository.findById(savedAnswer.getId()).orElseThrow(EntityNotFoundException::new);
 
-        assertSame(AnswerTest.A1, savedAnswer);
         assertSame(savedAnswer, foundAnswer);
     }
 

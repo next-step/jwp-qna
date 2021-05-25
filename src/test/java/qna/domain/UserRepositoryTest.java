@@ -23,7 +23,6 @@ public class UserRepositoryTest {
         User savedUser = userRepository.save(UserTest.JAVAJIGI);
         User foundQuestion = userRepository.findById(savedUser.getId()).orElseThrow(EntityNotFoundException::new);
 
-//        assertSame(UserTest.JAVAJIGI, savedUser); -> 다른 케이스와 다르게 Merge되어 새로운 객체가 Return되기에 테스트가 깨진다.
         assertSame(savedUser, foundQuestion);
     }
 
