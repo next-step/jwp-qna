@@ -3,7 +3,7 @@
 - Answer
   - [X] Repository Test 작성
     - [X] save -> findById
-    - [ ] 삭제처리 변경으로 findByIdAndDeletedFalse 테스트 
+    - [X] 삭제처리 변경으로 findByIdAndDeletedFalse 테스트 
   - [X] 객체 맵핑
 - DeleteHistory
   - [X] Repository Test 작성

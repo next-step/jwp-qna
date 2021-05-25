@@ -7,7 +7,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import javax.persistence.EntityNotFoundException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -22,5 +23,19 @@ public class AnswerRepositoryTest {
 
         assertSame(AnswerTest.A1, savedAnswer);
         assertSame(savedAnswer, foundAnswer);
+    }
+
+    @Test
+    @DisplayName("삭제가 되어있으면, findByIdAndDeletedFalse는 찾지 못한다")
+    public void 삭제를_하지_않으면_findByIdAndDeletedFalse는_찾지_못한다() {
+        Answer savedAnswer = answerRepository.save(AnswerTest.A2);
+
+        assertThat(answerRepository.findByIdAndDeletedFalse(savedAnswer.getId()).isPresent())
+                .isTrue();
+
+        // 삭제처리
+        savedAnswer.setDeleted(true);
+        assertThat(answerRepository.findByIdAndDeletedFalse(savedAnswer.getId()).isPresent())
+                .isFalse();
     }
 }
