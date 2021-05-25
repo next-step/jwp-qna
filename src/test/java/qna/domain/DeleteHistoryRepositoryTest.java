@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import qna.domain.utils.JpaTest;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,7 +55,7 @@ class DeleteHistoryRepositoryTest {
             @DisplayName("삭제정보 식별키에 해당하는 삭제 정보를 리턴한다")
             void it_returns_user() {
                 DeleteHistory actual = getDeleteHistoryRepository().findById(givenId())
-                        .orElse(null);
+                        .orElseThrow(EntityNotFoundException::new);
 
                 assertThat(actual).isEqualTo(deleteHistory1);
             }

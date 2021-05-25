@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import qna.domain.utils.JpaTest;
 
+import javax.persistence.EntityNotFoundException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("UserRepository")
@@ -54,7 +56,7 @@ class UserRepositoryTest {
             @DisplayName("사용자 식별키에 해당하는 사용자 정보를 리턴한다")
             void it_returns_user() {
                 User actual = getUserRepository().findByUserId(userKey)
-                        .orElse(null);
+                        .orElseThrow(EntityNotFoundException::new);
 
                 assertThat(actual).isEqualTo(user);
             }

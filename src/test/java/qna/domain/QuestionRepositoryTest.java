@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import qna.domain.utils.JpaTest;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -83,7 +84,8 @@ class QuestionRepositoryTest {
             @DisplayName("삭제되지않은 질문을 리턴한다.")
             void it_returns_not_deleted_question() {
                 Question question = getQuestionRepository()
-                        .findByIdAndDeletedFalse(givenId()).orElse(null);
+                        .findByIdAndDeletedFalse(givenId())
+                        .orElseThrow(EntityNotFoundException::new);
                 assertThat(question).isNotNull();
             }
         }

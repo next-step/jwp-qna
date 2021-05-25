@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import qna.domain.utils.JpaTest;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -88,7 +89,7 @@ class AnswerRepositoryTest {
             @DisplayName("식별키에 해당하는 답변을 리턴한다")
             void it_returns_answer() {
                 final Answer actual = getAnswerRepository().findByIdAndDeletedFalse(givenId())
-                        .orElse(null);
+                        .orElseThrow(EntityNotFoundException::new);
 
                 assertThat(actual).isEqualTo(givenAnswer1);
             }
