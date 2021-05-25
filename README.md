@@ -1,3 +1,5 @@
+- [ ] 모든 Entity에 @Id, @Entity 작성
+  
 - answer
   - [ ] Repository Test 작성
     - [ ] save -> findById
