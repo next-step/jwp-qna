@@ -31,7 +31,6 @@ public class User extends BaseEntity {
     private String email;
 
     protected User() {
-        this(null, null, null, null);
     }
 
     public User(String userId, String password, String name, String email) {

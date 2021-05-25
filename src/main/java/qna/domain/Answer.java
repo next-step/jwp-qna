@@ -30,7 +30,6 @@ public class Answer extends BaseEntity {
     private boolean deleted = false;
 
     protected Answer() {
-        this(new User(), new Question(), null);
     }
 
     public Answer(User writer, Question question, String contents) {

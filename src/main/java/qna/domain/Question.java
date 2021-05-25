@@ -28,7 +28,6 @@ public class Question extends BaseEntity {
     private boolean deleted = false;
 
     protected Question() {
-        this(null, null, null);
     }
 
     public Question(String title, String contents) {
