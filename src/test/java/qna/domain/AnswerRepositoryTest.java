@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,44 +20,42 @@ public class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    private Question question;
+    private Answer answer;
+    private Answer deletedAnswer;
+
+    @BeforeEach
+    public void setUp() {
+        question = questionRepository.save(new Question("title", "contents"));
+        deletedAnswer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+
+        deletedAnswer.setDeleted(true);
+
+        answerRepository.saveAll(Arrays.asList(deletedAnswer, answer));
+    }
+
     @Test
     @DisplayName("저장을 하고, 다시 가져왔을 때 원본 객체와 같아야 한다")
     public void 저장을_하고_다시_가져왔을_때_원본_객체와_같아야_한다() {
-        Answer savedAnswer = answerRepository.save(AnswerTest.A1);
-        Answer foundAnswer = answerRepository.findById(savedAnswer.getId()).orElseThrow(EntityNotFoundException::new);
+        Answer foundAnswer = answerRepository.findById(answer.getId()).orElseThrow(EntityNotFoundException::new);
 
-        assertSame(savedAnswer, foundAnswer);
+        assertSame(answer, foundAnswer);
     }
 
     @Test
     @DisplayName("삭제가 되어있으면, findByQuestionIdAndDeletedFalse는 찾지 못한다")
     public void 삭제가_되어있으면_findByQuestionIdAndDeletedFalse는_찾지_못한다() {
-        Question question = new Question(1L, "Title", "Contents");
-        Answer deletedAnswer = new Answer(UserTest.JAVAJIGI, question, "contents");
-        Answer notDeletedAnswer = new Answer(UserTest.JAVAJIGI, question, "contents");
-
-        deletedAnswer.setDeleted(true);
-
-        questionRepository.save(question);
-        answerRepository.saveAll(Arrays.asList(deletedAnswer, notDeletedAnswer));
-
-        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(deletedAnswer.getId()))
-                .containsExactly(notDeletedAnswer);
+        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(question.getId()))
+                .containsExactly(answer);
     }
 
     @Test
     @DisplayName("삭제가 되어있으면, findByIdAndDeletedFalse는 찾지 못한다")
     public void 삭제가_되어있으면_findByIdAndDeletedFalse는_찾지_못한다() {
-        Answer deleteTestAnswer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-
-        Answer savedAnswer = answerRepository.save(deleteTestAnswer);
-
-        assertThat(answerRepository.findByIdAndDeletedFalse(savedAnswer.getId()).isPresent())
-                .isTrue();
-
-        // 삭제처리
-        savedAnswer.setDeleted(true);
-        assertThat(answerRepository.findByIdAndDeletedFalse(savedAnswer.getId()).isPresent())
-                .isFalse();
+        assertThat(answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId()))
+                .isNotPresent();
+        assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId()))
+                .isPresent();
     }
 }
