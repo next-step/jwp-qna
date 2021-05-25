@@ -5,6 +5,11 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.util.Objects;
 
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = {"userId"})
+        }
+)
 @Entity
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
@@ -13,7 +18,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
     @Column(length = 20, nullable = false)

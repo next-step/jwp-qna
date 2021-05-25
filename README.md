@@ -21,6 +21,6 @@
     - [X] save -> findById
     - [X] UserId로 찾기
   - [X] 객체 맵핑
-    - [ ] 제약조건 추가
-      - [ ] unique key 추가
+    - [X] 제약조건 추가
+      - [X] unique key 추가
 - [X] BaseEntity를 만들어 createAt, updateAt 처리하기
