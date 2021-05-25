@@ -16,10 +16,10 @@ public class Answer extends BaseEntity {
     private String contents;
     private boolean deleted = false;
 
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     @ManyToOne
     private Question question;
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     @ManyToOne
     private User writer;
 

@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
@@ -21,7 +20,7 @@ public class Question extends BaseEntity {
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     @ManyToOne
     private User writer;
 
