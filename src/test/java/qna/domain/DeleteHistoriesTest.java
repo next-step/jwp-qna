@@ -5,10 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class DeleteHistoriesTest {
 
@@ -16,11 +14,12 @@ class DeleteHistoriesTest {
   @Test
   void addHistory() {
     //given
-    DeleteHistory givenFirstHistory = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
-    DeleteHistory givenSecondHistory = new DeleteHistory(ContentType.ANSWER, 2L, UserTest.JAVAJIGI, LocalDateTime.now());
-    DeleteHistories givenDeleteHistories = new DeleteHistories(Lists.newArrayList(givenFirstHistory));
+    DeleteHistory firstHistory = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
+    DeleteHistory secondHistory = new DeleteHistory(ContentType.ANSWER, 2L, UserTest.JAVAJIGI, LocalDateTime.now());
+    DeleteHistories givenFirstDeleteHistories = new DeleteHistories(Lists.newArrayList(firstHistory));
+    DeleteHistories givenSecondDeleteHistories = new DeleteHistories(Lists.newArrayList(secondHistory));
 
     //when & then
-    assertThat(givenDeleteHistories.addHistory(givenSecondHistory).toList()).isEqualTo(Lists.newArrayList(givenFirstHistory, givenSecondHistory));
+    assertThat(givenFirstDeleteHistories.concat(givenSecondDeleteHistories)).isEqualTo(new DeleteHistories(Lists.newArrayList(firstHistory, secondHistory)));
   }
 }

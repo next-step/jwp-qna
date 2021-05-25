@@ -1,23 +1,27 @@
 package qna.domain;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class DeleteHistories {
 
   private final List<DeleteHistory> histories;
 
   public DeleteHistories(List<DeleteHistory> histories) {
-    this.histories = histories;
+    this.histories = Collections.unmodifiableList(histories);
   }
 
-  public List<DeleteHistory> toList() {
+  public DeleteHistories(DeleteHistory deleteHistory) {
+    this.histories = Collections.singletonList(deleteHistory);
+  }
+
+  public List<DeleteHistory> toUnmodifiableList() {
     return histories;
   }
 
-  public DeleteHistories addHistory(DeleteHistory toAddHistory) {
-    histories.add(toAddHistory);
-    return this;
+  public DeleteHistories concat(DeleteHistories other) {
+    ArrayList<DeleteHistory> concatList = new ArrayList<>(histories);
+    concatList.addAll(other.histories);
+    return new DeleteHistories(concatList);
   }
 
   @Override
