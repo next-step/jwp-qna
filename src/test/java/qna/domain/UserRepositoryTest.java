@@ -21,7 +21,7 @@ public class UserRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        this.user = userRepository.save(UserTest.JAVAJIGI); // persist가 아닌 merge로 동작하기에 return값을 써야함.
+        user = userRepository.save(UserTest.JAVAJIGI); // persist가 아닌 merge로 동작하기에 return값을 써야함.
     }
 
     @Test
