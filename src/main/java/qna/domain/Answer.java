@@ -24,11 +24,11 @@ public class Answer extends BaseTimeEntity {
 
     public Answer() { }
 
-//    public Answer(User writer, Question question, String contents) {
-//        this(null, writer, question, contents);
-//    }
-
     public Answer(User writer, Question question, String contents) {
+        this(null, writer, question, contents);
+    }
+
+    public Answer(Long id, User writer, Question question, String contents) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -37,6 +37,7 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
+        this.id = id;
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
