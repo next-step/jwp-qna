@@ -7,6 +7,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import javax.persistence.EntityNotFoundException;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -14,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Test
     @DisplayName("저장을 하고, 다시 가져왔을 때 원본 객체와 같아야 한다")
@@ -26,8 +31,24 @@ public class AnswerRepositoryTest {
     }
 
     @Test
+    @DisplayName("삭제가 되어있으면, findByQuestionIdAndDeletedFalse는 찾지 못한다")
+    public void 삭제가_되어있으면_findByQuestionIdAndDeletedFalse는_찾지_못한다() {
+        Question question = new Question(1L, "Title", "Contents");
+        Answer deletedAnswer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        Answer notDeletedAnswer = new Answer(UserTest.JAVAJIGI, question, "contents");
+
+        deletedAnswer.setDeleted(true);
+
+        questionRepository.save(question);
+        answerRepository.saveAll(Arrays.asList(deletedAnswer, notDeletedAnswer));
+
+        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(deletedAnswer.getId()))
+                .containsExactly(notDeletedAnswer);
+    }
+
+    @Test
     @DisplayName("삭제가 되어있으면, findByIdAndDeletedFalse는 찾지 못한다")
-    public void 삭제를_하지_않으면_findByIdAndDeletedFalse는_찾지_못한다() {
+    public void 삭제가_되어있으면_findByIdAndDeletedFalse는_찾지_못한다() {
         Answer deleteTestAnswer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
 
         Answer savedAnswer = answerRepository.save(deleteTestAnswer);
