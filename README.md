@@ -21,4 +21,4 @@
     - [X] save -> findById
     - [X] UserId로 찾기
   - [X] 객체 맵핑
-- [ ] BaseEntity를 만들어 create, modified 처리하기
+- [X] BaseEntity를 만들어 createAt, updateAt 처리하기
