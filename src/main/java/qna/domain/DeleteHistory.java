@@ -9,37 +9,20 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/**
- * 삭제 이력.
- */
 @Entity
 public class DeleteHistory {
-    /**
-     * 삭제 이력 식별자.
-     */
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * 삭제 컨텐츠 유형.
-     */
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
-    /**
-     * 컨텐츠 식별자.
-     */
     private Long contentId;
 
-    /**
-     * 삭제한 식별자.
-     */
     private Long deletedById;
 
-    /**
-     * 생성일.
-     */
     private LocalDateTime createDate;
 
     protected DeleteHistory() {

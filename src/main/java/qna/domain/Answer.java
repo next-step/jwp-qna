@@ -12,48 +12,25 @@ import javax.persistence.Lob;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/**
- * 답변.
- */
 @Entity
 public class Answer {
-    /**
-     * 답변 식별자.
-     */
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * 작성자 식별자.
-     */
     private Long writerId;
 
-    /**
-     * 질문글 식별자.
-     */
     private Long questionId;
 
-    /**
-     * 본문.
-     */
     @Lob
     private String contents;
-    /**
-     * 생성시간.
-     */
+
     @NotNull
     private LocalDateTime createAt = LocalDateTime.now();
 
-    /**
-     * 수정시간.
-     */
     private LocalDateTime updatedAt;
 
-
-    /**
-     * 삭제된 답변이라면 true, 삭제되지 않았다면 false.
-     */
     @NotNull
     private boolean deleted = false;
 
@@ -81,19 +58,10 @@ public class Answer {
         this.contents = contents;
     }
 
-    /**
-     * 작성자이면 true를 리턴하고, 아니라면 false를 리턴한다.
-     *
-     * @param writer 작성자 정보
-     * @return 작성자 여부
-     */
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
     }
 
-    /**
-     * 질문글 식별자를 등록한다.
-     */
     public void toQuestion(Question question) {
         this.questionId = question.getId();
     }
