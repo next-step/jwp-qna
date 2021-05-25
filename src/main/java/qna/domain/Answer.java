@@ -26,7 +26,7 @@ public class Answer extends DateEntity {
     @Column(name = "question_id")
     private Long questionId;
 
-    @Column(columnDefinition = "longtext")
+    @Column(columnDefinition = "clob")
     private String contents;
 
     @Column(name = "deleted", nullable = false)
