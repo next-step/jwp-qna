@@ -10,9 +10,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "user")
+@Table(name = "user",
+    uniqueConstraints = @UniqueConstraint(
+        name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = {"user_id"}
+    )
+)
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
