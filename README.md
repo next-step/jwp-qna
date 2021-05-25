@@ -10,7 +10,8 @@
     - [X] save
   - [X] 객체 맵핑
 - Question
-  - [ ] Repository Test 작성
-    - [ ] save -> findById
-  - [ ] 객체 맵핑
+  - [X] Repository Test 작성
+    - [X] save -> findById
+    - [X] 삭제처리 변경으로 findByIdAndDeletedFalse 테스트
+  - [X] 객체 맵핑
 - [ ] BaseEntity를 만들어 create, modified 처리하기
