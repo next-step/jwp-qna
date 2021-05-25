@@ -13,6 +13,6 @@
   - [X] Repository Test 작성
     - [X] save -> findById
     - [X] 삭제처리 변경으로 findByIdAndDeletedFalse 테스트
-    - [ ] 삭제가 되어있으면, findByDeletedFalse에는 포함이 되면 안된다
+    - [X] 삭제가 되어있으면, findByDeletedFalse에는 포함이 되면 안된다
   - [X] 객체 맵핑
 - [ ] BaseEntity를 만들어 create, modified 처리하기
