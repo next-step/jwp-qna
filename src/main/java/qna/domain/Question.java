@@ -1,16 +1,16 @@
 package qna.domain;
 
 import com.sun.istack.NotNull;
+import qna.domain.base.BaseEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import java.time.LocalDateTime;
 
 @Entity
-public class Question {
+public class Question extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,11 +26,6 @@ public class Question {
 
     @NotNull
     private boolean deleted = false;
-
-    @NotNull
-    private LocalDateTime createAt = LocalDateTime.now();
-
-    private LocalDateTime updatedAt;
 
     protected Question() {
         this(null, null, null);

@@ -3,17 +3,17 @@ package qna.domain;
 import com.sun.istack.NotNull;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.base.BaseEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class Answer {
+public class Answer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +25,6 @@ public class Answer {
 
     @Lob
     private String contents;
-
-    @NotNull
-    private LocalDateTime createAt = LocalDateTime.now();
-
-    private LocalDateTime updatedAt;
 
     @NotNull
     private boolean deleted = false;
