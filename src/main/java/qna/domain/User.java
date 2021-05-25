@@ -3,6 +3,7 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,13 +26,13 @@ public class User extends BaseEntity {
     private String email;
 
     @OneToMany(mappedBy = "writer")
-    private List<Answer> wroteAnswers;
+    private List<Answer> wroteAnswers = new ArrayList<>();
 
     @OneToMany(mappedBy = "writer")
-    private List<Question> wroteQuestions;
+    private List<Question> wroteQuestions = new ArrayList<>();
 
     @OneToMany(mappedBy = "deletedBy")
-    private List<DeleteHistory> deleteHistories;
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected User() {
     }
