@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.NotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -30,11 +31,15 @@ public class AnswerTest {
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, content);
         Answer saveAnswer = answerRepository.save(answer);
 
+        Answer selectAnswer = answerRepository.findById(1L).orElseThrow(NotFoundException::new);
+
         assertAll(
                 () -> assertThat(saveAnswer.getId()).isNotNull(),
                 () -> assertThat(saveAnswer.getWriterId()).isEqualTo(1L),
                 () -> assertThat(saveAnswer.getContents()).isEqualTo(content),
                 () -> assertThat(saveAnswer.isDeleted()).isFalse()
         );
+
+        assertThat(selectAnswer.equals(saveAnswer)).isTrue();
     }
 }
