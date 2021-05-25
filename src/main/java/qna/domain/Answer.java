@@ -3,18 +3,21 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 public class Answer {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long writerId;
     private Long questionId;
+
+    @Lob
     private String contents;
+
     private boolean deleted = false;
 
     protected Answer() {}
