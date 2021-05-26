@@ -67,16 +67,16 @@ public class Answer extends BaseEntity {
         return question;
     }
 
-    public String getContents() {
-        return contents;
+    public void delete() {
+        if(isDeleted()) {
+            throw new IllegalStateException("이미 삭제가 되어있습니다.");
+        }
+
+        this.deleted = true;
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

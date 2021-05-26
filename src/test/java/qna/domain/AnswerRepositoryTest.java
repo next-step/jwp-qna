@@ -61,7 +61,7 @@ class AnswerRepositoryTest {
     @DisplayName("삭제가 되어있으면, findByIdAndDeletedFalse는 찾지 못한다")
     void 삭제가_되어있으면_findByIdAndDeletedFalse는_찾지_못한다() {
         Answer deletedAnswer = answerRepository.save(new Answer(user, question, "contents"));
-        deletedAnswer.setDeleted(true);
+        deletedAnswer.delete();
 
         assertThat(answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId()))
                 .isNotPresent();
