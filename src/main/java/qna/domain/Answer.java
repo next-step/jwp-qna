@@ -50,7 +50,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer == writer;
     }
 
     public void toQuestion(Question question) {
@@ -61,10 +61,6 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() { return writer; }
 
     public Question getQuestion() {
@@ -73,10 +69,6 @@ public class Answer extends BaseEntity {
 
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
