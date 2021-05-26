@@ -72,8 +72,6 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("questionId로 매칭되는 질문에 대한 답변들 정상 조회하는지 테스트")
     void findByQuestionIdAndDeletedFalse() {
-        answer_1.toQuestion(question);
-        answer_2.toQuestion(question);
         answerRepository.saveAll(Arrays.asList(answer_1, answer_2));
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
