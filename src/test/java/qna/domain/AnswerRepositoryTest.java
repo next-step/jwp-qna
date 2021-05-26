@@ -1,9 +1,6 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -27,7 +24,9 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    private Question question = QuestionTest.Q1;
     private Answer answer_1 = AnswerTest.A1;
+    private Answer answer_2 = AnswerTest.A2;
     private Answer saved;
 
     @BeforeEach
@@ -37,8 +36,8 @@ class AnswerRepositoryTest {
 
     @AfterEach
     void cleanUp() {
-        AnswerTest.A1.setDeleted(false);
-        AnswerTest.A2.setDeleted(false);
+        answer_1.setDeleted(false);
+        answer_2.setDeleted(false);
         answerRepository.deleteAll();
         entityManager.createNativeQuery("ALTER TABLE answer ALTER COLUMN `id` RESTART WITH 1")
                 .executeUpdate();
@@ -73,39 +72,30 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("questionId로 매칭되는 질문에 대한 답변들 정상 조회하는지 테스트")
     void findByQuestionIdAndDeletedFalse() {
-        Question question = QuestionTest.Q1;
-        Answer answer1 = AnswerTest.A1;
-        Answer answer2 = AnswerTest.A2;
-        answer1.toQuestion(question);
-        answer2.toQuestion(question);
-        answerRepository.saveAll(Arrays.asList(answer1, answer2));
+        answer_1.toQuestion(question);
+        answer_2.toQuestion(question);
+        answerRepository.saveAll(Arrays.asList(answer_1, answer_2));
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
         assertAll(
                 () -> assertThat(answers).hasSize(2),
-                () -> assertThat(answers).contains(answer1, answer2)
+                () -> assertThat(answers).contains(answer_1, answer_2)
         );
     }
 
     @Test
     @DisplayName("questionId로 매칭되는 answer값 삭제되었을 시 조회 불가 테스트")
     void findByQuestionIdAndDeletedFalse_failCase() {
-        Question question = QuestionTest.Q1;
-        Answer answer = AnswerTest.A1;
-        Answer deleted = AnswerTest.A2;
-        answer.toQuestion(question);
-        deleted.toQuestion(question);
+        answer_2.setDeleted(true);
 
-        deleted.setDeleted(true);
-
-        answerRepository.saveAll(Arrays.asList(answer, deleted));
+        answerRepository.saveAll(Arrays.asList(answer_1, answer_2));
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
         assertAll(
-                () -> assertThat(answers).contains(answer),
-                () -> assertThat(answers).doesNotContain(deleted)
+                () -> assertThat(answers).contains(answer_1),
+                () -> assertThat(answers).doesNotContain(answer_2)
         );
     }
 
