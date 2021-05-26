@@ -110,7 +110,7 @@ public class Answer extends BaseEntity implements Serializable {
 
     public void delete() {
         this.deleted = true;
-        question.getAnswers().remove(this);
+        question.removeAnswer(this);
     }
 
     public void restore() {

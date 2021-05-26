@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,9 +18,6 @@ import static qna.domain.UserTest.SANJIGI;
 @TestDataSourceConfig
 public class AnswerTest {
 
-    public static final Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
-
     @Autowired
     private AnswerRepository answerRepository;
 
@@ -29,49 +27,53 @@ public class AnswerTest {
     @Autowired
     private QuestionRepository questionRepository;
 
-    private Answer answer1;
-    private Answer answer2;
-
     private Question question;
+    private User user;
 
     @BeforeEach
     void setUp() {
+        user = userRepository.save(new User("user", "pwd", "name", "email"));
 
-        User javajigi = userRepository.save(JAVAJIGI);
-        User sanjigi = userRepository.save(SANJIGI);
-
-        question = new Question("title1", "contents1").writeBy(javajigi);
+        question = new Question(1L, "title1", "contents1").writeBy(user);
         question = questionRepository.save(question);
-
-        answer1 = new Answer(javajigi, question, "Answers Contents1");
-        answer2 = new Answer(sanjigi, question, "Answers Contents2");
-
-        question.setWriter(javajigi);
-
-        answer1.setWriter(javajigi);
-        answer2.setWriter(sanjigi);
     }
 
     @DisplayName("Answer entity 저장 검증")
     @Test
     void saveTest() {
-        question.addAnswer(answer1);
-        Answer saved = answerRepository.save(answer1);
+
+        Answer answer = new Answer(user, question, "contents");
+        Answer saved = answerRepository.save(answer);
         assertNotNull(saved.getId());
 
-        assertEquals(answer1.getWriter(), saved.getWriter());
-        assertEquals(answer1.getQuestion(), saved.getQuestion());
+        assertEquals(answer.getWriter(), saved.getWriter());
+        assertEquals(answer.getQuestion(), saved.getQuestion());
     }
 
     @DisplayName("삭제되지 않은 데이터 찾아오기")
     @Test
-    void findByIdAndDeletedFalseTest() {
-        Answer expected = answerRepository.save(answer2);
+    void findByIdAndDeletedFalseTest01() {
+
+        Answer notDeletedAnswer = new Answer(user, question, "contents");
+
+        Answer expected = answerRepository.save(notDeletedAnswer);
         Answer actual = answerRepository.findByIdAndDeletedFalse(expected.getId())
                                         .orElseThrow(EntityNotFoundException::new);
 
         assertFalse(actual.isDeleted());
         equals(expected, actual);
+    }
+
+    @DisplayName("삭제된 데이터는 찾아올 수 없음")
+    @Test
+    void findByIdAndDeletedFalseTest02() {
+
+        Answer deletedAnswer = new Answer(user, question, "contents");
+        deletedAnswer = answerRepository.save(deletedAnswer);
+        deletedAnswer.delete();
+
+        Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId());
+        assertFalse(actual.isPresent());
     }
 
     private void equals(Answer expected, Answer actual) {

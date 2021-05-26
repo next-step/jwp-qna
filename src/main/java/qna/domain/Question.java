@@ -74,6 +74,10 @@ public class Question extends BaseEntity implements Serializable {
         answers.add(answer);
     }
 
+    public void removeAnswer(Answer answer) {
+        answers.remove(answer);
+    }
+
     public Long getId() {
         return id;
     }
