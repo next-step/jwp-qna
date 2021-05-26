@@ -1,16 +1,32 @@
 package qna.domain;
 
+import org.springframework.lang.NonNull;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class User {
+@Entity
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @NonNull
+    @Column(length = 20)
     private String userId;
+
+    @NonNull
+    @Column(length = 20)
     private String password;
+
+    @NonNull
+    @Column(length = 20, unique = true)
     private String name;
+
+    @Column(length = 50)
     private String email;
 
     private User() {
