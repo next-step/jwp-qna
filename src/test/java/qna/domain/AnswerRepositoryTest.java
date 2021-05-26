@@ -62,7 +62,7 @@ class AnswerRepositoryTest {
         Answer answer = answerRepository.save(AnswerTest.A1);
 
         // when
-        Answer expected = answerRepository.findByIdAndDeletedFalse(answer.getId()).get();
+        Answer expected = answerRepository.findById(answer.getId()).get();
 
         // then
         assertThat(answer == expected).isTrue();
