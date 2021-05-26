@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 @DataJpaTest
-public class UserRepositoryTest {
+class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
@@ -27,7 +27,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("저장을 하고, 다시 가져왔을 때 원본 객체와 같아야 한다")
     @Transactional
-    public void 저장을_하고_다시_가져왔을_때_원본_객체와_같아야_한다() {
+    void 저장을_하고_다시_가져왔을_때_원본_객체와_같아야_한다() {
         User foundQuestion = userRepository.findById(user.getId()).orElseThrow(EntityNotFoundException::new);
 
         assertSame(user, foundQuestion);
@@ -35,7 +35,7 @@ public class UserRepositoryTest {
 
     @Test
     @DisplayName("유저 아이디로 유저를 찾을 수 있다.")
-    public void 유저_아이디로_유저를_찾을_수_있다() {
+    void 유저_아이디로_유저를_찾을_수_있다() {
         assertThat(userRepository.findByUserId(user.getUserId()).orElseThrow(EntityNotFoundException::new))
                 .isSameAs(user);
     }

@@ -19,6 +19,9 @@ public class DeleteHistory {
 
     protected DeleteHistory() {
     }
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedById, LocalDateTime createDate) {
+        this(contentType, contentId, deletedById.getId(), createDate);
+    }
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
