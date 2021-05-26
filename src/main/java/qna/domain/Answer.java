@@ -18,6 +18,7 @@ public class Answer extends BaseEntity {
     @Lob
     private String contents;
 
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Answer() {

@@ -15,6 +15,8 @@ public class Question extends BaseEntity {
     private String contents;
 
     private Long writerId;
+
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Question() {
