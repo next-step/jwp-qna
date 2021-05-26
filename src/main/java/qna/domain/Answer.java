@@ -16,7 +16,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-@Where(clause = "deleted=false")
+@Where(clause = "deleted=0")
 public class Answer extends BaseEntity {
 
     @Id
