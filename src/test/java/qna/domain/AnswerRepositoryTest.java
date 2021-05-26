@@ -36,9 +36,7 @@ class AnswerRepositoryTest {
     @DisplayName("조회한 데이터와 같은 id 값을 가진 엔티티는 동일해야 한다")
     void answerRetrieveTest() {
         List<Answer> findAnswers = repository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
-        Answer findAnswer = repository.findByIdAndDeletedFalse(savedAnswer.getId()).get();
-
-        System.out.println("size: " + findAnswers.size());
+        Answer findAnswer = repository.findById(savedAnswer.getId()).get();
 
         assertAll(
                 () -> assertThat(findAnswers.get(0)).isSameAs(savedAnswer),
@@ -57,6 +55,25 @@ class AnswerRepositoryTest {
                 () -> assertThat(savedAnswer.getWriterId()).isEqualTo(A1.getWriterId()),
                 () -> assertThat(savedAnswer.isDeleted()).isEqualTo(A1.isDeleted())
         );
+    }
+
+    @Test
+    @DisplayName("inert 시 createAt 이 자동으로 입력된다.")
+    void dateAutoCreateTest() {
+
+        assertAll(
+                () -> assertThat(savedAnswer.getCreateAt()).isNotNull(),
+                () -> assertThat(savedAnswer.getUpdateAt()).isNull()
+        );
+    }
+
+    @Test
+    @DisplayName("update 시 updateAt 이 자동으로 변경된다.")
+    void dateAutoModifyTest() {
+        savedAnswer.setContents("update date?");
+        repository.flush();
+
+        assertThat(savedAnswer.getUpdateAt()).isNotNull();
     }
 
     @AfterEach
