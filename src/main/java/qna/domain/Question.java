@@ -1,11 +1,40 @@
 package qna.domain;
 
-public class Question {
+import org.hibernate.annotations.Where;
+import qna.domain.base.BaseEntity;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+import java.util.Objects;
+
+@Entity
+@Table(name = "question")
+@Where(clause = "deleted=0")
+public class Question extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
+
+    @Lob
+    @Column(name = "contents")
     private String contents;
+
+    @Column(name = "writer_id")
     private Long writerId;
-    private boolean deleted = false;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
+
+    protected Question() {}
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -68,6 +97,19 @@ public class Question {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return Objects.equals(id, question.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

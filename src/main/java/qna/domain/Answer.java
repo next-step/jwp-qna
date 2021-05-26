@@ -1,16 +1,42 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.base.BaseEntity;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+@Table(name = "answer")
+@Where(clause = "deleted=0")
+public class Answer extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "question_id")
     private Long questionId;
+
+    @Lob
+    @Column(name = "contents")
     private String contents;
-    private boolean deleted = false;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
+
+    protected Answer() {}
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -78,6 +104,19 @@ public class Answer {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answer answer = (Answer) o;
+        return Objects.equals(id, answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
