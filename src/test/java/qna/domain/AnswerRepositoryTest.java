@@ -37,6 +37,8 @@ class AnswerRepositoryTest {
 
     @AfterEach
     void cleanUp() {
+        AnswerTest.A1.setDeleted(false);
+        AnswerTest.A2.setDeleted(false);
         answerRepository.deleteAll();
         entityManager.createNativeQuery("ALTER TABLE answer ALTER COLUMN `id` RESTART WITH 1")
                 .executeUpdate();
@@ -87,6 +89,27 @@ class AnswerRepositoryTest {
     }
 
     @Test
+    @DisplayName("questionId로 매칭되는 answer값 삭제되었을 시 조회 불가 테스트")
+    void findByQuestionIdAndDeletedFalse_failCase() {
+        Question question = QuestionTest.Q1;
+        Answer answer = AnswerTest.A1;
+        Answer deleted = AnswerTest.A2;
+        answer.toQuestion(question);
+        deleted.toQuestion(question);
+
+        deleted.setDeleted(true);
+
+        answerRepository.saveAll(Arrays.asList(answer, deleted));
+
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+
+        assertAll(
+                () -> assertThat(answers).contains(answer),
+                () -> assertThat(answers).doesNotContain(deleted)
+        );
+    }
+
+    @Test
     @DisplayName("answerId로 매칭되는 answer값 정상 조회하는지 테스트")
     public void findByIdAndDeletedFalse() {
         Optional<Answer> findedAnswer = answerRepository.findByIdAndDeletedFalse(answer_1.getId());
@@ -95,5 +118,14 @@ class AnswerRepositoryTest {
                 () -> assertThat(findedAnswer.isPresent()).isTrue(),
                 () -> assertThat(findedAnswer.get()).isEqualTo(answer_1)
         );
+    }
+
+    @Test
+    @DisplayName("answerId로 매칭되는 answer값 삭제시 조회 불가 테스트")
+    public void findByIdAndDeletedFalse_failCase() {
+        answer_1.setDeleted(true);
+        Optional<Answer> findedAnswer = answerRepository.findByIdAndDeletedFalse(answer_1.getId());
+
+        assertThat(findedAnswer.isPresent()).isFalse();
     }
 }
