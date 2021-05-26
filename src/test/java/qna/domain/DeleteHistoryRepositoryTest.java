@@ -52,7 +52,7 @@ class DeleteHistoryRepositoryTest {
 
         List<DeleteHistory> deleteHistories = deleteHistoryRepository.findAll();
 
-        assertThat(deleteHistories).isEmpty();
+        assertThat(deleteHistories.contains(saved)).isFalse();
     }
 
     @Test

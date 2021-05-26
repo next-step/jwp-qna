@@ -62,7 +62,7 @@ class UserRepositoryTest {
 
         List<User> users = userRepository.findAll();
 
-        assertThat(users).isEmpty();
+        assertThat(users.contains(saved)).isFalse();
     }
 
     @Test

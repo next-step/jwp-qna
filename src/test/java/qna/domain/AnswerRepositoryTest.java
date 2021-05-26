@@ -64,7 +64,7 @@ class AnswerRepositoryTest {
 
         List<Answer> answers = answerRepository.findAll();
 
-        assertThat(answers).isEmpty();
+        assertThat(answers.contains(saved)).isFalse();
     }
 
     @Test
