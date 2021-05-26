@@ -1,11 +1,34 @@
 package qna.domain;
 
-public class Question {
+import com.sun.istack.NotNull;
+import qna.domain.base.BaseEntity;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+
+@Entity
+public class Question extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
     private String title;
+
+    @Lob
     private String contents;
+
     private Long writerId;
+
+    @NotNull
     private boolean deleted = false;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
