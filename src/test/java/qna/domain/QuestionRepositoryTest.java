@@ -38,9 +38,7 @@ class QuestionRepositoryTest {
         entityManagerHelper = new EntityManagerHelper(entityManager);
 
         user = userRepository.save(new User("USER_ID", "PASSWORD", "NAME", "EMAIL"));
-        question = questionRepository.save(new Question("Hello", "Hello"));
-
-        question.writeBy(user);
+        question = questionRepository.save(new Question("Hello", "Hello", user));
     }
 
     @Test
@@ -54,7 +52,7 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("삭제가 되어있으면, findByIdAndDeletedFalse는 찾지 못한다")
     void 삭제를_하지_않으면_findByIdAndDeletedFalse는_찾지_못한다() {
-        Question deletedQuestion = questionRepository.save(new Question("Bye", "Bye"));
+        Question deletedQuestion = questionRepository.save(new Question("Bye", "Bye", user));
 
         deletedQuestion.delete();
 

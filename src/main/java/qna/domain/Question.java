@@ -31,13 +31,11 @@ public class Question extends BaseEntity {
     }
 
     public Question(String title, String contents) {
-        this(null, title, contents);
+        this(null, title, contents, User.GUEST_USER);
     }
 
     public Question(String title, String contents, User writer) {
-        this(null, title, contents);
-
-        writeBy(writer);
+        this(null, title, contents, writer);
     }
 
     public Question(Long id, String title, String contents) {
@@ -46,13 +44,15 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Question writeBy(User writer) {
+    public Question(Long id, String title, String contents, User writer) {
+        this.id = id;
+        this.title = title;
+        this.contents = contents;
         this.writer = writer;
-        return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+        return this.writer == writer;
     }
 
     public void addAnswer(Answer answer) {
