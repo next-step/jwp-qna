@@ -9,7 +9,7 @@ import java.util.Objects;
 
 
 @Entity
-public class Answer extends BaseEntity{
+public class Answer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,8 @@ public class Answer extends BaseEntity{
     @NotNull
     private boolean deleted = false;
 
-    protected Answer() {}
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
