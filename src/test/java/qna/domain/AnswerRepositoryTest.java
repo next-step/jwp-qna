@@ -52,11 +52,12 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("answer 수정 테스트")
     void update() {
-        saved.setContents("내용 바꿔보기");
+        String changedContents = "내용 바꿔보기";
+        saved.setContents(changedContents);
 
         Optional<Answer> updatedAnswer = answerRepository.findById(saved.getId());
 
-        assertThat(updatedAnswer.get().getContents()).isEqualTo("내용 바꿔보기");
+        assertThat(updatedAnswer.get().getContents()).isEqualTo(changedContents);
     }
 
     @Test

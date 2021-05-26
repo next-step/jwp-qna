@@ -50,11 +50,12 @@ class UserRepositoryTest {
     @Test
     @DisplayName("User 수정 테스트")
     void update() {
-        saved.setName("crong");
+        String changedName = "crong";
+        saved.setName(changedName);
 
         Optional<User> user = userRepository.findById(saved.getId());
 
-        assertThat(user.get().getName()).isEqualTo("crong");
+        assertThat(user.get().getName()).isEqualTo(changedName);
     }
 
     @Test
