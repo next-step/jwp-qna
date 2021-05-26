@@ -27,13 +27,13 @@ class DeleteHistoryRepositoryTest {
 
     @Test
     @DisplayName("서로 같은 데이터를 가진 엔티티는 동일해야 한다")
-    void answerSameAsTest() {
+    void entitySameAsTest() {
         assertThat(savedDeleteHistory).isSameAs(deleteHistory);
     }
 
     @Test
     @DisplayName("조회한 데이터와 같은 id 값을 가진 엔티티는 동일해야 한다")
-    void answerRetrieveTest() {
+    void entityRetrieveTest() {
         DeleteHistory findDeleteHistory = repository.findById(savedDeleteHistory.getId()).get();
 
         assertThat(findDeleteHistory).isSameAs(savedDeleteHistory);
@@ -41,7 +41,7 @@ class DeleteHistoryRepositoryTest {
 
     @Test
     @DisplayName("저장 전 후의 데이터가 같아야 한다")
-    void answerSameValueTest() {
+    void entitySameValueTest() {
         assertAll(
                 () -> assertThat(savedDeleteHistory.getId()).isNotNull(),
                 () -> assertThat(savedDeleteHistory.getContentType()).isEqualTo(deleteHistory.getContentType()),
