@@ -24,3 +24,8 @@
     - [X] 제약조건 추가
       - [X] unique key 추가
 - [X] BaseEntity를 만들어 createAt, updateAt 처리하기
+- 연관관계 매핑
+  - [ ] answer -> question
+  - [ ] answer -> user
+  - [ ] delete_history -> user
+  - [ ] question -> user
