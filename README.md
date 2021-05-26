@@ -26,6 +26,6 @@
 - [X] BaseEntity를 만들어 createAt, updateAt 처리하기
 - 연관관계 매핑
   - [ ] answer -> question (N : 1)
-  - [ ] answer -> user (1 : 1)
+  - [X] answer -> user (1 : 1)
   - [X] delete_history -> user (1 : 1)
   - [X] question -> user (1 : 1)
