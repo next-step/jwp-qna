@@ -3,14 +3,32 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+@Table(name = "answer")
+public class Answer extends BaseDate {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", columnDefinition = "bigint")
     private Long id;
-    private Long writerId;
-    private Long questionId;
+
+    @Lob
+    @Column(name = "contents", columnDefinition = "clob")
     private String contents;
+
+    @Column(name = "writer_id", columnDefinition = "bigint")
+    private Long writerId;
+
+    @Column(name = "question_id", columnDefinition = "bigint")
+    private Long questionId;
+
+    @Column(name = "deleted", columnDefinition = "boolean", nullable = false)
     private boolean deleted = false;
+
+    public Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -89,5 +107,18 @@ public class Answer {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answer answer = (Answer) o;
+        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents, answer.contents) && Objects.equals(writerId, answer.writerId) && Objects.equals(questionId, answer.questionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contents, writerId, questionId, deleted);
     }
 }
