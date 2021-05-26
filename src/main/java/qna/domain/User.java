@@ -20,16 +20,16 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", columnDefinition = "varchar(20)", nullable = false)
+    @Column(name = "user_id", length = 20, nullable = false)
     private String userId;
 
-    @Column(name = "password", columnDefinition = "varchar(20)", nullable = false)
+    @Column(name = "password", length = 20, nullable = false)
     private String password;
 
-    @Column(name = "name", columnDefinition = "varchar(20)", nullable = false)
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "email", columnDefinition = "varchar(50)")
+    @Column(name = "email", length = 50)
     private String email;
 
     protected User() {

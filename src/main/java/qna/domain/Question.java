@@ -19,7 +19,7 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", columnDefinition = "varchar(100)", nullable = false)
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
 
     @Lob
