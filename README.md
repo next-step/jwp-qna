@@ -61,3 +61,6 @@ alter table user
 > 실제 테스트 해보니, @AutoConfigureTestDatabase(replace = Replace.NONE) 없이 테스트 돌리면 내장 DB사용하고, 
 > 작성 후 테스트 돌리면 외부 지정된(여기서는 jdbc:h2:~/test) h2 DB를 콘솔로 켜보니 테이블이 생성되는걸
 > 확인할 수 있었음.
+
+- spring.jpa.hibernate.ddl-auto 값이 create면 테스트 할 때 drop 후 create 하고 create-drop이면 create와 같은데 최종적으로
+drop을 더 해줌 -> 외부 db 사용한다고 할 때, 콘솔 열어서 테이블 정상 생성되는지 확인하려면 create 써야함
