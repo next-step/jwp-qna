@@ -53,7 +53,7 @@ public class Answer extends BaseEntity {
         return this.writer == writer;
     }
 
-    public void toQuestion(Question question) {
+    protected void toQuestion(Question question) {
         this.question = question;
     }
 
