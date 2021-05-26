@@ -83,8 +83,12 @@ public class Answer extends BaseEntity implements Serializable {
         return question;
     }
 
-    public void setQuestion(Question question) {
+    public void toQuestion(Question question) {
+        this.question = question;
         question.addAnswer(this);
+    }
+
+    public void setQuestion(Question question) {
         this.question = question;
     }
 
@@ -102,9 +106,16 @@ public class Answer extends BaseEntity implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-        if (deleted) {
-            question.deleteAnswer(this);
-        }
+    }
+
+    public void delete() {
+        this.deleted = true;
+        question.getAnswers().remove(this);
+    }
+
+    public void restore() {
+        this.deleted = false;
+        question.addAnswer(this);
     }
 
     @Override
