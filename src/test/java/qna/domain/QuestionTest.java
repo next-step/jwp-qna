@@ -14,6 +14,6 @@ public class QuestionTest {
     void create() {
         Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
 
-        assertThat(question).isEqualTo(Q1);
+        assertThat(question).isEqualTo(new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI));
     }
 }

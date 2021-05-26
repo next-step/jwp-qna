@@ -19,6 +19,7 @@ public class AnswerTest {
         Answer answer = new Answer(UserTest.JAVAJIGI, question, "답변내용");
 
         assertThat(answer).isNotNull();
+        assertThat(answer).isEqualTo(new Answer(UserTest.JAVAJIGI, question, "답변내용"));
     }
 
     @Test

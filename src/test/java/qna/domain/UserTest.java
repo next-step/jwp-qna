@@ -14,6 +14,6 @@ public class UserTest {
     void create() {
         User user = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
 
-        assertThat(user).isEqualTo(JAVAJIGI);
+        assertThat(user).isEqualTo(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
     }
 }
