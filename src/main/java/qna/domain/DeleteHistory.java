@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Table(name = "delete_history")
 public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,13 +16,15 @@ public class DeleteHistory {
 
     private Long contentId;
 
-    private Long deletedById;
+    @ManyToOne
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedById;
 
     private LocalDateTime createDate = LocalDateTime.now();
 
     public DeleteHistory() { }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
