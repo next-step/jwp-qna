@@ -70,12 +70,16 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public boolean isDeleted() {
-        return deleted;
+    public void delete() {
+        if(isDeleted()) {
+            throw new IllegalStateException("이미 삭제가 되어있습니다.");
+        }
+
+        this.deleted = true;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public boolean isDeleted() {
+        return deleted;
     }
 
     @Override

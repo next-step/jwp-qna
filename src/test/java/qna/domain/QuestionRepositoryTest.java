@@ -56,7 +56,7 @@ class QuestionRepositoryTest {
     void 삭제를_하지_않으면_findByIdAndDeletedFalse는_찾지_못한다() {
         Question deletedQuestion = questionRepository.save(new Question("Bye", "Bye"));
 
-        deletedQuestion.setDeleted(true);
+        deletedQuestion.delete();
 
         assertThat(questionRepository.findByIdAndDeletedFalse(question.getId()))
                 .isPresent();
