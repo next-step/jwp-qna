@@ -46,11 +46,11 @@ public class Answer extends BaseEntity implements Serializable {
     public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
-        if (Objects.isNull(writer)) {
+        if (writer == null) {
             throw new UnAuthorizedException();
         }
 
-        if (Objects.isNull(question)) {
+        if (question == null) {
             throw new NotFoundException();
         }
 
