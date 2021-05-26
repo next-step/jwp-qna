@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @DataJpaTest
@@ -26,6 +27,7 @@ class QuestionRepositoryTest {
     private QuestionRepository questionRepository;
 
     private Question question = QuestionTest.Q1;
+    private Question newQuestion = QuestionTest.Q2;
     private Question saved;
 
     @BeforeEach
@@ -35,6 +37,8 @@ class QuestionRepositoryTest {
 
     @AfterEach
     void cleanUp() {
+        question.setDeleted(false);
+        newQuestion.setDeleted(false);
         questionRepository.deleteAll();
         entityManager.createNativeQuery("ALTER TABLE question ALTER COLUMN `id` RESTART WITH 1")
                 .executeUpdate();
@@ -67,10 +71,47 @@ class QuestionRepositoryTest {
     }
 
     @Test
+    @DisplayName("전체 question 조회 테스트")
     void findByDeletedFalse() {
+        questionRepository.save(newQuestion);
+
+        List<Question> questions = questionRepository.findByDeletedFalse();
+
+        assertThat(questions).hasSize(2);
+        assertThat(questions).contains(saved, newQuestion);
     }
 
     @Test
+    @DisplayName("전체 questions에서 question이 삭제된 경우 조회 실패 테스트")
+    void findByDeletedFalse_failCase() {
+        questionRepository.save(newQuestion);
+
+        newQuestion.setDeleted(true);
+
+        List<Question> questions = questionRepository.findByDeletedFalse();
+
+        assertThat(questions).hasSize(1);
+        assertThat(questions).doesNotContain(newQuestion);
+    }
+
+    @Test
+    @DisplayName("question 아이디 값으로 조회 테스트")
     void findByIdAndDeletedFalse() {
+        Optional<Question> finded = questionRepository.findByIdAndDeletedFalse(question.getId());
+
+        assertAll(
+                () -> assertThat(finded.isPresent()).isTrue(),
+                () -> assertThat(finded.get()).isEqualTo(question)
+        );
+    }
+
+    @Test
+    @DisplayName("question 아이디 값으로 조회시 삭제되었으면 조회 실패 테스트")
+    void findByIdAndDeletedFalse_failCase() {
+        question.setDeleted(true);
+
+        Optional<Question> finded = questionRepository.findByIdAndDeletedFalse(question.getId());
+
+        assertThat(finded.isPresent()).isFalse();
     }
 }
