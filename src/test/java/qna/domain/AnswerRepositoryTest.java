@@ -11,7 +11,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.AnswerTest.A1;
 
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -19,23 +18,25 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository repository;
 
+    Answer answer;
     Answer savedAnswer;
 
     @BeforeEach
     void setUp() {
-        savedAnswer = repository.save(A1);
+        answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        savedAnswer = repository.save(answer);
     }
 
     @Test
     @DisplayName("서로 같은 데이터를 가진 엔티티는 동일해야 한다")
     void entitySameAsTest() {
-        assertThat(savedAnswer).isSameAs(A1);
+        assertThat(savedAnswer).isSameAs(answer);
     }
 
     @Test
     @DisplayName("조회한 데이터와 같은 id 값을 가진 엔티티는 동일해야 한다")
     void entityRetrieveTest() {
-        List<Answer> findAnswers = repository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
+        List<Answer> findAnswers = repository.findByQuestionIdAndDeletedFalse(answer.getQuestionId());
         Answer findAnswer = repository.findById(savedAnswer.getId()).get();
 
         assertAll(
@@ -50,10 +51,10 @@ class AnswerRepositoryTest {
     void entitySameValueTest() {
         assertAll(
                 () -> assertThat(savedAnswer.getId()).isNotNull(),
-                () -> assertThat(savedAnswer.getContents()).isEqualTo(A1.getContents()),
-                () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(A1.getQuestionId()),
-                () -> assertThat(savedAnswer.getWriterId()).isEqualTo(A1.getWriterId()),
-                () -> assertThat(savedAnswer.isDeleted()).isEqualTo(A1.isDeleted())
+                () -> assertThat(savedAnswer.getContents()).isEqualTo(answer.getContents()),
+                () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(answer.getQuestionId()),
+                () -> assertThat(savedAnswer.getWriterId()).isEqualTo(answer.getWriterId()),
+                () -> assertThat(savedAnswer.isDeleted()).isEqualTo(answer.isDeleted())
         );
     }
 
