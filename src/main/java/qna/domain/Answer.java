@@ -5,11 +5,15 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.base.BaseEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
@@ -21,13 +25,15 @@ public class Answer extends BaseEntity {
 
     private Long writerId;
 
-    private Long questionId;
-
     @Lob
     private String contents;
 
     @NotNull
     private boolean deleted = false;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     protected Answer() {
     }
@@ -48,7 +54,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -57,7 +63,7 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -74,14 +80,6 @@ public class Answer extends BaseEntity {
 
     public void setWriterId(Long writerId) {
         this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
     }
 
     public String getContents() {
@@ -105,9 +103,9 @@ public class Answer extends BaseEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writerId +
-                ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
+                ", question=" + question +
                 '}';
     }
 }

@@ -7,14 +7,13 @@ import org.junit.jupiter.api.Test;
 import qna.domain.utils.JpaTest;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AnswerRepositoryTest {
-    private Question question1 = new Question(1L, "title", "content");
-    private Answer answer1 = new Answer(UserTest.JAVAJIGI, question1, "content");
-    private Answer answer2 = new Answer(UserTest.SANJIGI, question1, "content2");
+    private User user = new User("tester", "password", "tester", "test@test.com");
+    private Question question1 = new Question("title", "content");
+    private Answer answer1 = new Answer(user, question1, "content");
 
     @Nested
     @DisplayName("save 메서드는")
@@ -36,35 +35,6 @@ class AnswerRepositoryTest {
     }
 
     @Nested
-    @DisplayName("findByQuestionIdAndDeletedFalse 메서드는")
-    class Describe_find_by_question_id_and_deleted_false {
-
-        @Nested
-        @DisplayName("저장된 답변 이력과 질문 식별자가 주어지면 ")
-        class Context_with_answer_and_question_id extends JpaTest {
-            Answer givenAnswer1 = answer1;
-            Answer givenAnswer2 = answer2;
-            final Long givenQuestionId = 1L;
-
-            @BeforeEach
-            void setUp() {
-                givenAnswer1.setDeleted(true);
-                getAnswerRepository().save(givenAnswer1);
-                getAnswerRepository().save(givenAnswer2);
-            }
-
-            @Test
-            @DisplayName("질문 식별키에 해당하는 답변 목록을 리턴한다")
-            void it_returns_answers() {
-                final List<Answer> actual = getAnswerRepository()
-                        .findByQuestionIdAndDeletedFalse(givenQuestionId);
-
-                assertThat(actual.size()).isEqualTo(1);
-            }
-        }
-    }
-
-    @Nested
     @DisplayName("findByIdAndDeletedFalse 메서드는")
     class Describe_find_by_id_and_deleted_false {
 
@@ -72,7 +42,6 @@ class AnswerRepositoryTest {
         @DisplayName("저장된 답변 이력과 식별자가 주어지면 ")
         class Context_with_answer_and_id extends JpaTest {
             Answer givenAnswer1 = answer1;
-            Answer givenAnswer2 = answer2;
 
             long givenId() {
                 return givenAnswer1.getId();
@@ -80,9 +49,7 @@ class AnswerRepositoryTest {
 
             @BeforeEach
             void setUp() {
-                givenAnswer2.setDeleted(true);
                 getAnswerRepository().save(givenAnswer1);
-                getAnswerRepository().save(givenAnswer2);
             }
 
             @Test

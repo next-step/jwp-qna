@@ -1,13 +1,18 @@
 package qna.domain;
 
 import com.sun.istack.NotNull;
+import org.hibernate.annotations.BatchSize;
 import qna.domain.base.BaseEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -26,6 +31,10 @@ public class Question extends BaseEntity {
 
     @NotNull
     private boolean deleted = false;
+
+    @BatchSize(size = 1000)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
