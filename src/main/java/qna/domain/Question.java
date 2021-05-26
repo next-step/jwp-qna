@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
 import qna.domain.base.BaseEntity;
 
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "question")
+@Where(clause = "deleted=false")
 public class Question extends BaseEntity {
 
     @Id
