@@ -9,8 +9,10 @@ import qna.EntityManagerHelper;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
+
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -28,17 +30,17 @@ class QuestionRepositoryTest {
 
     private EntityManagerHelper entityManagerHelper;
 
-    private User questionWriter;
+    private User user;
     private Question question;
 
     @BeforeEach
     public void setUp() {
         entityManagerHelper = new EntityManagerHelper(entityManager);
 
-        questionWriter = userRepository.save(new User("USER_ID", "PASSWORD", "NAME", "EMAIL"));
+        user = userRepository.save(new User("USER_ID", "PASSWORD", "NAME", "EMAIL"));
         question = questionRepository.save(new Question("Hello", "Hello"));
 
-        question.writeBy(questionWriter);
+        question.writeBy(user);
     }
 
     @Test
@@ -77,6 +79,32 @@ class QuestionRepositoryTest {
         Question foundQuestion = questionRepository.findById(question.getId()).orElseThrow(EntityNotFoundException::new);
 
         assertThat(foundQuestion.getWriter().getId())
-                .isEqualTo(questionWriter.getId());
+                .isEqualTo(user.getId());
+    }
+
+    @Test
+    @DisplayName("Answer와 연관관계를 맺었을 때, 다시 가져올 때도 맺혀있어야 한다")
+    void Answer와_연관관계를_맺었을_때_다시_가져올_때도_맺혀있어야_한다() {
+        List<Answer> answers = Arrays.asList(
+                new Answer(user, question, "CONTENTS1"),
+                new Answer(user, question, "CONTENTS2"),
+                new Answer(user, question, "CONTENTS3")
+        );
+
+        answers.forEach(question::addAnswer);
+
+        entityManagerHelper.flushAndClear();
+
+        List<Long> answersId = answers.stream()
+                .map(item -> item.getId())
+                .collect(Collectors.toList());
+
+        Question foundQuestion = questionRepository.findById(question.getId()).orElseThrow(EntityNotFoundException::new);
+
+        assertThat(foundQuestion.getAnswers())
+                .hasSize(3);
+        assertThat(foundQuestion.getAnswers())
+                .map(item -> item.getId())
+                .containsExactlyInAnyOrderElementsOf(answersId);
     }
 }

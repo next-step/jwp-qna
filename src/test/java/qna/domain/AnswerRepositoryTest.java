@@ -80,4 +80,16 @@ class AnswerRepositoryTest {
         assertThat(foundAnswer.getWriter())
                 .isEqualTo(userRepository.findById(user.getId()).orElseThrow(EntityNotFoundException::new));
     }
+
+    @Test
+    @DisplayName("Question와 연관관계를 맺었을 때, 다시 가져올 때도 맺혀있어야 한다")
+    void Question와_연관관계를_맺었을_때_다시_가져올_때도_맺혀있어야_한다() {
+        entityManagerHelper.flushAndClear();
+
+        Answer foundAnswer = answerRepository.findById(answer.getId())
+                .orElseThrow(EntityNotFoundException::new);
+
+        assertThat(foundAnswer.getQuestion())
+                .isEqualTo(questionRepository.findById(question.getId()).orElseThrow(EntityNotFoundException::new));
+    }
 }
