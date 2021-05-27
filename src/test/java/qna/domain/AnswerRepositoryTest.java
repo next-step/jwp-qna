@@ -81,13 +81,15 @@ class AnswerRepositoryTest extends BaseDataJpaTest {
     @Test
     @DisplayName("Question 엔티티 @ManyToOne 관계 매핑 테스트")
     void manyToOneQuestionTest() {
-        assertThat(answer.getQuestion().getId()).isNotNull();
+        assertThat(savedAnswer.getQuestion()).isNotNull();
+        assertThat(savedAnswer.getQuestion().getId()).isNotNull();
     }
 
     @Test
     @DisplayName("User 엔티티 @ManyToOne 관계 매핑 테스트")
     void manyToOneUserTest() {
-        assertThat(answer.getWriter().getId()).isNotNull();
+        assertThat(savedAnswer.getWriter()).isNotNull();
+        assertThat(savedAnswer.getWriter().getId()).isNotNull();
     }
 
     @AfterEach
