@@ -6,7 +6,8 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Table(name = "user")
+@Table(name = "user", uniqueConstraints = {@UniqueConstraint(
+        columnNames = {"user_id"} )})
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 public class User extends BaseTimeEntity {
