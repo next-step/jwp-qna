@@ -21,23 +21,31 @@ class UserRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        user = userRepository.save(UserTest.JAVAJIGI); // persist가 아닌 merge로 동작하기에 return값을 써야함.
+        user = new User("USER", "PASSWORD", "NAME", "EMAIL");
     }
 
     @Test
     @DisplayName("저장을 하고, 다시 가져왔을 때 원본 객체와 같아야 한다")
     @Transactional
     void 저장을_하고_다시_가져왔을_때_원본_객체와_같아야_한다() {
-        User foundQuestion = userRepository.findById(user.getId()).orElseThrow(EntityNotFoundException::new);
+        User savedUser = userRepository.save(user);
 
-        assertSame(user, foundQuestion);
+        User foundUser = userRepository.findById(savedUser.getId())
+                .orElseThrow(EntityNotFoundException::new);
+
+        assertSame(savedUser, foundUser);
     }
 
     @Test
     @DisplayName("유저 아이디로 유저를 찾을 수 있다.")
     void 유저_아이디로_유저를_찾을_수_있다() {
-        assertThat(userRepository.findByUserId(user.getUserId()).orElseThrow(EntityNotFoundException::new))
-                .isSameAs(user);
+        User savedUser = userRepository.save(user);
+
+        User foundUser = userRepository.findByUserId(user.getUserId())
+                .orElseThrow(EntityNotFoundException::new);
+
+        assertThat(foundUser)
+                .isSameAs(savedUser);
     }
 
 }
