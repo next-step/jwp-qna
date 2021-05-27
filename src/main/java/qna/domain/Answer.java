@@ -22,6 +22,10 @@ public class Answer extends BaseEntity {
 	private String contents;
 	private boolean deleted = false;
 
+	public Answer() {
+
+	}
+	
 	public Answer(User writer, Question question, String contents) {
 		this(null, writer, question, contents);
 	}

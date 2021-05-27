@@ -13,4 +13,12 @@
   - [x] Question 엔티티 매핑
   - [x] User 엔티티 매핑
 - [ ] Spring Data JPA Test
+  - [x] AnswerRepository test
+  - [x] Answer entity test
+  - [ ] DeleteHistoryRepository test
+  - [ ] DeleteHistory entity test
+  - [ ] QuestionRepository test
+  - [ ] Question entity test
+  - [ ] UserRepository test
+  - [ ] User entity test
 
