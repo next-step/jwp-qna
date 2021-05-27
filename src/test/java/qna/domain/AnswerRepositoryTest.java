@@ -10,7 +10,6 @@ import qna.EntityManagerHelper;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
-import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -112,7 +111,7 @@ class AnswerRepositoryTest {
         Question foundQuestion = questionRepository.findById(savedQuestion.getId())
                 .orElseThrow(EntityNotFoundException::new);
 
-        assertThat(foundAnswer.isAnswerBy(foundQuestion))
+        assertThat(foundAnswer.isAnswerOf(foundQuestion))
                 .isTrue();
     }
 }

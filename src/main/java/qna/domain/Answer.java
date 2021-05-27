@@ -55,7 +55,7 @@ public class Answer extends BaseEntity {
         return this.writer == writer;
     }
 
-    public boolean isAnswerBy(Question question) {
+    public boolean isAnswerOf(Question question) {
         return this.question == question;
     }
 
