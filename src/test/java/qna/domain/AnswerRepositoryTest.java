@@ -14,15 +14,19 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class AnswerRepositoryTest extends BaseDataJpaTest {
 
     @Autowired
-    private AnswerRepository repository;
+    private AnswerRepository answers;
+
+    @Autowired
+    private QuestionRepository questions;
 
     Answer answer;
     Answer savedAnswer;
 
     @BeforeEach
     void setUp() {
-        answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-        savedAnswer = repository.save(answer);
+        answer = new Answer(UserTest.JAVAJIGI, new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI), "Answers Contents1");
+        savedAnswer = answers.save(answer);
+//        savedAnswer.toQuestion(questions.save(Q1));
     }
 
     @Test
@@ -34,8 +38,8 @@ class AnswerRepositoryTest extends BaseDataJpaTest {
     @Test
     @DisplayName("조회한 데이터와 같은 id 값을 가진 엔티티는 동일해야 한다")
     void entityRetrieveTest() {
-        List<Answer> findAnswers = repository.findByQuestionIdAndDeletedFalse(answer.getQuestionId());
-        Answer findAnswer = repository.findById(savedAnswer.getId()).get();
+        List<Answer> findAnswers = answers.findAll();
+        Answer findAnswer = answers.findById(savedAnswer.getId()).get();
 
         assertAll(
                 () -> assertThat(findAnswers.get(0)).isSameAs(savedAnswer),
@@ -50,7 +54,7 @@ class AnswerRepositoryTest extends BaseDataJpaTest {
         assertAll(
                 () -> assertThat(savedAnswer.getId()).isNotNull(),
                 () -> assertThat(savedAnswer.getContents()).isEqualTo(answer.getContents()),
-                () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(answer.getQuestionId()),
+                () -> assertThat(savedAnswer.getQuestion()).isSameAs(answer.getQuestion()),
                 () -> assertThat(savedAnswer.getWriterId()).isEqualTo(answer.getWriterId()),
                 () -> assertThat(savedAnswer.isDeleted()).isEqualTo(answer.isDeleted())
         );
@@ -70,13 +74,19 @@ class AnswerRepositoryTest extends BaseDataJpaTest {
     @DisplayName("update 시 updateAt 이 자동으로 변경된다.")
     void dateAutoModifyTest() {
         savedAnswer.setContents("update date?");
-        repository.flush();
+        answers.flush();
 
         assertThat(savedAnswer.getUpdateAt()).isNotNull();
     }
 
+    @Test
+    @DisplayName("@ManyToOne 관계 매핑 테스트")
+    void manyToOneTest(){
+        assertThat(answer.getQuestion().getId()).isNotNull();
+    }
+
     @AfterEach
     void endUp() {
-        repository.deleteAll();
+        answers.deleteAll();
     }
 }
