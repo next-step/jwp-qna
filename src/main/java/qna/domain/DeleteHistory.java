@@ -5,7 +5,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -19,7 +18,10 @@ public class DeleteHistory {
     private ContentType contentType;
 
     private Long contentId;
-    private Long deletedById;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "deletedById", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedBy;
 
     @CreatedDate
     private LocalDateTime createDate;
@@ -27,26 +29,10 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        this.deletedBy = deletedBy;
     }
 
     @Override
@@ -55,7 +41,6 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
                 '}';
     }
 
@@ -71,10 +56,6 @@ public class DeleteHistory {
         return contentId;
     }
 
-    public Long getDeletedById() {
-        return deletedById;
-    }
-
     public void setContentType(ContentType contentType) {
         this.contentType = contentType;
     }
@@ -83,8 +64,8 @@ public class DeleteHistory {
         this.contentId = contentId;
     }
 
-    public void setDeletedById(Long deletedById) {
-        this.deletedById = deletedById;
+    public User getDeletedBy() {
+        return deletedBy;
     }
 
     public LocalDateTime getCreateDate() {
