@@ -12,13 +12,13 @@
   - [x] DeleteHistory 엔티티 매핑
   - [x] Question 엔티티 매핑
   - [x] User 엔티티 매핑
-- [ ] Spring Data JPA Test
+- [x] Spring Data JPA Test
   - [x] AnswerRepository test
   - [x] Answer entity test
   - [x] DeleteHistoryRepository test
   - [x] DeleteHistory entity test
   - [x] QuestionRepository test
   - [x] Question entity test
-  - [ ] UserRepository test
-  - [ ] User entity test
+  - [x] UserRepository test
+  - [x] User entity test
 
