@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.transaction.annotation.Transactional;
 import qna.NotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,6 +18,12 @@ public class AnswerTest {
     @Autowired
     AnswerRepository answerRepository;
 
+    @Autowired
+    QuestionRepository questionRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
     @Test
     @DisplayName("답변 생성")
     public void createAnswer() {
@@ -27,15 +34,18 @@ public class AnswerTest {
     @Test
     @DisplayName("답변 저장")
     public void saveAnswer() {
+        User user = userRepository.findByUserId("javajigi").orElse(userRepository.save(UserTest.JAVAJIGI));
+        Question question = questionRepository.findByIdAndDeletedFalse(1L).orElse(questionRepository.save(QuestionTest.Q1));
+
         String content = "Save Answer Content";
-        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, content);
+        Answer answer = new Answer(user, question, content);
         Answer saveAnswer = answerRepository.save(answer);
 
-        Answer selectAnswer = answerRepository.findById(1L).orElseThrow(NotFoundException::new);
+        Answer selectAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswer.getId()).orElseThrow(NotFoundException::new);
 
         assertAll(
                 () -> assertThat(saveAnswer.getId()).isNotNull(),
-                () -> assertThat(saveAnswer.getWriterId()).isEqualTo(1L),
+                () -> assertThat(saveAnswer.getWriter()).isEqualTo(user),
                 () -> assertThat(saveAnswer.getContents()).isEqualTo(content),
                 () -> assertThat(saveAnswer.isDeleted()).isFalse()
         );

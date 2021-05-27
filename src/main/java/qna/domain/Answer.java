@@ -18,11 +18,13 @@ public class Answer extends BaseDate {
     @Column(name = "contents", columnDefinition = "clob")
     private String contents;
 
-    @Column(name = "writer_id", columnDefinition = "bigint")
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", columnDefinition = "bigint", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
-    @Column(name = "question_id", columnDefinition = "bigint")
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "question_id", columnDefinition = "bigint", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     @Column(name = "deleted", columnDefinition = "boolean", nullable = false)
     private boolean deleted = false;
@@ -45,17 +47,17 @@ public class Answer extends BaseDate {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -66,28 +68,16 @@ public class Answer extends BaseDate {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
     }
 
     public void setContents(String contents) {
         this.contents = contents;
+    }
+
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -102,9 +92,9 @@ public class Answer extends BaseDate {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", deleted=" + deleted +
                 '}';
     }
@@ -114,11 +104,11 @@ public class Answer extends BaseDate {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Answer answer = (Answer) o;
-        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents, answer.contents) && Objects.equals(writerId, answer.writerId) && Objects.equals(questionId, answer.questionId);
+        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents, answer.contents) && Objects.equals(writer, answer.writer) && Objects.equals(question, answer.question);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contents, writerId, questionId, deleted);
+        return Objects.hash(id, contents, writer, question, deleted);
     }
 }
