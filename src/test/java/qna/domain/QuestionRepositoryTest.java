@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -21,7 +20,8 @@ class QuestionRepositoryTest extends BaseDataJpaTest {
 
     @BeforeEach
     void setUp() {
-        question = new Question(Q1.getTitle(), Q1.getContents());
+        question = new Question(Q1.getTitle(), Q1.getContents())
+                .writeBy(new User("javajigi", "password", "name", "javajigi@slipp.net"));
         savedQuestion = repository.save(question);
     }
 
@@ -51,8 +51,8 @@ class QuestionRepositoryTest extends BaseDataJpaTest {
                 () -> assertThat(savedQuestion.getId()).isNotNull(),
                 () -> assertThat(savedQuestion.getContents()).isEqualTo(question.getContents()),
                 () -> assertThat(savedQuestion.getTitle()).isEqualTo(question.getTitle()),
-                () -> assertThat(savedQuestion.getWriterId()).isEqualTo(question.getWriterId()),
-                () -> assertThat(savedQuestion.isDeleted()).isEqualTo(question.isDeleted())
+                () -> assertThat(savedQuestion.isDeleted()).isEqualTo(question.isDeleted()),
+                () -> assertThat(savedQuestion.getWriter()).isSameAs(question.getWriter())
         );
     }
 
@@ -73,6 +73,13 @@ class QuestionRepositoryTest extends BaseDataJpaTest {
         repository.flush();
 
         assertThat(savedQuestion.getUpdateAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("User 엔티티 @ManyToOne 관계 매핑 테스트")
+    void manyToOneUserTest() {
+        assertThat(savedQuestion.getWriter()).isNotNull();
+        assertThat(savedQuestion.getWriter().getId()).isNotNull();
     }
 
     @AfterEach
