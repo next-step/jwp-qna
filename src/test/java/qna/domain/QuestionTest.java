@@ -15,20 +15,22 @@ public class QuestionTest {
     public static final Question Q2 = new Question("title2", "contents2", UserTest.SANJIGI);
 
     @Test
-    @DisplayName("본인이 쓴 글이 아니면 삭제가 불가능하다")
-    void 본인이_쓴_글이_아니면_삭제가_불가능하다() {
+    @DisplayName("본인이 쓴 글이 아니면 CannotDeleteException가 발생하여 삭제가 불가능하다")
+    void 본인이_쓴_글이_아니면_CannotDeleteException가_발생하여_삭제가_불가능하다() {
         assertThatExceptionOfType(CannotDeleteException.class)
                 .isThrownBy(() -> Q1.delete(UserTest.SANJIGI));
+        assertThat(Q1.isDeleted())
+                .isFalse();
     }
 
     @Test
     @DisplayName("본인이 쓴 글이면 삭제가 가능하다")
     void 본인이_쓴_글이면_삭제가_가능하다() {
-        List<DeleteHistory> deleteHistories = assertDoesNotThrow(() -> Q1.delete(UserTest.JAVAJIGI));
+        List<DeleteHistory> deleteHistories = assertDoesNotThrow(() -> Q2.delete(UserTest.SANJIGI));
 
         assertThat(deleteHistories)
                 .hasSize(1);
-        assertThat(Q1.isDeleted())
+        assertThat(Q2.isDeleted())
                 .isTrue();
     }
 }
