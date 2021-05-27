@@ -48,8 +48,12 @@ class AnswerRepositoryTest {
     @Test
     void entityAuditingTest() {
         LocalDateTime nowDt = LocalDateTime.now();
-        assertThat(savedAnswer.getCreatedAt()).isNotNull();
-        assertThat(savedAnswer.getCreatedAt()).isBefore(nowDt);
+
+        assertAll(
+                () -> assertThat(savedAnswer.getCreatedAt()).isNotNull(),
+                () -> assertThat(savedAnswer.getCreatedAt()).isBefore(nowDt)
+        );
+
     }
 
     @DisplayName("답변내용 업데이트 테스트")
@@ -61,10 +65,14 @@ class AnswerRepositoryTest {
         answerRepository.flush();
 
         Answer findAnswer = answerRepository.getOne(savedAnswer.getId());
-        assertThat(findAnswer).isEqualTo(savedAnswer);
-        assertThat(findAnswer.getContents()).isEqualTo(contests);
         LocalDateTime nowDt = LocalDateTime.now();
-        assertThat(findAnswer.getUpdatedAt()).isBefore(nowDt);
+
+        assertAll(
+                () -> assertThat(findAnswer).isEqualTo(savedAnswer),
+                () -> assertThat(findAnswer.getContents()).isEqualTo(contests),
+                () -> assertThat(findAnswer.getUpdatedAt()).isBefore(nowDt)
+        );
+
     }
 
     @DisplayName("삭제상태가 아닌 답변을 질문ID로 조회 테스트")
@@ -74,8 +82,11 @@ class AnswerRepositoryTest {
 
         List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId());
 
-        assertThat(findAnswers).hasSize(1);
-        assertThat(findAnswers).containsExactly(answer);
+        assertAll(
+                () -> assertThat(findAnswers).hasSize(1),
+                () -> assertThat(findAnswers).containsExactly(answer)
+        );
+
     }
 
     @DisplayName("삭제상태인 답변을 질문ID로 조회했을때 조회안됨 테스트")
@@ -86,8 +97,11 @@ class AnswerRepositoryTest {
 
         List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId());
 
-        assertThat(findAnswers).hasSize(0);
-        assertThat(findAnswers).isEmpty();
+        assertAll(
+                () -> assertThat(findAnswers).hasSize(0),
+                () -> assertThat(findAnswers).isEmpty()
+        );
+
     }
 
     @DisplayName("존재하지않는 질문ID로 조회 테스트")
@@ -97,17 +111,22 @@ class AnswerRepositoryTest {
 
         List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
 
-        assertThat(findAnswers).isEmpty();
-        ;
-        assertThat(findAnswers).hasSize(0);
+        assertAll(
+                () -> assertThat(findAnswers).isEmpty(),
+                () -> assertThat(findAnswers).hasSize(0)
+        );
+
     }
 
     @DisplayName("삭제상태가 아닌 답변을 답변ID로 조회 테스트")
     @Test
     void findByIdAndDeletedFalse() {
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId());
-        assertThat(findAnswer).contains(answer);
-        assertTrue(findAnswer.isPresent());
+
+        assertAll(
+                () -> assertThat(findAnswer).contains(answer),
+                () -> assertTrue(findAnswer.isPresent())
+        );
     }
 
     @DisplayName("삭제상태인 답변을 답변ID로 조회했을때 조회안됨 테스트")
@@ -117,8 +136,12 @@ class AnswerRepositoryTest {
         answerRepository.flush();
 
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId());
-        assertThat(findAnswer).isEmpty();
-        assertFalse(findAnswer.isPresent());
+
+        assertAll(
+                () -> assertThat(findAnswer).isEmpty(),
+                () -> assertFalse(findAnswer.isPresent())
+        );
+
     }
 
     @DisplayName("존재하지 않는 답변ID로 조회 테스트")
