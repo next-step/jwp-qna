@@ -19,6 +19,9 @@ public class Question extends BaseEntity {
 	private Long writerId;
 	private boolean deleted = false;
 
+	public Question() {
+	}
+
 	public Question(String title, String contents) {
 		this(null, title, contents);
 	}

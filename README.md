@@ -17,8 +17,8 @@
   - [x] Answer entity test
   - [ ] DeleteHistoryRepository test
   - [ ] DeleteHistory entity test
-  - [ ] QuestionRepository test
-  - [ ] Question entity test
+  - [x] QuestionRepository test
+  - [x] Question entity test
   - [ ] UserRepository test
   - [ ] User entity test
 
