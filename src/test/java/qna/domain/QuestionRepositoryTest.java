@@ -11,8 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.QuestionTest.Q1;
 
-@DataJpaTest
-class QuestionRepositoryTest {
+class QuestionRepositoryTest extends BaseDataJpaTest {
 
     @Autowired
     private QuestionRepository repository;
