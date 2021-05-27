@@ -17,7 +17,7 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
