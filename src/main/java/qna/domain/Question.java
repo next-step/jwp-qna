@@ -44,7 +44,7 @@ public class Question extends BaseEntity implements Serializable {
     @Column
     private boolean deleted = false;
 
-    public Question() { }
+    protected Question() { }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -70,60 +70,41 @@ public class Question extends BaseEntity implements Serializable {
             return;
         }
 
-        answer.setQuestion(this);
         answers.add(answer);
+        answer.replyTo(this);
     }
 
-    public void removeAnswer(Answer answer) {
+    public void deleteAnswer(Answer answer) {
         answers.remove(answer);
+        answer.delete();
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
     }
 
     public List<Answer> getAnswers() {
         return new ArrayList<>(answers);
     }
 
-    public void deleteAnswer(Answer answer) {
-        answers.remove(answer);
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
     }
 
     @Override

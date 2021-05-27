@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import qna.config.TestDataSourceConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
@@ -72,7 +74,7 @@ public class QuestionTest {
         }
     }
 
-    @DisplayName("")
+    @DisplayName("getAnswers는 지워지지 않은 답변만 가져옴")
     @Test
     void getAnswersTest() {
 
@@ -84,14 +86,26 @@ public class QuestionTest {
 
         Answer answer1 = new Answer(user, question, "contents1");
         answer1 = answerRepository.save(answer1);
-        answer1.setQuestion(question);
+        question.addAnswer(answer1);
 
         Answer answer2 = new Answer(user, question, "contents2");
         answer2 = answerRepository.save(answer2);
-        answer2.setQuestion(question);
-        answer2.setDeleted(true);
+        question.addAnswer(answer2);
 
-        System.out.println(question);
+        question.deleteAnswer(answer2);
+        assertTrue(answer2.isDeleted());
+
+        questionRepository.flush();
+
+        Optional<Question> actual = questionRepository.findById(question.getId());
+        assertTrue(actual.isPresent());
+
+        List<Answer> answers = actual.get().getAnswers();
+        assertEquals(1, answers.size());
+
+        for (Answer answer : answers) {
+            assertFalse(answer.isDeleted());
+        }
     }
 
     private void equals(Question expected, Question actual) {
