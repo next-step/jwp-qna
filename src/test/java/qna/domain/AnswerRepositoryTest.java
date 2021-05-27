@@ -31,66 +31,88 @@ class AnswerRepositoryTest {
 
     private EntityManagerHelper entityManagerHelper;
 
-    private User user;
-    private Question question;
-    private Answer answer;
+    private User savedUser;
+    private Question savedQuestion;
 
+    private Answer answer;
     @BeforeEach
     void setUp() {
         entityManagerHelper = new EntityManagerHelper(entityManager);
 
-        user = userRepository.save(new User("USER", "PASSWORD", "NAME", "EMAIL"));
-        question = questionRepository.save(new Question("title", "contents", user));
-        answer = answerRepository.save(new Answer(user, question, "contents"));
+        savedUser = userRepository.save(new User("USER", "PASSWORD", "NAME", "EMAIL"));
+        savedQuestion = questionRepository.save(new Question("title", "contents", savedUser));
+
+        answer = new Answer(savedUser, savedQuestion, "contents");
     }
 
     @Test
     @DisplayName("저장을 하고, 다시 가져왔을 때 원본 객체와 같아야 한다")
     void 저장을_하고_다시_가져왔을_때_원본_객체와_같아야_한다() {
-        assertThat(answer)
-                .isSameAs(answerRepository.findById(answer.getId()).orElseThrow(EntityNotFoundException::new));
+        Answer savedAnswer = answerRepository.save(answer);
+        Answer foundAnswer = answerRepository.findById(savedAnswer.getId())
+                .orElseThrow(EntityNotFoundException::new);
+
+        assertThat(savedAnswer)
+                .isSameAs(foundAnswer);
     }
 
     @Test
     @DisplayName("삭제가 되어있으면, findByQuestionIdAndDeletedFalse는 찾지 못한다")
-    void 삭제가_되어있으면_findByQuestionIdAndDeletedFalse는_찾지_못한다() {
-        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(question.getId()))
-                .containsExactly(answer);
+    void 삭제가_되어있으면_findByQuestionIdAndDeletedFalse는_찾지_못한다() throws CannotDeleteException {
+        Answer savedAnswer = answerRepository.save(answer);
+        Answer deletedAnswer = answerRepository.save(new Answer(savedUser, savedQuestion, "contents"));
+
+        deletedAnswer.delete(savedUser);
+
+        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId()))
+                .containsExactly(savedAnswer);
     }
 
     @Test
     @DisplayName("삭제가 되어있으면, findByIdAndDeletedFalse는 찾지 못한다")
     void 삭제가_되어있으면_findByIdAndDeletedFalse는_찾지_못한다() throws CannotDeleteException {
-        Answer deletedAnswer = answerRepository.save(new Answer(user, question, "contents"));
-        deletedAnswer.delete(user);
+        Answer savedAnswer = answerRepository.save(answer);
+        Answer deletedAnswer = answerRepository.save(new Answer(savedUser, savedQuestion, "contents"));
+
+        deletedAnswer.delete(savedUser);
 
         assertThat(answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId()))
                 .isNotPresent();
-        assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId()))
+        assertThat(answerRepository.findByIdAndDeletedFalse(savedAnswer.getId()))
                 .isPresent();
     }
 
     @Test
     @DisplayName("User와 연관관계를 맺었을 때, 다시 가져올 때도 맺혀있어야 한다")
     void User와_연관관계를_맺었을_때_다시_가져올_때도_맺혀있어야_한다() {
+        Answer savedAnswer = answerRepository.save(answer);
+
         entityManagerHelper.flushAndClear();
 
-        Answer foundAnswer = answerRepository.findById(answer.getId())
+        Answer foundAnswer = answerRepository.findById(savedAnswer.getId())
                 .orElseThrow(EntityNotFoundException::new);
 
-        assertThat(foundAnswer.getWriter())
-                .isEqualTo(userRepository.findById(user.getId()).orElseThrow(EntityNotFoundException::new));
+        User foundUser = userRepository.findById(savedUser.getId())
+                .orElseThrow(EntityNotFoundException::new);
+
+        assertThat(foundAnswer.isOwner(foundUser))
+                .isTrue();
     }
 
     @Test
     @DisplayName("Question와 연관관계를 맺었을 때, 다시 가져올 때도 맺혀있어야 한다")
     void Question와_연관관계를_맺었을_때_다시_가져올_때도_맺혀있어야_한다() {
+        Answer savedAnswer = answerRepository.save(answer);
+
         entityManagerHelper.flushAndClear();
 
-        Answer foundAnswer = answerRepository.findById(answer.getId())
+        Answer foundAnswer = answerRepository.findById(savedAnswer.getId())
+                .orElseThrow(EntityNotFoundException::new);
+
+        Question foundQuestion = questionRepository.findById(savedQuestion.getId())
                 .orElseThrow(EntityNotFoundException::new);
 
         assertThat(foundAnswer.getQuestion())
-                .isEqualTo(questionRepository.findById(question.getId()).orElseThrow(EntityNotFoundException::new));
+                .isEqualTo(foundQuestion);
     }
 }
