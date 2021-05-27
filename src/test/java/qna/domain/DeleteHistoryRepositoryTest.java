@@ -56,7 +56,7 @@ class DeleteHistoryRepositoryTest {
         DeleteHistory foundDeleteHistory = deleteHistoryRepository.findById(deleteHistory.getId())
                 .orElseThrow(EntityNotFoundException::new);
 
-        assertThat(foundDeleteHistory.getDeleter())
-                .isEqualTo(userRepository.findById(user.getId()).orElseThrow(EntityNotFoundException::new));
+        assertThat(foundDeleteHistory.isDeleteBy(userRepository.findById(user.getId()).orElseThrow(EntityNotFoundException::new)))
+                .isTrue();
     }
 }

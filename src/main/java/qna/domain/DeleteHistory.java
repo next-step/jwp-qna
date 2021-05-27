@@ -31,12 +31,12 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    public Long getId() {
-        return id;
+    public boolean isDeleteBy(User deleter) {
+        return this.deleter == deleter;
     }
 
-    public User getDeleter() {
-        return deleter;
+    public Long getId() {
+        return id;
     }
 
     @Override
