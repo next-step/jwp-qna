@@ -55,6 +55,10 @@ public class Answer extends BaseEntity {
         return this.writer == writer;
     }
 
+    public boolean isAnswerBy(Question question) {
+        return this.question == question;
+    }
+
     protected void toQuestion(Question question) {
         this.question = question;
     }
@@ -64,10 +68,6 @@ public class Answer extends BaseEntity {
     }
 
     public User getWriter() { return writer; }
-
-    public Question getQuestion() {
-        return question;
-    }
 
     public DeleteHistory delete(User deleter) throws CannotDeleteException {
         if(isDeleted()) {

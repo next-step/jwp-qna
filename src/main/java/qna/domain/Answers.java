@@ -14,7 +14,7 @@ public class Answers {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
 
-    public Answers() {
+    protected Answers() {
     }
 
     public void add(Answer answer) {

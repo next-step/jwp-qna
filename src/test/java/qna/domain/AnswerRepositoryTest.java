@@ -112,7 +112,7 @@ class AnswerRepositoryTest {
         Question foundQuestion = questionRepository.findById(savedQuestion.getId())
                 .orElseThrow(EntityNotFoundException::new);
 
-        assertThat(foundAnswer.getQuestion())
-                .isEqualTo(foundQuestion);
+        assertThat(foundAnswer.isAnswerBy(foundQuestion))
+                .isTrue();
     }
 }
