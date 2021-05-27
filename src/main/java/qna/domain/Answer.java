@@ -67,7 +67,7 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public DeleteHistory delete(User deleter) throws CannotDeleteException {
+    protected DeleteHistory delete(User deleter) throws CannotDeleteException {
         if(isDeleted()) {
             throw new IllegalStateException("이미 삭제가 되어있습니다.");
         }
