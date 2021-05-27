@@ -23,7 +23,8 @@ class AnswerRepositoryTest extends BaseDataJpaTest {
     void setUp() {
         answer = new Answer(
                 new User("javajigi", "password", "name", "javajigi@slipp.net"),
-                new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI)
+                new Question("title1", "contents1")
+                        .writeBy(new User("sanjigi", "password", "name", "sanjigi@slipp.net"))
                 , "Answers Contents1");
         savedAnswer = answers.save(answer);
     }
