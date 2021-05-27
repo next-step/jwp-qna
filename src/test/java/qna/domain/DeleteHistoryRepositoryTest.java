@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -51,22 +50,9 @@ class DeleteHistoryRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("inert 시 createAt 이 자동으로 입력된다.")
+    @DisplayName("inert 시 createDate 가 자동으로 입력된다.")
     void dateAutoCreateTest() {
-
-        assertAll(
-                () -> assertThat(savedDeleteHistory.getCreateAt()).isNotNull(),
-                () -> assertThat(savedDeleteHistory.getUpdateAt()).isNull()
-        );
-    }
-
-    @Test
-    @DisplayName("update 시 updateAt 이 자동으로 변경된다.")
-    void dateAutoModifyTest() {
-        savedDeleteHistory.setContentId(3L);
-        repository.flush();
-
-        assertThat(savedDeleteHistory.getUpdateAt()).isNotNull();
+        assertThat(savedDeleteHistory.getCreateDate()).isNotNull();
     }
 
     @AfterEach
