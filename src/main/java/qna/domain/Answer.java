@@ -1,9 +1,11 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -67,12 +69,18 @@ public class Answer extends BaseEntity {
         return question;
     }
 
-    public void delete() {
+    public DeleteHistory delete(User deleter) throws CannotDeleteException {
         if(isDeleted()) {
             throw new IllegalStateException("이미 삭제가 되어있습니다.");
         }
 
+        if (!isOwner(deleter)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+
         this.deleted = true;
+
+        return new DeleteHistory(ContentType.ANSWER, getId(), deleter, LocalDateTime.now());
     }
 
     public boolean isDeleted() {

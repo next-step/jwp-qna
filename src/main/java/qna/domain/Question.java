@@ -1,6 +1,9 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,8 +27,7 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    private List<Answer> answers = new ArrayList<>();
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -51,6 +53,23 @@ public class Question extends BaseEntity {
         this.writer = writer;
     }
 
+    public List<DeleteHistory> delete(User deleter) throws CannotDeleteException {
+        if(isDeleted()) {
+            throw new IllegalStateException("이미 삭제가 되어있습니다.");
+        } else if (!isOwner(deleter)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(), deleter, LocalDateTime.now()));
+
+        deleteHistories.addAll(answers.deleteAll(deleter));
+
+        this.deleted = true;
+
+        return deleteHistories;
+    }
+
     public boolean isOwner(User writer) {
         return this.writer == writer;
     }
@@ -64,18 +83,10 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public List<Answer> getAnswers() { return Collections.unmodifiableList(answers); }
+    public Answers getAnswers() { return answers; }
 
     public User getWriter() {
         return writer;
-    }
-
-    public void delete() {
-        if(isDeleted()) {
-            throw new IllegalStateException("이미 삭제가 되어있습니다.");
-        }
-
-        this.deleted = true;
     }
 
     public boolean isDeleted() {

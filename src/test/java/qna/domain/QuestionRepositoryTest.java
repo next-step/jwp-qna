@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.EntityManagerHelper;
 
 import javax.persistence.EntityManager;
@@ -51,10 +52,10 @@ class QuestionRepositoryTest {
 
     @Test
     @DisplayName("삭제가 되어있으면, findByIdAndDeletedFalse는 찾지 못한다")
-    void 삭제를_하지_않으면_findByIdAndDeletedFalse는_찾지_못한다() {
+    void 삭제를_하지_않으면_findByIdAndDeletedFalse는_찾지_못한다() throws CannotDeleteException {
         Question deletedQuestion = questionRepository.save(new Question("Bye", "Bye", user));
 
-        deletedQuestion.delete();
+        deletedQuestion.delete(user);
 
         assertThat(questionRepository.findByIdAndDeletedFalse(question.getId()))
                 .isPresent();
@@ -99,9 +100,7 @@ class QuestionRepositoryTest {
 
         Question foundQuestion = questionRepository.findById(question.getId()).orElseThrow(EntityNotFoundException::new);
 
-        assertThat(foundQuestion.getAnswers())
-                .hasSize(3);
-        assertThat(foundQuestion.getAnswers())
+        assertThat(foundQuestion.getAnswers().getAnswers())
                 .map(item -> item.getId())
                 .containsExactlyInAnyOrderElementsOf(answersId);
     }

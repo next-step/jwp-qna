@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.EntityManagerHelper;
 
 import javax.persistence.EntityManager;
@@ -59,9 +60,9 @@ class AnswerRepositoryTest {
 
     @Test
     @DisplayName("삭제가 되어있으면, findByIdAndDeletedFalse는 찾지 못한다")
-    void 삭제가_되어있으면_findByIdAndDeletedFalse는_찾지_못한다() {
+    void 삭제가_되어있으면_findByIdAndDeletedFalse는_찾지_못한다() throws CannotDeleteException {
         Answer deletedAnswer = answerRepository.save(new Answer(user, question, "contents"));
-        deletedAnswer.delete();
+        deletedAnswer.delete(user);
 
         assertThat(answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId()))
                 .isNotPresent();
