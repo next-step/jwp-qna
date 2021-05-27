@@ -15,8 +15,8 @@
 - [ ] Spring Data JPA Test
   - [x] AnswerRepository test
   - [x] Answer entity test
-  - [ ] DeleteHistoryRepository test
-  - [ ] DeleteHistory entity test
+  - [x] DeleteHistoryRepository test
+  - [x] DeleteHistory entity test
   - [x] QuestionRepository test
   - [x] Question entity test
   - [ ] UserRepository test
