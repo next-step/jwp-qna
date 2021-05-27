@@ -2,23 +2,45 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 @Entity
+@Table(
+    name="user",
+    uniqueConstraints=
+    @UniqueConstraint(columnNames = {"userId"})
+)
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private Long id;
+    @Column(length = 20, nullable = false)
     private String userId;
+    @Column(length = 20, nullable = false)
     private String password;
+    @Column(length = 20, nullable = false)
     private String name;
+    @Column(length = 50)
     private String email;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    private Date createAt = new Date();
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column
+    private Date updateAt;
 
     private User() {
     }
@@ -107,6 +129,22 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Date updateAt) {
+        this.updateAt = updateAt;
     }
 
     @Override
