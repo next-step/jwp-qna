@@ -16,17 +16,16 @@ class AnswerRepositoryTest extends BaseDataJpaTest {
     @Autowired
     private AnswerRepository answers;
 
-    @Autowired
-    private QuestionRepository questions;
-
     Answer answer;
     Answer savedAnswer;
 
     @BeforeEach
     void setUp() {
-        answer = new Answer(UserTest.JAVAJIGI, new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI), "Answers Contents1");
+        answer = new Answer(
+                new User("javajigi", "password", "name", "javajigi@slipp.net"),
+                new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI)
+                , "Answers Contents1");
         savedAnswer = answers.save(answer);
-//        savedAnswer.toQuestion(questions.save(Q1));
     }
 
     @Test
@@ -55,7 +54,7 @@ class AnswerRepositoryTest extends BaseDataJpaTest {
                 () -> assertThat(savedAnswer.getId()).isNotNull(),
                 () -> assertThat(savedAnswer.getContents()).isEqualTo(answer.getContents()),
                 () -> assertThat(savedAnswer.getQuestion()).isSameAs(answer.getQuestion()),
-                () -> assertThat(savedAnswer.getWriterId()).isEqualTo(answer.getWriterId()),
+                () -> assertThat(savedAnswer.getWriter()).isEqualTo(answer.getWriter()),
                 () -> assertThat(savedAnswer.isDeleted()).isEqualTo(answer.isDeleted())
         );
     }
@@ -80,9 +79,15 @@ class AnswerRepositoryTest extends BaseDataJpaTest {
     }
 
     @Test
-    @DisplayName("@ManyToOne 관계 매핑 테스트")
-    void manyToOneTest(){
+    @DisplayName("Question 엔티티 @ManyToOne 관계 매핑 테스트")
+    void manyToOneQuestionTest() {
         assertThat(answer.getQuestion().getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("User 엔티티 @ManyToOne 관계 매핑 테스트")
+    void manyToOneUserTest() {
+        assertThat(answer.getWriter().getId()).isNotNull();
     }
 
     @AfterEach
