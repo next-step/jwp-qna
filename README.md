@@ -33,10 +33,10 @@
 - [X] DeleteHistory 일급컬렉션으로 변경
 - [ ] 원시값 포장
   - [ ] id -> PositiveNumber
-  - [ ] title -> Title
+  - [X] title -> Title
   - [ ] contents -> BigContents
   - [ ] delete -> Deletion
-  - [ ] userId -> UserId
+  - [X] userId -> UserId
   - [ ] password -> Password
   - [ ] name -> Name
   - [ ] email -> Email
