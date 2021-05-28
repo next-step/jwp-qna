@@ -1,10 +1,10 @@
 package qna.domain;
 
-import com.sun.istack.NotNull;
 import org.hibernate.annotations.BatchSize;
 import qna.domain.base.BaseEntity;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,7 +21,7 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @Column(nullable = false)
     private String title;
 
     @Lob
@@ -29,7 +29,7 @@ public class Question extends BaseEntity {
 
     private Long writerId;
 
-    @NotNull
+    @Column(nullable = false)
     private boolean deleted = false;
 
     @BatchSize(size = 1000)

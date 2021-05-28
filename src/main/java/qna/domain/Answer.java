@@ -1,11 +1,11 @@
 package qna.domain;
 
-import com.sun.istack.NotNull;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.base.BaseEntity;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,7 +30,7 @@ public class Answer extends BaseEntity {
     @Lob
     private String contents;
 
-    @NotNull
+    @Column(nullable = false)
     private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
