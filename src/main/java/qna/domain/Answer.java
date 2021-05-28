@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Table(name = "answer")
 @Entity
-public class Answer extends BasicTime {
+public class Answer extends CreateAndUpdateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +22,6 @@ public class Answer extends BasicTime {
     private Long questionId;
 
     @Lob
-    @Basic(fetch = FetchType.LAZY)
     @Column(name = "contents")
     private String contents;
 
