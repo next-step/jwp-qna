@@ -23,6 +23,9 @@ public class Answer {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    @Embedded
+    private CommonTransactionInfo commonTransactionInfo;
+
     protected Answer() {
     }
 
