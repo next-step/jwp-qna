@@ -8,7 +8,6 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Table(name = "answer")
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class Answer extends BaseTimeEntity {
 

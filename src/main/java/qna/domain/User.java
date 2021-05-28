@@ -8,7 +8,6 @@ import java.util.Objects;
 
 @Table(name = "user", uniqueConstraints = {@UniqueConstraint(
         columnNames = {"user_id"} )})
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();

@@ -5,7 +5,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 
 @Table(name = "question")
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class Question extends BaseTimeEntity {
 
