@@ -36,7 +36,8 @@ public class QuestionTest {
     void 본인이_쓴_글이면_삭제가_가능하다() {
         Question question = new Question("title1", "contents1", UserTest.JAVAJIGI);
 
-        List<DeleteHistory> deleteHistories = assertDoesNotThrow(() -> question.delete(UserTest.JAVAJIGI));
+        List<DeleteHistory> deleteHistories = assertDoesNotThrow(() -> question.delete(UserTest.JAVAJIGI))
+                .toCollection();
 
         assertThat(deleteHistories)
                 .hasSize(1);

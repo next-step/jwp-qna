@@ -52,7 +52,7 @@ public class Question extends BaseEntity {
         this.writer = writer;
     }
 
-    public List<DeleteHistory> delete(User deleter) throws CannotDeleteException {
+    public DeleteHistories delete(User deleter) throws CannotDeleteException {
         if (isDeleted()) {
             throw new IllegalStateException("이미 삭제가 되어있습니다.");
         } else if (!isOwner(deleter)) {
@@ -66,7 +66,7 @@ public class Question extends BaseEntity {
 
         this.deleted = true;
 
-        return deleteHistories;
+        return new DeleteHistories(deleteHistories);
     }
 
     public boolean isOwner(User writer) {

@@ -82,10 +82,10 @@ class QnAServiceTest {
     }
 
     private void verifyDeleteHistories() {
-        List<DeleteHistory> deleteHistories = Arrays.asList(
+        DeleteHistories deleteHistories = new DeleteHistories(Arrays.asList(
                 new DeleteHistory(ContentType.QUESTION, question.getId(), UserTest.JAVAJIGI, LocalDateTime.now()),
                 new DeleteHistory(ContentType.ANSWER, answer.getId(), UserTest.JAVAJIGI, LocalDateTime.now())
-        );
+        ));
         verify(deleteHistoryService).saveAll(deleteHistories);
     }
 }

@@ -30,4 +30,4 @@
   - [X] delete_history -> user (1 : 1)
   - [X] question -> user (1 : 1)
   
-- [ ] DeleteHistory 일급컬렉션으로 변경
+- [X] DeleteHistory 일급컬렉션으로 변경
