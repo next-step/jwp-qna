@@ -36,16 +36,13 @@ public class Answer extends BaseEntity {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
-
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
-        }
-
-        if (Objects.isNull(question)) {
+        } else if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
 
+        this.id = id;
         this.writer = writer;
         this.question = question;
         this.contents = contents;
@@ -61,10 +58,6 @@ public class Answer extends BaseEntity {
 
     protected void toQuestion(Question question) {
         this.question = question;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     protected DeleteHistory delete(User deleter) throws CannotDeleteException {
@@ -83,6 +76,10 @@ public class Answer extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
