@@ -42,11 +42,10 @@ public class AnswerTest {
     void 본인이_쓴_글이면_삭제가_가능하다() {
         question.addAnswer(writeByJavaJigi);
 
-        List<DeleteHistory> deleteHistories = assertDoesNotThrow(() -> question.delete(UserTest.JAVAJIGI))
-                .toCollection();
+        DeleteHistories deleteHistories = assertDoesNotThrow(() -> question.delete(UserTest.JAVAJIGI));
 
-        assertThat(deleteHistories)
-                .hasSize(2);
+        assertThat(deleteHistories.size())
+                .isEqualTo(2);
         assertThat(question.isDeleted())
                 .isTrue();
         assertThat(writeByJavaJigi.isDeleted())

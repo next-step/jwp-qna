@@ -24,6 +24,10 @@ public class DeleteHistories {
         return Collections.unmodifiableList(deleteHistories);
     }
 
+    public int size() {
+        return deleteHistories.size();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -36,4 +40,6 @@ public class DeleteHistories {
     public int hashCode() {
         return Objects.hash(deleteHistories);
     }
+
+
 }
