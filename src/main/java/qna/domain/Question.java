@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "question")
 public class Question extends BaseTimeEntity {
 
     @Id
@@ -27,12 +26,24 @@ public class Question extends BaseTimeEntity {
     public Question() { }
 
     public Question(String title, String contents) {
-        this(null, title, contents);
+        this(title, null, contents);
     }
 
     public Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
+        this.contents = contents;
+        this.writer = null;
+    }
+
+    public Question(String title, User writer, String contents) {
+        this(null, title, writer, contents);
+    }
+
+    public Question(Long id, String title, User writer, String contents) {
+        this.id = id;
+        this.title = title;
+        this.writer = writer;
         this.contents = contents;
     }
 
@@ -42,7 +53,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -89,7 +100,11 @@ public class Question extends BaseTimeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Question question = (Question) o;
-        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer, question.writer);
+        return deleted == question.deleted
+                && Objects.equals(id, question.id)
+                && Objects.equals(title, question.title)
+                && Objects.equals(contents, question.contents)
+                && Objects.equals(writer, question.writer);
     }
 
     @Override
