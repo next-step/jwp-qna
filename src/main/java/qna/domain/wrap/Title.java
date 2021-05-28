@@ -7,7 +7,7 @@ import static java.lang.String.format;
 public class Title {
     private static final int MAXIMUM_LENGTH = 100;
 
-    private String title;
+    private final String title;
 
     public Title(String title) {
         validate(title);

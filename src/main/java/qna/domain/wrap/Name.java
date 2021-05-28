@@ -7,7 +7,7 @@ import static java.lang.String.format;
 public class Name {
     private static final int MAXIMUM_LENGTH = 20;
 
-    private String name;
+    private final String name;
 
     public Name(String name) {
         validate(name);

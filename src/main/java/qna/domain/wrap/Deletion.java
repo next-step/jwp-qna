@@ -3,7 +3,7 @@ package qna.domain.wrap;
 import java.util.Objects;
 
 public class Deletion {
-    private boolean deleted;
+    private final boolean deleted;
 
     public Deletion(boolean deleted) {
         this.deleted = deleted;

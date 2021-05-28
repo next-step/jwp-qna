@@ -3,7 +3,7 @@ package qna.domain.wrap;
 import java.util.Objects;
 
 public class IdentityLongId {
-    private Long id;
+    private final Long id;
 
     public IdentityLongId(Long id) {
         this.id = id;

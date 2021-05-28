@@ -7,7 +7,7 @@ import static java.lang.String.format;
 public class Password {
     private static final int MAXIMUM_LENGTH = 20;
 
-    private String password;
+    private final String password;
 
     public Password(String password) {
         validate(password);

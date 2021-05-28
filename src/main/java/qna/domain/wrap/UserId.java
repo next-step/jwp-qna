@@ -7,7 +7,7 @@ import static java.lang.String.format;
 public class UserId {
     private static final int MAXIMUM_LENGTH = 20;
 
-    private String userId;
+    private final String userId;
 
     public UserId(String userId) {
         validate(userId);

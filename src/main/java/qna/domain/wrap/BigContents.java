@@ -3,7 +3,7 @@ package qna.domain.wrap;
 import java.util.Objects;
 
 public class BigContents {
-    private String contents;
+    private final String contents;
 
     public BigContents(String contents) {
         this.contents = contents;
