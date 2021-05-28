@@ -1,13 +1,20 @@
 package qna.domain.wrap;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
 import static java.lang.String.format;
 
+@Embeddable
 public class Title {
     private static final int MAXIMUM_LENGTH = 100;
 
-    private final String title;
+    @Column(length = MAXIMUM_LENGTH, nullable = false)
+    private String title;
+
+    protected Title() {
+    }
 
     public Title(String title) {
         validate(title);

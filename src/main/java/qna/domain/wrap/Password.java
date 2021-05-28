@@ -1,13 +1,20 @@
 package qna.domain.wrap;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
 import static java.lang.String.format;
 
+@Embeddable
 public class Password {
     private static final int MAXIMUM_LENGTH = 20;
 
-    private final String password;
+    @Column(length = MAXIMUM_LENGTH, nullable = false)
+    private String password;
+
+    protected Password() {
+    }
 
     public Password(String password) {
         validate(password);

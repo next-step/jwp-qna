@@ -1,13 +1,20 @@
 package qna.domain.wrap;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
 import static java.lang.String.format;
 
+@Embeddable
 public class UserId {
     private static final int MAXIMUM_LENGTH = 20;
 
-    private final String userId;
+    @Column(length = MAXIMUM_LENGTH, nullable = false, unique = true)
+    private String userId;
+
+    protected UserId() {
+    }
 
     public UserId(String userId) {
         validate(userId);

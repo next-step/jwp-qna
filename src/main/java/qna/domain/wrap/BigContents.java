@@ -1,9 +1,16 @@
 package qna.domain.wrap;
 
+import javax.persistence.Embeddable;
+import javax.persistence.Lob;
 import java.util.Objects;
 
+@Embeddable
 public class BigContents {
-    private final String contents;
+    @Lob
+    private String contents;
+
+    protected BigContents() {
+    }
 
     public BigContents(String contents) {
         this.contents = contents;

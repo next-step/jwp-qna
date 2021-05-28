@@ -1,17 +1,22 @@
 package qna.domain.wrap;
 
-import org.apache.logging.log4j.util.Strings;
-
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
+@Embeddable
 public class Email {
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$");
     private static final int MAXIMUM_LENGTH = 50;
 
-    private final String email;
+    @Column(length = MAXIMUM_LENGTH)
+    private String email;
+
+    protected Email() {
+    }
 
     public Email(String email) {
         validate(email);

@@ -1,12 +1,26 @@
 package qna.domain.wrap;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class Deletion {
-    private final boolean deleted;
+    @Column(nullable = false)
+    private boolean deleted;
+
+    protected Deletion() {
+    }
 
     public Deletion(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void delete() {
+        if(isDeleted()) {
+            throw new IllegalStateException("이미 삭제가 되어있습니다.");
+        }
+        deleted = true;
     }
 
     public boolean isDeleted() {
