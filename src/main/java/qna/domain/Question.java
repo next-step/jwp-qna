@@ -64,8 +64,8 @@ public class Question extends BaseTimeEntity {
         return id;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {

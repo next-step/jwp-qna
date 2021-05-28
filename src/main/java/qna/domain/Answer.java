@@ -71,8 +71,8 @@ public class Answer extends BaseTimeEntity {
         return id;
     }
 
-    public Long getWriterId() {
-        return this.writer.getId();
+    public User getWriter() {
+        return writer;
     }
 
     public String getContents() {
