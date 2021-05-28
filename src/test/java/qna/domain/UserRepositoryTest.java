@@ -3,6 +3,8 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -74,5 +76,15 @@ public class UserRepositoryTest {
         users.delete(savedUser);
         // then
         assertThat(users.findById(savedUser.getId())).isNotPresent();
+    }
+
+    @Test
+    @DisplayName("유저 Id로 조회 테스트")
+    void findByUserId() {
+        // given & when
+        Optional<User> actual = users.findByUserId(savedUser.getUserId());
+        // then
+        assertThat(actual).isPresent();
+        assertThat(actual.get()).isEqualTo(savedUser);
     }
 }
