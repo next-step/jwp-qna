@@ -16,7 +16,9 @@ public class Question extends BaseTimeEntity {
     @Lob
     private String contents;
 
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -24,26 +26,42 @@ public class Question extends BaseTimeEntity {
     public Question() { }
 
     public Question(String title, String contents) {
-        this(null, title, contents);
+        this(title, null, contents);
     }
 
     public Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.writer = null;
     }
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+    public Question(String title, User writer, String contents) {
+        this(null, title, writer, contents);
+    }
+
+    public Question(Long id, String title, User writer, String contents) {
+        this.id = id;
+        this.title = title;
+        this.writer = writer;
+        this.contents = contents;
+    }
+
+    public Question writtenBy(User writer) {
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+    }
+
+    public void setWriter(User user) {
+        this.writer = user;
     }
 
     public Long getId() {
@@ -58,8 +76,8 @@ public class Question extends BaseTimeEntity {
         return contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -76,7 +94,7 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }
@@ -86,11 +104,16 @@ public class Question extends BaseTimeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Question question = (Question) o;
-        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents) && Objects.equals(writerId, question.writerId);
+        return deleted == question.deleted
+                && Objects.equals(id, question.id)
+                && Objects.equals(title, question.title)
+                && Objects.equals(contents, question.contents)
+                && Objects.equals(writer, question.writer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writerId, deleted);
+        return Objects.hash(id, title, contents, writer, deleted);
     }
+
 }

@@ -4,12 +4,14 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
@@ -59,6 +61,16 @@ public class UserTest {
                 () -> Assertions.assertThat(actual2.getUserId()).isEqualTo(expected.getUserId()),
                 () -> Assertions.assertThat(actual2.getName()).isEqualTo(expected.getName())
         );
+    }
+
+    @Test
+    void update() {
+        User user = userRepository.save(JAVAJIGI);
+        User expect = new User(user.getId(), user.getUserId(), user.getPassword(), "updateName", "updateEmail@uos.ac.kr");
+
+        user.update(user, expect);
+
+        assertThat(userRepository.findByUserId(user.getUserId()).get()).isEqualTo(expect);
     }
 
     @Test

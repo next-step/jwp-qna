@@ -1,70 +1,107 @@
 package qna.domain;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.domain.QuestionTest.Q1;
 
-@SpringBootTest
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class AnswerTest {
-    public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, Q1, "Answers Contents1");
+    public static final Answer A2 = new Answer(UserTest.SANJIGI, Q1, "Answers Contents2");
 
     @Autowired
     private AnswerRepository answerRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private User user;
+    private Question question;
+    private Answer answer;
 
     @AfterEach
     public void deleteAll() {
         answerRepository.deleteAll();
     }
 
+    @BeforeEach
+    void setup() {
+        user = userRepository.save(UserTest.JAVAJIGI);
+        question = questionRepository.save(new Question("title1", "contents1").writtenBy(user));
+        answer = answerRepository.save(new Answer(2L, user, question, "Answers Contents1"));
+    }
+
     @Test
     void findByIdAndDeletedFalse_Test() {
-        Answer expected = answerRepository.save(A1);
-        Answer actual = answerRepository.findByIdAndDeletedFalse(expected.getId()).get();
+        Answer actual = answerRepository.findByIdAndDeletedFalse(answer.getId()).get();
 
-        assertThat(expected).isEqualTo(actual);
+        assertThat(answer).isEqualTo(actual);
     }
 
     @Test
     void findByQuestionIdAndDeletedFalse_Test() {
-        Answer expected1 = answerRepository.save(A1);
-        Answer expected2 = answerRepository.save(A2);
-        List<Answer> actualList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        List<Answer> actualList = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
-        assertThat(actualList).contains(expected1, expected2);
+        assertThat(actualList).contains(answer);
     }
 
     @Test
     void save() {
-        Answer expected = A2;
+        Answer expected = new Answer(user, question, "contents");
         Answer actual = answerRepository.save(expected);
+
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
+                () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
-                () -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId())
+                () -> assertThat(actual.getQuestion()).isEqualTo(expected.getQuestion())
         );
     }
 
     @Test
     void findById() {
-        Answer expected = answerRepository.save(A1);
-        Answer actual = answerRepository.findById(expected.getId()).get();
+        Answer actual = answerRepository.findById(answer.getId()).get();
 
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isEqualTo(answer);
+    }
+
+    @Test
+    void update() {
+        String newContents = "newContents";
+
+        assertAll(
+                () -> assertThat(answer.isDeleted()).isFalse(),
+                () -> assertThat(answer.getContents()).isNotEqualTo(newContents)
+        );
+
+        answer.setContents(newContents);
+        answer.setDeleted(true);
+
+        Answer actual = answerRepository.findById(answer.getId()).get();
+        assertAll(
+                () -> assertThat(actual.isDeleted()).isTrue(),
+                () -> assertThat(actual.getContents()).isEqualTo(newContents)
+        );
     }
 
     @Test
     void delete() {
-        Answer expected = answerRepository.save(A1);
-        answerRepository.delete(expected);
+        answerRepository.delete(answer);
 
-        assertThat(answerRepository.findById(expected.getId())).isNotPresent();
+        assertThat(answerRepository.findById(answer.getId())).isNotPresent();
     }
+
 }
