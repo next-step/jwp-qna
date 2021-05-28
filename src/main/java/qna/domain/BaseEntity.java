@@ -16,24 +16,22 @@ import org.springframework.data.annotation.LastModifiedDate;
 @MappedSuperclass
 public abstract class BaseEntity {
 
-	protected BaseEntity() {
-
-	}
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	protected Long id;
-
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate
 	@Column(name = "create_at", nullable = false)
 	protected Date createAt = new Date();
-
 	@Temporal(TemporalType.TIMESTAMP)
 	@LastModifiedDate
 	@Column(name = "update_at")
 	protected Date updateAt;
+
+	protected BaseEntity() {
+
+	}
 
 	public Long getId() {
 		return id;
