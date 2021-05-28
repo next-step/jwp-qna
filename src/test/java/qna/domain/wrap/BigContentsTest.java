@@ -13,7 +13,7 @@ class BigContentsTest {
     @DisplayName("내용이 null이면 IllegalArgumentException이 발생한다")
     void 내용이_null이면_IllegalArgumentException이_발생한다() {
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> new Name(null));
+                .isThrownBy(() -> new BigContents(null));
     }
 
     @Test
@@ -24,12 +24,12 @@ class BigContentsTest {
                 .reduce("", (before, str) -> before + str);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> new Name(userId));
+                .isThrownBy(() -> new BigContents(userId));
     }
 
     @Test
     @DisplayName("내용이 null도 아니고, 3000글자 이하면은 정상이다")
     void 내용이_null도_아니고_3000글자_이하면은_정상이다() {
-        assertDoesNotThrow(() -> new Name("asdf"));
+        assertDoesNotThrow(() -> new BigContents("asdf"));
     }
 }
