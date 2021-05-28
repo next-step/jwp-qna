@@ -9,7 +9,8 @@ import static java.lang.String.format;
 
 @Embeddable
 public class Email {
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$");
+    private static final Pattern EMAIL_PATTERN = Pattern
+            .compile("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$");
     private static final int MAXIMUM_LENGTH = 50;
 
     @Column(length = MAXIMUM_LENGTH)

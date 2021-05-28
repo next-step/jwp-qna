@@ -12,7 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 @DataJpaTest
 class AnswerRepositoryTest {
