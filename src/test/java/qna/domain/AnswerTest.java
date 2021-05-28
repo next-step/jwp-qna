@@ -40,7 +40,7 @@ public class AnswerTest {
     @BeforeEach
     void setup() {
         user = userRepository.save(UserTest.JAVAJIGI);
-        question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
+        question = questionRepository.save(new Question("title1", "contents1").writtenBy(user));
         answer = answerRepository.save(new Answer(2L, user, question, "Answers Contents1"));
     }
 
@@ -76,6 +76,25 @@ public class AnswerTest {
         Answer actual = answerRepository.findById(answer.getId()).get();
 
         assertThat(actual).isEqualTo(answer);
+    }
+
+    @Test
+    void update() {
+        String newContents = "newContents";
+
+        assertAll(
+                () -> assertThat(answer.isDeleted()).isFalse(),
+                () -> assertThat(answer.getContents()).isNotEqualTo(newContents)
+        );
+
+        answer.setContents(newContents);
+        answer.setDeleted(true);
+
+        Answer actual = answerRepository.findById(answer.getId()).get();
+        assertAll(
+                () -> assertThat(actual.isDeleted()).isTrue(),
+                () -> assertThat(actual.getContents()).isEqualTo(newContents)
+        );
     }
 
     @Test

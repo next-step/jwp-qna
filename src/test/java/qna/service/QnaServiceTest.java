@@ -38,7 +38,7 @@ class QnAServiceTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        question = new Question(2L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        question = new Question(2L, "title1", "contents1").writtenBy(UserTest.JAVAJIGI);
         answer = new Answer(2L, UserTest.JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
     }

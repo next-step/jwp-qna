@@ -76,6 +76,10 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }

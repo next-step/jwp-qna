@@ -65,6 +65,16 @@ public class UserTest {
     }
 
     @Test
+    void update() {
+        User user = userRepository.save(JAVAJIGI);
+        User expect = new User(user.getId(), user.getUserId(), user.getPassword(), "updateName", "updateEmail@uos.ac.kr");
+
+        user.update(user, expect);
+
+        assertThat(userRepository.findByUserId(user.getUserId()).get()).isEqualTo(expect);
+    }
+
+    @Test
     void delete() {
         User user = userRepository.save(JAVAJIGI);
         userRepository.deleteById(user.getId());
