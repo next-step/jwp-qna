@@ -4,3 +4,5 @@
 -[x] DeleteHistory 엔티티 매핑하고 DeleteHistoryRepository 학습 테스트 해보기
 -[x] Question 엔티티 매핑하고 QuestionRepository 학습 테스트 해보기
 -[x] User 엔티티 매핑하고  UserRepository 학습 테스트 해보기
+-[x] Answer, Question, User 연관 관계 매핑해보기
+-[ ] DeleteHistory 연관 관계 매핑해보기
