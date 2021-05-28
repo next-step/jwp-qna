@@ -21,14 +21,14 @@ public class Answers {
         answers.add(answer);
     }
 
-    public List<DeleteHistory> deleteAll(User deleter) throws CannotDeleteException {
+    public DeleteHistories deleteAll(User deleter) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
         for (Answer answer : answers) {
             deleteHistories.add(answer.delete(deleter));
         }
 
-        return deleteHistories;
+        return new DeleteHistories(deleteHistories);
     }
 
     public List<Answer> toCollection() {

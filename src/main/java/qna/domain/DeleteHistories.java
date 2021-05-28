@@ -1,15 +1,23 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class DeleteHistories {
     private List<DeleteHistory> deleteHistories;
 
+    public DeleteHistories(DeleteHistory ...deleteHistories) {
+        this(Arrays.asList(deleteHistories));
+    }
+
     public DeleteHistories(List<DeleteHistory> deleteHistories) {
         this.deleteHistories = new ArrayList<>(deleteHistories);
+    }
+
+    public DeleteHistories addAll(DeleteHistories deleteAll) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>(this.deleteHistories);
+        deleteHistories.addAll(deleteAll.deleteHistories);
+
+        return new DeleteHistories(deleteHistories);
     }
 
     public List<DeleteHistory> toCollection() {

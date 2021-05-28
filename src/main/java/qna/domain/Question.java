@@ -59,14 +59,13 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, deleter, LocalDateTime.now()));
-
-        deleteHistories.addAll(answers.deleteAll(deleter));
+        DeleteHistories deleteHistories = new DeleteHistories(
+                new DeleteHistory(ContentType.QUESTION, id, deleter, LocalDateTime.now())
+        );
 
         this.deleted = true;
 
-        return new DeleteHistories(deleteHistories);
+        return deleteHistories.addAll(answers.deleteAll(deleter));
     }
 
     public boolean isOwner(User writer) {
