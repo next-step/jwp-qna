@@ -60,11 +60,7 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
-        DeleteHistories deleteHistories = new DeleteHistories(
-                new DeleteHistory(ContentType.QUESTION, id, deleter, LocalDateTime.now())
-        );
-
-        this.deleted = deleted.delete();
+        DeleteHistories deleteHistories = deleteQuestion(deleter);
 
         return deleteHistories.addAll(answers.deleteAll(deleter));
     }
@@ -88,6 +84,16 @@ public class Question extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted.isDeleted();
+    }
+
+    private DeleteHistories deleteQuestion(User deleter) {
+        DeleteHistories deleteHistories = new DeleteHistories(
+                new DeleteHistory(ContentType.QUESTION, id, deleter, LocalDateTime.now())
+        );
+
+        this.deleted = deleted.delete();
+
+        return deleteHistories;
     }
 
     @Override
