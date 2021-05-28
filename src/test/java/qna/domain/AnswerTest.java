@@ -62,7 +62,8 @@ public class AnswerTest {
         assertAll(
                 () -> assertThat(findAnswer.getContents()).isEqualTo("Answers Contents1"),
                 () -> assertThat(findAnswer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
-                () -> assertThat(findAnswer.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId())
+                () -> assertThat(findAnswer.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
+                () -> assertThat(findAnswer).isSameAs(a1)
         );
 
     }
