@@ -78,7 +78,7 @@ public class Answer extends BaseEntity {
 
         this.deleted = true;
 
-        return new DeleteHistory(ContentType.ANSWER, getId(), deleter, LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER, id, deleter, LocalDateTime.now());
     }
 
     public boolean isDeleted() {
