@@ -114,11 +114,11 @@ class QuestionRepositoryTest {
 
         entityManagerHelper.flushAndClear();
 
+        Question foundQuestion = questionRepository.findById(question.getId()).orElseThrow(EntityNotFoundException::new);
+
         List<Long> answersId = answers.stream()
                 .map(item -> item.getId())
                 .collect(Collectors.toList());
-
-        Question foundQuestion = questionRepository.findById(question.getId()).orElseThrow(EntityNotFoundException::new);
 
         assertThat(foundQuestion.getAnswers().toCollection())
                 .map(item -> item.getId())
