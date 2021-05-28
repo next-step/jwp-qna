@@ -17,11 +17,12 @@ class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    private String userId = "USER";
     private User user;
 
     @BeforeEach
     public void setUp() {
-        user = new User("USER", "PASSWORD", "NAME", "EMAIL");
+        user = new User(userId, "PASSWORD", "NAME", "EMAIL");
     }
 
     @Test
@@ -41,7 +42,7 @@ class UserRepositoryTest {
     void 유저_아이디로_유저를_찾을_수_있다() {
         User savedUser = userRepository.save(user);
 
-        User foundUser = userRepository.findByUserId(user.getUserId())
+        User foundUser = userRepository.findByUserId(userId)
                 .orElseThrow(EntityNotFoundException::new);
 
         assertThat(foundUser)

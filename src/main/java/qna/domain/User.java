@@ -83,10 +83,6 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
     @Override
     public String toString() {
         return "User{" +
