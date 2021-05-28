@@ -67,7 +67,7 @@ class UserRepositoryTest extends BaseDataJpaTest {
     @Test
     @DisplayName("update 시 updateAt 이 자동으로 변경된다.")
     void dateAutoModifyTest() {
-        savedUser.setUserId("update date?");
+        savedUser.changeUserId("update date?");
         repository.flush();
 
         assertThat(savedUser.getUpdateAt()).isNotNull();

@@ -19,7 +19,7 @@ class DeleteHistoryRepositoryTest extends BaseDataJpaTest {
 
     @BeforeEach
     void setUp() {
-        deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 1L);
+        deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, new User("javajigi", "password", "name", "javajigi@slipp.net"));
         savedDeleteHistory = repository.save(deleteHistory);
     }
 
@@ -44,9 +44,15 @@ class DeleteHistoryRepositoryTest extends BaseDataJpaTest {
                 () -> assertThat(savedDeleteHistory.getId()).isNotNull(),
                 () -> assertThat(savedDeleteHistory.getContentType()).isEqualTo(deleteHistory.getContentType()),
                 () -> assertThat(savedDeleteHistory.getContentId()).isEqualTo(deleteHistory.getContentId()),
-                () -> assertThat(savedDeleteHistory.getDeletedById()).isEqualTo(deleteHistory.getDeletedById())
+                () -> assertThat(savedDeleteHistory.getDeletedBy()).isSameAs(deleteHistory.getDeletedBy())
         );
+    }
 
+    @Test
+    @DisplayName("User 엔티티 @ManyToOne 관계 매핑 테스트")
+    void manyToOneUserTest() {
+        assertThat(savedDeleteHistory.getDeletedBy()).isNotNull();
+        assertThat(savedDeleteHistory.getDeletedBy().getId()).isNotNull();
     }
 
     @Test

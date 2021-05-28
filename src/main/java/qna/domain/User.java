@@ -87,7 +87,7 @@ public class User extends BaseTimeEntity {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void changeUserId(String userId) {
         this.userId = userId;
     }
 
@@ -95,24 +95,12 @@ public class User extends BaseTimeEntity {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @Override
