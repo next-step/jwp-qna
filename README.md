@@ -35,7 +35,7 @@
   - [ ] id -> PositiveNumber
   - [ ] title -> Title
   - [ ] contents -> BigContents
-  - [ ] delete -> Delete
+  - [ ] delete -> Deletion
   - [ ] userId -> UserId
   - [ ] password -> Password
   - [ ] name -> Name
