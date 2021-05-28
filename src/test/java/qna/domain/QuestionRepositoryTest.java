@@ -120,7 +120,7 @@ class QuestionRepositoryTest {
 
         Question foundQuestion = questionRepository.findById(question.getId()).orElseThrow(EntityNotFoundException::new);
 
-        assertThat(foundQuestion.getAnswers().getAnswers())
+        assertThat(foundQuestion.getAnswers().toCollection())
                 .map(item -> item.getId())
                 .containsExactlyInAnyOrderElementsOf(answersId);
     }

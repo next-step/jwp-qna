@@ -31,7 +31,7 @@ public class Answers {
         return deleteHistories;
     }
 
-    public List<Answer> getAnswers() {
+    public List<Answer> toCollection() {
         return Collections.unmodifiableList(answers);
     }
 }
