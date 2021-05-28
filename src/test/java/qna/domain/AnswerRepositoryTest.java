@@ -3,6 +3,9 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -74,5 +77,47 @@ public class AnswerRepositoryTest {
         answers.delete(savedAnswer);
         // then
         assertThat(answers.findById(savedAnswer.getId())).isNotPresent();
+    }
+
+    @Test
+    @DisplayName("실제 삭제가 아닌 경우, 답변 ID로 조회 테스트")
+    void findByIdAndDeletedFalse() {
+        // given & when
+        Optional<Answer> actual = answers.findByIdAndDeletedFalse(savedAnswer.getId());
+        // then
+        assertThat(actual).isPresent();
+        assertThat(actual).contains(savedAnswer);
+    }
+
+    @Test
+    @DisplayName("실제 삭제인 경우, 답변 ID로 조회 테스트")
+    void findByIdAndDeletedFalse_not_found() {
+        // given & when
+        savedAnswer.setDeleted(true);
+        answers.flush();
+        Optional<Answer> actual = answers.findByIdAndDeletedFalse(savedAnswer.getId());
+        // then
+        assertThat(actual).isNotPresent();
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    @DisplayName("실제 삭제가 아닌 경우, 질문 ID로 조회 테스트")
+    void findByQuestionIdAndDeletedFalse() {
+        // given & when
+        List<Answer> actualList = answers.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestionId());
+        // then
+        assertThat(actualList).containsExactly(savedAnswer);
+    }
+
+    @Test
+    @DisplayName("실제 삭제인 경우, 질문 ID로 조회 테스트")
+    void findByQuestionIdAndDeletedFalse_not_found() {
+        // given & when
+        savedAnswer.setDeleted(true);
+        answers.flush();
+        List<Answer> actualList = answers.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestionId());
+        // then
+        assertThat(actualList).isEmpty();
     }
 }
