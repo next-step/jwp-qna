@@ -14,7 +14,7 @@ public class QuestionRepositoryTest {
 
 	@Autowired
 	private QuestionRepository questions;
-	
+
 	@Test
 	@DisplayName("Question 저장 테스트")
 	void save() {
@@ -23,7 +23,7 @@ public class QuestionRepositoryTest {
 		assertThat(saved.getContents()).isEqualTo("contents1");
 		assertThat(saved.getTitle()).isEqualTo("title1");
 	}
-	
+
 	@Test
 	@DisplayName("Question 조회 테스트")
 	void findById() {
