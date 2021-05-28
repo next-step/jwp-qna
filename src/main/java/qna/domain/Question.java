@@ -56,10 +56,6 @@ public class Question extends BaseEntity {
         if (isDeleted()) {
             throw new IllegalStateException("이미 삭제가 되어있습니다.");
         }
-        if (!isOwner(deleter)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-
         DeleteHistories deleteHistories = deleteQuestion(deleter);
 
         return deleteHistories.addAll(answers.deleteAll(deleter));
@@ -86,7 +82,11 @@ public class Question extends BaseEntity {
         return deleted.isDeleted();
     }
 
-    private DeleteHistories deleteQuestion(User deleter) {
+    private DeleteHistories deleteQuestion(User deleter) throws CannotDeleteException {
+        if (!isOwner(deleter)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
         DeleteHistories deleteHistories = new DeleteHistories(
                 new DeleteHistory(ContentType.QUESTION, id, deleter, LocalDateTime.now())
         );
