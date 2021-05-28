@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url:  jdbc:h2:~/test;MODE=MySQL
+    username: sa
+
+  h2:
+    console:
+      enabled:  true
+
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: validate
+        format_sql: true
+    show-sql: true
