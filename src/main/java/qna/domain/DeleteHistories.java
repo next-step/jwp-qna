@@ -14,10 +14,10 @@ public class DeleteHistories {
     }
 
     public DeleteHistories addAll(DeleteHistories deleteAll) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>(this.deleteHistories);
-        deleteHistories.addAll(deleteAll.deleteHistories);
+        List<DeleteHistory> newDeleteHistories = new ArrayList<>(this.deleteHistories);
+        newDeleteHistories.addAll(deleteAll.deleteHistories);
 
-        return new DeleteHistories(deleteHistories);
+        return new DeleteHistories(newDeleteHistories);
     }
 
     public List<DeleteHistory> toCollection() {
