@@ -8,6 +8,7 @@ import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Embeddable
 public class Answers {
@@ -33,5 +34,18 @@ public class Answers {
 
     public List<Answer> toCollection() {
         return Collections.unmodifiableList(answers);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answers answers1 = (Answers) o;
+        return Objects.equals(answers, answers1.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(answers);
     }
 }
