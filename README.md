@@ -39,4 +39,4 @@
   - [X] userId -> UserId
   - [X] password -> Password
   - [X] name -> Name
-  - [ ] email -> Email
+  - [X] email -> Email
