@@ -13,13 +13,16 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class AnswerRepositoryTest {
 
+	public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+	public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+
 	@Autowired
 	private AnswerRepository answers;
 
 	@Test
 	@DisplayName("Answer 저장 테스트")
-	void saveAnswar() {
-		Answer expected = AnswerTest.A1;
+	void save() {
+		Answer expected = A1;
 		Answer actual = answers.save(expected);
 		assertThat(answers.findByIdAndDeletedFalse(actual.getId()).isPresent()).isTrue();
 	}
@@ -27,7 +30,7 @@ public class AnswerRepositoryTest {
 	@Test
 	@DisplayName("Answer id로 Answer 조회 테스트")
 	void findById() {
-		Answer expected = AnswerTest.A1;
+		Answer expected = A1;
 		Answer saved = answers.save(expected);
 		Answer actual = answers.findByIdAndDeletedFalse(saved.getId()).get();
 		assertAll(
@@ -42,7 +45,7 @@ public class AnswerRepositoryTest {
 	@Test
 	@DisplayName("Answer 수정 테스트")
 	void update() {
-		Answer expected = AnswerTest.A1;
+		Answer expected = A1;
 		Answer saved = answers.save(expected);
 		Answer actual = answers.findByIdAndDeletedFalse(saved.getId()).get();
 		Date updateAt = new Date();
@@ -57,7 +60,7 @@ public class AnswerRepositoryTest {
 	@Test
 	@DisplayName("Answer 삭제 테스트")
 	void delete() {
-		Answer expected = AnswerTest.A1;
+		Answer expected = A1;
 		Answer saved = answers.save(expected);
 		answers.delete(saved);
 		answers.flush();
