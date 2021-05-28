@@ -15,8 +15,11 @@ public class Question extends BaseEntity {
 	@Column(length = 100, nullable = false)
 	private String title;
 	@Lob
+	@Column(name = "contents")
 	private String contents;
+	@Column(name = "writer_id")
 	private Long writerId;
+	@Column(name = "deleted", nullable = false)
 	private boolean deleted = false;
 
 	protected Question() {
@@ -49,32 +52,16 @@ public class Question extends BaseEntity {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getTitle() {
 		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
 	}
 
 	public String getContents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
 	public Long getWriterId() {
 		return writerId;
-	}
-
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
 	}
 
 	public boolean isDeleted() {
