@@ -38,5 +38,5 @@
   - [ ] delete -> Deletion
   - [X] userId -> UserId
   - [X] password -> Password
-  - [ ] name -> Name
+  - [X] name -> Name
   - [ ] email -> Email
