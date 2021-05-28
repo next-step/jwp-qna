@@ -31,8 +31,8 @@
   - [X] question -> user (1 : 1)
   
 - [X] DeleteHistory 일급컬렉션으로 변경
-- [ ] 원시값 포장
-  - [X] id -> PositiveNumber
+- [X] 원시값 포장
+  - [X] id -> IdentityLongId
   - [X] title -> Title
   - [X] contents -> BigContents
   - [X] delete -> Deletion
@@ -40,3 +40,12 @@
   - [X] password -> Password
   - [X] name -> Name
   - [X] email -> Email
+- [ ] 원시값 포장 Entity에 추가
+  - [ ] IdentityLongId
+  - [ ] Title
+  - [ ] BigContents
+  - [ ] Deletion
+  - [ ] UserId
+  - [ ] Password
+  - [ ] Name
+  - [ ] Email
