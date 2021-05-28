@@ -3,6 +3,8 @@ package qna.domain;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.wrap.BigContents;
+import qna.domain.wrap.Deletion;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -22,11 +24,9 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    private BigContents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    private Deletion deleted = new Deletion(false);
 
     protected Answer() {
     }
@@ -36,6 +36,10 @@ public class Answer extends BaseEntity {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
+        this(id, writer, question, new BigContents(contents));
+    }
+
+    public Answer(Long id, User writer, Question question, BigContents contents) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         } else if (Objects.isNull(question)) {
@@ -67,13 +71,13 @@ public class Answer extends BaseEntity {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
 
-        this.deleted = true;
+        deleted.delete();
 
         return new DeleteHistory(ContentType.ANSWER, id, deleter, LocalDateTime.now());
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public Long getId() {
@@ -87,7 +91,7 @@ public class Answer extends BaseEntity {
                 ", writer=" + writer +
                 ", question=" + question +
                 ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
+                ", deleted=" + isDeleted() +
                 '}';
     }
 }

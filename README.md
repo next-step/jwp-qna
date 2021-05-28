@@ -40,11 +40,11 @@
   - [X] password -> Password
   - [X] name -> Name
   - [X] email -> Email
-- [ ] 원시값 포장 Entity에 추가
-  - [ ] Title
-  - [ ] BigContents
-  - [ ] Deletion
-  - [ ] UserId
-  - [ ] Password
-  - [ ] Name
-  - [ ] Email
+- [X] 원시값 포장 Entity에 추가
+  - [X] Title
+  - [X] BigContents
+  - [X] Deletion
+  - [X] UserId
+  - [X] Password
+  - [X] Name
+  - [X] Email

@@ -1,6 +1,9 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
+import qna.domain.wrap.BigContents;
+import qna.domain.wrap.Deletion;
+import qna.domain.wrap.Title;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,18 +14,15 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+    private Title title;
 
-    @Lob
-    private String contents;
+    private BigContents contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    private Deletion deleted = new Deletion(false);
 
     private Answers answers = new Answers();
 
@@ -38,12 +38,14 @@ public class Question extends BaseEntity {
     }
 
     public Question(Long id, String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
+        this(id, title, contents, null);
     }
 
     public Question(Long id, String title, String contents, User writer) {
+        this(id, new Title(title), new BigContents(contents), writer);
+    }
+
+    public Question(Long id, Title title, BigContents contents, User writer) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -61,7 +63,7 @@ public class Question extends BaseEntity {
                 new DeleteHistory(ContentType.QUESTION, id, deleter, LocalDateTime.now())
         );
 
-        this.deleted = true;
+        deleted.delete();
 
         return deleteHistories.addAll(answers.deleteAll(deleter));
     }
@@ -84,7 +86,7 @@ public class Question extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     @Override
@@ -94,7 +96,7 @@ public class Question extends BaseEntity {
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", writer=" + writer +
-                ", deleted=" + deleted +
+                ", deleted=" + isDeleted() +
                 '}';
     }
 }

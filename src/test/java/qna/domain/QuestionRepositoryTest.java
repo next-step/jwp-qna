@@ -39,7 +39,7 @@ class QuestionRepositoryTest {
     public void setUp() {
         entityManagerHelper = new EntityManagerHelper(entityManager);
 
-        savedUser = userRepository.save(new User("USER_ID", "PASSWORD", "NAME", "EMAIL"));
+        savedUser = userRepository.save(new User("USER_ID", "PASSWORD", "NAME", "EMAIL@EMAIL.COM"));
 
         question = new Question("Hello", "Hello", savedUser);
     }
