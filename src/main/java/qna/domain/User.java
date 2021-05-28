@@ -8,6 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -29,6 +32,9 @@ public class User extends BaseEntity {
 
     @Column(length = 50)
     private String email;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
 
     protected User() {
     }
@@ -135,5 +141,18 @@ public class User extends BaseEntity {
         public boolean isGuestUser() {
             return true;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getUserId(), user.getUserId()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getName(), user.getName()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(answers, user.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getUserId(), getPassword(), getName(), getEmail(), answers);
     }
 }
