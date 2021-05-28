@@ -4,30 +4,23 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
 
 @Entity
-public class Question {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column
-	private Long id;
-	@Column(length = 100)
+public class Question extends BaseEntity {
+
+	@Column(name = "title", length = 100)
 	private String title;
+
 	@Lob
-	@Column
+	@Column(name = "contents")
 	private String contents;
-	@Column
+
+	@Column(name = "writer_id")
 	private Long writerId;
-	@Column(nullable = false)
+
+	@Column(name = "deleted", nullable = false)
 	private boolean deleted = false;
-	@Column(nullable = false)
-	private Date createAt = new Date();
-	@Column
-	private Date updateAt;
 
 	protected Question() {
 

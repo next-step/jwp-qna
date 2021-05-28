@@ -5,40 +5,29 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
-public class Answer {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column
-	private Long id;
-	@Column
+public class Answer extends BaseEntity {
+
+	@Column(name = "writer_id")
 	private Long writerId;
-	@Column
+
+	@Column(name = "question_id")
 	private Long questionId;
+
 	@Lob
-	@Column
+	@Column(name = "contents")
 	private String contents;
-	@Column(nullable = false)
+
+	@Column(name = "deleted", nullable = false)
 	private boolean deleted = false;
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
-	private Date createAt = new Date();
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column
-	private Date updateAt;
 
 	protected Answer() {
-
+		super();
 	}
 
 	public Answer(User writer, Question question, String contents) {
@@ -66,14 +55,6 @@ public class Answer {
 
 	public void toQuestion(Question question) {
 		this.questionId = question.getId();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public Long getWriterId() {
@@ -106,22 +87,6 @@ public class Answer {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
-	}
-
-	public Date getCreateAt() {
-		return createAt;
-	}
-
-	public void setCreateAt(Date createAt) {
-		this.createAt = createAt;
-	}
-
-	public Date getUpdateAt() {
-		return updateAt;
-	}
-
-	public void setUpdateAt(Date updateAt) {
-		this.updateAt = updateAt;
 	}
 
 }

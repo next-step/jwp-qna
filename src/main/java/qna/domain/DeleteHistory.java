@@ -13,18 +13,23 @@ import javax.persistence.Id;
 
 @Entity
 public class DeleteHistory {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column
-	private Long id;
+	@Column(name = "id")
+	protected Long id;
+
 	@Enumerated(EnumType.STRING)
-	@Column
+	@Column(name = "content_type")
 	private ContentType contentType;
-	@Column
+
+	@Column(name = "content_id")
 	private Long contentId;
-	@Column
+
+	@Column(name = "delete_by_id")
 	private Long deletedById;
-	@Column
+
+	@Column(name = "create_date")
 	private LocalDateTime createDate;
 
 	protected DeleteHistory() {

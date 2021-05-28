@@ -5,42 +5,24 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 
 import qna.UnAuthorizedException;
 
 @Entity
-@Table(
-	name = "user",
-	uniqueConstraints =
-	@UniqueConstraint(columnNames = {"userId"})
-)
-public class User {
+public class User extends BaseEntity {
 	public static final GuestUser GUEST_USER = new GuestUser();
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column
-	private Long id;
-	@Column(length = 20, nullable = false)
+
+	@Column(name = "user_id", unique = true, length = 20, nullable = false)
 	private String userId;
-	@Column(length = 20, nullable = false)
+
+	@Column(name = "password", length = 20, nullable = false)
 	private String password;
-	@Column(length = 20, nullable = false)
+
+	@Column(name = "name", length = 20, nullable = false)
 	private String name;
-	@Column(length = 50)
+
+	@Column(name = "email", length = 50)
 	private String email;
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
-	private Date createAt = new Date();
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column
-	private Date updateAt;
 
 	protected User() {
 	}
