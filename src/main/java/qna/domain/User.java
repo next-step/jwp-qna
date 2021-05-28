@@ -11,19 +11,16 @@ public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NonNull
-    @Column(length = 20)
+    @Column(length = 20, unique = true, nullable = false)
     private String userId;
 
-    @NonNull
-    @Column(length = 20)
+    @Column(length = 20, nullable = false)
     private String password;
 
-    @NonNull
-    @Column(length = 20, unique = true)
+    @Column(length = 20, nullable = false)
     private String name;
 
     @Column(length = 50)
