@@ -48,9 +48,7 @@ public class User extends BaseEntity {
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.userId)) {
             throw new UnAuthorizedException();
-        }
-
-        if (!matchPassword(target.password)) {
+        } else if (!matchPassword(target.password)) {
             throw new UnAuthorizedException();
         }
 
