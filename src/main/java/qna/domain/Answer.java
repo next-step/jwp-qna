@@ -63,9 +63,7 @@ public class Answer extends BaseEntity {
     protected DeleteHistory delete(User deleter) throws CannotDeleteException {
         if(isDeleted()) {
             throw new IllegalStateException("이미 삭제가 되어있습니다.");
-        }
-
-        if (!isOwner(deleter)) {
+        }else if (!isOwner(deleter)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
 
