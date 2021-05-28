@@ -34,8 +34,8 @@
 - [ ] 원시값 포장
   - [X] id -> PositiveNumber
   - [X] title -> Title
-  - [ ] contents -> BigContents
-  - [ ] delete -> Deletion
+  - [X] contents -> BigContents
+  - [X] delete -> Deletion
   - [X] userId -> UserId
   - [X] password -> Password
   - [X] name -> Name
