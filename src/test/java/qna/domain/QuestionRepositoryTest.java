@@ -3,6 +3,9 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -73,5 +76,36 @@ public class QuestionRepositoryTest {
         questions.delete(savedQuestion);
         // then
         assertThat(questions.findById(savedQuestion.getId())).isNotPresent();
+    }
+
+    @Test
+    @DisplayName("실제 삭제가 아닌 경우, 질문 ID로 조회 가능 테스트")
+    void findByIdAndDeletedFalse() {
+        // given & when
+        Optional<Question> actual = questions.findByIdAndDeletedFalse(savedQuestion.getId());
+        // then
+        assertThat(actual).isPresent();
+        assertThat(actual).contains(savedQuestion);
+    }
+
+    @Test
+    @DisplayName("실제 삭제인 경우, 질문 ID로 조회 테스트")
+    void findByIdAndDeletedFalse_not_found() {
+        // given & when
+        savedQuestion.setDeleted(true);
+        questions.flush();
+        Optional<Question> actual = questions.findByIdAndDeletedFalse(savedQuestion.getId());
+        // then
+        assertThat(actual).isNotPresent();
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    @DisplayName("실제 삭제가 아닌 질문 리스트 조회 테스트")
+    void findByDeletedFalse() {
+        // given & when
+        List<Question> actualList = questions.findByDeletedFalse();
+        // then
+        assertThat(actualList).containsExactly(savedQuestion);
     }
 }
