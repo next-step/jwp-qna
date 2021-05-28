@@ -42,7 +42,8 @@ public class Answer extends BaseEntity {
     public Answer(Long id, User writer, Question question, BigContents contents) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
-        } else if (Objects.isNull(question)) {
+        }
+        if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
 
@@ -67,7 +68,8 @@ public class Answer extends BaseEntity {
     protected DeleteHistory delete(User deleter) throws CannotDeleteException {
         if(isDeleted()) {
             throw new IllegalStateException("이미 삭제가 되어있습니다.");
-        }else if (!isOwner(deleter)) {
+        }
+        if (!isOwner(deleter)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
 

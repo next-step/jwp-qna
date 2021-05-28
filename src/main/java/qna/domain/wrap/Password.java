@@ -25,7 +25,8 @@ public class Password {
     private void validate(String password) {
         if (Objects.isNull(password)) {
             throw new IllegalArgumentException("비밀번호는 null일 수 없습니다.");
-        } else if (password.length() > MAXIMUM_LENGTH) {
+        }
+        if (password.length() > MAXIMUM_LENGTH) {
             throw new IllegalArgumentException(format("비밀번호는 %d자를 넘길 수 없습니다.", MAXIMUM_LENGTH));
         }
     }

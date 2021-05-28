@@ -25,7 +25,8 @@ public class UserId {
     private void validate(String userId) {
         if (Objects.isNull(userId)) {
             throw new IllegalArgumentException("유저ID는 null일 수 없다.");
-        } else if (userId.length() > MAXIMUM_LENGTH) {
+        }
+        if (userId.length() > MAXIMUM_LENGTH) {
             throw new IllegalArgumentException(format("유저ID는 %d자를 넘길 수 없습니다.", MAXIMUM_LENGTH));
         }
     }

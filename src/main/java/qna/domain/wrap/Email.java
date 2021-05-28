@@ -28,9 +28,11 @@ public class Email {
     private void validate(String email) {
         if (Objects.isNull(email)) {
             throw new IllegalArgumentException("이메일은 null일 수 없습니다.");
-        }else if(!EMAIL_PATTERN.matcher(email).matches()) {
+        }
+        if(!EMAIL_PATTERN.matcher(email).matches()) {
             throw new IllegalArgumentException("이메일 형식이 아닙니다.");
-        } else if(email.length() > MAXIMUM_LENGTH) {
+        }
+        if(email.length() > MAXIMUM_LENGTH) {
             throw new IllegalArgumentException(format("이메일의 최대 길이는 %d자 입니다.", MAXIMUM_LENGTH));
         }
     }

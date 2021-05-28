@@ -25,7 +25,8 @@ public class Title {
     private void validate(String title) {
         if (Objects.isNull(title)) {
             throw new IllegalArgumentException("제목은 null일 수 없습니다.");
-        } else if(title.length() > MAXIMUM_LENGTH) {
+        }
+        if(title.length() > MAXIMUM_LENGTH) {
             throw new IllegalArgumentException(format("제목의 최대 길이는 %d자 입니다.", MAXIMUM_LENGTH));
         }
     }

@@ -55,7 +55,8 @@ public class Question extends BaseEntity {
     public DeleteHistories delete(User deleter) throws CannotDeleteException {
         if (isDeleted()) {
             throw new IllegalStateException("이미 삭제가 되어있습니다.");
-        } else if (!isOwner(deleter)) {
+        }
+        if (!isOwner(deleter)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 

@@ -25,7 +25,8 @@ public class Name {
     private void validate(String name) {
         if (Objects.isNull(name)) {
             throw new IllegalArgumentException("이름은 null일 수 없습니다.");
-        } else if (name.length() > MAXIMUM_LENGTH) {
+        }
+        if (name.length() > MAXIMUM_LENGTH) {
             throw new IllegalArgumentException(format("이름은 %d자를 넘길 수 없습니다.", MAXIMUM_LENGTH));
         }
     }
