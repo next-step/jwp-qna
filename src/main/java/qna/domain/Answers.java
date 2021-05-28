@@ -6,8 +6,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 @Embeddable
 public class Answers {
@@ -21,17 +23,30 @@ public class Answers {
         answers.add(answer);
     }
 
-    public List<DeleteHistory> deleteAll(User deleter) throws CannotDeleteException {
+    public DeleteHistories deleteAll(User deleter) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
         for (Answer answer : answers) {
             deleteHistories.add(answer.delete(deleter));
         }
 
-        return deleteHistories;
+        return new DeleteHistories(deleteHistories);
     }
 
-    public List<Answer> getAnswers() {
-        return Collections.unmodifiableList(answers);
+    public <R> Stream<R> map(Function<? super Answer, ? extends R> mapper) {
+        return this.answers.stream().map(mapper);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answers answers1 = (Answers) o;
+        return Objects.equals(answers, answers1.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(answers);
     }
 }

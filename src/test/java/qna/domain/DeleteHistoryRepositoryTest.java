@@ -36,7 +36,7 @@ class DeleteHistoryRepositoryTest {
     void setUp() {
         entityManagerHelper = new EntityManagerHelper(entityManager);
 
-        savedUser = userRepository.save(new User("USER", "PASSWORD", "NAME", "EMAIL"));
+        savedUser = userRepository.save(new User("USER", "PASSWORD", "NAME", "EMAIL@EMAIL.COM"));
 
         deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, savedUser, LocalDateTime.now());
     }

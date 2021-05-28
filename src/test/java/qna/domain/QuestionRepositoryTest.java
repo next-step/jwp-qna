@@ -39,7 +39,7 @@ class QuestionRepositoryTest {
     public void setUp() {
         entityManagerHelper = new EntityManagerHelper(entityManager);
 
-        savedUser = userRepository.save(new User("USER_ID", "PASSWORD", "NAME", "EMAIL"));
+        savedUser = userRepository.save(new User("USER_ID", "PASSWORD", "NAME", "EMAIL@EMAIL.COM"));
 
         question = new Question("Hello", "Hello", savedUser);
     }
@@ -114,14 +114,17 @@ class QuestionRepositoryTest {
 
         entityManagerHelper.flushAndClear();
 
+        Question foundQuestion = questionRepository.findById(question.getId()).orElseThrow(EntityNotFoundException::new);
+
         List<Long> answersId = answers.stream()
                 .map(item -> item.getId())
                 .collect(Collectors.toList());
 
-        Question foundQuestion = questionRepository.findById(question.getId()).orElseThrow(EntityNotFoundException::new);
-
-        assertThat(foundQuestion.getAnswers().getAnswers())
+        List<Long> answersIdInQuestion = foundQuestion.getAnswers()
                 .map(item -> item.getId())
+                .collect(Collectors.toList());
+
+        assertThat(answersIdInQuestion)
                 .containsExactlyInAnyOrderElementsOf(answersId);
     }
 }

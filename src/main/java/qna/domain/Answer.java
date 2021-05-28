@@ -3,6 +3,8 @@ package qna.domain;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.wrap.BigContents;
+import qna.domain.wrap.Deletion;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -22,11 +24,9 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    private BigContents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    private Deletion deleted = new Deletion(false);
 
     protected Answer() {
     }
@@ -36,16 +36,18 @@ public class Answer extends BaseEntity {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+        this(id, writer, question, new BigContents(contents));
+    }
 
+    public Answer(Long id, User writer, Question question, BigContents contents) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
-
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
 
+        this.id = id;
         this.writer = writer;
         this.question = question;
         this.contents = contents;
@@ -63,26 +65,25 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     protected DeleteHistory delete(User deleter) throws CannotDeleteException {
         if(isDeleted()) {
             throw new IllegalStateException("이미 삭제가 되어있습니다.");
         }
-
         if (!isOwner(deleter)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
 
-        this.deleted = true;
+        this.deleted = deleted.delete();
 
-        return new DeleteHistory(ContentType.ANSWER, getId(), deleter, LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER, id, deleter, LocalDateTime.now());
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
@@ -92,7 +93,7 @@ public class Answer extends BaseEntity {
                 ", writer=" + writer +
                 ", question=" + question +
                 ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
+                ", deleted=" + isDeleted() +
                 '}';
     }
 }

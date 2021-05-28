@@ -29,3 +29,22 @@
   - [X] answer -> user (1 : 1)
   - [X] delete_history -> user (1 : 1)
   - [X] question -> user (1 : 1)
+  
+- [X] DeleteHistory 일급컬렉션으로 변경
+- [X] 원시값 포장
+  - [X] id -> IdentityLongId -> https://www.icatpark.com/entry/jpa-%EB%B3%B5%ED%95%A9%ED%82%A4%EC%97%90%EC%84%9C-auto-increment로 제거
+  - [X] title -> Title
+  - [X] contents -> BigContents
+  - [X] delete -> Deletion
+  - [X] userId -> UserId
+  - [X] password -> Password
+  - [X] name -> Name
+  - [X] email -> Email
+- [X] 원시값 포장 Entity에 추가
+  - [X] Title
+  - [X] BigContents
+  - [X] Deletion
+  - [X] UserId
+  - [X] Password
+  - [X] Name
+  - [X] Email

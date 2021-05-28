@@ -1,11 +1,12 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
+import qna.domain.wrap.BigContents;
+import qna.domain.wrap.Deletion;
+import qna.domain.wrap.Title;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -13,18 +14,15 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+    private Title title;
 
-    @Lob
-    private String contents;
+    private BigContents contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    private Deletion deleted = new Deletion(false);
 
     private Answers answers = new Answers();
 
@@ -40,33 +38,27 @@ public class Question extends BaseEntity {
     }
 
     public Question(Long id, String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
+        this(id, title, contents, null);
     }
 
     public Question(Long id, String title, String contents, User writer) {
+        this(id, new Title(title), new BigContents(contents), writer);
+    }
+
+    public Question(Long id, Title title, BigContents contents, User writer) {
         this.id = id;
         this.title = title;
         this.contents = contents;
         this.writer = writer;
     }
 
-    public List<DeleteHistory> delete(User deleter) throws CannotDeleteException {
+    public DeleteHistories delete(User deleter) throws CannotDeleteException {
         if (isDeleted()) {
             throw new IllegalStateException("이미 삭제가 되어있습니다.");
-        } else if (!isOwner(deleter)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
+        DeleteHistories deleteHistories = deleteQuestion(deleter);
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(), deleter, LocalDateTime.now()));
-
-        deleteHistories.addAll(answers.deleteAll(deleter));
-
-        this.deleted = true;
-
-        return deleteHistories;
+        return deleteHistories.addAll(answers.deleteAll(deleter));
     }
 
     public boolean isOwner(User writer) {
@@ -87,7 +79,21 @@ public class Question extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
+    }
+
+    private DeleteHistories deleteQuestion(User deleter) throws CannotDeleteException {
+        if (!isOwner(deleter)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        DeleteHistories deleteHistories = new DeleteHistories(
+                new DeleteHistory(ContentType.QUESTION, id, deleter, LocalDateTime.now())
+        );
+
+        this.deleted = deleted.delete();
+
+        return deleteHistories;
     }
 
     @Override
@@ -97,7 +103,7 @@ public class Question extends BaseEntity {
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", writer=" + writer +
-                ", deleted=" + deleted +
+                ", deleted=" + isDeleted() +
                 '}';
     }
 }

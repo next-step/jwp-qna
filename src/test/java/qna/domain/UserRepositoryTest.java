@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
+import qna.domain.wrap.UserId;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -17,11 +18,12 @@ class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    private String userId = "USER";
     private User user;
 
     @BeforeEach
     public void setUp() {
-        user = new User("USER", "PASSWORD", "NAME", "EMAIL");
+        user = new User(userId, "PASSWORD", "NAME", "EMAIL@EMAIL.COM");
     }
 
     @Test
@@ -41,7 +43,7 @@ class UserRepositoryTest {
     void 유저_아이디로_유저를_찾을_수_있다() {
         User savedUser = userRepository.save(user);
 
-        User foundUser = userRepository.findByUserId(user.getUserId())
+        User foundUser = userRepository.findByUserId(new UserId(userId))
                 .orElseThrow(EntityNotFoundException::new);
 
         assertThat(foundUser)

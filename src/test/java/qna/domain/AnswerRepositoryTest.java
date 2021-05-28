@@ -12,7 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -38,7 +37,7 @@ class AnswerRepositoryTest {
     void setUp() {
         entityManagerHelper = new EntityManagerHelper(entityManager);
 
-        savedUser = userRepository.save(new User("USER", "PASSWORD", "NAME", "EMAIL"));
+        savedUser = userRepository.save(new User("USER", "PASSWORD", "NAME", "EMAIL@EMAIL.COM"));
         savedQuestion = questionRepository.save(new Question("title", "contents", savedUser));
 
         answer = new Answer(savedUser, savedQuestion, "contents");
