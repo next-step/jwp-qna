@@ -69,7 +69,7 @@ class QuestionRepositoryTest extends BaseDataJpaTest {
     @Test
     @DisplayName("update 시 updateAt 이 자동으로 변경된다.")
     void dateAutoModifyTest() {
-        savedQuestion.setContents("update date?");
+        savedQuestion.changeContents("update date?");
         repository.flush();
 
         assertThat(savedQuestion.getUpdateAt()).isNotNull();

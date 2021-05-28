@@ -62,20 +62,8 @@ public class Answer extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
     }
 
     public Question getQuestion() {
@@ -86,7 +74,7 @@ public class Answer extends BaseTimeEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void changeContents(String contents) {
         this.contents = contents;
     }
 
@@ -94,7 +82,7 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void changeDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 

@@ -56,14 +56,6 @@ public class DeleteHistory {
         return contentId;
     }
 
-    public void setContentType(ContentType contentType) {
-        this.contentType = contentType;
-    }
-
-    public void setContentId(Long contentId) {
-        this.contentId = contentId;
-    }
-
     public User getDeletedBy() {
         return deletedBy;
     }
