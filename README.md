@@ -31,3 +31,12 @@
   - [X] question -> user (1 : 1)
   
 - [X] DeleteHistory 일급컬렉션으로 변경
+- [ ] 원시값 포장
+  - [ ] id -> PositiveNumber
+  - [ ] title -> Title
+  - [ ] contents -> BigContents
+  - [ ] delete -> Delete
+  - [ ] userId -> UserId
+  - [ ] password -> Password
+  - [ ] name -> Name
+  - [ ] email -> Email
