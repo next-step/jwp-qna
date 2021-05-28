@@ -18,18 +18,18 @@ public class Question {
 	@Column(length = 100)
 	private String title;
 	@Lob
-    @Column
+	@Column
 	private String contents;
 	@Column
 	private Long writerId;
 	@Column(nullable = false)
 	private boolean deleted = false;
 	@Column(nullable = false)
-    private Date createAt = new Date();
-    @Column
-    private Date updateAt;
+	private Date createAt = new Date();
+	@Column
+	private Date updateAt;
 
-    protected Question() {
+	protected Question() {
 
 	}
 
@@ -96,23 +96,23 @@ public class Question {
 		this.deleted = deleted;
 	}
 
-    public Date getCreateAt() {
-        return createAt;
-    }
+	public Date getCreateAt() {
+		return createAt;
+	}
 
-    public void setCreateAt(Date createAt) {
-        this.createAt = createAt;
-    }
+	public void setCreateAt(Date createAt) {
+		this.createAt = createAt;
+	}
 
-    public Date getUpdateAt() {
-        return updateAt;
-    }
+	public Date getUpdateAt() {
+		return updateAt;
+	}
 
-    public void setUpdateAt(Date updateAt) {
-        this.updateAt = updateAt;
-    }
+	public void setUpdateAt(Date updateAt) {
+		this.updateAt = updateAt;
+	}
 
-    @Override
+	@Override
 	public String toString() {
 		return "Question{" +
 			"id=" + id +

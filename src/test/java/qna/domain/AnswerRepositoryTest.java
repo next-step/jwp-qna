@@ -22,21 +22,21 @@ public class AnswerRepositoryTest {
 	@Test
 	@DisplayName("Answer 저장 테스트")
 	void save() {
-		Answer expected = A1;
-		Answer actual = answers.save(expected);
+		Answer answer = A1;
+		Answer actual = answers.save(answer);
 		assertThat(answers.findByIdAndDeletedFalse(actual.getId()).isPresent()).isTrue();
 	}
 
 	@Test
 	@DisplayName("Answer id로 Answer 조회 테스트")
 	void findById() {
-		Answer expected = A1;
-		Answer saved = answers.save(expected);
+		Answer answer = A1;
+		Answer saved = answers.save(answer);
 		Answer actual = answers.findByIdAndDeletedFalse(saved.getId()).get();
 		assertAll(
 			() -> assertThat(actual).isNotNull(),
-			() -> assertThat(actual.getWriterId()).isEqualTo(expected.getId()),
-			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
+			() -> assertThat(actual.getWriterId()).isEqualTo(answer.getId()),
+			() -> assertThat(actual.getContents()).isEqualTo(answer.getContents()),
 			() -> assertThat(actual.isDeleted()).isEqualTo(false),
 			() -> assertThat(actual.getCreateAt()).isNotNull()
 		);
@@ -45,8 +45,8 @@ public class AnswerRepositoryTest {
 	@Test
 	@DisplayName("Answer 수정 테스트")
 	void update() {
-		Answer expected = A1;
-		Answer saved = answers.save(expected);
+		Answer answer = A1;
+		Answer saved = answers.save(answer);
 		Answer actual = answers.findByIdAndDeletedFalse(saved.getId()).get();
 		Date updateAt = new Date();
 
@@ -60,11 +60,12 @@ public class AnswerRepositoryTest {
 	@Test
 	@DisplayName("Answer 삭제 테스트")
 	void delete() {
-		Answer expected = A1;
-		Answer saved = answers.save(expected);
+		Answer answer = A1;
+		Answer saved = answers.save(answer);
+		long savedId = saved.getId();
 		answers.delete(saved);
 		answers.flush();
-		assertThat(answers.findByIdAndDeletedFalse(expected.getId()).isPresent()).isFalse();
+		assertThat(answers.findByIdAndDeletedFalse(savedId).isPresent()).isFalse();
 	}
 
 }
