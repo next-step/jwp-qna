@@ -22,23 +22,27 @@ class AnswerRepositoryTest {
     private AnswerRepository answerRepository;
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
 
+    User user;
     Question savedQuestion;
     Answer answer;
     Answer savedAnswer;
 
     @BeforeEach
     void setUp() {
-        savedQuestion = questionRepository.save(QuestionTest.Q1);
-
-        answer = new Answer(UserTest.JAVAJIGI, savedQuestion, "답변1");
+        user = userRepository.save(new User("hjjang", "password", "hyungju", "dacapolife87@gmail.com"));
+        Question question = new Question("질문타이틀", "질문내용입니다").writeBy(user);
+        savedQuestion = questionRepository.save(question);
+        answer = new Answer(user, savedQuestion, "답변1");
         savedAnswer = answerRepository.save(answer);
     }
 
     @DisplayName("DB에 저장된 Entity와 저장하기전 Entity가 동일한지 확인")
     @Test
     void insertTest() {
-        Answer answer = new Answer(UserTest.JAVAJIGI, savedQuestion, "답변내용");
+        Answer answer = new Answer(user, savedQuestion, "답변내용");
         Answer savedAnswer = answerRepository.save(answer);
 
         assertThat(savedAnswer).isEqualTo(answer);
