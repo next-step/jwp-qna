@@ -1,10 +1,12 @@
 package qna.domain;
 
-import static java.time.LocalDateTime.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,9 @@ class AnswerRepositoryTest {
 	@Autowired
 	private AnswerRepository answers;
 
+	@Autowired
+	private EntityManager entityManager;
+
 	private Answer answer;
 
 	private User user;
@@ -29,6 +34,8 @@ class AnswerRepositoryTest {
 	void setup() {
 		user = new User("testUser", "password", "name", "test@test.net");
 		question = new Question("title1", "contents1").writeBy(user);
+		entityManager.persist(user);
+		entityManager.persist(question);
 		answer = answers.save(new Answer(user, question, "Answers Contents1"));
 	}
 
