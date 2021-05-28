@@ -12,7 +12,15 @@ repositories {
 	mavenCentral()
 }
 
+def versions = [
+		lombok : '1.16.20'
+]
+
 dependencies {
+	//lombok
+	compileOnly "org.projectlombok:lombok:${versions.lombok}"
+	annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+	
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
