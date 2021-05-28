@@ -22,9 +22,7 @@ class DeletionTest {
     void 미삭제_상태일경우_삭제가_가능하다() {
         Deletion deletion = new Deletion();
 
-        assertAll(
-                () -> assertDoesNotThrow(() -> deletion.delete()),
-                () -> assertThat(deletion.isDeleted()).isTrue()
-        );
+        Deletion deleted = assertDoesNotThrow(() -> deletion.delete());
+        assertThat(deleted.isDeleted()).isTrue();
     }
 }

@@ -16,11 +16,12 @@ public class Deletion {
         this.deleted = deleted;
     }
 
-    public void delete() {
+    public Deletion delete() {
         if(isDeleted()) {
             throw new IllegalStateException("이미 삭제가 되어있습니다.");
         }
-        deleted = true;
+
+        return new Deletion(true);
     }
 
     public boolean isDeleted() {
