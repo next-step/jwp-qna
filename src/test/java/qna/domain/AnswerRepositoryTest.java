@@ -65,7 +65,7 @@ class AnswerRepositoryTest {
 	void insertTest() {
 		assertAll(
 			() -> assertThat(answer.getId()).isNotNull(),
-			() -> assertThat(answer.isCreatedBefore(now())).isTrue()
+			() -> assertThat(answer.hasCreatedAt()).isTrue()
 		);
 	}
 
@@ -77,7 +77,7 @@ class AnswerRepositoryTest {
 
 		assertAll(
 			() -> assertThat(answer.getContents()).isEqualTo(contents),
-			() -> assertThat(answer.isUpdatedBefore(now())).isTrue()
+			() -> assertThat(answer.hasUpdateDatedAt()).isTrue()
 		);
 	}
 }

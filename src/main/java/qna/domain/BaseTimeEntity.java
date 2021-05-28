@@ -21,14 +21,11 @@ public abstract class BaseTimeEntity {
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
 
-	protected boolean isCreatedBefore(LocalDateTime localDateTime) {
-		return createdAt.isBefore(localDateTime);
+	protected boolean hasCreatedAt() {
+		return createdAt != null;
 	}
 
-	protected boolean isUpdatedBefore(LocalDateTime localDateTime) {
-		if (updatedAt == null) {
-			return false;
-		}
-		return updatedAt.isBefore(localDateTime);
+	protected boolean hasUpdateDatedAt() {
+		return updatedAt != null;
 	}
 }
