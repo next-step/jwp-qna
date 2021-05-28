@@ -32,7 +32,7 @@ public class AnswerRepositoryTest {
 		Answer actual = answers.findByIdAndDeletedFalse(saved.getId()).get();
 		assertAll(
 			() -> assertThat(actual).isNotNull(),
-			() -> assertThat(actual.getWriterId()).isEqualTo(answer.getId()),
+			() -> assertThat(actual.getWriterId()).isEqualTo(answer.getWriterId()),
 			() -> assertThat(actual.getContents()).isEqualTo(answer.getContents()),
 			() -> assertThat(actual.isDeleted()).isEqualTo(false),
 			() -> assertThat(actual.getCreateAt()).isNotNull()
