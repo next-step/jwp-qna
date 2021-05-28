@@ -47,9 +47,9 @@ public class QuestionTest {
         Question givenQuestion = new Question("title1", "contents1");
 
         // when
-        givenQuestion.writeBy(UserTest.JAVAJIGI);
+        Question question = givenQuestion.writeBy(UserTest.JAVAJIGI);
 
         // then
-        assertThat(givenQuestion.getWriterId()).isEqualTo(1L);
+        assertThat(question.getWriter()).isNotNull();
     }
 }

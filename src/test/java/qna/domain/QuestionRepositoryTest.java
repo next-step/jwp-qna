@@ -15,6 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class QuestionRepositoryTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    private Question question1 = new Question("title1", "content1");
+    private Question question2 = new Question("title2", "content2");
+    private User user1 = new User("user1", "password", "user1", "user1@test.com");
+    private User user2 = new User("user2", "password", "user2", "user2@test.com");
 
     @Nested
     @DisplayName("save 메서드는")
@@ -23,15 +27,15 @@ class QuestionRepositoryTest {
         @Nested
         @DisplayName("질문 정보가 주어지면")
         class Context_with_question_data extends JpaTest {
-            final Question expected = Q1;
+            final Question expected = question1.writeBy(user1);
 
             @Test
             @DisplayName("질문 정보를 저장하고, 질문 객체를 리턴한다")
             void it_saves_question_and_returns_question() {
                 Question actual = getQuestionRepository().save(expected);
 
-                assertThat(actual).extracting("title").isEqualTo(Q1.getTitle());
-                assertThat(actual).extracting("contents").isEqualTo(Q1.getContents());
+                assertThat(actual).extracting("title").isEqualTo(question1.getTitle());
+                assertThat(actual).extracting("contents").isEqualTo(question1.getContents());
             }
         }
     }
@@ -47,9 +51,9 @@ class QuestionRepositoryTest {
 
             @BeforeEach
             void setUp() {
-                question = getQuestionRepository().save(Q1);
-                question.setDeleted(true);
-                getQuestionRepository().save(Q2);
+                question = getQuestionRepository().save(question1);
+                question.delete();
+                getQuestionRepository().save(question2);
             }
 
             @Test
@@ -77,7 +81,7 @@ class QuestionRepositoryTest {
 
             @BeforeEach
             void setUp() {
-                givenQuestion = getQuestionRepository().save(Q1);
+                givenQuestion = getQuestionRepository().save(question1);
             }
 
             @Test
