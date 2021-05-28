@@ -6,9 +6,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 @Embeddable
 public class Answers {
@@ -32,8 +33,8 @@ public class Answers {
         return new DeleteHistories(deleteHistories);
     }
 
-    public List<Answer> toCollection() {
-        return Collections.unmodifiableList(answers);
+    public <R> Stream<R> map(Function<? super Answer, ? extends R> mapper) {
+        return this.answers.stream().map(mapper);
     }
 
     @Override

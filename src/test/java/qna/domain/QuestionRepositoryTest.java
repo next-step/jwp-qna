@@ -120,8 +120,11 @@ class QuestionRepositoryTest {
                 .map(item -> item.getId())
                 .collect(Collectors.toList());
 
-        assertThat(foundQuestion.getAnswers().toCollection())
+        List<Long> answersIdInQuestion = foundQuestion.getAnswers()
                 .map(item -> item.getId())
+                .collect(Collectors.toList());
+
+        assertThat(answersIdInQuestion)
                 .containsExactlyInAnyOrderElementsOf(answersId);
     }
 }
