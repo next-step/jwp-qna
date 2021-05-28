@@ -32,7 +32,7 @@
   
 - [X] DeleteHistory 일급컬렉션으로 변경
 - [X] 원시값 포장
-  - [X] id -> IdentityLongId
+  - [X] id -> IdentityLongId -> https://www.icatpark.com/entry/jpa-%EB%B3%B5%ED%95%A9%ED%82%A4%EC%97%90%EC%84%9C-auto-increment로 제거
   - [X] title -> Title
   - [X] contents -> BigContents
   - [X] delete -> Deletion
@@ -41,7 +41,6 @@
   - [X] name -> Name
   - [X] email -> Email
 - [ ] 원시값 포장 Entity에 추가
-  - [ ] IdentityLongId
   - [ ] Title
   - [ ] BigContents
   - [ ] Deletion
