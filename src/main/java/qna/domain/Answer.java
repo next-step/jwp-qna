@@ -37,8 +37,8 @@ public class Answer {
 	@Column
 	private Date updateAt;
 
-	public Answer() {
-		
+	protected Answer() {
+
 	}
 
 	public Answer(User writer, Question question, String contents) {

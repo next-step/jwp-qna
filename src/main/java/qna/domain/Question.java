@@ -29,6 +29,10 @@ public class Question {
     @Column
     private Date updateAt;
 
+    protected Question() {
+
+	}
+
 	public Question(String title, String contents) {
 		this(null, title, contents);
 	}

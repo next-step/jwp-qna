@@ -42,7 +42,7 @@ public class User {
     @Column
     private Date updateAt;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
