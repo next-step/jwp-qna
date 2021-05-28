@@ -1,19 +1,36 @@
 package qna.domain;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class User {
+@Table(name = "user", uniqueConstraints = {@UniqueConstraint(
+        columnNames = {"user_id"} )})
+@EntityListeners(AuditingEntityListener.class)
+@Entity
+public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "user_id", length = 20, nullable = false)
     private String userId;
+
+    @Column(name = "password", length = 20, nullable = false)
     private String password;
+
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
+
+    @Column(name = "email", length = 50)
     private String email;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -118,5 +135,18 @@ public class User {
         public boolean isGuestUser() {
             return true;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(userId, user.userId) && Objects.equals(password, user.password) && Objects.equals(name, user.name) && Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email);
     }
 }

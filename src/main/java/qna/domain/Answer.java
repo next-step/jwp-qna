@@ -1,16 +1,37 @@
 package qna.domain;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Answer {
+@Table(name = "answer")
+@EntityListeners(AuditingEntityListener.class)
+@Entity
+public class Answer extends BaseTimeEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "question_id")
     private Long questionId;
+
+    @Lob
+    @Column(name = "contents")
     private String contents;
+
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
