@@ -18,7 +18,7 @@ class UserIdTest {
 
     @Test
     @DisplayName("유저Id가 20글자 초과시 IllegalArguementException이 발생한다")
-    void 유저Id가_100글자_초과시_IllegalArgumentException이_발생한다() {
+    void 유저Id가_20글자_초과시_IllegalArgumentException이_발생한다() {
         String title = IntStream.range(0, 21)
                 .mapToObj((i) -> "0")
                 .reduce("", (before, str) -> before + str);
