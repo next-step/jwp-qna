@@ -32,7 +32,7 @@
   
 - [X] DeleteHistory 일급컬렉션으로 변경
 - [ ] 원시값 포장
-  - [ ] id -> PositiveNumber
+  - [X] id -> PositiveNumber
   - [X] title -> Title
   - [ ] contents -> BigContents
   - [ ] delete -> Deletion
