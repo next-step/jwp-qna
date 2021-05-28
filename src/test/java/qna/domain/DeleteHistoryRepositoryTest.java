@@ -12,8 +12,10 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DeleteHistoryRepositoryTest {
+    private User user1 = new User("tester", "password", "tester", "test@test.com");
+
     private DeleteHistory deleteHistory1 = new DeleteHistory(
-            ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+            ContentType.QUESTION, 1L, user1, LocalDateTime.now());
 
     @Nested
     @DisplayName("save 메서드는")
