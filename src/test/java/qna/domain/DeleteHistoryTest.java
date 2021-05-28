@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 
@@ -18,14 +17,18 @@ public class DeleteHistoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @AfterEach
-    void clear() {
+    void deleteAll() {
         deleteHistoryRepository.deleteAll();
     }
 
     @Test
     void save() {
-        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, 1L, 2L, LocalDateTime.now());
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, 1L, user, LocalDateTime.now());
         DeleteHistory actual = deleteHistoryRepository.save(expected);
 
         assertThat(expected).isEqualTo(actual);
