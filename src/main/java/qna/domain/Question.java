@@ -5,6 +5,7 @@ import qna.domain.base.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,7 +32,7 @@ public class Question extends BaseEntity {
     @Column(name = "contents")
     private String contents;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "write_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
