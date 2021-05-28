@@ -37,6 +37,6 @@
   - [ ] contents -> BigContents
   - [ ] delete -> Deletion
   - [X] userId -> UserId
-  - [ ] password -> Password
+  - [X] password -> Password
   - [ ] name -> Name
   - [ ] email -> Email
