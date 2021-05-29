@@ -1,16 +1,34 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
 
-public class Answer {
+import javax.persistence.*;
+
+import qna.exceptions.NotFoundException;
+import qna.exceptions.UnAuthorizedException;
+
+@Table
+@Entity
+public class Answer extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
     private Long writerId;
+
+    @Column
     private Long questionId;
+
+    @Lob
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -82,12 +100,14 @@ public class Answer {
 
     @Override
     public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+        return "Answer{"
+            + "id=" + id
+            + ", writerId=" + writerId
+            + ", questionId=" + questionId
+            + ", contents='" + contents + '\''
+            + ", deleted=" + deleted
+            + ", createdAt=" + getCreatedAt()
+            + ", updatedAt=" + getUpdatedAt()
+            + '}';
     }
 }
