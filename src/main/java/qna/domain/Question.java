@@ -1,12 +1,18 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class Question extends BaseTimeEntity {
 
     @Id
+    @Column(name = "question_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -19,6 +25,9 @@ public class Question extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -47,6 +56,43 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        validateUserForDelete(loginUser);
+
+        DeleteHistories deleteHistories = new DeleteHistories();
+        this.setDeleted(true);
+
+        deleteHistories.add(this.deleteHistory());
+
+        Answers answers = new Answers(this.answers);
+        deleteHistories.addAll(answers.deleteAllHistory());
+
+        return deleteHistories;
+    }
+
+    protected DeleteHistory deleteHistory() {
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+    }
+
+    private void validateUserForDelete(User loginUser) throws CannotDeleteException {
+         validateQuestionProprietary(loginUser);
+         validateAnswersProprietary(loginUser);
+    }
+
+    protected void validateQuestionProprietary(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    protected void validateAnswersProprietary(User loginUser) throws CannotDeleteException {
+        for (Answer answer : answers) {
+            if (!answer.isOwner(loginUser)) {
+                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            }
+        }
+    }
+
     public Question writtenBy(User writer) {
         this.writer = writer;
         return this;
@@ -57,11 +103,18 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
+        if (!answers.contains(answer)) {
+            answers.add(answer);
+        }
         answer.toQuestion(this);
     }
 
     public void setWriter(User user) {
         this.writer = user;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public Long getId() {

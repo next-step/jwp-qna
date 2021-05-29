@@ -6,12 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -41,6 +44,40 @@ public class QuestionTest {
     @AfterEach
     void deleteAll() {
         questionRepository.deleteAll();
+    }
+
+    @Test
+    void deleteHistory_Test() {
+        DeleteHistory deleteHistory = question.deleteHistory();
+
+        assertAll(
+                () -> assertThat(deleteHistory.getContentType().equals(question.getContents())),
+                () -> assertThat(deleteHistory.getContentId().equals(question.getId())),
+                () -> assertThat(deleteHistory.getUser().equals(question.getWriter())),
+                () -> assertThat(deleteHistory.getCreateDate()).isBefore(LocalDateTime.now())
+        );
+    }
+
+    @Test
+    void question_삭제하려는_유저의_유효성_성공_Test() throws CannotDeleteException {
+        question.validateQuestionProprietary(user);
+    }
+
+    @Test
+    void question_삭제하려는_유저의_question_작성자_유효성_실패_Test() throws CannotDeleteException {
+        assertThatThrownBy(() ->
+                question.validateQuestionProprietary(UserTest.SANJIGI)
+        ).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void question_삭제하려는_유저의_answer_작성자_유효성_실패_Test() {
+        Answer answer = answerRepository.save(new Answer(userRepository.save(UserTest.SANJIGI), question, "contents"));
+        question.addAnswer(answer);
+
+        assertThatThrownBy(() ->
+                question.validateAnswersProprietary(user)
+        ).isInstanceOf(CannotDeleteException.class);
     }
 
     @Test

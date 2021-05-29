@@ -31,15 +31,27 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    public Long getId() {
+    protected Long getId() {
         return id;
     }
 
-    public void setContentType(ContentType contentType) {
+    protected User getUser() {
+        return user;
+    }
+
+    protected LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
+    protected Long getContentId() {
+        return contentId;
+    }
+
+    protected void setContentType(ContentType contentType) {
         this.contentType = contentType;
     }
 
-    public ContentType getContentType() {
+    protected ContentType getContentType() {
         return this.contentType;
     }
 
