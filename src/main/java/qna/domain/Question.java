@@ -60,9 +60,9 @@ public class Question extends BaseTimeEntity {
         validateUserForDelete(loginUser);
 
         DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.add(this.deleteAndHistory());
-
         Answers answers = new Answers(this.answers);
+
+        deleteHistories.add(this.deleteAndHistory());
         deleteHistories.addAll(answers.deleteAllAndHistory());
 
         return deleteHistories;
