@@ -72,8 +72,20 @@ public class Answer extends BaseEntity {
         return writer;
     }
 
+    public Question getQuestion() {
+        return question;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
     }
 
     public void setDeleted(boolean deleted) {
