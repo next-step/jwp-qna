@@ -3,10 +3,13 @@ package qna.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -26,8 +29,9 @@ public class Question extends BaseTimeEntity{
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
@@ -46,12 +50,12 @@ public class Question extends BaseTimeEntity{
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -62,36 +66,36 @@ public class Question extends BaseTimeEntity{
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public void setDeleted(boolean deleted) {
@@ -101,11 +105,11 @@ public class Question extends BaseTimeEntity{
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", contents='" + contents + '\'' +
+            ", title='" + title + '\'' +
+            ", writer=" + writer +
+            ", deleted=" + deleted +
+            '}';
     }
 }
