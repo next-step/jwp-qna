@@ -82,6 +82,10 @@ public class User {
         return id;
     }
 
+    public void modifyName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "User{" +
