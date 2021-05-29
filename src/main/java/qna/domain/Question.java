@@ -1,11 +1,43 @@
 package qna.domain;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Table(name = "question")
+@Entity
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Lob
     private String contents;
-    private Long writerId;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column(length = 100, nullable = false)
+    private String title;
+
+    private LocalDateTime updatedAt;
+
+    private Long writerId;
+
+    protected Question() {
+        //JPA need no-arg constructor
+    }
+
+    public Question(String contents, LocalDateTime createdAt, boolean deleted, String title, LocalDateTime updatedAt, Long writerId) {
+        this.contents = contents;
+        this.createdAt = createdAt;
+        this.deleted = deleted;
+        this.title = title;
+        this.updatedAt = updatedAt;
+        this.writerId = writerId;
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);

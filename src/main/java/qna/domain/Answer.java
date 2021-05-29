@@ -3,14 +3,44 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Table(name = "answer")
+@Entity
 public class Answer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+
+    @Lob
     private String contents;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    private Long questionId;
+
+    private LocalDateTime updatedAt;
+
+    private Long writerId;
+
+    protected Answer() {
+        //JPA need no-arg constructor
+    }
+
+    public Answer(String contents, LocalDateTime createdAt, boolean deleted, Long questionId, LocalDateTime updatedAt, Long writerId) {
+        this.contents = contents;
+        this.createdAt = createdAt;
+        this.deleted = deleted;
+        this.questionId = questionId;
+        this.updatedAt = updatedAt;
+        this.writerId = writerId;
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
