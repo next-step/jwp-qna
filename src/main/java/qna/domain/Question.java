@@ -105,7 +105,7 @@ public class Question extends BaseEntity implements Serializable {
         return delete();
     }
 
-    public List<DeleteHistory> delete() {
+    private List<DeleteHistory> delete() {
 
         this.deleted = true;
         LocalDateTime deleteTime = LocalDateTime.now();

@@ -93,13 +93,16 @@ class QnAServiceTest {
     }
 
     @Test
-    public void delete_이미_삭제된_질문() {
+    public void delete_이미_삭제된_질문() throws CannotDeleteException {
 
         Question deletedQuestion = new Question(2L, "title", "contents").writeBy(loginUser);
-        deletedQuestion.delete();
+        deletedQuestion.delete(loginUser);
 
         when(questionRepository.findById(eq(deletedQuestion.getId())))
             .thenReturn(Optional.of(deletedQuestion));
+
+        when(userRepository.findById(eq(loginUser.getId())))
+            .thenReturn(Optional.of(loginUser));
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(loginUser.getId(), deletedQuestion.getId()))
             .isInstanceOf(CannotDeleteException.class)

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
+import org.hibernate.annotations.Where;
 
 import static java.util.stream.Collectors.toList;
 
@@ -13,6 +14,7 @@ import static java.util.stream.Collectors.toList;
 public class Answers {
 
     @OneToMany(mappedBy = "question")
+    @Where(clause = "deleted = 0")
     private final Set<Answer> answers = new HashSet<>();
 
     public Set<Answer> getAnswers() {
