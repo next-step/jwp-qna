@@ -22,7 +22,7 @@ class AnswerRepositoryTest {
 
 	@Test
 	@DisplayName("save 테스트")
-	void saveTest(){
+	void saveTest() {
 		// when
 		Answer answerA1 = answers.save(A1);
 
@@ -36,19 +36,21 @@ class AnswerRepositoryTest {
 
 	@Test
 	@DisplayName("findById test")
-	void findByIdTest(){
+	void findByIdTest() {
 		// given
 		Answer answerA1 = answers.save(A1);
 
 		// when
-		assertThatCode(() -> answers.findById(answerA1.getId())
-								   .orElseThrow(()-> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
-			.doesNotThrowAnyException(); // then
+		assertThat(answers.findById(answerA1.getId())
+						  .orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
+			.isNotNull()
+			.isSameAs(answerA1); // then
+
 	}
 
 	@Test
 	@DisplayName("존재하지 않는 PK로 findById test")
-	void findByIdTestWithNull(){
+	void findByIdTestWithNull() {
 		assertThatThrownBy(() -> answers.findById(0L).orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
 			.isInstanceOf(NullPointerException.class)
 			.hasMessageContaining(EMPTY_ENTITY_MESSAGE);
@@ -71,19 +73,20 @@ class AnswerRepositoryTest {
 
 	@Test
 	@DisplayName("PK로 deleted 컬럼이 false인 Answer 확인")
-	void findByIdAndDeletedFalseTest(){
+	void findByIdAndDeletedFalseTest() {
 		// given
 		Answer answerA1 = answers.save(A1);
 
 		// when
-		assertThatCode(() -> assertThat(answers.findByIdAndDeletedFalse(answerA1.getId())
-											   .orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE))))
-			.doesNotThrowAnyException(); // then
+		assertThat(answers.findByIdAndDeletedFalse(answerA1.getId())
+						  .orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
+			.isNotNull() // then
+			.isSameAs(answerA1);
 	}
 
 	@Test
 	@DisplayName("PK로 deleted 컬럼이 true Answer 확인")
-	void findByIdAndDeletedFalseTestWithDeletedTrueEntity(){
+	void findByIdAndDeletedFalseTestWithDeletedTrueEntity() {
 		// given
 		answers.save(A1);
 

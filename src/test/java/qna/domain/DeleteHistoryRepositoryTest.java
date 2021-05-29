@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -23,7 +22,7 @@ class DeleteHistoryRepositoryTest {
 
 	@Test
 	@DisplayName("save test")
-	void saveTest(){
+	void saveTest() {
 		// given
 		DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 0l, 0l, LocalDateTime.now());
 
@@ -35,17 +34,15 @@ class DeleteHistoryRepositoryTest {
 
 	@Test
 	@DisplayName("findById test")
-	void findByIdTest(){
+	void findByIdTest() {
 		// given
 		DeleteHistory deleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, 0l, 0l, LocalDateTime.now()));
 
 		// when
-		assertThatCode(() ->
-						   assertThat(deleteHistoryRepository.findById(deleteHistory.getId())
-															 .orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
-							   .isNotNull()
-							   .isSameAs(deleteHistory))
-			.doesNotThrowAnyException();
+		assertThat(deleteHistoryRepository.findById(deleteHistory.getId())
+										  .orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
+			.isNotNull() // then
+			.isSameAs(deleteHistory);
 	}
 
 }
