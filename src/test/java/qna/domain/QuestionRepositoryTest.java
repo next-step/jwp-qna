@@ -34,7 +34,7 @@ public class QuestionRepositoryTest {
             () -> assertThat(savedQuestion.getId()).isNotNull(),
             () -> assertThat(savedQuestion.getTitle()).isEqualTo(QuestionTest.Q1.getTitle()),
             () -> assertThat(savedQuestion.getContents()).isEqualTo(QuestionTest.Q1.getContents()),
-            () -> assertThat(savedQuestion.getWriterId()).isEqualTo(QuestionTest.Q1.getWriterId())
+            () -> assertThat(savedQuestion.getWriter()).isEqualTo(QuestionTest.Q1.getWriter())
         );
     }
 

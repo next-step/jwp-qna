@@ -21,8 +21,8 @@ public class AnswerTest {
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
         // when & then
         assertAll(
-            () -> assertThat(answer.getQuestionId()).isEqualTo(A1.getQuestionId()),
-            () -> assertThat(answer.getWriterId()).isEqualTo(A1.getWriterId()),
+            () -> assertThat(answer.getQuestion()).isEqualTo(A1.getQuestion()),
+            () -> assertThat(answer.getWriter()).isEqualTo(A1.getWriter()),
             () -> assertThat(answer.getContents()).isEqualTo(A1.getContents())
         );
     }

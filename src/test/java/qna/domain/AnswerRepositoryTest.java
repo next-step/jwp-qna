@@ -33,8 +33,8 @@ public class AnswerRepositoryTest {
         // given & when & then
         assertAll(
             () -> assertThat(savedAnswer.getId()).isNotNull(),
-            () -> assertThat(savedAnswer.getWriterId()).isEqualTo(AnswerTest.A1.getWriterId()),
-            () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
+            () -> assertThat(savedAnswer.getWriter()).isEqualTo(AnswerTest.A1.getWriter()),
+            () -> assertThat(savedAnswer.getQuestion()).isEqualTo(QuestionTest.Q1),
             () -> assertThat(savedAnswer.getContents()).isEqualTo(AnswerTest.A1.getContents())
         );
     }
@@ -105,7 +105,7 @@ public class AnswerRepositoryTest {
     @DisplayName("실제 삭제가 아닌 경우, 질문 ID로 조회 테스트")
     void findByQuestionIdAndDeletedFalse() {
         // given & when
-        List<Answer> actualList = answers.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestionId());
+        List<Answer> actualList = answers.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestion().getId());
         // then
         assertThat(actualList).containsExactly(savedAnswer);
     }
@@ -116,7 +116,7 @@ public class AnswerRepositoryTest {
         // given & when
         savedAnswer.setDeleted(true);
         answers.flush();
-        List<Answer> actualList = answers.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestionId());
+        List<Answer> actualList = answers.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestion().getId());
         // then
         assertThat(actualList).isEmpty();
     }
