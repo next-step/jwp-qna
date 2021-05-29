@@ -30,6 +30,9 @@ public class Answer extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    protected Answer() {
+    }
+
     public Answer(final User writer, final Question question, final String contents) {
         this(null, writer, question, contents);
     }
@@ -96,6 +99,25 @@ public class Answer extends BaseEntity {
 
     public void setDeleted(final boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Answer answer = (Answer)o;
+        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writerId,
+            answer.writerId) && Objects.equals(questionId, answer.questionId) && Objects.equals(
+            contents, answer.contents);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, writerId, questionId, contents, deleted);
     }
 
     @Override
