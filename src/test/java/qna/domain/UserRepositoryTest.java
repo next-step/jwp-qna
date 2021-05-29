@@ -30,6 +30,18 @@ class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("이름 변경 시 updatedAt 컬럼 업데이트 확인")
+    void modifyName() {
+        // given
+        User user1 = new User("USER1", "123456", "LDS", "lds@test.com");
+
+        // when then
+        User actual = users.save(user1);
+        actual.modifyName("LJS");
+        users.flush();
+    }
+
+    @Test
     @DisplayName("변경감지 실습 - 원래의 이름으로 다시 세팅 시, 업데이트 쿼리를 실행하지 않음")
     void study_dirtyCheck() {
         // given
