@@ -1,11 +1,11 @@
 package qna.domain;
 
-import static java.time.LocalDateTime.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static qna.domain.QuestionTest.*;
 
 import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,12 +21,22 @@ class AnswerRepositoryTest {
 	@Autowired
 	private AnswerRepository answers;
 
+	@Autowired
+	private EntityManager entityManager;
+
 	private Answer answer;
+
+	private User user;
+
+	private Question question;
 
 	@BeforeEach
 	void setup() {
-		answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-		answer = answers.save(answer);
+		user = new User("testUser", "password", "name", "test@test.net");
+		question = new Question("title1", "contents1").writeBy(user);
+		entityManager.persist(user);
+		entityManager.persist(question);
+		answer = answers.save(new Answer(user, question, "Answers Contents1"));
 	}
 
 	@Test
@@ -46,10 +56,10 @@ class AnswerRepositoryTest {
 	@Test
 	@DisplayName("questionId 로 삭제되지 않은 answer 리스트를 가지고 올 수 있다.")
 	void findByQuestionIdAndDeletedFalse() {
-		Answer otherAnswer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents2");
+		Answer otherAnswer = new Answer(user, question, "Answers Contents2");
 		answers.save(otherAnswer);
 
-		List<Answer> answersByQuestion = answers.findByQuestionIdAndDeletedFalse(Q1.getId());
+		List<Answer> answersByQuestion = answers.findByQuestionIdAndDeletedFalse(question.getId());
 
 		assertAll(
 			() -> assertThat(answersByQuestion).hasSize(2),
@@ -62,7 +72,7 @@ class AnswerRepositoryTest {
 	void insertTest() {
 		assertAll(
 			() -> assertThat(answer.getId()).isNotNull(),
-			() -> assertThat(answer.isCreatedBefore(now())).isTrue()
+			() -> assertThat(answer.hasCreatedAt()).isTrue()
 		);
 	}
 
@@ -74,7 +84,7 @@ class AnswerRepositoryTest {
 
 		assertAll(
 			() -> assertThat(answer.getContents()).isEqualTo(contents),
-			() -> assertThat(answer.isUpdatedBefore(now())).isTrue()
+			() -> assertThat(answer.hasUpdateDatedAt()).isTrue()
 		);
 	}
 }
