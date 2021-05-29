@@ -60,17 +60,26 @@ public class UserRepositoryTest {
                 .isBefore(LocalDateTime.now());
     }
 
-    @DisplayName("동일한 user_id로 생성하려는 경우, exception이 발생한다 -> 발생 안함")
+    @DisplayName("id를 통해 user 객체를 조회하는지 확인한다")
+    @Test
+    void check_findByIdAndDeletedFalse() {
+        //Then
+        User user = userRepository.findById(expected.getId())
+                .orElseThrow(() -> new IllegalArgumentException());
+
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isEqualTo(expected.getId());
+        assertThat(user.getUserId()).isEqualTo(expected.getUserId());
+    }
+
+    @DisplayName("동일한 user_id로 생성하려는 경우, exception이 발생한다")
     @Test
     void check_unique_constraints() {
         //Given
-        //em.flush();
-        userRepository.flush();
-
-        User newUser = new User(3L, "javajigi", "password", "name", "pythonjigi@slipp.net");
-        //User newUser = new User("javajigi", "password", "name", "pythonjigi@slipp.net");
+        User newUser = new User(99L,"javajigi", "password", "name", "pythonjigi@slipp.net");
 
         //When + Then
         assertThatThrownBy(() -> userRepository.save(newUser)).isInstanceOf(DataIntegrityViolationException.class);
     }
+
 }
