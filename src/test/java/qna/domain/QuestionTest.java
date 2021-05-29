@@ -2,16 +2,18 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
+    public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
+    public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(SANJIGI);
 
     @DisplayName("writeBy로 질문자 설정 가능")
     @Test
@@ -65,5 +67,36 @@ public class QuestionTest {
         assertThat(Q1.getAnswers()).hasSize(1)
                                    .contains(answer1)
                                    .doesNotContain(answer2);
+    }
+
+    @DisplayName("로그인 사용자와 질문한 사람이 다르면 질문 삭제 불가")
+    @Test
+    void deleteFailTest01() {
+        assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> Q1.delete(SANJIGI));
+    }
+
+    @DisplayName("답변자 중 질문자와 다른 사람이 1명이라도 존재하면 질문 삭제 불가")
+    @Test
+    void deleteFailTest02() {
+        Q1.addAnswer(new Answer(1L, JAVAJIGI, Q1, "answer1"));
+        Q1.addAnswer(new Answer(2L, SANJIGI, Q1, "answer2"));
+
+        assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> Q1.delete(JAVAJIGI));
+    }
+
+    @DisplayName("질문 삭제 성공 시 질문과 답변 모두 삭제")
+    @Test
+    void deleteSuccess() throws CannotDeleteException {
+        Answer answer1 = new Answer(1L, JAVAJIGI, Q1, "answer1");
+        Answer answer2 = new Answer(2L, JAVAJIGI, Q1, "answer2");
+
+        Q1.addAnswer(answer1);
+        Q1.addAnswer(answer2);
+
+        Q1.delete(JAVAJIGI);
+        assertThat(Q1.getAnswers()).hasSize(0);
+        assertThat(Q1.isDeleted()).isTrue();
+        assertThat(answer1.isDeleted()).isTrue();
+        assertThat(answer2.isDeleted()).isTrue();
     }
 }

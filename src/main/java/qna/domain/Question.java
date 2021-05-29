@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity implements Serializable {
@@ -105,6 +106,35 @@ public class Question extends BaseEntity implements Serializable {
 
     public void delete() {
         this.deleted = true;
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        verifyDeletePermission(loginUser);
+        verifyHasOtherUserAnswer();
+        delete();
+        deleteAnswers();
+    }
+
+    private void verifyDeletePermission(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private void verifyHasOtherUserAnswer() throws CannotDeleteException {
+        if (hasOtherUserAnswer()) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
+    private boolean hasOtherUserAnswer() {
+        return answers.stream()
+                      .anyMatch(answer -> !answer.isOwner(writer));
+    }
+
+    private void deleteAnswers() {
+        answers.forEach(Answer::delete);
+        answers.clear();
     }
 
     @Override
