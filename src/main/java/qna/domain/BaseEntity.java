@@ -4,18 +4,19 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @MappedSuperclass
-@EntityListeners(BaseEntityListener.class)
+@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
 
     @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @CreatedDate
     private Date createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedBy
     private Date updatedAt;
 
     public Date getCreatedAt() {
