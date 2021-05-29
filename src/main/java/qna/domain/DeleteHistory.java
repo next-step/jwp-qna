@@ -1,20 +1,57 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "delete_history")
 public class DeleteHistory {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
     private ContentType contentType;
+
     private Long contentId;
+
     private Long deletedById;
-    private LocalDateTime createDate = LocalDateTime.now();
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createDate;
+
+    protected DeleteHistory() {}
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
         this.createDate = createDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public Long getDeletedById() {
+        return deletedById;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
     }
 
     @Override
