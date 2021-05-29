@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,17 +20,14 @@ public class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    EntityManager em;
-
     private User expected;
 
     @BeforeEach
     void setUp() {
         //Given
         expected = userRepository.save(UserTest.JAVAJIGI);
+        System.out.println("BEFORE EACH의 expected = "+expected.toString());
     }
-
     @DisplayName("저장 후에 조회해서 가져온 객체가 동일한 객체인지 확인한다")
     @Test
     void check_same_instance() {
@@ -60,26 +58,28 @@ public class UserRepositoryTest {
                 .isBefore(LocalDateTime.now());
     }
 
-    @DisplayName("id를 통해 user 객체를 조회하는지 확인한다")
-    @Test
-    void check_findByIdAndDeletedFalse() {
-        //Then
-        User user = userRepository.findById(expected.getId())
-                .orElseThrow(() -> new IllegalArgumentException());
-
-        assertThat(user).isNotNull();
-        assertThat(user.getId()).isEqualTo(expected.getId());
-        assertThat(user.getUserId()).isEqualTo(expected.getUserId());
-    }
-
     @DisplayName("동일한 user_id로 생성하려는 경우, exception이 발생한다")
     @Test
     void check_unique_constraints() {
         //Given
-        User newUser = new User(99L,"javajigi", "password", "name", "pythonjigi@slipp.net");
+        User newUser = new User(3L,"javajigi", "password", "name", "pythonjigi@slipp.net");
 
         //When + Then
-        assertThatThrownBy(() -> userRepository.save(newUser)).isInstanceOf(DataIntegrityViolationException.class);
+        userRepository.save(newUser);
+//        assertThatThrownBy(() -> userRepository.save(newUser)).isInstanceOf(DataIntegrityViolationException.class);
     }
 
+// 질문을 위해 우선 주석처리
+//    @DisplayName("id를 통해 user 객체를 조회하는지 확인한다")
+//    @Test
+//    void check_findByIdAndDeletedFalse() {
+//        //Then
+//        User user = userRepository.findById(expected.getId())
+//                .orElseThrow(() -> new IllegalArgumentException());
+//
+//        assertThat(user).isNotNull();
+//        assertThat(user.getId()).isEqualTo(expected.getId());
+//        assertThat(user.getUserId()).isEqualTo(expected.getUserId());
+//    }
+// 질문을 위해 우선 주석처리
 }
