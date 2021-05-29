@@ -63,4 +63,8 @@ public class DeleteHistory {
                 ", createDate=" + createDate +
                 '}';
     }
+
+    public Long getId() {
+        return this.id;
+    }
 }
