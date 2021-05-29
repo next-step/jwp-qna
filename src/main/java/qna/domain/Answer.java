@@ -16,11 +16,11 @@ public class Answer extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "writer_id")
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"), name = "writer_id")
     private User writer;
 
     @ManyToOne
-    @JoinColumn(name = "question_id")
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"), name = "question_id")
     private Question question;
 
     @Lob

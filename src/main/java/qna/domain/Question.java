@@ -21,7 +21,7 @@ public class Question extends BaseTimeEntity {
     private String contents;
 
     @ManyToOne
-    @JoinColumn(name = "writer_id")
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"), name = "writer_id")
     private User writer;
 
     @Column(name = "deleted", nullable = false)
@@ -94,6 +94,10 @@ public class Question extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override

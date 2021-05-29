@@ -20,7 +20,7 @@ public class DeleteHistory {
     private Long contentId;
 
     @ManyToOne
-    @JoinColumn(name = "deleted_by_id")
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_delete_history_to_user"), name = "deleted_by_id")
     private User user;
 
     @Column(name = "create_date")
