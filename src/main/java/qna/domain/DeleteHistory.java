@@ -3,7 +3,6 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -14,19 +13,18 @@ import javax.persistence.Id;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
-public class DeleteHistory {
+public class DeleteHistory extends BaseEntity {
 
-    @Column(length = 255)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Enumerated(EnumType.STRING)
     private final ContentType contentType;
 
     private final Long contentId;
 
     private final Long deletedById;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @CreatedDate
     private final LocalDateTime createDate;
