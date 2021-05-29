@@ -4,8 +4,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 class UserRepositoryTest {
@@ -51,5 +53,18 @@ class UserRepositoryTest {
 
         // then
         assertThat(actual).isSameAs(user1);
+    }
+
+    @Test
+    @DisplayName("유저명은 20자 이하여야 함")
+    void userNameLength() {
+        // given
+        User user = new User("USER1", "123456", "123456789012345678901", "lds@test.com");
+
+        // when then
+        assertThatThrownBy(
+                () -> users.save(user)
+        ).isInstanceOf(DataIntegrityViolationException.class);
+
     }
 }
