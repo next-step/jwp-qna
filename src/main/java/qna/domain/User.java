@@ -4,17 +4,36 @@ import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
-public class User {
-    public static final GuestUser GUEST_USER = new GuestUser();
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-    private Long id;
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
+@Entity
+@Table(name = "user")
+public class User extends BaseEntity {
+	public static final GuestUser GUEST_USER = new GuestUser();
 
-    private User() {
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@Column(name = "user_id", nullable = false, length = 20, unique = true)
+	private String userId;
+
+	@Column(name = "password", nullable = false, length = 20)
+	private String password;
+
+	@Column(name = "name", nullable = false, length = 20)
+	private String name;
+
+	@Column(name = "email", nullable = false, length = 50)
+	private String email;
+
+	protected User() {
+	}
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
