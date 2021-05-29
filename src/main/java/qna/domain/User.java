@@ -1,13 +1,16 @@
 package qna.domain;
 
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import qna.UnAuthorizedException;
 
-import javax.persistence.*;
-import java.util.Date;
-import java.util.Objects;
-
 @Entity
-public class User {
+public class User extends BaseEntity {
+
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -25,13 +28,6 @@ public class User {
 
     @Column(length = 50)
     private String email;
-
-    @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
 
     public User() {
     }

@@ -1,14 +1,17 @@
 package qna.domain;
 
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import javax.persistence.*;
-import java.util.Date;
-import java.util.Objects;
-
 @Entity
-public class Answer {
+public class Answer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +26,6 @@ public class Answer {
 
     @Column(nullable = false)
     private boolean deleted = false;
-
-    @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
