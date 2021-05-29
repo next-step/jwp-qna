@@ -11,10 +11,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-class AnswerRepositoryTest {
-
-    @Autowired
-    private AnswerRepository answerRepository;
+class QuestionRepositoryTest {
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -22,52 +19,51 @@ class AnswerRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    private Answer savedAnswer;
+    private Question savedQuestion;
 
     @BeforeEach
     void setUp() {
         User writer = userRepository.save(UserTest.JAVAJIGI);
-        Question question = questionRepository.save(new Question("title1", "contents1").writeBy(writer));
-        this.savedAnswer = answerRepository.save(new Answer(writer, question, "test"));
+        this.savedQuestion = questionRepository.save(new Question("title1", "contents1").writeBy(writer));
     }
 
     @DisplayName("save하면 pk가 존재한다")
     @Test
     void save() {
-        assertThat(savedAnswer.getId()).isNotNull();
+        assertThat(savedQuestion.getId()).isNotNull();
     }
 
     @DisplayName("동일성 확인")
     @Test
     void findById() {
         // given & when
-        Answer actual = answerRepository.findById(savedAnswer.getId()).get();
+        Question actual = questionRepository.findById(savedQuestion.getId()).get();
 
         // then
-        assertThat(savedAnswer).isSameAs(actual);
+        assertThat(savedQuestion).isSameAs(actual);
     }
 
-    @DisplayName("flush시 더티체킹을 통해 update쿼리 실행되고 contents가 업데이트 된다")
+    @DisplayName("update쿼리를 실행하면 contents가 업데이트 된다")
     @Test
     void update() {
         // given
         String newContents = "newTest";
 
         // when
-        savedAnswer.setContents(newContents);
-        answerRepository.flush();
-        Answer actual = answerRepository.findById(savedAnswer.getId()).get();
+        savedQuestion.setContents(newContents);
+        questionRepository.flush();
+        Question actual = questionRepository.findById(savedQuestion.getId()).get();
 
-        // when
+        // then
         assertThat(actual.getContents()).isEqualTo(newContents);
     }
 
-    @DisplayName("Answer를 삭제하고 조회하면 empty Optional이 반환된다")
+    @DisplayName("삭제하고 조회하면 empty Optional이 반환된다")
     @Test
     void delete() {
         // given & when
-        answerRepository.delete(savedAnswer);
-        Optional<Answer> actual = answerRepository.findById(savedAnswer.getId());
+        questionRepository.delete(savedQuestion);
+        Optional<Question> actual = questionRepository.findById(savedQuestion.getId());
 
         // then
         assertThat(actual).isEqualTo(Optional.empty());
