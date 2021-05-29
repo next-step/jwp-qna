@@ -38,4 +38,18 @@ class UserRepositoryTest {
         actual.modifyName("LJS");
         actual.modifyName("LDS");
     }
+
+    @Test
+    @DisplayName("이름 기반으로 유저 찾기")
+    void findByName() {
+        // given
+        User user1 = new User("USER1", "123456", "LDS", "lds@test.com");
+
+        // when
+        users.save(user1);
+        User actual = users.findByName("LDS").orElseThrow(IllegalArgumentException::new);
+
+        // then
+        assertThat(actual).isSameAs(user1);
+    }
 }
