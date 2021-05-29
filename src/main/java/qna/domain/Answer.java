@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.springframework.lang.NonNull;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
