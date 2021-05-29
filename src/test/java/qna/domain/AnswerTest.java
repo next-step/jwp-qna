@@ -5,9 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
-@Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class AnswerTest {
     public static Answer A1;
     public static Answer A2;
@@ -33,7 +33,7 @@ public class AnswerTest {
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(QuestionTest.Q1, "id", 1L);
-        ReflectionTestUtils.setField(QuestionTest.Q1, "id", 2L);
+        ReflectionTestUtils.setField(QuestionTest.Q2, "id", 2L);
 
         A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
         A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
@@ -51,21 +51,6 @@ public class AnswerTest {
                 () -> assertThat(a1.getId()).isNotNull(),
                 () -> assertThat(a1.getContents()).isEqualTo("Answers Contents1")
         );
-    }
-
-    @DisplayName("Answer id로 찾기")
-    @Test
-    void findById() {
-        Answer findAnswer = answerRepository.findById(
-                a1.getId()).orElseThrow(NoSuchElementException::new);
-
-        assertAll(
-                () -> assertThat(findAnswer.getContents()).isEqualTo("Answers Contents1"),
-                () -> assertThat(findAnswer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
-                () -> assertThat(findAnswer.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
-                () -> assertThat(findAnswer).isSameAs(a1)
-        );
-
     }
 
     @DisplayName("업데이트 확인")
@@ -96,7 +81,6 @@ public class AnswerTest {
     @DisplayName("동일한 QuestionId를 가지고 있는 항목 확인")
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        System.out.println(QuestionTest.Q1.getId());
         List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
         assertThat(answerList).hasSize(2);
     }

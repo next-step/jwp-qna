@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
@@ -37,19 +39,6 @@ public class QuestionTest {
         assertAll(
                 () -> assertThat(q1.getId()).isNotNull(),
                 () -> assertThat(q1.getTitle()).isEqualTo("title1")
-        );
-    }
-
-    @Test
-    void findById() {
-        //when
-        Question findQuestion = questionRepository.findById(q1.getId())
-                .orElseThrow(NoSuchElementException::new);
-
-        assertAll(
-                () -> assertThat(findQuestion.getContents()).isEqualTo("contents1"),
-                () -> assertThat(findQuestion.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
-                () -> assertThat(findQuestion).isSameAs(q1)
         );
     }
 
