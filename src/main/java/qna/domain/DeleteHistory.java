@@ -12,15 +12,17 @@ public class DeleteHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 255)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "content_type")
     private ContentType contentType;
 
-    @Column
+    @Column(name = "content_id")
     private Long contentId;
 
-    @Column
+    @Column(name = "delete_by_id")
     private Long deletedById;
 
+    @Column(name = "createDate")
     @CreatedDate
     private LocalDateTime createDate;
 
@@ -32,6 +34,10 @@ public class DeleteHistory {
         this.contentId = contentId;
         this.deletedById = deletedById;
         this.createDate = createDate;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
