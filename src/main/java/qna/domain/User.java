@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Table(name = "user")
 @Entity
-public class User extends CreateAndUpdateTimeEntity{
+public class User extends CreateAndUpdateTimeEntity {
 
     private static final GuestUser GUEST_USER = new GuestUser();
 
