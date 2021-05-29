@@ -25,8 +25,7 @@ public class User extends BaseDateTimeEntity {
     @Column(length = 50)
     private String email;
 
-    private User() {
-    }
+    protected User() {}
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);

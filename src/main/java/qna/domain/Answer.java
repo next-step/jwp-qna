@@ -12,12 +12,12 @@ public class Answer extends BaseDateTimeEntity {
     @Id
     private Long id;
 
-    @JoinColumn(name = "writer_id")
-    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
-    @JoinColumn(name = "question_id")
-    @ManyToOne
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
 
     @Lob
@@ -25,6 +25,8 @@ public class Answer extends BaseDateTimeEntity {
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    protected Answer() {}
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);

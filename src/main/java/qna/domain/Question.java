@@ -14,12 +14,14 @@ public class Question extends BaseDateTimeEntity {
     @Lob
     private String contents;
 
-    @JoinColumn(name = "writer_id")
-    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    protected Question() {}
 
     public Question(String title, String contents) {
         this(null, title, contents);
