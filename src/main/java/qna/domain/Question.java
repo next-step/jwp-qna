@@ -16,7 +16,7 @@ import javax.persistence.*;
  * )
  */
 
-@Table(name = "table")
+@Table(name = "question")
 @Entity
 public class Question extends CreateAndUpdateTimeEntity {
 
