@@ -1,10 +1,13 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 
 @Entity
 public class Question extends BaseTimeEntity {
 
+    public static final String CANNOT_DELETE_MESSAGE = "질문을 삭제할 권한이 없습니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,10 +42,6 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
     }
@@ -71,8 +70,11 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void deleteByOwner(User loginUser) throws CannotDeleteException {
+        if (!this.writer.equals(loginUser)) {
+            throw new CannotDeleteException(CANNOT_DELETE_MESSAGE);
+        }
+        deleted = true;
     }
 
     @Override
