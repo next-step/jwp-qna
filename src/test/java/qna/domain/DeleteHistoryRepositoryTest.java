@@ -1,13 +1,11 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -19,30 +17,27 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class DeleteHistoryRepositoryTest {
 
     @Autowired
-    private EntityManager entityManager;
-
-    @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
-    private DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
+    private DeleteHistory deleteHistory;
     private DeleteHistory saved;
 
     @BeforeEach
     void setUp() {
+        deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
         saved = deleteHistoryRepository.save(deleteHistory);
-    }
-
-    @AfterEach
-    void cleanUp() {
-        deleteHistoryRepository.deleteAll();
-        entityManager.createNativeQuery("ALTER TABLE delete_history ALTER COLUMN `id` RESTART WITH 1")
-                .executeUpdate();
     }
 
     @Test
     @DisplayName("DeleteHistory 저장 테스트")
     void save() {
-        assertThat(saved).isEqualTo(deleteHistory);
+        assertAll(
+                () -> assertThat(saved.getId()).isNotNull(),
+                () -> assertThat(saved.getContentId()).isEqualTo(deleteHistory.getContentId()),
+                () -> assertThat(saved.getDeletedById()).isEqualTo(deleteHistory.getDeletedById()),
+                () -> assertThat(saved.getContentType()).isEqualTo(deleteHistory.getContentType()),
+                () -> assertThat(saved.getCreateDate()).isEqualTo(deleteHistory.getCreateDate())
+        );
     }
 
     @Test
