@@ -4,8 +4,8 @@
 
 ### Step 1
 
-* [ ] 엔티티 매핑
-    * [ ] answer
-    * [ ] delete_history
-    * [ ] question
-    * [ ] user
+* [x] 엔티티 매핑
+    * [x] answer
+    * [x] delete_history
+    * [x] question
+    * [x] user
