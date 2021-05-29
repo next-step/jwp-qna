@@ -80,11 +80,13 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void deleteByOwner(User loginUser) throws CannotDeleteException {
+    public DeleteHistory deleteByOwner(User loginUser) throws CannotDeleteException {
         if (!this.writer.equals(loginUser)) {
             throw new CannotDeleteException(CANNOT_DELETE_NOT_OWNER_MESSAGE);
         }
         this.deleted = true;
+
+        return new DeleteHistory(ContentType.ANSWER, id, writer);
     }
 
     @Override

@@ -10,6 +10,7 @@ import qna.CannotDeleteException;
 import qna.domain.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +58,7 @@ class QnAServiceTest {
     @Test
     public void delete_다른_사람이_쓴_글() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn((Collections.singletonList(answer)));
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(UserTest.SANJIGI, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
