@@ -17,7 +17,7 @@ class DeleteHistoryRepositoryTest {
 	private static final String EMPTY_ENTITY_MESSAGE = "찾는 Entity가 없습니다.";
 
 	@Autowired
-	private DeleteHistoryRepository deleteHistoryRepository;
+	private DeleteHistoryRepository deleteHistorys;
 
 
 	@Test
@@ -27,7 +27,7 @@ class DeleteHistoryRepositoryTest {
 		DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 0l, 0l, LocalDateTime.now());
 
 		// when
-		assertThat(deleteHistoryRepository.save(deleteHistory))
+		assertThat(deleteHistorys.save(deleteHistory))
 			.isNotNull()
 			.isSameAs(deleteHistory); // then
 	}
@@ -36,11 +36,11 @@ class DeleteHistoryRepositoryTest {
 	@DisplayName("findById test")
 	void findByIdTest() {
 		// given
-		DeleteHistory deleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, 0l, 0l, LocalDateTime.now()));
+		DeleteHistory deleteHistory = deleteHistorys.save(new DeleteHistory(ContentType.ANSWER, 0l, 0l, LocalDateTime.now()));
 
 		// when
-		assertThat(deleteHistoryRepository.findById(deleteHistory.getId())
-										  .orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
+		assertThat(deleteHistorys.findById(deleteHistory.getId())
+								 .orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
 			.isNotNull() // then
 			.isSameAs(deleteHistory);
 	}
