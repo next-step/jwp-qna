@@ -20,6 +20,8 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
     @Autowired
+    private AnswerRepository answerRepository;
+    @Autowired
     private UserRepository userRepository;
 
     User user;
@@ -113,5 +115,21 @@ class QuestionRepositoryTest {
                 () -> assertThat(findQuestion.getContents()).isEqualTo(contests)
         );
 
+    }
+
+    @DisplayName("질문을 등록한 사람조회")
+    @Test
+    void findQuestionWriter() {
+        user = userRepository.save(new User("wootecam", "password", "wootecam", "wootecam@gmail.com"));
+        Question question = new Question("질문제목", "질문내용입니다").writeBy(user);
+        Question savedQuestion = questionRepository.save(question);
+        questionRepository.flush();
+
+        Optional<Question> findOptionalQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
+
+        assertTrue(findOptionalQuestion.isPresent());
+        Question findQuestion = findOptionalQuestion.get();
+
+        assertThat(findQuestion.getUser()).isSameAs(user);
     }
 }

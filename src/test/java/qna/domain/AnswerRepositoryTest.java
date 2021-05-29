@@ -156,4 +156,24 @@ class AnswerRepositoryTest {
         assertFalse(findAnswer.isPresent());
     }
 
+    @DisplayName("답변의 작성자가 일치하는지 테스트")
+    @Test
+    void findAnswerWriter() {
+
+        Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
+
+        Answer answer = findAnswer.get();
+        assertThat(answer.getUser()).isSameAs(user);
+    }
+
+    @DisplayName("답변을 통해서 질문접근 테스트")
+    @Test
+    void findQuestion() {
+        Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
+
+        Answer answer = findAnswer.get();
+        Question question = answer.getQuestion();
+        assertThat(question).isSameAs(savedQuestion);
+    }
+
 }
