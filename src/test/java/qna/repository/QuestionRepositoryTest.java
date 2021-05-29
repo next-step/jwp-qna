@@ -13,14 +13,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 public class QuestionRepositoryTest {
     @Autowired
-    QuestionRepository questions;
+    QuestionRepository questionRepository;
 
     @DisplayName("저장하기")
     @Test
     void save() {
         Question question = new Question("testTitle", "testContent");
 
-        Question saveQuestion = questions.save(question);
+        Question saveQuestion = questionRepository.save(question);
 
         assertThat(saveQuestion).isEqualTo(question);
         assertThat(saveQuestion).isSameAs(question);
@@ -30,12 +30,12 @@ public class QuestionRepositoryTest {
     @Test
     void update() {
         Question question = new Question("testTitle", "testContent");
-        Question saveQuestion = questions.save(question);
+        Question saveQuestion = questionRepository.save(question);
 
         saveQuestion.setContents("testUpdateContent");
         saveQuestion.setDeleted(true);
 
-        Question findQuestion = questions.findById(question.getId()).orElseThrow(() -> new IllegalStateException());
+        Question findQuestion = questionRepository.findById(question.getId()).orElseThrow(() -> new IllegalStateException());
         assertThat(findQuestion.getContents()).isEqualTo("testUpdateContent");
         assertThat(findQuestion.isDeleted()).isTrue();
     }
@@ -44,10 +44,10 @@ public class QuestionRepositoryTest {
     @Test
     void delete() {
         Question question = new Question("testTitle", "testContent");
-        Question saveQuestion = questions.save(question);
+        Question saveQuestion = questionRepository.save(question);
 
-        questions.delete(saveQuestion);
+        questionRepository.delete(saveQuestion);
 
-        assertThat(questions.findById(saveQuestion.getId())).isEqualTo(Optional.empty());
+        assertThat(questionRepository.findById(saveQuestion.getId())).isEqualTo(Optional.empty());
     }
 }

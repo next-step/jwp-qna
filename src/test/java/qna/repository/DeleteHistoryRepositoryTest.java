@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
     @Autowired
-    DeleteHistoryRepository deleteHistories;
+    DeleteHistoryRepository deleteHistoryRepository;
 
     @DisplayName("저장하기")
     @Test
@@ -21,7 +21,7 @@ public class DeleteHistoryRepositoryTest {
         User deletedBy = new User("testUserId", "testPassword", "testName", "test@email.com");
         DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, deletedBy);
 
-        DeleteHistory saveDeleteHistory = deleteHistories.save(deleteHistory);
+        DeleteHistory saveDeleteHistory = deleteHistoryRepository.save(deleteHistory);
 
         assertThat(saveDeleteHistory).isEqualTo(deleteHistory);
         assertThat(saveDeleteHistory).isSameAs(deleteHistory);

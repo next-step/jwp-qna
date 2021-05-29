@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 public class AnswerRepositoryTest {
     @Autowired
-    AnswerRepository answers;
+    AnswerRepository answerRepository;
 
     @DisplayName("저장하기")
     @Test
@@ -24,7 +24,7 @@ public class AnswerRepositoryTest {
         Question question = new Question("testTitle", "testContent");
         Answer answer = new Answer(writer, question, "save test");
 
-        Answer savedAnswer = answers.save(answer);
+        Answer savedAnswer = answerRepository.save(answer);
 
         assertThat(savedAnswer).isEqualTo(answer);
         assertThat(savedAnswer).isSameAs(answer);
@@ -36,11 +36,11 @@ public class AnswerRepositoryTest {
         User writer = new User("testUserId", "testPassword", "testName", "test@email.com");
         Question question = new Question("testTitle", "testContent");
         Answer answer = new Answer(writer, question, "save test");
-        Answer savedAnswer = answers.save(answer);
+        Answer savedAnswer = answerRepository.save(answer);
 
         savedAnswer.setContents("testUpdateContent");
 
-        Answer findAnswer = answers.findById(answer.getId()).orElseThrow(() -> new IllegalStateException());
+        Answer findAnswer = answerRepository.findById(answer.getId()).orElseThrow(() -> new IllegalStateException());
         assertThat(findAnswer.getContents()).isEqualTo("testUpdateContent");
     }
 
@@ -50,10 +50,10 @@ public class AnswerRepositoryTest {
         User writer = new User("testUserId", "testPassword", "testName", "test@email.com");
         Question question = new Question("testTitle", "testContent");
         Answer answer = new Answer(writer, question, "save test");
-        Answer savedAnswer = answers.save(answer);
+        Answer savedAnswer = answerRepository.save(answer);
 
-        answers.delete(savedAnswer);
+        answerRepository.delete(savedAnswer);
 
-        assertThat(answers.findById(savedAnswer.getId())).isEqualTo(Optional.empty());
+        assertThat(answerRepository.findById(savedAnswer.getId())).isEqualTo(Optional.empty());
     }
 }

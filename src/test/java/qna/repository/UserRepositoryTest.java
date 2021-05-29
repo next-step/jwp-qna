@@ -13,14 +13,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 public class UserRepositoryTest {
     @Autowired
-    UserRepository users;
+    UserRepository userRepository;
 
     @DisplayName("저장하기")
     @Test
     void save() {
         User user = new User("testUserId", "testPassword", "testName", "test@email.com");
 
-        User saveUser = users.save(user);
+        User saveUser = userRepository.save(user);
 
         assertThat(saveUser).isEqualTo(user);
         assertThat(saveUser).isSameAs(user);
@@ -30,11 +30,11 @@ public class UserRepositoryTest {
     @Test
     void update() {
         User user = new User("testUserId", "testPassword", "testName", "test@email.com");
-        User saveUser = users.save(user);
+        User saveUser = userRepository.save(user);
 
         saveUser.setName("testUpdateName");
 
-        User findUser = users.findById(user.getId()).orElseThrow(() -> new IllegalStateException());
+        User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new IllegalStateException());
         assertThat(findUser.getName()).isEqualTo("testUpdateName");
     }
 
@@ -42,10 +42,10 @@ public class UserRepositoryTest {
     @Test
     void delete() {
         User user = new User("testUserId", "testPassword", "testName", "test@email.com");
-        User saveUser = users.save(user);
+        User saveUser = userRepository.save(user);
 
-        users.delete(saveUser);
+        userRepository.delete(saveUser);
 
-        assertThat(users.findById(saveUser.getId())).isEqualTo(Optional.empty());
+        assertThat(userRepository.findById(saveUser.getId())).isEqualTo(Optional.empty());
     }
 }
