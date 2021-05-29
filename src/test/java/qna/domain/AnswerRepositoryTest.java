@@ -20,11 +20,21 @@ public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answers;
 
+    @Autowired
+    private QuestionRepository questions;
+
+    @Autowired
+    private UserRepository users;
+
     private Answer savedAnswer;
+    private Question savedQuestion;
+    private User savedUser;
 
     @BeforeEach
     void init() {
-        savedAnswer = answers.save(AnswerTest.A1);
+        savedUser = users.save(UserTest.JAVAJIGI);
+        savedQuestion = questions.save(new Question("title1", "contents1").writeBy(savedUser));
+        savedAnswer = answers.save(new Answer(savedUser, savedQuestion, "Answers Contents1"));
     }
 
     @Test
@@ -33,8 +43,8 @@ public class AnswerRepositoryTest {
         // given & when & then
         assertAll(
             () -> assertThat(savedAnswer.getId()).isNotNull(),
-            () -> assertThat(savedAnswer.getWriter()).isEqualTo(AnswerTest.A1.getWriter()),
-            () -> assertThat(savedAnswer.getQuestion()).isEqualTo(QuestionTest.Q1),
+            () -> assertThat(savedAnswer.getWriter()).isEqualTo(savedUser),
+            () -> assertThat(savedAnswer.getQuestion()).isEqualTo(savedQuestion),
             () -> assertThat(savedAnswer.getContents()).isEqualTo(AnswerTest.A1.getContents())
         );
     }
