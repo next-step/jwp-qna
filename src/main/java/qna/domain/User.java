@@ -28,7 +28,7 @@ public class User {
     private String email;
 
     @Embedded
-    private CommonTransactionInfo commonTransactionInfo;
+    private CommonTransactionInfo commonTransactionInfo = new CommonTransactionInfo();
 
     protected User() {
     }

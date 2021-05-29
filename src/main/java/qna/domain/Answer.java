@@ -24,7 +24,7 @@ public class Answer {
     private boolean deleted = false;
 
     @Embedded
-    private CommonTransactionInfo commonTransactionInfo;
+    private CommonTransactionInfo commonTransactionInfo = new CommonTransactionInfo();
 
     protected Answer() {
     }
