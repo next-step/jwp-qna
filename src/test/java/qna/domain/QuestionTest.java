@@ -84,6 +84,16 @@ public class QuestionTest {
         assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> Q1.delete(JAVAJIGI));
     }
 
+    @DisplayName("이미 삭제된 질문을 삭제하려고 시도하면 예외 발생")
+    @Test
+    void deleteFailTest03() {
+
+        Question question = new Question(3L, "title", "contents");
+        question.delete();
+
+        assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> question.delete(JAVAJIGI));
+    }
+
     @DisplayName("질문 삭제 성공 시 질문과 답변 모두 삭제")
     @Test
     void deleteSuccess() throws CannotDeleteException {

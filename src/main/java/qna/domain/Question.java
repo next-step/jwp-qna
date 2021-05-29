@@ -109,10 +109,17 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public void delete(User loginUser) throws CannotDeleteException {
+        verifyDeletedQuestion();
         verifyDeletePermission(loginUser);
         verifyHasOtherUserAnswer();
         delete();
         deleteAnswers();
+    }
+
+    private void verifyDeletedQuestion() throws CannotDeleteException {
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 질문입니다.");
+        }
     }
 
     private void verifyDeletePermission(User loginUser) throws CannotDeleteException {
