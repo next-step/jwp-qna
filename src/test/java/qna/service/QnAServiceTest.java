@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
+import qna.NotFoundException;
 import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.ContentType;
@@ -89,7 +90,23 @@ class QnAServiceTest {
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(loginUser.getId(), notFoundQuestionId))
             .isInstanceOf(CannotDeleteException.class)
-            .hasMessage("질문을 찾을 수 없습니다.");
+            .hasMessage(QnAService.MESSAGE_QUESTION_NOT_FOUND);
+    }
+
+    @Test
+    public void delete_잘못된_사용자() {
+
+        long notFoundUserId = 9999L;
+
+        when(questionRepository.findById(eq(question.getId())))
+            .thenReturn(Optional.of(question));
+
+        when(userRepository.findById(eq(notFoundUserId)))
+            .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> qnAService.deleteQuestion(notFoundUserId, question.getId()))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(QnAService.MESSAGE_USER_NOT_FOUND);
     }
 
     @Test
@@ -106,7 +123,7 @@ class QnAServiceTest {
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(loginUser.getId(), deletedQuestion.getId()))
             .isInstanceOf(CannotDeleteException.class)
-            .hasMessage("이미 삭제된 질문입니다.");
+            .hasMessage(Question.MESSAGE_ALREADY_DELETED);
     }
 
     @Test
@@ -120,7 +137,7 @@ class QnAServiceTest {
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(otherUser.getId(), question.getId()))
                 .isInstanceOf(CannotDeleteException.class)
-                .hasMessage("질문을 삭제할 권한이 없습니다.");
+                .hasMessage(Question.MESSAGE_HAS_NOT_DELETE_PERMISSION);
     }
 
     @Test
@@ -156,7 +173,7 @@ class QnAServiceTest {
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(loginUser.getId(), question.getId()))
                 .isInstanceOf(CannotDeleteException.class)
-                .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+                .hasMessage(Question.MESSAGE_HAS_OTHER_USER_ANSWER);
     }
 
     private void verifyDeleteHistories(Answer... additionalAnswers) {

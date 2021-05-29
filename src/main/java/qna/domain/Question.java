@@ -21,6 +21,10 @@ public class Question extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = -5316964078122252034L;
 
+    public static final String MESSAGE_ALREADY_DELETED = "이미 삭제된 질문입니다.";
+    public static final String MESSAGE_HAS_NOT_DELETE_PERMISSION = "질문을 삭제할 권한이 없습니다.";
+    public static final String MESSAGE_HAS_OTHER_USER_ANSWER = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
@@ -119,19 +123,19 @@ public class Question extends BaseEntity implements Serializable {
 
     private void verifyDeletedQuestion() throws CannotDeleteException {
         if (isDeleted()) {
-            throw new CannotDeleteException("이미 삭제된 질문입니다.");
+            throw new CannotDeleteException(MESSAGE_ALREADY_DELETED);
         }
     }
 
     private void verifyDeletePermission(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(MESSAGE_HAS_NOT_DELETE_PERMISSION);
         }
     }
 
     private void verifyHasOtherUserAnswer() throws CannotDeleteException {
         if (answers.hasOtherUserAnswer(writer)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(MESSAGE_HAS_OTHER_USER_ANSWER);
         }
     }
 
