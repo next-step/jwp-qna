@@ -1,11 +1,39 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@EntityListeners(AuditingEntityListener.class)
+@Entity
+@Table(name = "question")
+public class Question extends BaseTimeEntity{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Lob
+    @Column
     private String contents;
+
+    @Column(name = "title", nullable = false, length = 100)
+    private String title;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    public Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -38,20 +66,20 @@ public class Question {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
     public void setContents(String contents) {
         this.contents = contents;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Long getWriterId() {
