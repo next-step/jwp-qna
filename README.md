@@ -64,3 +64,6 @@ alter table user
 
 - spring.jpa.hibernate.ddl-auto 값이 create면 테스트 할 때 drop 후 create 하고 create-drop이면 create와 같은데 최종적으로
 drop을 더 해줌 -> 외부 db 사용한다고 할 때, 콘솔 열어서 테이블 정상 생성되는지 확인하려면 create 써야함
+
+- DataJpaTest를 하게 되면 테스트 메소드별 트랜젝션이 이루어져서 롤백이 알아서 되는데, auto-increament된 
+id값만은 클래스가 끝날때까지는 초기화되지 않아서 이 id값을 테스트에 사용할 때에는 주의가 필요함.
