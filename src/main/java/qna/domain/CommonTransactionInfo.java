@@ -1,12 +1,14 @@
 package qna.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.time.LocalDateTime;
 
 @Embeddable
 public class CommonTransactionInfo {
 
-    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private final LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
 
     protected CommonTransactionInfo() {
