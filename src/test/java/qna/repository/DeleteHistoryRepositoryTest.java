@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.Answer;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.User;
@@ -23,7 +24,10 @@ public class DeleteHistoryRepositoryTest {
 
         DeleteHistory saveDeleteHistory = deleteHistoryRepository.save(deleteHistory);
 
-        assertThat(saveDeleteHistory).isEqualTo(deleteHistory);
-        assertThat(saveDeleteHistory).isSameAs(deleteHistory);
+        DeleteHistory findDeleteHistory = deleteHistoryRepository.findById(saveDeleteHistory.getId())
+                .orElseThrow(() -> new IllegalStateException());
+
+        assertThat(saveDeleteHistory).isEqualTo(findDeleteHistory);
+        assertThat(saveDeleteHistory).isSameAs(findDeleteHistory);
     }
 }

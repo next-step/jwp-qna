@@ -26,8 +26,11 @@ public class AnswerRepositoryTest {
 
         Answer savedAnswer = answerRepository.save(answer);
 
-        assertThat(savedAnswer).isEqualTo(answer);
-        assertThat(savedAnswer).isSameAs(answer);
+        Answer findAnswer = answerRepository.findById(savedAnswer.getId())
+                .orElseThrow(() -> new IllegalStateException());
+
+        assertThat(savedAnswer).isEqualTo(findAnswer);
+        assertThat(savedAnswer).isSameAs(findAnswer);
     }
 
     @DisplayName("수정하기")

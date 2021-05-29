@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.Question;
 import qna.domain.User;
 
 import java.util.Optional;
@@ -22,8 +23,11 @@ public class UserRepositoryTest {
 
         User saveUser = userRepository.save(user);
 
-        assertThat(saveUser).isEqualTo(user);
-        assertThat(saveUser).isSameAs(user);
+        User findUser = userRepository.findById(saveUser.getId())
+                .orElseThrow(() -> new IllegalStateException());
+
+        assertThat(saveUser).isEqualTo(findUser);
+        assertThat(saveUser).isSameAs(findUser);
     }
 
     @DisplayName("수정하기")
