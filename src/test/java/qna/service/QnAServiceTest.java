@@ -17,10 +17,8 @@ import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
-import qna.domain.QuestionTest;
 import qna.domain.User;
 import qna.domain.UserRepository;
-import qna.domain.UserTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -31,6 +29,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("NonAsciiCharacters")
 class QnAServiceTest {
+
     @Mock
     private QuestionRepository questionRepository;
 
@@ -53,7 +52,7 @@ class QnAServiceTest {
     private Answer answer;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
 
         loginUser = new User(1L, "loginUser", "pwd", "name1", "email");
         otherUser = new User(2L, "loginUser", "pwd", "name1", "email");
@@ -81,7 +80,7 @@ class QnAServiceTest {
     }
 
     @Test
-    public void delete_찾을_수_없는_질문() throws Exception {
+    public void delete_찾을_수_없는_질문() {
 
         long notFoundQuestionId = 9999L;
 
@@ -94,7 +93,7 @@ class QnAServiceTest {
     }
 
     @Test
-    public void delete_이미_삭제된_질문() throws Exception {
+    public void delete_이미_삭제된_질문() {
 
         Question deletedQuestion = new Question(2L, "title", "contents").writeBy(loginUser);
         deletedQuestion.delete();
@@ -108,7 +107,7 @@ class QnAServiceTest {
     }
 
     @Test
-    public void delete_다른_사람이_쓴_글() throws Exception {
+    public void delete_다른_사람이_쓴_글() {
 
         when(questionRepository.findById(eq(question.getId())))
             .thenReturn(Optional.of(question));
@@ -138,7 +137,7 @@ class QnAServiceTest {
     }
 
     @Test
-    public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
+    public void delete_답변_중_다른_사람이_쓴_글() {
 
         Answer answer2 = new Answer(2L, otherUser, question, "Answers Contents1");
         question.addAnswer(answer2);
