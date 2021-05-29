@@ -85,6 +85,7 @@ public class User {
 
     public void modifyName(String name) {
         this.name = name;
+        this.commonTransactionInfo.update();
     }
 
     @Override

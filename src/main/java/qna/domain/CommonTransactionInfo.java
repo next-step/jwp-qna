@@ -13,4 +13,8 @@ public class CommonTransactionInfo {
 
     protected CommonTransactionInfo() {
     }
+
+    public void update() {
+        updatedAt = LocalDateTime.now();
+    }
 }
