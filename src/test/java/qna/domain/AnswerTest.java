@@ -1,62 +1,85 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import qna.config.TestDataSourceConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static qna.domain.QuestionTest.Q1;
+import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 @TestDataSourceConfig
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    private Question question;
+    private User user;
+
+    @BeforeEach
+    void setUp() {
+        user = userRepository.save(new User("user", "pwd", "name", "email"));
+
+        question = new Question(1L, "title1", "contents1").writeBy(user);
+        question = questionRepository.save(question);
+    }
+
     @DisplayName("Answer entity 저장 검증")
     @Test
     void saveTest() {
-        Answer saved = answerRepository.save(A1);
+
+        Answer answer = new Answer(user, question, "contents");
+        Answer saved = answerRepository.save(answer);
         assertNotNull(saved.getId());
 
-        assertEquals(A1.getWriterId(), saved.getWriterId());
-        assertEquals(A1.getQuestionId(), saved.getQuestionId());
+        assertEquals(answer.getWriter(), saved.getWriter());
+        assertEquals(answer.getQuestion(), saved.getQuestion());
     }
 
-    @DisplayName("findById 검증")
+    @DisplayName("삭제되지 않은 데이터 찾아오기")
     @Test
-    void findByIdAndDeletedFalseTest() {
-        Answer expected = answerRepository.save(A2);
-        Answer actual = answerRepository.findByIdAndDeletedFalse(expected.getId())
-                                        .orElseThrow(IllegalArgumentException::new);
+    void findByIdAndDeletedFalseTest01() {
 
+        Answer notDeletedAnswer = new Answer(user, question, "contents");
+
+        Answer expected = answerRepository.save(notDeletedAnswer);
+        Answer actual = answerRepository.findByIdAndDeletedFalse(expected.getId())
+                                        .orElseThrow(EntityNotFoundException::new);
+
+        assertFalse(actual.isDeleted());
         equals(expected, actual);
     }
 
-    @DisplayName("findByQuestionIdAndDeletedFalse 검증")
+    @DisplayName("삭제된 데이터는 찾아올 수 없음")
     @Test
-    void findByQuestionIdAndDeletedFalseTest() {
+    void findByIdAndDeletedFalseTest02() {
 
-        List<Answer> expected = new ArrayList<>();
-        expected.add(answerRepository.save(A1));
-        expected.add(answerRepository.save(A2));
+        Answer deletedAnswer = new Answer(user, question, "contents");
+        deletedAnswer = answerRepository.save(deletedAnswer);
+        deletedAnswer.delete();
 
-        List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
-
-        for (int i = 0; i < expected.size(); i++) {
-            equals(expected.get(i), actual.get(i));
-        }
+        Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId());
+        assertFalse(actual.isPresent());
     }
 
     private void equals(Answer expected, Answer actual) {
         assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getWriterId(), actual.getWriterId());
-        assertEquals(expected.getQuestionId(), actual.getQuestionId());
+        assertEquals(expected.getWriter(), actual.getWriter());
+        assertEquals(expected.getQuestion(), actual.getQuestion());
         assertEquals(expected.getContents(), actual.getContents());
     }
 }
