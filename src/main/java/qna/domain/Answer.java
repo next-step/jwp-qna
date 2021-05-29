@@ -1,93 +1,91 @@
 package qna.domain;
 
+import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
+@Entity
+public class Answer extends BaseEntity {
 
-public class Answer {
-    private Long id;
-    private Long writerId;
-    private Long questionId;
-    private String contents;
-    private boolean deleted = false;
+	@Column(name = "writer_id")
+	private Long writerId;
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
+	@Column(name = "question_id")
+	private Long questionId;
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+	@Lob
+	@Column(name = "contents")
+	private String contents;
 
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
+	@Column(name = "deleted", nullable = false)
+	private boolean deleted = false;
 
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
+	protected Answer() {
+		super();
+	}
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
-        this.contents = contents;
-    }
+	public Answer(User writer, Question question, String contents) {
+		this(null, writer, question, contents);
+	}
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
+	public Answer(Long id, User writer, Question question, String contents) {
+		this.id = id;
 
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
-    }
+		if (Objects.isNull(writer)) {
+			throw new UnAuthorizedException();
+		}
 
-    public Long getId() {
-        return id;
-    }
+		if (Objects.isNull(question)) {
+			throw new NotFoundException();
+		}
+		this.writerId = writer.getId();
+		this.questionId = question.getId();
+		this.contents = contents;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public boolean isOwner(User writer) {
+		return this.writerId.equals(writer.getId());
+	}
 
-    public Long getWriterId() {
-        return writerId;
-    }
+	public void toQuestion(Question question) {
+		this.questionId = question.getId();
+	}
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
+	public Long getWriterId() {
+		return writerId;
+	}
 
-    public Long getQuestionId() {
-        return questionId;
-    }
+	public void setWriterId(Long writerId) {
+		this.writerId = writerId;
+	}
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
+	public Long getQuestionId() {
+		return questionId;
+	}
 
-    public String getContents() {
-        return contents;
-    }
+	public void setQuestionId(Long questionId) {
+		this.questionId = questionId;
+	}
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
+	public String getContents() {
+		return contents;
+	}
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+	public void setContents(String contents) {
+		this.contents = contents;
+	}
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+	public boolean isDeleted() {
+		return deleted;
+	}
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
-    }
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
 }
