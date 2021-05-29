@@ -2,18 +2,47 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Table(name = "user")
+@Entity
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(length = 50)
     private String email;
 
-    private User() {
+    @Column(length = 20, nullable = false)
+    private String name;
+
+    @Column(length = 20, nullable = false)
+    private String password;
+
+    private LocalDateTime updatedAt;
+
+    @Column(length = 20, nullable = false, unique = true)
+    private String userId;
+
+    protected User() {
+        //JPA need no-arg constructor
+    }
+
+    public User(LocalDateTime createdAt, String email, String name, String password, LocalDateTime updatedAt, String userId) {
+        this.createdAt = createdAt;
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.updatedAt = updatedAt;
+        this.userId = userId;
     }
 
     public User(String userId, String password, String name, String email) {
