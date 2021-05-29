@@ -48,7 +48,7 @@ public class QuestionTest {
 
     @Test
     void deleteHistory_Test() {
-        DeleteHistory deleteHistory = question.deleteHistory();
+        DeleteHistory deleteHistory = question.deleteAndHistory();
 
         assertAll(
                 () -> assertThat(deleteHistory.getContentType().equals(question.getContents())),

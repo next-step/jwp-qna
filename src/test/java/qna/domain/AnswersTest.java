@@ -25,7 +25,7 @@ public class AnswersTest {
         Answers answers = new Answers(Arrays.asList(AnswerTest.A1,
                                                     AnswerTest.A2));
 
-        answers.deleteAllHistory();
+        answers.deleteAllAndHistory();
 
         assertThat(answers.answers().stream()
                                     .anyMatch(answer -> !answer.isDeleted())

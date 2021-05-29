@@ -18,7 +18,7 @@ public class Answers {
         return this.answers;
     }
 
-    public List<DeleteHistory> deleteAllHistory() {
+    public List<DeleteHistory> deleteAllAndHistory() {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
         for (Answer answer : answers) {

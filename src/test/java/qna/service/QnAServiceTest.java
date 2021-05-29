@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 //@MockitoSettings(strictness = Strictness.LENIENT)
-class QnaServiceTest {
+class QnAServiceTest {
     @Mock
     private QuestionRepository questionRepository;
 
