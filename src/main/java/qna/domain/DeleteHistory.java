@@ -45,6 +45,14 @@ public class DeleteHistory implements Serializable {
         this.createDate = createDate;
     }
 
+    public static DeleteHistory of(Question question, LocalDateTime createDate) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), createDate);
+    }
+
+    public static DeleteHistory of(Answer answer, LocalDateTime createDate) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), createDate);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

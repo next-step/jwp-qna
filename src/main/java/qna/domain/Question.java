@@ -1,12 +1,12 @@
 package qna.domain;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -14,8 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 
 @Entity
@@ -38,9 +36,8 @@ public class Question extends BaseEntity implements Serializable {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    @Where(clause = "deleted = 0")
-    private Set<Answer> answers = new HashSet<>();
+    @Embedded
+    private Answers answers;
 
     @Column
     private boolean deleted = false;
@@ -55,6 +52,7 @@ public class Question extends BaseEntity implements Serializable {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {
@@ -67,17 +65,12 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public void addAnswer(Answer answer) {
-        if (answers.contains(answer)) {
-            return;
-        }
-
         answers.add(answer);
         answer.replyTo(this);
     }
 
-    public void deleteAnswer(Answer answer) {
-        answers.remove(answer);
-        answer.delete();
+    public DeleteHistory deleteAnswer(Answer answer) {
+        return answers.remove(answer);
     }
 
     public Long getId() {
@@ -97,23 +90,31 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public List<Answer> getAnswers() {
-        return new ArrayList<>(answers);
+        return new ArrayList<>(answers.getAnswers());
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void delete() {
-        this.deleted = true;
-    }
-
-    public void delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         verifyDeletedQuestion();
         verifyDeletePermission(loginUser);
         verifyHasOtherUserAnswer();
-        delete();
-        deleteAnswers();
+
+        return delete();
+    }
+
+    public List<DeleteHistory> delete() {
+
+        this.deleted = true;
+        LocalDateTime deleteTime = LocalDateTime.now();
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.of(this, deleteTime));
+        deleteHistories.addAll(answers.deleteAnswers(deleteTime));
+
+        return deleteHistories;
     }
 
     private void verifyDeletedQuestion() throws CannotDeleteException {
@@ -129,19 +130,9 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     private void verifyHasOtherUserAnswer() throws CannotDeleteException {
-        if (hasOtherUserAnswer()) {
+        if (answers.hasOtherUserAnswer(writer)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
-    }
-
-    private boolean hasOtherUserAnswer() {
-        return answers.stream()
-                      .anyMatch(answer -> !answer.isOwner(writer));
-    }
-
-    private void deleteAnswers() {
-        answers.forEach(Answer::delete);
-        answers.clear();
     }
 
     @Override
