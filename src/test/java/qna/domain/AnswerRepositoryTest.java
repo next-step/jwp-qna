@@ -11,6 +11,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AnswerRepositoryTest {
 
     @Autowired
+    private UserRepository users;
+
+    @Autowired
+    private QuestionRepository questions;
+
+    @Autowired
     private AnswerRepository answers;
 
     @Test
@@ -26,5 +32,20 @@ class AnswerRepositoryTest {
 
         // then
         assertThat(actual).isSameAs(answer);
+    }
+
+    @Test
+    @DisplayName("답변저장 - 작성자 매핑")
+    void saveWithWriterAndQuestion() {
+        // given
+        User sangJigi = users.save(UserTest.SANJIGI);
+        Question question1 = questions.save(QuestionTest.Q1);
+
+        // when
+        Answer answer = new Answer(sangJigi, question1, "답변테스트");
+        Answer actual = answers.save(answer);
+
+        // then
+        assertThat(actual.writer()).isSameAs(sangJigi);
     }
 }
