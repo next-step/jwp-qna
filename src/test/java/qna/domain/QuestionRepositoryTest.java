@@ -19,19 +19,25 @@ public class QuestionRepositoryTest {
     void saveTest() {
         // 데이터 테스트
         assertThat(QuestionTest.QUESTION1.getId()).isNull();
-        Question actualQuestion1 = questionRepository.save(QuestionTest.QUESTION1);
-        assertThat(actualQuestion1.getId()).isNotNull();
-        assertThat(actualQuestion1.getTitle()).isEqualTo(QuestionTest.QUESTION1.getTitle());
-        assertThat(actualQuestion1.getContents()).isEqualTo(QuestionTest.QUESTION1.getContents());
-        assertThat(actualQuestion1.getCreatedAt()).isNotNull();
-        assertThat(actualQuestion1.getUpdatedAt()).isNotNull();
+        Question actualQuestion = questionRepository.save(QuestionTest.QUESTION1);
+        assertThat(actualQuestion.getId()).isNotNull();
+        assertThat(actualQuestion.getTitle()).isEqualTo(QuestionTest.QUESTION1.getTitle());
+        assertThat(actualQuestion.getContents()).isEqualTo(QuestionTest.QUESTION1.getContents());
+        assertThat(actualQuestion.getCreatedAt()).isNotNull();
+        assertThat(actualQuestion.getUpdatedAt()).isNotNull();
+    }
 
-        // 리스트 테스트
+    @Test
+    @DisplayName("Question 여러개 save 테스트")
+    void saveMultipleQuestionTest() {
+        Question actualQuestion1 = questionRepository.save(QuestionTest.QUESTION1);
         Question actualQuestion2 = questionRepository.save(QuestionTest.QUESTION2);
         List<Question> questionList = questionRepository.findAll();
         assertThat(questionList.size()).isEqualTo(2);
         assertThat(questionList).containsExactly(actualQuestion1, actualQuestion2);
     }
+
+
 
     @Test
     @DisplayName("삭제되지 않은 질문 검색 테스트")

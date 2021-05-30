@@ -17,22 +17,24 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("save 테스트")
     void saveTest() {
-        // 데이터 테스트
         assertThat(AnswerTest.ANSWER1.getId()).isNull();
-        Answer actualAnswer1 = answerRepository.save(AnswerTest.ANSWER1);
-        assertThat(actualAnswer1.getId()).isNotNull(); // id 생성 테스트
-        assertThat(actualAnswer1.getWriterId()).isEqualTo(AnswerTest.ANSWER1.getWriterId());
-        assertThat(actualAnswer1.getQuestionId()).isEqualTo(AnswerTest.ANSWER1.getQuestionId());
-        assertThat(actualAnswer1.getContents()).isEqualTo(AnswerTest.ANSWER1.getContents());
-        assertThat(actualAnswer1.getCreatedAt()).isNotNull();
-        assertThat(actualAnswer1.getUpdatedAt()).isNotNull();
+        Answer actualAnswer = answerRepository.save(AnswerTest.ANSWER1);
+        assertThat(actualAnswer.getId()).isNotNull(); // id 생성 테스트
+        assertThat(actualAnswer.getWriterId()).isEqualTo(AnswerTest.ANSWER1.getWriterId());
+        assertThat(actualAnswer.getQuestionId()).isEqualTo(AnswerTest.ANSWER1.getQuestionId());
+        assertThat(actualAnswer.getContents()).isEqualTo(AnswerTest.ANSWER1.getContents());
+        assertThat(actualAnswer.getCreatedAt()).isNotNull();
+        assertThat(actualAnswer.getUpdatedAt()).isNotNull();
+    }
 
-        // 리스트 테스트
+    @Test
+    @DisplayName("Answer 여러개 save 테스트")
+    void saveMultipleAnswerTest() {
+        Answer actualAnswer1 = answerRepository.save(AnswerTest.ANSWER1);
         Answer actualAnswer2 = answerRepository.save(AnswerTest.ANSWER2);
         List<Answer> answerList = answerRepository.findAll();
         assertThat(answerList.size()).isEqualTo(2);
         assertThat(answerList).containsExactly(actualAnswer1, actualAnswer2);
-
     }
 
     @Test
