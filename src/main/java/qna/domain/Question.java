@@ -15,7 +15,7 @@ public class Question {
     private String contents;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "id")
     private User writer;
 
     @Column(nullable = false)
