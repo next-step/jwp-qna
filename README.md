@@ -54,5 +54,6 @@ add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 
 ```
 
-* 각 엔티티를 생성하고 테스트케이스를 실행하며 create가 제대로 되는지 확인한다.
-* 연관 관계 매핑을 확인하고 실제 데이터가 잘 들어가는지 체크한다.
+* created_at, updated_at 값을 생성 해 줄 수 있는 클래스를 생성한다.
+* User, Question, Answer 순으로 엔티티를 매핑한다.
+* 각각의 엔티티 매핑을 진행하며 테스트케이스를 작성한다.
