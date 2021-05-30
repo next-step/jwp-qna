@@ -4,6 +4,7 @@ import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -25,6 +26,15 @@ public class User extends BaseTimeEntity {
 
     @Column(name = "email", length = 50)
     private String email;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> writtenAnswers;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Question> writtenQuestions;
+
+    @OneToMany(mappedBy = "deletedBy")
+    private List<DeleteHistory> deleteHistories;
 
     protected User() {
     }
