@@ -19,6 +19,9 @@ public class AnswerRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     private Answer savedAnswer;
     private Question savedQuestion;
     private User savedUser;
@@ -27,6 +30,7 @@ public class AnswerRepositoryTest {
     void setUp() {
         //Given
         savedUser = new User("applemango", "pw", "name", "contents");
+        savedUser = userRepository.save(savedUser);
 
         savedQuestion = new Question("JPA Hands On", "JPA Contents");
         savedQuestion = questionRepository.save(savedQuestion);
