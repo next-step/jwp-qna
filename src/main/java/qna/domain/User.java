@@ -3,8 +3,6 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -28,9 +26,6 @@ public class User {
 
     @Column(length = 50)
     private String email;
-
-    @OneToMany(mappedBy = "user")
-    private List<Question> questions = new ArrayList<Question>();
 
     @Embedded
     private CommonTransactionInfo commonTransactionInfo = new CommonTransactionInfo();
@@ -91,10 +86,6 @@ public class User {
 
     public Long getId() {
         return id;
-    }
-
-    public List<Question> questions() {
-        return questions;
     }
 
     @Override
