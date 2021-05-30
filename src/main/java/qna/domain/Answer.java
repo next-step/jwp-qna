@@ -65,8 +65,8 @@ public class Answer {
         return id;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
+    public User writer() {
+        return writer;
     }
 
     public boolean isDeleted() {

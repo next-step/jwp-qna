@@ -54,8 +54,8 @@ public class Question {
         return id;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
+    public User writer() {
+        return writer;
     }
 
     public boolean isDeleted() {
