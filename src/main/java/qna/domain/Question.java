@@ -14,13 +14,15 @@ public class Question {
 
     private String contents;
 
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
 
     @Embedded
-    private CommonTransactionInfo commonTransactionInfo = new CommonTransactionInfo();;
+    private CommonTransactionInfo commonTransactionInfo = new CommonTransactionInfo();
 
     protected Question() {
     }
@@ -36,12 +38,12 @@ public class Question {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -52,8 +54,8 @@ public class Question {
         return id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User writer() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -70,7 +72,7 @@ public class Question {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }

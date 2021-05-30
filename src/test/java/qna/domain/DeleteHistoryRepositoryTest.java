@@ -13,18 +13,37 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DeleteHistoryRepositoryTest {
 
     @Autowired
+    private UserRepository users;
+
+    @Autowired
     private DeleteHistoryRepository deleteHistories;
     
     @Test
     @DisplayName("삭제이력 저장")
     void save() {
         // given
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, QuestionTest.Q1.getId(), UserTest.JAVAJIGI.getId(), LocalDateTime.now());
+        User deleteUser = new User("USER1", "123456", "LDS", "lds@test.com");
+        users.save(deleteUser);
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, QuestionTest.Q1.getId(), deleteUser, LocalDateTime.now());
 
         // when
         DeleteHistory actual = deleteHistories.save(deleteHistory);
 
         // then
         assertThat(actual).isSameAs(deleteHistory);
+    }
+
+    @Test
+    @DisplayName("연관관계 매핑 테스트 - 삭제한 유저")
+    void deleteUser() {
+        // given
+        User deleteUser = users.save(UserTest.JAVAJIGI);
+
+        // when
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, QuestionTest.Q1.getId(), deleteUser, LocalDateTime.now());
+        DeleteHistory actual = deleteHistories.save(deleteHistory);
+
+        // then
+        assertThat(actual.deleteUser()).isSameAs(deleteUser);
     }
 }

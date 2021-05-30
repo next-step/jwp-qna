@@ -79,13 +79,13 @@ public class User {
         return false;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public void modifyName(String name) {
         this.name = name;
         this.commonTransactionInfo.update();
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
