@@ -1,23 +1,18 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
-import java.time.LocalDateTime;
-import java.util.Objects;
+import javax.persistence.Table;
+
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
 
 @Entity
-public class Answer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+@Table(name = "answer")
+public class Answer extends BaseEntity {
     private Long writerId;
 
     private Long questionId;
@@ -27,12 +22,6 @@ public class Answer {
 
     @Column(nullable = false)
     private boolean deleted = false;
-
-    @Column(name = "created_at", columnDefinition = "DATETIME", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", columnDefinition = "DATETIME")
-    private LocalDateTime updatedAt;
 
     public Answer() {}
 
@@ -54,7 +43,6 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
-        this.createdAt = LocalDateTime.now();
     }
 
     public boolean isOwner(User writer) {

@@ -2,18 +2,12 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
-import java.time.LocalDateTime;
+import javax.persistence.Table;
 
 @Entity
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+@Table(name = "question")
+public class Question extends BaseEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
@@ -24,12 +18,6 @@ public class Question {
 
     @Column(nullable = false)
     private boolean deleted = false;
-
-    @Column(name = "created_at", columnDefinition = "DATETIME(6)", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", columnDefinition = "DATETIME(6)")
-    private LocalDateTime updatedAt;
 
     public Question() {
     }
@@ -42,7 +30,6 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.createdAt = LocalDateTime.now();
     }
 
     public Question writeBy(User writer) {

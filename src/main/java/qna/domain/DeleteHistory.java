@@ -1,13 +1,16 @@
 package qna.domain;
 
+import java.util.Objects;
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
-import java.util.Objects;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "delete_history")
 public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
