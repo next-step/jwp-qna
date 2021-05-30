@@ -10,9 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
-import static qna.domain.QuestionTest.Q1;
+import static qna.domain.AnswerTest.*;
+import static qna.domain.QuestionTest.*;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
@@ -29,20 +28,19 @@ class AnswerRepositoryTest {
     private AnswerRepository answerRepository;
 
     private Question question;
+
     private Answer firstAnswer;
     private Answer secondAnswer;
 
     @BeforeEach
     void setUp() {
-        userRepository.save(JAVAJIGI);
-        userRepository.save(SANJIGI);
+        User javajigi = userRepository.save(JAVAJIGI);
+        User sangjigi = userRepository.save(SANJIGI);
 
-        question = questionRepository.save(Q1);
+        question = questionRepository.save(new Question(Q1_TITLE, Q1_CONTENT).writeBy(javajigi));
 
-        firstAnswer = answerRepository.save(A1);
-        firstAnswer.toQuestion(question);
-        secondAnswer = answerRepository.save(A2);
-        secondAnswer.toQuestion(question);
+        firstAnswer = answerRepository.save(new Answer(javajigi, question, A1_CONTENT));
+        secondAnswer = answerRepository.save(new Answer(sangjigi, question, A2_CONTENT));
     }
 
     @Test
