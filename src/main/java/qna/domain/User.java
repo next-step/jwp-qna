@@ -1,7 +1,5 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -12,12 +10,16 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import qna.UnAuthorizedException;
+
 @Entity
 @Table(uniqueConstraints = {
     @UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = {"userId"})
 })
-public class User extends BaseEntity{
+public class User extends BaseEntity {
+
     public static final GuestUser GUEST_USER = new GuestUser();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

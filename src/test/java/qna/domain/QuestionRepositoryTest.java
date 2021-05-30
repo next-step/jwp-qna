@@ -14,10 +14,16 @@ class QuestionRepositoryTest {
 	@Autowired
 	QuestionRepository repository;
 
+	@Autowired
+	UserRepository userRepository;
+
 	@Test
 	void saveAndFind() {
-		Question actual = repository.save(QuestionTest.Q1);
-		Question expect = repository.findById(actual.getId()).get();
+		User user = userRepository.save(UserTest.JAVAJIGI);
+		Question q1 = QuestionTest.Q1.writeBy(user);
+		Question actual = repository.save(q1);
+		Question expect = repository.findById(actual.getId()).orElse(Question.NONE);
+
 		assertThat(actual).isEqualTo(expect);
 	}
 }

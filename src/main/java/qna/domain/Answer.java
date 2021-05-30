@@ -4,10 +4,13 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 import org.springframework.lang.NonNull;
 
@@ -17,11 +20,16 @@ import qna.UnAuthorizedException;
 @Entity
 public class Answer extends BaseEntity {
 
+    public static final Answer NONE = new Answer();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long writerId;
+    @JoinColumn(name = "writer_id",
+        referencedColumnName = "ID",
+        foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @ManyToOne
+    private User writer;
 
     private Long questionId;
     @Lob
@@ -46,7 +54,7 @@ public class Answer extends BaseEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
+        this.writer = writer;
         this.questionId = question.getId();
         this.contents = contents;
     }
@@ -54,7 +62,7 @@ public class Answer extends BaseEntity {
     protected Answer() {}
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -69,12 +77,12 @@ public class Answer extends BaseEntity {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writerId) {
+        this.writer = writerId;
     }
 
     public Long getQuestionId() {
@@ -105,7 +113,7 @@ public class Answer extends BaseEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
+                ", writerId=" + writer +
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
