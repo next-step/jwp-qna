@@ -68,10 +68,10 @@ public class Question extends BaseTimeEntity{
     }
     public List<DeleteHistory> deleteByOwner(User owner) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(deleteQuestion(owner));
         for (Answer answer : answers) {
             deleteHistories.add(answer.deleteByOwner(owner));
         }
-        deleteHistories.add(deleteQuestion(owner));
 
         return deleteHistories;
     }
