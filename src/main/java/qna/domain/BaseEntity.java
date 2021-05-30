@@ -1,6 +1,6 @@
 package qna.domain;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
@@ -14,26 +14,10 @@ public abstract class BaseEntity {
 
     @Column(nullable = false)
     @CreatedDate
-    private Date createdAt;
+    protected LocalDateTime createdAt;
 
     @LastModifiedBy
-    private Date updatedAt;
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    protected LocalDateTime updatedAt;
 
     @Override
     public String toString() {
