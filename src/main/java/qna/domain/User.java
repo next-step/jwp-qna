@@ -83,6 +83,14 @@ public class User extends AbstractEntity {
         return userId;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
