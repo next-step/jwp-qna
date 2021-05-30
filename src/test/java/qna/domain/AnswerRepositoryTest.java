@@ -16,17 +16,22 @@ class AnswerRepositoryTest {
 
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
 
-    private Question question;
+    private Question savedQuestion;
     private Answer answer_1;
     private Answer answer_2;
     private Answer saved;
 
     @BeforeEach
     void setUp() {
-        question = new Question(1L, "question", "질문내용");
-        answer_1 = new Answer(UserTest.JAVAJIGI, question, AnswerTest.A1.getContents());
-        answer_2 = new Answer(UserTest.SANJIGI, question, AnswerTest.A2.getContents());
+        User user = new User("bjr", "password", "name","email");
+        Question question = new Question(1L,"question", "질문내용").writeBy(user);
+        savedQuestion = questionRepository.save(question);
+
+        answer_1 = new Answer(UserTest.JAVAJIGI, savedQuestion, AnswerTest.A1.getContents());
+        answer_2 = new Answer(UserTest.SANJIGI, savedQuestion, AnswerTest.A2.getContents());
         saved = answerRepository.save(answer_1);
     }
 
@@ -67,7 +72,7 @@ class AnswerRepositoryTest {
     void findByQuestionIdAndDeletedFalse() {
         answerRepository.saveAll(Arrays.asList(answer_1, answer_2));
 
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId());
 
         assertAll(
                 () -> assertThat(answers).hasSize(2),
@@ -82,7 +87,7 @@ class AnswerRepositoryTest {
 
         answerRepository.saveAll(Arrays.asList(answer_1, answer_2));
 
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId());
 
         assertAll(
                 () -> assertThat(answers).contains(answer_1),
