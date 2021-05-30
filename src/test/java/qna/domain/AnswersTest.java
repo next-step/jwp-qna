@@ -19,8 +19,8 @@ class AnswersTest {
     private Answer answer2 = new Answer(user2, question1, "content2");
 
     @Nested
-    @DisplayName("deleteHistory 메서드는")
-    class Describe_deleteHistory {
+    @DisplayName("delete 메서드는")
+    class Describe_delete {
         Answers answers = new Answers();
 
         @Nested
@@ -37,7 +37,7 @@ class AnswersTest {
             @Test
             @DisplayName("삭제이력 목록을 리턴한다.")
             void it_returns_delete_histories() {
-                List<DeleteHistory> actual = answers.deleteAnswers(givenUser);
+                List<DeleteHistory> actual = answers.delete(givenUser);
 
                 assertThat(actual.size()).isEqualTo(1);
             }
@@ -57,7 +57,7 @@ class AnswersTest {
             @Test
             @DisplayName("예외를 던진다")
             void it_throws_exception() {
-                assertThatThrownBy(() -> answers.deleteAnswers(givenUser))
+                assertThatThrownBy(() -> answers.delete(givenUser))
                         .isInstanceOf(CannotDeleteException.class);
             }
         }
