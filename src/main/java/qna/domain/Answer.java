@@ -4,11 +4,11 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.vo.Contents;
+import qna.domain.vo.Deleted;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -35,8 +35,8 @@ public class Answer extends BaseTimeEntity {
     @Embedded
     private Contents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted = Deleted.FALSE;
 
     protected Answer() {
     }
@@ -91,7 +91,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     @Override
@@ -110,7 +110,7 @@ public class Answer extends BaseTimeEntity {
             throw new CannotDeleteException("다른 사람이 쓴 답변은 삭제할 수 없습니다.");
         }
 
-        this.deleted = true;
+        this.deleted = Deleted.TRUE;
 
         return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
