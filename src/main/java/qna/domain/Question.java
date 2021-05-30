@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Question {
+public class Question extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,12 +22,6 @@ public class Question {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
-
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedAt;
 
     protected Question() {
     }
@@ -68,20 +62,10 @@ public class Question {
     }
 
     public void setDeleted(boolean deleted) {
-        this.updatedAt = LocalDateTime.now();
         this.deleted = deleted;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return this.createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return this.updatedAt;
-    }
-
     public void setContents(String contents) {
-        this.updatedAt = LocalDateTime.now();
         this.contents = contents;
     }
 

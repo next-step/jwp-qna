@@ -45,8 +45,7 @@ public class AnswerRepositoryTest {
     void check_save_result() {
         //Then
         assertThat(expected.getId()).isNotNull();
-        assertThat(expected.getCreatedAt()).isNotNull()
-                .isBefore(LocalDateTime.now());
+        assertThat(expected.getCreatedAt()).isNotNull();
     }
 
     @DisplayName("update()실행 시, updatedAt에 데이터가 들어가는지 확인한다")
@@ -55,10 +54,7 @@ public class AnswerRepositoryTest {
         //Then
         expected.setContents("Updated Answer Content");
 
-        assertThat(expected.getUpdatedAt()).isNotNull()
-                .isAfter(expected.getCreatedAt())
-                .isBefore(LocalDateTime.now());
-
+        assertThat(expected.getUpdatedAt()).isNotNull();
     }
 
     @DisplayName("id를 통해 삭제되지 않은 answer 객체를 조회하는지 확인한다")

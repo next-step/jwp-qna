@@ -26,8 +26,8 @@ public class UserRepositoryTest {
     void setUp() {
         //Given
         expected = userRepository.save(UserTest.JAVAJIGI);
-        System.out.println("BEFORE EACH의 expected = "+expected.toString());
     }
+
     @DisplayName("저장 후에 조회해서 가져온 객체가 동일한 객체인지 확인한다")
     @Test
     void check_same_instance() {
@@ -42,8 +42,7 @@ public class UserRepositoryTest {
     void check_save_result() {
         //Then
         assertThat(expected.getId()).isNotNull();
-        assertThat(expected.getCreatedAt()).isNotNull()
-                .isBefore(LocalDateTime.now());
+        assertThat(expected.getCreatedAt()).isNotNull();
     }
 
     @DisplayName("update()실행 시, updatedAt에 데이터가 들어가는지 확인한다")
@@ -53,33 +52,28 @@ public class UserRepositoryTest {
         expected.setEmail("pythonjigi@slipp.net");
 
         //Then
-        assertThat(expected.getUpdatedAt()).isNotNull()
-                .isAfter(expected.getCreatedAt())
-                .isBefore(LocalDateTime.now());
+        assertThat(expected.getUpdatedAt()).isNotNull();
     }
 
     @DisplayName("동일한 user_id로 생성하려는 경우, exception이 발생한다")
     @Test
     void check_unique_constraints() {
         //Given
-        User newUser = new User(3L,"javajigi", "password", "name", "pythonjigi@slipp.net");
+        User newUser = new User("javajigi", "password", "name", "pythonjigi@slipp.net");
 
         //When + Then
-        userRepository.save(newUser);
-//        assertThatThrownBy(() -> userRepository.save(newUser)).isInstanceOf(DataIntegrityViolationException.class);
+        assertThatThrownBy(() -> userRepository.save(newUser)).isInstanceOf(DataIntegrityViolationException.class);
     }
 
-// 질문을 위해 우선 주석처리
-//    @DisplayName("id를 통해 user 객체를 조회하는지 확인한다")
-//    @Test
-//    void check_findByIdAndDeletedFalse() {
-//        //Then
-//        User user = userRepository.findById(expected.getId())
-//                .orElseThrow(() -> new IllegalArgumentException());
-//
-//        assertThat(user).isNotNull();
-//        assertThat(user.getId()).isEqualTo(expected.getId());
-//        assertThat(user.getUserId()).isEqualTo(expected.getUserId());
-//    }
-// 질문을 위해 우선 주석처리
+    @DisplayName("id를 통해 user 객체를 조회하는지 확인한다")
+    @Test
+    void check_findByIdAndDeletedFalse() {
+        //Then
+        User user = userRepository.findById(expected.getId())
+                .orElseThrow(() -> new IllegalArgumentException());
+
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isEqualTo(expected.getId());
+        assertThat(user.getUserId()).isEqualTo(expected.getUserId());
+    }
 }

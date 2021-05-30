@@ -5,11 +5,10 @@ import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Entity
-public class Answer {
+public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,12 +25,6 @@ public class Answer {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
-
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedAt;
 
     protected Answer() {
     }
@@ -80,20 +73,11 @@ public class Answer {
         return deleted;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
     public void setContents(String contents) {
-        this.updatedAt = LocalDateTime.now();
         this.contents = contents;
     }
 

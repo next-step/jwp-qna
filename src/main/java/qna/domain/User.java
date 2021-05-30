@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class User {
+public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -25,12 +25,6 @@ public class User {
 
     @Column(name = "email", length = 50)
     private String email;
-
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedAt;
 
     protected User() {
     }
@@ -106,16 +100,7 @@ public class User {
     }
 
     public void setEmail(String email) {
-        this.updatedAt = LocalDateTime.now();
         this.email = email;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return this.createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return this.updatedAt;
     }
 
     @Override
