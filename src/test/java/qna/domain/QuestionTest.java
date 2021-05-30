@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,24 +19,36 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    private User user1;
+    private User user2;
+
+    @BeforeEach
+    void setup() {
+        user1 = userRepository.save(UserTest.JAVAJIGI);
+        user2 = userRepository.save(UserTest.SANJIGI);
+    }
+
     @Test
     @DisplayName("Question 저장 확인")
     void saveTest() {
-        Question question1 = questionRepository.save(Q1);
+        Question result = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
 
         assertAll(
-                () -> assertThat(question1.getId()).isNotNull(),
-                () -> assertThat(question1.getWriterId()).isEqualTo(Q1.getWriterId()),
-                () -> assertThat(question1.getContents()).isEqualTo(Q1.getContents()),
-                () -> assertThat(question1.getTitle()).isEqualTo(Q1.getTitle())
+                () -> assertThat(result.getId()).isNotNull(),
+                () -> assertThat(result.getWriter().getId()).isEqualTo(user1.getId()),
+                () -> assertThat(result.getContents()).isEqualTo(Q1.getContents()),
+                () -> assertThat(result.getTitle()).isEqualTo(Q1.getTitle())
         );
     }
 
     @Test
     @DisplayName("deleted 값이 false인 Question 조회")
     void findByDeletedFalseTest() {
-        Question question1 = questionRepository.save(Q1);
-        Question question2 = questionRepository.save(Q2);
+        Question question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
+        Question question2 = questionRepository.save(new Question("title1", "contents1").writeBy(user2));
 
         List<Question> resultList = questionRepository.findByDeletedFalse();
 
@@ -49,11 +62,12 @@ public class QuestionTest {
         Question question1 = questionRepository.save(Q1);
 
         Question result = questionRepository.findByIdAndDeletedFalse(question1.getId()).get();
+
         assertAll(
                 () -> assertThat(result.isDeleted()).isFalse(),
                 () -> assertThat(result.getContents()).isEqualTo(question1.getContents()),
                 () -> assertThat(result.getTitle()).isEqualTo(question1.getTitle()),
-                () -> assertThat(result.getWriterId()).isEqualTo(question1.getWriterId())
+                () -> assertThat(result.getWriter()).isEqualTo(question1.getWriter())
         );
     }
 }
