@@ -35,7 +35,7 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Question() {
+    protected Question() {
 
     }
 

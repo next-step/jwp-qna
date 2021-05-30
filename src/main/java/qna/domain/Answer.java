@@ -47,7 +47,7 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public Answer() {
+    protected Answer() {
 
     }
 
