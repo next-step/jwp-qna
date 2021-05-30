@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class QnAService {
     private static final Logger log = LoggerFactory.getLogger(QnAService.class);
 
@@ -31,18 +32,10 @@ public class QnAService {
         this.deleteHistoryService = deleteHistoryService;
     }
 
-    @Transactional(readOnly = true)
-    public Question findQuestionById(Long id) {
-        return questionRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(NotFoundException::new);
-    }
-
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-        if (!question.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+        question.delete(loginUser);
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
         for (Answer answer : answers) {
@@ -59,5 +52,10 @@ public class QnAService {
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()));
         }
         deleteHistoryService.saveAll(deleteHistories);
+    }
+
+    private Question findQuestionById(Long id) {
+        return questionRepository.findByIdAndDeletedFalse(id)
+                .orElseThrow(NotFoundException::new);
     }
 }
