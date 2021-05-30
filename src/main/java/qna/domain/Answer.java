@@ -1,13 +1,11 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,6 +17,9 @@ import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
+
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "answer")
@@ -27,11 +28,11 @@ public class Answer extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
@@ -70,7 +71,19 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
+        if (this.question != null) {
+            this.question.getAnswers().remove(this);
+        }
         this.question = question;
+        this.question.getAnswers().add(this);
+    }
+
+    public void toWriter(User writer) {
+        if (this.writer != null) {
+            this.writer.getAnswers().remove(this);
+        }
+        this.writer = writer;
+        this.writer.getAnswers().add(this);
     }
 
     public Long getId() {
@@ -99,10 +112,6 @@ public class Answer extends BaseTimeEntity {
 
     public void setWriter(User writer) {
         this.writer = writer;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
     }
 
     public void setContents(String contents) {

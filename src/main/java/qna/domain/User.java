@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -8,6 +10,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -35,6 +38,9 @@ public class User extends BaseTimeEntity {
 
     @Column(name = "email", length = 50)
     private String email;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
 
     public User() {
     }
@@ -81,6 +87,10 @@ public class User extends BaseTimeEntity {
                 email.equals(target.email);
     }
 
+    public void addAnswer(Answer answer) {
+        answer.toWriter(this);
+    }
+
     public boolean isGuestUser() {
         return false;
     }
@@ -123,6 +133,10 @@ public class User extends BaseTimeEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override
