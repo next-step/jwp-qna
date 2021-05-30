@@ -14,10 +14,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class Question extends BaseEntity {
+    private static final String DELETE_NOT_ALLOWED = "질문을 삭제할 권한이 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,12 +61,9 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
@@ -114,10 +114,22 @@ public class Question extends BaseEntity {
                 '}';
     }
 
-    public void delete(User loginUser) {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+    public List<DeleteHistory> delete(User loginUser) {
+        isOwner(loginUser);
         this.deleted = true;
+        return generateDeleteHistories(loginUser);
+    }
+
+    private List<DeleteHistory> generateDeleteHistories(User loginUser) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, loginUser));
+        deleteHistories.addAll(answers.deleteAnswers(loginUser));
+        return deleteHistories;
+    }
+
+    private void isOwner(User loginUser) {
+        if (!this.writer.equals(loginUser)) {
+            throw new CannotDeleteException(DELETE_NOT_ALLOWED);
+        }
     }
 }
