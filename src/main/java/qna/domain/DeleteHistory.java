@@ -20,14 +20,17 @@ public class DeleteHistory extends BaseEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private final ContentType contentType;
+    private ContentType contentType;
 
-    private final Long contentId;
+    private Long contentId;
 
-    private final Long deletedById;
+    private Long deletedById;
 
     @CreatedDate
-    private final LocalDateTime createDate;
+    private LocalDateTime createDate;
+
+    protected DeleteHistory() {
+    }
 
     public DeleteHistory(
         final ContentType contentType, final Long contentId, final Long deletedById, final LocalDateTime createDate) {

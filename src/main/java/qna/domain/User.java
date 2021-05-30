@@ -30,7 +30,7 @@ public class User extends BaseEntity {
     @Column(length = 50)
     private String email;
 
-    private User() {
+    protected User() {
     }
 
     public User(final String userId, final String password, final String name, final String email) {
