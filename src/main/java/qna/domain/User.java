@@ -1,19 +1,40 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
 
-public class User {
+import javax.persistence.*;
+
+import qna.exceptions.UnAuthorizedException;
+import qna.validators.StringValidator;
+
+@Table
+@Entity
+public class User extends BaseEntity {
+
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    private static final int USER_ID_LENGTH = 20;
+    private static final int PASSWORD_LENGTH = 20;
+    private static final int NAME_LENGTH = 20;
+    private static final int EMAIL_LENGTH = 50;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true, length = USER_ID_LENGTH, nullable = false)
     private String userId;
+
+    @Column(length = PASSWORD_LENGTH, nullable = false)
     private String password;
+
+    @Column(length = NAME_LENGTH, nullable = false)
     private String name;
+
+    @Column(length = EMAIL_LENGTH)
     private String email;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -21,6 +42,11 @@ public class User {
     }
 
     public User(Long id, String userId, String password, String name, String email) {
+        StringValidator.validate(userId, USER_ID_LENGTH);
+        StringValidator.validate(password, PASSWORD_LENGTH);
+        StringValidator.validate(name, NAME_LENGTH);
+        StringValidator.validateNullable(email, EMAIL_LENGTH);
+
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -54,8 +80,7 @@ public class User {
             return false;
         }
 
-        return name.equals(target.name) &&
-                email.equals(target.email);
+        return name.equals(target.name) && email.equals(target.email);
     }
 
     public boolean isGuestUser() {
@@ -104,13 +129,15 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+        return "User{"
+            + "id=" + id
+            + ", userId='" + userId + '\''
+            + ", password='" + password + '\''
+            + ", name='" + name + '\''
+            + ", email='" + email + '\''
+            + ", createdAt='" + getCreatedAt() + '\''
+            + ", updatedAt='" + getUpdatedAt() + '\''
+            + '}';
     }
 
     private static class GuestUser extends User {
