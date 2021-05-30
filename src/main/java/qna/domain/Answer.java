@@ -4,7 +4,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.io.Writer;
 import java.util.Objects;
 
 @Entity
@@ -13,18 +13,20 @@ public class Answer extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "writer_id")
-    private Long writerId;
-
-    @Column(name = "question_id")
-    private Long questionId;
-
     @Lob
     @Column(name = "contents")
     private String contents;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @ManyToOne
+    private Question question;
+
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    @ManyToOne
+    private User writer;
 
     protected Answer() {
     }
@@ -44,29 +46,35 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equalsNameAndEmail(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    /* DeleteHistory 수정전 임시 메소드 */
+    public Long getWriterId() {
+        return writer.getId();
+    }
+    /* DeleteHistory 수정전 임시 메소드 */
+
+    public Question getQuestion() {
+        return question;
     }
 
     public boolean isDeleted() {
@@ -85,8 +93,8 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writerId=" + writer.toString() +
+                ", question=" + question.toString() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
