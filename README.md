@@ -52,6 +52,8 @@ alter table user
 ## 구현 기능
 1. answer, delete_history, question, user table 생성
 2. 생성된 테이블 기반 테스트
+    1. save 테스트
+    2. id 기반 검색 테스트
 
 # 2단계 - 연관 관계 매핑
 # 3단계 - 질문 삭제하기 리팩터링
