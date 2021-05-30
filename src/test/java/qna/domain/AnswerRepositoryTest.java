@@ -15,7 +15,9 @@ public class AnswerRepositoryTest {
 
     @Autowired
     private AnswerRepository repository;
+
     private Answer answer;
+
     private Answer actual;
 
     @BeforeEach
@@ -42,10 +44,10 @@ public class AnswerRepositoryTest {
     void updata() {
         answer.setContents("change content");
         repository.saveAndFlush(answer);
-        Answer fineddAnswer = repository.findById(answer.getId()).get();
+        Answer finedAnswer = repository.findById(answer.getId()).get();
         assertAll(
-            () -> assertThat(fineddAnswer.getContents()).isEqualTo("change content"),
-            () -> assertThat(fineddAnswer.getUpdatedAt()).isNotNull());
+            () -> assertThat(finedAnswer.getContents()).isEqualTo("change content"),
+            () -> assertThat(finedAnswer.getUpdatedAt()).isNotNull());
     }
 
     @AfterEach

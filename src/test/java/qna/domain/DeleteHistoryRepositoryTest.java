@@ -15,7 +15,9 @@ public class DeleteHistoryRepositoryTest {
 
     @Autowired
     DeleteHistoryRepository repository;
+
     private DeleteHistory deleteHistory;
+
     private DeleteHistory actual;
 
     @BeforeEach
@@ -40,8 +42,8 @@ public class DeleteHistoryRepositoryTest {
     void updata() {
         deleteHistory.setContentType(ContentType.QUESTION);
         repository.save(deleteHistory);
-        DeleteHistory fineddAnswer = repository.findById(deleteHistory.getId()).get();
-        assertThat(fineddAnswer.getContentType()).isEqualTo(ContentType.QUESTION);
+        DeleteHistory finedDeleteHistory = repository.findById(deleteHistory.getId()).get();
+        assertThat(finedDeleteHistory.getContentType()).isEqualTo(ContentType.QUESTION);
     }
 
     @AfterEach
