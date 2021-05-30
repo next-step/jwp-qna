@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.exception.BlankValidateException;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
@@ -12,12 +13,12 @@ public class Answer extends BaseDateTimeEntity {
     @Id
     private Long id;
 
-    @JoinColumn(name = "writer_id")
-    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
-    @JoinColumn(name = "question_id")
-    @ManyToOne
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
 
     @Lob
@@ -26,12 +27,23 @@ public class Answer extends BaseDateTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    protected Answer() {}
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, String contents)
+            throws UnAuthorizedException, NotFoundException, BlankValidateException {
+
         this.id = id;
+        this.writer = writer;
+        toQuestion(question);
+        this.contents = contents;
+    }
+
+    private static void validate(User writer, Question question, String contents)
+            throws UnAuthorizedException, NotFoundException, BlankValidateException {
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -41,9 +53,16 @@ public class Answer extends BaseDateTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writer = writer;
-        this.question = question;
-        this.contents = contents;
+        if(Objects.isNull(contents) || contents.isEmpty()) {
+            throw new BlankValidateException("contents", contents);
+        }
+    }
+
+    public static Answer createAnswer(User writer, Question question, String contents)
+            throws UnAuthorizedException, NotFoundException, BlankValidateException {
+
+        validate(writer, question, contents);
+        return new Answer(writer, question, contents);
     }
 
     public boolean isOwner(User writer) {
@@ -52,6 +71,7 @@ public class Answer extends BaseDateTimeEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
+        question.getAnswers().add(this);
     }
 
     public Long getId() {
