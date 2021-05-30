@@ -60,7 +60,7 @@ public class AnswerRepositoryTest {
         answerRepository.save(AnswerTest.ANSWER2);
 
         Answer answer = answerRepository.findByIdAndDeletedFalse(expectedAnswer.getId())
-                .orElseThrow(IllegalArgumentException::new);
+                                        .orElseThrow(IllegalArgumentException::new);
         assertThat(answer).isEqualTo(expectedAnswer); // findById test
         assertThat(answer.isDeleted()).isEqualTo(false); //deleted false test
 

@@ -41,8 +41,9 @@ public class UserRepositoryTest {
     @DisplayName("id 기준 검색 테스트")
     void findByIdAndDeletedFalse() {
         User expected = userRepository.save(UserTest.JAVAJIGI);
-        Optional<User> actual = userRepository.findByUserId(expected.getUserId());
+        User actual = userRepository.findByUserId(expected.getUserId())
+                                              .orElseThrow(IllegalArgumentException::new);
 
-        assertThat(actual.get()).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 }

@@ -56,9 +56,10 @@ public class QuestionRepositoryTest {
     @DisplayName("id 기준 검색 테스트")
     void findByIdAndDeletedFalse() {
         Question expected = questionRepository.save(QuestionTest.QUESTION1);
-        Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(expected.getId());
+        Question actual = questionRepository.findByIdAndDeletedFalse(expected.getId())
+                                            .orElseThrow(IllegalArgumentException::new);
 
-        assertThat(actual.get()).isEqualTo(expected);
-        assertThat(actual.get().isDeleted()).isFalse();
+        assertThat(actual).isEqualTo(expected);
+        assertThat(actual.isDeleted()).isFalse();
     }
 }
