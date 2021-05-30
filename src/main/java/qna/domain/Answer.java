@@ -80,6 +80,10 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public User getWriter() {
+        return writer;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -29,19 +28,28 @@ public class AnswerTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private Answer a1;
     private Answer a2;
     private Answer a3;
 
+    private Question q1;
+
     @BeforeEach
     void setUp() {
-        Question q1 = questionRepository.save(QuestionTest.Q1);
-        Question q2 = questionRepository.save(QuestionTest.Q2);
-        Question q3 = questionRepository.save(QuestionTest.Q2);
 
-        A1 = new Answer(UserTest.JAVAJIGI, q1, "Answers Contents1");
-        A2 = new Answer(UserTest.SANJIGI, q2, "Answers Contents2");
-        A3 = new Answer(UserTest.INSUP, q3, "Answers Contents3");
+        User javajigi = userRepository.save(UserTest.JAVAJIGI);
+        User sanjigi = userRepository.save(UserTest.SANJIGI);
+        User insup = userRepository.save(UserTest.INSUP);
+
+        q1 = questionRepository.save(QuestionTest.Q1.writeBy(javajigi));
+        Question q2 = questionRepository.save(QuestionTest.Q2.writeBy(sanjigi));
+
+        A1 = new Answer(javajigi, q1, "Answers Contents1");
+        A2 = new Answer(sanjigi, q2, "Answers Contents2");
+        A3 = new Answer(insup, q2, "Answers Contents3");
 
         a1 = answerRepository.save(A1);
         a2 = answerRepository.save(A2);
@@ -85,7 +93,7 @@ public class AnswerTest {
     @DisplayName("동일한 QuestionId를 가지고 있는 항목 확인")
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        List<Answer> answerList = answerRepository.findByQuestionAndDeletedFalse(QuestionTest.Q1.getId());
+        List<Answer> answerList = answerRepository.findByQuestionAndDeletedFalse(QuestionTest.Q2);
         assertThat(answerList).hasSize(2);
     }
 }

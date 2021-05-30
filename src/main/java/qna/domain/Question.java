@@ -85,6 +85,10 @@ public class Question {
         this.deleted = deleted;
     }
 
+    public User getWriter() {
+        return writer;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
