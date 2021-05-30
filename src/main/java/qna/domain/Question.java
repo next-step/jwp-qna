@@ -27,6 +27,8 @@ public class Question extends BaseTimeEntity {
 
     private Long writerId;
 
+    protected Question() {}
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }
