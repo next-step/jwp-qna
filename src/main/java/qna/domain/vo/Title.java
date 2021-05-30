@@ -25,13 +25,13 @@ public class Title {
 
 	private void validateHasText(String title) {
 		if (!StringUtils.hasText(title)) {
-			throw new IllegalArgumentException("문자열을 포함해야 합니다.");
+			throw new IllegalArgumentException("제목은 빈 텍스트일 수 없습니다.");
 		}
 	}
 
 	private void validateMaxLength(String title) {
 		if (title.length() > MAX_LENGTH) {
-			throw new IllegalArgumentException("최대 길이를 넘었습니다.");
+			throw new IllegalArgumentException("제목의 최대 길이를 넘었습니다.");
 		}
 	}
 
