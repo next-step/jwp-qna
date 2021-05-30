@@ -17,10 +17,14 @@ public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Enumerated(value = EnumType.STRING)
     private ContentType contentType;
+
     private Long contentId;
+
     private Long deletedById;
+
     private LocalDateTime createDate = LocalDateTime.now();
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
