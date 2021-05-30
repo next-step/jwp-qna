@@ -31,4 +31,5 @@ public class AnswersTest {
                                     .anyMatch(answer -> !answer.isDeleted())
         ).isFalse();
     }
+
 }

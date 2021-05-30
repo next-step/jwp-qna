@@ -56,14 +56,12 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public DeleteHistories deleteAndHistory(User loginUser) throws CannotDeleteException {
+    public DeleteHistories deleteAndHistories(User loginUser) throws CannotDeleteException {
         validateUserForDelete(loginUser);
 
-        DeleteHistories deleteHistories = new DeleteHistories();
         Answers answers = new Answers(this.answers);
-
+        DeleteHistories deleteHistories = answers.deleteAllAndHistory();
         deleteHistories.add(this.deleteAndHistory());
-        deleteHistories.addAll(answers.deleteAllAndHistory());
 
         return deleteHistories;
     }
@@ -86,9 +84,8 @@ public class Question extends BaseTimeEntity {
     }
 
     protected void validateAnswersProprietary(User loginUser) throws CannotDeleteException {
-        if (answers.stream().anyMatch(answer -> !answer.isOwner(loginUser))) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
+        Answers answers = new Answers(this.answers);
+        answers.validateProprietary(loginUser);
     }
 
     public Question writtenBy(User writer) {
