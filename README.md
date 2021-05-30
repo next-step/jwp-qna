@@ -78,15 +78,15 @@ alter table user
     │  │      │  UnAuthorizedException.java
     │  │      │
     │  │      ├─domain
-    │  │      │      Answer.java                   QnA 답변
+    │  │      │      Answer.java                      QnA 답변
     │  │      │      AnswerRepository.java
-    │  │      │      BaseEntity.java               공통 Entity
-    │  │      │      ContentType.java              Content type
-    │  │      │      DeleteHistory.java            QnA 삭제 history
+    │  │      │      BaseEntity.java                  공통 Entity
+    │  │      │      ContentType.java                 Content type
+    │  │      │      DeleteHistory.java               QnA 삭제 history
     │  │      │      DeleteHistoryRepository.java
-    │  │      │      Question.java                 QnA 질문
+    │  │      │      Question.java                    QnA 질문
     │  │      │      QuestionRepository.java
-    │  │      │      User.java                     사용자
+    │  │      │      User.java                        사용자
     │  │      │      UserRepository.java
     │  │      │
     │  │      └─service
@@ -94,9 +94,9 @@ alter table user
     │  │              QnaService.java
     │  │
     │  └─resources
-    │          application-default.properties      기본 설정(운영)
-    │          application-local.properties        로컬 설정
-    │          application-prod.properties         운영 설정
+    │          application-default.properties         기본 설정(운영)
+    │          application-local.properties           로컬 설정
+    │          application-prod.properties            운영 설정
     │
     └─test
         │  .DS_Store
