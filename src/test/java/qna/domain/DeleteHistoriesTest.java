@@ -42,16 +42,15 @@ public class DeleteHistoriesTest {
 
     @Test
     void add_Test() {
-        deleteHistories.add(question.deleteAndHistory());
+        deleteHistories.add(question.deleteAndHistories());
 
         assertThat(deleteHistories.histories()).hasSize(1);
     }
 
     @Test
     void addAll_Test() {
-        List<DeleteHistory> deleteHistoryList = Arrays.asList(QuestionTest.Q1.deleteAndHistory(),
-                                                                  QuestionTest.Q2.deleteAndHistory());
-        deleteHistories.addAll(deleteHistoryList);
+        DeleteHistories deleteHistories = QuestionTest.Q1.deleteAndHistories();
+        deleteHistories.add(QuestionTest.Q2.deleteAndHistories());
 
         assertThat(deleteHistories.histories()).hasSize(2);
     }

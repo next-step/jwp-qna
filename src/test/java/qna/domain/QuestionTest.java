@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -48,13 +47,13 @@ public class QuestionTest {
 
     @Test
     void deleteHistory_Test() {
-        DeleteHistory deleteHistory = question.deleteAndHistory();
+        DeleteHistories deleteHistories = question.deleteAndHistories();
+        DeleteHistory deleteHistory = deleteHistories.histories().get(0);
 
         assertAll(
                 () -> assertThat(deleteHistory.getContentType().equals(question.getContents())),
                 () -> assertThat(deleteHistory.getContentId().equals(question.getId())),
-                () -> assertThat(deleteHistory.getUser().equals(question.getWriter())),
-                () -> assertThat(deleteHistory.getCreateDate()).isBefore(LocalDateTime.now())
+                () -> assertThat(deleteHistory.getUser().equals(question.getWriter()))
         );
     }
 
@@ -67,16 +66,6 @@ public class QuestionTest {
     void question_삭제하려는_유저의_question_작성자_유효성_실패_Test() throws CannotDeleteException {
         assertThatThrownBy(() ->
                 question.validateQuestionProprietary(UserTest.SANJIGI)
-        ).isInstanceOf(CannotDeleteException.class);
-    }
-
-    @Test
-    void question_삭제하려는_유저의_answer_작성자_유효성_실패_Test() {
-        Answer answer = answerRepository.save(new Answer(userRepository.save(UserTest.SANJIGI), question, "contents"));
-        question.addAnswer(answer);
-
-        assertThatThrownBy(() ->
-                question.validateAnswersProprietary(user)
         ).isInstanceOf(CannotDeleteException.class);
     }
 

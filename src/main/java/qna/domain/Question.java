@@ -4,7 +4,6 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,8 +25,8 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -39,10 +38,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question(Long id, String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
-        this.writer = null;
+        this(id, title, null, contents);
     }
 
     public Question(String title, User writer, String contents) {
@@ -54,22 +50,22 @@ public class Question extends BaseTimeEntity {
         this.title = title;
         this.writer = writer;
         this.contents = contents;
+        this.answers = new Answers();
     }
 
     public DeleteHistories deleteAndHistories(User loginUser) throws CannotDeleteException {
         validateUserForDelete(loginUser);
 
-        Answers answers = new Answers(this.answers);
-        DeleteHistories deleteHistories = answers.deleteAllAndHistory();
-        deleteHistories.add(this.deleteAndHistory());
+        DeleteHistories deleteHistories = this.deleteAndHistories();
+        deleteHistories.add(answers.deleteAllAndHistories());
 
         return deleteHistories;
     }
 
-    protected DeleteHistory deleteAndHistory() {
+    protected DeleteHistories deleteAndHistories() {
         this.setDeleted(true);
 
-        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+        return new DeleteHistories(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
     }
 
     private void validateUserForDelete(User loginUser) throws CannotDeleteException {
@@ -84,7 +80,6 @@ public class Question extends BaseTimeEntity {
     }
 
     protected void validateAnswersProprietary(User loginUser) throws CannotDeleteException {
-        Answers answers = new Answers(this.answers);
         answers.validateProprietary(loginUser);
     }
 
@@ -98,9 +93,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if (!answers.contains(answer)) {
-            answers.add(answer);
-        }
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -109,7 +102,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.answers();
     }
 
     public Long getId() {

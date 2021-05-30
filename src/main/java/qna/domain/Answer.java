@@ -49,6 +49,10 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
+    public DeleteHistory deleteHistory() {
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+    }
+
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
@@ -109,7 +113,4 @@ public class Answer extends BaseTimeEntity {
                 '}';
     }
 
-    public DeleteHistory deleteHistory() {
-        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
-    }
 }
