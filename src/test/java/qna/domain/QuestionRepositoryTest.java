@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceUnitUtil;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,15 +20,42 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    private User user;
     private Question question;
     private Question newQuestion;
     private Question saved;
 
     @BeforeEach
     void setUp() {
-        question = new Question("질문1", "질문이 있습니다.");
-        newQuestion = new Question("새로운 질문", "질문이 또 있습니다.");
+        user = new User("userId", "password", "name", "email");
+        User savedUser = userRepository.save(user);
+
+        question = new Question("질문1", "질문이 있습니다.").writeBy(savedUser);
+        newQuestion = new Question("새로운 질문", "질문이 또 있습니다.").writeBy(savedUser);
         saved = questionRepository.save(question);
+    }
+
+    @Test
+    @DisplayName("User 매핑된 참조 부분 지연로딩인지 테스트(즉시로딩 안되는지 테스트)")
+    void testForUserLazy() {
+        entityManager.clear();
+        PersistenceUnitUtil persistenceUnitUtil = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+        Optional<Question> maybeQuestion = questionRepository.findById(saved.getId());
+
+        boolean isLoaded = persistenceUnitUtil.isLoaded(maybeQuestion.get(), "writer");
+        assertThat(isLoaded).isFalse(); //지연로딩이라서 여기선 false
+
+        String writerName = maybeQuestion.get().getWriter().getName();
+        assertAll(
+                () -> assertThat(writerName).isEqualTo(user.getName()),
+                () -> assertThat(persistenceUnitUtil.isLoaded(maybeQuestion.get(), "writer")).isTrue()
+        );
     }
 
     @Test

@@ -4,6 +4,8 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceUnitUtil;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 class AnswerRepositoryTest {
-
     @Autowired
     private UserRepository userRepository;
 
@@ -22,6 +23,9 @@ class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     private User savedUser;
     private Question savedQuestion;
     private Answer givenAnswer;
@@ -29,7 +33,7 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        User user = new User("bjr", "password", "name","email");
+        User user = new User("bjr", "password", "name", "email");
         savedUser = userRepository.save(user);
 
         Question question = new Question("question", "질문내용").writeBy(savedUser);
@@ -47,6 +51,40 @@ class AnswerRepositoryTest {
                 () -> assertThat(savedAnswer.getWriter()).isEqualTo(givenAnswer.getWriter()),
                 () -> assertThat(savedAnswer.getQuestion()).isEqualTo(givenAnswer.getQuestion()),
                 () -> assertThat(savedAnswer.getContents()).isEqualTo(givenAnswer.getContents())
+        );
+    }
+
+    @Test
+    @DisplayName("User 매핑된 참조 부분 지연로딩인지 테스트(즉시로딩 안되는지 테스트)")
+    void testForUserLazy() {
+        entityManager.clear();
+        PersistenceUnitUtil persistenceUnitUtil = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+        Optional<Answer> maybeAnswer = answerRepository.findById(savedAnswer.getId());
+
+        boolean isLoaded = persistenceUnitUtil.isLoaded(maybeAnswer.get(), "writer");
+        assertThat(isLoaded).isFalse(); //지연로딩이라서 여기선 false
+
+        String writerName = maybeAnswer.get().getWriter().getName();
+        assertAll(
+                () -> assertThat(writerName).isEqualTo(savedUser.getName()),
+                () -> assertThat(persistenceUnitUtil.isLoaded(maybeAnswer.get(), "writer")).isTrue()
+        );
+    }
+
+    @Test
+    @DisplayName("Question 매핑된 참조 부분 지연로딩인지 테스트(즉시로딩 안되는지 테스트)")
+    void testForQuestionLazy() {
+        entityManager.clear();
+        PersistenceUnitUtil persistenceUnitUtil = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+        Optional<Answer> maybeAnswer = answerRepository.findById(savedAnswer.getId());
+
+        boolean isLoaded = persistenceUnitUtil.isLoaded(maybeAnswer.get(), "question");
+        assertThat(isLoaded).isFalse(); //지연로딩이라서 여기선 false
+
+        String questionTitle = maybeAnswer.get().getQuestion().getTitle();
+        assertAll(
+                () -> assertThat(questionTitle).isEqualTo(savedQuestion.getTitle()),
+                () -> assertThat(persistenceUnitUtil.isLoaded(maybeAnswer.get(), "question")).isTrue()
         );
     }
 
@@ -84,7 +122,8 @@ class AnswerRepositoryTest {
                 () -> assertThat(answers).contains(givenAnswer, givenAnswer_2)
         );
     }
-//
+
+    //
     @Test
     @DisplayName("questionId로 매칭되는 answer값 삭제처리 되었을 시 조회 불가 테스트")
     void findByQuestionIdAndDeletedFalse_failCase() {
