@@ -17,7 +17,7 @@ import qna.exceptions.NotFoundException;
 public class UserRepositoryTest {
 
     @Autowired
-    private UserRepository users;
+    private UserRepository userRepository;
 
     private static final String USER_ID = "alice";
     private static final String PASSWORD = "password";
@@ -28,9 +28,9 @@ public class UserRepositoryTest {
     @Test
     void findByUserId() {
         User alice = new User(USER_ID, PASSWORD, NAME, EMAIL);
-        users.save(alice);
+        userRepository.save(alice);
 
-        User actual = users
+        User actual = userRepository
             .findByUserId(alice.getUserId())
             .orElseThrow(NotFoundException::new);
 
@@ -42,11 +42,11 @@ public class UserRepositoryTest {
     @ValueSource(strings = {"New User Id"})
     void update(String expected) {
         User alice = new User(USER_ID, PASSWORD, NAME, EMAIL);
-        users.save(alice);
+        userRepository.save(alice);
 
         alice.setUserId(expected);
 
-        User actual = users
+        User actual = userRepository
             .findByUserId(expected)
             .orElseThrow(NotFoundException::new);
 
@@ -58,26 +58,26 @@ public class UserRepositoryTest {
     @ValueSource(strings = {"New User Id"})
     void updateUpdatedAt(String expected) {
         User alice = new User(USER_ID, PASSWORD, NAME, EMAIL);
-        users.save(alice);
+        userRepository.save(alice);
 
-        assertThat(alice.getUpdatedAt()).isNull();
+        assertThat(alice.getUpdatedAt()).isEqualTo(alice.getCreatedAt());
 
         alice.setUserId(expected);
-        users.flush();
+        userRepository.flush();
 
-        assertThat(alice.getUpdatedAt()).isNotNull();
+        assertThat(alice.getUpdatedAt()).isNotEqualTo(alice.getCreatedAt());
     }
 
     @DisplayName("삭제하기")
     @Test
     void delete() {
         User alice = new User(USER_ID, PASSWORD, NAME, EMAIL);
-        users.save(alice);
+        userRepository.save(alice);
 
-        users.delete(alice);
+        userRepository.delete(alice);
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
-            users.findById(alice.getId()).get()
+            userRepository.findById(alice.getId()).get()
         );
     }
 

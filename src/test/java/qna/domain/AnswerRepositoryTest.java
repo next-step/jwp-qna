@@ -16,25 +16,25 @@ import qna.exceptions.NotFoundException;
 public class AnswerRepositoryTest {
 
     @Autowired
-    private AnswerRepository answers;
+    private AnswerRepository answerRepository;
 
     @Autowired
-    private QuestionRepository questions;
+    private QuestionRepository questionRepository;
 
     @Autowired
-    private UserRepository users;
+    private UserRepository userRepository;
 
     @DisplayName("질문의 답변 목록 검색")
     @Test
     void findByQuestionIdAndDeletedFalse() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
-        users.save(alice);
+        userRepository.save(alice);
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
         Answer answer = new Answer(alice, question, "Answers Contents1");
-        answers.save(answer);
+        answerRepository.save(answer);
 
-        List<Answer> activeAnswers = answers.findByQuestionIdAndDeletedFalse(question.getId());
+        List<Answer> activeAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
         assertThat(activeAnswers.size()).isEqualTo(1);
         assertThat(activeAnswers.contains(answer)).isTrue();
@@ -44,14 +44,14 @@ public class AnswerRepositoryTest {
     @Test
     void findByQuestionIdAndDeletedFalse_AfterDeleteAnswer() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
-        users.save(alice);
+        userRepository.save(alice);
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
         Answer answer = new Answer(alice, question, "Answers Contents1");
-        answers.save(answer);
+        answerRepository.save(answer);
 
         answer.setDeleted(true);
-        List<Answer> activeAnswers = answers.findByQuestionIdAndDeletedFalse(question.getId());
+        List<Answer> activeAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
         assertThat(activeAnswers).isEmpty();
     }
@@ -60,13 +60,13 @@ public class AnswerRepositoryTest {
     @Test
     void findByIdAndDeletedFalse() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
-        users.save(alice);
+        userRepository.save(alice);
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
         Answer answer = new Answer(alice, question, "Answers Contents1");
-        answers.save(answer);
+        answerRepository.save(answer);
 
-        Answer actual = answers
+        Answer actual = answerRepository
             .findByIdAndDeletedFalse(answer.getId())
             .orElseThrow(NotFoundException::new);
 
@@ -78,16 +78,16 @@ public class AnswerRepositoryTest {
     @Test
     void findByIdAndDeletedFalse_AfterDeleteAnswer() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
-        users.save(alice);
+        userRepository.save(alice);
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
         Answer answer = new Answer(alice, question, "Answers Contents1");
-        answers.save(answer);
+        answerRepository.save(answer);
 
         answer.setDeleted(true);
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
-            answers.findByIdAndDeletedFalse(answer.getId()).get()
+            answerRepository.findByIdAndDeletedFalse(answer.getId()).get()
         );
     }
 

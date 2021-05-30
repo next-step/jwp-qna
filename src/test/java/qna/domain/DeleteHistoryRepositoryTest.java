@@ -11,27 +11,27 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class DeleteHistoryRepositoryTest {
 
     @Autowired
-    private DeleteHistoryRepository deleteHistories;
+    private DeleteHistoryRepository deleteHistoryRepository;
 
     @Autowired
-    private AnswerRepository answers;
+    private AnswerRepository answerRepository;
 
     @Autowired
-    private QuestionRepository questions;
+    private QuestionRepository questionRepository;
 
     @Autowired
-    private UserRepository users;
+    private UserRepository userRepository;
 
     @DisplayName("질문 삭제 기록하기")
     @Test
     void deleteQuestion() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
-        users.save(alice);
+        userRepository.save(alice);
         Question question = new Question("title", "contents").writeBy(alice);
-        questions.save(question);
+        questionRepository.save(question);
 
         DeleteHistory deleteHistory = new DeleteHistory(question, alice);
-        DeleteHistory actual = deleteHistories.save(deleteHistory);
+        DeleteHistory actual = deleteHistoryRepository.save(deleteHistory);
 
         assertThat(actual.equals(deleteHistory)).isTrue();
         assertThat(actual.hashCode()).isEqualTo(deleteHistory.hashCode());
@@ -41,14 +41,14 @@ public class DeleteHistoryRepositoryTest {
     @Test
     void deleteAnswer() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
-        users.save(alice);
+        userRepository.save(alice);
         Question question = new Question("title", "contents").writeBy(alice);
-        questions.save(question);
+        questionRepository.save(question);
         Answer answer = new Answer(alice, question, "Answer Contents");
-        answers.save(answer);
+        answerRepository.save(answer);
 
         DeleteHistory deleteHistory = new DeleteHistory(answer, alice);
-        DeleteHistory actual = deleteHistories.save(deleteHistory);
+        DeleteHistory actual = deleteHistoryRepository.save(deleteHistory);
 
         assertThat(actual.equals(deleteHistory)).isTrue();
         assertThat(actual.hashCode()).isEqualTo(deleteHistory.hashCode());

@@ -18,37 +18,30 @@ import qna.exceptions.NotFoundException;
 public class QuestionRepositoryTest {
 
     @Autowired
-    private QuestionRepository questions;
-
-    @Autowired
-    private AnswerRepository answers;
-
-    @Autowired
-    private UserRepository users;
+    private QuestionRepository questionRepository;
 
     @DisplayName("진행 중인 질문 검색")
     @Test
     void findByDeletedFalse() {
         Question question1 = new Question("title", "contents");
         Question question2 = new Question("title2", "contents2");
-        questions.save(question1);
-        questions.save(question2);
+        questionRepository.save(question1);
+        questionRepository.save(question2);
 
-        List<Question> activeQuestions = questions.findByDeletedFalse();
+        List<Question> activeQuestions = questionRepository.findByDeletedFalse();
 
         assertThat(activeQuestions.size()).isEqualTo(2);
-        assertThat(activeQuestions.contains(question1)).isTrue();
-        assertThat(activeQuestions.contains(question2)).isTrue();
+        assertThat(activeQuestions).contains(question1, question2);
     }
 
     @DisplayName("삭제한 질문으로 변경 후 진행 중인 질문 검색")
     @Test
     void findByDeletedFalse_AfterDeleteQuestion() {
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
         question.setDeleted(true);
 
-        List<Question> activeQuestions = questions.findByDeletedFalse();
+        List<Question> activeQuestions = questionRepository.findByDeletedFalse();
 
         assertThat(activeQuestions).isEmpty();
     }
@@ -57,9 +50,9 @@ public class QuestionRepositoryTest {
     @Test
     void findByIdAndDeletedFalse() {
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
 
-        Question actual = questions
+        Question actual = questionRepository
             .findByIdAndDeletedFalse(question.getId())
             .orElseThrow(NotFoundException::new);
 
@@ -70,11 +63,11 @@ public class QuestionRepositoryTest {
     @Test
     void findByIdAndDeletedFalse_AfterDeleteQuestion() {
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
         question.setDeleted(true);
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
-            questions.findByIdAndDeletedFalse(question.getId()).get()
+            questionRepository.findByIdAndDeletedFalse(question.getId()).get()
         );
     }
 
@@ -83,11 +76,11 @@ public class QuestionRepositoryTest {
     @ValueSource(strings = {"New Title"})
     void update(String expected) {
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
 
         question.setTitle(expected);
 
-        List<Question> activeQuestions = questions.findByDeletedFalse();
+        List<Question> activeQuestions = questionRepository.findByDeletedFalse();
 
         assertThat(activeQuestions.get(0).getTitle()).isEqualTo(expected);
     }
@@ -97,26 +90,26 @@ public class QuestionRepositoryTest {
     @ValueSource(strings = {"New Title"})
     void updateUpdatedAt(String expected) {
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
 
-        assertThat(question.getUpdatedAt()).isNull();
+        assertThat(question.getUpdatedAt()).isEqualTo(question.getCreatedAt());
 
         question.setTitle(expected);
-        questions.flush();
+        questionRepository.flush();
 
-        assertThat(question.getUpdatedAt()).isNotNull();
+        assertThat(question.getUpdatedAt()).isNotEqualTo(question.getCreatedAt());
     }
 
     @DisplayName("삭제하기")
     @Test
     void delete() {
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
 
-        questions.delete(question);
+        questionRepository.delete(question);
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
-            questions.findById(question.getId()).get()
+            questionRepository.findById(question.getId()).get()
         );
     }
 
