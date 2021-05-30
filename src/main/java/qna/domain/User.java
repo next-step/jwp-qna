@@ -111,8 +111,8 @@ public class User extends BaseTimeEntity {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        User user = (User) o;
-        return id.equals(user.id);
+
+        return equalsNameAndEmail((User) o);
     }
 
     @Override

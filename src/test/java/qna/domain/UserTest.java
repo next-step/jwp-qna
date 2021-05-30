@@ -10,12 +10,13 @@ public class UserTest {
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
 
-    @DisplayName("id 값만으로 equals() 여부를 점검하는지 확인한다")
+    @DisplayName("id/name/email을 점검하는지 확인한다")
     @Test
-    void check_equals_method(){
-        User onlyIdDifferentUser = new User(99L, "javajigi", "password", "name", "javajigi@slipp.net");
-        User onlyIdSameUser = new User(1L, "pythonjigi", "pythonPW","pythonName","python@slipp.net");
-        assertThat(JAVAJIGI.equals(onlyIdDifferentUser)).isFalse();
-        assertThat(JAVAJIGI.equals(onlyIdSameUser)).isTrue();
+    void check_equals_method() {
+
+        User onlyEmailDifferentUser = new User(1L,"javajigi", "password", "name", "fakeJavaJigi@slipp.net");
+        User onlyNameDifferentUser = new User(2L, "javajigi", "password", "fakeName", "javajigi@slipp.net");
+        assertThat(JAVAJIGI.equals(onlyEmailDifferentUser)).isFalse();
+        assertThat(JAVAJIGI.equals(onlyNameDifferentUser)).isFalse();
     }
 }
