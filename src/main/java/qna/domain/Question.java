@@ -4,6 +4,7 @@ import qna.CannotDeleteException;
 import qna.domain.wrapper.Answers;
 import qna.domain.wrapper.DeleteHistories;
 import qna.domain.wrapper.Deleted;
+import qna.domain.wrapper.QuestionTitle;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,8 +19,8 @@ public class Question extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+    @Embedded
+    private QuestionTitle title;
 
     @Lob
     private String contents;
@@ -50,7 +51,7 @@ public class Question extends BaseTimeEntity {
 
     public Question(Long id, String title, User writer, String contents) {
         this.id = id;
-        this.title = title;
+        this.title = new QuestionTitle(title);
         this.writer = writer;
         this.contents = contents;
         this.answers = new Answers();
@@ -117,7 +118,7 @@ public class Question extends BaseTimeEntity {
         return id;
     }
 
-    public String getTitle() {
+    public QuestionTitle getTitle() {
         return title;
     }
 
