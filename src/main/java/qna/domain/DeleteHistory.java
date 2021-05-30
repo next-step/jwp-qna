@@ -1,14 +1,37 @@
 package qna.domain;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class DeleteHistory {
+@Entity
+@Table(name = "delete_history")
+public class DeleteHistory{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "content_type", length = 255)
+    @Enumerated(EnumType.STRING)
     private ContentType contentType;
+
+    @Column(name = "content_id")
     private Long contentId;
+
+    @Column(name = "deleted_by_id")
     private Long deletedById;
+
+    @CreatedDate
+    @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
+
+    protected DeleteHistory() {
+
+    }
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
