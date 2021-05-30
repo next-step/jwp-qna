@@ -49,6 +49,24 @@ class AnswerRepositoryTest {
 	}
 
 	@Test
+	@DisplayName("update 테스트")
+	void updateTest() {
+		// given
+		String expectContents = "update";
+		Answer expected = answers.save(A1);
+
+		// when
+		expected.setContents(expectContents);
+
+		// then
+		assertThat(answers.findByIdAndDeletedFalse(expected.getId())
+						  .orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
+			.isNotNull()
+			.extracting(answer -> answer.getContents())
+			.isEqualTo(expectContents);
+	}
+
+	@Test
 	@DisplayName("존재하지 않는 PK로 findById test")
 	void findByIdTestWithNull() {
 		assertThatThrownBy(() -> answers.findById(0L).orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))

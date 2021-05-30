@@ -108,6 +108,10 @@ public class User extends CreateAndUpdateTimeEntity {
                 '}';
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     private static class GuestUser extends User {
         @Override
         public boolean isGuestUser() {

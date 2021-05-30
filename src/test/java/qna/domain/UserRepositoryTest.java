@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static qna.domain.QuestionTest.Q1;
 import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
@@ -33,6 +34,24 @@ class UserRepositoryTest {
 			assertThat(javajigi.getName()).isEqualTo(JAVAJIGI.getName());
 			assertThat(javajigi.getEmail()).isEqualTo(JAVAJIGI.getEmail());
 		});
+	}
+
+	@Test
+	@DisplayName("update 테스트")
+	void updateTest() {
+		// given
+		String expectedName = "update";
+		User expected = users.save(JAVAJIGI);
+
+		// when
+		expected.setName(expectedName);
+
+		// then
+		assertThat(users.findById(expected.getId())
+							.orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
+			.isNotNull()
+			.extracting(value -> value.getName())
+			.isEqualTo(expectedName);
 	}
 
 	@Test

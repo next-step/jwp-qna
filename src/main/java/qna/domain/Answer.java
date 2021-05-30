@@ -112,4 +112,11 @@ public class Answer extends CreateAndUpdateTimeEntity {
         return Objects.hash(id, writerId, questionId, contents, deleted);
     }
 
+    public void setContents(final String contents) {
+        this.contents = contents;
+    }
+
+    public String getContents() {
+        return this.contents;
+    }
 }

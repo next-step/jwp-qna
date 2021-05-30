@@ -67,4 +67,12 @@ public class DeleteHistory {
     public Long getId() {
         return this.id;
     }
+
+    public void setContentType(ContentType contentType) {
+        this.contentType = contentType;
+    }
+
+    public ContentType getContentType() {
+        return this.contentType;
+    }
 }

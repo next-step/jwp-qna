@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,6 +36,24 @@ class QuestionRepositoryTest {
 			assertThat(questionQ1.getWriterId()).isEqualTo(Q1.getWriterId());
 		});
 
+	}
+
+	@Test
+	@DisplayName("update 테스트")
+	void updateTest() {
+		// given
+		String expectedTitle = "update";
+		Question expected = questions.save(Q1);
+
+		// when
+		expected.setTitle(expectedTitle);
+
+		// then
+		assertThat(questions.findByIdAndDeletedFalse(expected.getId())
+							.orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
+			.isNotNull()
+			.extracting(value -> value.getTitle())
+			.isEqualTo(expectedTitle);
 	}
 
 	@Test
