@@ -2,18 +2,42 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+
+@Entity
+@Table(name = "user"
+        , uniqueConstraints = {@UniqueConstraint(
+                name = "UK_a3imlf41l37utmxiquukk8ajc"
+                , columnNames = {"user_id"})})
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "user_id", nullable = false, length = 20)
     private String userId;
+
+    @Column(name = "password", nullable = false, length = 20)
     private String password;
+
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
+
+    @Column(name = "email", length = 50)
     private String email;
 
-    private User() {
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updatedAt")
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
