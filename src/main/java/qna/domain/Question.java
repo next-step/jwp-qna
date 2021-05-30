@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class Question {
@@ -15,7 +16,9 @@ public class Question {
     @Lob
     private String contents;
 
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -34,12 +37,12 @@ public class Question {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -71,11 +74,7 @@ public class Question {
     }
 
     public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+        return writer.getId();
     }
 
     public boolean isDeleted() {
@@ -92,8 +91,21 @@ public class Question {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer, question.writer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writer, deleted);
     }
 }
