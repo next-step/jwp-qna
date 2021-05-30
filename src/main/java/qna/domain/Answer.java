@@ -2,11 +2,14 @@ package qna.domain;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+
+import org.springframework.lang.NonNull;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -24,6 +27,8 @@ public class Answer extends BaseEntity {
     @Lob
     private String contents;
 
+    @NonNull
+    @Column(nullable = false)
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {

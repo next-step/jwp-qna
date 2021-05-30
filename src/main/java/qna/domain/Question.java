@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
+import org.springframework.lang.NonNull;
+
 @Entity
 public class Question extends BaseEntity {
     @Id
@@ -21,6 +23,8 @@ public class Question extends BaseEntity {
 
     private Long writerId;
 
+    @NonNull
+    @Column(nullable = false)
     private boolean deleted = false;
 
     public Question(String title, String contents) {
