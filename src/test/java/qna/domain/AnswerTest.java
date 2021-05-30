@@ -26,18 +26,22 @@ public class AnswerTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
     private Answer a1;
     private Answer a2;
     private Answer a3;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(QuestionTest.Q1, "id", 1L);
-        ReflectionTestUtils.setField(QuestionTest.Q2, "id", 2L);
+        Question q1 = questionRepository.save(QuestionTest.Q1);
+        Question q2 = questionRepository.save(QuestionTest.Q2);
+        Question q3 = questionRepository.save(QuestionTest.Q2);
 
-        A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-        A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-        A3 = new Answer(UserTest.INSUP, QuestionTest.Q2, "Answers Contents3");
+        A1 = new Answer(UserTest.JAVAJIGI, q1, "Answers Contents1");
+        A2 = new Answer(UserTest.SANJIGI, q2, "Answers Contents2");
+        A3 = new Answer(UserTest.INSUP, q3, "Answers Contents3");
 
         a1 = answerRepository.save(A1);
         a2 = answerRepository.save(A2);
@@ -81,7 +85,7 @@ public class AnswerTest {
     @DisplayName("동일한 QuestionId를 가지고 있는 항목 확인")
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        List<Answer> answerList = answerRepository.findByQuestionAndDeletedFalse(QuestionTest.Q1.getId());
         assertThat(answerList).hasSize(2);
     }
 }
