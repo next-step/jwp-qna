@@ -14,17 +14,16 @@ public class Answer extends AbstractEntity {
     private Question question;
 
     @Column
-    protected String contents;
+    private String contents;
 
     @JoinColumn(name = "writer_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    protected User writer;
+    private User writer;
 
     @Column
-    protected boolean deleted = false;
+    private boolean deleted = false;
 
-
-    public Answer() {
+    protected Answer() {
     }
 
     public Answer(User writer, Question question, String contents) {

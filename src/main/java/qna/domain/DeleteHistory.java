@@ -19,7 +19,7 @@ public class DeleteHistory extends AbstractEntity {
 
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory() {
+    protected DeleteHistory() {
     }
 
     public DeleteHistory(ContentType contentType, Long contentId, User deleter, LocalDateTime createDate) {
