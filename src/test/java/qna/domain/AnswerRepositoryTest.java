@@ -23,12 +23,23 @@ public class AnswerRepositoryTest {
 	@Autowired
 	private AnswerRepository answerRepository;
 
+	@Autowired
+	private QuestionRepository questionRepository;
+
+	@Autowired
+	private UserRepository userRepository;
+
 	private Answer expected;
 	private Answer saved;
 
 	@BeforeEach
 	void setup() {
-		this.expected = AnswerTest.A1;
+		User user = new User("testUser", "testPassword", "testName", "testEmail");
+		Question question = new Question("questionTitle", "questionContents");
+		Question savedQuestion = this.questionRepository.save(question);
+		User savedUser = this.userRepository.save(user);
+
+		this.expected = new Answer(savedUser, savedQuestion, "answerContents");
 		this.saved = this.answerRepository.save(expected);
 	}
 
@@ -60,7 +71,7 @@ public class AnswerRepositoryTest {
 		List<Answer> actual = this.answerRepository.findByQuestionIdAndDeletedFalse(
 			saved.getQuestion().getId());
 
-		assertThat(actual).containsExactly(AnswerTest.A1);
+		assertThat(actual).containsExactly(this.expected);
 	}
 
 	private void isEqualTo(Answer expected, Answer actual) {

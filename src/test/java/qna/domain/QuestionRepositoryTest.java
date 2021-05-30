@@ -22,12 +22,18 @@ class QuestionRepositoryTest {
 	@Autowired
 	private QuestionRepository questionRepository;
 
+	@Autowired
+	private UserRepository userRepository;
+
 	private Question expected;
 	private Question saved;
 
 	@BeforeEach
 	void setup() {
-		this.expected = QuestionTest.Q1;
+		User user = new User("testUser", "testPassword", "testName", "testEmail");
+		User savedUser = this.userRepository.save(user);
+		this.expected = new Question("questionTitle", "questionContents");
+		this.expected.writeBy(savedUser);
 		this.saved = this.questionRepository.save(expected);
 	}
 

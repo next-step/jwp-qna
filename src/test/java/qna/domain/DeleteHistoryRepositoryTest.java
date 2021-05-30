@@ -20,12 +20,18 @@ class DeleteHistoryRepositoryTest {
 	@Autowired
 	private DeleteHistoryRepository deleteHistoryRepository;
 
+	@Autowired
+	private UserRepository userRepository;
+
 	private DeleteHistory expected;
 	private DeleteHistory saved;
 
 	@BeforeEach
 	void setup() {
-		this.expected = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, null);
+		User user = new User("testUser", "testPassword", "testName", "testEmail");
+		User savedUser = this.userRepository.save(user);
+
+		this.expected = new DeleteHistory(ContentType.ANSWER, 1L, savedUser, null);
 		this.saved = this.deleteHistoryRepository.save(this.expected);
 	}
 
