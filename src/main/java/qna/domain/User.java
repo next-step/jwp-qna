@@ -4,10 +4,11 @@ import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class User {
+public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -26,11 +27,14 @@ public class User {
     @Column(name = "email", length = 50)
     private String email;
 
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> writtenAnswers;
 
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedAt;
+    @OneToMany(mappedBy = "writer")
+    private List<Question> writtenQuestions;
+
+    @OneToMany(mappedBy = "deletedBy")
+    private List<DeleteHistory> deleteHistories;
 
     protected User() {
     }
@@ -106,16 +110,24 @@ public class User {
     }
 
     public void setEmail(String email) {
-        this.updatedAt = LocalDateTime.now();
         this.email = email;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return this.createdAt;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        return equalsNameAndEmail((User) o);
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return this.updatedAt;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email);
     }
 
     @Override

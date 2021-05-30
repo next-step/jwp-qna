@@ -1,10 +1,10 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-public class Question {
+public class Question extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,17 +17,15 @@ public class Question {
     @Lob
     private String contents;
 
-    @Column(name = "writer_id")
-    private Long writerId;
-
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
+    @ManyToOne
+    private User writer;
 
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedAt;
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers;
 
     protected Question() {
     }
@@ -42,13 +40,17 @@ public class Question {
         this.contents = contents;
     }
 
+    public List<Answer> getAnswers() {
+        return this.answers;
+    }
+
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -59,8 +61,8 @@ public class Question {
         return id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -68,20 +70,10 @@ public class Question {
     }
 
     public void setDeleted(boolean deleted) {
-        this.updatedAt = LocalDateTime.now();
         this.deleted = deleted;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return this.createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return this.updatedAt;
-    }
-
     public void setContents(String contents) {
-        this.updatedAt = LocalDateTime.now();
         this.contents = contents;
     }
 
@@ -91,7 +83,7 @@ public class Question {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer.toString() +
                 ", deleted=" + deleted +
                 '}';
     }

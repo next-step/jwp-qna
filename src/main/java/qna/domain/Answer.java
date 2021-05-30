@@ -4,21 +4,14 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.io.Writer;
 import java.util.Objects;
 
 @Entity
-public class Answer {
+public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "writer_id")
-    private Long writerId;
-
-    @Column(name = "question_id")
-    private Long questionId;
 
     @Lob
     @Column(name = "contents")
@@ -27,11 +20,13 @@ public class Answer {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @ManyToOne
+    private Question question;
 
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedAt;
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    @ManyToOne
+    private User writer;
 
     protected Answer() {
     }
@@ -51,41 +46,39 @@ public class Answer {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equalsNameAndEmail(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    /* DeleteHistory 수정전 임시 메소드 */
+    public Long getWriterId() {
+        return writer.getId();
+    }
+    /* DeleteHistory 수정전 임시 메소드 */
+
+    public Question getQuestion() {
+        return question;
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 
     public void setDeleted(boolean deleted) {
@@ -93,7 +86,6 @@ public class Answer {
     }
 
     public void setContents(String contents) {
-        this.updatedAt = LocalDateTime.now();
         this.contents = contents;
     }
 
@@ -101,8 +93,8 @@ public class Answer {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writerId=" + writer.toString() +
+                ", question=" + question.toString() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

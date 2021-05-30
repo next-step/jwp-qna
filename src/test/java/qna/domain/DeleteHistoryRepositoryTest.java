@@ -16,27 +16,30 @@ public class DeleteHistoryRepositoryTest {
     DeleteHistoryRepository deleteHistoryRepository;
 
     @Autowired
-    AnswerRepository answerRepository;
-
-    @Autowired
     QuestionRepository questionRepository;
 
-    private Question question;
+    @Autowired
+    UserRepository userRepository;
+
+    private Question savedQuestion;
+    private User savedUser;
 
     @BeforeEach
     void setUp() {
-        question = questionRepository.save(QuestionTest.Q1);
-        answerRepository.save(AnswerTest.A1);
+        savedUser = new User("applemango", "pw", "name", "contents");
+        savedUser = userRepository.save(savedUser);
+
+        savedQuestion = new Question("title2", "contents2").writeBy(savedUser);
+        savedQuestion = questionRepository.save(savedQuestion);
     }
 
     @DisplayName("삭제이력 저장 시, id가 생성되는지 확인한다")
     @Test
     void check_save() {
         //When
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(
-                new DeleteHistory(ContentType.QUESTION, question.getId(),
-                        UserTest.JAVAJIGI.getId(), LocalDateTime.now())
-        );
+        DeleteHistory deleteHistory
+                = new DeleteHistory(ContentType.QUESTION, savedQuestion.getId(), savedUser, LocalDateTime.now());
+        deleteHistory = deleteHistoryRepository.save(deleteHistory);
 
         //Then
         assertThat(deleteHistory.getId()).isNotNull();
