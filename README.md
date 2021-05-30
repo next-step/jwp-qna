@@ -64,3 +64,41 @@ create table user
 alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
+
+## 기본 키 매핑 방법 
+### 직접 할당
+* ```@Id``` 어노테이션만 사용.
+
+### 자동 생성
+* ```@Id```와 ```@GenerateValue``` 어노테이션을 함께 사용.
+* 자동 생성 전략 : ```@GenerateValue```의 속성 값 ```strategy```에 아래 전략 중 하나를 세팅한다.
+    - ```IDENTIRY``` : 테이터 베이스에 위임.
+    - ```SEQUENCE``` : 데이터베이스의 시퀀스 오브젝트를 사용. 
+    - ```TABLE``` : 시퀀스 생성 테이블을 생성하여 사용.
+
+## 자동 생성 전략별 사용법 및 특징
+* IDENTIRY
+    - 특징 
+        + 기본 키 생성을 데이터베이스에 위임하여 INSERT 전까지는 ID를 사용자가 알 수 없음.
+        + 이와같은 이유로 인해 ```Transaction Commit```시에 SQL을 실행하는것이 아니라 ```persist(save)```시에 쿼리가 실행된다.
+        + 대표적인 예가 ```MySql```의 ```AUTO_INCREMENT```가 있다.
+
+* SEQUENCE
+    - 특징
+        + 유일한 값을 순서대로 생성하는 데이터베이스의 오브젝트를 사용한다.
+        + 대표적인 예가 ```Oracle```의 ```Oracel Sequence```이다.
+        + ```persist(save)```시점에 ```SEQUENCE```값만 조회해 온다.(```Transaction Commit``` 시 ```INSERT``` 쿼리가 실행된다.)
+        + ```allocationSize``` 속성은 1 이상의 값으로 지정될 경우 한번 조회 해 올 때 지정된 값 만큼 다음 시퀀스 범위를 조회해 오고 메모리에 둔 상태로 시퀀스를 꺼내사용하여 성능 최적화에 사용된다.(기본값 50)
+    - 사용방법
+        + 클래스에 ```@SequenceGenerator``` 어노테이션을 달고 제네레이터의 이름, 시퀀스 이름, 초기화값, 한번에 호출 증가수 값 등을 지정한다.(주요 속성으로는 ```name```, ```sequenceName```, ```initialValue```, ```allocationSize``` 등이 있다.)
+        + ```@GenerateValue```의 ```generator``` 값을 ```@SequenceGenerator``` 어노테이션의 ```name``` 값과 일치시킨다.
+
+* TABLE
+    - 특징
+        + 키 생성용 테이블을 만들어서 데이터베이스의 시퀀스와 비슷한 기능을 구현.
+        + 모든 데이터베이스에 적용이 가능하나 성능적인 문제가 따라온다.
+    - 사용방법
+        + 클래스에 ```@TableGenerator``` 어노테이션을 달고 제네레이터의 이름, 테이블 이름, PK컬럼 이름, 한번에 호출 증가수 값 등을 지정한다.(주요 속성으로는 ```name```, ```table```, ```pkColumnValue```, ```allocationSize```, ```initialValue``` 등이 있다.)
+        + ```@GenerateValue```의 ```generator``` 값을 ```@TableGenerator``` 어노테이션의 ```name``` 값과 일치시킨다.
+
+- 출처 : [김영한의 자바 ORM 표준 JPA 프로그래밍 - 기본편](https://www.inflearn.com/course/ORM-JPA-Basic/dashboard)

@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+/**
+ * User 클래스 기능 테스트
+ */
 public class UserTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
@@ -37,9 +40,12 @@ public class UserTest {
     @Test
     @DisplayName("사용자 정보 복사")
     void new_create() {
+        // given
         User user = User.copy(this.loginUser);
+
+        // then
         assertAll(
-                () -> assertThat(user.getId()).isEqualTo(this.loginUser.getId()),
+                () -> assertThat(user.getId()).isNull(),
                 () -> assertThat(user.getEmail()).isEqualTo(this.loginUser.getEmail()),
                 () -> assertThat(user.getName()).isEqualTo(this.loginUser.getName()),
                 () -> assertThat(user.getPassword()).isEqualTo(this.loginUser.getPassword()),
@@ -69,7 +75,10 @@ public class UserTest {
     @Test
     @DisplayName("게스트 사용자 여부")
     void guest_user() {
+        // given
         User guestUser = User.GUEST_USER;
+
+        // then
         assertAll(
                 () -> assertThat(guestUser.isGuestUser()).isTrue(),
                 () -> assertThat(this.loginUser.isGuestUser()).isFalse()

@@ -33,10 +33,13 @@ public class Question extends BaseEntity {
     }
 
     public Question(Long id, String title, String contents) {
-        super();
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    public static Question copy(Question question) {
+        return new Question(question.getTitle(), question.getContents());
     }
 
     public Question writeBy(User writer) {

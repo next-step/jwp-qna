@@ -47,6 +47,10 @@ public class Answer {
         this.contents = contents;
     }
 
+    public static Answer copy(Answer answer, User user, Question question) {
+        return new Answer(user, question, answer.getContents());
+    }
+
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
     }
