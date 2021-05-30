@@ -3,21 +3,46 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Answer {
-    private Long id;
-    private Long writerId;
-    private Long questionId;
-    private String contents;
-    private boolean deleted = false;
+@Entity
+public class Answer extends AbstractEntity {
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+    @JoinColumn(name = "question_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Question question;
+
+    @Column
+    protected String contents;
+
+    @JoinColumn(name = "writer_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    protected User writer;
+
+    @Column
+    protected boolean deleted = false;
+
+
+    public Answer() {
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(User writer, Question question, String contents) {
+        this.contents = contents;
+        this.writer = writer;
+        this.question = question;
+    }
+
+    public Answer(String contents, User writer, Question question) {
+        this.contents = contents;
+        this.writer = writer;
+        this.question = question;
+    }
+
+    public Answer(Long id, String contents, User writer, boolean deleted, Question question) {
         this.id = id;
+        this.contents = contents;
+        this.deleted = deleted;
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -27,49 +52,31 @@ public class Answer {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
+    }
+
+    public Answer(long id, User writer, Question question, String contents) {
+        this.id = id;
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer == writer;
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -84,8 +91,8 @@ public class Answer {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
