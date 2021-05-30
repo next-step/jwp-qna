@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -17,6 +18,7 @@ import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -86,6 +88,14 @@ public class Answer extends BaseTimeEntity {
         this.writer.getAnswers().add(this);
     }
 
+    public DeleteHistory deleteByOwner(User owner) throws CannotDeleteException {
+        if (!this.isOwner(owner)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter(), LocalDateTime.now());
+    }
+
     public Long getId() {
         return id;
     }
@@ -120,16 +130,5 @@ public class Answer extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    @Override
-    public String toString() {
-        return "Answer{" +
-            "id=" + id +
-            ", writer=" + writer +
-            ", question=" + question +
-            ", contents='" + contents + '\'' +
-            ", deleted=" + deleted +
-            '}';
     }
 }

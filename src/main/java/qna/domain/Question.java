@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import qna.CannotDeleteException;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -42,6 +46,7 @@ public class Question extends BaseTimeEntity{
     private boolean deleted = false;
 
     @OneToMany(mappedBy = "question")
+    @Where(clause = "deleted = false")
     private List<Answer> answers = new ArrayList<>();
 
     public Question() {
@@ -60,6 +65,23 @@ public class Question extends BaseTimeEntity{
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
+    }
+    public List<DeleteHistory> deleteByOwner(User owner) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.deleteByOwner(owner));
+        }
+        deleteHistories.add(deleteQuestion(owner));
+
+        return deleteHistories;
+    }
+
+    private DeleteHistory deleteQuestion(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        setDeleted(true);
+        return new DeleteHistory(ContentType.QUESTION, this.getId(), this.getWriter(), LocalDateTime.now());
     }
 
     public boolean isOwner(User writer) {
@@ -112,16 +134,5 @@ public class Question extends BaseTimeEntity{
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-            "id=" + id +
-            ", contents='" + contents + '\'' +
-            ", title='" + title + '\'' +
-            ", writer=" + writer +
-            ", deleted=" + deleted +
-            '}';
     }
 }
