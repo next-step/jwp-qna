@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.QuestionTest.*;
@@ -34,7 +35,6 @@ class QuestionRepositoryTest {
         secondQuestion = questionRepository.save(new Question(Q2_TITLE, Q2_CONTENT).writeBy(sangjigi));
     }
 
-
     @Test
     @DisplayName("모든 게시글을 조회한다.")
     void findByDeletedFalse() {
@@ -46,5 +46,15 @@ class QuestionRepositoryTest {
                 firstQuestion,
                 secondQuestion
         );
+    }
+
+    @Test
+    @DisplayName("ID에 해당하는 게시글을 조회힌다.")
+    void findByIdAndDeletedFalse() {
+        //when
+        Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(firstQuestion.getId());
+
+        //then
+        assertThat(findQuestion.get()).isEqualTo(firstQuestion);
     }
 }
