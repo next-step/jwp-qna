@@ -52,10 +52,71 @@ alter table user
 ## 구현 기능
 1. answer, delete_history, question, user table 생성
 2. 생성된 테이블 기반 테스트
-    1. save 테스트
-    2. id 기반 검색 테스트
+   1. save 테스트
+   2. id 기반 검색 테스트
 
 # 2단계 - 연관 관계 매핑
 # 3단계 - 질문 삭제하기 리팩터링
 
 # 디렉터리 구조
+```
+└─src
+    │  .DS_Store
+    │
+    ├─main
+    │  │  .DS_Store
+    │  │
+    │  ├─java
+    │  │  │  .DS_Store
+    │  │  │
+    │  │  └─qna
+    │  │      │  Application.java
+    │  │      │  CannotDeleteException.java
+    │  │      │  ForbiddenException.java
+    │  │      │  NotFoundException.java
+    │  │      │  UnAuthenticationException.java
+    │  │      │  UnAuthorizedException.java
+    │  │      │
+    │  │      ├─domain
+    │  │      │      Answer.java                   QnA 답변
+    │  │      │      AnswerRepository.java
+    │  │      │      BaseEntity.java               공통 Entity
+    │  │      │      ContentType.java              Content type
+    │  │      │      DeleteHistory.java            QnA 삭제 history
+    │  │      │      DeleteHistoryRepository.java
+    │  │      │      Question.java                 QnA 질문
+    │  │      │      QuestionRepository.java
+    │  │      │      User.java                     사용자
+    │  │      │      UserRepository.java
+    │  │      │
+    │  │      └─service
+    │  │              DeleteHistoryService.java
+    │  │              QnaService.java
+    │  │
+    │  └─resources
+    │          application-default.properties      기본 설정(운영)
+    │          application-local.properties        로컬 설정
+    │          application-prod.properties         운영 설정
+    │
+    └─test
+        │  .DS_Store
+        │
+        └─java
+            │  .DS_Store
+            │
+            └─qna
+                │  ApplicationTest.java
+                │
+                ├─domain
+                │      AnswerRepositoryTest.java
+                │      AnswerTest.java
+                │      DeleteHistoryRepositoryTest.java
+                │      DeleteHistoryTest.java
+                │      QuestionRepositoryTest.java
+                │      QuestionTest.java
+                │      UserRepositoryTest.java
+                │      UserTest.java
+                │
+                └─service
+                        QnaServiceTest.java
+```
