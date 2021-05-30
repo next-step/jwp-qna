@@ -3,18 +3,19 @@ package qna.domain;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.vo.Contents;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -31,8 +32,8 @@ public class Answer extends BaseTimeEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"), name = "question_id")
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -57,7 +58,7 @@ public class Answer extends BaseTimeEntity {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
+        this.contents = Contents.of(contents);
         question.addAnswer(this);
     }
 
@@ -81,20 +82,16 @@ public class Answer extends BaseTimeEntity {
         return writer;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void changeContents(Contents contents) {
         this.contents = contents;
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

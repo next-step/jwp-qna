@@ -6,14 +6,43 @@ import static org.junit.jupiter.api.Assertions.*;
 import static qna.domain.ContentType.*;
 import static qna.domain.UserTest.*;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import qna.CannotDeleteException;
+import qna.domain.vo.Title;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1", JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2", SANJIGI);
+
+    @Test
+    @DisplayName("처음 질문을 만들면 삭제 상태가 아니다")
+    void deletedTest() {
+        Question question = new Question("title", "contents", JAVAJIGI);
+
+        assertThat(question.isDeleted()).isFalse();
+    }
+
+    @Test
+    @DisplayName("질문의 제목은 100자가 넘어가면 안된다.")
+    void titleTest() {
+        String maxLengthTitle = createTitle(100);
+        String overMaxLengthTitle = createTitle(101);
+        Question question = new Question(maxLengthTitle, "content", JAVAJIGI);
+
+        assertThat(question.getTitle()).isEqualTo(Title.of(maxLengthTitle));
+        assertThatThrownBy(() -> new Question(overMaxLengthTitle, "content", JAVAJIGI))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private String createTitle(int length) {
+        char[] chars = new char[length];
+        Arrays.fill(chars, 'a');
+        return new String(chars);
+    }
 
     @Test
     @DisplayName("질문에 답변이 없으면 질문을 삭제 가능하다, 질문이 삭제 상태되고, 삭제 내역이 반환된다.")
