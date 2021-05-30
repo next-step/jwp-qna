@@ -36,7 +36,7 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "writer")
     private List<Question> questions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "deleteUser")
     private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected User() {
