@@ -1,6 +1,6 @@
 package qna.domain;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
@@ -16,16 +16,16 @@ public abstract class BaseTimeEntity {
 
     @CreatedDate
     @Column(nullable = false)
-    private LocalTime createdAt;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalTime updatedAt;
+    private LocalDateTime updatedAt;
 
-    public LocalTime getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public LocalTime getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
