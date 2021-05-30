@@ -143,6 +143,19 @@ public class AnswerRepositoryTest {
     }
 
     @Test
+    @DisplayName("Question 양방향 매핑 테스트 - 2")
+    void question_two_way_mapping_2() {
+        // given
+        savedQuestion.addAnswer(savedAnswer);
+        // when
+        Question findQuestion = questions.findByIdAndDeletedFalse(savedQuestion.getId()).get();
+        List<Answer> findAnswers = answers.findByQuestionIdAndDeletedFalse(savedQuestion.getId());
+        List<Answer> actual = findQuestion.getAnswers();
+        // then
+        assertThat(actual.get(0)).isEqualTo(findAnswers.get(0));
+    }
+
+    @Test
     @DisplayName("User 양방향 매핑 테스트")
     void user_two_way_mapping() {
         // given & when
