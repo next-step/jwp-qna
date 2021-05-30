@@ -18,7 +18,7 @@ class UserRepositoryTest {
 
     @Test
     @DisplayName("ID에 해당하는 User를 조회한다.")
-    void findByUserId() {
+    void findByUserId_test() {
         //given
         User javajigi = userRepository.save(JAVAJIGI);
 

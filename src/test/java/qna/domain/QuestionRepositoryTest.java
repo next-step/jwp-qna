@@ -37,7 +37,7 @@ class QuestionRepositoryTest {
 
     @Test
     @DisplayName("모든 게시글을 조회한다.")
-    void findByDeletedFalse() {
+    void findByDeletedFalse_test() {
         //when
         List<Question> questions = questionRepository.findByDeletedFalse();
 
@@ -50,7 +50,7 @@ class QuestionRepositoryTest {
 
     @Test
     @DisplayName("ID에 해당하는 게시글을 조회힌다.")
-    void findByIdAndDeletedFalse() {
+    void findByIdAndDeletedFalse_test() {
         //when
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(firstQuestion.getId());
 

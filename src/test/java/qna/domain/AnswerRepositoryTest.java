@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.AnswerTest.*;
-import static qna.domain.QuestionTest.*;
+import static qna.domain.AnswerTest.A1_CONTENT;
+import static qna.domain.AnswerTest.A2_CONTENT;
+import static qna.domain.QuestionTest.Q1_CONTENT;
+import static qna.domain.QuestionTest.Q1_TITLE;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
@@ -45,7 +47,7 @@ class AnswerRepositoryTest {
 
     @Test
     @DisplayName("질문 글에 저장된 모든 답변을 조회한다.")
-    void findByQuestionIdAndDeletedFalse() {
+    void findByQuestionIdAndDeletedFalse_test() {
         //when
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
@@ -58,7 +60,7 @@ class AnswerRepositoryTest {
 
     @Test
     @DisplayName("ID에 해당하는 답변을 조회한다.")
-    void findByIdAndDeletedFalse() {
+    void findByIdAndDeletedFalse_test() {
         //when
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(firstAnswer.getId());
 
