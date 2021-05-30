@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -9,6 +10,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class QuestionTest {
@@ -20,22 +22,28 @@ public class QuestionTest {
     @Autowired
     QuestionRepository questions;
 
-    @Test
-    void findByDeletedFalse() {
+    @BeforeEach
+    void setUp() {
         questions.save(Q1);
         questions.save(Q2);
+    }
+
+    @Test
+    void findByDeletedFalse() {
+
         List<Question> actual = questions.findByDeletedFalse();
-        assertThat(actual.size()).isEqualTo(2);
-        assertThat(actual.stream()
-                .filter(question -> question.isDeleted() != false)
-                .count())
-                .isEqualTo(0);
+        assertAll(
+                () -> assertThat(actual.size()).isEqualTo(2),
+                () -> assertThat(actual.stream()
+                        .filter(question -> question.isDeleted() != false)
+                        .count())
+                        .isEqualTo(0)
+        );
+
     }
 
     @Test
     void findByIdAndDeletedFalse() {
-        questions.save(Q1);
-        questions.save(Q2);
         Optional<Question> actual = questions.findByIdAndDeletedFalse(Q1.getId());
         assertThat(actual.get()).isSameAs(Q1);
     }
