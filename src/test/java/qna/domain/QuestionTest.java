@@ -31,8 +31,8 @@ public class QuestionTest {
         Answer myAnswer = new Answer(1L, JAVAJIGI, question, "answer contents");
 
         DeleteHistories expectedDeleteHistories = DeleteHistories.of(
-            new DeleteHistory(ANSWER, 1L, JAVAJIGI, now()),
-            new DeleteHistory(QUESTION, 1L, JAVAJIGI, now())
+            new DeleteHistory(QUESTION, 1L, JAVAJIGI, now()),
+            new DeleteHistory(ANSWER, 1L, JAVAJIGI, now())
         );
 
         verifyDeleteQuestion(question, expectedDeleteHistories);

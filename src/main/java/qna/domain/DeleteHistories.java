@@ -1,10 +1,12 @@
 package qna.domain;
 
 import static java.util.Arrays.*;
+import static java.util.stream.Collectors.*;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class DeleteHistories {
 	private List<DeleteHistory> deleteHistories;
@@ -25,6 +27,15 @@ public class DeleteHistories {
 		return Collections.unmodifiableList(deleteHistories);
 	}
 
+	DeleteHistories concat(DeleteHistories otherDeleteHistories) {
+		List<DeleteHistory> concatDeleteHistories = Stream.concat(
+			this.deleteHistories.stream(),
+			otherDeleteHistories.deleteHistories.stream()
+		).collect(toList());
+
+		return new DeleteHistories(concatDeleteHistories);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -38,9 +49,5 @@ public class DeleteHistories {
 	@Override
 	public int hashCode() {
 		return Objects.hash(deleteHistories);
-	}
-
-	void add(DeleteHistory deleteHistory) {
-		this.deleteHistories.add(deleteHistory);
 	}
 }
