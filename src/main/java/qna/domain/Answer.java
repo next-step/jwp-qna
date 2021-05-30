@@ -1,16 +1,34 @@
 package qna.domain;
 
+import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+@Table(name = "answer")
+public class Answer extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "question_id")
     private Long questionId;
+
+    @Lob
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
