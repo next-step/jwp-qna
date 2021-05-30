@@ -39,6 +39,9 @@ public class Question {
 
     public Question writeBy(User writer) {
         this.writer = writer;
+        if (!writer.questions().contains(this)) {
+            writer.questions().add(this);
+        }
         return this;
     }
 
