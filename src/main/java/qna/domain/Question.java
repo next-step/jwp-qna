@@ -1,21 +1,20 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-public class Question {
+public class Question extends BaseEntity {
     @Id @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @Column(name = "question_id")
     private Long id;
+    @Column(length = 100, nullable = false)
     private String title;
+    @Lob
     private String contents;
     @OneToOne
+    @JoinColumn(name = "user_id")
     private User writer;
-
-    @OneToMany
-    private List<Answer> answers = new ArrayList<>();
-
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Question () { }
