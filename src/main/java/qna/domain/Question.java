@@ -6,6 +6,7 @@ import qna.exception.UnAuthenticationException;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Question extends BaseDateTimeEntity {
@@ -52,15 +53,15 @@ public class Question extends BaseDateTimeEntity {
     private static void validate(String title, String contents, User writer)
             throws UnAuthenticationException, BlankValidateException {
 
-        if(title == null || title.isEmpty()) {
+        if(Objects.isNull(title) || title.isEmpty()) {
             throw new BlankValidateException("title", title);
         }
 
-        if(contents == null || contents.isEmpty()) {
+        if(Objects.isNull(contents) || contents.isEmpty()) {
             throw new BlankValidateException("contents", contents);
         }
 
-        if(writer == null) {
+        if(Objects.isNull(writer)) {
             throw new UnAuthenticationException();
         }
     }
