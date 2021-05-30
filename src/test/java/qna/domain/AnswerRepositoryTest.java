@@ -36,7 +36,7 @@ class AnswerRepositoryTest {
 
     @Test
     @DisplayName("답변저장 - 작성자 매핑")
-    void saveWithWriterAndQuestion() {
+    void saveWithWriter() {
         // given
         User sangJigi = users.save(UserTest.SANJIGI);
         Question question1 = questions.save(QuestionTest.Q1);
@@ -47,5 +47,23 @@ class AnswerRepositoryTest {
 
         // then
         assertThat(actual.writer()).isSameAs(sangJigi);
+    }
+
+    @Test
+    @DisplayName("답변저장 - 연관질문 매핑 테스트")
+    void saveWithQuestion() {
+        // given
+        User javaJigi = users.save(UserTest.JAVAJIGI);
+        Question question = new Question("테스트질문제목", "테스트질문내용");
+        question.writeBy(javaJigi);
+        questions.save(question);
+
+        // when
+        User sangJigi = users.save(UserTest.SANJIGI);
+        Answer answer = new Answer(sangJigi, question, "답변테스트");
+        Answer actual = answers.save(answer);
+
+        // then
+        assertThat(actual.question()).isSameAs(question);
     }
 }

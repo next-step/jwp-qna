@@ -65,6 +65,10 @@ public class Answer {
         return id;
     }
 
+    public Question question() {
+        return question;
+    }
+
     public User writer() {
         return writer;
     }
