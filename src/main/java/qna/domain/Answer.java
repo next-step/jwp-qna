@@ -33,6 +33,9 @@ public class Answer {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    protected Answer() {
+    }
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
