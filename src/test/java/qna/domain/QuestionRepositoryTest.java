@@ -130,6 +130,6 @@ class QuestionRepositoryTest {
         assertTrue(findOptionalQuestion.isPresent());
         Question findQuestion = findOptionalQuestion.get();
 
-        assertThat(findQuestion.getUser()).isSameAs(user);
+        assertThat(findQuestion.getWriter()).isSameAs(user);
     }
 }

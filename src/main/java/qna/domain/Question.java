@@ -80,11 +80,11 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public User getUser() {
+    public User getWriter() {
         return writer;
     }
 
-    public void setUser(User writer) {
+    public void setWriter(User writer) {
         this.writer = writer;
     }
 
