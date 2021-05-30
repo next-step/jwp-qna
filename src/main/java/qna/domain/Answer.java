@@ -33,14 +33,8 @@ public class Answer extends AbstractEntity {
         this.question = question;
     }
 
-    public Answer(String contents, User writer, Question question) {
-        this.contents = contents;
-        this.writer = writer;
-        this.question = question;
-    }
-
     public Answer(Long id, String contents, User writer, boolean deleted, Question question) {
-        this.id = id;
+        super(id);
         this.contents = contents;
         this.deleted = deleted;
 

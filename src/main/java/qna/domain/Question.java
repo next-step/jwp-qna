@@ -49,14 +49,6 @@ public class Question extends AbstractEntity {
         return id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
     public User getWriter() {
         return writer;
     }

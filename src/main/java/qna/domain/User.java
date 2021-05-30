@@ -75,10 +75,6 @@ public class User extends AbstractEntity {
         return false;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public String getUserId() {
         return userId;
     }
