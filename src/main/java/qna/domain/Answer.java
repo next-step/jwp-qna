@@ -14,11 +14,11 @@ public class Answer {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "writer_id")
     private User writer;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "question_id")
     private Question question;
 
     @Lob
