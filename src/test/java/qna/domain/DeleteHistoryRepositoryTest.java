@@ -22,8 +22,9 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("삭제이력 저장")
     void save() {
         // given
-        users.save(UserTest.JAVAJIGI);
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, QuestionTest.Q1.getId(), UserTest.JAVAJIGI, LocalDateTime.now());
+        User deleteUser = new User("USER1", "123456", "LDS", "lds@test.com");
+        users.save(deleteUser);
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, QuestionTest.Q1.getId(), deleteUser, LocalDateTime.now());
 
         // when
         DeleteHistory actual = deleteHistories.save(deleteHistory);
