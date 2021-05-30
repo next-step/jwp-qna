@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.wrapper;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
+import qna.domain.*;
 
 import java.util.Arrays;
 

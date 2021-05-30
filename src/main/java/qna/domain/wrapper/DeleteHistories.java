@@ -1,4 +1,6 @@
-package qna.domain;
+package qna.domain.wrapper;
+
+import qna.domain.DeleteHistory;
 
 import java.util.ArrayList;
 import java.util.List;

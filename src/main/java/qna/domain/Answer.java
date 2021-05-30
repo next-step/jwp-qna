@@ -2,6 +2,7 @@ package qna.domain;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.wrapper.Deleted;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,8 +26,8 @@ public class Answer extends BaseTimeEntity {
     @Lob
     private String contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted;
 
     public Answer() { }
 
@@ -47,10 +48,17 @@ public class Answer extends BaseTimeEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+        this.deleted = new Deleted();
     }
 
-    public DeleteHistory deleteHistory() {
+    public DeleteHistory deleteAndReturnHistory() {
+        this.delete();
+
         return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+    }
+
+    public void delete() {
+        this.deleted.setTrue();
     }
 
     public boolean isOwner(User writer) {
@@ -78,15 +86,11 @@ public class Answer extends BaseTimeEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.status();
     }
 
     public void setContents(String contents) {
         this.contents = contents;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

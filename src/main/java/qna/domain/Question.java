@@ -1,6 +1,9 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
+import qna.domain.wrapper.Answers;
+import qna.domain.wrapper.DeleteHistories;
+import qna.domain.wrapper.Deleted;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -28,8 +31,8 @@ public class Question extends BaseTimeEntity {
     @Embedded
     private Answers answers;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted;
 
     public Question() { }
 
@@ -51,24 +54,29 @@ public class Question extends BaseTimeEntity {
         this.writer = writer;
         this.contents = contents;
         this.answers = new Answers();
+        this.deleted = new Deleted();
     }
 
-    public DeleteHistories deleteAndHistories(User loginUser) throws CannotDeleteException {
-        validateUserForDelete(loginUser);
+    public DeleteHistories deleteBy(User loginUser) throws CannotDeleteException {
+        validateDeletionBy(loginUser);
 
-        DeleteHistories deleteHistories = this.deleteAndHistories();
+        DeleteHistories deleteHistories = this.deleteAndReturnHistories();
         deleteHistories.add(answers.deleteAllAndHistories());
 
         return deleteHistories;
     }
 
-    protected DeleteHistories deleteAndHistories() {
-        this.setDeleted(true);
+    public DeleteHistories deleteAndReturnHistories() {
+        this.delete();
 
         return new DeleteHistories(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
     }
 
-    private void validateUserForDelete(User loginUser) throws CannotDeleteException {
+    private void delete() {
+        deleted.setTrue();
+    }
+
+    private void validateDeletionBy(User loginUser) throws CannotDeleteException {
          validateQuestionProprietary(loginUser);
          validateAnswersProprietary(loginUser);
     }
@@ -122,11 +130,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        return deleted.status();
     }
 
     @Override

@@ -1,13 +1,11 @@
-package qna.domain;
+package qna.domain.wrapper;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.util.Arrays;
-import java.util.List;
+import qna.domain.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,15 +40,15 @@ public class DeleteHistoriesTest {
 
     @Test
     void add_Test() {
-        deleteHistories.add(question.deleteAndHistories());
+        deleteHistories.add(question.deleteAndReturnHistories());
 
         assertThat(deleteHistories.histories()).hasSize(1);
     }
 
     @Test
     void addAll_Test() {
-        DeleteHistories deleteHistories = QuestionTest.Q1.deleteAndHistories();
-        deleteHistories.add(QuestionTest.Q2.deleteAndHistories());
+        DeleteHistories deleteHistories = QuestionTest.Q1.deleteAndReturnHistories();
+        deleteHistories.add(QuestionTest.Q2.deleteAndReturnHistories());
 
         assertThat(deleteHistories.histories()).hasSize(2);
     }

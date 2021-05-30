@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
+import qna.domain.wrapper.DeleteHistories;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +48,7 @@ public class QuestionTest {
 
     @Test
     void deleteHistory_Test() {
-        DeleteHistories deleteHistories = question.deleteAndHistories();
+        DeleteHistories deleteHistories = question.deleteAndReturnHistories();
         DeleteHistory deleteHistory = deleteHistories.histories().get(0);
 
         assertAll(

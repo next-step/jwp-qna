@@ -1,6 +1,8 @@
-package qna.domain;
+package qna.domain.wrapper;
 
 import qna.CannotDeleteException;
+import qna.domain.Answer;
+import qna.domain.User;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -26,8 +28,7 @@ public class Answers {
 
     public DeleteHistories deleteAllAndHistories() {
         return new DeleteHistories(answers.stream()
-                                        .peek(answer -> answer.setDeleted(true))
-                                        .map(answer -> answer.deleteHistory())
+                                        .map(answer -> answer.deleteAndReturnHistory())
                                         .collect(Collectors.toList()));
     }
 
