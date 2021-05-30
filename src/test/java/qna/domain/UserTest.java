@@ -44,4 +44,17 @@ public class UserTest {
                 () -> JAVAJIGI.update(loginUser, target)
         );
     }
+
+    @Test
+    @DisplayName("이름과 이메일이 같은지 검증한다.")
+    void equalsNameAndEmail_test() {
+        //given
+        User another = new User("another", "123456", "name", "kim@slipp.net");
+
+        //when
+        boolean isEqualsNameAndEmail = loginUser.equalsNameAndEmail(another);
+
+        //then
+        assertThat(isEqualsNameAndEmail).isTrue();
+    }
 }
