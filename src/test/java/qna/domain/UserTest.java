@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +112,33 @@ public class UserTest {
             () -> assertThat(actual.getTotalPages()).isEqualTo(2),
             () -> assertThat(actual.getContent().size()).isEqualTo(10),
             () -> assertThat(actual.getContent().get(0).getId()).isEqualTo(11L)
+        );
+    }
+
+    @DisplayName("persist 와 merge 후 객체 비교")
+    @Test
+    void persistVsMerge() {
+        // given
+        final User user = new User(1L, "id", "password", "name", "email");
+        final User unmanagedUser = new User(1L, "id", "password", "name", "email");
+        final User managedUser = userRepository.save(user);
+        final EntityManager entityManager = this.entityManager.getEntityManager();
+        final User mergedUser = entityManager.merge(user);
+
+        // when
+        final boolean userActual = entityManager.contains(user);
+        final boolean managedUserActual = entityManager.contains(managedUser);
+        final boolean unmanagedUserActual = entityManager.contains(unmanagedUser);
+        final boolean mergedUserActual = entityManager.contains(mergedUser);
+
+        // then
+        assertAll(
+            () -> assertThat(userActual).as("persist 에 argument 로 전달한 객체").isEqualTo(false),
+            () -> assertThat(managedUserActual).as("persist 후 반환된 객체").isEqualTo(true),
+            () -> assertThat(unmanagedUserActual).as("persist 하지 않은 객체").isEqualTo(false),
+            () -> assertThat(mergedUserActual).as("merge 실행 후 반환된 객체").isEqualTo(true),
+            () -> assertThat(user).as("persist 전후 객체 비교").isNotEqualTo(managedUser),
+            () -> assertThat(managedUser).as("persist 후 반환된 객체와 merge 후 반환된 객체 비교").isEqualTo(mergedUser)
         );
     }
 }
