@@ -13,8 +13,8 @@ import qna.domain.User;
 @Transactional(readOnly = true)
 public class QnAService {
     private static final Logger log = LoggerFactory.getLogger(QnAService.class);
-    private QuestionRepository questionRepository;
-    private DeleteHistoryService deleteHistoryService;
+    private final QuestionRepository questionRepository;
+    private final DeleteHistoryService deleteHistoryService;
 
     public QnAService(QuestionRepository questionRepository, DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;

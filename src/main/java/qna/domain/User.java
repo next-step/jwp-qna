@@ -111,7 +111,9 @@ public class User extends BaseEntity {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return Objects.equals(getId(), user.getId()) && Objects.equals(getUserId(), user.getUserId()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getName(), user.getName()) && Objects.equals(getEmail(), user.getEmail());
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getUserId(), user.getUserId()) &&
+                Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getName(), user.getName()) &&
+                Objects.equals(getEmail(), user.getEmail());
     }
 
     @Override

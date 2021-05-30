@@ -90,12 +90,34 @@ public class Question extends BaseEntity {
         this.deleted = true;
     }
 
+    public List<DeleteHistory> delete(User loginUser) {
+        checkIsOwner(loginUser);
+        this.deleted = true;
+        return generateDeleteHistories(loginUser);
+    }
+
+    private List<DeleteHistory> generateDeleteHistories(User loginUser) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, loginUser));
+        deleteHistories.addAll(this.answers.deleteAnswers(loginUser));
+        return deleteHistories;
+    }
+
+    private void checkIsOwner(User loginUser) {
+        if (!this.writer.equals(loginUser)) {
+            throw new CannotDeleteException(DELETE_NOT_ALLOWED);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Question)) return false;
         Question question = (Question) o;
-        return isDeleted() == question.isDeleted() && Objects.equals(getId(), question.getId()) && Objects.equals(getTitle(), question.getTitle()) && Objects.equals(getContents(), question.getContents()) && Objects.equals(getWriter(), question.getWriter());
+        return isDeleted() == question.isDeleted() && Objects.equals(getId(), question.getId()) &&
+                Objects.equals(getTitle(), question.getTitle()) &&
+                Objects.equals(getContents(), question.getContents()) &&
+                Objects.equals(getWriter(), question.getWriter());
     }
 
     @Override
@@ -112,24 +134,5 @@ public class Question extends BaseEntity {
                 ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
-    }
-
-    public List<DeleteHistory> delete(User loginUser) {
-        isOwner(loginUser);
-        this.deleted = true;
-        return generateDeleteHistories(loginUser);
-    }
-
-    private List<DeleteHistory> generateDeleteHistories(User loginUser) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, loginUser));
-        deleteHistories.addAll(answers.deleteAnswers(loginUser));
-        return deleteHistories;
-    }
-
-    private void isOwner(User loginUser) {
-        if (!this.writer.equals(loginUser)) {
-            throw new CannotDeleteException(DELETE_NOT_ALLOWED);
-        }
     }
 }
