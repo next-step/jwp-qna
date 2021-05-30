@@ -36,12 +36,10 @@ public class User {
     @Column(length = 50)
     private String email;
 
-    @Column(name = "created_at", columnDefinition = "DATETIME", nullable = false)
-    @CreatedDate
+    @Column(name = "created_at", columnDefinition = "DATETIME(6)", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", columnDefinition = "DATETIME")
-    @UpdateTimestamp
+    @Column(name = "updated_at", columnDefinition = "DATETIME(6)")
     private LocalDateTime updatedAt;
 
     protected User() {
