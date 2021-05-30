@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static qna.domain.UserTest.*;
 
 @ExtendWith(MockitoExtension.class)
 class QnAServiceTest {
@@ -38,8 +39,8 @@ class QnAServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-        answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
+        question = new Question(1L, "title1", "contents1", JAVAJIGI);
+        answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
     }
 
@@ -49,7 +50,7 @@ class QnAServiceTest {
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
         assertThat(question.isDeleted()).isFalse();
-        qnAService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
+        qnAService.deleteQuestion(JAVAJIGI, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
         verifyDeleteHistories();
@@ -68,7 +69,7 @@ class QnAServiceTest {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
-        qnAService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
+        qnAService.deleteQuestion(JAVAJIGI, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
@@ -83,7 +84,7 @@ class QnAServiceTest {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer, answer2));
 
-        assertThatThrownBy(() -> qnAService.deleteQuestion(UserTest.JAVAJIGI, question.getId()))
+        assertThatThrownBy(() -> qnAService.deleteQuestion(JAVAJIGI, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 

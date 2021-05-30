@@ -33,7 +33,7 @@ class AnswerRepositoryTest {
 	@BeforeEach
 	void setup() {
 		user = new User("testUser", "password", "name", "test@test.net");
-		question = new Question("title1", "contents1").writeBy(user);
+		question = new Question("title1", "contents1", user);
 		entityManager.persist(user);
 		entityManager.persist(question);
 		answer = answers.save(new Answer(user, question, "Answers Contents1"));
