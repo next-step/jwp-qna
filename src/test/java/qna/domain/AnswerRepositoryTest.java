@@ -38,15 +38,19 @@ class AnswerRepositoryTest {
     @DisplayName("답변저장 - 작성자 매핑")
     void saveWithWriter() {
         // given
-        User sangJigi = users.save(UserTest.SANJIGI);
-        Question question1 = questions.save(QuestionTest.Q1);
+        User questionUser = new User("USER1", "123456", "LDS", "lds@test.com");
+        users.save(questionUser);
+        Question question = new Question("질문테스트", "질문테스트내용");
+        question.writeBy(questionUser);
+        questions.save(question);
 
         // when
-        Answer answer = new Answer(sangJigi, question1, "답변테스트");
+        User answerUser = new User("USER2", "123456", "LDS", "lds@test.com");
+        Answer answer = new Answer(answerUser, question, "답변테스트");
         Answer actual = answers.save(answer);
 
         // then
-        assertThat(actual.writer()).isSameAs(sangJigi);
+        assertThat(actual.writer()).isSameAs(answerUser);
     }
 
     @Test
