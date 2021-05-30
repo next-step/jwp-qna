@@ -130,4 +130,26 @@ public class AnswerRepositoryTest {
         // then
         assertThat(actualList).isEmpty();
     }
+
+    @Test
+    @DisplayName("Question 양방향 매핑 테스트")
+    void question_two_way_mapping() {
+        // given & when
+        savedQuestion.addAnswer(savedAnswer);
+        Question findQuestion = questions.findByIdAndDeletedFalse(savedQuestion.getId()).get();
+        List<Answer> answerList = findQuestion.getAnswers();
+        // then
+        assertThat(answerList.contains(savedAnswer)).isTrue();
+    }
+
+    @Test
+    @DisplayName("User 양방향 매핑 테스트")
+    void user_two_way_mapping() {
+        // given & when
+        savedUser.addAnswer(savedAnswer);
+        User findUser = users.findById(savedUser.getId()).get();
+        List<Answer> answerList = findUser.getAnswers();
+        // then
+        assertThat(answerList.contains(savedAnswer)).isTrue();
+    }
 }
