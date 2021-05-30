@@ -27,6 +27,8 @@ public class QuestionTest {
         assertThat(actualQuestion1.getId()).isNotNull();
         assertThat(actualQuestion1.getTitle()).isEqualTo(QUESTION1.getTitle());
         assertThat(actualQuestion1.getContents()).isEqualTo(QUESTION1.getContents());
+        assertThat(actualQuestion1.getCreatedAt()).isNotNull();
+        assertThat(actualQuestion1.getUpdatedAt()).isNotNull();
 
         // 리스트 테스트
         Question actualQuestion2 = questionRepository.save(QUESTION2);

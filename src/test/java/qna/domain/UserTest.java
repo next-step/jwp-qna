@@ -31,6 +31,8 @@ public class UserTest {
         assertThat(actualUser1.getPassword()).isEqualTo(SUNJU.getPassword());
         assertThat(actualUser1.getName()).isEqualTo(SUNJU.getName());
         assertThat(actualUser1.getEmail()).isEqualTo(SUNJU.getEmail());
+        assertThat(actualUser1.getCreatedAt()).isNotNull();
+        assertThat(actualUser1.getUpdatedAt()).isNotNull();
 
         // 리스트 테스트
         User actualUser2 = userRepository.save(SANJIGI);

@@ -27,12 +27,15 @@ public class AnswerTest {
         assertThat(actualAnswer1.getWriterId()).isEqualTo(ANSWER1.getWriterId());
         assertThat(actualAnswer1.getQuestionId()).isEqualTo(ANSWER1.getQuestionId());
         assertThat(actualAnswer1.getContents()).isEqualTo(ANSWER1.getContents());
+        assertThat(actualAnswer1.getCreatedAt()).isNotNull();
+        assertThat(actualAnswer1.getUpdatedAt()).isNotNull();
 
         // 리스트 테스트
         Answer actualAnswer2 = answerRepository.save(ANSWER2);
         List<Answer> answerList = answerRepository.findAll();
         assertThat(answerList.size()).isEqualTo(2);
         assertThat(answerList).containsExactly(actualAnswer1, actualAnswer2);
+
     }
 
     @Test
