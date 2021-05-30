@@ -63,10 +63,6 @@ public class DeleteHistory {
         return deletedBy;
     }
 
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o)

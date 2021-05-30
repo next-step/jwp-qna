@@ -112,20 +112,8 @@ public class Question extends BaseTimeEntity{
         return deleted;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setContents(String contents) {
         this.contents = contents;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
     }
 
     public void setDeleted(boolean deleted) {
