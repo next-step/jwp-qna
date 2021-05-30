@@ -17,7 +17,9 @@ public class Answer extends BaseEntity {
 
     private Long writerId;
 
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     @Lob
     private String contents;
@@ -44,7 +46,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -53,7 +55,7 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -72,12 +74,12 @@ public class Answer extends BaseEntity {
         this.writerId = writerId;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public String getContents() {
@@ -104,13 +106,13 @@ public class Answer extends BaseEntity {
         return deleted == answer.deleted &&
                 Objects.equals(id, answer.id) &&
                 Objects.equals(writerId, answer.writerId) &&
-                Objects.equals(questionId, answer.questionId) &&
+                Objects.equals(question, answer.question) &&
                 Objects.equals(contents, answer.contents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, writerId, questionId, contents, deleted);
+        return Objects.hash(id, writerId, question, contents, deleted);
     }
 
     @Override
@@ -118,7 +120,7 @@ public class Answer extends BaseEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
