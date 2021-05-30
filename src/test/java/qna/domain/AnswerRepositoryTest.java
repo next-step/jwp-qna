@@ -58,7 +58,7 @@ public class AnswerRepositoryTest {
 	@DisplayName("question id 에해당하는 answer 목록을 반환을 테스트합니다.")
 	void test_findByQuestionIdAndDeleteFalse() {
 		List<Answer> actual = this.answerRepository.findByQuestionIdAndDeletedFalse(
-			saved.getQuestionId());
+			saved.getQuestion().getId());
 
 		assertThat(actual).containsExactly(AnswerTest.A1);
 	}
@@ -67,8 +67,8 @@ public class AnswerRepositoryTest {
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
-			() -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId()),
-			() -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
+			() -> assertThat(actual.getQuestion()).isEqualTo(expected.getQuestion()),
+			() -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
 			() -> assertThat(actual.getCreatedAt()).isNotNull(),
 			() -> assertThat(actual.getUpdatedAt()).isNotNull()
 		);

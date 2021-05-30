@@ -24,7 +24,7 @@
 
 ## Step2 - 연관관계 매핑
 
-- [ ] Answer 엔티티 매핑
-- [ ] Delete_History 엔티티 매핑
-- [ ] Question 엔티티 매핑
+- [x] Answer 엔티티 매핑
+- [x] Delete_History 엔티티 매핑
+- [x] Question 엔티티 매핑
 

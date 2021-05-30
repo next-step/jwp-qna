@@ -73,7 +73,7 @@ class QuestionRepositoryTest {
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
-			() -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
+			() -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
 			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
 			() -> assertThat(actual.getCreatedAt()).isNotNull(),
 			() -> assertThat(actual.getUpdatedAt()).isNotNull()

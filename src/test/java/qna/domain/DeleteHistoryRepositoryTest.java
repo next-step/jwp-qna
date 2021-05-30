@@ -25,7 +25,7 @@ class DeleteHistoryRepositoryTest {
 
 	@BeforeEach
 	void setup() {
-		this.expected = new DeleteHistory(ContentType.ANSWER, 1L, 1L, null);
+		this.expected = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, null);
 		this.saved = this.deleteHistoryRepository.save(this.expected);
 	}
 
@@ -54,7 +54,7 @@ class DeleteHistoryRepositoryTest {
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getContentId()).isEqualTo(expected.getContentId()),
-			() -> assertThat(actual.getDeletedById()).isEqualTo(expected.getDeletedById()),
+			() -> assertThat(actual.getDeletedBy()).isEqualTo(expected.getDeletedBy()),
 			() -> assertThat(actual.getCreateDate()).isEqualTo(expected.getCreateDate()),
 			() -> assertThat(actual.getContentType()).isEqualTo(expected.getContentType())
 		);

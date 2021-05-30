@@ -4,10 +4,13 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -17,13 +20,19 @@ public class Answer extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(name = "writer_id", nullable = false)
-	private Long writerId;
-	@Column(name = "question_id", nullable = false)
-	private Long questionId;
+
+	@ManyToOne
+	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+	private Question question;
+
+	@ManyToOne
+	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fw_answer_writer"))
+	private User writer;
+
 	@Lob
 	@Column(name = "contents")
 	private String contents;
+
 	@Column(name = "deleted", nullable = false)
 	private boolean deleted = false;
 
@@ -40,29 +49,29 @@ public class Answer extends BaseEntity {
 			throw new NotFoundException();
 		}
 
-		this.writerId = writer.getId();
-		this.questionId = question.getId();
+		this.writer = writer;
+		this.question = question;
 		this.contents = contents;
-	}
-
-	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
-	}
-
-	public void toQuestion(Question question) {
-		this.questionId = question.getId();
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public Long getWriterId() {
-		return writerId;
+	public boolean isOwner(User writer) {
+		return this.writer.getId().equals(writer.getId());
 	}
 
-	public Long getQuestionId() {
-		return questionId;
+	public void toQuestion(Question question) {
+		this.question = question;
+	}
+
+	public Question getQuestion() {
+		return question;
+	}
+
+	public User getWriter() {
+		return writer;
 	}
 
 	public String getContents() {
@@ -77,14 +86,4 @@ public class Answer extends BaseEntity {
 		this.deleted = deleted;
 	}
 
-	@Override
-	public String toString() {
-		return "Answer{" +
-			"id=" + id +
-			", writerId=" + writerId +
-			", questionId=" + questionId +
-			", contents='" + contents + '\'' +
-			", deleted=" + deleted +
-			'}';
-	}
 }
