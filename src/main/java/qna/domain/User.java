@@ -2,11 +2,14 @@ package qna.domain;
 
 import java.util.Objects;
 
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import qna.domain.vo.UserAuthentication;
+import qna.domain.vo.UserDetail;
 
 @Entity
 public class User extends BaseTimeEntity {
@@ -15,17 +18,11 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, length = 20, nullable = false)
-    private String userId;
+    @Embedded
+    private UserAuthentication authentication;
 
-    @Column(length = 20, nullable = false)
-    private String password;
-
-    @Column(length = 20, nullable = false)
-    private String name;
-
-    @Column(length = 50)
-    private String email;
+    @Embedded
+    private UserDetail userDetail;
 
     protected User() {
     }
@@ -36,10 +33,8 @@ public class User extends BaseTimeEntity {
 
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+        this.authentication = UserAuthentication.of(userId, password);
+        this.userDetail = UserDetail.of(name, email);
     }
 
     public Long getId() {
@@ -47,18 +42,16 @@ public class User extends BaseTimeEntity {
     }
 
     public String getUserId() {
-        return userId;
+        return authentication.getUserId();
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+            "id=" + id +
+            ", authentication=" + authentication +
+            ", userDetail=" + userDetail +
+            '}';
     }
 
     @Override
@@ -74,5 +67,9 @@ public class User extends BaseTimeEntity {
     @Override
     public int hashCode() {
         return Objects.hash(getUserId());
+    }
+
+    public boolean authenticate(User loginUser) {
+        return authentication.equals(loginUser.authentication);
     }
 }

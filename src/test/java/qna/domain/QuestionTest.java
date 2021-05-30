@@ -6,12 +6,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static qna.domain.ContentType.*;
 import static qna.domain.UserTest.*;
 
-import java.util.Arrays;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import qna.CannotDeleteException;
+import qna.TestUtils;
 import qna.domain.vo.Title;
 
 public class QuestionTest {
@@ -29,19 +28,13 @@ public class QuestionTest {
     @Test
     @DisplayName("질문의 제목은 100자가 넘어가면 안된다.")
     void titleTest() {
-        String maxLengthTitle = createTitle(100);
-        String overMaxLengthTitle = createTitle(101);
+        String maxLengthTitle = TestUtils.createText(100);
+        String overMaxLengthTitle = TestUtils.createText(101);
         Question question = new Question(maxLengthTitle, "content", JAVAJIGI);
 
         assertThat(question.getTitle()).isEqualTo(Title.of(maxLengthTitle));
         assertThatThrownBy(() -> new Question(overMaxLengthTitle, "content", JAVAJIGI))
             .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private String createTitle(int length) {
-        char[] chars = new char[length];
-        Arrays.fill(chars, 'a');
-        return new String(chars);
     }
 
     @Test
