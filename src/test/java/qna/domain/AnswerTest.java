@@ -21,7 +21,7 @@ public class AnswerTest {
     @DisplayName("저장한_객체와_저장된_객체_비교")
     @Test
     void 저장한_객체와_저장된_객체_비교() {
-        Answer answer = new Answer("zz", false, 1L, 1L);
+        Answer answer = new Answer("zz", false);
         Answer actual = answerRepository.save(answer);
         assertThat(actual).isEqualTo(answer);
     }
@@ -29,7 +29,7 @@ public class AnswerTest {
     @DisplayName("BaseEntity")
     @Test
     void base_entity_test() {
-        Answer answer = new Answer("zz", false, 1L, 1L);
+        Answer answer = new Answer("zz", false);
         Answer actual = answerRepository.save(answer);
 
         assertThat(actual.getId()).isNotNull();
@@ -40,7 +40,7 @@ public class AnswerTest {
     @DisplayName("update 테스트(변경감지)")
     @Test
     void update() {
-        Answer answer = new Answer("zz", false, 1L, 1L);
+        Answer answer = new Answer("zz", false);
         Answer actual = answerRepository.save(answer);
 
         answer.setContents("gtgt");

@@ -17,7 +17,7 @@ public class DeleteHistoryTest {
     @DisplayName("저장한_객체와_저장된_객체_비교")
     @Test
     void 저장한_객체와_저장된_객체_비교() {
-        DeleteHistory deleteHistory = new DeleteHistory(1L, ContentType.QUESTION, LocalDateTime.now(), 1L);
+        DeleteHistory deleteHistory = new DeleteHistory(1L, ContentType.QUESTION, LocalDateTime.now());
 
         DeleteHistory actual = deleteHistoryRepository.save(deleteHistory);
         assertThat(actual).isEqualTo(deleteHistory);

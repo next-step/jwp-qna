@@ -15,18 +15,18 @@ public class Question extends BaseEntity{
     @Column(length = 100, nullable = false)
     private String title;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User writerId;
 
     protected Question() {
         //JPA need no-arg constructor
     }
 
-    public Question(String contents, boolean deleted, String title, Long writerId) {
+    public Question(String contents, boolean deleted, String title) {
         this.contents = contents;
         this.deleted = deleted;
         this.title = title;
-        this.writerId = writerId;
     }
 
     public Question(String title, String contents) {
@@ -35,7 +35,7 @@ public class Question extends BaseEntity{
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writerId = writer;
         return this;
     }
 
@@ -63,11 +63,11 @@ public class Question extends BaseEntity{
         this.contents = contents;
     }
 
-    public Long getWriterId() {
+    public User getWriterId() {
         return writerId;
     }
 
-    public void setWriterId(Long writerId) {
+    public void setWriterId(User writerId) {
         this.writerId = writerId;
     }
 

@@ -21,7 +21,7 @@ public class QuestionTest {
     @DisplayName("저장한_객체와_저장된_객체_비교")
     @Test
     void 저장한_객체와_저장된_객체_비교() {
-        Question question = new Question("gt", false, "cheers", 1L);
+        Question question = new Question("gt", false, "gt");
 
         Question actual = questionRepository.save(question);
         assertThat(actual).isEqualTo(question);
@@ -30,7 +30,7 @@ public class QuestionTest {
     @DisplayName("not null 컬럼에 null을 저장")
     @Test
     void notNull_컬럼에_null을_저장() {
-        Question question = new Question("gt", false, null, 1L);
+        Question question = new Question("gt", false, null);
 
         assertThatThrownBy(()-> questionRepository.save(question)).isInstanceOf(Exception.class);
     }
@@ -38,7 +38,7 @@ public class QuestionTest {
     @DisplayName("update 테스트(변경감지)")
     @Test
     void update() {
-        Question question = new Question("gt", false, "cheers", 1L);
+        Question question = new Question("gt", false, "cheers");
         Question actual = questionRepository.save(question);
 
         question.setTitle("cheer up!!!!");

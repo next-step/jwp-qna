@@ -17,20 +17,21 @@ public class Answer extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question questionId;
 
-    @Column(name="writer_id")
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User writerId;
 
     protected Answer() {
         //JPA need no-arg constructor
     }
 
-    public Answer(String contents, boolean deleted, Long questionId, Long writerId) {
+    public Answer(String contents, boolean deleted) {
         this.contents = contents;
         this.deleted = deleted;
-        this.questionId = questionId;
-        this.writerId = writerId;
     }
 
     public Answer(User writer, Question question, String contents) {
@@ -48,8 +49,8 @@ public class Answer extends BaseEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writerId = writer;
+        this.questionId = question;
         this.contents = contents;
     }
 
@@ -58,24 +59,24 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.questionId = question;
     }
 
 
 
-    public Long getWriterId() {
+    public User getWriterId() {
         return writerId;
     }
 
-    public void setWriterId(Long writerId) {
+    public void setWriterId(User writerId) {
         this.writerId = writerId;
     }
 
-    public Long getQuestionId() {
+    public Question getQuestionId() {
         return questionId;
     }
 
-    public void setQuestionId(Long questionId) {
+    public void setQuestionId(Question questionId) {
         this.questionId = questionId;
     }
 

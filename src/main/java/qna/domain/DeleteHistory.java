@@ -21,21 +21,21 @@ public class DeleteHistory {
     @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
-    @Column(name = "deleted_by_id")
-    private Long deletedById;
+    @ManyToOne
+    @JoinColumn(name = "deleted_by_id")
+    private User deletedById;
 
     protected DeleteHistory() {
         //JPA need no-arg constructor
     }
 
-    public DeleteHistory(Long contentId, ContentType contentType, LocalDateTime createDate, Long deletedById) {
+    public DeleteHistory(Long contentId, ContentType contentType, LocalDateTime createDate) {
         this.contentId = contentId;
         this.contentType = contentType;
         this.createDate = createDate;
-        this.deletedById = deletedById;
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
