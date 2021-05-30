@@ -32,12 +32,6 @@ public class Answer extends BaseEntity {
     }
 
     public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
-
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
