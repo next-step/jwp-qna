@@ -22,3 +22,9 @@
   - [x] UserRepository test
   - [x] User entity test
 
+## Step2 - 연관관계 매핑
+
+- [ ] Answer 엔티티 매핑
+- [ ] Delete_History 엔티티 매핑
+- [ ] Question 엔티티 매핑
+
