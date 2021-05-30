@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.domain.Question;
-import qna.repository.QuestionRepository;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
@@ -19,6 +19,7 @@ public class QuestionRepositoryTest {
 	private QuestionRepository questions;
 
 	@Test
+	@DisplayName("저장")
 	void save() {
 		Question expected = new Question("title1", "contents1");
 		Question actual = questions.save(expected);
@@ -29,6 +30,7 @@ public class QuestionRepositoryTest {
 		);
 	}
 	@Test
+	@DisplayName("삭제 되지 않는 질문 조회")
 	void findByDeletedFalse() {
 		Question expected1 = new Question("title1", "contents1");
 		Question expected2 = new Question("title2", "contents2");
@@ -45,6 +47,7 @@ public class QuestionRepositoryTest {
 	}
 
 	@Test
+	@DisplayName("특정 유저의 삭제 되지 않는 질문 조회")
 	void findByIdAndDeletedFalse() {
 		Question expected1 = new Question("title1", "contents1");
 		Question expected2 = new Question("title2", "contents2");
