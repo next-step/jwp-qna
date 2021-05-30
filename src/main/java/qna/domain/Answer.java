@@ -27,11 +27,15 @@ public class Answer extends BaseEntity {
 
     @JoinColumn(name = "writer_id",
         referencedColumnName = "ID",
-        foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+        foreignKey = @ForeignKey(name = "fk_answer_writer"))
     @ManyToOne
     private User writer;
 
-    private Long questionId;
+    @JoinColumn(name = "question_id",
+        referencedColumnName = "ID",
+        foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @ManyToOne
+    private Question question;
     @Lob
     private String contents;
 
@@ -55,7 +59,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
     // for jpa
@@ -66,7 +70,7 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -85,12 +89,12 @@ public class Answer extends BaseEntity {
         this.writer = writerId;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public String getContents() {
@@ -114,7 +118,7 @@ public class Answer extends BaseEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writer +
-                ", questionId=" + questionId +
+                ", questionId=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
