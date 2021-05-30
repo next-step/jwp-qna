@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.persistence.EntityManager;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +16,10 @@ public class AnswerTest {
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Autowired
-    AnswerRepository answers;
+    private AnswerRepository answers;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
     void save() {
@@ -40,6 +44,8 @@ public class AnswerTest {
     void update() {
         Answer expected = answers.save(AnswerTest.A1);
         expected.setDeleted(true);
+        entityManager.flush();
+        entityManager.clear();
         Optional<Answer> actual = answers.findById(expected.getId());
         assertThat(actual.isPresent()).isTrue();
         assertThat(actual.get().isDeleted()).isTrue();
@@ -49,6 +55,8 @@ public class AnswerTest {
     void delete() {
         Answer expected = answers.save(AnswerTest.A1);
         answers.delete(expected);
+        entityManager.flush();
+        entityManager.clear();
         Optional<Answer> actual = answers.findById(expected.getId());
         assertThat(actual.isPresent()).isFalse();
     }
