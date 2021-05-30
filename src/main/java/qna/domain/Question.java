@@ -1,11 +1,36 @@
 package qna.domain;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
 public class Question {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
+
+    @Column(name = "contents")
+    @Lob
     private String contents;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
+    private LocalDateTime updatedAt;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -34,32 +59,8 @@ public class Question {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public boolean isDeleted() {
@@ -67,7 +68,21 @@ public class Question {
     }
 
     public void setDeleted(boolean deleted) {
+        this.updatedAt = LocalDateTime.now();
         this.deleted = deleted;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public void setContents(String contents) {
+        this.updatedAt = LocalDateTime.now();
+        this.contents = contents;
     }
 
     @Override
