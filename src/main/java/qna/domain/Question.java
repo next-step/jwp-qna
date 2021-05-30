@@ -20,7 +20,9 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -39,12 +41,12 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -76,12 +78,12 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -104,23 +106,13 @@ public class Question extends BaseEntity {
         return deleted == question.deleted &&
                 Objects.equals(id, question.id) &&
                 Objects.equals(title, question.title) &&
+                Objects.equals(answers, question.answers) &&
                 Objects.equals(contents, question.contents) &&
-                Objects.equals(writerId, question.writerId);
+                Objects.equals(writer, question.writer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writerId, deleted);
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+        return Objects.hash(id, title, answers, contents, writer, deleted);
     }
 }
