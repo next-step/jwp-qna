@@ -24,5 +24,12 @@
 - 객체간 참조 피드백 적용
 - Answer(N) : Question(1)
 - Answer(N) : User(1)
+- 연관 관계 편의 메소드 구현
+
+### QnAService 리펙토링
+- 핵심 로직 Domain 위임
+- Question 삭제 로직 구현
+- Answer 삭제 로직 구현
+- Answers 일급객체 추출
 
 
