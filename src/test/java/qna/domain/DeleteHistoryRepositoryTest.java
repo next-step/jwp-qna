@@ -19,12 +19,14 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    private User user;
     private DeleteHistory deleteHistory;
     private DeleteHistory saved;
 
     @BeforeEach
     void setUp() {
-        deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
+        user = new User("userId", "password", "name", "email");
+        deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, user, LocalDateTime.now());
         saved = deleteHistoryRepository.save(deleteHistory);
     }
 
@@ -34,7 +36,7 @@ class DeleteHistoryRepositoryTest {
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
                 () -> assertThat(saved.getContentId()).isEqualTo(deleteHistory.getContentId()),
-                () -> assertThat(saved.getDeletedById()).isEqualTo(deleteHistory.getDeletedById()),
+                () -> assertThat(saved.getDeleteUser()).isEqualTo(deleteHistory.getDeleteUser()),
                 () -> assertThat(saved.getContentType()).isEqualTo(deleteHistory.getContentType()),
                 () -> assertThat(saved.getCreateDate()).isEqualTo(deleteHistory.getCreateDate())
         );
