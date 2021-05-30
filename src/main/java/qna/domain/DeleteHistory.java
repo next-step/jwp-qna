@@ -59,4 +59,8 @@ public class DeleteHistory {
     public Long getId() {
         return id;
     }
+
+    public User getDeletedBy() {
+        return deletedBy;
+    }
 }
