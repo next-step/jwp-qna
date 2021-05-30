@@ -10,14 +10,14 @@ import qna.UnAuthorizedException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class UserTest {
+class UserTest {
     private static final String USER_ID = "user1";
     private static final String PASSWORD = "password2";
     private static final String NAME = "test";
     private static final String EMAIL = "test@test.com";
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-    private static final User user1 = new User(USER_ID, PASSWORD, NAME, EMAIL);
+    private User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
+    private User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+    private User user1 = new User(USER_ID, PASSWORD, NAME, EMAIL);
 
     @Nested
     @DisplayName("update 메서드는")
