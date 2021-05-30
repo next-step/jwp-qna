@@ -1,19 +1,50 @@
 package qna.domain;
 
+import java.util.Objects;
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
-
+@Entity
+@Table(name = "user")
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 20, nullable = false, unique = true)
     private String userId;
+
+    @Column(length = 20, nullable = false)
     private String password;
+
+    @Column(length = 20, nullable = false)
     private String name;
+
+    @Column(length = 50)
     private String email;
 
-    private User() {
+    @Column(name = "created_at", columnDefinition = "DATETIME", nullable = false)
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", columnDefinition = "DATETIME")
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -26,6 +57,8 @@ public class User {
         this.password = password;
         this.name = name;
         this.email = email;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void update(User loginUser, User target) {
@@ -39,6 +72,7 @@ public class User {
 
         this.name = target.name;
         this.email = target.email;
+        this.updatedAt = LocalDateTime.now();
     }
 
     private boolean matchUserId(String userId) {
@@ -110,6 +144,8 @@ public class User {
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", updatedAt='" + updatedAt + '\'' +
                 '}';
     }
 
