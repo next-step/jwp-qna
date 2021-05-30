@@ -1,27 +1,13 @@
-server:
-  port: 8000
 spring:
-  application:
-    name: test
   datasource:
-    url: jdbc:mysql://localhost:3306/qna
-    username: root
-    password: 1234
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:h2:~/qna;MODE=MYSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;
+    username: sa
+  h2:
+    console:
+      enabled: true
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
-
-logging:
-  level:
-    ROOT: INFO
-    org.hibernate: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.springframework.orm: TRACE
-    org.springframework.transaction: TRACE
-    com.zaxxer.hikari: TRACE
-    com.mysql.cj.jdbc: TRACE
+        dialect: org.hibernate.dialect.MySQL57Dialect
