@@ -9,36 +9,27 @@ import java.util.Objects;
 
 @Table(name = "answer")
 @Entity
-public class Answer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Answer extends BaseEntity {
 
     @Lob
     private String contents;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private boolean deleted = false;
 
     private Long questionId;
 
-    private LocalDateTime updatedAt;
-
+    @Column(name="writer_id")
     private Long writerId;
 
     protected Answer() {
         //JPA need no-arg constructor
     }
 
-    public Answer(String contents, LocalDateTime createdAt, boolean deleted, Long questionId, LocalDateTime updatedAt, Long writerId) {
+    public Answer(String contents, boolean deleted, Long questionId, Long writerId) {
         this.contents = contents;
-        this.createdAt = createdAt;
         this.deleted = deleted;
         this.questionId = questionId;
-        this.updatedAt = updatedAt;
         this.writerId = writerId;
     }
 
@@ -47,7 +38,7 @@ public class Answer {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -70,13 +61,7 @@ public class Answer {
         this.questionId = question.getId();
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Long getWriterId() {
         return writerId;
@@ -110,14 +95,5 @@ public class Answer {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
-    }
+
 }
