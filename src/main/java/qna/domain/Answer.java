@@ -69,7 +69,7 @@ public class Answer extends BaseTimeEntity {
         this.id = id;
     }
 
-    public User getUser() {
+    public User getWriter() {
         return writer;
     }
 

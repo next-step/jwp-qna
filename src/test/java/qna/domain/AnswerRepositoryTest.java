@@ -163,7 +163,7 @@ class AnswerRepositoryTest {
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
 
         Answer answer = findAnswer.get();
-        assertThat(answer.getUser()).isSameAs(user);
+        assertThat(answer.getWriter()).isSameAs(user);
     }
 
     @DisplayName("답변을 통해서 질문접근 테스트")
