@@ -19,7 +19,7 @@ public class QuestionTest {
         assertAll(
             () -> assertThat(question.getTitle()).isEqualTo(Q1.getTitle()),
             () -> assertThat(question.getContents()).isEqualTo(Q1.getContents()),
-            () -> assertThat(question.getWriterId()).isEqualTo(Q1.getWriterId())
+            () -> assertThat(question.getWriter()).isEqualTo(Q1.getWriter())
         );
     }
 

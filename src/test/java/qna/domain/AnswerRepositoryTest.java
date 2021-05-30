@@ -20,11 +20,21 @@ public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answers;
 
+    @Autowired
+    private QuestionRepository questions;
+
+    @Autowired
+    private UserRepository users;
+
     private Answer savedAnswer;
+    private Question savedQuestion;
+    private User savedUser;
 
     @BeforeEach
     void init() {
-        savedAnswer = answers.save(AnswerTest.A1);
+        savedUser = users.save(UserTest.JAVAJIGI);
+        savedQuestion = questions.save(new Question("title1", "contents1").writeBy(savedUser));
+        savedAnswer = answers.save(new Answer(savedUser, savedQuestion, "Answers Contents1"));
     }
 
     @Test
@@ -33,8 +43,8 @@ public class AnswerRepositoryTest {
         // given & when & then
         assertAll(
             () -> assertThat(savedAnswer.getId()).isNotNull(),
-            () -> assertThat(savedAnswer.getWriterId()).isEqualTo(AnswerTest.A1.getWriterId()),
-            () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
+            () -> assertThat(savedAnswer.getWriter()).isEqualTo(savedUser),
+            () -> assertThat(savedAnswer.getQuestion()).isEqualTo(savedQuestion),
             () -> assertThat(savedAnswer.getContents()).isEqualTo(AnswerTest.A1.getContents())
         );
     }
@@ -105,7 +115,7 @@ public class AnswerRepositoryTest {
     @DisplayName("실제 삭제가 아닌 경우, 질문 ID로 조회 테스트")
     void findByQuestionIdAndDeletedFalse() {
         // given & when
-        List<Answer> actualList = answers.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestionId());
+        List<Answer> actualList = answers.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestion().getId());
         // then
         assertThat(actualList).containsExactly(savedAnswer);
     }
@@ -116,7 +126,7 @@ public class AnswerRepositoryTest {
         // given & when
         savedAnswer.setDeleted(true);
         answers.flush();
-        List<Answer> actualList = answers.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestionId());
+        List<Answer> actualList = answers.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestion().getId());
         // then
         assertThat(actualList).isEmpty();
     }

@@ -7,9 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -26,8 +29,9 @@ public class DeleteHistory {
     @Column(name = "content_type")
     private ContentType contentType;
 
-    @Column(name = "deleted_by_id")
-    private Long deletedById;
+    @ManyToOne
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedBy;
 
     @Column(name="create_date")
     private LocalDateTime createDate = LocalDateTime.now();
@@ -35,10 +39,10 @@ public class DeleteHistory {
     public DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedBy = deletedBy;
         this.createDate = createDate;
     }
 
@@ -54,8 +58,8 @@ public class DeleteHistory {
         return contentType;
     }
 
-    public Long getDeletedById() {
-        return deletedById;
+    public User getDeletedBy() {
+        return deletedBy;
     }
 
     public LocalDateTime getCreateDate() {
@@ -70,13 +74,13 @@ public class DeleteHistory {
             return false;
         DeleteHistory that = (DeleteHistory)o;
         return Objects.equals(getId(), that.getId()) && Objects.equals(getContentId(),
-            that.getContentId()) && getContentType() == that.getContentType() && Objects.equals(getDeletedById(),
-            that.getDeletedById()) && Objects.equals(getCreateDate(), that.getCreateDate());
+            that.getContentId()) && getContentType() == that.getContentType() && Objects.equals(getDeletedBy(),
+            that.getDeletedBy()) && Objects.equals(getCreateDate(), that.getCreateDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getContentId(), getContentType(), getDeletedById(), getCreateDate());
+        return Objects.hash(getId(), getContentId(), getContentType(), getDeletedBy(), getCreateDate());
     }
 
     @Override
@@ -85,7 +89,7 @@ public class DeleteHistory {
             "id=" + id +
             ", contentId=" + contentId +
             ", contentType=" + contentType +
-            ", deletedById=" + deletedById +
+            ", deletedBy=" + deletedBy +
             ", createDate=" + createDate +
             '}';
     }

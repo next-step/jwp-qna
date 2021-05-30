@@ -3,6 +3,8 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,11 +18,17 @@ public class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistories;
 
+    @Autowired
+    private UserRepository users;
+
     private DeleteHistory savedDeleteHistory;
+    private User savedUser;
 
     @BeforeEach
     void init() {
-        savedDeleteHistory = deleteHistories.save(DeleteHistoryTest.D1);
+        savedUser = users.save(UserTest.JAVAJIGI);
+        savedDeleteHistory = deleteHistories.save(new DeleteHistory(ContentType.ANSWER, 1L, savedUser, LocalDateTime
+            .now()));
     }
 
     @Test
@@ -31,7 +39,7 @@ public class DeleteHistoryRepositoryTest {
             () -> assertThat(savedDeleteHistory.getId()).isNotNull(),
             () -> assertThat(savedDeleteHistory.getContentId()).isEqualTo(DeleteHistoryTest.D1.getContentId()),
             () -> assertThat(savedDeleteHistory.getContentType()).isEqualTo(DeleteHistoryTest.D1.getContentType()),
-            () -> assertThat(savedDeleteHistory.getDeletedById()).isEqualTo(DeleteHistoryTest.D1.getDeletedById())
+            () -> assertThat(savedDeleteHistory.getDeletedBy()).isEqualTo(savedUser)
         );
     }
 
