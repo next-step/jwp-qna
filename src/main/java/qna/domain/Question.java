@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -15,10 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import qna.CannotDeleteException;
@@ -45,9 +44,8 @@ public class Question extends BaseTimeEntity{
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    @Where(clause = "deleted = false")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
 
     public Question() {
     }
@@ -60,6 +58,7 @@ public class Question extends BaseTimeEntity{
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {
@@ -69,10 +68,7 @@ public class Question extends BaseTimeEntity{
     public List<DeleteHistory> deleteByOwner(User owner) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(deleteQuestion(owner));
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.deleteByOwner(owner));
-        }
-
+        deleteHistories.addAll(answers.deleteAllByOwner(owner));
         return deleteHistories;
     }
 
@@ -92,8 +88,8 @@ public class Question extends BaseTimeEntity{
         answer.toQuestion(this);
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public Answers getAnswers() {
+        return this.answers;
     }
 
     public Long getId() {

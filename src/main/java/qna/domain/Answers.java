@@ -25,8 +25,20 @@ public class Answers {
         this.answers = answers;
     }
 
-    public List<DeleteHistory> deleteAllByOwner(User owner) {
-        return null;
+    public List<DeleteHistory> deleteAllByOwner(User owner) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.deleteByOwner(owner));
+        }
+        return deleteHistories;
+    }
+
+    public void add(Answer answer) {
+        answers.add(answer);
+    }
+
+    public void remove(Answer answer) {
+        answers.remove(answer);
     }
 
     public List<Answer> getAnswers() {

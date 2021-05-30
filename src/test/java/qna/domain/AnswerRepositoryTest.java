@@ -137,9 +137,9 @@ public class AnswerRepositoryTest {
         // given & when
         savedQuestion.addAnswer(savedAnswer);
         Question findQuestion = questions.findByIdAndDeletedFalse(savedQuestion.getId()).get();
-        List<Answer> answerList = findQuestion.getAnswers();
+        Answers actual = findQuestion.getAnswers();
         // then
-        assertThat(answerList.contains(savedAnswer)).isTrue();
+        assertThat(actual.getAnswers().contains(savedAnswer)).isTrue();
     }
 
     @Test
@@ -150,9 +150,9 @@ public class AnswerRepositoryTest {
         // when
         Question findQuestion = questions.findByIdAndDeletedFalse(savedQuestion.getId()).get();
         List<Answer> findAnswers = answers.findByQuestionIdAndDeletedFalse(savedQuestion.getId());
-        List<Answer> actual = findQuestion.getAnswers();
+        Answers actual = findQuestion.getAnswers();
         // then
-        assertThat(actual.get(0)).isEqualTo(findAnswers.get(0));
+        assertThat(actual.getAnswers().get(0)).isEqualTo(findAnswers.get(0));
     }
 
     @Test
