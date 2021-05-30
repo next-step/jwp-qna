@@ -6,14 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
     @Autowired
-    QuestionRepository questionRepository;
+    private QuestionRepository questionRepository;
 
     @Test
     @DisplayName("save 테스트")
@@ -35,7 +34,7 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("전체 검색 테스트")
+    @DisplayName("삭제되지 않은 질문 검색 테스트")
     void findByDeletedFalseTest() {
         questionRepository.save(QuestionTest.QUESTION1);
         questionRepository.save(QuestionTest.QUESTION2);
@@ -54,7 +53,7 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("id 기준 검색 테스트")
-    void findByIdAndDeletedFalse() {
+    void findByIdAndDeletedFalseTest() {
         Question expected = questionRepository.save(QuestionTest.QUESTION1);
         Question actual = questionRepository.findByIdAndDeletedFalse(expected.getId())
                                             .orElseThrow(IllegalArgumentException::new);

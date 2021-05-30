@@ -8,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
     @Autowired
-    DeleteHistoryRepository deleteHistoryRepository;
+    private DeleteHistoryRepository deleteHistoryRepository;
 
     @Test
     @DisplayName("save 테스트")
