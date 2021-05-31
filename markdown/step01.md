@@ -252,8 +252,8 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
     - [x] 1-3.[IntelliJ](https://naver.github.io/hackday-conventions-java/#_intellij) 적용
     - [x] 1-4.[Github](https://naver.github.io/hackday-conventions-java/#_github) 적용
 - [ ] 2.학습
-    - [ ] 2-0. 
-    - [ ] 2-1. 
+    - [ ] 2-1. Hands-on
+    - [ ] 2-2. 
 - [ ] 3.분석 및 설계
     - [ ] 3-1.step01.md 작성
     - [ ] 3-2.도메인 주도 설계 이미지 수정
