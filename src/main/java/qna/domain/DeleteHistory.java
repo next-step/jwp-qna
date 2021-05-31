@@ -36,6 +36,14 @@ public class DeleteHistory {
         this.deletedBy = deletedBy;
     }
 
+    public static DeleteHistory answerOf(Long id, User writer) {
+        return new DeleteHistory(ContentType.ANSWER, id, writer);
+    }
+
+    public static DeleteHistory questionOf(Long id, User writer) {
+        return new DeleteHistory(ContentType.QUESTION, id, writer);
+    }
+
     @Override
     public String toString() {
         return "DeleteHistory{" +

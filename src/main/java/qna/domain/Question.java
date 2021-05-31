@@ -76,7 +76,7 @@ public class Question extends BaseTimeEntity {
         }
         deleted = true;
 
-        return new DeleteHistory(ContentType.QUESTION, id, writer);
+        return DeleteHistory.questionOf(id, writer);
     }
 
     @Override
