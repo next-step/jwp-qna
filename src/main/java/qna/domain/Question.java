@@ -1,7 +1,11 @@
 package qna.domain;
 
 import org.springframework.lang.NonNull;
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -22,6 +26,9 @@ public class Question extends BaseEntity{
     private User writer;
 
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {}
 
@@ -44,10 +51,6 @@ public class Question extends BaseEntity{
         return this.writer.equals(writer);
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
-
     public Long getId() {
         return id;
     }
@@ -68,8 +71,17 @@ public class Question extends BaseEntity{
         return deleted;
     }
 
-    public void updateDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
+    }
+
+    public List<Answer> getAnswers() {
+        return this.answers;
+    }
+
+    public void addAnswers(Answer answer) {
+        answers.add(answer);
+        answer.toQuestion(this);
     }
 
     @Override
