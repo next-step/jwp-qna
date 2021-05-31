@@ -122,12 +122,13 @@ public class User extends BaseTimeEntity {
             return false;
         }
 
-        return equalsNameAndEmail((User) o);
+        User target = (User) o;
+        return this.userId.equals(target.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email);
+        return Objects.hash(userId);
     }
 
     @Override
