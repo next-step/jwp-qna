@@ -152,6 +152,10 @@ alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
  ```
  
- ### 기능 구현
- * 각 엔티티의 속한 컬럼들을 정의하고 각각의 annotaion 등의 설정 
- * 연관관계를 설정하고 외래키를 주입
+### 기능 구현
+* 각 엔티티의 속한 컬럼들을 정의하고 각각의 annotaion 등의 설정 
+* 연관관계를 설정하고 외래키를 주입
+
+### 기능 수정 내역
+* Entity 별 공통 컬럼 추상화하여 추상클래스 생성 후 상속 (2021.05.31)
+* 테스트 코드 작성 시 Repository 와 Entity 테스트 파일 분리 (2021.05.31)
