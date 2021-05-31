@@ -1,10 +1,14 @@
 package qna.domain;
 
+import static qna.domain.UserTest.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.QuestionTest.Q1;
 
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +16,30 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
+    public static final Answer A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
 
     @Autowired
-    AnswerRepository answerRepository;
+    private AnswerRepository answerRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @BeforeEach
+    void setup() {
+        userRepository.save(JAVAJIGI);
+        questionRepository.save(Q1);
+    }
+
+    @AfterEach
+    void deleteAll() {
+        userRepository.deleteAll();
+        questionRepository.deleteAll();
+        answerRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("답변 생성")
@@ -45,9 +68,9 @@ public class AnswerRepositoryTest {
         //given
         //when
         Answer save = answerRepository.save(A1);
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(save.getQuestionId());
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(save.getQuestion().getId());
         //then
         assertThat(answers.size() > 0).isTrue();
-        assertThat(answers.get(0).getQuestionId()).isEqualTo(save.getQuestionId());
+        assertThat(answers.get(0).getQuestion()).isEqualTo(save.getQuestion());
     }
 }
