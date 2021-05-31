@@ -45,9 +45,4 @@ public class DeleteHistoryRepositoryTest {
         DeleteHistory finedDeleteHistory = repository.findById(deleteHistory.getId()).get();
         assertThat(finedDeleteHistory.getContentType()).isEqualTo(ContentType.QUESTION);
     }
-
-    @AfterEach
-    void end() {
-        repository.deleteAll();
-    }
 }
