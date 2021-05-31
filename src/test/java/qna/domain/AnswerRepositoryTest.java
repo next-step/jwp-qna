@@ -49,9 +49,4 @@ public class AnswerRepositoryTest {
             () -> assertThat(finedAnswer.getContents()).isEqualTo("change content"),
             () -> assertThat(finedAnswer.getUpdatedAt()).isNotNull());
     }
-
-    @AfterEach
-    void end() {
-        repository.deleteAll();
-    }
 }
