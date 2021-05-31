@@ -56,10 +56,11 @@ public class Answer extends BaseEntity {
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
-
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
+        this.writer = writer;
+        this.question = question;
     }
 
     protected Answer() {
@@ -68,10 +69,6 @@ public class Answer extends BaseEntity {
 
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
-    }
-
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
     }
 
     public Long getId() {
@@ -112,6 +109,39 @@ public class Answer extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
+    public User getWriter() {
+        return writer;
+    }
+
+    public void setWriter(User writer) {
+        this.writer = writer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Answer answer = (Answer) o;
+        return Objects.equals(id, answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
