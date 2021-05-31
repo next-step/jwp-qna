@@ -3,6 +3,9 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class Question {
@@ -25,6 +28,9 @@ public class Question {
 
     @Embedded
     private CommonTransactionInfo commonTransactionInfo = new CommonTransactionInfo();
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -50,6 +56,15 @@ public class Question {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        if (!answers.contains(answer)) {
+            answers.add(answer);
+        }
+    }
+
+    public List<Answer> activeAnswers() {
+        return answers.stream()
+                .filter(answer -> !answer.isDeleted())
+                .collect(Collectors.toList());
     }
 
     public void delete(User loginUser) {
