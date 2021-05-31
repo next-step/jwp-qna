@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,114 +9,168 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
+import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class AnswerRepositoryTest {
 
-	private static final String EMPTY_ENTITY_MESSAGE = "찾는 Entity가 없습니다.";
-
 	@Autowired
 	private AnswerRepository answers;
+
+	@Autowired
+	private UserRepository users;
+
+	@Autowired
+	private QuestionRepository questions;
+
+	private static final String expectedContents = "Answers Contents1";
+	private User writer;
+	private Question question;
+	private Answer expected;
+
+	@BeforeEach
+	void setUp() {
+		writer = users.save(UserTest.JAVAJIGI);
+		question = questions.save(new Question("title1", "contents1").writeBy(writer));
+		expected = answers.save(new Answer(writer, question, expectedContents));
+
+		assertAll(() -> {
+			assertThat(writer).isNotNull();
+			assertThat(question).isNotNull();
+			assertThat(expected).isNotNull();
+		});
+	}
 
 	@Test
 	@DisplayName("save 테스트")
 	void saveTest() {
-		// when
-		Answer answerA1 = answers.save(A1);
-
 		// then
 		assertAll(() -> {
-			assertThat(answerA1.getId()).isNotNull();
-			assertThat(answerA1.getQuestionId()).isEqualTo(A1.getQuestionId());
-			assertThat(answerA1.getWriterId()).isEqualTo(A1.getWriterId());
+			assertThat(expected.getId()).isNotNull();
+			assertThat(expected.isSameQuestion(question)).isTrue();
+			assertThat(expected.isOwner(writer)).isTrue();
+			assertThat(expected.isSameContents(expectedContents)).isTrue();
 		});
 	}
 
 	@Test
 	@DisplayName("findById test")
 	void findByIdTest() {
-		// given
-		Answer answerA1 = answers.save(A1);
-
 		// when
-		assertThat(answers.findById(answerA1.getId())
-						  .orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
-			.isNotNull()
-			.isSameAs(answerA1); // then
-
+		assertThat(answers.findById(expected.getId()))
+			.isPresent()
+			.get()
+			.isSameAs(expected); // then
 	}
 
 	@Test
-	@DisplayName("update 테스트")
+	@DisplayName("contents update 테스트")
 	void updateTest() {
 		// given
 		String expectContents = "update";
-		Answer expected = answers.save(A1);
 
 		// when
 		expected.setContents(expectContents);
 
 		// then
-		assertThat(answers.findByIdAndDeletedFalse(expected.getId())
-						  .orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
-			.isNotNull()
-			.extracting(answer -> answer.getContents())
-			.isEqualTo(expectContents);
+		assertThat(answers.findByIdAndDeletedFalse(expected.getId()))
+			.isPresent()
+			.get()
+			.extracting(answer -> answer.isSameContents(expectContents))
+			.isEqualTo(true);
+	}
+
+	@Test
+	@DisplayName("연관 관계인 Writer update 테스트")
+	void updateWriterTest() {
+		// given
+		User updateWriter = users.save(SANJIGI);
+
+		// when
+		expected.toWriter(updateWriter);
+
+		// then
+		assertThat(answers.findByIdAndDeletedFalse(expected.getId()))
+			.isPresent()
+			.get()
+			.extracting(answer -> answer.isOwner(updateWriter))
+			.isEqualTo(true);
+	}
+
+	@Test
+	@DisplayName("연관 관계인 Question update 테스트")
+	void updateQuestionTest() {
+		// given
+		User writer = users.save(SANJIGI);
+		Question updateQuestion = questions.save(new Question("title1", "contents1").writeBy(writer));
+
+		// when
+		expected.toQuestion(updateQuestion);
+
+		// then
+		assertThat(answers.findByIdAndDeletedFalse(expected.getId()))
+			.isPresent()
+			.get()
+			.extracting(answer -> answer.isSameQuestion(updateQuestion))
+			.isEqualTo(true);
 	}
 
 	@Test
 	@DisplayName("존재하지 않는 PK로 findById test")
 	void findByIdTestWithNull() {
-		assertThatThrownBy(() -> answers.findById(0L).orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
-			.isInstanceOf(NullPointerException.class)
-			.hasMessageContaining(EMPTY_ENTITY_MESSAGE);
+		assertThat(answers.findById(0L)).isNotPresent();
 	}
 
 	@Test
 	@DisplayName("question_id 값으로 deleted 컬럼이 false인 Answer 확인")
 	void findByQuestionIdAndDeletedFalseTest() {
 		// given
-		Answer answerA1 = answers.save(A1);
-
-		A2.setDeleted(true);
-		answers.save(A2);
+		User writer = users.save(SANJIGI);
+		Answer answer = new Answer(writer, question, "Answers Contents2");
+		answer.setDeleted(true);
+		Answer notHaveAnswer = answers.save(answer);
 
 		// when
-		assertThat(answers.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId()))
+		assertThat(answers.findByQuestionIdAndDeletedFalse(question.getId()))
 			.isNotEmpty()
-			.containsOnly(answerA1); // then
+			.contains(expected)
+			.doesNotContain(notHaveAnswer); // then
 	}
 
 	@Test
 	@DisplayName("PK로 deleted 컬럼이 false인 Answer 확인")
 	void findByIdAndDeletedFalseTest() {
-		// given
-		Answer answerA1 = answers.save(A1);
-
 		// when
-		assertThat(answers.findByIdAndDeletedFalse(answerA1.getId())
-						  .orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
-			.isNotNull() // then
-			.isSameAs(answerA1);
+		assertThat(answers.findByIdAndDeletedFalse(expected.getId()))
+			.isPresent()
+			.get()
+			.isSameAs(expected);
 	}
 
 	@Test
 	@DisplayName("PK로 deleted 컬럼이 true Answer 확인")
 	void findByIdAndDeletedFalseTestWithDeletedTrueEntity() {
 		// given
-		answers.save(A1);
-
-		A2.setDeleted(true);
-		Answer answerA2 = answers.save(A2);
+		User writer = users.save(SANJIGI);
+		Answer answer = new Answer(writer, question, "Answers Contents2");
+		answer.setDeleted(true);
+		Answer notHaveAnswer = answers.save(answer);
 
 		// when
-		assertThatThrownBy(() -> answers.findByIdAndDeletedFalse(answerA2.getId())
-										.orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
-			.isInstanceOf(NullPointerException.class) // then
-			.hasMessageContaining(EMPTY_ENTITY_MESSAGE);
+		assertThat(answers.findByIdAndDeletedFalse(notHaveAnswer.getId()))
+			.isNotPresent();
+	}
+
+	@Test
+	@DisplayName("DELETE 테스트")
+	void deleteTest() {
+		// when
+		answers.delete(expected);
+
+		// then
+		assertThat(answers.findById(expected.getId()))
+			.isNotPresent();
 	}
 
 

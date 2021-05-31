@@ -1,12 +1,11 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -18,22 +17,35 @@ import static qna.domain.QuestionTest.Q2;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class QuestionRepositoryTest {
 
-	private static final String EMPTY_ENTITY_MESSAGE = "찾는 Entity가 없습니다.";
-
 	@Autowired
 	private QuestionRepository questions;
+
+	@Autowired
+	private UserRepository users;
+
+	private User writer;
+	private Question expected;
+
+	@BeforeEach
+	void setUp() {
+		writer = users.save(UserTest.JAVAJIGI);
+		expected = questions.save(new Question("title1", "contents1").writeBy(writer));
+
+		assertAll(() -> {
+			assertThat(expected).isNotNull();
+			assertThat(writer).isNotNull();
+		});
+	}
+
 
 	@Test
 	@DisplayName("save 테스트")
 	void saveTest() {
-		Question questionQ1 = questions.save(Q1);
-
 		assertAll(() -> {
-			assertThat(questionQ1).isNotNull();
-			assertThat(questionQ1.getId()).isNotNull();
-			assertThat(questionQ1.getTitle()).isEqualTo(Q1.getTitle());
-			assertThat(questionQ1.getContents()).isEqualTo(Q1.getContents());
-			assertThat(questionQ1.getWriterId()).isEqualTo(Q1.getWriterId());
+			assertThat(expected.getId()).isNotNull();
+			assertThat(expected.isSameTitle("title1")).isTrue();
+			assertThat(expected.isSameContents("contents1")).isTrue();
+			assertThat(expected.isOwner(writer)).isTrue();
 		});
 
 	}
@@ -43,71 +55,89 @@ class QuestionRepositoryTest {
 	void updateTest() {
 		// given
 		String expectedTitle = "update";
-		Question expected = questions.save(Q1);
 
 		// when
 		expected.setTitle(expectedTitle);
 
 		// then
-		assertThat(questions.findByIdAndDeletedFalse(expected.getId())
-							.orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
-			.isNotNull()
-			.extracting(value -> value.getTitle())
-			.isEqualTo(expectedTitle);
+		assertThat(questions.findByIdAndDeletedFalse(expected.getId()))
+			.isPresent()
+			.get()
+			.extracting(value -> value.isSameTitle(expectedTitle))
+			.isEqualTo(true);
+	}
+
+	@Test
+	@DisplayName("연관관계 writer 업데이트 테스트")
+	void updateWriterTest() {
+		// given
+		User updateWriter = users.save(UserTest.SANJIGI);
+
+		// when
+		expected.writeBy(updateWriter);
+
+		// then
+		assertThat(questions.findById(expected.getId()))
+			.isPresent()
+			.get()
+			.extracting(question -> question.isOwner(updateWriter))
+			.isEqualTo(true);
 	}
 
 	@Test
 	@DisplayName("findById 테스트")
 	void findByIdTest() {
-		Question questionQ1 = questions.save(Q1);
-
 		// when
-		assertThat(questions.findById(questionQ1.getId())
-						  .orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
-			.isNotNull()
-			.isSameAs(questionQ1); // then
+		assertThat(questions.findById(expected.getId()))
+			.isPresent()
+			.get()
+			.isSameAs(expected); // then
 	}
 
 	@Test
 	@DisplayName("delete 컬럼이 false인 모든 question 조회 테스트")
 	void findByDeletedFalseTest() {
 		// given
-		Question questionQ1 = questions.save(Q1); // default false
-
-		Q2.setDeleted(true);
-		Question questionQ2 = questions.save(Q2); // default false
+		Question notHaveQuestion = questions.save(new Question("title1", "contents1").writeBy(writer)); // default false
+		notHaveQuestion.setDeleted(true);
 
 		// when
 		assertThat(questions.findByDeletedFalse())
 			.isNotEmpty()
-			.contains(questionQ1)
-			.doesNotContain(questionQ2); // then
+			.contains(expected)
+			.doesNotContain(notHaveQuestion); // then
 	}
 
 	@Test
 	@DisplayName("delete 컬럼이 false인 question Id 조회 테스트")
 	void findByIdAndDeletedFalseTest() {
-		// given
-		Question questionQ1 = questions.save(Q1); // default false
-
 		// when
-		assertThat(questions.findByIdAndDeletedFalse(questionQ1.getId())
-							.orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
-			.isNotNull()
-			.isSameAs(questionQ1); // then
+		assertThat(questions.findByIdAndDeletedFalse(expected.getId()))
+			.isPresent()
+			.get()
+			.isSameAs(expected); // then
 	}
 
 	@Test
 	@DisplayName("delete 컬럼이 true인 question Id 조회 테스트")
 	void findByIdAndDeletedFalseTestWithDeleteTure() {
 		// given
-		Q2.setDeleted(true);
-		Question questionQ2 = questions.save(Q2); // default false
+		Question notHaveQuestion = questions.save(new Question("title1", "contents1").writeBy(writer)); // default false
+		notHaveQuestion.setDeleted(true);
 
 		// when
-		assertThatThrownBy(() -> questions.findByIdAndDeletedFalse(questionQ2.getId())
-										  .orElseThrow(() -> new NullPointerException(EMPTY_ENTITY_MESSAGE)))
-			.isInstanceOf(NullPointerException.class)
-			.hasMessageContaining(EMPTY_ENTITY_MESSAGE); // then
+		assertThat(questions.findByIdAndDeletedFalse(notHaveQuestion.getId()))
+			.isNotPresent(); // then
+	}
+
+	@Test
+	@DisplayName("삭제 테스트")
+	void deleteTest() {
+		// when
+		questions.delete(expected);
+
+		// then
+		assertThat(questions.findById(expected.getId()))
+			.isNotPresent();
 	}
 }

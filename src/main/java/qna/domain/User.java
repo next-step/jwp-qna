@@ -4,6 +4,7 @@ import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 @Table(name = "user")
 @Entity
@@ -32,11 +33,6 @@ public class User extends CreateAndUpdateTimeEntity {
     }
 
     public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
-    }
-
-    public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -44,11 +40,11 @@ public class User extends CreateAndUpdateTimeEntity {
     }
 
     public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
+        if (matchUserId(loginUser.userId) == false) {
             throw new UnAuthorizedException();
         }
 
-        if (!matchPassword(target.password)) {
+        if (matchPassword(target.password) == false) {
             throw new UnAuthorizedException();
         }
 
@@ -56,7 +52,7 @@ public class User extends CreateAndUpdateTimeEntity {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    public boolean matchUserId(String userId) {
         return this.userId.equals(userId);
     }
 
@@ -81,35 +77,12 @@ public class User extends CreateAndUpdateTimeEntity {
         return id;
     }
 
+    public void setUserId(final String userId) {
+        this.userId = userId;
+    }
+
     public String getUserId() {
-        return userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return this.userId;
     }
 
     private static class GuestUser extends User {
@@ -117,5 +90,37 @@ public class User extends CreateAndUpdateTimeEntity {
         public boolean isGuestUser() {
             return true;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User)o;
+        return Objects.equals(id, user.id)
+               && Objects.equals(userId, user.userId)
+               && Objects.equals(password, user.password)
+               && Objects.equals(name, user.name)
+               && Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email);
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", User.class.getSimpleName() + "[", "]")
+            .add("id=" + id)
+            .add("userId='" + userId + "'")
+            .add("password='" + password + "'")
+            .add("name='" + name + "'")
+            .add("email='" + email + "'")
+            .toString();
     }
 }

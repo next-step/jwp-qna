@@ -6,7 +6,6 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.util.Objects;
 
-
 @Table(name = "answer")
 @Entity
 public class Answer extends CreateAndUpdateTimeEntity {
@@ -15,11 +14,13 @@ public class Answer extends CreateAndUpdateTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     @Lob
     @Column(name = "contents")
@@ -33,12 +34,6 @@ public class Answer extends CreateAndUpdateTimeEntity {
     }
 
     public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
-
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -47,29 +42,30 @@ public class Answer extends CreateAndUpdateTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
+    }
+
+    public boolean isSameQuestion(final Question question) {
+        return this.question.equals(question);
+    }
+
+    public boolean isSameContents(final String contents){
+        return this.contents.equals(contents);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
-    }
-
-    public Long getQuestionId() {
-        return this.questionId;
+        this.question = question;
+        question.addAnswer(this);
     }
 
     public Long getId() {
         return id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
     }
 
     public boolean isDeleted() {
@@ -80,15 +76,16 @@ public class Answer extends CreateAndUpdateTimeEntity {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+    public void setContents(final String contents) {
+        this.contents = contents;
+    }
+
+    public void toWriter(User writer) {
+        this.writer = writer;
+    }
+
+    public User getWriter() {
+        return this.writer;
     }
 
     @Override
@@ -102,21 +99,13 @@ public class Answer extends CreateAndUpdateTimeEntity {
         Answer answer = (Answer)o;
         return deleted == answer.deleted
                && Objects.equals(id, answer.id)
-               && Objects.equals(writerId, answer.writerId)
-               && Objects.equals(questionId, answer.questionId)
+               && Objects.equals(writer, answer.writer)
+               && Objects.equals(question, answer.question)
                && Objects.equals(contents, answer.contents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, writerId, questionId, contents, deleted);
-    }
-
-    public void setContents(final String contents) {
-        this.contents = contents;
-    }
-
-    public String getContents() {
-        return this.contents;
+        return Objects.hash(id, writer, question, contents, deleted);
     }
 }
