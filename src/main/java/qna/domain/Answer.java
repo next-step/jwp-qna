@@ -7,33 +7,32 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "t_answer")
 public class Answer extends BaseEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "answer_id")
     private Long id;
 
-    private Long writerId;
+    private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
-    @JoinColumn(name = "question_id")
+    @ManyToOne(cascade = CascadeType.ALL)
     private Question question;
 
     @Lob
     private String contents;
 
     @Column(nullable = false)
-    private boolean deleted = false;
+    private boolean deleted;
 
     protected Answer () { }
 
-    public Answer(Long writerId, Question question, String contents) {
-        this(null, writerId, question, contents);
+    public Answer(Long userId, Question question, String contents) {
+        this(null, userId, question, contents);
     }
 
-    public Answer(Long id, Long writer, Question question, String contents) {
+    public Answer(Long id, Long userId, Question question, String contents) {
         this.id = id;
 
-        if (Objects.isNull(writer)) {
+        if (Objects.isNull(userId)) {
             throw new UnAuthorizedException();
         }
 
@@ -41,52 +40,52 @@ public class Answer extends BaseEntity{
             throw new NotFoundException();
         }
 
-        this.writerId = writerId;
+        this.userId = userId;
         this.question = question;
         this.contents = contents;
     }
 
-    public boolean isOwner(Long writerIs) {
-        return this.writerId.equals(writerId);
+    public boolean isOwner(Long userId) {
+        return this.userId.equals(userId);
     }
 
     public void toQuestion(Question question) {
         this.question = question;
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void id(Long id) {
         this.id = id;
     }
 
     public Long writerId() {
-        return writerId;
+        return userId;
     }
 
-    public Long getQuestionId() {
-        return question.getId();
+    public Long questionId() {
+        return question.id();
     }
 
-    public void setQuestionId(Question question) {
+    public void questionId(Question question) {
         this.question = question;
     }
 
-    public String getContents() {
+    public String contents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void contents(String contents) {
         this.contents = contents;
     }
 
-    public boolean isDeleted() {
+    public boolean deleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void deleted(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -94,8 +93,8 @@ public class Answer extends BaseEntity{
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writer=" + writerId +
-                ", questionId=" + question.getId() +
+                ", writer=" + userId +
+                ", questionId=" + question.id() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

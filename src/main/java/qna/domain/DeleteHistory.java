@@ -9,16 +9,20 @@ import java.util.Objects;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
+@Table(name = "T_delete_history")
 public class DeleteHistory {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "delete_history_id")
     private Long id;
+
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
+
     private Long contentId;
     private Long deletedById;
+
     @CreatedDate
     private LocalDateTime createDate;
+
     protected DeleteHistory () { }
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {

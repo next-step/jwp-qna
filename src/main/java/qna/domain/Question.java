@@ -3,17 +3,19 @@ package qna.domain;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "T_question")
 public class Question extends BaseEntity {
     @Id @GeneratedValue (strategy = GenerationType.IDENTITY)
-    @Column(name = "question_id")
     private Long id;
+
     @Column(length = 100, nullable = false)
     private String title;
+
     @Lob
     private String contents;
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User writer;
+
+    private Long writerId;
+
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -29,56 +31,56 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Question writeBy(User writer) {
-        this.writer = writer;
+    public Question writeBy(Long writerId) {
+        this.writerId = writerId;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writerId.equals(writer.id());
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void id(Long id) {
         this.id = id;
     }
 
-    public String getTitle() {
+    public String title() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void title(String title) {
         this.title = title;
     }
 
-    public String getContents() {
+    public String contents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void contents(String contents) {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
+    public Long writerId() {
+        return writerId;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
+    public void writer(Long writerId) {
+        this.writerId = writerId;
     }
 
-    public boolean isDeleted() {
+    public boolean deleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void deleted(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -88,7 +90,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writer.getId() +
+                ", writerId=" + writerId +
                 ", deleted=" + deleted +
                 '}';
     }

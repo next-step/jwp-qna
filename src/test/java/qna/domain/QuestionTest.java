@@ -11,8 +11,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI.id());
+    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI.id());
 
     @Autowired
     private QuestionRepository questions;
@@ -21,14 +21,14 @@ public class QuestionTest {
     public void save(){
         final Question q1 = questions.save(Q1);
 
-        assertThat(q1.getId()).isNotNull();
+        assertThat(q1.id()).isNotNull();
     }
 
     @Test
     public void findByIdAndDeletedFalse(){
         final Question q1 = questions.save(Q1);
 
-        final Optional<Question> findQ1 = questions.findByIdAndDeletedFalse(q1.getId());
+        final Optional<Question> findQ1 = questions.findByIdAndDeletedFalse(q1.id());
 
         assertThat(findQ1).isNotEmpty();
     }

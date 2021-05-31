@@ -19,21 +19,21 @@ public class AnswerTest {
     @Autowired
     private TestEntityManager entityManager;
 
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI.getId(), QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI.getId(), QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI.id(), QuestionTest.Q1, "Answers Contents1");
+    public static final Answer A2 = new Answer(2L, UserTest.SANJIGI.id(), QuestionTest.Q1, "Answers Contents2");
 
     @Test
     public void save(){
         final Answer javajigi = answerRepository.save(A1);
 
-        assertThat(javajigi.getId()).isNotNull();
+        assertThat(javajigi.id()).isNotNull();
 
     }
     @Test
     public void findByIdAndDeletedFalse(){
         final Answer javajigi = answerRepository.save(A1);
 
-        Optional<Answer> find = answerRepository.findByIdAndDeletedFalse(javajigi.getId());
+        Optional<Answer> find = answerRepository.findByIdAndDeletedFalse(javajigi.id());
 
         assertThat(find).isNotEmpty();
     }
