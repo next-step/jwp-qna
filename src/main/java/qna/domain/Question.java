@@ -5,6 +5,7 @@ import qna.CannotDeleteException;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -48,7 +49,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
+        answer.toQuestion(this);
     }
 
     public String getContents() {
@@ -60,7 +61,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public DeleteHistory deleteByOwner(User loginUser) throws CannotDeleteException {
-        if (!this.writer.equals(loginUser)) {
+        if (!Objects.equals(this.writer, loginUser)) {
             throw new CannotDeleteException(CANNOT_DELETE_MESSAGE);
         }
         deleted = true;
@@ -91,12 +92,6 @@ public class Question extends BaseTimeEntity {
     public List<Answer> getAnswers() {
         return answers;
     }
-
-//    public void deleteAnswers() {
-//        for (Answer answer : answers) {
-//            answer.
-//        }
-//    }
 
     @Override
     public String toString() {

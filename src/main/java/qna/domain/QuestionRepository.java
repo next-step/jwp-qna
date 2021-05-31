@@ -12,6 +12,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     Optional<Question> findByIdAndDeletedFalse(Long id);
 
-    @Query(value = "select q from Question q left join q.answers a on q = a.question and a.deleted = false where q.id = :id")
+    @Query(value = "select q from Question q left join q.answers a on a.deleted = false where q.id = :id")
     Optional<Question> getOneNotDeletedById(@Param("id") Long id);
 }
