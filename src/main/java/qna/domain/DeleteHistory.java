@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,7 +30,7 @@ public class DeleteHistory {
     @Column(name = "content_type")
     private ContentType contentType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
 
@@ -62,10 +63,6 @@ public class DeleteHistory {
         return deletedBy;
     }
 
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -73,14 +70,15 @@ public class DeleteHistory {
         if (o == null || getClass() != o.getClass())
             return false;
         DeleteHistory that = (DeleteHistory)o;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(getContentId(),
-            that.getContentId()) && getContentType() == that.getContentType() && Objects.equals(getDeletedBy(),
-            that.getDeletedBy()) && Objects.equals(getCreateDate(), that.getCreateDate());
+        return Objects.equals(getId(), that.getId()) &&
+            Objects.equals(getContentId(), that.getContentId()) &&
+            getContentType() == that.getContentType() &&
+            Objects.equals(getDeletedBy(), that.getDeletedBy());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getContentId(), getContentType(), getDeletedBy(), getCreateDate());
+        return Objects.hash(getId(), getContentId(), getContentType(), getDeletedBy());
     }
 
     @Override
@@ -89,8 +87,6 @@ public class DeleteHistory {
             "id=" + id +
             ", contentId=" + contentId +
             ", contentType=" + contentType +
-            ", deletedBy=" + deletedBy +
-            ", createDate=" + createDate +
             '}';
     }
 }

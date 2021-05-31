@@ -1,44 +1,35 @@
-# [JPA] 2단계 - 연관 관계 매핑
+# [JPA] 3단계 - 질문 삭제하기 리팩터링
 
 ## 요구 사항
-- 객체의 참조와 테이블의 외래 키 매핑 
-- 아래의 DDL을 보고 유추하여 진행
+- 질문 데이터를 완전히 삭제하는 것이 아니라 데이터의 상태를 삭제 상태(deleted - boolean type)로 변경
+- 로그인 사용자와 질문한 사람이 같은 경우 삭제 가능
+- 답변이 없는 경우 삭제 가능
+- 질문자와 답변 글의 모든 답변자 같은 경우 삭제가 가능
+- 질문을 삭제할 때 답변 또한 삭제해야 하며, 답변의 삭제 또한 삭제 상태(deleted) 변경
+- 질문자와 답변자가 다른 경우 답변을 삭제 불가능
+- 질문과 답변 삭제 이력에 대한 정보를 DeleteHistory를 활용해 기록
 
 
-```sql
-alter table answer
-    add constraint fk_answer_to_question
-        foreign key (question_id)
-            references question (id)
+## 프로그래밍 요구 사항
+- qna.service.QnaService의 deleteQuestion()는 앞의 질문 삭제 기능을 구현한 코드
+- 이 메서드는 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드가 섞여 있음
+- 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드를 분리
+- 단위 테스트 가능한 코드에 대해 단위 테스트를 구현
+- qna.service.QnaServiceTest의 모든 테스트가 통과
 
-alter table answer
-    add constraint fk_answer_writer
-        foreign key (writer_id)
-            references user (id)
-
-alter table delete_history
-    add constraint fk_delete_history_to_user
-        foreign key (deleted_by_id)
-            references user (id)
-
-alter table question
-    add constraint fk_question_writer
-        foreign key (writer_id)
-            references user (id)
-```
 
 ## 구현 내용
 
-### 1. 테이블 관계 정리
-#### 1) Answer : Question
-- 다대일 [N:1]
+### 양방향 매핑
+- 객체간 참조 피드백 적용
+- Answer(N) : Question(1)
+- Answer(N) : User(1)
+- 연관 관계 편의 메소드 구현
 
-#### 2) Answer : User
-- 다대일 [N:1]
+### QnAService 리펙토링
+- 핵심 로직 Domain 위임
+- Question 삭제 로직 구현
+- Answer 삭제 로직 구현
+- Answers 일급객체 추출
 
-#### 3) Question : User
-- 다대일 [N:1]
-
-#### 4) Delete_history : User
-- 다대일 [N:1]
 
