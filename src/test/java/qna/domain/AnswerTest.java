@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,47 +13,71 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private User user1;
+    private User user2;
+
+    private Question question1;
+    private Question question2;
+
+    private Answer answer1;
+    private Answer answer2;
+
+    @BeforeEach
+    void setup() {
+        user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+
+        userRepository.save(user1);
+        userRepository.save(user2);
+
+        question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
+        question2 = questionRepository.save(new Question("title2", "contents2").writeBy(user2));
+
+        Answer A1 = new Answer(user1, question1, "contents1");
+        Answer A2 = new Answer(user2, question2, "contents2");
+
+        answer1 = answerRepository.save(new Answer(user1, question1, A1.getContents()));
+        answer2 = answerRepository.save(new Answer(user2, question2, A2.getContents()));
+    }
+
     @Test
     @DisplayName("Answer 저장 확인")
     void saveTest() {
-
-        Answer answer1 = answerRepository.save(A1);
-
         assertAll(
                 () -> assertThat(answer1.getId()).isNotNull(),
-                () -> assertThat(answer1.getWriterId()).isEqualTo(A1.getWriterId()),
-                () -> assertThat(answer1.getQuestionId()).isEqualTo(A1.getQuestionId()),
-                () -> assertThat(answer1.getContents()).isEqualTo(A1.getContents())
+                () -> assertThat(answer1.getWriter()).isEqualTo(question1.getWriter()),
+                () -> assertThat(answer1.getQuestion()).isEqualTo(question1),
+                () -> assertThat(answer1.getContents()).isEqualTo(question1.getContents())
         );
     }
 
     @Test
     @DisplayName("question id 값으로 deleted false 리스트 확인")
     void findByQuestionIdAndDeletedFalseTest() {
-        Answer answer1 = answerRepository.save(A1);
-        Answer answer2 = answerRepository.save(A2);
+        List<Answer> actualList = answerRepository.findByQuestionAndDeletedFalse(question1);
 
-        List<Answer> actualList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
-
-        assertThat(actualList).contains(answer1, answer2);
+        assertThat(actualList).contains(answer1);
     }
 
     @Test
     @DisplayName("Deleted값이 false인 answer 찾기")
     void findByIdAndDeletedFalseTest() {
-        Answer answer1 = answerRepository.save(A1);
         Answer result = answerRepository.findByIdAndDeletedFalse(answer1.getId()).get();
         assertThat(result.getId()).isEqualTo(answer1.getId());
 
         assertAll(
-                () -> assertThat(result.getWriterId()).isEqualTo(answer1.getWriterId()),
-                () -> assertThat(result.getQuestionId()).isEqualTo(answer1.getQuestionId()),
+                () -> assertThat(result.getWriter()).isEqualTo(answer1.getWriter()),
+                () -> assertThat(result.getQuestion()).isEqualTo(answer1.getQuestion()),
                 () -> assertThat(result.getContents()).isEqualTo(answer1.getContents())
         ) ;
     }
