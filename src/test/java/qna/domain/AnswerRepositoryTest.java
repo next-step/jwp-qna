@@ -20,37 +20,43 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository repository;
 
-    private User firstUser;
-    private User secondUser;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    private User javajigiUser;
+    private User sanjigiUser;
     private Question firstQuestion;
     private Question secondQuestion;
-    private Answer answer;
+    private Answer firstAnswer;
     private Answer secondAnswer;
     private List<Answer> answers;
 
     @BeforeEach
     public void BeforeEach() {
-        this.firstUser = User.copy(UserTest.JAVAJIGI);
-        this.secondUser = User.copy(UserTest.SANJIGI);
-        this.firstUser.setId(1L);
-        this.secondUser.setId(2L);
+        this.javajigiUser = User.copy(UserTest.JAVAJIGI);
+        this.sanjigiUser = User.copy(UserTest.SANJIGI);
+        userRepository.saveAll(Arrays.asList(this.javajigiUser, this.sanjigiUser));
+
         this.firstQuestion = Question.copy(QuestionTest.Q1);
         this.secondQuestion = Question.copy(QuestionTest.Q2);
-        this.firstQuestion.setId(1L);
-        this.secondQuestion.setId(2L);
-        this.answer = new Answer(this.firstUser, this.firstQuestion, AnswerTest.A1.getContents());
-        this.secondAnswer = new Answer(this.secondUser, this.firstQuestion, AnswerTest.A2.getContents());
-        this.answers = Arrays.asList(this.answer, this.secondAnswer);
+        questionRepository.saveAll(Arrays.asList(this.firstQuestion, this.secondQuestion));
+
+        this.firstAnswer = new Answer(this.javajigiUser, this.firstQuestion, AnswerTest.A1.getContents());
+        this.secondAnswer = new Answer(this.sanjigiUser, this.firstQuestion, AnswerTest.A2.getContents());
+        this.answers = Arrays.asList(this.firstAnswer, this.secondAnswer);
     }
 
     @Test
     @DisplayName("답변 저장")
     void save() {
         // when
-        Answer resultAnswer = repository.save(this.answer);
+        Answer resultAnswer = repository.save(this.firstAnswer);
 
         // then
-        assertThat(resultAnswer).isSameAs(this.answer);
+        assertThat(resultAnswer).isSameAs(this.firstAnswer);
     }
 
     @Test
@@ -60,7 +66,7 @@ class AnswerRepositoryTest {
         repository.saveAll(this.answers);
 
         // when
-        List<Answer> resultAnswers = repository.findByQuestionIdAndDeletedFalse(1L);
+        List<Answer> resultAnswers = repository.findByQuestionAndDeletedFalse(this.firstQuestion);
 
         // then
         assertThat(resultAnswers.size()).isEqualTo(2);
@@ -73,10 +79,10 @@ class AnswerRepositoryTest {
         repository.saveAll(this.answers);
 
         // when
-        Optional<Answer> findAnswer = repository.findByIdAndDeletedFalse(this.answer.getId());
+        Optional<Answer> findAnswer = repository.findByIdAndDeletedFalse(this.firstAnswer.getId());
 
         // then
-        assertThat(findAnswer.get()).isSameAs(this.answer);
+        assertThat(findAnswer.get()).isSameAs(this.firstAnswer);
     }
 
     @Test
@@ -86,7 +92,7 @@ class AnswerRepositoryTest {
         repository.saveAll(this.answers);
 
         // when
-        List<Answer> findAnswers = repository.findByQuestionIdAndContentsContaining(this.answer.getQuestionId(),
+        List<Answer> findAnswers = repository.findByQuestionAndContentsContaining(this.firstAnswer.getQuestion(),
                 "Content");
 
         // then
@@ -100,7 +106,7 @@ class AnswerRepositoryTest {
         repository.saveAll(this.answers);
 
         // when
-        List<Answer> findAnswers = repository.findByQuestionIdIsNotNull();
+        List<Answer> findAnswers = repository.findByQuestionIsNotNull();
 
         // then
         assertThat(findAnswers.size()).isEqualTo(2);
@@ -113,8 +119,7 @@ class AnswerRepositoryTest {
         repository.saveAll(this.answers);
 
         // when
-        List<Answer> findAnswers = repository.findByWriterIdAndQuestionId(this.firstUser.getId(),
-                this.firstQuestion.getId());
+        List<Answer> findAnswers = repository.findByWriterAndQuestion(this.javajigiUser, this.firstQuestion);
 
         // then
         assertThat(findAnswers.size()).isEqualTo(1);
