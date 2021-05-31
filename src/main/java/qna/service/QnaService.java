@@ -8,8 +8,6 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,17 +32,8 @@ public class QnaService {
 
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
-
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-
         Question question = findQuestionById(questionId);
-        question.delete(loginUser);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.writer(), LocalDateTime.now()));
-
-        List<Answer> answers = question.activeAnswers();
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.delete(loginUser));
-        }
+        List<DeleteHistory> deleteHistories = question.delete(loginUser);
         deleteHistoryService.saveAll(deleteHistories);
     }
 }

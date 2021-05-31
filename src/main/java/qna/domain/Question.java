@@ -3,9 +3,9 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 public class Question {
@@ -29,8 +29,8 @@ public class Question {
     @Embedded
     private CommonTransactionInfo commonTransactionInfo = new CommonTransactionInfo();
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -61,17 +61,20 @@ public class Question {
         }
     }
 
-    public List<Answer> activeAnswers() {
-        return answers.stream()
-                .filter(answer -> !answer.isDeleted())
-                .collect(Collectors.toList());
-    }
-
-    public void delete(User loginUser) {
+    public List<DeleteHistory> delete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         deleted = true;
+
+        return assembleDeleteHistories(loginUser);
+    }
+
+    private List<DeleteHistory> assembleDeleteHistories(User loginUser) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(answers.deleteAll(loginUser));
+        return deleteHistories;
     }
 
     public Long getId() {
