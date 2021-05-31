@@ -9,7 +9,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -28,6 +31,9 @@ public class Question extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -56,7 +62,6 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-//        return this.writerId.equals(writer.getId());
         return this.writer.equals(writer);
     }
 
@@ -88,11 +93,6 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-//        return writerId;
-        return null;
-    }
-
     public User getWriter() {
         return this.writer;
     }
@@ -103,6 +103,10 @@ public class Question extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public List<Answer> getAnswers() {
+        return this.answers;
     }
 
     @Override

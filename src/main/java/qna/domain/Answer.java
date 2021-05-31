@@ -2,7 +2,16 @@ package qna.domain;
 
 import java.util.Objects;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -50,6 +59,7 @@ public class Answer extends BaseEntity {
         this.writer = writer;
         this.writer.getAnswers().add(this);
         this.question = question;
+        this.question.getAnswers().add(this);
         this.contents = contents;
     }
 
@@ -67,10 +77,6 @@ public class Answer extends BaseEntity {
 
     public Long getId() {
         return id;
-    }
-
-    public Long getWriterId() {
-        return null;
     }
 
     public User getWriter() {
