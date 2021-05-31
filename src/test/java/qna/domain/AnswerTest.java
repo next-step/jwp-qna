@@ -16,19 +16,16 @@ public class AnswerTest {
     @Autowired
     private AnswerRepository answerRepository;
 
-    @Autowired
-    private TestEntityManager entityManager;
-
-    public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI.id(), QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(2L, UserTest.SANJIGI.id(), QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Test
     public void save(){
         final Answer javajigi = answerRepository.save(A1);
 
         assertThat(javajigi.id()).isNotNull();
-
     }
+
     @Test
     public void findByIdAndDeletedFalse(){
         final Answer javajigi = answerRepository.save(A1);
