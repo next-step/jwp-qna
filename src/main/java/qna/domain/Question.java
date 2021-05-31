@@ -14,7 +14,7 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    private Long writerId;
+    private Long userId;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -31,13 +31,13 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Question writeBy(Long writerId) {
-        this.writerId = writerId;
+    public Question writeBy(Long userId) {
+        this.userId = userId;
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.id());
+    public boolean isOwner(User user) {
+        return this.userId.equals(user.id());
     }
 
     public void addAnswer(Answer answer) {
@@ -69,11 +69,11 @@ public class Question extends BaseEntity {
     }
 
     public Long writerId() {
-        return writerId;
+        return userId;
     }
 
-    public void writer(Long writerId) {
-        this.writerId = writerId;
+    public void writer(Long userId) {
+        this.userId = userId;
     }
 
     public boolean deleted() {
@@ -90,7 +90,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + userId +
                 ", deleted=" + deleted +
                 '}';
     }
