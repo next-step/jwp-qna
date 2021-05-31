@@ -13,8 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+//    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+//    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -36,14 +36,20 @@ public class AnswerTest {
 
     @BeforeEach
     void setup() {
-        user1 = userRepository.save(UserTest.JAVAJIGI);
-        user2 = userRepository.save(UserTest.SANJIGI);
+        user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+
+        userRepository.save(user1);
+        userRepository.save(user2);
 
         question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
         question2 = questionRepository.save(new Question("title2", "contents2").writeBy(user2));
 
+        Answer A1 = new Answer(user1, question1, "contents1");
+        Answer A2 = new Answer(user2, question2, "contents2");
+
         answer1 = answerRepository.save(new Answer(user1, question1, A1.getContents()));
-        answer2 = answerRepository.save(new Answer(user2, question1, A2.getContents()));
+        answer2 = answerRepository.save(new Answer(user2, question2, A2.getContents()));
     }
 
     @Test
@@ -53,16 +59,16 @@ public class AnswerTest {
                 () -> assertThat(answer1.getId()).isNotNull(),
                 () -> assertThat(answer1.getWriter()).isEqualTo(question1.getWriter()),
                 () -> assertThat(answer1.getQuestion()).isEqualTo(question1),
-                () -> assertThat(answer1.getContents()).isEqualTo(A1.getContents())
+                () -> assertThat(answer1.getContents()).isEqualTo(question1.getContents())
         );
     }
 
     @Test
     @DisplayName("question id 값으로 deleted false 리스트 확인")
     void findByQuestionIdAndDeletedFalseTest() {
-        List<Answer> actualList = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
+        List<Answer> actualList = answerRepository.findByQuestionAndDeletedFalse(question1);
 
-        assertThat(actualList).contains(answer1, answer2);
+        assertThat(actualList).contains(answer1);
     }
 
     @Test

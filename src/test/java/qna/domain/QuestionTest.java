@@ -13,8 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -25,10 +23,19 @@ public class QuestionTest {
     private User user1;
     private User user2;
 
+    private Question question1;
+    private Question question2;
+
     @BeforeEach
     void setup() {
-        user1 = userRepository.save(UserTest.JAVAJIGI);
-        user2 = userRepository.save(UserTest.SANJIGI);
+        user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+
+        userRepository.save(user1);
+        userRepository.save(user2);
+
+        question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
+        question2 = questionRepository.save(new Question("title2", "contents1").writeBy(user2));
     }
 
     @Test
@@ -39,17 +46,14 @@ public class QuestionTest {
         assertAll(
                 () -> assertThat(result.getId()).isNotNull(),
                 () -> assertThat(result.getWriter().getId()).isEqualTo(user1.getId()),
-                () -> assertThat(result.getContents()).isEqualTo(Q1.getContents()),
-                () -> assertThat(result.getTitle()).isEqualTo(Q1.getTitle())
+                () -> assertThat(result.getContents()).isEqualTo(question1.getContents()),
+                () -> assertThat(result.getTitle()).isEqualTo(question1.getTitle())
         );
     }
 
     @Test
     @DisplayName("deleted 값이 false인 Question 조회")
     void findByDeletedFalseTest() {
-        Question question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
-        Question question2 = questionRepository.save(new Question("title1", "contents1").writeBy(user2));
-
         List<Question> resultList = questionRepository.findByDeletedFalse();
 
         assertThat(resultList.size()).isEqualTo(2);
@@ -59,8 +63,6 @@ public class QuestionTest {
     @Test
     @DisplayName("id로 deleted값이 false인 Question 조회")
     void findByIdAndDeletedFalseTest() {
-        Question question1 = questionRepository.save(Q1);
-
         Question result = questionRepository.findByIdAndDeletedFalse(question1.getId()).get();
 
         assertAll(

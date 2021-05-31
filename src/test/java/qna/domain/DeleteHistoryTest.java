@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class DeleteHistoryTest {
-    public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
+    public User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
 
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
