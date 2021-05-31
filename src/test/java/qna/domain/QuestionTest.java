@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
+import qna.NotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -39,10 +40,11 @@ public class QuestionTest {
         Question saveQuestion = questionRepository.save(question);
 
         assertAll(
-                () -> assertThat(saveQuestion.getId()).isNotNull(),
-                () -> assertThat(saveQuestion.getTitle()).isEqualTo(title),
-                () -> assertThat(saveQuestion.getContents()).isEqualTo(content)
+                () -> assertThat(saveQuestion.getId()).isNotNull()
         );
+
+        Question selectQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestion.getId()).orElseThrow(NotFoundException::new);
+        assertThat(selectQuestion.equals(saveQuestion)).isTrue();
     }
 
 }

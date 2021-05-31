@@ -45,8 +45,6 @@ public class AnswerTest {
 
         assertAll(
                 () -> assertThat(saveAnswer.getId()).isNotNull(),
-                () -> assertThat(saveAnswer.getWriter()).isEqualTo(user),
-                () -> assertThat(saveAnswer.getContents()).isEqualTo(content),
                 () -> assertThat(saveAnswer.isDeleted()).isFalse()
         );
 

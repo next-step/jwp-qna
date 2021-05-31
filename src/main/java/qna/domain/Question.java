@@ -55,30 +55,6 @@ public class Question extends BaseDate{
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public User getWriter() {
-        return writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -88,7 +64,7 @@ public class Question extends BaseDate{
     }
 
     public DeleteHistory deleteHistory(){
-        return new DeleteHistory(ContentType.QUESTION, this.id, this.getWriter(), LocalDateTime.now());
+        return new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
     }
 
     @Override
