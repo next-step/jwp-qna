@@ -2,10 +2,14 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Question extends BaseEntity {
@@ -20,10 +24,15 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
+    @Column(name = "writer_id", insertable = false, updatable = false)
     private Long writerId;
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     public Question(String title, String contents) {
         this(null, title, contents);

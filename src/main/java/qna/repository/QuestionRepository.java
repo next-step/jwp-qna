@@ -13,5 +13,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findByTitleAndContents(String title, String contents);
 
-    long countByContents(String contents);
+    long countById(Long id);
 }

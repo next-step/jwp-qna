@@ -3,10 +3,15 @@ package qna.domain;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -17,8 +22,10 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "writer_id", insertable = false, updatable = false)
     private Long writerId;
 
+    @Column(name = "question_id", insertable = false, updatable = false)
     private Long questionId;
 
     @Lob
@@ -26,6 +33,14 @@ public class Answer extends BaseEntity {
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);

@@ -82,11 +82,11 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("단건조회 (findById)")
     void findById() {
-        Question expected = Q1;
-        Question actual = questionRepository.findById(Q1.getId()).get();
+        Question expected = Q2;
+        Question actual = questionRepository.findById(expected.getId()).get();
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getWriterId()).isEqualTo(expected.getId())
+            () -> assertThat(actual.getId()).isEqualTo(expected.getId())
         );
     }
 
@@ -132,21 +132,21 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("카운트")
     void count() {
-        long count = questionRepository.count(Example.of(Q1));
+        long count = questionRepository.count(Example.of(new Question(Q1.getTitle(), Q1.getContents())));
         assertThat(count).isEqualTo(1);
     }
 
     @Test
     @DisplayName("카운트 (countBy)")
     void countBy() {
-        long count = questionRepository.countByContents("contents1");
-        assertThat(count).isEqualTo(2);
+        long count = questionRepository.countById(Q1.getId());
+        assertThat(count).isEqualTo(1);
     }
 
     @Test
     @DisplayName("수정")
     void update() {
-        Question expected = questionRepository.findById(Q1.getId()).get();
+        Question expected = questionRepository.findById(Q3.getId()).get();
         expected.setTitle("제목 변경");
 
         Question actual = questionRepository.findById(expected.getId()).get();
@@ -159,10 +159,10 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("삭제")
     void delete() {
-        questionRepository.delete(Q1);
+        questionRepository.delete(Q3);
         questionRepository.flush();
 
-        assertThat(questionRepository.findById(Q1.getId()).isPresent()).isFalse();
+        assertThat(questionRepository.findById(Q3.getId()).isPresent()).isFalse();
     }
 
 }
