@@ -48,6 +48,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
+        this.writer.getAnswers().add(this);
         this.question = question;
         this.contents = contents;
     }
@@ -68,10 +69,6 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getWriterId() {
         return null;
     }
@@ -82,10 +79,6 @@ public class Answer extends BaseEntity {
 
     public Question getQuestion() {
         return this.question;
-    }
-
-    public Long getQuestionId() {
-        return null;
     }
 
     public String getContents() {

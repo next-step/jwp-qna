@@ -128,10 +128,9 @@ class UserRepositoryTest {
     @DisplayName("사용자 정보 수정")
     void update() {
         // given
-        User targetUser = User.copy(this.user);
         User saveUser = repository.save(this.user);
-        targetUser.setName("JANG");
-        targetUser.setEmail("JANG@gmail.com");
+        User targetUser = new User(this.user.getId(), this.user.getUserId(), this.user.getPassword(),
+                "JANG", "JANG@gmail.com");
 
         // when
         saveUser.update(saveUser, targetUser);
