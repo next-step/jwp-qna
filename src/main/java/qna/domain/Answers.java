@@ -7,13 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Where;
-
-import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
@@ -32,11 +31,10 @@ public class Answers {
 		return new Answers(Arrays.asList(answers));
 	}
 
-	DeleteHistories delete(User user, LocalDateTime deletedAt) throws CannotDeleteException {
-		List<DeleteHistory> deleteHistories = new ArrayList<>();
-		for (Answer answer : answers) {
-			deleteHistories.add(answer.delete(user, deletedAt));
-		}
+	DeleteHistories delete(User user, LocalDateTime deletedAt) {
+		List<DeleteHistory> deleteHistories = answers.stream()
+			.map(answer -> answer.delete(user, deletedAt))
+			.collect(Collectors.toList());
 		return DeleteHistories.of(deleteHistories);
 	}
 

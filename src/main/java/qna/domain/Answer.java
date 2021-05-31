@@ -105,7 +105,7 @@ public class Answer extends BaseTimeEntity {
                 '}';
     }
 
-    public DeleteHistory delete(User user, LocalDateTime deletedAt) throws CannotDeleteException {
+    public DeleteHistory delete(User user, LocalDateTime deletedAt) {
         if (!isOwner(user)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변은 삭제할 수 없습니다.");
         }
