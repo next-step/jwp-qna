@@ -3,7 +3,6 @@ package qna.domain;
 import qna.CannotDeleteException;
 import qna.domain.base.BaseEntity;
 
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,8 +34,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deletion deleted;
 
     @Embedded
     private Answers answers;
@@ -53,6 +52,7 @@ public class Question extends BaseEntity {
         this.title = new Title(title);
         this.contents = new Contents(contents);
         this.answers = new Answers();
+        this.deleted = new Deletion();
     }
 
     public Question writeBy(User writer) {
@@ -82,20 +82,20 @@ public class Question extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return this.deleted;
+        return this.deleted.isDeleted();
     }
 
     public void delete() {
-        this.deleted = true;
+        this.deleted.delete();
     }
 
     public List<DeleteHistory> delete(User loginUser) {
         checkIsOwner(loginUser);
-        this.deleted = true;
-        return generateDeleteHistories(loginUser);
+        this.deleted.delete();
+        return createDeleteHistories(loginUser);
     }
 
-    private List<DeleteHistory> generateDeleteHistories(User loginUser) {
+    private List<DeleteHistory> createDeleteHistories(User loginUser) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, loginUser));
         deleteHistories.addAll(this.answers.delete(loginUser));

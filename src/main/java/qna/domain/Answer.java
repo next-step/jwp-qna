@@ -6,7 +6,6 @@ import qna.UnAuthorizedException;
 import qna.domain.base.BaseEntity;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,8 +32,8 @@ public class Answer extends BaseEntity {
     @Embedded
     private Contents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deletion deleted;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -58,6 +57,7 @@ public class Answer extends BaseEntity {
         this.writer = writer;
         this.question = question;
         this.contents = new Contents(contents);
+        this.deleted = new Deletion();
     }
 
     public boolean isOwner(User writer) {
@@ -81,14 +81,14 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public DeleteHistory delete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(ANSWERS_EXISTED);
         }
-        this.deleted = true;
+        this.deleted.delete();
         return new DeleteHistory(ContentType.ANSWER, this.id, loginUser);
     }
 
