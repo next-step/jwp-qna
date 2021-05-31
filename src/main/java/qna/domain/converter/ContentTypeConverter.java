@@ -6,12 +6,12 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter
-public class ContentTypeConverter implements AttributeConverter<ContentType,String> {
+public class ContentTypeConverter implements AttributeConverter<ContentType, String> {
 
 
     @Override
     public String convertToDatabaseColumn(ContentType attribute) {
-        return attribute.getType();
+        return attribute.name();
     }
 
     @Override

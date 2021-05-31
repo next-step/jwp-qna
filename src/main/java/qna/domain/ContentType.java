@@ -1,15 +1,9 @@
 package qna.domain;
 
 public enum ContentType {
-    QUESTION("question"), ANSWER("answer");
+    QUESTION, ANSWER;
 
-    private final String type;
-
-    ContentType(String type) {
-        this.type = type;
+    ContentType() {
     }
 
-    public String getType() {
-        return type;
-    }
 }

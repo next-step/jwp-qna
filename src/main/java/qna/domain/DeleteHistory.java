@@ -24,7 +24,8 @@ public class DeleteHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long contentId;
-    @Convert(converter = ContentTypeConverter.class)
+   // @Convert(converter = ContentTypeConverter.class)
+    @Enumerated(EnumType.STRING)
     private ContentType contentType;
     private LocalDateTime createDate = LocalDateTime.now();
     private Long deletedById;
