@@ -1,7 +1,9 @@
 # jwp-qna
 ## QnA 서비스
 
-## 1단계 - 엔티티 매핑
+<details>
+<summary style="font-Weight : bold; font-size : 25px;" > 1단계 - 엔티티 매핑</summary>
+<div>
 
 ### 요구 사항
 * 아래의 DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
@@ -156,6 +158,52 @@ alter table user
 * 각 엔티티의 속한 컬럼들을 정의하고 각각의 annotaion 등의 설정 
 * 연관관계를 설정하고 외래키를 주입
 
-### 기능 수정 내역
+### 기능 수정 내역 (피드백)
 * Entity 별 공통 컬럼 추상화하여 추상클래스 생성 후 상속 (2021.05.31)
 * 테스트 코드 작성 시 Repository 와 Entity 테스트 파일 분리 (2021.05.31)
+
+</div>
+</details>
+
+---
+## 2단계 - 연관 관계 매핑
+* 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+
+### 힌트
+* 다음 방식은 객체 설계를 테이블 설계에 맞춘 방법이다.
+* 외래 키를 객체에 그대로 가져온 부분이 문제
+  * 관계형 데이터베이스는 연관된 객체를 찾을 때 외래 키를 사용해서 조인하면 되지만 ***객체에는 조인이라는 기능이 없다.***
+```java
+List<Answer> findByQuestionIdAndDeletedFalse(Long questionId);
+```
+* 객체는 연관된 객체를 찾을 때 ***참조***를 사용해야 한다.
+```java
+Question question = findQuestionById(questionId);
+List<Answer> answers = question.getAnswers();
+```
+* 아래의 DDL을 보고 유추한다.
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question (id)
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user (id)
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user (id)
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user (id)
+```
+
+### 기능 구현
+* 각각 엔터티의 외래키를 주입
+  * 이때, 외래키는 일대다 관계에서 다 쪽에 주입한다.
