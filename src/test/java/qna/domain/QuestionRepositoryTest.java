@@ -18,10 +18,18 @@ class QuestionRepositoryTest extends BaseDataJpaTest {
     Question question;
     Question savedQuestion;
 
+    Answer answer;
+
     @BeforeEach
     void setUp() {
         question = new Question(Q1.getTitle(), Q1.getContents())
                 .writeBy(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        answer = new Answer(
+                new User("sanjigi", "password", "name", "sanjigi@slipp.net"),
+                question,
+                "진짜 내용");
+        question.addAnswer(
+                answer);
         savedQuestion = repository.save(question);
     }
 
@@ -80,6 +88,13 @@ class QuestionRepositoryTest extends BaseDataJpaTest {
     void manyToOneUserTest() {
         assertThat(savedQuestion.getWriter()).isNotNull();
         assertThat(savedQuestion.getWriter().getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Answer 엔티티 @OneToMany 관계 매핑 테스트")
+    void oneTpManyTest() {
+        Question question = repository.getOneNotDeletedById(savedQuestion.getId()).get();
+        assertThat(question.getAnswers()).contains(answer);
     }
 
     @AfterEach
