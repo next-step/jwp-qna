@@ -76,8 +76,15 @@ public class Answer extends BaseEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void updateContents(String contents) {
+        validateContents(contents);
         this.contents = contents;
+    }
+
+    private void validateContents(String contents) {
+        if (Objects.isNull(contents) || contents.trim().isEmpty()) {
+            throw new IllegalArgumentException("null 또는 빈값으로 contents를 업데이트 할 수 없습니다.");
+        }
     }
 
     public boolean isDeleted() {

@@ -91,8 +91,15 @@ public class User extends BaseEntity {
         return name;
     }
 
-    public void setName(String name) {
+    public void updateName(String name) {
+        validateName(name);
         this.name = name;
+    }
+
+    private void validateName(String name) {
+        if (Objects.isNull(name) || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("null 또는 빈값으로 name을 업데이트 할 수 없습니다.");
+        }
     }
 
     public String getEmail() {
