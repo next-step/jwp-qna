@@ -34,8 +34,7 @@ public class QuestionTest {
             () -> assertThat(actual.getTitle()).isNotNull(),
             () -> assertThat(actual.getContents()).isNotNull(),
             () -> assertThat(actual.isDeleted()).isEqualTo(false),
-            () -> assertThat(actual.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
-            () -> assertThat(actual).isEqualTo(Q1)
+            () -> assertThat(actual.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId())
         );
     }
 
@@ -46,7 +45,7 @@ public class QuestionTest {
         final Question expected = questionRepository.save(Q1);
 
         // when
-        final Optional<Question> optActual = questionRepository.findById(Q1.getId());
+        final Optional<Question> optActual = questionRepository.findById(expected.getId());
         final Question actual = optActual.orElseThrow(IllegalArgumentException::new);
 
         // then
@@ -56,7 +55,7 @@ public class QuestionTest {
             () -> assertThat(actual.getContents()).isNotNull(),
             () -> assertThat(actual.isDeleted()).isEqualTo(false),
             () -> assertThat(actual.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
-            () -> assertThat(actual).isEqualTo(Q1),
+            () -> assertThat(actual).isEqualTo(expected),
             () -> assertThat(actual).isEqualTo(expected)
         );
     }
@@ -65,36 +64,33 @@ public class QuestionTest {
     @Test
     void findByIdAndDeletedTrue() {
         // given
-        assertThat(Q1.getId()).isNull();
-        assertThat(Q2.getId()).isNull();
-
         final Question questionMarkedDeleted = questionRepository.save(Q1);
         questionMarkedDeleted.setDeleted(true);
         final Question questionMarkUndeleted = questionRepository.save(Q2);
         questionMarkUndeleted.setDeleted(false);
 
-        assertThat(Q1.getId()).isNotNull();
-        assertThat(Q2.getId()).isNotNull();
-
         // when
-        final Optional<Question> optActualMarkDeleted = questionRepository.findByIdAndDeletedTrue(Q1.getId());
+        final Optional<Question> optActualMarkDeleted = questionRepository.findByIdAndDeletedTrue(
+            questionMarkedDeleted.getId());
         final Question actualMarkDeleted = optActualMarkDeleted.orElseThrow(IllegalArgumentException::new);
-        final Optional<Question> optNotExistActualMarkDeleted = questionRepository.findByIdAndDeletedFalse(Q1.getId());
+        final Optional<Question> optNotExistActualMarkDeleted = questionRepository.findByIdAndDeletedFalse(
+            questionMarkedDeleted.getId());
 
-        final Optional<Question> optActualMarkUndeleted = questionRepository.findByIdAndDeletedFalse(Q2.getId());
+        final Optional<Question> optActualMarkUndeleted = questionRepository.findByIdAndDeletedFalse(
+            questionMarkUndeleted.getId());
         final Question actualMarkUndeleted = optActualMarkUndeleted.orElseThrow(IllegalArgumentException::new);
         final Optional<Question> optNotExistActualMarkUndeletedNotExist = questionRepository.findByIdAndDeletedTrue(
-            Q2.getId());
+            questionMarkUndeleted.getId());
 
         // then
         assertAll(
             () -> assertThat(actualMarkDeleted).isNotNull(),
             () -> assertThat(actualMarkDeleted.getId()).isNotNull(),
-            () -> assertThat(actualMarkDeleted).isEqualTo(Q1),
+            () -> assertThat(actualMarkDeleted).isEqualTo(questionMarkedDeleted),
             () -> assertThat(actualMarkDeleted).isEqualTo(questionMarkedDeleted),
             () -> assertThat(actualMarkUndeleted).isNotNull(),
             () -> assertThat(actualMarkUndeleted.getId()).isNotNull(),
-            () -> assertThat(actualMarkUndeleted).isEqualTo(Q2),
+            () -> assertThat(actualMarkUndeleted).isEqualTo(questionMarkUndeleted),
             () -> assertThat(actualMarkUndeleted).isEqualTo(questionMarkUndeleted),
             () -> assertThatThrownBy(
                 () -> optNotExistActualMarkDeleted.orElseThrow(IllegalArgumentException::new)).isInstanceOf(
@@ -127,9 +123,9 @@ public class QuestionTest {
     @Test
     void findByDeletedFalse() {
         // given
-        questionRepository.save(Q1);
-        final Question savedQuestion = questionRepository.save(Q2);
-        savedQuestion.setDeleted(true);
+        final Question savedQuestion1 = questionRepository.save(Q1);
+        final Question savedQuestion2 = questionRepository.save(Q2);
+        savedQuestion2.setDeleted(true);
 
         // when
         final List<Question> actual = questionRepository.findByDeletedFalse();
@@ -137,7 +133,7 @@ public class QuestionTest {
         // then
         assertAll(
             () -> assertThat(actual.size()).isEqualTo(1),
-            () -> assertThat(actual.get(0)).isEqualTo(Q1)
+            () -> assertThat(actual.get(0)).isEqualTo(savedQuestion1)
         );
     }
 
@@ -145,17 +141,17 @@ public class QuestionTest {
     @Test
     void findByTitle() {
         // given
-        questionRepository.save(Q1);
+        final Question question1 = questionRepository.save(Q1);
         questionRepository.save(Q2);
 
         // when
-        final List<Question> actual = questionRepository.findByTitle(Q1.getTitle());
+        final List<Question> actual = questionRepository.findByTitle(question1.getTitle());
 
         // then
         assertAll(
             () -> assertThat(actual).isNotNull(),
             () -> assertThat(actual.size()).isEqualTo(1),
-            () -> assertThat(actual.get(0)).isEqualTo(Q1)
+            () -> assertThat(actual.get(0)).isEqualTo(question1)
         );
     }
 

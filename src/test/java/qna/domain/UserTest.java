@@ -22,8 +22,8 @@ import org.springframework.data.domain.Sort;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class UserTest {
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+    public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
+    public static final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
 
     @Autowired
     private TestEntityManager entityManager;
@@ -49,16 +49,16 @@ public class UserTest {
     @Test
     void findByUserId() {
         // given
-        userRepository.save(JAVAJIGI);
+        final User expected = userRepository.save(JAVAJIGI);
 
         // when
-        final Optional<User> optUser = userRepository.findByUserId(JAVAJIGI.getUserId());
+        final Optional<User> optUser = userRepository.findByUserId(expected.getUserId());
+        final User user = optUser.orElseThrow(IllegalArgumentException::new);
 
         // then
-        final User user = optUser.orElseThrow(IllegalArgumentException::new);
         assertAll(
             () -> assertThat(user).isNotNull(),
-            () -> assertThat(user).isEqualTo(JAVAJIGI),
+            () -> assertThat(user).isEqualTo(expected),
             () -> assertThat(user.getId()).isNotNull()
         );
     }
@@ -82,8 +82,8 @@ public class UserTest {
     @Test
     void findAllWithSortId() {
         // given
-        userRepository.save(JAVAJIGI);
-        userRepository.save(SANJIGI);
+        final User user1 = userRepository.save(JAVAJIGI);
+        final User user2 = userRepository.save(SANJIGI);
 
         // when
         final List<User> actual = userRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
@@ -91,7 +91,7 @@ public class UserTest {
         // then
         assertAll(
             () -> assertThat(actual.size()).isEqualTo(2),
-            () -> assertThat(actual).containsExactly(SANJIGI, JAVAJIGI)
+            () -> assertThat(actual).containsExactly(user2, user1)
         );
     }
 
@@ -104,14 +104,14 @@ public class UserTest {
         }
 
         // when
-        final Page<User> actual = userRepository.findAll(PageRequest.of(1, 10));
+        final Page<User> actual = userRepository.findAll(PageRequest.of(1, 10, Sort.by("id").ascending()));
 
         // then
         assertAll(
             () -> assertThat(actual.getTotalElements()).isEqualTo(20),
             () -> assertThat(actual.getTotalPages()).isEqualTo(2),
             () -> assertThat(actual.getContent().size()).isEqualTo(10),
-            () -> assertThat(actual.getContent().get(0).getId()).isEqualTo(11L)
+            () -> assertThat(actual.getContent().get(0).getUserId()).isEqualTo("id10")
         );
     }
 

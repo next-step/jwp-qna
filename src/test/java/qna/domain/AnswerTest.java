@@ -14,12 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class AnswerTest {
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(UserTest.SANJIGI, Q1, "Answers Contents2");
+
+    @Autowired
+    private TestEntityManager entityManager;
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -32,8 +36,7 @@ public class AnswerTest {
 
         // then
         assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual).isEqualTo(A1)
+            () -> assertThat(actual.getId()).isNotNull()
         );
     }
 
@@ -44,7 +47,7 @@ public class AnswerTest {
         final Answer expected = answerRepository.save(A1);
 
         // when
-        final Optional<Answer> optAnswer = answerRepository.findById(A1.getId());
+        final Optional<Answer> optAnswer = answerRepository.findById(expected.getId());
         final Answer actual = optAnswer.orElseThrow(IllegalArgumentException::new);
 
         // then
@@ -61,7 +64,6 @@ public class AnswerTest {
         // given
         answerRepository.save(A1);
         answerRepository.save(A2);
-        answerRepository.save(A1);
 
         // when
         final long actual = answerRepository.count();
@@ -79,8 +81,8 @@ public class AnswerTest {
         savedAnswer2.setDeleted(true);
 
         // when
-        final Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(A1.getId());
-        final Optional<Answer> optionalAnswer2 = answerRepository.findByIdAndDeletedFalse(A2.getId());
+        final Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
+        final Optional<Answer> optionalAnswer2 = answerRepository.findByIdAndDeletedFalse(savedAnswer2.getId());
 
         // then
         final Answer actual = optionalAnswer.orElseThrow(IllegalArgumentException::new);
@@ -132,10 +134,10 @@ public class AnswerTest {
     @Test
     void delete() {
         // given
-        answerRepository.save(A1);
-        answerRepository.save(A2);
-        answerRepository.delete(A1);
-        answerRepository.deleteById(A2.getId());
+        final Answer answer1 = answerRepository.save(A1);
+        final Answer answer2 = answerRepository.save(A2);
+        answerRepository.delete(answer1);
+        answerRepository.deleteById(answer2.getId());
 
         // when
         final long actual = answerRepository.count();
