@@ -4,7 +4,10 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -12,18 +15,20 @@ import qna.UnAuthorizedException;
 @Entity
 public class Answer extends BaseEntity {
 
-	@Column(name = "writer_id")
-	private Long writerId;
-
-	@Column(name = "question_id")
-	private Long questionId;
-
 	@Lob
 	@Column(name = "contents")
 	private String contents;
 
 	@Column(name = "deleted", nullable = false)
 	private boolean deleted = false;
+
+	@ManyToOne
+	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+	private Question question;
+
+	@ManyToOne
+	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+	private User writer;
 
 	protected Answer() {
 		super();
@@ -43,33 +48,29 @@ public class Answer extends BaseEntity {
 		if (Objects.isNull(question)) {
 			throw new NotFoundException();
 		}
-		this.writerId = writer.getId();
-		this.questionId = question.getId();
+		this.writer = writer;
+		this.question = question;
 		this.contents = contents;
 	}
 
 	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
+		return this.writer.equals(writer);
 	}
 
 	public void toQuestion(Question question) {
-		this.questionId = question.getId();
+		this.question = question;
 	}
 
-	public Long getWriterId() {
-		return writerId;
+	public User getWriter() {
+		return this.writer;
 	}
 
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
+	public void setWriterId(User writer) {
+		this.writer = writer;
 	}
 
-	public Long getQuestionId() {
-		return questionId;
-	}
-
-	public void setQuestionId(Long questionId) {
-		this.questionId = questionId;
+	public Question getQuestion() {
+		return this.question;
 	}
 
 	public String getContents() {
