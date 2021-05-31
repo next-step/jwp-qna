@@ -43,6 +43,7 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
+    /* 2. getAnswers()를 해도 DB에서 데이터를 가져오는 건 아닌데 */
     public List<Answer> getAnswers() {
         return this.answers;
     }
@@ -52,13 +53,11 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
+    /* 1.  https://wonit.tistory.com/466
+    : "외래 키를 갖는 쪽에서만 UPDATE와 INSERT를 수행하고,
+    * 없는 쪽은 SELECT만 수행할 것  */
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-        answers.add(answer);
     }
 
     public Long getId() {
@@ -98,11 +97,8 @@ public class Question extends BaseTimeEntity {
     }
 
     private void validateAnswersWriter(User loginUser) throws CannotDeleteException {
-        /* 차후수정 : if 인덴트 향상 + answer에 책임주는 걸 고려할 것*/
         for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
+            answer.deleteBy(loginUser);
         }
     }
 
