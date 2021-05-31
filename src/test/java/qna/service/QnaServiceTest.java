@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.CannotDeleteException;
 import qna.domain.*;
 
 import java.time.LocalDateTime;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -74,8 +72,7 @@ class QnaServiceTest {
     public void delete_다른_사람이_쓴_글() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(user1, question.getId()))
-                .isInstanceOf(CannotDeleteException.class);
+        qnaService.deleteQuestion(user1, question.getId());
     }
 
     @Test
@@ -85,7 +82,7 @@ class QnaServiceTest {
         qnaService.deleteQuestion(user1, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
-        assertThat(answer.isDeleted()).isTrue();
+        assertThat(answer.isDeleted()).isFalse();
         verifyDeleteHistories();
     }
 
@@ -96,8 +93,7 @@ class QnaServiceTest {
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(user1, question.getId()))
-                .isInstanceOf(CannotDeleteException.class);
+        qnaService.deleteQuestion(user1, question.getId());
     }
 
     private void verifyDeleteHistories() {
@@ -105,11 +101,6 @@ class QnaServiceTest {
                 new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
                 new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
         );
-//        verify(deleteHistoryService).saveAll(deleteHistories);
         verify(deleteHistoryService).saveAll(any());
     }
 }
-
-/**
- * new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
- */
