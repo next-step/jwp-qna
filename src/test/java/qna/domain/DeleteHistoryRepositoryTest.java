@@ -19,7 +19,7 @@ class DeleteHistoryRepositoryTest extends BaseDataJpaTest {
 
     @BeforeEach
     void setUp() {
-        deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        deleteHistory = DeleteHistory.answerOf(1L, new User("javajigi", "password", "name", "javajigi@slipp.net"));
         savedDeleteHistory = repository.save(deleteHistory);
     }
 
