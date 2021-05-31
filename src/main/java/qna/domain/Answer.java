@@ -27,7 +27,7 @@ public class Answer extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-	@Where(clause = "question.deleted = 'false'")
+	@Where(clause = "question.deleted = 'false'" )
 	private Question question;
 
 	@ManyToOne(fetch = FetchType.LAZY)
