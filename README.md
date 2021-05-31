@@ -4,10 +4,10 @@
 * 삭제 전, 아래 로직은 `Question` 엔티티에서 수행하도록 변경
   * [O] `Question`의 작성자와 삭제자가 일치하는지 점검
   * [O] `Answer`가 있어도 `Answer`의 작성자와 `Question`의 작성자가 동일한 경우 삭제가능함
-  * `Answer` 엔티티 역시 삭제 처리한다.  
+  * [O] `Answer` 엔티티 역시 삭제 처리한다.  
   * 삭제 시, DeleteHistory를 통해 삭제 이력을 남김 
 * `Answer` 엔티티에서 아래 점검을 수행하도록 변경
-  * `Answer`의 작성자가 `Question`의 작성자와 다른 경우에는 삭제할 수 없음 
+  * [O] `Answer`의 작성자가 `Question`의 작성자와 다른 경우에는 삭제할 수 없음 
   * 삭제 시, DeleteHistory를 통해 삭제 이력을 남김 
   
 ## 기능 요구사항
