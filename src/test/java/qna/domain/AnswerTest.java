@@ -49,4 +49,14 @@ public class AnswerTest {
 
         assertThatThrownBy(() -> answer.delete(deleter)).isInstanceOf(CannotDeleteException.class);
     }
+
+    @DisplayName("답변 삭제: 질문자와 답변자가 다른 경우")
+    @Test
+    void delete_question_writer_answer_writer_exception() throws UnAuthenticationException {
+        Question question = Question.createQuestion("testTitle", "testContents", UserTest.JAVAJIGI);
+        Answer answer = Answer.createAnswer(UserTest.SANJIGI, question, "testAnswer");
+        User deleter = UserTest.SANJIGI;
+
+        assertThatThrownBy(() -> answer.delete(deleter)).isInstanceOf(CannotDeleteException.class);
+    }
 }

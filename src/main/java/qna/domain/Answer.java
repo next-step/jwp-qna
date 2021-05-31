@@ -134,9 +134,21 @@ public class Answer extends BaseDateTimeEntity {
     }
 
     public void delete(User deleter) throws CannotDeleteException {
+        validate(deleter);
+        setDeleted(true);
+    }
+
+    private void validate(User deleter) {
         if (!isOwner(deleter)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        setDeleted(true);
+
+        if(!isSameWriter()) {
+            throw new CannotDeleteException("질문자와 답변자가 다른 경우 답변을 삭제할 수 없습니다.");
+        }
+    }
+
+    private boolean isSameWriter() {
+        return question.getWriter().equals(this.getWriter());
     }
 }
