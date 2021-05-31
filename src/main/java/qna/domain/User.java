@@ -24,7 +24,7 @@ public class User extends QnaAbstract {
     @Column(name = "email", length = 50)
     private String email;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
