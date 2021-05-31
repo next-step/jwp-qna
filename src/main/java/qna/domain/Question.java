@@ -49,15 +49,6 @@ public class Question extends BaseTimeEntity {
 
     public void addAnswer(Answer answer) {
         answers.add(answer);
-//        answer.toQuestion(this);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public String getContents() {
@@ -66,6 +57,27 @@ public class Question extends BaseTimeEntity {
 
     public void changeContents(String contents) {
         this.contents = contents;
+    }
+
+    public DeleteHistory deleteByOwner(User loginUser) throws CannotDeleteException {
+        if (!this.writer.equals(loginUser)) {
+            throw new CannotDeleteException(CANNOT_DELETE_MESSAGE);
+        }
+        deleted = true;
+
+        for (Answer answer : answers) {
+            answer.deleteByOwner(loginUser);
+        }
+
+        return DeleteHistory.questionOf(id, writer);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public User getWriter() {
@@ -78,15 +90,6 @@ public class Question extends BaseTimeEntity {
 
     public List<Answer> getAnswers() {
         return answers;
-    }
-
-    public DeleteHistory deleteByOwner(User loginUser) throws CannotDeleteException {
-        if (!this.writer.equals(loginUser)) {
-            throw new CannotDeleteException(CANNOT_DELETE_MESSAGE);
-        }
-        deleted = true;
-
-        return DeleteHistory.questionOf(id, writer);
     }
 
 //    public void deleteAnswers() {
