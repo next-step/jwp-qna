@@ -25,6 +25,10 @@ public class Line {
         return name;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void addStation(Station station) {
         this.stations.add(station);
         station.setLine(this);

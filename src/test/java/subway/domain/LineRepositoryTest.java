@@ -1,5 +1,6 @@
 package subway.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,6 +19,13 @@ class LineRepositoryTest {
 
     @Autowired
     private StationRepository stations;
+
+    @BeforeEach
+    public void setUp() {
+        Line expectedLine = new Line("3호선");
+        expectedLine.addStation(stations.save(new Station("교대역")));
+        lines.save(expectedLine);
+    }
 
     @Test
     public void saveWithLine() {
