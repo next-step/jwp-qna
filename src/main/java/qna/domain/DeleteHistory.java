@@ -32,6 +32,14 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
+    public static DeleteHistory of(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.writer(), LocalDateTime.now());
+    }
+
+    public static DeleteHistory of(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.writer(), LocalDateTime.now());
+    }
+
     public User deleteUser() {
         return deleteUser;
     }

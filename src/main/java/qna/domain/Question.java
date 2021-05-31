@@ -3,7 +3,6 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,13 +65,13 @@ public class Question {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         deleted = true;
-
+        commonTransactionInfo.update();
         return assembleDeleteHistories(loginUser);
     }
 
     private List<DeleteHistory> assembleDeleteHistories(User loginUser) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.add(DeleteHistory.of(this));
         deleteHistories.addAll(answers.deleteAll(loginUser));
         return deleteHistories;
     }

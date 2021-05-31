@@ -5,7 +5,6 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -68,7 +67,8 @@ public class Answer {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+        commonTransactionInfo.update();
+        return DeleteHistory.of(this);
     }
 
     public Long getId() {
@@ -85,10 +85,6 @@ public class Answer {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
