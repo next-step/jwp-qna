@@ -3,27 +3,26 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Table(name = "answer")
 @Entity
 public class Answer extends QnaAbstract {
-    @Column(name = "writer_Id")
-    private Long writerId;
-
-    @Column(name = "question_id")
-    private Long questionId;
-
     @Lob
     @Column(name = "contents")
     private String contents;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    @ManyToOne
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
+
+    @OneToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
     protected Answer() {
     }
@@ -43,17 +42,17 @@ public class Answer extends QnaAbstract {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -65,19 +64,19 @@ public class Answer extends QnaAbstract {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return writer.getId();
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public Long getQuestionId() {
-        return questionId;
+        return question.getId();
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public String getContents() {
@@ -100,8 +99,8 @@ public class Answer extends QnaAbstract {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writerId=" + writer.getId() +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

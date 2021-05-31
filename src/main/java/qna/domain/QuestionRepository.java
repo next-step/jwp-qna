@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     Question findByTitle(String title);
-    Question findByWriterId(Long writeId);
+    Question findByWriter(User write);
     List<Question> findByDeletedFalse();
     Optional<Question> findByIdAndDeletedFalse(Long id);
 }
