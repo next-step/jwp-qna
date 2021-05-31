@@ -15,7 +15,6 @@ import org.springframework.lang.NonNull;
 @Entity
 public class Question extends BaseEntity {
 
-    public static final Question NONE = new Question();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,7 +27,6 @@ public class Question extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "writer_id",
-        referencedColumnName = "ID",
         foreignKey = @ForeignKey(name = "fk_question_writer")
     )
     private User writer;

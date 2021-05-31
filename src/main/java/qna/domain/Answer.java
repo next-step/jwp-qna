@@ -20,22 +20,20 @@ import qna.UnAuthorizedException;
 @Entity
 public class Answer extends BaseEntity {
 
-    public static final Answer NONE = new Answer();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "writer_id",
-        referencedColumnName = "ID",
-        foreignKey = @ForeignKey(name = "fk_answer_writer"))
     @ManyToOne
+    @JoinColumn(name = "writer_id",
+        foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @JoinColumn(name = "question_id",
-        referencedColumnName = "ID",
-        foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     @ManyToOne
+    @JoinColumn(name = "question_id",
+        foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
+
     @Lob
     private String contents;
 
@@ -93,10 +91,6 @@ public class Answer extends BaseEntity {
         return question;
     }
 
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-
     public String getContents() {
         return contents;
     }
@@ -109,7 +103,7 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void deleted(boolean deleted) {
         this.deleted = deleted;
     }
 

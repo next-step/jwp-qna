@@ -26,7 +26,6 @@ public class DeleteHistory {
     private Long contentId;
 
     @JoinColumn(name = "deleted_by_id",
-        referencedColumnName = "ID",
         foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     @ManyToOne
     private User deletedBy;

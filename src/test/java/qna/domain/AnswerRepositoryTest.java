@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,16 +42,16 @@ class AnswerRepositoryTest {
 	@Test
 	void findByIdAndDeletedFalseTest() {
 
-
 		Answer save = repository.save(answer);
 
-		Answer answer1 = repository.findByIdAndDeletedFalse(save.getId()).orElse(Answer.NONE);
+		Answer answer1 = repository.findByIdAndDeletedFalse(save.getId())
+			.orElseThrow(EntityNotFoundException::new);
 		assertThat(answer1).isEqualTo(save);
 
-		save.setDeleted(true);
+		save.deleted(true);
 
-		Answer answer2 = repository.findByIdAndDeletedFalse(save.getId()).orElse(Answer.NONE);
-		assertThat(answer2).isEqualTo(Answer.NONE);
+		assertThatThrownBy(() -> repository.findByIdAndDeletedFalse(save.getId())
+			.orElseThrow(EntityNotFoundException::new)).isInstanceOf(EntityNotFoundException.class);
 	}
 
 	@Test

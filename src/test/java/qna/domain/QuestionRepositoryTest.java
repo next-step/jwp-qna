@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,7 @@ class QuestionRepositoryTest {
 		User user = userRepository.save(UserTest.JAVAJIGI);
 		Question q1 = QuestionTest.Q1.writeBy(user);
 		Question actual = repository.save(q1);
-		Question expect = repository.findById(actual.getId()).orElse(Question.NONE);
+		Question expect = repository.findById(actual.getId()).orElseThrow(EntityNotFoundException::new);
 
 		assertThat(actual).isEqualTo(expect);
 	}
@@ -53,14 +55,14 @@ class QuestionRepositoryTest {
 		q1.setDeleted(false);
 		Question save1 = repository.save(q1);
 
-		Question question = repository.findByIdAndDeletedFalse(save1.getId()).orElse(Question.NONE);
+		Question question = repository.findByIdAndDeletedFalse(save1.getId()).orElseThrow(EntityNotFoundException::new);
 		assertThat(question).isEqualTo(save1);
 
 		Question q2 = QuestionTest.Q1.writeBy(save);
 		q2.setDeleted(true);
 		Question save2 = repository.save(q2);
 
-		Question question2 = repository.findByIdAndDeletedFalse(save2.getId()).orElse(Question.NONE);
-		assertThat(question2).isEqualTo(Question.NONE);
+		assertThatThrownBy(() -> repository.findByIdAndDeletedFalse(save2.getId()).orElseThrow(EntityNotFoundException::new)).isInstanceOf(EntityNotFoundException.class);
+
 	}
 }
