@@ -63,6 +63,7 @@ class QuestionRepositoryTest {
     void save() {
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
+                () -> assertThat(saved).isSameAs(question),
                 () -> assertThat(saved.getContents()).isEqualTo(question.getContents()),
                 () -> assertThat(saved.getTitle()).isEqualTo(question.getTitle())
         );
@@ -72,7 +73,7 @@ class QuestionRepositoryTest {
     @DisplayName("Question 수정 테스트")
     void update() {
         String changedContents = "질문 내용 바꾸기";
-        saved.setContents(changedContents);
+        saved.updateContents(changedContents);
 
         Optional<Question> updated = questionRepository.findById(saved.getId());
 

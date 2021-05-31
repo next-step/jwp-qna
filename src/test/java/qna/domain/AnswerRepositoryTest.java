@@ -48,6 +48,7 @@ class AnswerRepositoryTest {
     void save() {
         assertAll(
                 () -> assertThat(savedAnswer.getId()).isNotNull(),
+                () -> assertThat(savedAnswer).isSameAs(givenAnswer),
                 () -> assertThat(savedAnswer.getWriter()).isEqualTo(givenAnswer.getWriter()),
                 () -> assertThat(savedAnswer.getQuestion()).isEqualTo(givenAnswer.getQuestion()),
                 () -> assertThat(savedAnswer.getContents()).isEqualTo(givenAnswer.getContents())
@@ -92,7 +93,7 @@ class AnswerRepositoryTest {
     @DisplayName("answer 수정 테스트")
     void update() {
         String changedContents = "내용 바꿔보기";
-        savedAnswer.setContents(changedContents);
+        savedAnswer.updateContents(changedContents);
 
         Optional<Answer> updatedAnswer = answerRepository.findById(savedAnswer.getId());
 

@@ -33,6 +33,7 @@ class UserRepositoryTest {
     void save() {
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
+                () -> assertThat(saved).isSameAs(javajigi),
                 () -> assertThat(saved.getUserId()).isEqualTo(javajigi.getUserId()),
                 () -> assertThat(saved.getPassword()).isEqualTo(javajigi.getPassword()),
                 () -> assertThat(saved.getName()).isEqualTo(javajigi.getName()),
@@ -44,7 +45,7 @@ class UserRepositoryTest {
     @DisplayName("User 수정 테스트")
     void update() {
         String changedName = "crong";
-        saved.setName(changedName);
+        saved.updateName(changedName);
 
         Optional<User> user = userRepository.findById(saved.getId());
 
