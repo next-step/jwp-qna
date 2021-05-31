@@ -12,7 +12,7 @@ public class DeleteHistoryTest {
 	@Test
 	@DisplayName("DeleteHistory 생성 테스트")
 	void create() {
-		DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+		DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
 		assertThat(deleteHistory).isNotNull();
 	}
 }

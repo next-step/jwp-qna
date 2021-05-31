@@ -7,9 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class DeleteHistory {
@@ -26,8 +29,9 @@ public class DeleteHistory {
 	@Column(name = "content_id")
 	private Long contentId;
 
-	@Column(name = "delete_by_id")
-	private Long deletedById;
+	@ManyToOne
+	@JoinColumn(name = "delete_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+	private User deletedByUser;
 
 	@Column(name = "create_date")
 	private LocalDateTime createDate;
@@ -36,10 +40,10 @@ public class DeleteHistory {
 
 	}
 
-	public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+	public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
 		this.contentType = contentType;
 		this.contentId = contentId;
-		this.deletedById = deletedById;
+		this.deletedByUser = deletedByUser;
 		this.createDate = createDate;
 	}
 
@@ -57,12 +61,12 @@ public class DeleteHistory {
 		return Objects.equals(id, that.id) &&
 			contentType == that.contentType &&
 			Objects.equals(contentId, that.contentId) &&
-			Objects.equals(deletedById, that.deletedById);
+			Objects.equals(deletedByUser, that.deletedByUser);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, contentType, contentId, deletedById);
+		return Objects.hash(id, contentType, contentId, deletedByUser);
 	}
 
 	@Override
@@ -71,7 +75,7 @@ public class DeleteHistory {
 			"id=" + id +
 			", contentType=" + contentType +
 			", contentId=" + contentId +
-			", deletedById=" + deletedById +
+			", deletedByUser=" + deletedByUser +
 			", createDate=" + createDate +
 			'}';
 	}
