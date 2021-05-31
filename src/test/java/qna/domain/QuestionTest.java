@@ -23,7 +23,7 @@ public class QuestionTest {
         otherUser = new User("Conan", "password", "name", "conan@email.com");
     }
 
-    @DisplayName("질문 작성자와 삭제자가 다르면 exception을 던진다")
+    @DisplayName("삭제 시, 질문 작성자와 삭제자가 다르면 exception을 던진다")
     @Test
     void throw_exception_when_other_user_is_deleting() {
         //When + Then
@@ -31,7 +31,7 @@ public class QuestionTest {
                 .isInstanceOf(CannotDeleteException.class);
     }
 
-    @DisplayName("답변 작성자 중 한명이라도 질문 작성자와 다르면 exception을 던진다")
+    @DisplayName("삭제 시, 답변 작성자 중 한명이라도 질문 작성자와 다르면 exception을 던진다")
     @Test
     void throw_exception_when_answer_writer_is_different() {
         //Given
