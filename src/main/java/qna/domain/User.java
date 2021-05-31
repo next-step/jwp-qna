@@ -3,8 +3,6 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -27,12 +25,6 @@ public class User extends BaseEntity {
 
     @Column(length = 50, nullable = false)
     private String email;
-
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "writer")
-//    private List<Answer> answers = new ArrayList<>();
-//
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "writer")
-//    private List<Question> questions = new ArrayList<>();
 
     protected User() {
     }
