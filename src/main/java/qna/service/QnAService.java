@@ -40,7 +40,7 @@ public class QnAService {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
-        List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(
+        List<Answer> answers = answerRepository.findByQuestion(
                 questionRepository.findById(questionId)
                 .orElseThrow(NoSuchElementException::new)
         );

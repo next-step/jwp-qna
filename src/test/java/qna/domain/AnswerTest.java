@@ -93,7 +93,7 @@ public class AnswerTest {
     @DisplayName("동일한 QuestionId를 가지고 있는 항목 확인")
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        List<Answer> answerList = answerRepository.findByQuestionAndDeletedFalse(QuestionTest.Q2);
+        List<Answer> answerList = answerRepository.findByQuestion(QuestionTest.Q2);
         assertThat(answerList).hasSize(2);
     }
 }
