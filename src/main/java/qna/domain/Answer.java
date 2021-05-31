@@ -1,6 +1,7 @@
 package qna.domain;
 
 import qna.exception.BlankValidateException;
+import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
@@ -27,7 +28,8 @@ public class Answer extends BaseDateTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    protected Answer() {}
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -53,7 +55,7 @@ public class Answer extends BaseDateTimeEntity {
             throw new NotFoundException();
         }
 
-        if(Objects.isNull(contents) || contents.isEmpty()) {
+        if (Objects.isNull(contents) || contents.isEmpty()) {
             throw new BlankValidateException("contents", contents);
         }
     }
@@ -66,12 +68,14 @@ public class Answer extends BaseDateTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.question = question;
-        question.getAnswers().add(this);
+        if (!question.getAnswers().contains(this)) {
+            this.question = question;
+            question.getAnswers().add(this);
+        }
     }
 
     public Long getId() {
@@ -86,7 +90,9 @@ public class Answer extends BaseDateTimeEntity {
         return writer.getId();
     }
 
-    public User getWriter() { return writer; }
+    public User getWriter() {
+        return writer;
+    }
 
     public void setWriter(User writer) {
         this.writer = writer;
@@ -125,5 +131,12 @@ public class Answer extends BaseDateTimeEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public void delete(User deleter) throws CannotDeleteException {
+        if (!isOwner(deleter)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        setDeleted(true);
     }
 }

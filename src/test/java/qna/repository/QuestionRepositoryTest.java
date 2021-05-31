@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
+import qna.domain.Answers;
 import qna.domain.Question;
 import qna.domain.User;
 import qna.exception.UnAuthenticationException;
@@ -98,7 +99,7 @@ public class QuestionRepositoryTest {
         entityManager.flush();
         entityManager.clear();
 
-        List<Answer> findAnswers = questionRepository.findById(saveQuestion.getId())
+        Answers findAnswers = questionRepository.findById(saveQuestion.getId())
                 .orElseThrow(() -> new IllegalStateException()).getAnswers();
 
         assertThat(findAnswers.size()).isEqualTo(2);

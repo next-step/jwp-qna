@@ -1,11 +1,10 @@
 package qna.domain;
 
 import qna.exception.BlankValidateException;
+import qna.exception.CannotDeleteException;
 import qna.exception.UnAuthenticationException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -24,13 +23,14 @@ public class Question extends BaseDateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
-    @OneToMany(mappedBy = "question", orphanRemoval = true)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
 
-    protected Question() {}
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -53,15 +53,15 @@ public class Question extends BaseDateTimeEntity {
     private static void validate(String title, String contents, User writer)
             throws UnAuthenticationException, BlankValidateException {
 
-        if(Objects.isNull(title) || title.isEmpty()) {
+        if (Objects.isNull(title) || title.isEmpty()) {
             throw new BlankValidateException("title", title);
         }
 
-        if(Objects.isNull(contents) || contents.isEmpty()) {
+        if (Objects.isNull(contents) || contents.isEmpty()) {
             throw new BlankValidateException("contents", contents);
         }
 
-        if(Objects.isNull(writer)) {
+        if (Objects.isNull(writer)) {
             throw new UnAuthenticationException();
         }
     }
@@ -71,7 +71,7 @@ public class Question extends BaseDateTimeEntity {
         return this;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -111,7 +111,9 @@ public class Question extends BaseDateTimeEntity {
         return writer.getId();
     }
 
-    public User getWriter() { return writer; }
+    public User getWriter() {
+        return writer;
+    }
 
     public void setWriter(User writer) {
         this.writer = writer;
@@ -134,5 +136,17 @@ public class Question extends BaseDateTimeEntity {
                 ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public void delete(User deleter) throws CannotDeleteException {
+        validate(deleter);
+        answers.delete(deleter);
+        setDeleted(true);
+    }
+
+    private void validate(User deleter) throws CannotDeleteException {
+        if (!isOwner(deleter)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 }
