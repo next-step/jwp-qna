@@ -2,6 +2,7 @@ package qna.domain;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,7 +28,7 @@ public class Question extends CreateAndUpdateTimeEntity {
     @Column(name = "deleted")
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
     private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
@@ -105,5 +106,9 @@ public class Question extends CreateAndUpdateTimeEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, title, contents, writer, deleted, answers);
+    }
+
+    public List<Answer> getAnswers() {
+        return Collections.unmodifiableList(this.answers);
     }
 }

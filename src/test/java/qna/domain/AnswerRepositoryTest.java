@@ -123,22 +123,6 @@ class AnswerRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("question_id 값으로 deleted 컬럼이 false인 Answer 확인")
-	void findByQuestionIdAndDeletedFalseTest() {
-		// given
-		User writer = users.save(SANJIGI);
-		Answer answer = new Answer(writer, question, "Answers Contents2");
-		answer.setDeleted(true);
-		Answer notHaveAnswer = answers.save(answer);
-
-		// when
-		assertThat(answers.findByQuestionIdAndDeletedFalse(question.getId()))
-			.isNotEmpty()
-			.contains(expected)
-			.doesNotContain(notHaveAnswer); // then
-	}
-
-	@Test
 	@DisplayName("PK로 deleted 컬럼이 false인 Answer 확인")
 	void findByIdAndDeletedFalseTest() {
 		// when
