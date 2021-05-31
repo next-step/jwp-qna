@@ -17,20 +17,31 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question("title1", "contents1");
+    public static final Question Q2 = new Question("title2", "contents2");
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private Question q1;
     private Question q2;
 
     @BeforeEach
     void setUp() {
+        User javajigi = userRepository.save(UserTest.JAVAJIGI);
+        User sanjigi = userRepository.save(UserTest.SANJIGI);
+
+        Q1.writeBy(javajigi);
+        Q2.writeBy(sanjigi);
+
         q1 = questionRepository.save(Q1);
         q2 = questionRepository.save(Q2);
         q2.setDeleted(true);
+
+
     }
 
     @Test
