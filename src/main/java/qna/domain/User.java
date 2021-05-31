@@ -27,15 +27,6 @@ public class User extends BaseTimeEntity {
     @Column(name = "email", length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "writer")
-    private List<Answer> writtenAnswers;
-
-    @OneToMany(mappedBy = "writer")
-    private List<Question> writtenQuestions;
-
-    @OneToMany(mappedBy = "deletedBy")
-    private List<DeleteHistory> deleteHistories;
-
     protected User() {
     }
 
@@ -72,15 +63,6 @@ public class User extends BaseTimeEntity {
         return this.password.equals(targetPassword);
     }
 
-    public boolean equalsNameAndEmail(User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
-
-        return name.equals(target.name) &&
-                email.equals(target.email);
-    }
-
     public boolean isGuestUser() {
         return false;
     }
@@ -89,24 +71,12 @@ public class User extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public void setEmail(String email) {
