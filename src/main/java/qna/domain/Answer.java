@@ -105,13 +105,13 @@ public class Answer extends BaseTimeEntity {
                 '}';
     }
 
-    public DeleteHistory delete(User user) throws CannotDeleteException {
+    public DeleteHistory delete(User user, LocalDateTime deletedAt) throws CannotDeleteException {
         if (!isOwner(user)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변은 삭제할 수 없습니다.");
         }
 
         this.deleted = Deleted.TRUE;
 
-        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+        return DeleteHistory.of(this, deletedAt);
     }
 }

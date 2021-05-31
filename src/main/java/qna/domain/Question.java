@@ -1,7 +1,6 @@
 package qna.domain;
 
-import static java.time.LocalDateTime.*;
-import static qna.domain.ContentType.*;
+import java.time.LocalDateTime;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -101,14 +100,15 @@ public class Question extends BaseTimeEntity {
                 '}';
     }
 
-    public DeleteHistories delete(User user) throws CannotDeleteException {
+    public DeleteHistories delete(User user, LocalDateTime deletedAt) throws CannotDeleteException {
         if (!isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
         deleted = Deleted.TRUE;
-        DeleteHistories questionDeleteHistories = DeleteHistories.of(new DeleteHistory(QUESTION, id, writer, now()));
-        DeleteHistories answerDeleteHistories = answers.delete(user);
+        DeleteHistory questionDeleteHistory = DeleteHistory.of(this, deletedAt);
+        DeleteHistories questionDeleteHistories = DeleteHistories.of(questionDeleteHistory);
+        DeleteHistories answerDeleteHistories = answers.delete(user, deletedAt);
 
         return questionDeleteHistories.concat(answerDeleteHistories);
     }

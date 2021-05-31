@@ -2,6 +2,7 @@ package qna.domain;
 
 import static javax.persistence.FetchType.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,10 +32,10 @@ public class Answers {
 		return new Answers(Arrays.asList(answers));
 	}
 
-	DeleteHistories delete(User user) throws CannotDeleteException {
+	DeleteHistories delete(User user, LocalDateTime deletedAt) throws CannotDeleteException {
 		List<DeleteHistory> deleteHistories = new ArrayList<>();
 		for (Answer answer : answers) {
-			deleteHistories.add(answer.delete(user));
+			deleteHistories.add(answer.delete(user, deletedAt));
 		}
 		return DeleteHistories.of(deleteHistories);
 	}

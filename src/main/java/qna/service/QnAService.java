@@ -1,5 +1,7 @@
 package qna.service;
 
+import java.time.LocalDateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,7 @@ public class QnAService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-        DeleteHistories deleteHistories = question.delete(loginUser);
+        DeleteHistories deleteHistories = question.delete(loginUser, LocalDateTime.now());
         deleteHistoryService.saveAll(deleteHistories.getDeleteHistories());
     }
 }

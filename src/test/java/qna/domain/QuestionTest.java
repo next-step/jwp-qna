@@ -3,7 +3,6 @@ package qna.domain;
 import static java.time.LocalDateTime.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static qna.domain.ContentType.*;
 import static qna.domain.UserTest.*;
 
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +40,7 @@ public class QuestionTest {
     @DisplayName("질문에 답변이 없으면 질문을 삭제 가능하다, 질문이 삭제 상태되고, 삭제 내역이 반환된다.")
     void deleteStatusTest() throws Exception {
         Question question = new Question(1L, "to be deleted", "contents", JAVAJIGI);
-        DeleteHistory questionDeleteHistory = new DeleteHistory(QUESTION, 1L, JAVAJIGI, now());
+        DeleteHistory questionDeleteHistory = DeleteHistory.of(question, now());
 
         verifyDeleteQuestion(question, DeleteHistories.of(questionDeleteHistory));
     }
@@ -53,8 +52,8 @@ public class QuestionTest {
         Answer myAnswer = new Answer(1L, JAVAJIGI, question, "answer contents");
 
         DeleteHistories expectedDeleteHistories = DeleteHistories.of(
-            new DeleteHistory(QUESTION, 1L, JAVAJIGI, now()),
-            new DeleteHistory(ANSWER, 1L, JAVAJIGI, now())
+            DeleteHistory.of(question, now()),
+            DeleteHistory.of(myAnswer, now())
         );
 
         verifyDeleteQuestion(question, expectedDeleteHistories);
@@ -65,7 +64,7 @@ public class QuestionTest {
     void deleteAuthorizationTest() {
         Question question = new Question("to be deleted", "contents", JAVAJIGI);
 
-        assertThatThrownBy(() -> question.delete(SANJIGI))
+        assertThatThrownBy(() -> question.delete(SANJIGI, now()))
             .isInstanceOf(CannotDeleteException.class);
     }
 
@@ -75,12 +74,12 @@ public class QuestionTest {
         Question question = new Question("to be deleted", "contents", JAVAJIGI);
         Answer answer = new Answer(SANJIGI, question, "answer contents");
 
-        assertThatThrownBy(() -> question.delete(JAVAJIGI))
+        assertThatThrownBy(() -> question.delete(JAVAJIGI, now()))
             .isInstanceOf(CannotDeleteException.class);
     }
 
     private void verifyDeleteQuestion(Question question, DeleteHistories expectedDeleteHistories) throws CannotDeleteException {
-        DeleteHistories actualHistories = question.delete(JAVAJIGI);
+        DeleteHistories actualHistories = question.delete(JAVAJIGI, now());
         assertAll(
             () -> assertThat(question.isDeleted()).isTrue(),
             () -> assertThat(actualHistories).isEqualTo(expectedDeleteHistories),
