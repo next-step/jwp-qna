@@ -3,8 +3,6 @@ package qna.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import qna.UnAuthorizedException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -94,13 +92,6 @@ class UserTest {
                 assertThat(givenUser.equalsNameAndEmail(compareUser)).isFalse();
             }
         }
-    }
-
-    @DisplayName("주어진 비밀번호와 입력받은 비밀번호의 일치여부를 리턴한다.")
-    @ParameterizedTest
-    @CsvSource({"password, true", "password2, false"})
-    void matchPassword(String password, boolean isMatch) {
-        assertThat(JAVAJIGI.matchPassword(password)).isEqualTo(isMatch);
     }
 
     @DisplayName("본인일 경우 게스트 사용자는 거짓을 리턴한다.")

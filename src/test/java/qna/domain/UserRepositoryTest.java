@@ -45,7 +45,7 @@ class UserRepositoryTest {
         @DisplayName("저장된 사용자 정보와 사용자 식별키가 주어지면")
         class Context_with_ extends JpaTest {
             User givenUser;
-            final String userKey = USER_ID;
+            final UserId userKey = new UserId(USER_ID);
 
             @BeforeEach
             void setUp() {
