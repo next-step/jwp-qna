@@ -1,21 +1,21 @@
-package homework.domain;
+package qna.domain;
 
-import homework.domain.entity.Answer;
-import homework.domain.entity.Question;
-import homework.domain.entity.User;
-import homework.domain.repository.AnswerRepository;
-import homework.domain.repository.QuestionRepository;
-import homework.domain.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.entity.Answer;
+import qna.domain.entity.Question;
+import qna.domain.entity.User;
+import qna.domain.repository.AnswerRepository;
+import qna.domain.repository.QuestionRepository;
+import qna.domain.repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
-class WritingTest {
+class EntityTest {
 
     @Autowired
     private UserRepository userRepository;
@@ -59,17 +59,18 @@ class WritingTest {
 
         //When
         Question expected = Question.builder()
-                .user(hun)
                 .title("제목")
                 .contents("내용입니다.")
                 .build();
+
+        expected.writeBy(hun);
 
         Question actual = questionRepository.save(expected);
 
         //Then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getUser()).isEqualTo(hun)
+                () -> assertThat(actual.getWriter()).isEqualTo(hun)
         );
     }
 
@@ -92,16 +93,17 @@ class WritingTest {
                 .build();
 
         Question question = Question.builder()
-                .user(hun)
                 .title("제목")
                 .contents("내용입니다.")
                 .build();
+
+        question.writeBy(hun);
 
         //When
         Answer expected = Answer.builder()
                 .contents("답변입니다.")
                 .question(question)
-                .user(hong)
+                .writer(hong)
                 .build();
 
         Answer actual = answerRepository.save(expected);
@@ -109,16 +111,10 @@ class WritingTest {
         //Then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getUser()).isEqualTo(hong),
+                () -> assertThat(actual.getWriter()).isEqualTo(hong),
                 () -> assertThat(actual.getQuestion()).isEqualTo(question),
-                () -> assertThat(actual.getQuestion().getUser()).isEqualTo(hun)
+                () -> assertThat(actual.getQuestion().getWriter()).isEqualTo(hun)
         );
-    }
-
-    @Test
-    @DisplayName("질문 삭제")
-    void deleteAnswer() {
-        //TODO
     }
 
 }

@@ -1,5 +1,7 @@
-package homework.domain.entity;
+package qna.domain.entity;
 
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity
+@EqualsAndHashCode(of={"id", "contentType", "contentId", "deletedById"})
 public class DeleteHistory {
 
     @Id
@@ -36,6 +39,15 @@ public class DeleteHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="deleted_by_id")
     private User user;
+
+
+    @Builder
+    public DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
+        this.contentId = contentId;
+        this.contentType = contentType;
+        this.user = user;
+        this.createDate = createDate;
+    }
 
     public enum ContentType {
         ANSWER, QUESTION

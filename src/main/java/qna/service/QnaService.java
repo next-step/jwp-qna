@@ -1,30 +1,26 @@
 package qna.service;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
-import qna.domain.*;
-
+import qna.domain.entity.*;
+import qna.domain.repository.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class QnaService {
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
-    private QuestionRepository questionRepository;
-    private AnswerRepository answerRepository;
-    private DeleteHistoryService deleteHistoryService;
-
-    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
-        this.questionRepository = questionRepository;
-        this.answerRepository = answerRepository;
-        this.deleteHistoryService = deleteHistoryService;
-    }
+    private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
+    private final DeleteHistoryService deleteHistoryService;
 
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {
@@ -46,13 +42,14 @@ public class QnaService {
             }
         }
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        /*List<DeleteHistory> deleteHistories = new ArrayList<>();
         question.setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriterId(), LocalDateTime.now()));
+        deleteHistories.add(new DeleteHistory(DeleteHistory.ContentType.QUESTION, questionId, question.getWriterId(), LocalDateTime.now()));
         for (Answer answer : answers) {
             answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId(), LocalDateTime.now()));
+            deleteHistories.add(new DeleteHistory(DeleteHistory.ContentType.ANSWER, answer.getId(), answer.getWriterId(), LocalDateTime.now()));
         }
-        deleteHistoryService.saveAll(deleteHistories);
+
+        deleteHistoryService.saveAll(deleteHistories);*/
     }
 }

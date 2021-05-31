@@ -1,6 +1,6 @@
-package homework.domain.entity;
+package qna.domain.entity;
 
-import homework.domain.entity.common.TraceDate;
+import qna.domain.entity.common.TraceDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,16 +41,34 @@ public class Question extends TraceDate {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
-    private User user;
+    private User writer;
 
     @OneToMany(mappedBy = "question")
     List<Answer> answers = new ArrayList<>();
 
+    public Question(String title, String contents) {
+        this(null, title, contents);
+    }
+
     @Builder
-    private Question(String contents, String title, User user) {
-        this.contents = contents;
+    public Question(Long id, String title, String contents) {
+        this.id = id;
         this.title = title;
-        this.user = user;
+        this.contents = contents;
         this.deleted = false;
+    }
+
+    public Question writeBy(User writer) {
+        this.writer = writer;
+        return this;
+    }
+
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
+        answer.toQuestion(this);
     }
 }

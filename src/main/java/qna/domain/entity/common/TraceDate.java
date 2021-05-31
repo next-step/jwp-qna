@@ -1,4 +1,4 @@
-package homework.domain.entity.common;
+package qna.domain.entity.common;
 
 import lombok.Getter;
 import javax.persistence.Column;
