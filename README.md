@@ -56,7 +56,7 @@ alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
 2. 객체들의 연관관계 매핑
-    - Answer(N) : Question(1) 단방향 연관 관계 설정
+    - Answer(N) : Question(1) 양방향 연관 관계 설정
     - Answer(N) : User(1) 단방향 연관 관계 설정
     - Question(N) : User(1) 단방향 연관 관계 설정
     - Deleted_history(N) : user(1) 단방향 연관 관계 설정
