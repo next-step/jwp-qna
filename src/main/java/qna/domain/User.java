@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 public class User extends BaseEntity {
