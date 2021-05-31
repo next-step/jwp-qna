@@ -49,9 +49,4 @@ public class UserRepositoryTest {
             () -> assertThat(user.getEmail()).isEqualTo("change Email"),
             () -> assertThat(user.getUpdatedAt()).isNotNull());
     }
-
-    @AfterEach
-    void end() {
-        repository.deleteAll();
-    }
 }
