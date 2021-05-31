@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,8 +14,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Example;
+import qna.domain.Question;
+import qna.domain.UserTest;
 
 @DataJpaTest
 @TestInstance(Lifecycle.PER_CLASS)
@@ -69,25 +70,13 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("단건조회 (findOne)")
     void findOne() {
-        Question expected = new Question();
-        expected.setTitle("title1");
-        expected.setContents("contents1");
+        Question expected = new Question("title1", "contents1");
         Question actual = questionRepository.findOne(Example.of(expected)).get();
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
             () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
             () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
         );
-    }
-
-    @Test
-    @DisplayName("단건조회 (findOne) 여러건 조회될경우 예외발생")
-    void findOne_moreThanOneRow() {
-        Question expected = new Question();
-        expected.setContents("contents1");
-
-        assertThatThrownBy(() -> questionRepository.findOne(Example.of(expected)))
-            .isInstanceOf(IncorrectResultSizeDataAccessException.class);
     }
 
     @Test

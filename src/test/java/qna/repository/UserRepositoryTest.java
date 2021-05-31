@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -10,6 +10,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.User;
+import qna.domain.UserTest;
+import qna.repository.UserRepository;
 
 @DataJpaTest
 @TestInstance(Lifecycle.PER_CLASS)
