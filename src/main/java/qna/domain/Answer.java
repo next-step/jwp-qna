@@ -1,22 +1,43 @@
 package qna.domain;
 
+import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
-
-public class Answer {
+@Entity
+public class Answer extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "question_id")
     private Long questionId;
+
+    @Lob
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
 
-    public Answer(User writer, Question question, String contents) {
+    protected Answer() {
+    }
+
+    public Answer(final User writer, final Question question, final String contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(final Long id, final User writer, final Question question, final String contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -32,11 +53,11 @@ public class Answer {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
+    public boolean isOwner(final User writer) {
         return this.writerId.equals(writer.getId());
     }
 
-    public void toQuestion(Question question) {
+    public void toQuestion(final Question question) {
         this.questionId = question.getId();
     }
 
@@ -44,7 +65,7 @@ public class Answer {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -52,7 +73,7 @@ public class Answer {
         return writerId;
     }
 
-    public void setWriterId(Long writerId) {
+    public void setWriterId(final Long writerId) {
         this.writerId = writerId;
     }
 
@@ -60,7 +81,7 @@ public class Answer {
         return questionId;
     }
 
-    public void setQuestionId(Long questionId) {
+    public void setQuestionId(final Long questionId) {
         this.questionId = questionId;
     }
 
@@ -68,7 +89,7 @@ public class Answer {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void setContents(final String contents) {
         this.contents = contents;
     }
 
@@ -76,18 +97,37 @@ public class Answer {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(final boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Answer answer = (Answer)o;
+        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writerId,
+            answer.writerId) && Objects.equals(questionId, answer.questionId) && Objects.equals(
+            contents, answer.contents);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, writerId, questionId, contents, deleted);
     }
 
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", writerId=" + writerId +
+            ", questionId=" + questionId +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            '}';
     }
 }
