@@ -3,7 +3,6 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,18 +17,18 @@ public class Question extends BaseTimeEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
-    private List<Answer> answers = new ArrayList<>();
-
     @Lob
     private String contents;
+
+    @Column(nullable = false)
+    private boolean deleted;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @Column(nullable = false)
-    private boolean deleted;
+    @Embedded
+    private Answers answers;
 
     protected Question() {}
 
@@ -49,6 +48,9 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
+        if (answers == null) {
+            answers = new Answers();
+        }
         answer.toQuestion(this);
     }
 
@@ -60,17 +62,19 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public DeleteHistory deleteByOwner(User loginUser) throws CannotDeleteException {
+    public DeleteHistories deleteByOwner(User loginUser) throws CannotDeleteException {
         if (!Objects.equals(this.writer, loginUser)) {
             throw new CannotDeleteException(CANNOT_DELETE_MESSAGE);
         }
+
+        DeleteHistories deleteHistories = new DeleteHistories();
+        if (answers != null) {
+            deleteHistories.addAll(answers.deleteAllByOwner(loginUser));
+        }
+        deleteHistories.add(DeleteHistory.questionOf(id, writer));
         deleted = true;
 
-        for (Answer answer : answers) {
-            answer.deleteByOwner(loginUser);
-        }
-
-        return DeleteHistory.questionOf(id, writer);
+        return deleteHistories;
     }
 
     public Long getId() {
@@ -90,7 +94,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.getAnswers();
     }
 
     @Override

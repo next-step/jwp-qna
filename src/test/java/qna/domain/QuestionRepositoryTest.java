@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -100,5 +99,4 @@ class QuestionRepositoryTest extends BaseDataJpaTest {
     void endUp() {
         repository.deleteAll();
     }
-
 }

@@ -33,10 +33,10 @@ public class QuestionTest {
     @Test
     @DisplayName("삭제 시 deleted : true 변경, contentType : Question 인 DeleteHistory 를 반환한다")
     void deleteQuestionTest() throws CannotDeleteException {
-        DeleteHistory deleteHistory = question.deleteByOwner(question.getWriter());
+        DeleteHistories deleteHistories = question.deleteByOwner(question.getWriter());
 
         assertThat(question.isDeleted()).isEqualTo(true);
-        assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.QUESTION);
+        assertThat(deleteHistories.getDeleteHistories().get(0).getContentType()).isEqualTo(ContentType.QUESTION);
     }
 
     @Test
@@ -56,6 +56,6 @@ public class QuestionTest {
 
         assertThat(answer1.getWriter()).isNotSameAs(answer2.getWriter());
         assertThatThrownBy(() -> question.deleteByOwner(question.getWriter()))
-                .isInstanceOf(CannotDeleteException.class);
+                .hasCauseInstanceOf(CannotDeleteException.class);
     }
 }
