@@ -81,7 +81,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public DeleteHistory deleteByOwner(User loginUser) throws CannotDeleteException {
-        if (!this.writer.equals(loginUser)) {
+        if (!Objects.equals(this.writer, loginUser)) {
             throw new CannotDeleteException(CANNOT_DELETE_NOT_OWNER_MESSAGE);
         }
         this.deleted = true;
