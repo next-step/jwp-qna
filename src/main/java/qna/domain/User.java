@@ -41,6 +41,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "writer")
     private List<Answer> answers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "deletedByUser")
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
+
     private User() {
     }
 
@@ -132,7 +135,11 @@ public class User extends BaseEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return this.answers;
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return this.deleteHistories;
     }
 
     @Override

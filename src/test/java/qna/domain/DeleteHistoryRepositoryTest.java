@@ -22,9 +22,22 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository repository;
 
-    private User questionUser;
-    private User firstDeletedUser;
-    private User secondDeletedUser;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
+
+    private User hagiUser;
+    private User javajigiUser;
+    private User sanjigiUser;
+    private Question firstQuestion;
+    private Question secondQuestion;
+    private Answer firstAnswer;
+    private Answer secondAnswer;
     private DeleteHistory firstDeleteHistory;
     private DeleteHistory secondDeleteHistory;
     private DeleteHistory thirdDeleteHistory;
@@ -32,18 +45,25 @@ class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     public void beforeEach() {
-        this.firstDeletedUser = User.copy(UserTest.JAVAJIGI);
-        this.firstDeletedUser.setId(1L);
-        this.secondDeletedUser = User.copy(UserTest.SANJIGI);
-        this.secondDeletedUser.setId(2L);
-        this.questionUser = User.copy(UserTest.HAGI);
-        this.questionUser.setId(3L);
-        this.firstDeleteHistory = new DeleteHistory(ContentType.ANSWER, 1L,
-                this.firstDeletedUser.getId(), LocalDateTime.now());
-        this.secondDeleteHistory = new DeleteHistory(ContentType.ANSWER, 2L,
-                this.secondDeletedUser.getId(), LocalDateTime.now());
-        this.thirdDeleteHistory = new DeleteHistory(ContentType.QUESTION, 1L,
-                this.questionUser.getId(), LocalDateTime.now());
+        this.javajigiUser = User.copy(UserTest.JAVAJIGI);
+        this.sanjigiUser = User.copy(UserTest.SANJIGI);
+        this.hagiUser = User.copy(UserTest.HAGI);
+        userRepository.saveAll(Arrays.asList(this.javajigiUser, this.sanjigiUser, this.hagiUser));
+
+        this.firstQuestion = Question.copy(QuestionTest.Q1);
+        this.secondQuestion = Question.copy(QuestionTest.Q2);
+        questionRepository.saveAll(Arrays.asList(this.firstQuestion, this.secondQuestion));
+
+        this.firstAnswer = new Answer(this.javajigiUser, this.firstQuestion, AnswerTest.A1.getContents());
+        this.secondAnswer = new Answer(this.sanjigiUser, this.firstQuestion, AnswerTest.A2.getContents());
+        answerRepository.saveAll(Arrays.asList(this.firstAnswer, this.secondAnswer));
+
+        this.firstDeleteHistory = new DeleteHistory(ContentType.ANSWER, this.firstAnswer.getId(),
+                this.javajigiUser, LocalDateTime.now());
+        this.secondDeleteHistory = new DeleteHistory(ContentType.ANSWER, this.secondAnswer.getId(),
+                this.sanjigiUser, LocalDateTime.now());
+        this.thirdDeleteHistory = new DeleteHistory(ContentType.QUESTION, this.firstQuestion.getId(),
+                this.hagiUser, LocalDateTime.now());
         this.deleteHistories = Arrays.asList(this.firstDeleteHistory, this.secondDeleteHistory,
                 this.thirdDeleteHistory);
     }
@@ -65,7 +85,8 @@ class DeleteHistoryRepositoryTest {
         repository.save(this.firstDeleteHistory);
 
         // when
-        Optional<DeleteHistory> deleteHistory = repository.findByContentTypeAndContentId(ContentType.ANSWER, 1L);
+        Optional<DeleteHistory> deleteHistory = repository.findByContentTypeAndContentId(ContentType.ANSWER,
+                this.firstAnswer.getId());
 
         // then
         assertThat(deleteHistory.get()).isSameAs(this.firstDeleteHistory);
@@ -105,7 +126,7 @@ class DeleteHistoryRepositoryTest {
         repository.saveAll(this.deleteHistories);
 
         // when
-        List<DeleteHistory> deleteHistories = repository.findByDeletedById(this.firstDeletedUser.getId());
+        List<DeleteHistory> deleteHistories = repository.findByDeletedByUser(this.javajigiUser);
 
         // then
         assertThat(deleteHistories.size()).isEqualTo(1);
