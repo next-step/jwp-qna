@@ -114,15 +114,12 @@ public class Question extends BaseEntity {
         if (this == o) return true;
         if (!(o instanceof Question)) return false;
         Question question = (Question) o;
-        return isDeleted() == question.isDeleted() && Objects.equals(getId(), question.getId()) &&
-                Objects.equals(getTitle(), question.getTitle()) &&
-                Objects.equals(getContents(), question.getContents()) &&
-                Objects.equals(getWriter(), question.getWriter());
+        return Objects.equals(getId(), question.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getContents(), getWriter(), isDeleted());
+        return Objects.hash(getId());
     }
 
     @Override
@@ -133,6 +130,7 @@ public class Question extends BaseEntity {
                 ", contents='" + contents + '\'' +
                 ", writer=" + writer +
                 ", deleted=" + deleted +
+                ", answers=" + answers +
                 '}';
     }
 }

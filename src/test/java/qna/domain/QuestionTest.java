@@ -9,8 +9,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class QuestionTest {
-    public static final User user1 = new User("user1", "password", "user1", "user1@test.com");
-    public static final User user2 = new User("user2", "password", "user2", "user2@test.com");
+    public static final User user1 = new User(1L, "user1", "password", "user1", "user1@test.com");
+    public static final User user2 = new User(2L, "user2", "password", "user2", "user2@test.com");
     public static final Question Q1 = new Question("title1", "contents1").writeBy(user1);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(user2);
 

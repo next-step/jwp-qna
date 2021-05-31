@@ -12,8 +12,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AnswersTest {
-    private User user1 = new User("tester", "password", "tester", "test@test.com");
-    private User user2 = new User("tester2", "password", "tester2", "test2@test.com");
+    private User user1 = new User(1L, "tester", "password", "tester", "test@test.com");
+    private User user2 = new User(2L, "tester2", "password", "tester2", "test2@test.com");
     private Question question1 = new Question("title", "content");
     private Answer answer1 = new Answer(user1, question1, "content");
     private Answer answer2 = new Answer(user2, question1, "content2");

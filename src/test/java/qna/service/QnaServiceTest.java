@@ -41,8 +41,8 @@ class QnAServiceTest {
 
     @BeforeEach
     public void setUp() {
-        user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
-        user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        user1 = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+        user2 = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
         question = new Question("title1", "contents1");
         answer = new Answer(user1, question, "Answers Contents1");
