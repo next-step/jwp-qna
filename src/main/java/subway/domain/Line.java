@@ -18,7 +18,7 @@ public class Line {
 
     @OneToMany(mappedBy = "line")
     @ReadOnlyProperty // 조회 용도
-    private List<Station> stations = new ArrayList<>();
+    private final List<Station> stations = new ArrayList<>();
 
     protected Line() {
     }
