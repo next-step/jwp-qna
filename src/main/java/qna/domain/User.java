@@ -1,6 +1,10 @@
 package qna.domain;
 
 import qna.UnAuthorizedException;
+import qna.domain.wrapper.UserEmail;
+import qna.domain.wrapper.UserId;
+import qna.domain.wrapper.UserName;
+import qna.domain.wrapper.UserPassword;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -14,17 +18,17 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false, unique=true)
-    private String userId;
+    @Embedded
+    private UserId userId;
 
-    @Column(length = 20, nullable = false)
-    private String password;
+    @Embedded
+    private UserPassword password;
 
-    @Column(length = 20, nullable = false)
-    private String name;
+    @Embedded
+    private UserName name;
 
-    @Column(length = 50)
-    private String email;
+    @Embedded
+    private UserEmail email;
 
     public User() { }
 
@@ -32,12 +36,20 @@ public class User extends BaseTimeEntity {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
+    public User(Long id, UserId userId, UserPassword password, UserName name, UserEmail email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public User(Long id, String userId, String password, String name, String email) {
+        this.id = id;
+        this.userId = new UserId(userId);
+        this.password = new UserPassword(password);
+        this.name = new UserName(name);
+        this.email = new UserEmail(email);
     }
 
     public void update(User loginUser, User target) {
@@ -53,11 +65,11 @@ public class User extends BaseTimeEntity {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    private boolean matchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
+    public boolean matchPassword(UserPassword targetPassword) {
         return this.password.equals(targetPassword);
     }
 
@@ -78,19 +90,19 @@ public class User extends BaseTimeEntity {
         return id;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
-    public String getPassword() {
+    public UserPassword getPassword() {
         return password;
     }
 
-    public String getName() {
+    public UserName getName() {
         return name;
     }
 
-    public String getEmail() {
+    public UserEmail getEmail() {
         return email;
     }
 

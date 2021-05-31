@@ -2,8 +2,10 @@ package qna.domain;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.wrapper.Deleted;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -13,19 +15,19 @@ public class Answer extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey=@ForeignKey(name="fk_answer_to_writer"))
     private User writer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey=@ForeignKey(name="fk_answer_to_question"))
     private Question question;
 
     @Lob
     private String contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted;
 
     public Answer() { }
 
@@ -46,6 +48,17 @@ public class Answer extends BaseTimeEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+        this.deleted = new Deleted();
+    }
+
+    public DeleteHistory deleteAndReturnHistory() {
+        this.delete();
+
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+    }
+
+    public void delete() {
+        this.deleted.setTrue();
     }
 
     public boolean isOwner(User writer) {
@@ -73,15 +86,11 @@ public class Answer extends BaseTimeEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.status();
     }
 
     public void setContents(String contents) {
         this.contents = contents;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

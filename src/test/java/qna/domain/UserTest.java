@@ -30,10 +30,10 @@ public class UserTest {
         User actual = userRepository.save(expected);
         assertAll(
                 () -> Assertions.assertThat(actual.getId()).isNotNull(),
-                () -> Assertions.assertThat(actual.getPassword()).isEqualTo(expected.getPassword()),
-                () -> Assertions.assertThat(actual.getEmail()).isEqualTo(expected.getEmail()),
-                () -> Assertions.assertThat(actual.getUserId()).isEqualTo(expected.getUserId()),
-                () -> Assertions.assertThat(actual.getName()).isEqualTo(expected.getName())
+                () -> Assertions.assertThat(actual.getPassword().get()).isEqualTo(expected.getPassword().get()),
+                () -> Assertions.assertThat(actual.getEmail().get()).isEqualTo(expected.getEmail().get()),
+                () -> Assertions.assertThat(actual.getUserId().get()).isEqualTo(expected.getUserId().get()),
+                () -> Assertions.assertThat(actual.getName().get()).isEqualTo(expected.getName().get())
         );
     }
 
@@ -66,7 +66,7 @@ public class UserTest {
     @Test
     void update() {
         User user = userRepository.save(JAVAJIGI);
-        User expect = new User(user.getId(), user.getUserId(), user.getPassword(), "updateName", "updateEmail@uos.ac.kr");
+        User expect = new User(user.getId(), user.getUserId().get(), user.getPassword().get(), "updateName", "updateEmail@uos.ac.kr");
 
         user.update(user, expect);
 

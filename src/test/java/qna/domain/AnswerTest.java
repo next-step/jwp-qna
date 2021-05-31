@@ -88,7 +88,7 @@ public class AnswerTest {
         );
 
         answer.setContents(newContents);
-        answer.setDeleted(true);
+        answer.delete();
 
         Answer actual = answerRepository.findById(answer.getId()).get();
         assertAll(

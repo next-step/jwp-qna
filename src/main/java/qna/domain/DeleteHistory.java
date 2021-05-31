@@ -6,7 +6,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "delete_history")
-public class DeleteHistory {
+public class DeleteHistory extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,26 +20,36 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User user;
 
-    private LocalDateTime createDate = LocalDateTime.now();
-
     public DeleteHistory() { }
 
     public DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
+        this(null, contentType, contentId, user, createDate);
+    }
+
+    public DeleteHistory(Long id, ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
+        this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;
         this.user = user;
-        this.createDate = createDate;
     }
 
-    public Long getId() {
+    protected Long getId() {
         return id;
     }
 
-    public void setContentType(ContentType contentType) {
+    protected User getUser() {
+        return user;
+    }
+
+    protected Long getContentId() {
+        return contentId;
+    }
+
+    protected void setContentType(ContentType contentType) {
         this.contentType = contentType;
     }
 
-    public ContentType getContentType() {
+    protected ContentType getContentType() {
         return this.contentType;
     }
 
@@ -65,9 +75,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + user +
-                ", createDate=" + createDate +
+                ", user=" + user +
                 '}';
     }
-
 }

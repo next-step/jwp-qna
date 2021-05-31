@@ -6,8 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
+import qna.domain.wrapper.DeleteHistories;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -22,6 +29,9 @@ public class QuestionTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AnswerRepository answerRepository;
+
     private Question question;
     private User user;
 
@@ -34,6 +44,61 @@ public class QuestionTest {
     @AfterEach
     void deleteAll() {
         questionRepository.deleteAll();
+    }
+
+    @Test
+    void deleteHistory_Test() {
+        DeleteHistories deleteHistories = question.deleteAndReturnHistories();
+        DeleteHistory deleteHistory = deleteHistories.histories().get(0);
+
+        assertAll(
+                () -> assertThat(deleteHistory.getContentType().equals(question.getContents())),
+                () -> assertThat(deleteHistory.getContentId().equals(question.getId())),
+                () -> assertThat(deleteHistory.getUser().equals(question.getWriter()))
+        );
+    }
+
+    @Test
+    void question_삭제하려는_유저의_유효성_성공_Test() throws CannotDeleteException {
+        question.validateQuestionProprietary(user);
+    }
+
+    @Test
+    void question_삭제하려는_유저의_question_작성자_유효성_실패_Test() throws CannotDeleteException {
+        assertThatThrownBy(() ->
+                question.validateQuestionProprietary(UserTest.SANJIGI)
+        ).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void question_answer_다대일_양방향_Test_1() {
+        Answer expected = answerRepository.save(new Answer(user, question, "contents"));
+        question.addAnswer(expected);
+
+        List<Answer> actuals = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+        question = questionRepository.findById(question.getId()).get();
+        question = questionRepository.findById(question.getId()).orElseThrow(NoSuchElementException::new);
+
+        assertThat(actuals).containsExactly(expected);
+        assertThat(question.getAnswers()).containsExactly(expected);
+    }
+
+    @Test
+    void question_answer_다대일_양방향_Test_2() {
+        List<Answer> answers = Arrays.asList(new Answer(user, question, "contents"),
+                new Answer(user, question, "contents"),
+                new Answer(user, question, "contents"));
+        for (Answer answer : answers) {
+            question.addAnswer(answerRepository.save(answer));
+        }
+
+        questionRepository.flush();
+
+        List<Question> questions = questionRepository.findByDeletedFalse();
+        Question actualQuestion = questions.get(0);
+        List<Answer> actualAnswers = actualQuestion.getAnswers();
+
+        assertThat(actualAnswers).hasSize(3);
     }
 
     @Test
