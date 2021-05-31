@@ -1,14 +1,14 @@
 package qna.domain;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Table(name = "user", uniqueConstraints = {@UniqueConstraint(
-        columnNames = {"user_id"} )})
-@EntityListeners(AuditingEntityListener.class)
+        columnNames = {"user_id"})})
 @Entity
 public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
@@ -29,6 +29,15 @@ public class User extends BaseTimeEntity {
 
     @Column(name = "email", length = 50)
     private String email;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
+    private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "deleteUser")
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected User() {
     }
