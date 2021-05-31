@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -61,6 +62,15 @@ public class Answer {
         this.question = question;
     }
 
+    public DeleteHistory delete(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        deleted = true;
+        commonTransactionInfo.update();
+        return DeleteHistory.of(this);
+    }
+
     public Long getId() {
         return id;
     }
@@ -75,10 +85,6 @@ public class Answer {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

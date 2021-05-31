@@ -1,6 +1,10 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Question {
@@ -23,6 +27,9 @@ public class Question {
 
     @Embedded
     private CommonTransactionInfo commonTransactionInfo = new CommonTransactionInfo();
+
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -48,6 +55,25 @@ public class Question {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        if (!answers.contains(answer)) {
+            answers.add(answer);
+        }
+    }
+
+    public List<DeleteHistory> delete(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        deleted = true;
+        commonTransactionInfo.update();
+        return assembleDeleteHistories(loginUser);
+    }
+
+    private List<DeleteHistory> assembleDeleteHistories(User loginUser) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.of(this));
+        deleteHistories.addAll(answers.deleteAll(loginUser));
+        return deleteHistories;
     }
 
     public Long getId() {
@@ -60,10 +86,6 @@ public class Question {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
