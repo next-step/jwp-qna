@@ -15,9 +15,13 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     @Lob
     private String contents;
@@ -43,49 +47,44 @@ public class Answer extends BaseEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public User getWriter() {
+        return writer;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void updateContents(String contents) {
+        validateContents(contents);
         this.contents = contents;
+    }
+
+    private void validateContents(String contents) {
+        if (Objects.isNull(contents) || contents.trim().isEmpty()) {
+            throw new IllegalArgumentException("null 또는 빈값으로 contents를 업데이트 할 수 없습니다.");
+        }
     }
 
     public boolean isDeleted() {
@@ -103,24 +102,13 @@ public class Answer extends BaseEntity {
         Answer answer = (Answer) o;
         return deleted == answer.deleted &&
                 Objects.equals(id, answer.id) &&
-                Objects.equals(writerId, answer.writerId) &&
-                Objects.equals(questionId, answer.questionId) &&
+                Objects.equals(writer, answer.writer) &&
+                Objects.equals(question, answer.question) &&
                 Objects.equals(contents, answer.contents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, writerId, questionId, contents, deleted);
-    }
-
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+        return Objects.hash(id, writer, question, contents, deleted);
     }
 }

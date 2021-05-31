@@ -1,6 +1,8 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -12,10 +14,15 @@ public class Question extends BaseEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
+
     @Lob
     private String contents;
 
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -34,48 +41,44 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void updateContents(String contents) {
+        validateContents(contents);
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    private void validateContents(String contents) {
+        if (Objects.isNull(contents) || contents.trim().isEmpty()) {
+            throw new IllegalArgumentException("null 또는 빈값으로 contents를 업데이트 할 수 없습니다.");
+        }
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -86,6 +89,10 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public List<Answer> getAnswers() {
+        return new ArrayList<>(answers);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -94,23 +101,13 @@ public class Question extends BaseEntity {
         return deleted == question.deleted &&
                 Objects.equals(id, question.id) &&
                 Objects.equals(title, question.title) &&
+                Objects.equals(answers, question.answers) &&
                 Objects.equals(contents, question.contents) &&
-                Objects.equals(writerId, question.writerId);
+                Objects.equals(writer, question.writer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writerId, deleted);
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+        return Objects.hash(id, title, answers, contents, writer, deleted);
     }
 }

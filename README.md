@@ -64,3 +64,15 @@ alter table user
 
 - spring.jpa.hibernate.ddl-auto 값이 create면 테스트 할 때 drop 후 create 하고 create-drop이면 create와 같은데 최종적으로
 drop을 더 해줌 -> 외부 db 사용한다고 할 때, 콘솔 열어서 테이블 정상 생성되는지 확인하려면 create 써야함
+
+- DataJpaTest를 하게 되면 테스트 메소드별 트랜젝션이 이루어져서 롤백이 알아서 되는데, auto-increament된 
+id값만은 클래스가 끝날때까지는 초기화되지 않아서 이 id값을 테스트에 사용할 때에는 주의가 필요함.
+
+- DeleteHistory 에는 createDate 가 LocalDateTime.now()로 되어 있는데, 이부분이 equals 메소드에
+비교로 정의가 되면, 테스트 할 때 테스트 코드 돌아가는 시점에 따라서 시간이 미묘하게 달라져서 객체 비교시
+다른 값으로 인식하게 된다. 주의할 것(이 부분 때문에 테스트 코드 깨지는거 고치려고 한참 헤맴)
+
+- 지연로딩 테스트시에는 BeforeEach setUp 메소드에서 저장하는 작업을 했어도, 지연로딩 테스트가 원활하게 안될 수 있음.
+영속성 컨텍스트에 저장된 값들이 있어서, 지연로딩이 문제가 아니라 이미 로딩(?) 된 상태이므로 무조건 로딩 되어 있다고 판단되는 것 같음
+엔티티 매니져를 clear해줌으로써 영속성 컨텍스트를 비우고 새로 select 해오게끔 해야함. 
+(주의 : flush가 필요할 경우 flush부터 해주어야함)

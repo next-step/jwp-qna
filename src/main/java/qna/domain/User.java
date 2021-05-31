@@ -79,40 +79,31 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void updateName(String name) {
+        validateName(name);
         this.name = name;
+    }
+
+    private void validateName(String name) {
+        if (Objects.isNull(name) || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("null 또는 빈값으로 name을 업데이트 할 수 없습니다.");
+        }
     }
 
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @Override
