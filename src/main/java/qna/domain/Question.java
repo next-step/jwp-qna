@@ -1,11 +1,13 @@
 package qna.domain;
 
+import qna.common.BaseTimeEntity;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Table(name = "question")
 @Entity
-public class Question {
+public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,16 +16,10 @@ public class Question {
     private String contents;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
     private boolean deleted = false;
 
     @Column(nullable = false, length = 100)
     private String title;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
 
     private Long writerId;
 
@@ -36,11 +32,7 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
-
-        final LocalDateTime now = LocalDateTime.now();
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
+  }
 
     public Question writeBy(User writer) {
         this.writerId = writer.getId();

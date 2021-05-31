@@ -2,6 +2,7 @@ package qna.domain;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.common.BaseTimeEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -9,7 +10,7 @@ import java.util.Objects;
 
 @Table(name = "answer")
 @Entity
-public class Answer {
+public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,14 +19,9 @@ public class Answer {
     private String contents;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
     private boolean deleted = false;
 
     private Long questionId;
-
-    private LocalDateTime updatedAt;
 
     private Long writerId;
 
@@ -47,9 +43,6 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
-        final LocalDateTime now = LocalDateTime.now();
-        this.createdAt = now;
-        this.updatedAt = now;
     }
 
     public boolean isOwner(User writer) {

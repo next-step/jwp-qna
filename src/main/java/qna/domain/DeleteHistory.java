@@ -1,12 +1,14 @@
 package qna.domain;
 
+import qna.common.BaseTimeEntity;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Table(name = "delete_history")
 @Entity
-public class DeleteHistory {
+public class DeleteHistory extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
