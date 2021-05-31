@@ -85,7 +85,8 @@ class QnAServiceTest {
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer, answer2));
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(UserTest.JAVAJIGI, question.getId()))
-                .isInstanceOf(CannotDeleteException.class);
+                .hasCauseInstanceOf(CannotDeleteException.class)
+        ;
     }
 
     private void verifyDeleteHistories() {

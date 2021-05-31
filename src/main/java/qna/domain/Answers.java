@@ -1,9 +1,8 @@
 package qna.domain;
 
-import qna.CannotDeleteException;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Answers {
 
@@ -15,12 +14,20 @@ public class Answers {
         this.answers = answers;
     }
 
-    public List<DeleteHistory> deleteAllByOwner(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.deleteByOwner(loginUser));
-        }
-        return deleteHistories;
+    public List<DeleteHistory> deleteAllByOwner(User loginUser) {
+        return answers.stream()
+                .map(wrap(answer -> answer.deleteByOwner(loginUser)))
+                .collect(Collectors.toList());
+    }
+
+    private <T, R> Function<T, R> wrap(ExceptionFunction<T, R> function) {
+        return (T input) -> {
+            try {
+                return function.apply(input);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        };
     }
 
     private void validate(List<Answer> answers) {
