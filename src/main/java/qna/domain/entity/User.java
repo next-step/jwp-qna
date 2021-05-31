@@ -1,10 +1,7 @@
 package qna.domain.entity;
 
-import lombok.ToString;
+import lombok.*;
 import qna.domain.entity.common.TraceDate;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -29,10 +26,11 @@ import java.util.Objects;
  */
 
 @Getter
-@ToString
 @NoArgsConstructor
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(name = "unique_user_id", columnNames={"userId"}))
+@EqualsAndHashCode(of = "id")
+@ToString(of = {"id", "userId", "email", "name"})
 public class User extends TraceDate {
     public static final GuestUser GUEST_USER = new GuestUser();
 

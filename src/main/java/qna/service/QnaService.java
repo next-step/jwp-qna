@@ -42,14 +42,14 @@ public class QnaService {
             }
         }
 
-        /*List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.setDeleted(true);
-        deleteHistories.add(new DeleteHistory(DeleteHistory.ContentType.QUESTION, questionId, question.getWriterId(), LocalDateTime.now()));
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        question.deleted();
+        deleteHistories.add(new DeleteHistory(DeleteHistory.ContentType.QUESTION, questionId, question.getWriter(), LocalDateTime.now()));
         for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(DeleteHistory.ContentType.ANSWER, answer.getId(), answer.getWriterId(), LocalDateTime.now()));
+            answer.deleted();
+            deleteHistories.add(new DeleteHistory(DeleteHistory.ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
         }
 
-        deleteHistoryService.saveAll(deleteHistories);*/
+        deleteHistoryService.saveAll(deleteHistories);
     }
 }

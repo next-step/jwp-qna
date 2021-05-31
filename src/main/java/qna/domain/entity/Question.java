@@ -1,5 +1,7 @@
 package qna.domain.entity;
 
+import lombok.ToString;
+import qna.domain.entity.common.Deleteable;
 import qna.domain.entity.common.TraceDate;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +26,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Question extends TraceDate {
+@ToString(of = {"id", "contents", "title", "writer", "deleted"})
+public class Question extends TraceDate implements Deleteable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,5 +73,10 @@ public class Question extends TraceDate {
     public void addAnswer(Answer answer) {
         this.answers.add(answer);
         answer.toQuestion(this);
+    }
+
+    @Override
+    public void deleted() {
+        this.deleted = true;
     }
 }
