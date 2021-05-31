@@ -26,9 +26,6 @@ class QnAServiceTest {
     private QuestionRepository questionRepository;
 
     @Mock
-    private AnswerRepository answerRepository;
-
-    @Mock
     private DeleteHistoryService deleteHistoryService;
 
     @InjectMocks
@@ -41,13 +38,12 @@ class QnAServiceTest {
     public void setUp() throws Exception {
         question = new Question(1L, "title1", "contents1").writeBy(UserRepositoryTest.JAVAJIGI);
         answer = new Answer(1L, UserRepositoryTest.JAVAJIGI, question, "Answers Contents1");
-        question.addAnswer(answer);
+        question.addAnswers(answer);
     }
 
     @Test
     public void delete_성공() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
         assertThat(question.isDeleted()).isFalse();
         qnAService.deleteQuestion(UserRepositoryTest.JAVAJIGI, question.getId());
@@ -67,7 +63,6 @@ class QnAServiceTest {
     @Test
     public void delete_성공_질문자_답변자_같음() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
         qnAService.deleteQuestion(UserRepositoryTest.JAVAJIGI, question.getId());
 
@@ -79,10 +74,9 @@ class QnAServiceTest {
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
         Answer answer2 = new Answer(2L, UserRepositoryTest.SANJIGI, QuestionRepositoryTest.Q1, "Answers Contents1");
-        question.addAnswer(answer2);
+        question.addAnswers(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer, answer2));
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(UserRepositoryTest.JAVAJIGI, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);

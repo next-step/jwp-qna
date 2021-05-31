@@ -71,4 +71,21 @@ public class QuestionRepositoryTest {
                 () -> assertThat(result.getWriter()).isEqualTo(question1.getWriter())
         );
     }
+
+    @Test
+    @DisplayName("Question Answer 양방향 테스트")
+    void findById() {
+        Question question = new Question(1L, "title1", "contents1").writeBy(UserRepositoryTest.JAVAJIGI);
+        Answer answer1= new Answer(user1, question, "Answers Contents1");
+        Answer answer2 = new Answer(user1, question, "Answers Contents2");
+        question.addAnswers(answer1);
+        question.addAnswers(answer2);
+
+        List<Answer> result = question.getAnswers();
+
+        assertAll (
+                () -> assertThat(result).hasSize(2),
+                () -> assertThat(result).contains(answer1, answer2)
+        );
+    }
 }
