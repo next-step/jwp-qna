@@ -66,6 +66,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
+        question.addAnswer(this);
         this.question = question;
     }
 
