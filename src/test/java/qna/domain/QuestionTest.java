@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.UserTest.JAVAJIGI;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,16 +13,20 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+    public static final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Autowired
     QuestionRepository questionRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @Test
     @DisplayName("질문 생성")
     void create() {
         //given
+        userRepository.save(JAVAJIGI);
         //when
         questionRepository.save(Q1);
         Optional<Question> question = questionRepository.findById(1L);
@@ -33,6 +38,7 @@ public class QuestionTest {
     @DisplayName("질문 삭제")
     void delete() {
         //given
+        userRepository.save(JAVAJIGI);
         //when
         questionRepository.save(Q1);
         questionRepository.deleteByTitle("title1");
@@ -45,6 +51,7 @@ public class QuestionTest {
     @DisplayName("지우지 않은 글 조회")
     void findNotDeleted() {
         //given
+        userRepository.save(JAVAJIGI);
         //when
         questionRepository.save(Q1);
         questionRepository.save(Q2);
@@ -57,6 +64,7 @@ public class QuestionTest {
     @DisplayName("제목 수정")
     void update() {
         //given
+        userRepository.save(JAVAJIGI);
         //when
         Question save = questionRepository.save(Q1);
         save.setTitle("title3");

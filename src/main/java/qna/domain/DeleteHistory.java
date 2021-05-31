@@ -1,5 +1,7 @@
 package qna.domain;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.util.Objects;
 import java.time.LocalDateTime;
 
@@ -13,8 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Table(name = "delete_history")
