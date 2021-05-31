@@ -28,8 +28,8 @@ public class Question extends BaseTimeEntity {
     @ManyToOne
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -45,7 +45,7 @@ public class Question extends BaseTimeEntity {
     }
 
     /* 2. getAnswers()를 해도 DB에서 데이터를 가져오는 건 아닌데 */
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return this.answers;
     }
 
@@ -56,9 +56,14 @@ public class Question extends BaseTimeEntity {
 
     /* 1.  https://wonit.tistory.com/466
     : "외래 키를 갖는 쪽에서만 UPDATE와 INSERT를 수행하고,
-    * 없는 쪽은 SELECT만 수행할 것  */
+    * 없는 쪽은 SELECT만 수행할 것
+    * → 하지만 순수자바객체 입장에서는 Question의 Answers에도 answer를 추가해주어야 한다.
+    */
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        if (!answers.contains(answer)) {
+            answers.add(answer);
+        }
     }
 
     public Long getId() {
@@ -93,9 +98,8 @@ public class Question extends BaseTimeEntity {
     }
 
     public List<DeleteHistory> deleteBy(User loginUser) throws CannotDeleteException {
-        validateUser(loginUser);
-
         List<DeleteHistory> deleteHistories = new ArrayList<>();
+        validateUser(loginUser);
         this.deleted = true;
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
         deleteHistories.addAll(validateAnswersWriter(loginUser));
@@ -104,11 +108,7 @@ public class Question extends BaseTimeEntity {
     }
 
     private List<DeleteHistory> validateAnswersWriter(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.deleteBy(loginUser));
-        }
-        return deleteHistories;
+        return answers.deleteAllBy(loginUser);
     }
 
     private void validateUser(User loginUser) throws CannotDeleteException {
