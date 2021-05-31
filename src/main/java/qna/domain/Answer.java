@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,7 +60,9 @@ public class Answer extends BaseEntity {
 	}
 
 	public boolean isOwner(User writer) {
-		return this.writer.getId().equals(writer.getId());
+		return Optional.ofNullable(writer)
+			.map(user -> user.getId().equals(this.writer.getId()))
+			.orElse(false);
 	}
 
 	public void toQuestion(Question question) {
