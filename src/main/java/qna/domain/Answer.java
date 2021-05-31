@@ -7,6 +7,7 @@ import qna.domain.base.BaseEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -14,7 +15,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import java.util.Objects;
 
@@ -30,8 +30,8 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -57,7 +57,7 @@ public class Answer extends BaseEntity {
         }
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
+        this.contents = new Contents(contents);
     }
 
     public boolean isOwner(User writer) {
@@ -77,7 +77,7 @@ public class Answer extends BaseEntity {
     }
 
     public String getContents() {
-        return contents;
+        return contents.getContent();
     }
 
     public boolean isDeleted() {

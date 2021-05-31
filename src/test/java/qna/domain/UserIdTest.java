@@ -11,13 +11,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class UserIdTest {
-    private static final String USER_ID = "user1";
+    private static final String USER1_NAME = "user1";
 
     @Test
     void createNameWithValidInput() {
-        UserId userId = new UserId(USER_ID);
+        UserId userId = new UserId(USER1_NAME);
 
-        assertThat(userId.getUserId()).isEqualTo(USER_ID);
+        assertThat(userId.getUserId()).isEqualTo(USER1_NAME);
     }
 
     @ParameterizedTest
@@ -32,7 +32,7 @@ class UserIdTest {
     @Test
     void matchUserId() {
         // given
-        UserId userId = new UserId(USER_ID);
+        UserId userId = new UserId(USER1_NAME);
         User user2 = new User("user2", "password2", "name", "test@test.com");
 
         // then
