@@ -18,7 +18,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -67,13 +66,14 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void delete() {
+    private void delete() {
         this.deleted = true;
     }
 
@@ -99,10 +99,6 @@ public class Question extends BaseEntity {
 
     public String getContents() {
         return contents;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers.getAnswers();
     }
 
     public void setContents(final String contents) {
