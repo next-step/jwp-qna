@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +13,44 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 public class AnswerRepositoryTest {
     @Autowired
-    private AnswerRepository answerRepository;
+    private AnswerRepository answers;
+
+    @Autowired
+    private QuestionRepository questions;
+
+    @Autowired
+    private UserRepository users;
+
+    private Question expectedQuestion;
+    private Answer expectedAnswer1;
+    private Answer expectedAnswer2;
+
+    @BeforeEach
+    void setUp() {
+        User questionWriter = new User("qwriter", "password", "name", "sunju@slipp.net");
+        expectedQuestion = new Question("title3", "contents2").writeBy(questionWriter);
+        users.save(questionWriter);
+        questions.save(expectedQuestion);
+
+        User answerWriter = new User("awriter", "password", "name", "sunju@slipp.net");
+        expectedAnswer1 = new Answer(answerWriter, expectedQuestion, "Answers Contents");
+        users.save(answerWriter);
+
+        User answerWriter2 = new User("awriter2", "password", "name", "sunju@slipp.net");
+        expectedAnswer2 = new Answer(answerWriter2, expectedQuestion, "Answers Contents2");
+        users.save(answerWriter2);
+    }
 
     @Test
     @DisplayName("save 테스트")
     void saveTest() {
         assertThat(AnswerTest.ANSWER1.getId()).isNull();
-        Answer actualAnswer = answerRepository.save(AnswerTest.ANSWER1);
+        Answer actualAnswer = answers.save(expectedAnswer1);
+        answers.flush();
         assertThat(actualAnswer.getId()).isNotNull(); // id 생성 테스트
-        assertThat(actualAnswer.getWriterId()).isEqualTo(AnswerTest.ANSWER1.getWriterId());
-        assertThat(actualAnswer.getQuestionId()).isEqualTo(AnswerTest.ANSWER1.getQuestionId());
-        assertThat(actualAnswer.getContents()).isEqualTo(AnswerTest.ANSWER1.getContents());
+        assertThat(actualAnswer.getWriter()).isEqualTo(expectedAnswer1.getWriter());
+        assertThat(actualAnswer.getQuestion()).isEqualTo(expectedAnswer1.getQuestion());
+        assertThat(actualAnswer.getContents()).isEqualTo(expectedAnswer1.getContents());
         assertThat(actualAnswer.getCreatedAt()).isNotNull();
         assertThat(actualAnswer.getUpdatedAt()).isNotNull();
     }
@@ -30,24 +58,25 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("Answer 여러개 save 테스트")
     void saveMultipleAnswerTest() {
-        Answer actualAnswer1 = answerRepository.save(AnswerTest.ANSWER1);
-        Answer actualAnswer2 = answerRepository.save(AnswerTest.ANSWER2);
-        List<Answer> answerList = answerRepository.findAll();
+        Answer savedAnswer1 = answers.save(expectedAnswer1);
+        Answer savedAnswer2 = answers.save(expectedAnswer2);
+        answers.flush();
+        List<Answer> answerList = answers.findAll();
         assertThat(answerList.size()).isEqualTo(2);
-        assertThat(answerList).containsExactly(actualAnswer1, actualAnswer2);
+        assertThat(answerList).containsExactly(savedAnswer1, savedAnswer2);
     }
 
     @Test
     @DisplayName("question id 기준 검색 테스트")
-    void findByQuestionIdAndDeletedFalseTest() {
-        answerRepository.save(AnswerTest.ANSWER1);
-        answerRepository.save(AnswerTest.ANSWER2);
-        List<Answer> expectedList = answerRepository.findAll();
-        List<Answer> actualList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.QUESTION1.getId());
+    void findByQuestionAndDeletedFalseTest() {
+        Answer savedAnswer1 = answers.save(expectedAnswer1);
+        Answer savedAnswer2 = answers.save(expectedAnswer2);
+        answers.flush();
+        List<Answer> actualList = answers.findByQuestionIdAndDeletedFalse(expectedAnswer1.getQuestion().getId());
 
         //findByQuestionId test
         assertThat(actualList.size()).isEqualTo(2);
-        assertThat(actualList).isEqualTo(expectedList);
+        assertThat(actualList).containsExactly(savedAnswer1, savedAnswer2);
 
         //deleted false test
         for(Answer answer : actualList) {
@@ -58,12 +87,13 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("id 기준 검색 테스트")
     void findByIdAndDeletedFalseTest() {
-        Answer expectedAnswer = answerRepository.save(AnswerTest.ANSWER1);
-        answerRepository.save(AnswerTest.ANSWER2);
+        Answer savedAnswer1 = answers.save(expectedAnswer1);
+        Answer savedAnswer2 = answers.save(expectedAnswer2);
+        answers.flush();
 
-        Answer answer = answerRepository.findByIdAndDeletedFalse(expectedAnswer.getId())
-                                        .orElseThrow(IllegalArgumentException::new);
-        assertThat(answer).isEqualTo(expectedAnswer); // findById test
+        Answer answer = answers.findByIdAndDeletedFalse(savedAnswer1.getId())
+                .orElseThrow(IllegalArgumentException::new);
+        assertThat(answer).isEqualTo(savedAnswer1); // findById test
         assertThat(answer.isDeleted()).isEqualTo(false); //deleted false test
 
     }
