@@ -62,7 +62,7 @@ alter table user
 
 ### 설정파일
 
-- [ ] application.xml -> yaml 변경
+- [X] application.properties -> yaml 변경
 
 ### Entity
 
