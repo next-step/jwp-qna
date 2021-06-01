@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,9 +26,9 @@ public class DeleteHistory {
 
     private Long contentId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id",
         foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
-    @ManyToOne
     private User deletedBy;
 
     private LocalDateTime createDate = LocalDateTime.now();
