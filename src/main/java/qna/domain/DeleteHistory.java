@@ -50,6 +50,18 @@ public class DeleteHistory {
         return id;
     }
 
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public User getDeletedBy() {
+        return deletedBy;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
