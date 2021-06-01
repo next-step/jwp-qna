@@ -1,5 +1,6 @@
 package qna.domain;
 
+import lombok.Builder;
 import qna.common.BaseTimeEntity;
 
 import javax.persistence.*;
@@ -23,6 +24,8 @@ public class Question extends BaseTimeEntity {
 
     private Long writerId;
 
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);

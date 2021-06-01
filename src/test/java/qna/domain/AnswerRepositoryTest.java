@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -11,23 +12,20 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answers;
 
+    @BeforeEach
+    void setUp() {
+        answers.save(AnswerTest.A1);
+    }
+
     @Test
     public void save() {
-        User user = new User(1L, "cjs", "password", "name", "chajs226@gmail.com");
-        Question question = new Question("initTestTitle", "initTestContents");
-        Answer expected = new Answer(user, question, "initTestContents");
-
-        Answer actual = answers.save(expected);
+         Answer actual = answers.save(AnswerTest.A2);
         assertThat(actual.getId()).isNotNull();
     }
 
     @Test
     public void findByContents() {
-        User user = new User(1L, "cjs", "password", "name", "chajs226@gmail.com");
-        Question question = new Question("initTestTitle", "initTestContents");
-        Answer expected = new Answer(user, question, "initTestContents");
-
-        Answer actual = answers.save(expected);
-        assertThat(actual.getContents()).isEqualTo("initTestContents");
+        Answer actual = answers.findByContents("Answers Contents1").get();
+        assertThat(actual.getContents()).isEqualTo("Answers Contents1");
     }
 }

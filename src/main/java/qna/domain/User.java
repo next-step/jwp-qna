@@ -1,5 +1,6 @@
 package qna.domain;
 
+import lombok.Builder;
 import qna.UnAuthorizedException;
 import qna.common.BaseTimeEntity;
 
@@ -9,6 +10,7 @@ import java.util.Objects;
 
 @Table(name = "user")
 @Entity
+
 public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -28,7 +30,7 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, length = 20)
     private String userId;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {

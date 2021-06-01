@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Table(name = "delete_history")
 @Entity
-public class DeleteHistory extends BaseTimeEntity {
+public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

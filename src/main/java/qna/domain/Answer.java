@@ -1,5 +1,7 @@
 package qna.domain;
 
+import lombok.Builder;
+import org.hibernate.type.LocalDateType;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.common.BaseTimeEntity;

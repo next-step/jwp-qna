@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
+
+    Optional<Question> findByTitle(String title);
+
     List<Question> findByDeletedFalse();
 
     Optional<Question> findByIdAndDeletedFalse(Long id);
