@@ -1,8 +1,12 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static qna.domain.ContentType.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Example;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -10,17 +14,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.data.domain.Example;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static qna.domain.ContentType.*;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class DeleteHistoryTest {
+class DeleteHistoryTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -28,11 +27,22 @@ public class DeleteHistoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    private User user1;
+    private User user2;
+
+    @BeforeEach
+    void setup() {
+        user1 = new User("id1", "password1", "name1", "email1");
+        user2 = new User("id2", "password2", "name2", "email2");
+        entityManager.persist(user1);
+        entityManager.persist(user2);
+    }
+
     @DisplayName("Entity 저장 테스트")
     @Test
     void save() {
         // given
-        final DeleteHistory deleteHistory = new DeleteHistory(ANSWER, 1L, 1L, LocalDateTime.now());
+        final DeleteHistory deleteHistory = new DeleteHistory(ANSWER, 1L, user1, LocalDateTime.now());
 
         // when
         final DeleteHistory saved = deleteHistoryRepository.save(deleteHistory);
@@ -48,7 +58,7 @@ public class DeleteHistoryTest {
     void findById() {
         // given
         final long contentId = 1L;
-        final DeleteHistory deleteHistory = new DeleteHistory(ANSWER, contentId, 1L, null);
+        final DeleteHistory deleteHistory = new DeleteHistory(ANSWER, contentId, user1, null);
         final DeleteHistory expected = deleteHistoryRepository.save(deleteHistory);
 
         // when
@@ -65,7 +75,7 @@ public class DeleteHistoryTest {
     @Test
     void findByCreateDateIsNull() {
         // given
-        final DeleteHistory deleteHistory = new DeleteHistory(ANSWER, 1L, 1L, null);
+        final DeleteHistory deleteHistory = new DeleteHistory(ANSWER, 1L, user1, null);
         deleteHistoryRepository.save(deleteHistory);
 
         // when
@@ -81,7 +91,7 @@ public class DeleteHistoryTest {
     @Test
     void findByContentType() {
         // given
-        final DeleteHistory deleteHistory = new DeleteHistory(null, 1L, 1L, null);
+        final DeleteHistory deleteHistory = new DeleteHistory(null, 1L, user1, null);
         deleteHistoryRepository.save(deleteHistory);
 
         // when
@@ -97,9 +107,9 @@ public class DeleteHistoryTest {
     @Test
     void example_interface() {
         // given
-        final DeleteHistory deleteHistory = new DeleteHistory(null, 1L, 1L, null);
+        final DeleteHistory deleteHistory = new DeleteHistory(null, 1L, user1, null);
         final DeleteHistory expected = deleteHistoryRepository.save(deleteHistory);
-        final DeleteHistory probe = new DeleteHistory(null, 1L, 1L, null);
+        final DeleteHistory probe = new DeleteHistory(null, 1L, user1, null);
 
         // when
         final Optional<DeleteHistory> optActual = deleteHistoryRepository.findOne(Example.of(probe));
@@ -118,8 +128,8 @@ public class DeleteHistoryTest {
     @Test
     void native_query() {
         // given
-        final DeleteHistory deleteHistory = new DeleteHistory(null, 1L, 1L, null);
-        final DeleteHistory deleteHistory2 = new DeleteHistory(null, 2L, 2L, null);
+        final DeleteHistory deleteHistory = new DeleteHistory(null, 1L, user1, null);
+        final DeleteHistory deleteHistory2 = new DeleteHistory(null, 2L, user2, null);
         deleteHistoryRepository.save(deleteHistory);
         deleteHistoryRepository.save(deleteHistory2);
         final Collection<Long> ids = Arrays.asList(1L, 2L);
@@ -139,12 +149,12 @@ public class DeleteHistoryTest {
     @Test
     void updateDeleteHistorySetContentTypeById() {
         // given
-        final DeleteHistory deleteHistory = new DeleteHistory(ANSWER, 1L, 1L, null);
+        final DeleteHistory deleteHistory = new DeleteHistory(ANSWER, 1L, user1, null);
         final Long id = entityManager.persistAndGetId(deleteHistory, Long.class);
         deleteHistoryRepository.updateDeleteHistorySetContentTypeById(QUESTION, id);
 
         // when
-        final DeleteHistory probe = new DeleteHistory(QUESTION, 1L, 1L, null);
+        final DeleteHistory probe = new DeleteHistory(QUESTION, 1L, user1, null);
         final Optional<DeleteHistory> optActual = deleteHistoryRepository.findOne(Example.of(probe));
         final DeleteHistory actual = optActual.orElseThrow(IllegalArgumentException::new);
 

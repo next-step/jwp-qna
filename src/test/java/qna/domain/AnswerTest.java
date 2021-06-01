@@ -1,26 +1,21 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static qna.domain.QuestionTest.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
-public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, Q1, "Answers Contents2");
+class AnswerTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -28,11 +23,36 @@ public class AnswerTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    private Answer answer1;
+    private Answer answer2;
+
+    private Question question1;
+    private Question question2;
+
+    private User user1;
+    private User user2;
+
+    @BeforeEach
+    void setup() {
+        user1 = new User("id1", "password1", "name1", "email1");
+        user2 = new User("id2", "password2", "name2", "email2");
+        entityManager.persist(user1);
+        entityManager.persist(user2);
+
+        question1 = new Question("title1", "contents1", user1);
+        question2 = new Question("title2", "contents2", user2);
+        entityManager.persist(question1);
+        entityManager.persist(question2);
+
+        answer1 = new Answer(user1, question1, "Answers Contents1");
+        answer2 = new Answer(user2, question2, "Answers Contents2");
+    }
+
     @DisplayName("Entity 데이터를 DB에 저장하는 테스트")
     @Test
     void save() {
         // given
-        final Answer actual = answerRepository.save(A1);
+        final Answer actual = answerRepository.save(answer1);
 
         // then
         assertAll(
@@ -44,7 +64,7 @@ public class AnswerTest {
     @Test
     void findById() {
         // given
-        final Answer expected = answerRepository.save(A1);
+        final Answer expected = answerRepository.save(answer1);
 
         // when
         final Optional<Answer> optAnswer = answerRepository.findById(expected.getId());
@@ -62,8 +82,8 @@ public class AnswerTest {
     @Test
     void count() {
         // given
-        answerRepository.save(A1);
-        answerRepository.save(A2);
+        answerRepository.save(answer1);
+        answerRepository.save(answer2);
 
         // when
         final long actual = answerRepository.count();
@@ -76,13 +96,13 @@ public class AnswerTest {
     @Test
     void findByIdAndDeletedFalse() {
         // given
-        final Answer savedAnswer = answerRepository.save(A1);
-        final Answer savedAnswer2 = answerRepository.save(A2);
+        final Answer savedAnswer = answerRepository.save(answer1);
+        final Answer savedAnswer2 = answerRepository.save(answer2);
         savedAnswer2.setDeleted(true);
 
         // when
-        final Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
-        final Optional<Answer> optionalAnswer2 = answerRepository.findByIdAndDeletedFalse(savedAnswer2.getId());
+        final Optional<Answer> optionalAnswer = answerRepository.findByWriterAndDeletedFalse(savedAnswer.getWriter());
+        final Optional<Answer> optionalAnswer2 = answerRepository.findByWriterAndDeletedFalse(savedAnswer2.getWriter());
 
         // then
         final Answer actual = optionalAnswer.orElseThrow(IllegalArgumentException::new);
@@ -96,14 +116,12 @@ public class AnswerTest {
     @Test
     void findByQuestionIdAndDeletedFalse() {
         // given
-        final Answer savedAnswer = answerRepository.save(A1);
-        savedAnswer.setQuestionId(Q1.getId());
-        final Answer savedAnswer2 = answerRepository.save(A2);
-        savedAnswer2.setQuestionId(Q1.getId());
+        final Answer savedAnswer = answerRepository.save(answer1);
+        final Answer savedAnswer2 = answerRepository.save(answer2);
         savedAnswer2.setDeleted(true);
 
         // when
-        final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(Q1.getId());
+        final List<Answer> actual = answerRepository.findByQuestionAndDeletedFalse(question1);
 
         // then
         assertAll(
@@ -117,7 +135,7 @@ public class AnswerTest {
     @Test
     void findAll() {
         // given
-        final List<Answer> answers = Arrays.asList(A1, A2);
+        final List<Answer> answers = Arrays.asList(answer1, answer2);
         final List<Answer> savedAnswers = answerRepository.saveAll(answers);
 
         // when
@@ -134,10 +152,10 @@ public class AnswerTest {
     @Test
     void delete() {
         // given
-        final Answer answer1 = answerRepository.save(A1);
-        final Answer answer2 = answerRepository.save(A2);
-        answerRepository.delete(answer1);
-        answerRepository.deleteById(answer2.getId());
+        final Answer savedAnswer1 = answerRepository.save(answer1);
+        final Answer savedAnswer2 = answerRepository.save(answer2);
+        answerRepository.delete(savedAnswer1);
+        answerRepository.deleteById(savedAnswer2.getId());
 
         // when
         final long actual = answerRepository.count();
