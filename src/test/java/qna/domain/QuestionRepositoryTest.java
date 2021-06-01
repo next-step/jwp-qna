@@ -36,4 +36,24 @@ class QuestionRepositoryTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+
+    @Test
+    void update() {
+        Question expected = QuestionTest.Q1;
+        Question saved = questions.save(expected);
+
+        saved.setContents("Question Contents Changed");
+        questions.flush();
+    }
+
+    @Test
+    void delete() {
+        Question expected = QuestionTest.Q1;
+        Question saved = questions.save(expected);
+
+        questions.delete(saved);
+        questions.flush();
+    }
+
+
 }
