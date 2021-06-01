@@ -3,7 +3,6 @@ package qna.domain.answer;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,18 +11,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Where;
-import org.springframework.lang.NonNull;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.BaseEntity;
-import qna.domain.Question;
 import qna.domain.User;
-import qna.domain.answer.Contents;
+import qna.domain.question.Question;
 
 @Entity
 @Where(clause = "deleted = false")

@@ -14,6 +14,8 @@ import qna.domain.deletehistory.ContentId;
 import qna.domain.deletehistory.ContentType;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.deletehistory.DeleteHistoryService;
+import qna.domain.question.Question;
+import qna.domain.question.QuestionRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

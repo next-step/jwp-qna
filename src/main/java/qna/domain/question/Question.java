@@ -1,6 +1,7 @@
-package qna.domain;
+package qna.domain.question;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -14,6 +15,8 @@ import javax.persistence.ManyToOne;
 import org.springframework.lang.NonNull;
 
 import qna.CannotDeleteException;
+import qna.domain.BaseEntity;
+import qna.domain.User;
 import qna.domain.answer.Answer;
 
 @Entity
@@ -23,11 +26,11 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+    @Embedded
+    private Title title;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id",
@@ -37,19 +40,23 @@ public class Question extends BaseEntity {
 
     @NonNull
     @Column(nullable = false)
-    private boolean deleted = false;
+    private Deleted deleted = new Deleted(false);
+
+    protected Question() { }
 
     public Question(String title, String contents) {
-        this(null, title, contents);
+        this(null, new Title(title), new Contents(contents));
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, Title title, Contents contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
     }
 
-    protected Question() { }
+    public Question(Long id, String title, String contents) {
+        this(id, new Title(title), new Contents(contents));
+    }
 
     public Question writeBy(User writer) {
         this.writer = writer;
@@ -73,22 +80,15 @@ public class Question extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.value == true;
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        this.deleted = new Deleted(deleted);
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", contents='" + contents + '\'' +
-            ", writerId=" + writer +
-            ", deleted=" + deleted +
-            '}';
+    public void setDeleted(Deleted deleted) {
+        this.deleted = deleted;
     }
 
     public void markDeleteWhenUserOwner(User user) throws CannotDeleteException {

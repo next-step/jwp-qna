@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.question;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import qna.CannotDeleteException;
+import qna.domain.User;
+import qna.domain.UserTest;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);

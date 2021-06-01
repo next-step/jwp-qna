@@ -11,11 +11,14 @@ import qna.domain.*;
 import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
 import qna.domain.answer.Contents;
-import qna.domain.answer.Deleted;
 import qna.domain.deletehistory.ContentId;
 import qna.domain.deletehistory.ContentType;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.deletehistory.DeleteHistoryService;
+import qna.domain.question.Question;
+import qna.domain.question.QuestionRepository;
+import qna.domain.question.QuestionTest;
+import qna.domain.question.Title;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.answer;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -12,10 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import qna.domain.User;
+import qna.domain.UserRepository;
 import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
 import qna.domain.answer.Contents;
 import qna.domain.answer.Deleted;
+import qna.domain.question.Question;
+import qna.domain.question.QuestionRepository;
 
 @DirtiesContext
 @DataJpaTest
