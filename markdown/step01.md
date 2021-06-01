@@ -251,12 +251,12 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
     - [x] 1-2.[gradle-checkstyle](https://naver.github.io/hackday-conventions-java/#checkstyle) 적용
     - [x] 1-3.[IntelliJ](https://naver.github.io/hackday-conventions-java/#_intellij) 적용
     - [x] 1-4.[Github](https://naver.github.io/hackday-conventions-java/#_github) 적용
-- [ ] 2.학습
-    - [ ] 2-1. Hands-on
-    - [ ] 2-2. 
+- [x] 2.학습
+    - [x] 2-1. Hands-on JPA 정리
+    - [x] 2-2. Hands-on JPA Test code 작성
 - [ ] 3.분석 및 설계
-    - [ ] 3-1.step01.md 작성
-    - [ ] 3-2.도메인 주도 설계 이미지 수정
+    - [x] 3-1.step01.md 초안 작성
+    - [ ] 3-2.객체 관계 이미지 만들기
 - [ ] 4.구현
     - [ ] 4-1.Context
         - [ ] 4-1-1.`Value Object` & `Aggregate`

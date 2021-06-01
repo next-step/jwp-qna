@@ -328,6 +328,21 @@ public class Line {
 ```
 
 ```java
+public interface LineRepository extends JpaRepository<Line, Long> {
+}
+```
+
+```java
+class StationRepositoryTest {
+	@Autowired
+	private StationRepository stations;
+	@Autowired
+	private LineRepository lines;
+	...
+}
+```
+
+```java
 @Entity
 @Table(name = "station")
 public class Station {
@@ -590,7 +605,7 @@ where
     stations0_.line_id=1
 ```
 
-### 1.7.5. 연관 관계의 주인
+#### 1.7.4.2 연관 관계의 주인
 
 - 엄밀히 이야기하면 객체에는 양방향 연관 관계라는 것이 없다.
 - 서로 다른 단방향 연관 관계 2개를 양방향인 것처럼 보이게 할 뿐이다.
@@ -603,7 +618,7 @@ where
 
 > :exclamation: 데이터베이스 테이블의 다대일, 일대다 관계에서는 항상 다 쪽이 외래 키를 가진다.
 
-#### 1.7.5.1. 실습
+#### 1.7.4.3. 실습
 
 - 저장에 대한 테스트를 해보자.
 
@@ -652,9 +667,9 @@ values
     (null, '2호선')
 ```
 
-> 
+> :exclamation: 연관 관계의 주인이 아닌 곳에 입력된 값은 외래 키에 영향을 주지 않는다.
 
-### 1.7.6. 연관 관계 편의 메서드
+#### 1.7.4.4. 연관 관계 편의 메서드
 
 - 양방향 연관 관계는 결국 양쪽 다 신경 써야 한다.
 
@@ -682,13 +697,15 @@ public void addStation(Station station) {
 
 > :exclamation: 양방향 매핑 시에는 무한 루프에 빠지지 않게 조심해야 한다.
 
-### 1.7.7. 연관 관계 편의 메서드 작성 시 주의 사항
+#### 1.7.4.5. 연관 관계 편의 메서드 작성 시 주의 사항
 
 ```java
 station.setLine(line1);
 station.setLine(line2);
 boolean contains = line1.getStations().contains(station); // true
 ```
+
+### 1.7.5. 일대다 단방향 연관 관계
 
 ```java
 @Entity
@@ -708,6 +725,8 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @Column
     private String name;
 
     @OneToMany // (1)
@@ -722,14 +741,14 @@ public class Member {
    - 일대다(1:N) 관계라는 매핑 정보
 2. `@JoinColumn`
    - `favorite`의 외래 키
-3. 사용자 객체는 `favorites` 필드로 지하철역 객체와 연관 관계를 맺는다.
+3. 사용자 객체는 `favorites` 필드로 즐겨찾기 객체와 연관 관계를 맺는다.
    - `Member` -> `Favorite`: 가능
    - `Favorite` -> `Member`: 불가능
    - `member` -> `favorite`: 가능
    - `favorite` -> `member`: 가능
    - **사용자와 즐겨찾기는 단방향 관계다.**
 
-#### 1.7.7.1. 실습
+#### 1.7.5.1. 실습
 
 - 콘솔에 실행되는 테이블 생성 DDL을 출력해 보자.
 
@@ -752,7 +771,7 @@ alter table favorite
    references member
 ```
 
-#### 1.7.7.2. 실습
+#### 1.7.5.2. 실습
 
 - 저장에 대한 테스트를 해 보자.
 
@@ -789,13 +808,13 @@ where
     id=1
 ```
 
-### 1.7.8. 일대다 단방향 매핑의 단점
+#### 1.7.5.3. 일대다 단방향 매핑의 단점
 
 - 매핑한 객체가 관리하는 외래 키가 다른 테이블에 있다.
 - 연관 관계 처리를 위한 UPDATE SQL을 추가로 실행해야 한다.
 - 일대다 단방향 매핑보다는 다대일 양방향 매핑을 권장한다.
 
-### 1.7.9. 일대일 연관 관계
+### 1.7.6. 일대일 연관 관계
 - 일대일 관계는 그 반대도 일대일 관계다.
 - 일대일 관계는 주 테이블이나 대상 테이블 둘 중 어느 곳이나 외래 키를 가질 수 있기 때문에 **외래 키를 어느 곳에 두어야 하는지 고민을 해야 한다.**
    - `station`이 주 테이블이고 `line_station`이 대상 테이블이라고 가정한다.
@@ -812,12 +831,12 @@ class LineStation {
 }
 ```
 
-### 1.7.10. 주 테이블에 외래 키
+#### 1.7.6.1. 주 테이블에 외래 키
 
 - 주 테이블이 외래 키를 가지고 있으므로 주 테이블만 확인해도 대상 테이블과 연관 관계가 있는지 알 수 있다.
    - Station -> LineStation: 가능
    
-#### 1.7.10.1. 단방향 연관 관계
+##### 1.7.6.1.1. 단방향 연관 관계
 
 ```java
 @Entity
@@ -866,7 +885,7 @@ public class Station {
    - `station` -> `line_station`: 가능
    - `liline_stationne` -> `station`: 가능
 
-##### 1.7.10.1.1. 실습
+###### 1.7.6.1.1.1. 실습
 
 - 콘솔에 실행되는 테이블 생성 DDL을 출력해보자.
 
@@ -890,7 +909,7 @@ alter table station
    references line_station
 ```
 
-##### 1.7.10.1.2. 실습
+###### 1.7.6.1.1.2. 실습
 
 - 저장에 대한 테스트를 해보자.
 
@@ -919,7 +938,7 @@ values
 
 ```
 
-#### 1.7.10.2. 양방향 연관 관계
+##### 1.7.6.1.2. 양방향 연관 관계
 
 ```java
 @Entity
@@ -949,18 +968,18 @@ public class LineStation {
    - `station` -> `line_station`: 가능
    - `line_station` -> `station`: 가능
    
-### 1.7.11. 대상 테이블에 외래 키
+#### 1.7.6.2. 대상 테이블에 외래 키
 
 - 테이블 관계를 일대일에서 일대다로 변경할 때 테이블 구조를 그대로 유지할 수 있다.
    - **환승역을 고려해 본다.**
 
-#### 1.7.11.1. 단방향 연관 관계
+##### 1.7.6.2.1. 단방향 연관 관계
 
 - **이런 모양으로 매핑할 수 있는 방법이 없다.**
    - `Station` -> `LineStation`: 불가능
    - `LineStation` -> `Station`: 불가능
 
-#### 1.7.11.2. 양방향 연관 관계
+##### 1.7.6.2.2. 양방향 연관 관계
 
 ```java
 @Entity
@@ -1002,7 +1021,7 @@ public class Station {
 }
 ```
 
-##### 1.7.11.2.1. 실습
+###### 1.7.6.2.2.1. 실습
 
 - 콘솔에 실행되는 테이블 생성 DDL을 출력해보자.
 
@@ -1026,13 +1045,13 @@ alter table line_station
     references station
 ```
 
-### 1.7.12. 다대다 연관 관계
+### 1.7.7. 다대다 연관 관계
 
 - 관계형 데이터베이스는 정규화된 테이블 2개로 다대다 관계를 표현할 수 없다.
 - 보통 다대다 관계를 일대다, 다대일 관계로 풀어내는 연결 테이블을 사용한다.
 - **연결 테이블에 필드가 추가되면 더는 사용할 수 없다.**
 
-### 1.8. 더 하고 싶은 말
+## 1.8. 더 하고 싶은 말
 
 - 지연 로딩
 - CASCADE
