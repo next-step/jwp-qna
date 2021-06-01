@@ -3,6 +3,7 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Answers {
@@ -18,12 +19,12 @@ public class Answers {
     }
 
     public DeleteHistories delete(User loginUser, LocalDateTime deletedDt) throws CannotDeleteException {
-        DeleteHistories deleteHistories = DeleteHistories.create();
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
 
         for (Answer answer : answers) {
-            deleteHistories.addHistory(answer.delete(loginUser, deletedDt));
+            deleteHistories.add(answer.delete(loginUser, deletedDt));
         }
 
-        return deleteHistories;
+        return DeleteHistories.create(deleteHistories);
     }
 }
