@@ -1,0 +1,19 @@
+package qna.domain.wrapper;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
+public class Deleted {
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+}
