@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -88,6 +89,23 @@ public class Question extends BaseEntity {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Question question = (Question)o;
+		return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
+			question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer,
+			question.writer) && Objects.equals(answers, question.answers);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, title, contents, writer, deleted, answers);
+	}
+
+	@Override
 	public String toString() {
 		return "Question{" +
 			"id=" + id +
@@ -95,6 +113,7 @@ public class Question extends BaseEntity {
 			", contents='" + contents + '\'' +
 			", writer=" + writer +
 			", deleted=" + deleted +
+			", answers=" + answers +
 			'}';
 	}
 

@@ -92,4 +92,21 @@ public class Answer extends BaseEntity {
 	public void toWriter(User user) {
 		this.writer = user;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Answer answer = (Answer)o;
+		return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(question,
+			answer.question) && Objects.equals(writer, answer.writer) && Objects.equals(contents,
+			answer.contents);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, question, writer, contents, deleted);
+	}
 }
