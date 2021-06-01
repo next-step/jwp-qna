@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -7,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import qna.UnAuthorizedException;
 
@@ -17,14 +20,27 @@ public class User extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(length = 20, nullable = false)
+
+	@Column(name = "user_id", length = 20, nullable = false, unique = true)
 	private String userId;
-	@Column(length = 20, nullable = false)
+
+	@Column(name = "password", length = 20, nullable = false)
 	private String password;
-	@Column(length = 20, nullable = false)
+
+	@Column(name = "name", length = 20, nullable = false)
 	private String name;
-	@Column(length = 50)
+
+	@Column(name = "email", length = 50)
 	private String email;
+
+	@OneToMany(mappedBy = "writer")
+	private final List<Question> questions = new ArrayList<>();
+
+	@OneToMany(mappedBy = "writer")
+	private final List<Answer> answers = new ArrayList<>();
+
+	@OneToMany(mappedBy = "deletedBy")
+	private final List<DeleteHistory> deleteHistories = new ArrayList<>();
 
 	private User() {
 	}
@@ -54,6 +70,30 @@ public class User extends BaseEntity {
 		this.email = target.email;
 	}
 
+	public void addQuestion(Question question) {
+		question.toWriter(this);
+	}
+
+	public void addAnswer(Answer answer) {
+		answer.toWriter(this);
+	}
+
+	public void addDeleteHistory(DeleteHistory deleteHistory) {
+		deleteHistory.toDeletedBy(this);
+	}
+
+	public List<Question> getQuestions() {
+		return questions;
+	}
+
+	public List<Answer> getAnswers() {
+		return answers;
+	}
+
+	public List<DeleteHistory> getDeleteHistories() {
+		return deleteHistories;
+	}
+
 	private boolean matchUserId(String userId) {
 		return this.userId.equals(userId);
 	}
@@ -79,40 +119,20 @@ public class User extends BaseEntity {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getUserId() {
 		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
 	}
 
 	public String getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getEmail() {
 		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	@Override
@@ -123,7 +143,29 @@ public class User extends BaseEntity {
 			", password='" + password + '\'' +
 			", name='" + name + '\'' +
 			", email='" + email + '\'' +
+			", questions=" + questions +
+			", answers=" + answers +
+			", deleteHistories=" + deleteHistories +
 			'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		User user = (User)o;
+		return Objects.equals(id, user.id) && Objects.equals(userId, user.userId)
+			&& Objects.equals(password, user.password) && Objects.equals(name, user.name)
+			&& Objects.equals(email, user.email) && Objects.equals(questions, user.questions)
+			&& Objects.equals(answers, user.answers) && Objects.equals(deleteHistories,
+			user.deleteHistories);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, userId, password, name, email, questions, answers, deleteHistories);
 	}
 
 	private static class GuestUser extends User {

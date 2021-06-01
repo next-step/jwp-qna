@@ -23,33 +23,41 @@ public class AnswerRepositoryTest {
 	@Autowired
 	private AnswerRepository answerRepository;
 
-	private Answer expected;
-	private Answer saved;
+	@Autowired
+	private QuestionRepository questionRepository;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	private Answer answer;
 
 	@BeforeEach
 	void setup() {
-		this.expected = AnswerTest.A1;
-		this.saved = this.answerRepository.save(expected);
+		User user = new User("testUser", "testPassword", "testName", "testEmail");
+		Question question = new Question("questionTitle", "questionContents");
+		Question savedQuestion = this.questionRepository.save(question);
+		User savedUser = this.userRepository.save(user);
+		this.answer = this.answerRepository.save(new Answer(savedUser, savedQuestion, "answerContents"));
 	}
 
 	@Test
 	@DisplayName("answer 저장 확인")
 	void testSave() {
-		this.isEqualTo(expected, saved);
+		assertThat(this.answer.getId()).isNotNull();
 	}
 
 	@Test
 	@DisplayName("answer id 에 해당하는 엔티티가 삭제되지 않았으면 Answer entity 반환확인")
 	void tesst_findByIdAndDeleteFalse() {
-		Answer actual = this.answerRepository.findByIdAndDeletedFalse(saved.getId())
+		Answer actual = this.answerRepository.findByIdAndDeletedFalse(this.answer.getId())
 			.orElseThrow(() -> new EntityNotFoundException("아이디에 해당하는 엔티티가없음"));
-		this.isEqualTo(expected, actual);
+		this.isEqualTo(this.answer, actual);
 	}
 
 	@Test
 	void test_findByIdAndDeleteTrue() {
-		this.answerRepository.delete(saved);
-		Optional<Answer> answerOpt = this.answerRepository.findByIdAndDeletedFalse(saved.getId());
+		this.answerRepository.delete(this.answer);
+		Optional<Answer> answerOpt = this.answerRepository.findByIdAndDeletedFalse(answer.getId());
 
 		Assertions.assertThat(answerOpt.isPresent()).isFalse();
 	}
@@ -58,17 +66,17 @@ public class AnswerRepositoryTest {
 	@DisplayName("question id 에해당하는 answer 목록을 반환을 테스트합니다.")
 	void test_findByQuestionIdAndDeleteFalse() {
 		List<Answer> actual = this.answerRepository.findByQuestionIdAndDeletedFalse(
-			saved.getQuestionId());
+			answer.getQuestion().getId());
 
-		assertThat(actual).containsExactly(AnswerTest.A1);
+		assertThat(actual).containsExactly(this.answer);
 	}
 
 	private void isEqualTo(Answer expected, Answer actual) {
 		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
+			() -> assertThat(actual.getId()).isEqualTo(expected.getId()),
 			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
-			() -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId()),
-			() -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
+			() -> assertThat(actual.getQuestion()).isEqualTo(expected.getQuestion()),
+			() -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
 			() -> assertThat(actual.getCreatedAt()).isNotNull(),
 			() -> assertThat(actual.getUpdatedAt()).isNotNull()
 		);
