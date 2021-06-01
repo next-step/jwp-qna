@@ -4,6 +4,7 @@ import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 import qna.domain.base.BaseEntity;
 import qna.domain.wrapper.Answers;
+import qna.domain.wrapper.Deleted;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -44,8 +45,8 @@ public class Question extends BaseEntity {
     @Column(name = "contents")
     private String contents;
 
-    @Column(name = "deleted", nullable = false)
-    private boolean deleted;
+    @Embedded
+    private Deleted deleted;
 
     protected Question() {}
 
@@ -59,6 +60,7 @@ public class Question extends BaseEntity {
         this.contents = contents;
         this.writer = writer;
         this.answers = new Answers();
+        this.deleted = new Deleted();
     }
 
     public boolean isOwner(User loginUser) {
@@ -71,7 +73,7 @@ public class Question extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public DeleteHistory deleteAndReturnDeleteHistory(User loginUser) {
@@ -107,7 +109,7 @@ public class Question extends BaseEntity {
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        this.deleted.setDeleted(deleted);
     }
 
     @Override
