@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,22 +45,23 @@ public class Answer extends BaseEntity {
 
     public Answer(final Long id, final User writer, final Question question, final String contents) {
         this.id = id;
-
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
-
-        this.writer = writer;
-        this.question = question;
         this.contents = contents;
+        this.writer = validWriter(writer);
+        this.question = validQuestion(question);
+    }
+
+    private User validWriter(final User writer) {
+        return Optional.ofNullable(writer)
+            .orElseThrow(UnAuthorizedException::new);
+    }
+
+    private Question validQuestion(final Question question) {
+        return Optional.ofNullable(question)
+            .orElseThrow(NotFoundException::new);
     }
 
     public boolean isOwner(final User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(final Question question) {
@@ -70,32 +72,16 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(final User writer) {
-        this.writer = writer;
     }
 
     public Long getQuestionId() {
         return question.getId();
     }
 
-    public void setQuestionId(final Long questionId) {
-        this.question.setId(questionId);
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(final String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
