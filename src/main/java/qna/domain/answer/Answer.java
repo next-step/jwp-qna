@@ -18,7 +18,7 @@ import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.BaseEntity;
-import qna.domain.User;
+import qna.domain.user.User;
 import qna.domain.question.Question;
 
 @Entity

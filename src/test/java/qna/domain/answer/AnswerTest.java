@@ -1,8 +1,6 @@
 package qna.domain.answer;
 
-import qna.domain.UserTest;
-import qna.domain.answer.Answer;
-import qna.domain.answer.Contents;
+import qna.domain.user.UserTest;
 import qna.domain.question.QuestionTest;
 
 public class AnswerTest {

@@ -149,11 +149,11 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
     - [x] title - String
     - [x] Contents - String
     - [x] deleted - Boolean
-  - [ ] User
-    - [ ] UserId - String
-    - [ ] Password - String
-    - [ ] name - String
-    - [ ] email - String
+  - [x] User
+    - [x] UserId - String
+    - [x] Password - String
+    - [x] name - String
+    - [x] email - String
 
 - [ ] 배열 대신 컬렉션 사용, 일급 컬렉션 사용
   - [ ] List\<Answer> - Answers

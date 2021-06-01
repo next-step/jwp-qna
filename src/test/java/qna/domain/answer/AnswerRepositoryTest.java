@@ -12,12 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import qna.domain.User;
-import qna.domain.UserRepository;
-import qna.domain.answer.Answer;
-import qna.domain.answer.AnswerRepository;
-import qna.domain.answer.Contents;
-import qna.domain.answer.Deleted;
+import qna.domain.user.User;
+import qna.domain.user.UserRepository;
 import qna.domain.question.Question;
 import qna.domain.question.QuestionRepository;
 
