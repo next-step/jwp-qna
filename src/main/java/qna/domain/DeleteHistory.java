@@ -81,10 +81,6 @@ public class DeleteHistory {
         return contentId;
     }
 
-    public void setContentId(Long contentId) {
-        this.contentId = contentId;
-    }
-
     public ContentType getContentType() {
         return contentType;
     }

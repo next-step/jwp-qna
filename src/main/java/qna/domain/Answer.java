@@ -14,12 +14,15 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseTimeEntity {
+
+    private static final String CHECK_ANSWER_AUTHORITY = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,10 +64,6 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
-    }
-
     public void toQuestion(Question question) {
         question.addAnswer(this);
         this.question = question;
@@ -72,10 +71,6 @@ public class Answer extends BaseTimeEntity {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Question getQuestion() {
@@ -94,12 +89,16 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public User getWriter() {
         return writer;
+    }
+
+    public DeleteHistory deleteByOwner(User loginUser) throws CannotDeleteException {
+        if (!writer.equals(loginUser)) {
+            throw new CannotDeleteException(CHECK_ANSWER_AUTHORITY);
+        }
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer);
     }
 
     @Override
@@ -112,4 +111,5 @@ public class Answer extends BaseTimeEntity {
             ", deleted=" + deleted +
             '}';
     }
+
 }

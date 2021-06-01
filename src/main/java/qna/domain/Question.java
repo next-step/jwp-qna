@@ -2,6 +2,8 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,9 +18,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
+
 @Entity
 @Table(name = "question")
 public class Question extends BaseTimeEntity {
+
+    private static final String CHECK_AUTHORITY = "질문을 삭제할 권한이 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,16 +79,8 @@ public class Question extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
@@ -97,16 +95,42 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public User getWriter() {
         return writer;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public List<DeleteHistory> deleteByOwner(User loginUser) throws CannotDeleteException {
+        validateAuthority(loginUser);
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        if (null != answers) {
+            deleteHistories.addAll(deleteAllAnswerByOwner(loginUser));
+        }
+
+        this.deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer));
+
+        return deleteHistories;
+    }
+
+    private void validateAuthority(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(CHECK_AUTHORITY);
+        }
+    }
+
+    private List<DeleteHistory> deleteAllAnswerByOwner(User loginUser) {
+        return answers.stream().map(wrap(answer -> answer.deleteByOwner(loginUser))).collect(Collectors.toList());
+    }
+
+    public static <T, R, E extends Exception> Function<T, R> wrap(ExceptionFunction<T, R, E> function) {
+        return arg -> {
+            try {
+                return function.apply(arg);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        };
     }
 
     @Override
@@ -119,4 +143,5 @@ public class Question extends BaseTimeEntity {
             ", deleted=" + deleted +
             '}';
     }
+
 }
