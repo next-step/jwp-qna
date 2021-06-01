@@ -12,6 +12,10 @@ import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
 import qna.domain.answer.Contents;
 import qna.domain.answer.Deleted;
+import qna.domain.deletehistory.ContentId;
+import qna.domain.deletehistory.ContentType;
+import qna.domain.deletehistory.DeleteHistory;
+import qna.domain.deletehistory.DeleteHistoryService;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -75,7 +79,7 @@ class QnaServiceTest {
         qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
-        assertThat(answer.deleted()).isEqualTo(new Deleted(true));
+        assertThat(answer.deleted()).isTrue();
         verifyDeleteHistories();
     }
 
@@ -93,8 +97,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
+                new DeleteHistory(ContentType.QUESTION, new ContentId(question.getId()), question.getWriter(), LocalDateTime.now()),
+                new DeleteHistory(ContentType.ANSWER, new ContentId(answer.getId()), answer.getWriter(), LocalDateTime.now())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

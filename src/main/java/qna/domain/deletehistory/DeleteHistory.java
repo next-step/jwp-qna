@@ -1,8 +1,9 @@
-package qna.domain;
+package qna.domain.deletehistory;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -14,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import qna.domain.User;
+
 @Entity
 public class DeleteHistory {
 
@@ -24,7 +27,8 @@ public class DeleteHistory {
     @Enumerated(value = EnumType.STRING)
     private ContentType contentType;
 
-    private Long contentId;
+    @Embedded
+    private ContentId contentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id",
@@ -33,7 +37,7 @@ public class DeleteHistory {
 
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, ContentId contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;

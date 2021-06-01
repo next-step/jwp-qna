@@ -143,8 +143,8 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
   - [x] Answer
     - [x] contents - String
     - [x] deleted - Boolean
-  - [ ] DeleteHistory
-    - [ ] contentId - Long
+  - [x] DeleteHistory
+    - [x] contentId - Long
   - [ ] Question
     - [ ] title - String
     - [ ] Contents - String

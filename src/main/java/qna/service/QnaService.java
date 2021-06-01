@@ -10,6 +10,10 @@ import qna.domain.*;
 import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
 import qna.domain.answer.Deleted;
+import qna.domain.deletehistory.ContentId;
+import qna.domain.deletehistory.ContentType;
+import qna.domain.deletehistory.DeleteHistory;
+import qna.domain.deletehistory.DeleteHistoryService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -49,10 +53,10 @@ public class QnaService {
         }
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, writer, LocalDateTime.now()));
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, new ContentId(questionId), writer, LocalDateTime.now()));
         for (Answer answer : answers) {
             answer.setDeleted(new Deleted(true));
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, new ContentId(answer.getId()), answer.getWriter(), LocalDateTime.now()));
         }
         deleteHistoryService.saveAll(deleteHistories);
     }
