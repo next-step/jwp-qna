@@ -10,7 +10,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.Where;
+
 @Entity
+@Where(clause = "deleted = false")
 public class Question extends BaseEntity {
 
 	@Column(name = "title", length = 100)
