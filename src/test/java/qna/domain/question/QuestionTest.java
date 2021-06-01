@@ -27,7 +27,7 @@ public class QuestionTest {
         User notOwnerUser = UserTest.JAVAJIGI;
 
         assertThat(question.isDeleted()).isFalse();
-        assertThatThrownBy(() -> question.markDeleteWhenUserOwner(notOwnerUser))
+        assertThatThrownBy(() -> question.deletedBy(notOwnerUser))
             .isInstanceOf(CannotDeleteException.class)
         .hasMessageContaining("질문을 삭제할 권한이 없습니다.");
     }
@@ -36,7 +36,7 @@ public class QuestionTest {
     void Owner가_질문을_삭제하면_mark_가_표시된다() throws Exception {
         assertThat(question.isDeleted()).isFalse();
 
-        question.markDeleteWhenUserOwner(owner);
+        question.deletedBy(owner);
 
         assertThat(question.isDeleted()).isTrue();
     }

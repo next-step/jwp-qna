@@ -1,5 +1,6 @@
 package qna.domain.answer;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -15,9 +16,12 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Where;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.BaseEntity;
+import qna.domain.deletehistory.ContentType;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.user.User;
 import qna.domain.question.Question;
 
@@ -94,4 +98,12 @@ public class Answer extends BaseEntity {
     public void setDeleted(boolean deleted) {
         this.setDeleted(new Deleted(deleted));
     }
+
+	public DeleteHistory deletedBy(User user) {
+        if (isOwner(user) == false) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, getId(), user, LocalDateTime.now());
+	}
 }

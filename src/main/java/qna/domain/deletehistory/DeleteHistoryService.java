@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DeleteHistoryService {
-    private DeleteHistoryRepository deleteHistoryRepository;
+    private final DeleteHistoryRepository deleteHistoryRepository;
 
     public DeleteHistoryService(DeleteHistoryRepository deleteHistoryRepository) {
         this.deleteHistoryRepository = deleteHistoryRepository;
@@ -20,7 +20,7 @@ public class DeleteHistoryService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void save(DeleteHistory deleteHistory) {
-        deleteHistoryRepository.save(deleteHistory);
+    public void saveAll(DeleteHistories deleteHistories) {
+        deleteHistoryRepository.saveAll(deleteHistories.getValue());
     }
 }

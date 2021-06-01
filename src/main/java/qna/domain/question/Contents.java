@@ -1,5 +1,7 @@
 package qna.domain.question;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
@@ -16,4 +18,19 @@ public class Contents {
 	}
 
 	protected Contents() { }
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof Contents))
+			return false;
+		Contents contents = (Contents)o;
+		return Objects.equals(value, contents.value);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(value);
+	}
 }

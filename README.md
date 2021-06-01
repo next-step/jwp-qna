@@ -157,12 +157,12 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
 - [x] 배열 대신 컬렉션 사용, 일급 컬렉션 사용
   - [x] List\<Answer> - Answers
 
-- [ ] deleteQuestion 리팩토링하기
+- [x] deleteQuestion 리팩토링하기
 
   - [x] `@Where(clause = "deleted = false")` 엔티티에 붙이기.
 
-  - [ ] Question 에 answer List 속성 추가하기
+  - [x] Question 에 answer List 속성 추가하기
 
-  - [ ] 
+  - [x] 속성 추가후, 도메인에서 answers 를 불러 올 수 있도록 수정
 
     

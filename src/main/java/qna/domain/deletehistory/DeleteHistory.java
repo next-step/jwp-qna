@@ -43,6 +43,10 @@ public class DeleteHistory {
         this.deletedBy = deletedBy;
         this.createDate = createDate;
     }
+
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+        this(contentType, new ContentId(contentId), deletedBy, createDate);
+    }
     // for jpa
     protected DeleteHistory() { }
 

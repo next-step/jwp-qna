@@ -1,23 +1,39 @@
 package qna.domain.answer;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import qna.CannotDeleteException;
+import qna.domain.deletehistory.DeleteHistories;
 import qna.domain.user.User;
 
 public class Answers {
 
-	List<Answer> value;
+	private final List<Answer> value;
 
 	public Answers(List<Answer> value) {
 		this.value = value;
 	}
 
-	public void markDeleteWhenUserOwner(User user) throws CannotDeleteException {
-		for (Answer answer : this.value) {
-			if (answer.isOwner(user) == false) {
-				throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-			}
-		}
+	public DeleteHistories deletedBy(User user) throws CannotDeleteException {
+		return new DeleteHistories(this.value.stream()
+			.map(answer -> answer.deletedBy(user))
+			.collect(Collectors.toList()));
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof Answers))
+			return false;
+		Answers answers = (Answers)o;
+		return Objects.equals(value, answers.value);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(value);
 	}
 }
