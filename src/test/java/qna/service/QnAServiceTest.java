@@ -9,12 +9,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.ContentType;
+import qna.domain.DateTimeStrategy;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
@@ -43,6 +45,9 @@ class QnAServiceTest {
     @Mock
     private DeleteHistoryService deleteHistoryService;
 
+    @Spy
+    private DateTimeStrategy dateTimeStrategy;
+
     @InjectMocks
     private QnAService qnAService;
 
@@ -54,6 +59,8 @@ class QnAServiceTest {
 
     @BeforeEach
     public void setUp() {
+
+        dateTimeStrategy = () -> LocalDateTime.of(2021, 6, 1, 0, 0, 0);
 
         loginUser = new User(1L, "loginUser", "pwd", "name1", "email");
         otherUser = new User(2L, "loginUser", "pwd", "name1", "email");
@@ -113,7 +120,7 @@ class QnAServiceTest {
     public void delete_이미_삭제된_질문() throws CannotDeleteException {
 
         Question deletedQuestion = new Question(2L, "title", "contents").writeBy(loginUser);
-        deletedQuestion.delete(loginUser);
+        deletedQuestion.delete(loginUser, dateTimeStrategy);
 
         when(questionRepository.findById(eq(deletedQuestion.getId())))
             .thenReturn(Optional.of(deletedQuestion));

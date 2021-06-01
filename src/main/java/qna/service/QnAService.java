@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
+import qna.domain.DateTimeStrategy;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.User;
@@ -23,12 +24,17 @@ public class QnAService {
     private final DeleteHistoryService deleteHistoryService;
     private final UserRepository userRepository;
 
+    private final DateTimeStrategy dateTimeStrategy;
+
     public QnAService(QuestionRepository questionRepository,
                       DeleteHistoryService deleteHistoryService,
-                      UserRepository userRepository) {
+                      UserRepository userRepository,
+                      DateTimeStrategy dateTimeStrategy) {
+
         this.questionRepository = questionRepository;
         this.deleteHistoryService = deleteHistoryService;
         this.userRepository = userRepository;
+        this.dateTimeStrategy = dateTimeStrategy;
     }
 
     @Transactional
@@ -43,6 +49,6 @@ public class QnAService {
             userRepository.findById(loginUserId)
                           .orElseThrow(() -> new NotFoundException(MESSAGE_USER_NOT_FOUND));
 
-        deleteHistoryService.saveAll(question.delete(loginUser));
+        deleteHistoryService.saveAll(question.delete(loginUser, dateTimeStrategy));
     }
 }

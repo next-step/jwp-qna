@@ -101,18 +101,20 @@ public class Question extends BaseEntity implements Serializable {
         return deleted;
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser, DateTimeStrategy dateTimeStrategy)
+        throws CannotDeleteException {
+
         verifyDeletedQuestion();
         verifyDeletePermission(loginUser);
         verifyHasOtherUserAnswer();
 
-        return delete();
+        return delete(dateTimeStrategy);
     }
 
-    private List<DeleteHistory> delete() {
+    private List<DeleteHistory> delete(DateTimeStrategy dateTimeStrategy) {
 
         this.deleted = true;
-        LocalDateTime deleteTime = LocalDateTime.now();
+        LocalDateTime deleteTime = dateTimeStrategy.now();
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(DeleteHistory.of(this, deleteTime));

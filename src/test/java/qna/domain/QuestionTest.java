@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
@@ -14,6 +16,13 @@ import static qna.domain.UserTest.SANJIGI;
 public class QuestionTest {
     public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
     public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(SANJIGI);
+
+    private DateTimeStrategy dateTimeStrategy;
+
+    @BeforeEach
+    void setUp() {
+        dateTimeStrategy = () -> LocalDateTime.of(2021, 6, 1, 0, 0, 0);
+    }
 
     @DisplayName("writeBy로 질문자 설정 가능")
     @Test
@@ -72,7 +81,7 @@ public class QuestionTest {
     @DisplayName("로그인 사용자와 질문한 사람이 다르면 질문 삭제 불가")
     @Test
     void deleteFailTest01() {
-        assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> Q1.delete(SANJIGI));
+        assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> Q1.delete(SANJIGI, dateTimeStrategy));
     }
 
     @DisplayName("답변자 중 질문자와 다른 사람이 1명이라도 존재하면 질문 삭제 불가")
@@ -81,7 +90,7 @@ public class QuestionTest {
         Q1.addAnswer(new Answer(1L, JAVAJIGI, Q1, "answer1"));
         Q1.addAnswer(new Answer(2L, SANJIGI, Q1, "answer2"));
 
-        assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> Q1.delete(JAVAJIGI));
+        assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> Q1.delete(JAVAJIGI, dateTimeStrategy));
     }
 
     @DisplayName("이미 삭제된 질문을 삭제하려고 시도하면 예외 발생")
@@ -89,9 +98,9 @@ public class QuestionTest {
     void deleteFailTest03() throws CannotDeleteException {
 
         Question question = new Question(3L, "title", "contents").writeBy(JAVAJIGI);
-        question.delete(JAVAJIGI);
+        question.delete(JAVAJIGI, dateTimeStrategy);
 
-        assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> question.delete(JAVAJIGI));
+        assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> question.delete(JAVAJIGI, dateTimeStrategy));
     }
 
     @DisplayName("질문 삭제 성공 시 질문과 답변 모두 삭제")
@@ -103,7 +112,7 @@ public class QuestionTest {
         Q1.addAnswer(answer1);
         Q1.addAnswer(answer2);
 
-        Q1.delete(JAVAJIGI);
+        Q1.delete(JAVAJIGI, dateTimeStrategy);
         assertThat(Q1.getAnswers()).hasSize(0);
         assertThat(Q1.isDeleted()).isTrue();
         assertThat(answer1.isDeleted()).isTrue();
