@@ -5,13 +5,18 @@ import javax.persistence.*;
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(length = 100, nullable = false)
     private String title;
+
     private String contents;
+
     private Long writerId;
+
     private boolean deleted = false;
 
     protected Question(){}

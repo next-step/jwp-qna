@@ -8,9 +8,11 @@ import java.util.Date;
 
 @MappedSuperclass
 public abstract class BaseEntity {
+
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt = new Date();
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 }

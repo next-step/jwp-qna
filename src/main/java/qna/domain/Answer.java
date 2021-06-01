@@ -9,13 +9,18 @@ import java.util.Objects;
 @Table(name = "answer")
 @Entity
 public class Answer extends BaseEntity{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long writerId;
+
     private Long questionId;
+
     @Lob
     private String contents;
+
     private boolean deleted = false;
 
     protected Answer(){}
