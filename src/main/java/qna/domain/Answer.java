@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -55,6 +56,12 @@ public class Answer extends QnaAbstract {
         return this.writer.equals(writer);
     }
 
+    public void checkDeleteAnswerAuthority(User deleter) throws CannotDeleteException {
+        if (!isOwner(deleter)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
     public void toQuestion(Question question) {
         this.question = question;
     }
@@ -67,8 +74,8 @@ public class Answer extends QnaAbstract {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
+    public User getWriter() {
+        return this.writer;
     }
 
     public void setWriter(User writer) {
@@ -95,8 +102,9 @@ public class Answer extends QnaAbstract {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public DeleteHistory setDeleted(boolean deleted) {
         this.deleted = deleted;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
     public LocalDateTime getUpdateAt() {

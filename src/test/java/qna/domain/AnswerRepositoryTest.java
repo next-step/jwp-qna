@@ -39,7 +39,7 @@ public class AnswerRepositoryTest {
         answers.flush();
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriterId()).isEqualTo(AnswerTest.A1.getWriterId()),
+                () -> assertThat(actual.getWriter()).isEqualTo(AnswerTest.A1),
                 () -> assertThat(actual.isOwner(UserTest.JAVAJIGI)).isTrue(),
                 () -> assertThat(actual.getContents()).isEqualTo("Answers Contents1")
         );
@@ -58,13 +58,13 @@ public class AnswerRepositoryTest {
     @Test
     void update() {
         Answer actual = answers.save(AnswerTest.A1);
-        assertThat(actual.getWriterId()).isNotNull();
+        assertThat(actual.getWriter()).isNotNull();
         assertThat(actual.isOwner(UserTest.JAVAJIGI)).isTrue();
 
         actual.setWriter(UserTest.SANJIGI);
         Answer expected = answers.findByWriter(UserTest.SANJIGI);
         assertThat(expected.getUpdateAt()).isNotNull();
-        assertThat(expected.getWriterId()).isNotNull();
+        assertThat(expected.getWriter()).isNotNull();
         assertThat(expected.isOwner(UserTest.SANJIGI)).isTrue();
     }
 
@@ -72,7 +72,7 @@ public class AnswerRepositoryTest {
     @Test
     void delete() {
         Answer actual = answers.save(AnswerTest.A1);
-        assertThat(actual.getWriterId()).isNotNull();
+        assertThat(actual.getWriter()).isNotNull();
         assertThat(actual.isOwner(UserTest.JAVAJIGI)).isTrue();
 
         Answer expectedTrue = answers.findByWriterAndDeletedFalse(UserTest.JAVAJIGI);
