@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -45,5 +46,19 @@ public class AnswerTest {
 
         answer.setContents("gtgt");
         assertThat(actual.getContents()).isEqualTo("gtgt");
+    }
+
+    @Test
+    void base_entity_등록() {
+        LocalDateTime now = LocalDateTime.now();
+        Answer answer = new Answer("zz", false);
+        answerRepository.save(answer);
+
+        List<Answer> answers = answerRepository.findAll();
+
+        Answer actual = answers.get(0);
+
+        assertThat(actual.getCreatedAt()).isAfter(now);
+        assertThat(actual.getUpdatedAt()).isAfter(now);
     }
 }
