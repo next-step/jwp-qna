@@ -12,12 +12,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.Where;
 import org.springframework.lang.NonNull;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
+@Where(clause = "deleted = false")
 public class Answer extends BaseEntity {
 
     @Id
@@ -75,28 +77,8 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User writerId) {
-        this.writer = writerId;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
