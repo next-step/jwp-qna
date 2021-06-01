@@ -73,13 +73,9 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    private void delete() {
-        this.deleted = true;
-    }
-
     public DeleteHistory deleteAndReturnDeleteHistory(User loginUser) {
         checkPossibleDelete(loginUser);
-        delete();
+        setDeleted(true);
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
