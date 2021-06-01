@@ -66,8 +66,8 @@ alter table user
 
 ### Entity
 
-- [ ] Answer Entity 구현
-- [ ] DeleteHistory Entity 구현
+- [X] Answer Entity 구현
+- [X] DeleteHistory Entity 구현
 - [ ] Question Entity 구현
 - [ ] User Entity 구현
 - [X] created, updated 기능을 하는 BaseEntity 구현
