@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import qna.CannotDeleteException;
 import qna.NotFoundException;
-import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.Answers;
 import qna.domain.DeleteHistory;
@@ -40,12 +39,12 @@ public class QnaService {
 
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
-        Question question = findQuestionById(questionId);
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
-
         List<DeleteHistory> deleteHistories = new ArrayList<>();
+        Question question = findQuestionById(questionId);
         deleteHistories.add(question.deleteByWriter(loginUser));
-        deleteHistories.addAll(new Answers(answers).deleteAllByWriter(loginUser));
+
+        Answers answers = new Answers(answerRepository.findByQuestionIdAndDeletedFalse(question.getId()));
+        deleteHistories.addAll(answers.deleteAllByWriter(loginUser));
 
         deleteHistoryService.saveAll(deleteHistories);
     }
