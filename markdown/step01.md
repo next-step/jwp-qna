@@ -254,28 +254,21 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
 - [x] 2.학습
     - [x] 2-1. Hands-on JPA 정리
     - [x] 2-2. Hands-on JPA Test code 작성
-- [ ] 3.분석 및 설계
+- [x] 3.분석 및 설계
     - [x] 3-1.step01.md 초안 작성
-    - [ ] 3-2.객체 관계 이미지 만들기
 - [ ] 4.구현
-    - [ ] 4-1.Context
-        - [ ] 4-1-1.`Value Object` & `Aggregate`
-            - [ ] 4-1-1-1.
-                - [ ] 4-1-1-1-1.
-        - [ ] 4-1-2.`Entity`
-            - [ ] 4-1-2-1.
-                - [ ] 4-1-2-1-1.
-        - [ ] 4-1-3.`Exception`
-            - [ ] 4-1-3-1.
-    - [ ] 4-2.Refactoring
-        - [ ] 4-2-1.
-        - [ ] 4-2-2.
+    - [x] 4-1.엔티티 매핑
+        - [x] 4-1-1.`Answer`
+        - [x] 4-1-2.`DeleteHistory`
+        - [x] 4-1-3.`Question`
+        - [x] 4-1-4.`User`
+    - [ ] 4-2.테스트 코드 작성
+        - [ ] 4-2-1.`AnswerTest`
+        - [ ] 4-2-2.`DeleteHistoryTest`
+        - [ ] 4-2-3.`QuestionTest`
+        - [ ] 4-2-4.`UserTest`
 - [ ] 5.테스트
     - [ ] 5-1.Gradle build Success 확인
-        - [ ] 5-1-1.`Value Object` & `Aggregate`
-            - [ ] 5-1-1-1.
-        - [ ] 5-1-2.`Entity`
-            - [ ] 5-1-2-1.
     - [ ] 5-2.checkstyle 문제없는지 확인 (Java Convention)
     - [ ] 5-3.요구사항 조건들 충족했는지 확인
         - [ ] 5-3-1.< 2 Depth 규칙
