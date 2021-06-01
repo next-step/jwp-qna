@@ -10,9 +10,13 @@ import java.util.Objects;
 @Entity
 public class Answer extends BaseEntity{
 
-    private Long writerId;
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    @OneToOne
+    private User writer;
 
-    private Long questionId;
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @ManyToOne
+    private Question question;
 
     @Lob
     private String contents;
@@ -36,33 +40,25 @@ public class Answer extends BaseEntity{
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer != null && this.writer.getId().equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public String getContents() {
@@ -85,8 +81,8 @@ public class Answer extends BaseEntity{
     public String toString() {
         return "Answer{" +
                 "id=" + getId() +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writerId=" + this.writer.getId() +
+                ", questionId=" + this.question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
