@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnitUtil;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +29,9 @@ class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private EntityManagerFactory factory;
+
     private User javajigiUser;
     private User sanjigiUser;
     private Question firstQuestion;
@@ -33,20 +39,47 @@ class AnswerRepositoryTest {
     private Answer firstAnswer;
     private Answer secondAnswer;
     private List<Answer> answers;
+    private PersistenceUnitUtil entityUtil;
 
     @BeforeEach
     public void BeforeEach() {
+        this.entityUtil = factory.getPersistenceUnitUtil();
         this.javajigiUser = User.copy(UserTest.JAVAJIGI);
         this.sanjigiUser = User.copy(UserTest.SANJIGI);
         userRepository.saveAll(Arrays.asList(this.javajigiUser, this.sanjigiUser));
 
         this.firstQuestion = Question.copy(QuestionTest.Q1);
         this.secondQuestion = Question.copy(QuestionTest.Q2);
-        questionRepository.saveAll(Arrays.asList(this.firstQuestion, this.secondQuestion));
+        questionRepository.saveAll(Arrays.asList(this.firstQuestion.writeBy(this.javajigiUser),
+                this.secondQuestion.writeBy(this.sanjigiUser)));
 
         this.firstAnswer = new Answer(this.javajigiUser, this.firstQuestion, AnswerTest.A1.getContents());
         this.secondAnswer = new Answer(this.sanjigiUser, this.firstQuestion, AnswerTest.A2.getContents());
         this.answers = Arrays.asList(this.firstAnswer, this.secondAnswer);
+    }
+
+    @Test
+    @DisplayName("지연로딩")
+    void lazy_loading() {
+        Answer lasyAnswer = repository.findById(100L).get();
+        assertThat(this.entityUtil.isLoaded(lasyAnswer, "question")).isFalse();
+        assertThat(this.entityUtil.isLoaded(lasyAnswer, "writer")).isFalse();
+
+        Question lazyQuestion = lasyAnswer.getQuestion();
+        assertThat(this.entityUtil.isLoaded(lasyAnswer, "question")).isFalse();
+
+        User questionWriter = lazyQuestion.getWriter();
+        assertThat(this.entityUtil.isLoaded(lasyAnswer, "question")).isTrue();
+        assertThat(this.entityUtil.isLoaded(questionWriter, "writer")).isFalse();
+
+        String name = questionWriter.getName();
+        assertThat(this.entityUtil.isLoaded(questionWriter, "writer")).isTrue();
+
+        User answerWriter = lasyAnswer.getWriter();
+        assertThat(this.entityUtil.isLoaded(lasyAnswer, "writer")).isFalse();
+
+        String answerWriterName = answerWriter.getName();
+        assertThat(this.entityUtil.isLoaded(lasyAnswer, "writer")).isTrue();
     }
 
     @Test
@@ -66,7 +99,7 @@ class AnswerRepositoryTest {
         repository.saveAll(this.answers);
 
         // when
-        List<Answer> resultAnswers = repository.findByQuestionAndDeletedFalse(this.firstQuestion);
+        List<Answer> resultAnswers = repository.findByQuestionIdAndDeletedFalse(this.firstQuestion.getId());
 
         // then
         assertThat(resultAnswers.size()).isEqualTo(2);
@@ -75,11 +108,14 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("ID 기준 deleted가 false인 대상 조회")
     void find_by_id_and_deleted_is_false() {
+        PersistenceUnitUtil util = factory.getPersistenceUnitUtil();
         // given
         repository.saveAll(this.answers);
 
         // when
         Optional<Answer> findAnswer = repository.findByIdAndDeletedFalse(this.firstAnswer.getId());
+
+        System.out.println(util.isLoaded(findAnswer.get(), "question"));
 
         // then
         assertThat(findAnswer.get()).isSameAs(this.firstAnswer);
@@ -92,8 +128,8 @@ class AnswerRepositoryTest {
         repository.saveAll(this.answers);
 
         // when
-        List<Answer> findAnswers = repository.findByQuestionAndContentsContaining(this.firstAnswer.getQuestion(),
-                "Content");
+        List<Answer> findAnswers = repository.findByQuestionIdAndContentsContaining(
+                this.firstAnswer.getQuestion().getId(), "Content");
 
         // then
         assertThat(findAnswers.size()).isEqualTo(2);
@@ -106,10 +142,10 @@ class AnswerRepositoryTest {
         repository.saveAll(this.answers);
 
         // when
-        List<Answer> findAnswers = repository.findByQuestionIsNotNull();
+        List<Answer> findAnswers = repository.findByQuestionIdIsNotNull();
 
         // then
-        assertThat(findAnswers.size()).isEqualTo(2);
+        assertThat(findAnswers.size()).isEqualTo(3);
     }
 
     @Test
@@ -119,7 +155,8 @@ class AnswerRepositoryTest {
         repository.saveAll(this.answers);
 
         // when
-        List<Answer> findAnswers = repository.findByWriterAndQuestion(this.javajigiUser, this.firstQuestion);
+        List<Answer> findAnswers = repository.findByWriterIdAndQuestionId(this.javajigiUser.getId(),
+                this.firstQuestion.getId());
 
         // then
         assertThat(findAnswers.size()).isEqualTo(1);

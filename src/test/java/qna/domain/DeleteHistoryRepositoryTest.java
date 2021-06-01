@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnitUtil;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +34,9 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private EntityManagerFactory factory;
+
     private User hagiUser;
     private User javajigiUser;
     private User sanjigiUser;
@@ -42,9 +48,11 @@ class DeleteHistoryRepositoryTest {
     private DeleteHistory secondDeleteHistory;
     private DeleteHistory thirdDeleteHistory;
     private List<DeleteHistory> deleteHistories;
+    private PersistenceUnitUtil entityUtil;
 
     @BeforeEach
     public void beforeEach() {
+        this.entityUtil = factory.getPersistenceUnitUtil();
         this.javajigiUser = User.copy(UserTest.JAVAJIGI);
         this.sanjigiUser = User.copy(UserTest.SANJIGI);
         this.hagiUser = User.copy(UserTest.HAGI);
@@ -66,6 +74,19 @@ class DeleteHistoryRepositoryTest {
                 this.hagiUser, LocalDateTime.now());
         this.deleteHistories = Arrays.asList(this.firstDeleteHistory, this.secondDeleteHistory,
                 this.thirdDeleteHistory);
+    }
+
+    @Test
+    @DisplayName("지연로딩")
+    void lazy_loading() {
+        DeleteHistory lazyDeleteHistory = repository.findById(100L).get();
+        assertThat(this.entityUtil.isLoaded(lazyDeleteHistory, "deletedByUser")).isFalse();
+
+        User lazyDeletedByUser = lazyDeleteHistory.getDeletedByUser();
+        assertThat(this.entityUtil.isLoaded(lazyDeleteHistory, "deletedByUser")).isFalse();
+
+        String name = lazyDeletedByUser.getName();
+        assertThat(this.entityUtil.isLoaded(lazyDeleteHistory, "deletedByUser")).isTrue();
     }
 
     @Test

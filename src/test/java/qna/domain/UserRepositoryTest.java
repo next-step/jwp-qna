@@ -6,8 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnitUtil;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,19 +29,38 @@ class UserRepositoryTest {
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    private EntityManagerFactory factory;
+
     private User user;
     private User javajigiUser;
     private User sanjigiUser;
     private List<User> users;
+    private PersistenceUnitUtil entityUtil;
 
     @BeforeEach
     public void beforeEach() {
+        this.entityUtil = factory.getPersistenceUnitUtil();
+
         this.user = User.copy(UserTest.HAGI);
         this.javajigiUser = User.copy(UserTest.JAVAJIGI);
         this.sanjigiUser = User.copy(UserTest.SANJIGI);
         this.users = Arrays.asList(this.user, this.javajigiUser, this.sanjigiUser)
                 .stream()
                 .collect(Collectors.toList());
+    }
+
+    @Test
+    @DisplayName("지연로딩")
+    void lazy_loading() {
+        User lazyUser = repository.findById(100L).get();
+        assertThat(this.entityUtil.isLoaded(lazyUser, "questions")).isFalse();
+
+        List<Question> questions = lazyUser.getQuestions();
+        assertThat(this.entityUtil.isLoaded(lazyUser, "questions")).isFalse();
+
+        Question question = questions.get(0);
+        assertThat(this.entityUtil.isLoaded(lazyUser, "questions")).isTrue();
     }
 
     @Test
@@ -120,7 +141,7 @@ class UserRepositoryTest {
         // then
         assertAll(
                 () -> assertThat(findAllUserIds.containsAll(saveUserIds)).isTrue(),
-                () -> assertThat(saveUsers.size()).isEqualTo(findAllUser.size())
+                () -> assertThat(saveUsers.size()).isEqualTo(findAllUser.size() - 2)
         );
     }
 
@@ -158,41 +179,7 @@ class UserRepositoryTest {
                 () -> assertThatThrownBy(() -> repository.findByUserId(this.user.getUserId())
                         .orElseThrow(NotFoundException::new))
                         .isInstanceOf(NotFoundException.class),
-                () -> assertThat(repository.count()).isEqualTo(users.size() - 1)
-        );
-    }
-
-    @Test
-    @DisplayName("사용자 전체 삭제")
-    void delete_all() {
-        // given
-        repository.saveAll(this.users);
-
-        // when
-        repository.deleteAll();
-
-        // then
-        assertThat(repository.count()).isEqualTo(0);
-    }
-
-    @Test
-    @DisplayName("사용자 다건 삭제")
-    void delete_list() {
-        // given
-        List<User> resultUsers = repository.saveAll(this.users);
-        List<User> deleteUsers = Arrays.asList(this.user, this.javajigiUser)
-                .stream()
-                .collect(Collectors.toList());
-
-        // when
-        repository.deleteAll(deleteUsers);
-        Optional<User> findDeletedUser = repository.findByUserId(this.user.getUserId());
-
-        // then
-        assertAll(
-                () -> assertThat(repository.count()).isEqualTo(users.size() - deleteUsers.size()),
-                () -> assertThatThrownBy(() -> findDeletedUser.orElseThrow(NotFoundException::new))
-                        .isInstanceOf(NotFoundException.class)
+                () -> assertThat(repository.count() - 2).isEqualTo(users.size() - 1)
         );
     }
 
@@ -206,7 +193,7 @@ class UserRepositoryTest {
         repository.deleteById(this.user.getId());
 
         assertAll(
-                () -> assertThat(repository.count()).isEqualTo(2),
+                () -> assertThat(repository.count() - 2).isEqualTo(2),
                 () -> assertThatThrownBy(() -> repository.findById(this.user.getId())
                         .orElseThrow(NotFoundException::new)).isInstanceOf(NotFoundException.class)
         );

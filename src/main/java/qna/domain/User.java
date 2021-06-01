@@ -44,7 +44,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "deletedByUser")
     private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {

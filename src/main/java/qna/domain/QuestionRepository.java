@@ -11,13 +11,13 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     Optional<Question> findByIdAndDeletedFalse(Long id);
 
-    List<Question> findByWriter(User writer);
+    List<Question> findByWriterId(Long writerId);
 
-    void deleteByWriterAndDeletedTrue(User writer);
+    void deleteByWriterIdAndDeletedTrue(Long writerId);
 
     List<Question> findByContentsContaining(String contents);
 
-    List<Question> findByWriterIn(Collection<User> writers);
+    List<Question> findByWriterIdIn(Collection<Long> writerIds);
 
-    List<Question> findByWriterOrderByIdDesc(User writer);
+    List<Question> findByWriterIdOrderByIdDesc(Long writerId);
 }
