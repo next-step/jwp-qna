@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class UserTest {
+public class UserRepositoryTest {
     public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
     public static final User INSUP = new User("insup", "password", "name", "insup@slipp.net");
