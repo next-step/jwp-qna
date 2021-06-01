@@ -1,8 +1,10 @@
-package qna.domain;
+package qna.domain.answer;
 
 import java.util.List;
 
 import qna.CannotDeleteException;
+import qna.domain.User;
+import qna.domain.answer.Answer;
 
 public class Answers {
 

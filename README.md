@@ -140,9 +140,9 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
 - [x] 맵핑관계는 지연로딩으로 변경
 - [ ] `@Where(clause = "deleted = false")` 엔티티에 붙이기.
 - [ ] 모든 원시 값과 문자열 포장
-  - [ ] Answer
-    - [ ] contents - String
-    - [ ] deleted - Boolean
+  - [x] Answer
+    - [x] contents - String
+    - [x] deleted - Boolean
   - [ ] DeleteHistory
     - [ ] contentId - Long
   - [ ] Question

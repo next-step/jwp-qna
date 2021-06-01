@@ -12,6 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import qna.domain.answer.Answer;
+import qna.domain.answer.AnswerRepository;
+import qna.domain.answer.Contents;
+import qna.domain.answer.Deleted;
+
 @DirtiesContext
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -36,7 +41,7 @@ class AnswerRepositoryTest {
 		Question question = new Question("title", "Contents");
 		savedQuestion = questionRepository.save(question);
 
-		answer = new Answer(savedUser, savedQuestion, "Answer Contents");
+		answer = new Answer(savedUser, savedQuestion, new Contents("Answer Contents"));
 	}
 
 	@Test
@@ -48,7 +53,7 @@ class AnswerRepositoryTest {
 			.orElseThrow(EntityNotFoundException::new);
 		assertThat(answer1).isEqualTo(save);
 
-		save.deleted(true);
+		save.setDeleted(new Deleted(true));
 
 		assertThatThrownBy(() -> repository.findByIdAndDeletedFalse(save.getId())
 			.orElseThrow(EntityNotFoundException::new)).isInstanceOf(EntityNotFoundException.class);
@@ -57,8 +62,8 @@ class AnswerRepositoryTest {
 	@Test
 	void findByQuestionIdAndDeletedFalseTest() {
 
-		Answer answer = new Answer(savedUser, savedQuestion, "Answer Contents");
-		Answer answer2 = new Answer(savedUser, savedQuestion, "another Contents");
+		Answer answer = new Answer(savedUser, savedQuestion, new Contents("Answer Contents"));
+		Answer answer2 = new Answer(savedUser, savedQuestion, new Contents("another Contents"));
 
 		repository.save(answer);
 		repository.save(answer2);

@@ -1,9 +1,10 @@
-package qna.domain;
+package qna.domain.answer;
 
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -19,6 +20,10 @@ import org.springframework.lang.NonNull;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.BaseEntity;
+import qna.domain.Question;
+import qna.domain.User;
+import qna.domain.answer.Contents;
 
 @Entity
 @Where(clause = "deleted = false")
@@ -38,18 +43,17 @@ public class Answer extends BaseEntity {
         foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @NonNull
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted = new Deleted(false);
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer(User writer, Question question, Contents contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, Contents contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -83,11 +87,11 @@ public class Answer extends BaseEntity {
         return writer;
     }
 
-    public boolean isDeleted() {
-        return deleted;
+    public boolean deleted() {
+        return deleted.value == true;
     }
 
-    public void deleted(boolean deleted) {
+    public void setDeleted(Deleted deleted) {
         this.deleted = deleted;
     }
 

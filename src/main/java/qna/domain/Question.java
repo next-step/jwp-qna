@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import org.springframework.lang.NonNull;
 
 import qna.CannotDeleteException;
+import qna.domain.answer.Answer;
 
 @Entity
 public class Question extends BaseEntity {
