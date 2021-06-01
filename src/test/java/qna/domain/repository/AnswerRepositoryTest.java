@@ -1,8 +1,6 @@
 package qna.domain.repository;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.entity.*;
@@ -47,6 +45,13 @@ public class AnswerRepositoryTest {
         answer1 = answerRepository.save(AnswerTest.ANSWER_OF_JAVAJIGI);
         answer2 = answerRepository.save(AnswerTest.ANSWER_OF_SANJIGI);
     }
+
+    /*@AfterEach
+    public void end() {
+        questionRepository.deleteAll();
+        answerRepository.deleteAll();
+        userRepository.deleteAll();
+    }*/
 
     @Test
     public void exists() {

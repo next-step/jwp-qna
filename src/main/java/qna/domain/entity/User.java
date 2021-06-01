@@ -50,8 +50,11 @@ public class User extends TraceDate {
     @Column(length = 20, nullable = false)
     private String userId;
 
-    @OneToMany(mappedBy = "writer")
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+    private List<Answer> answers = new ArrayList<>();
 
     public boolean isGuestUser() {
         return false;

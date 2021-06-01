@@ -46,7 +46,7 @@ public class Question extends TraceDate implements Deleteable {
     @JoinColumn(name = "writer_id")
     private User writer;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     List<Answer> answers = new ArrayList<>();
 
     public Question(String title, String contents) {
