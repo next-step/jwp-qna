@@ -51,7 +51,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("Question delete 테스트 - 정상 삭제일 경우")
-    void delete() {
+    void delete() throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
 
         assertAll(
