@@ -92,4 +92,8 @@ public class DeleteHistory {
 	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
+
+	public void toDeletedBy(User user) {
+		this.deletedBy = user;
+	}
 }

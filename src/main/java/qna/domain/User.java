@@ -39,6 +39,9 @@ public class User extends BaseEntity {
 	@OneToMany(mappedBy = "writer")
 	private final List<Answer> answers = new ArrayList<>();
 
+	@OneToMany(mappedBy = "deletedBy")
+	private final List<DeleteHistory> deleteHistories = new ArrayList<>();
+
 	private User() {
 	}
 
@@ -75,12 +78,20 @@ public class User extends BaseEntity {
 		answer.toWriter(this);
 	}
 
+	public void addDeleteHistory(DeleteHistory deleteHistory) {
+		deleteHistory.toDeletedBy(this);
+	}
+
 	public List<Question> getQuestions() {
 		return questions;
 	}
 
 	public List<Answer> getAnswers() {
 		return answers;
+	}
+
+	public List<DeleteHistory> getDeleteHistories() {
+		return deleteHistories;
 	}
 
 	private boolean matchUserId(String userId) {
