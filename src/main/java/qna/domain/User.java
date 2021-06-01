@@ -9,7 +9,7 @@ import java.util.Objects;
 @Table(name = "user", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id"})
 })
-public class User extends BaseDate{
+public class User extends BaseDate {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -29,7 +29,7 @@ public class User extends BaseDate{
     @Column(name = "email", columnDefinition = "varchar(50)")
     private String email;
 
-    public User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -46,11 +46,11 @@ public class User extends BaseDate{
 
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException("로그인 한 계정만 수정이 가능 합니다.");
         }
 
         if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException("패스워드를 잘 못 입력하셨습니다.");
         }
 
         this.name = target.name;
@@ -74,48 +74,24 @@ public class User extends BaseDate{
                 email.equals(target.email);
     }
 
-    public boolean isGuestUser() {
-        return false;
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @Override
@@ -127,6 +103,10 @@ public class User extends BaseDate{
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    public boolean isGuestUser() {
+        return false;
     }
 
     private static class GuestUser extends User {
