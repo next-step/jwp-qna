@@ -1,22 +1,15 @@
 package qna.domain;
 
-import lombok.Builder;
 import qna.UnAuthorizedException;
-import qna.common.BaseTimeEntity;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Table(name = "user")
 @Entity
 
-public class User extends BaseTimeEntity {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(length = 50)
     private String email;

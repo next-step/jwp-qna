@@ -7,9 +7,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.AnswerTest.A1;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
@@ -26,32 +23,16 @@ class DeleteHistoryRepositoryTest {
     private UserRepository users;
 
     @Test
-    public void save() {
-        //User user = new User(1L, "cjs", "password", "name", "chajs226@gmail.com");
-        //Question question = new Question("initTestTitle", "initTestContents");
-        //Answer answer = new Answer(user, question, "initTestContents");
+    public void save_테스트() {
+        User writer_saved = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        Question question_saved = questions.save(new Question("title1", "contents1").writeBy(writer_saved));
+        Answer answer = new Answer(writer_saved, question_saved, "Answers Contents1");
+        answer.toQuestion(question_saved);
+        Answer answer_saved = answers.save(answer);
 
-        User user = users.save(JAVAJIGI);
-        Question question = questions.save(Q1);
-        A1.toQuestion(question);
-        Answer answer = answers.save(A1);
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, answer_saved.getId(), writer_saved, LocalDateTime.now());
+        DeleteHistory actual = deleteHistories.save(deleteHistory);
 
-        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, answer.getId(), user, LocalDateTime.now());
-        DeleteHistory actual = deleteHistories.save(expected);
-
-        assertThat(actual.getId()).isNotNull();
-    }
-
-    @Test
-    public void findByContentId() {
-        User user = new User(1L, "cjs", "password", "name", "chajs226@gmail.com");
-        Question question = new Question("initTestTitle", "initTestContents");
-        Answer answer = new Answer(user, question, "initTestContents");
-        Answer expectedAnswer = answers.save(answer);
-
-        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, answer.getId(), user, LocalDateTime.now());
-        DeleteHistory actual = deleteHistories.save(expected);
-
-        assertThat(actual.getContentId()).isEqualTo(expectedAnswer.getId());
+        assertThat(actual.getContentId()).isEqualTo(answer_saved.getId());
     }
 }

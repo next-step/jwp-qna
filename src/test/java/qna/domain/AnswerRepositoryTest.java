@@ -1,10 +1,5 @@
 package qna.domain;
-
-import org.hibernate.classic.Lifecycle;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,5 +25,14 @@ class AnswerRepositoryTest {
         A1.toQuestion(question);
         Answer actual = answers.save(A1);
         assertThat(actual.getContents()).isEqualTo("Answers Contents1");
+    }
+
+    @Test
+    public void isOwner_테스트() {
+        User user = users.save(JAVAJIGI);
+        Question question = questions.save(Q1);
+        A1.toQuestion(question);
+        Answer actual = answers.save(A1);
+        assertThat(actual.isOwner(JAVAJIGI)).isTrue();
     }
 }

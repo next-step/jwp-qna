@@ -1,7 +1,5 @@
 package qna.domain;
 
-import qna.common.BaseTimeEntity;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -20,16 +18,13 @@ public class DeleteHistory {
 
     private LocalDateTime createDate = LocalDateTime.now();
 
-//    private Long deletedById;
     @ManyToOne
     @JoinColumn(name = "deleted_by_id")
     private User user;
 
-    //public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
     public DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        //this.deletedById = deletedById;
         this.user = user;
         this.createDate = createDate;
     }
@@ -56,7 +51,6 @@ public class DeleteHistory {
 
     @Override
     public int hashCode() {
-        //return Objects.hash(id, contentType, contentId, deletedById);
         return Objects.hash(id, contentType, contentId, user);
     }
 

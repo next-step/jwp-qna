@@ -19,14 +19,20 @@ class UserRepositoryTest {
     }
 
     @Test
-    public void save() {
-        User actual = users.save(UserTest.JUNSEONG);
-        assertThat(actual.getId()).isNotNull();
+    public void save_테스트() {
+        User user_saved = users.save(UserTest.JUNSEONG);
+        assertThat(user_saved.getId()).isNotNull();
     }
 
     @Test
-    public void findById() {
+    public void findById_테스트() {
         User actual = users.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
         assertThat(actual.getUserId()).isEqualTo("javajigi");
+    }
+
+    @Test
+    public void matchPassword_테스트() {
+        User actual = users.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
+        assertThat(actual.matchPassword("password")).isTrue();
     }
 }

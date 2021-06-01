@@ -1,18 +1,12 @@
 package qna.domain;
 
-import lombok.Builder;
-import qna.common.BaseTimeEntity;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Table(name = "question")
 @Entity
-public class Question extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Question extends BaseEntity {
     @Lob
     private String contents;
 
@@ -22,8 +16,7 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false, length = 100)
     private String title;
 
-    //private Long writerId;
-    @OneToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "writer_id")
     private User user;
 
@@ -38,16 +31,14 @@ public class Question extends BaseTimeEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
-  }
+    }
 
     public Question writeBy(User writer) {
-        //this.writerId = writer.getId();
         this.user = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        //return this.writerId.equals(writer.getId());
         return this.user.equals(writer);
     }
 
@@ -68,7 +59,6 @@ public class Question extends BaseTimeEntity {
     }
 
     public Long getWriterId() {
-        //return writerId;
         return user.getId();
     }
 
