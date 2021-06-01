@@ -17,8 +17,8 @@ public class Question extends BaseEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     @Lob
     private String contents;
@@ -41,6 +41,25 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        DeleteHistories deleteHistories = new DeleteHistories(deleteQuestion(loginUser));
+        return deleteHistories.merge(answers.deleteAll(loginUser));
+    }
+
+    private List<DeleteHistory> deleteQuestion(User loginUser) throws CannotDeleteException {
+        checkQuestionOwner(loginUser);
+        setDeleted(true);
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        return deleteHistories;
+    }
+
+    private void checkQuestionOwner(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public Question writeBy(User writer) {
@@ -90,41 +109,6 @@ public class Question extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public List<Answer> getAnswers() {
-        return new ArrayList<>(answers);
-    }
-
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> questionHistories = deleteQuestion(loginUser);
-        List<DeleteHistory> answersHistories = deleteAnswers(loginUser);
-        questionHistories.addAll(answersHistories);
-        return new ArrayList<>(questionHistories);
-    }
-
-    private List<DeleteHistory> deleteQuestion(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        checkQuestionOwner(loginUser);
-        setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
-        return deleteHistories;
-    }
-
-    private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : answers) {
-            answer.checkAnswerOwner(loginUser);
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
-        return deleteHistories;
-    }
-
-    private void checkQuestionOwner(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
     }
 
     @Override
