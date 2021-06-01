@@ -18,6 +18,8 @@ public class Answers {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
 
+    public Answers() {}
+
     public void add(Answer answer) {
         if (!answers.contains(answer)) {
             this.answers.add(answer);

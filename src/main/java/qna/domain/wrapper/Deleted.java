@@ -9,6 +9,8 @@ public class Deleted {
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
+    public Deleted() {}
+
     public boolean isDeleted() {
         return deleted;
     }
