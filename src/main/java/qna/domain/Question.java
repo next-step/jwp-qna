@@ -1,9 +1,11 @@
 package qna.domain;
 
-import com.sun.istack.NotNull;
 import org.springframework.lang.NonNull;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -18,8 +20,15 @@ public class Question extends BaseEntity{
 
     @Lob
     private String contents;
-    private Long writerId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {}
 
@@ -34,56 +43,45 @@ public class Question extends BaseEntity{
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        return this.writer.equals(writer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
+    }
+
+    public List<Answer> getAnswers() {
+        return this.answers;
+    }
+
+    public void addAnswers(Answer answer) {
+        answers.add(answer);
+        answer.toQuestion(this);
     }
 
     @Override
@@ -92,7 +90,7 @@ public class Question extends BaseEntity{
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }
