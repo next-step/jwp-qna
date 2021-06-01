@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -65,15 +67,15 @@ public class Answer extends BaseEntity {
 	}
 
 	public void toQuestion(Question question) {
+		if(Objects.nonNull(this.question)) {
+			this.question.getAnswers().remove(this);
+		}
 		this.question = question;
+		question.getAnswers().add(this);
 	}
 
 	public User getWriter() {
 		return this.writer;
-	}
-
-	public void setWriterId(User writer) {
-		this.writer = writer;
 	}
 
 	public Question getQuestion() {
@@ -96,4 +98,11 @@ public class Answer extends BaseEntity {
 		this.deleted = deleted;
 	}
 
+	public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+		if (!this.isOwner(loginUser)) {
+			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+		}
+		this.setDeleted(true);
+		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+	}
 }

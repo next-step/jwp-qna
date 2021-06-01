@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Date;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,11 +11,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
+
 @DataJpaTest
 public class QuestionRepositoryTest {
 
 	@Autowired
 	private QuestionRepository questions;
+
+	@Autowired
+	private AnswerRepository answers;
 
 	@Autowired
 	private UserRepository users;
@@ -71,11 +77,20 @@ public class QuestionRepositoryTest {
 
 	@Test
 	@DisplayName("Question 삭제 테스트")
-	void delete() {
+	void delete() throws CannotDeleteException {
 		Question question = new Question("title1", "contents1").writeBy(writer);
 		Question saved = questions.save(question);
-		questions.delete(saved);
+		Answer answer = new Answer(writer, question, "answer1 contents");
+		Answer answer2 = new Answer(writer, question, "answer2 contents");
+		saved.addAnswer(answers.save(answer));
+		saved.addAnswer(answers.save(answer2));
+		List<DeleteHistory> deleteHistories = saved.delete(writer);
 		questions.flush();
-		assertThat(questions.findById(saved.getId()).isPresent()).isFalse();
+		Question findQuestion = questions.findById(saved.getId()).get();
+		assertThat(findQuestion.getAnswers()).hasSize(2);
+		assertThat(findQuestion.isDeleted()).isTrue();
+		for (Answer answerInQuestion : findQuestion.getAnswers()) {
+			assertThat(answerInQuestion.isDeleted()).isTrue();
+		}
 	}
 }

@@ -1,6 +1,9 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,9 +12,12 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
+
+import qna.CannotDeleteException;
 
 @Entity
 @Where(clause = "deleted = 'false'")
@@ -27,6 +33,9 @@ public class Question extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
+
+	@OneToMany(mappedBy = "question")
+	private List<Answer> answers = new ArrayList<>();
 
 	@ColumnDefault("false")
 	@Column(name = "deleted", nullable = false)
@@ -56,15 +65,12 @@ public class Question extends BaseEntity {
 	}
 
 	public void addAnswer(Answer answer) {
+		answers.add(answer);
 		answer.toQuestion(this);
 	}
 
 	public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getTitle() {
@@ -87,10 +93,6 @@ public class Question extends BaseEntity {
 		return this.writer;
 	}
 
-	public void setWriter(User writer) {
-		this.writer = writer;
-	}
-
 	public boolean isDeleted() {
 		return deleted;
 	}
@@ -103,16 +105,16 @@ public class Question extends BaseEntity {
 		return createAt;
 	}
 
-	public void setCreateAt(Date createAt) {
-		this.createAt = createAt;
-	}
-
 	public Date getUpdateAt() {
 		return updateAt;
 	}
 
 	public void setUpdateAt(Date updateAt) {
 		this.updateAt = updateAt;
+	}
+
+	public List<Answer> getAnswers() {
+		return this.answers;
 	}
 
 	@Override
@@ -124,5 +126,18 @@ public class Question extends BaseEntity {
 			", writer=" + writer +
 			", deleted=" + deleted +
 			'}';
+	}
+
+	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+		if (!this.isOwner(loginUser)) {
+			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+		}
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		this.setDeleted(true);
+		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
+		for (Answer answer : this.answers) {
+			deleteHistories.add(answer.delete(loginUser));
+		}
+		return deleteHistories;
 	}
 }
