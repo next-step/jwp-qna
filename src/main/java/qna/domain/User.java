@@ -3,10 +3,13 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "user")
+@Table(name = "user",
+        uniqueConstraints = @UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = "user_id"))
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -26,7 +29,16 @@ public class User extends BaseEntity {
     @Column(length = 50)
     private String email;
 
-    private User() {
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "deletedBy")
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
+    private List<Question> questions = new ArrayList<>();
+
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -79,31 +91,19 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void name(String name) {
         this.name = name;
     }
 
@@ -111,8 +111,16 @@ public class User extends BaseEntity {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
     }
 
     @Override

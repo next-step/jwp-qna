@@ -5,7 +5,7 @@ import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-public class BaseEntity {
+public abstract class BaseEntity {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime  createdAt = LocalDateTime.now();
