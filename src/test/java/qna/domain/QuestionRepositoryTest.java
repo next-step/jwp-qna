@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,20 @@ import static qna.domain.QuestionTest.Q1;
 @DataJpaTest
 public class QuestionRepositoryTest {
     @Autowired
-    private QuestionRepository questions;
+    private AnswerRepository answers;
 
     @Autowired
-    private AnswerRepository answers;
+    private UserRepository users;
+
+    @Autowired
+    private QuestionRepository questions;
+
+    @BeforeEach
+    void setUp() {
+        users.save(UserTest.JAVAJIGI);
+        users.save(UserTest.SANJIGI);
+        users.flush();
+    }
 
     @DisplayName("Question 저장 테스트")
     @Test

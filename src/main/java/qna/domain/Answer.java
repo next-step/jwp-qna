@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -9,6 +10,7 @@ import java.util.Objects;
 
 @Table(name = "answer")
 @Entity
+@Where(clause = "deleted='false'")
 public class Answer extends QnaAbstract {
     @Lob
     @Column(name = "contents")
@@ -19,6 +21,7 @@ public class Answer extends QnaAbstract {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @Where(clause = "deleted = 'false'")
     private Question question;
 
     @OneToOne(fetch = FetchType.LAZY)

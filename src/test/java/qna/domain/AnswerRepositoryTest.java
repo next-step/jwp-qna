@@ -62,7 +62,7 @@ public class AnswerRepositoryTest {
         assertThat(actual.isOwner(UserTest.JAVAJIGI)).isTrue();
 
         actual.setWriter(UserTest.SANJIGI);
-        Answer expected = answers.findByWriterAndDeletedFalse(UserTest.SANJIGI);
+        Answer expected = answers.findByWriter(UserTest.SANJIGI);
         assertThat(expected.getUpdateAt()).isNotNull();
         assertThat(expected.getWriterId()).isNotNull();
         assertThat(expected.isOwner(UserTest.SANJIGI)).isTrue();
