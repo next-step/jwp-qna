@@ -18,12 +18,14 @@ class DeleteHistoryRepositoryTest {
 
 	private DeleteHistory answerDeleteHistory;
 
+	@Autowired
+	private UserRepository userRepository;
 	@BeforeEach
 	void setUp() {
 		LocalDateTime now = LocalDateTime.now();
-		long deletedById = 1L;
+		User deletedBy = userRepository.save(UserTest.JAVAJIGI);;
 		long contentId = 1L;
-		answerDeleteHistory = new DeleteHistory(ContentType.ANSWER, contentId, deletedById, now);
+		answerDeleteHistory = new DeleteHistory(ContentType.ANSWER, contentId, deletedBy, now);
 	}
 
 	@Test

@@ -1,43 +1,69 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
+
+import javax.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 
+@DirtiesContext
 @DataJpaTest
 class AnswerRepositoryTest {
 
 	@Autowired
 	private AnswerRepository repository;
 
-	private Answer save;
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private QuestionRepository questionRepository;
+
+	private Answer answer;
+	private User savedUser;
+	private Question savedQuestion;
 
 	@BeforeEach
 	void setUp() {
-		save = repository.save(AnswerTest.A1);
+		savedUser = userRepository.save(new User("len", "password", "name", "email"));
+
+		Question question = new Question("title", "Contents");
+		savedQuestion = questionRepository.save(question);
+
+		answer = new Answer(savedUser, savedQuestion, "Answer Contents");
 	}
 
 	@Test
-	@DisplayName("정답을 저장된 후, ID를 갖는다")
-	void saveTest() {
-		assertAll(
-			() -> assertThat(save).isNotNull(),
-			() -> assertThat(save.getId()).isNotNull()
-		);
+	void findByIdAndDeletedFalseTest() {
+
+		Answer save = repository.save(answer);
+
+		Answer answer1 = repository.findByIdAndDeletedFalse(save.getId())
+			.orElseThrow(EntityNotFoundException::new);
+		assertThat(answer1).isEqualTo(save);
+
+		save.deleted(true);
+
+		assertThatThrownBy(() -> repository.findByIdAndDeletedFalse(save.getId())
+			.orElseThrow(EntityNotFoundException::new)).isInstanceOf(EntityNotFoundException.class);
 	}
 
 	@Test
-	@DisplayName("정답을 저장된 후, 원본은 같다")
-	void findByIdTest() {
-		Answer find = repository.findById(save.getId()).orElse(null);
-		assertAll(
-			() -> assertThat(find).isNotNull(),
-			() -> assertThat(find).isEqualTo(save)
-		);
+	void findByQuestionIdAndDeletedFalseTest() {
+
+		Answer answer = new Answer(savedUser, savedQuestion, "Answer Contents");
+		Answer answer2 = new Answer(savedUser, savedQuestion, "another Contents");
+
+		repository.save(answer);
+		repository.save(answer2);
+
+		List<Answer> answers = repository.findByQuestionIdAndDeletedFalse(savedQuestion.getId());
+		assertThat(answers).containsExactly(answer, answer2);
 	}
 }
