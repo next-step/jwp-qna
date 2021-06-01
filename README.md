@@ -134,3 +134,32 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
 
 
 
+---
+
+- [ ] 사용되지 않는 getter / setter 제거함으로써 최대한 변경에 닫혀있도록 Entity 변경
+- [ ] 맵핑관계는 지연로딩으로 변경
+- [ ] `@Where(clause = "deleted = false")` 엔티티에 붙이기.
+- [ ] 모든 원시 값과 문자열 포장
+  - [ ] Answer
+    - [ ] contents - String
+    - [ ] deleted - Boolean
+  - [ ] DeleteHistory
+    - [ ] contentId - Long
+  - [ ] Question
+    - [ ] title - String
+    - [ ] Contents - String
+    - [ ] deleted - Boolean
+  - [ ] User
+    - [ ] UserId - String
+    - [ ] Password - String
+    - [ ] name - String
+    - [ ] email - String
+
+- [ ] 배열 대신 컬렉션 사용, 일급 컬렉션 사용
+  - [ ] List\<Answer> - Answers
+
+- [ ] deleteQuestion 리팩토링하기
+
+  - [ ] Question 에 answer List 추가하기
+
+    
