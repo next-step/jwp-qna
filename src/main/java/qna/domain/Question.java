@@ -2,6 +2,8 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,8 +26,8 @@ public class Question extends BaseEntity{
 	@Column(name = "contents")
 	private String contents;
 
-	@ManyToOne
-	@JoinColumn(name = "writer_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
 
 	@Column(name = "deleted", nullable = false)
