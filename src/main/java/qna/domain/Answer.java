@@ -72,11 +72,11 @@ public class Answer extends CreateAndUpdateTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
     }
 
-    public void setContents(final String contents) {
+    public void updateContents(final String contents) {
         this.contents = contents;
     }
 

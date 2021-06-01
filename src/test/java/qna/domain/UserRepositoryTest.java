@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -44,17 +45,14 @@ class UserRepositoryTest {
 	@Test
 	@DisplayName("update 테스트")
 	void updateTest() {
-		// given
-		String expectedName = "sanjigi";
-
 		// when
-		expected.setUserId(expectedName);
+		expected.update(expected, SANJIGI);
 
 		// then
 		assertThat(users.findById(expected.getId()))
 			.isPresent()
 			.get()
-			.extracting(value -> value.matchUserId(expectedName))
+			.extracting(value -> value.equalsNameAndEmail(SANJIGI))
 			.isEqualTo(true);
 	}
 

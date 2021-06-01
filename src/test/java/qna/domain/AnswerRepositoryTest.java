@@ -6,14 +6,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class AnswerRepositoryTest {
+
+	@Autowired
+	private TestEntityManager testEntityManager;
 
 	@Autowired
 	private AnswerRepository answers;
@@ -31,7 +36,7 @@ class AnswerRepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		writer = users.save(UserTest.JAVAJIGI);
+		writer = users.save(JAVAJIGI);
 		question = questions.save(new Question("title1", "contents1").writeBy(writer));
 		expected = answers.save(new Answer(writer, question, expectedContents));
 
@@ -57,11 +62,22 @@ class AnswerRepositoryTest {
 	@Test
 	@DisplayName("findById test")
 	void findByIdTest() {
-		// when
 		assertThat(answers.findById(expected.getId()))
 			.isPresent()
 			.get()
-			.isSameAs(expected); // then
+			.isSameAs(expected);
+	}
+
+	@Test
+	@DisplayName("연관관계 매핑이 된 User를 지연로딩을 통해 불러오는지 테스트")
+	void fetchLazyTest() {
+		testEntityManager.clear(); // cache clear
+
+		assertThat(answers.findById(expected.getId())) // select Answer
+			.isPresent()
+			.get()
+			.extracting(answer -> answer.getWriter()) // select User
+			.isEqualTo(writer);
 	}
 
 	@Test
@@ -71,7 +87,7 @@ class AnswerRepositoryTest {
 		String expectContents = "update";
 
 		// when
-		expected.setContents(expectContents);
+		expected.updateContents(expectContents);
 
 		// then
 		assertThat(answers.findByIdAndDeletedFalse(expected.getId()))
@@ -138,7 +154,7 @@ class AnswerRepositoryTest {
 		// given
 		User writer = users.save(SANJIGI);
 		Answer answer = new Answer(writer, question, "Answers Contents2");
-		answer.setDeleted(true);
+		answer.delete();
 		Answer notHaveAnswer = answers.save(answer);
 
 		// when

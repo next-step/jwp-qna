@@ -74,7 +74,6 @@ public class DeleteHistory {
         this.contentType = contentType;
     }
 
-
     public boolean isSameContent(ContentType contentType) {
         return this.contentType == contentType;
     }
@@ -93,5 +92,9 @@ public class DeleteHistory {
 
     public void toDeletedByUser(final User deletedByUser) {
         this.deletedByUser = deletedByUser;
+    }
+
+    public User getDeletedByUser() {
+        return this.deletedByUser;
     }
 }

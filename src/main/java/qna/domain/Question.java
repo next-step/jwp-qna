@@ -28,7 +28,7 @@ public class Question extends CreateAndUpdateTimeEntity {
     @Column(name = "deleted")
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
@@ -62,7 +62,7 @@ public class Question extends CreateAndUpdateTimeEntity {
         return id;
     }
 
-    public void setTitle(String title) {
+    public void updateTitle(String title) {
         this.title = title;
     }
 
@@ -70,8 +70,8 @@ public class Question extends CreateAndUpdateTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
     }
 
     public boolean isSameTitle(String title) {

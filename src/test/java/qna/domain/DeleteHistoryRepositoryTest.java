@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +18,9 @@ import static qna.domain.UserTest.SANJIGI;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class DeleteHistoryRepositoryTest {
+
+	@Autowired
+	private TestEntityManager testEntityManager;
 
 	@Autowired
 	private DeleteHistoryRepository deleteHistorys;
@@ -91,6 +95,18 @@ class DeleteHistoryRepositoryTest {
 			.isPresent()
 			.get()
 			.isSameAs(expected);
+	}
+
+	@Test
+	@DisplayName("연관관계 매핑이 된 deletedByUser를 지연 로딩을 통해 불러오는지 테스트")
+	void fetchLazyTest() {
+		testEntityManager.clear(); // cache clear
+
+		assertThat(deleteHistorys.findById(expected.getId())) // select deleteHistory
+			.isPresent()
+			.get()
+			.extracting(deleteHistory -> deleteHistory.getDeletedByUser()) // select user
+			.isEqualTo(deleteByUser);
 	}
 
 	@Test

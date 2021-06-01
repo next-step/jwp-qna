@@ -44,7 +44,7 @@ public class User extends CreateAndUpdateTimeEntity {
             throw new UnAuthorizedException();
         }
 
-        if (matchPassword(target.password) == false) {
+        if (matchPassword(loginUser.password) == false) {
             throw new UnAuthorizedException();
         }
 
@@ -75,10 +75,6 @@ public class User extends CreateAndUpdateTimeEntity {
 
     public Long getId() {
         return id;
-    }
-
-    public void setUserId(final String userId) {
-        this.userId = userId;
     }
 
     public String getUserId() {
