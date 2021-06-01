@@ -2,18 +2,15 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Table(name = "user")
 @Entity
-public class User {
+public class User extends QnaAbstract {
     public static final GuestUser GUEST_USER = new GuestUser();
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(name = "user_id", nullable = false, length = 20, unique = true)
     private String userId;
@@ -27,13 +24,7 @@ public class User {
     @Column(name = "email", length = 50)
     private String email;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {

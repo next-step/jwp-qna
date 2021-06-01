@@ -1,15 +1,12 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "question")
 @Entity
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Question extends QnaAbstract {
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
@@ -17,17 +14,19 @@ public class Question {
     @Column(name = "contents")
     private String contents;
 
-    @Column(name = "writer_id")
-    private Long writerId;
-
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "answer")
+    private List<Answer> answers = new ArrayList<>();
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -40,12 +39,16 @@ public class Question {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
+    public List<Answer> getAnswers() {
+        return this.answers;
+    }
+
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -77,11 +80,11 @@ public class Question {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return writer.getId();
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriterId(User writerId) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -98,7 +101,7 @@ public class Question {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }

@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -18,17 +20,25 @@ public class DeleteHistory {
     @Column(name = "content_id")
     private Long contentId;
 
-    @Column(name = "deleted_By_id")
-    private Long deletedById;
-
     @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedByUser;
+
+    protected DeleteHistory() {
+    }
+
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedByUser = deletedByUser;
         this.createDate = createDate;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
     }
 
     @Override
@@ -39,12 +49,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(deletedByUser, that.deletedByUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, deletedByUser);
     }
 
     @Override
@@ -53,7 +63,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + deletedByUser.getId() +
                 ", createDate=" + createDate +
                 '}';
     }

@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
-    Answer findByWriterIdAndDeletedFalse(Long writerId);
-    List<Answer> findByQuestionIdAndDeletedFalse(Long questionId);
+    Answer findByWriter(User writer);
+    Answer findByWriterAndDeletedFalse(User writer);
+    List<Answer> findByQuestionAndDeletedFalse(Question question);
     Optional<Answer> findByIdAndDeletedFalse(Long id);
 }
