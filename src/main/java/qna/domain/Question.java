@@ -1,20 +1,15 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Table(name = "question")
 @Entity
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+@Where(clause = "deleted = false")
+public class Question extends BaseEntity{
     @Lob
     private String contents;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -22,35 +17,27 @@ public class Question {
     @Column(length = 100, nullable = false)
     private String title;
 
-    private LocalDateTime updatedAt;
-
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id")
+    private User writerId;
 
     protected Question() {
         //JPA need no-arg constructor
     }
 
-    public Question(String contents, LocalDateTime createdAt, boolean deleted, String title, LocalDateTime updatedAt, Long writerId) {
+    public Question(String contents, boolean deleted, String title) {
         this.contents = contents;
-        this.createdAt = createdAt;
         this.deleted = deleted;
         this.title = title;
-        this.updatedAt = updatedAt;
-        this.writerId = writerId;
     }
 
     public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
-        this.id = id;
         this.title = title;
         this.contents = contents;
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writerId = writer;
         return this;
     }
 
@@ -60,14 +47,6 @@ public class Question {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -86,11 +65,11 @@ public class Question {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
+    public User getWriterId() {
         return writerId;
     }
 
-    public void setWriterId(Long writerId) {
+    public void setWriterId(User writerId) {
         this.writerId = writerId;
     }
 
@@ -102,14 +81,4 @@ public class Question {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
-    }
 }

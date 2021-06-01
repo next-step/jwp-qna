@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -9,37 +10,30 @@ import java.util.Objects;
 
 @Table(name = "answer")
 @Entity
-public class Answer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Where(clause = "deleted = false")
+public class Answer extends BaseEntity {
 
     @Lob
     private String contents;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
     private boolean deleted = false;
 
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
+    private Question questionId;
 
-    private LocalDateTime updatedAt;
-
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id")
+    private User writerId;
 
     protected Answer() {
         //JPA need no-arg constructor
     }
 
-    public Answer(String contents, LocalDateTime createdAt, boolean deleted, Long questionId, LocalDateTime updatedAt, Long writerId) {
+    public Answer(String contents, boolean deleted) {
         this.contents = contents;
-        this.createdAt = createdAt;
         this.deleted = deleted;
-        this.questionId = questionId;
-        this.updatedAt = updatedAt;
-        this.writerId = writerId;
     }
 
     public Answer(User writer, Question question, String contents) {
@@ -47,7 +41,7 @@ public class Answer {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -57,8 +51,8 @@ public class Answer {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writerId = writer;
+        this.questionId = question;
         this.contents = contents;
     }
 
@@ -67,30 +61,24 @@ public class Answer {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.questionId = question;
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
-    public Long getWriterId() {
+    public User getWriterId() {
         return writerId;
     }
 
-    public void setWriterId(Long writerId) {
+    public void setWriterId(User writerId) {
         this.writerId = writerId;
     }
 
-    public Long getQuestionId() {
+    public Question getQuestionId() {
         return questionId;
     }
 
-    public void setQuestionId(Long questionId) {
+    public void setQuestionId(Question questionId) {
         this.questionId = questionId;
     }
 
@@ -110,14 +98,5 @@ public class Answer {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
-    }
+
 }

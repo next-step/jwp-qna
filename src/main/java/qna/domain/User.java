@@ -2,21 +2,15 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Table(name = "user")
 @Entity
-public class User {
+public class User extends BaseEntity{
     public static final GuestUser GUEST_USER = new GuestUser();
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
 
     @Column(length = 50)
     private String email;
@@ -27,34 +21,18 @@ public class User {
     @Column(length = 20, nullable = false)
     private String password;
 
-    private LocalDateTime updatedAt;
-
-    @Column(length = 20, nullable = false, unique = true)
+    @Column(length = 20, nullable = false, unique = true, name = "user_id")
     private String userId;
 
     protected User() {
         //JPA need no-arg constructor
     }
 
-    public User(LocalDateTime createdAt, String email, String name, String password, LocalDateTime updatedAt, String userId) {
-        this.createdAt = createdAt;
+    public User(String email, String name, String password, String userId) {
         this.email = email;
         this.name = name;
         this.password = password;
-        this.updatedAt = updatedAt;
         this.userId = userId;
-    }
-
-    public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
-    }
-
-    public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
     }
 
     public void update(User loginUser, User target) {
@@ -91,14 +69,6 @@ public class User {
         return false;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
     }
@@ -131,16 +101,6 @@ public class User {
         this.email = email;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
 
     private static class GuestUser extends User {
         @Override

@@ -11,27 +11,31 @@ public class DeleteHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "content_id")
     private Long contentId;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "content_type")
     private ContentType contentType;
 
+    @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
-    private Long deletedById;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id")
+    private User deletedById;
 
     protected DeleteHistory() {
         //JPA need no-arg constructor
     }
 
-    public DeleteHistory(Long contentId, ContentType contentType, LocalDateTime createDate, Long deletedById) {
+    public DeleteHistory(Long contentId, ContentType contentType, LocalDateTime createDate) {
         this.contentId = contentId;
         this.contentType = contentType;
         this.createDate = createDate;
-        this.deletedById = deletedById;
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
