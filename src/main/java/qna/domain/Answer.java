@@ -89,4 +89,7 @@ public class Answer extends BaseEntity {
 		this.deleted = deleted;
 	}
 
+	public void toWriter(User user) {
+		this.writer = user;
+	}
 }

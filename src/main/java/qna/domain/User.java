@@ -36,6 +36,9 @@ public class User extends BaseEntity {
 	@OneToMany(mappedBy = "writer")
 	private final List<Question> questions = new ArrayList<>();
 
+	@OneToMany(mappedBy = "writer")
+	private final List<Answer> answers = new ArrayList<>();
+
 	private User() {
 	}
 
@@ -68,8 +71,16 @@ public class User extends BaseEntity {
 		question.toWriter(this);
 	}
 
+	public void addAnswer(Answer answer) {
+		answer.toWriter(this);
+	}
+
 	public List<Question> getQuestions() {
 		return questions;
+	}
+
+	public List<Answer> getAnswers() {
+		return answers;
 	}
 
 	private boolean matchUserId(String userId) {
