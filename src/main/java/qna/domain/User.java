@@ -2,6 +2,8 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -9,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -31,6 +34,15 @@ public class User extends BaseEntity {
 
 	@Column(name = "email", nullable = false, length = 50)
 	private String email;
+
+	@OneToMany(mappedBy = "writer")
+    private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "deletedUser")
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
 	protected User() {
 	}
