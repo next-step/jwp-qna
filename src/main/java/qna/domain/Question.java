@@ -1,11 +1,25 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.*;
+
+@Entity
+@Table(name = "T_question")
+public class Question extends BaseEntity {
+    @Id @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 100, nullable = false)
     private String title;
+
+    @Lob
     private String contents;
-    private Long writerId;
+
+    private Long userId;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    protected Question () { }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -17,56 +31,56 @@ public class Question {
         this.contents = contents;
     }
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+    public Question writeBy(Long userId) {
+        this.userId = userId;
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+    public boolean isOwner(User user) {
+        return this.userId.equals(user.id());
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void id(Long id) {
         this.id = id;
     }
 
-    public String getTitle() {
+    public String title() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void title(String title) {
         this.title = title;
     }
 
-    public String getContents() {
+    public String contents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void contents(String contents) {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public Long writerId() {
+        return userId;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void writer(Long userId) {
+        this.userId = userId;
     }
 
-    public boolean isDeleted() {
+    public boolean deleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void deleted(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -76,7 +90,7 @@ public class Question {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + userId +
                 ", deleted=" + deleted +
                 '}';
     }
