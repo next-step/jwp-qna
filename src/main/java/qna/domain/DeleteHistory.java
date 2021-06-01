@@ -53,6 +53,14 @@ public class DeleteHistory {
         return this.deletedByUser;
     }
 
+    public ContentType getContentType() {
+        return this.contentType;
+    }
+
+    public Long getContentId() {
+        return this.contentId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
