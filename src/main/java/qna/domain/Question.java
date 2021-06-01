@@ -10,10 +10,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
 
 @Entity
-@Where(clause = "deleted = false")
+@Where(clause = "deleted = 'false'")
 public class Question extends BaseEntity {
 
 	@Column(name = "title", length = 100)
@@ -27,8 +28,9 @@ public class Question extends BaseEntity {
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
 
+	@ColumnDefault("false")
 	@Column(name = "deleted", nullable = false)
-	private boolean deleted = false;
+	private boolean deleted;
 
 	protected Question() {
 

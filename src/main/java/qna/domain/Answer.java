@@ -10,20 +10,23 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
+@Where(clause = "deleted = 'false'")
 public class Answer extends BaseEntity {
 
 	@Lob
 	@Column(name = "contents")
 	private String contents;
 
+	@ColumnDefault("false")
 	@Column(name = "deleted", nullable = false)
-	private boolean deleted = false;
+	private boolean deleted;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
