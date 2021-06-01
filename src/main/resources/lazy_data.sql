@@ -1,0 +1,5 @@
+insert into user (id, created_at, updated_at, email, name, password, user_id) values (100, '2020-06-01 13:33:33', null, 'hi1@hi.com', 'jbh1', '123', 'jbh1')
+insert into user (id, created_at, updated_at, email, name, password, user_id) values (101, '2020-06-01 13:33:33', null, 'hi2@hi.com', 'jbh2', '123', 'jbh2')
+insert into question (id, created_at, updated_at, contents, deleted, title, writer_id) values (100, '2020-06-01 13:33:33', null, 'lazy test', true, 'lazy test', 100)
+insert into answer (id, created_at, updated_at, contents, deleted, question_id, writer_id) values (100, '2020-06-01 13:33:33', null, 'lazy test', true, 100, 101)
+insert into delete_history (id, content_id, content_type, create_date, deleted_by_id) values (100, 100, 'QUESTION', '2020-06-01 13:33:33', 100)

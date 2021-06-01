@@ -34,9 +34,9 @@ public class AnswerTest {
 
         // then
         assertAll(
-                () -> assertThat(A1.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
-                () -> assertThat(A2.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
-                () -> assertThat(A2.getQuestionId()).isNotEqualTo(QuestionTest.Q2.getId())
+                () -> assertThat(A1.getQuestion()).isSameAs(QuestionTest.Q1),
+                () -> assertThat(A2.getQuestion()).isSameAs(QuestionTest.Q1),
+                () -> assertThat(A2.getQuestion()).isNotSameAs(QuestionTest.Q2)
         );
     }
 }

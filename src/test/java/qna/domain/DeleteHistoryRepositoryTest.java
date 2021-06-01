@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnitUtil;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,30 +25,68 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository repository;
 
-    private User questionUser;
-    private User firstDeletedUser;
-    private User secondDeletedUser;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
+
+    @Autowired
+    private EntityManagerFactory factory;
+
+    private User hagiUser;
+    private User javajigiUser;
+    private User sanjigiUser;
+    private Question firstQuestion;
+    private Question secondQuestion;
+    private Answer firstAnswer;
+    private Answer secondAnswer;
     private DeleteHistory firstDeleteHistory;
     private DeleteHistory secondDeleteHistory;
     private DeleteHistory thirdDeleteHistory;
     private List<DeleteHistory> deleteHistories;
+    private PersistenceUnitUtil entityUtil;
 
     @BeforeEach
     public void beforeEach() {
-        this.firstDeletedUser = User.copy(UserTest.JAVAJIGI);
-        this.firstDeletedUser.setId(1L);
-        this.secondDeletedUser = User.copy(UserTest.SANJIGI);
-        this.secondDeletedUser.setId(2L);
-        this.questionUser = User.copy(UserTest.HAGI);
-        this.questionUser.setId(3L);
-        this.firstDeleteHistory = new DeleteHistory(ContentType.ANSWER, 1L,
-                this.firstDeletedUser.getId(), LocalDateTime.now());
-        this.secondDeleteHistory = new DeleteHistory(ContentType.ANSWER, 2L,
-                this.secondDeletedUser.getId(), LocalDateTime.now());
-        this.thirdDeleteHistory = new DeleteHistory(ContentType.QUESTION, 1L,
-                this.questionUser.getId(), LocalDateTime.now());
+        this.entityUtil = factory.getPersistenceUnitUtil();
+        this.javajigiUser = User.copy(UserTest.JAVAJIGI);
+        this.sanjigiUser = User.copy(UserTest.SANJIGI);
+        this.hagiUser = User.copy(UserTest.HAGI);
+        userRepository.saveAll(Arrays.asList(this.javajigiUser, this.sanjigiUser, this.hagiUser));
+
+        this.firstQuestion = Question.copy(QuestionTest.Q1);
+        this.secondQuestion = Question.copy(QuestionTest.Q2);
+        questionRepository.saveAll(Arrays.asList(this.firstQuestion, this.secondQuestion));
+
+        this.firstAnswer = new Answer(this.javajigiUser, this.firstQuestion, AnswerTest.A1.getContents());
+        this.secondAnswer = new Answer(this.sanjigiUser, this.firstQuestion, AnswerTest.A2.getContents());
+        answerRepository.saveAll(Arrays.asList(this.firstAnswer, this.secondAnswer));
+
+        this.firstDeleteHistory = new DeleteHistory(ContentType.ANSWER, this.firstAnswer.getId(),
+                this.javajigiUser, LocalDateTime.now());
+        this.secondDeleteHistory = new DeleteHistory(ContentType.ANSWER, this.secondAnswer.getId(),
+                this.sanjigiUser, LocalDateTime.now());
+        this.thirdDeleteHistory = new DeleteHistory(ContentType.QUESTION, this.firstQuestion.getId(),
+                this.hagiUser, LocalDateTime.now());
         this.deleteHistories = Arrays.asList(this.firstDeleteHistory, this.secondDeleteHistory,
                 this.thirdDeleteHistory);
+    }
+
+    @Test
+    @DisplayName("지연로딩")
+    void lazy_loading() {
+        DeleteHistory lazyDeleteHistory = repository.findById(100L).get();
+        assertThat(this.entityUtil.isLoaded(lazyDeleteHistory, "deletedByUser")).isFalse();
+
+        User lazyDeletedByUser = lazyDeleteHistory.getDeletedByUser();
+        assertThat(this.entityUtil.isLoaded(lazyDeleteHistory, "deletedByUser")).isFalse();
+
+        String name = lazyDeletedByUser.getName();
+        assertThat(this.entityUtil.isLoaded(lazyDeleteHistory, "deletedByUser")).isTrue();
     }
 
     @Test
@@ -65,7 +106,8 @@ class DeleteHistoryRepositoryTest {
         repository.save(this.firstDeleteHistory);
 
         // when
-        Optional<DeleteHistory> deleteHistory = repository.findByContentTypeAndContentId(ContentType.ANSWER, 1L);
+        Optional<DeleteHistory> deleteHistory = repository.findByContentTypeAndContentId(ContentType.ANSWER,
+                this.firstAnswer.getId());
 
         // then
         assertThat(deleteHistory.get()).isSameAs(this.firstDeleteHistory);
@@ -96,18 +138,5 @@ class DeleteHistoryRepositoryTest {
 
         // then
         assertThat(deleteHistories.size()).isEqualTo(3);
-    }
-
-    @Test
-    @DisplayName("삭제한 사용자 ID를 기준으로 목록 조회")
-    void find_by_deletedById() {
-        // given
-        repository.saveAll(this.deleteHistories);
-
-        // when
-        List<DeleteHistory> deleteHistories = repository.findByDeletedById(this.firstDeletedUser.getId());
-
-        // then
-        assertThat(deleteHistories.size()).isEqualTo(1);
     }
 }
