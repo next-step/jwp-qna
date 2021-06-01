@@ -14,7 +14,7 @@ public class Answers {
     }
 
     public void validateOwner(User loginUser) throws CannotDeleteException {
-        for(Answer answer : answers) {
+        for (Answer answer : answers) {
             answer.validateSameOwnerInAnswer(loginUser);
         }
     }
