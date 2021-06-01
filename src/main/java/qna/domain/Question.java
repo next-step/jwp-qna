@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 
 import org.springframework.lang.NonNull;
 
+import qna.CannotDeleteException;
+
 @Entity
 public class Question extends BaseEntity {
 
@@ -109,5 +111,12 @@ public class Question extends BaseEntity {
             ", writerId=" + writer +
             ", deleted=" + deleted +
             '}';
+    }
+
+    public void markDeleteWhenUserOwner(User user) throws CannotDeleteException {
+        if (this.isOwner(user) == false) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.setDeleted(true);
     }
 }
