@@ -60,7 +60,7 @@ public class Answer extends BaseEntity implements Serializable {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
+    boolean isOwner(User writer) {
         return this.writer.getId().equals(writer.getId());
     }
 
@@ -76,7 +76,7 @@ public class Answer extends BaseEntity implements Serializable {
         return question;
     }
 
-    public void replyTo(Question question) {
+    void replyTo(Question question) {
         this.question = question;
     }
 
@@ -88,7 +88,7 @@ public class Answer extends BaseEntity implements Serializable {
         return deleted;
     }
 
-    public DeleteHistory delete(LocalDateTime deleteTime) {
+    DeleteHistory delete(LocalDateTime deleteTime) {
         deleted = true;
         return DeleteHistory.ofAnswer(id, writer, deleteTime);
     }

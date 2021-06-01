@@ -21,21 +21,21 @@ public class Answers {
         return answers;
     }
 
-    public void add(Answer answer) {
+    void add(Answer answer) {
         answers.add(answer);
     }
 
-    public DeleteHistory delete(Answer answer, LocalDateTime deleteTime) {
+    DeleteHistory delete(Answer answer, LocalDateTime deleteTime) {
         answers.remove(answer);
         return answer.delete(deleteTime);
     }
 
-    public boolean hasOtherUserAnswer(User owner) {
+    boolean hasOtherUserAnswer(User owner) {
         return answers.stream()
                       .anyMatch(answer -> !answer.isOwner(owner));
     }
 
-    public DeleteHistories deleteAnswers(LocalDateTime deleteTime) {
+    DeleteHistories deleteAnswers(LocalDateTime deleteTime) {
 
         DeleteHistories deleteHistories =
             new DeleteHistories(answers.stream()
@@ -43,7 +43,6 @@ public class Answers {
                                        .collect(toList()));
 
         answers.clear();
-
         return deleteHistories;
     }
 }
