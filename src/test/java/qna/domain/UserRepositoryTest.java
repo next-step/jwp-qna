@@ -37,4 +37,23 @@ class UserRepositoryTest {
         User actual = users.findByUserId(expected.getUserId()).get();
         assertThat(actual).isEqualTo(expected);
     }
+
+
+    @Test
+    void update() {
+        User expected = UserTest.JAVAJIGI;
+        User saved = users.save(expected);
+
+        saved.setEmail("beck33333@naver.com");
+        users.flush();
+    }
+
+    @Test
+    void delete() {
+        User expected = UserTest.JAVAJIGI;
+        User saved = users.save(expected);
+
+        users.delete(saved);
+        users.flush();
+    }
 }
