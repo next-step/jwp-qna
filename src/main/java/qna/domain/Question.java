@@ -97,24 +97,28 @@ public class Question extends BaseEntity {
     }
 
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteQuestion(loginUser, deleteHistories);
-        deleteAnswers(loginUser, deleteHistories);
-        return new ArrayList<>(deleteHistories);
+        List<DeleteHistory> questionHistories = deleteQuestion(loginUser);
+        List<DeleteHistory> answersHistories = deleteAnswers(loginUser);
+        questionHistories.addAll(answersHistories);
+        return new ArrayList<>(questionHistories);
     }
 
-    private void deleteQuestion(User loginUser, List<DeleteHistory> deleteHistories) throws CannotDeleteException {
+    private List<DeleteHistory> deleteQuestion(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         checkQuestionOwner(loginUser);
         setDeleted(true);
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        return deleteHistories;
     }
 
-    private void deleteAnswers(User loginUser, List<DeleteHistory> deleteHistories) throws CannotDeleteException {
+    private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : answers) {
             answer.checkAnswerOwner(loginUser);
             answer.setDeleted(true);
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
         }
+        return deleteHistories;
     }
 
     private void checkQuestionOwner(User loginUser) throws CannotDeleteException {
