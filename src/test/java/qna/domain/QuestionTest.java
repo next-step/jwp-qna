@@ -5,9 +5,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import qna.CannotDeleteException;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
@@ -43,5 +47,24 @@ public class QuestionTest {
         question.updateContents(changedContents);
 
         assertThat(question.getContents()).isEqualTo(changedContents);
+    }
+
+    @Test
+    @DisplayName("Question delete 테스트 - 정상 삭제일 경우")
+    void delete() {
+        List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
+
+        assertAll(
+                () -> assertThat(question.isDeleted()),
+                () -> assertThat(deleteHistories).isNotEmpty()
+        );
+    }
+
+    @Test
+    @DisplayName("Question delete 테스트 - 질문 작성자와 제거하려는 유저가 다를 때 예외 발생")
+    void delete_throw_exception() {
+        assertThatThrownBy(() -> question.delete(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("질문을 삭제할 권한이 없습니다.");
     }
 }
