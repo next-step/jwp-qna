@@ -21,35 +21,62 @@ class UserRepositoryTest {
 	@Autowired
 	private UserRepository userRepository;
 
-	private User expected;
-	private User saved;
+	private User user;
+	private DeleteHistory deleteHistory;
+	private Answer answer;
+	private Question question;
 
 	@BeforeEach
 	void setup() {
-		this.expected = UserTest.JAVAJIGI;
-		this.saved = this.userRepository.save(expected);
+		User expectedUser = new User("testUser", "testPassword", "testName", "testEmail");
+		this.deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, user, null);
+		expectedUser.addDeleteHistory(this.deleteHistory);
+		this.question = new Question("questionTitle", "questionContents");
+		expectedUser.addQuestion(this.question);
+		this.answer = new Answer(expectedUser, this.question, "answerContents");
+		expectedUser.addAnswer(this.answer);
+
+		this.user = this.userRepository.save(expectedUser);
 	}
 
 	@Test
 	@DisplayName("user save 테스트")
 	void test_save() {
-		this.isEqualTo(expected, saved);
+		assertThat(this.user.getId()).isNotNull();
 	}
 
 	@Test
 	@DisplayName("userID로 user를 찾아 반환값 테스트")
 	void testFindById() {
-		User user = this.userRepository.findByUserId(saved.getUserId())
+		User user = this.userRepository.findByUserId(this.user.getUserId())
 			.orElseThrow(() -> new EntityNotFoundException("아이디에 해당하는 User를 찾을 수 없습니다."));
-		this.isEqualTo(saved, user);
+		this.isEqualTo(this.user, user);
 	}
 
 	@Test
 	@DisplayName("user를 제거하고 find시 빈값 테스트")
 	void testDeleteAndFindById() {
-		this.userRepository.delete(saved);
-		Optional<User> userOpt = this.userRepository.findByUserId(saved.getUserId());
+		this.userRepository.delete(this.user);
+		Optional<User> userOpt = this.userRepository.findByUserId(this.user.getUserId());
 		assertThat(userOpt.isPresent()).isFalse();
+	}
+
+	@Test
+	@DisplayName("user의 deleteHistory 목록을 반환")
+	void test_userDeleteHistory() {
+		assertThat(this.user.getDeleteHistories()).contains(this.deleteHistory);
+	}
+
+	@Test
+	@DisplayName("user의 question 목록을 반환")
+	void test_userQuestions() {
+		assertThat(this.user.getQuestions()).contains(this.question);
+	}
+
+	@Test
+	@DisplayName("user의 answer 목록을 반환")
+	void test_userAnswers() {
+		assertThat(this.user.getAnswers()).contains(this.answer);
 	}
 
 	private void isEqualTo(User expected, User actual) {

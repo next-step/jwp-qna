@@ -94,6 +94,10 @@ public class DeleteHistory {
 	}
 
 	public void toDeletedBy(User user) {
+		if (this.deletedBy != null) {
+			user.getDeleteHistories().remove(this);
+		}
 		this.deletedBy = user;
+		user.getDeleteHistories().add(this);
 	}
 }

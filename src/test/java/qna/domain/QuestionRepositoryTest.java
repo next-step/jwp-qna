@@ -25,37 +25,41 @@ class QuestionRepositoryTest {
 	@Autowired
 	private UserRepository userRepository;
 
-	private Question expected;
-	private Question saved;
+	private Question question;
+	private Answer answer;
 
 	@BeforeEach
 	void setup() {
 		User user = new User("testUser", "testPassword", "testName", "testEmail");
 		User savedUser = this.userRepository.save(user);
-		this.expected = new Question("questionTitle", "questionContents");
-		this.expected.writeBy(savedUser);
-		this.saved = this.questionRepository.save(expected);
+		Question question = new Question("questionTitle", "questionContents");
+		question.writeBy(savedUser);
+
+		this.answer = new Answer(savedUser, question, "answerContents");
+		question.addAnswer(this.answer);
+
+		this.question = this.questionRepository.save(question);
 	}
 
 	@Test
 	@DisplayName("question entity 저장 확인")
 	void test_save() {
-		this.isEqualTo(expected, saved);
+		assertThat(this.question.getId()).isNotNull();
 	}
 
 	@Test
 	@DisplayName("question id가 존재하면 questionEntity반환")
 	void test_findByIdAndDeletedFalse() {
-		Optional<Question> actualOpt = this.questionRepository.findByIdAndDeletedFalse(saved.getId());
+		Optional<Question> actualOpt = this.questionRepository.findByIdAndDeletedFalse(this.question.getId());
 		Question actual = actualOpt.orElseThrow(() -> new EntityNotFoundException("id에 해당하는 Question 을 찾을 수 없습니다."));
-		this.isEqualTo(expected, actual);
+		this.isEqualTo(this.question, actual);
 	}
 
 	@Test
 	@DisplayName("question id가 없는경우")
 	void test_findByIdAndDeletedTrue() {
-		this.questionRepository.delete(saved);
-		Optional<Question> questionOpt = this.questionRepository.findByIdAndDeletedFalse(saved.getId());
+		this.questionRepository.delete(this.question);
+		Optional<Question> questionOpt = this.questionRepository.findByIdAndDeletedFalse(this.question.getId());
 
 		assertThat(questionOpt.isPresent()).isFalse();
 	}
@@ -64,15 +68,21 @@ class QuestionRepositoryTest {
 	@DisplayName("question 목록이 반환 테스트")
 	void test_findByDeletedFalse() {
 		List<Question> actual = this.questionRepository.findByDeletedFalse();
-		assertThat(actual).contains(saved);
+		assertThat(actual).contains(this.question);
 	}
 
 	@Test
 	@DisplayName("question 목록이 없는경우")
 	void test_findByDeletedTrue() {
-		this.questionRepository.delete(saved);
+		this.questionRepository.delete(this.question);
 		List<Question> actual = this.questionRepository.findByDeletedFalse();
 		assertThat(actual).isEmpty();
+	}
+
+	@Test
+	@DisplayName("question의 answer 목록 반환 테스트")
+	void test_questionAnswers() {
+		assertThat(this.question.getAnswers()).contains(this.answer);
 	}
 
 	private void isEqualTo(Question expected, Question actual) {
