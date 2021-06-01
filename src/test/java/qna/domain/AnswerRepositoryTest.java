@@ -6,10 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static qna.domain.AnswerTest.A1;
 
 @DataJpaTest
@@ -43,13 +44,14 @@ class AnswerRepositoryTest {
         A1.setDeleted(false);
 
         //when
-        Optional<Answer> actual = answers.findByIdAndDeletedFalse(A1.getId());
+        Answer actual = answers.findByIdAndDeletedFalse(A1.getId())
+                .orElseThrow(EntityNotFoundException::new);
 
         //then
-        assertThat(actual.get()).isSameAs(A1);
+        assertThat(actual).isSameAs(A1);
     }
 
-    @DisplayName("답변 아이디에 해당하는 답변이 삭제 상태라면 빈 Optional 객체를 리턴한다.")
+    @DisplayName("답변 아이디에 해당하는 답변이 삭제 상태라면 EntityNotFoundException 을 발생시킨다.")
     @Test
     void findByIdAndDeletedFalseIfPresent() {
         //given
@@ -57,9 +59,8 @@ class AnswerRepositoryTest {
         A1.setDeleted(true);
 
         //when
-        Optional<Answer> actual = answers.findByIdAndDeletedFalse(A1.getId());
-
-        //then
-        assertThat(actual.isPresent()).isFalse();
+        assertThatThrownBy(() -> answers.findByIdAndDeletedFalse(A1.getId())
+                .orElseThrow(EntityNotFoundException::new))
+                .isInstanceOf(EntityNotFoundException.class); //then
     }
 }
