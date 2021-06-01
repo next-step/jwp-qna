@@ -93,6 +93,10 @@ public class Question extends BaseEntity {
         return new ArrayList<>(answers);
     }
 
+    public List<DeleteHistory> delete(User loginUser) {
+        return new ArrayList<>();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
