@@ -88,6 +88,6 @@ alter table question
 ```
 
 ### 기능 수정 사항
-* [ ] DDL을 참고하여 entity 연관 관계 맵핑
-* [ ] setter method 제거
-* [ ] 관련 테스트 코드 수정
+* [X] DDL을 참고하여 entity 연관 관계 맵핑
+* [X] setter method 제거
+* [X] 관련 테스트 코드 수정
