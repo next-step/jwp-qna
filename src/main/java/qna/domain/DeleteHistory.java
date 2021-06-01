@@ -22,21 +22,29 @@ public class DeleteHistory{
     @Column(name = "content_id")
     private Long contentId;
 
-    @Column(name = "deleted_by_id")
-    private Long deletedById;
-
     @CreatedDate
     @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name="fk_delete_history_to_user"))
+    private User user;
 
     protected DeleteHistory() {
 
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Answer answer, LocalDateTime createDate) {
         this.contentType = contentType;
-        this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.contentId = answer.getId();
+        this.user = answer.getWriter();
+        this.createDate = createDate;
+    }
+
+    public DeleteHistory(ContentType contentType, Question question, LocalDateTime createDate) {
+        this.contentType = contentType;
+        this.contentId = question.getId();
+        this.user = question.getWriter();
         this.createDate = createDate;
     }
 
@@ -48,12 +56,12 @@ public class DeleteHistory{
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(user.getId(), that.user.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, user.getId());
     }
 
     @Override
@@ -62,7 +70,7 @@ public class DeleteHistory{
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + user.getId() +
                 ", createDate=" + createDate +
                 '}';
     }
