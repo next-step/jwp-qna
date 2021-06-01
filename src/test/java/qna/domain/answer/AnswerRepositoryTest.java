@@ -49,14 +49,12 @@ class AnswerRepositoryTest {
 
 		Answer save = repository.save(answer);
 
-		Answer answer1 = repository.findByIdAndDeletedFalse(save.getId())
+		Answer answer1 = repository.findById(save.getId())
 			.orElseThrow(EntityNotFoundException::new);
 		assertThat(answer1).isEqualTo(save);
 
 		save.setDeleted(new Deleted(true));
-
-		assertThatThrownBy(() -> repository.findByIdAndDeletedFalse(save.getId())
-			.orElseThrow(EntityNotFoundException::new)).isInstanceOf(EntityNotFoundException.class);
+		assertThat(repository.findAll()).hasSize(0);
 	}
 
 	@Test
@@ -68,7 +66,7 @@ class AnswerRepositoryTest {
 		repository.save(answer);
 		repository.save(answer2);
 
-		List<Answer> answers = repository.findByQuestionIdAndDeletedFalse(savedQuestion.getId());
+		List<Answer> answers = repository.findByQuestionId(savedQuestion.getId());
 		assertThat(answers).containsExactly(answer, answer2);
 	}
 }

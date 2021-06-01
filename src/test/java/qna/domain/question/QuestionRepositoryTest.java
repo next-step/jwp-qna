@@ -45,7 +45,7 @@ class QuestionRepositoryTest {
 		repository.save(q1);
 		repository.save(q2);
 
-		List<Question> questions = repository.findByDeletedFalse();
+		List<Question> questions = repository.findAll();
 		assertThat(questions).containsExactly(q1);
 	}
 
@@ -59,14 +59,14 @@ class QuestionRepositoryTest {
 		q1.setDeleted(false);
 		Question save1 = repository.save(q1);
 
-		Question question = repository.findByIdAndDeletedFalse(save1.getId()).orElseThrow(EntityNotFoundException::new);
+		Question question = repository.findById(save1.getId()).orElseThrow(EntityNotFoundException::new);
 		assertThat(question).isEqualTo(save1);
 
 		Question q2 = QuestionTest.Q1.writeBy(save);
 		q2.setDeleted(true);
 		Question save2 = repository.save(q2);
 
-		assertThatThrownBy(() -> repository.findByIdAndDeletedFalse(save2.getId()).orElseThrow(EntityNotFoundException::new)).isInstanceOf(EntityNotFoundException.class);
+		assertThatThrownBy(() -> repository.findById(save2.getId()).orElseThrow(EntityNotFoundException::new)).isInstanceOf(EntityNotFoundException.class);
 
 	}
 }

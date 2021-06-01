@@ -1,6 +1,5 @@
 package qna.domain.question;
 
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,14 +10,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import org.springframework.lang.NonNull;
+import org.hibernate.annotations.Where;
 
 import qna.CannotDeleteException;
 import qna.domain.BaseEntity;
-import qna.domain.user.User;
 import qna.domain.answer.Answer;
+import qna.domain.user.User;
 
 @Entity
+@Where(clause = "deleted = false")
 public class Question extends BaseEntity {
 
     @Id
@@ -37,8 +37,7 @@ public class Question extends BaseEntity {
     )
     private User writer;
 
-    @NonNull
-    @Column(nullable = false)
+    @Embedded
     private Deleted deleted = new Deleted(false);
 
     protected Question() { }
@@ -82,12 +81,12 @@ public class Question extends BaseEntity {
         return deleted.value == true;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = new Deleted(deleted);
-    }
-
     public void setDeleted(Deleted deleted) {
         this.deleted = deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.setDeleted(new Deleted(deleted));
     }
 
     public void markDeleteWhenUserOwner(User user) throws CannotDeleteException {

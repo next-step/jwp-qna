@@ -91,14 +91,7 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writer +
-                ", questionId=" + question +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+    public void setDeleted(boolean deleted) {
+        this.setDeleted(new Deleted(deleted));
     }
 }
