@@ -82,7 +82,7 @@ class QnaServiceTest {
         qnaService.deleteQuestion(user1, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
-        assertThat(answer.isDeleted()).isFalse();
+        assertThat(answer.isDeleted()).isTrue();
         verifyDeleteHistories();
     }
 
