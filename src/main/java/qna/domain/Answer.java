@@ -94,7 +94,7 @@ public class Answer extends BaseEntity{
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writer=" + user.id() +
+                ", writer=" + userId +
                 ", questionId=" + question.id() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +

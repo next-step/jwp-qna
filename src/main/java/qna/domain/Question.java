@@ -76,6 +76,7 @@ public class Question extends BaseEntity {
 
     public void writer(User user) {
         this.user = user;
+
     }
 
     public boolean deleted() {
