@@ -63,6 +63,7 @@ public class AnswerRepositoryTest {
 
         actual.setWriter(UserTest.SANJIGI);
         Answer expected = answers.findByWriterAndDeletedFalse(UserTest.SANJIGI);
+        assertThat(expected.getUpdateAt()).isNotNull();
         assertThat(expected.getWriterId()).isNotNull();
         assertThat(expected.isOwner(UserTest.SANJIGI)).isTrue();
     }

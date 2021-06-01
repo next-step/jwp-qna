@@ -4,6 +4,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Table(name = "answer")
@@ -93,6 +94,10 @@ public class Answer extends QnaAbstract {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public LocalDateTime getUpdateAt() {
+        return updatedAt;
     }
 
     @Override
