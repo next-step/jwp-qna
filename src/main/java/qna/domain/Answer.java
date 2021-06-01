@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Where(clause = "deleted = false")
 public class Answer extends BaseEntity {
 
     @Id
@@ -20,7 +21,6 @@ public class Answer extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
-    @Where(clause = "deleted = false")
     private Question question;
 
     @Lob

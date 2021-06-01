@@ -85,7 +85,7 @@ public class AnswerTest {
     @Test
     void findByIdAndDeletedFalse() {
         a3.setDeleted(true);
-        Optional<Answer> optAnswer = answerRepository.findByIdAndDeletedFalse(a3.getId());
+        Optional<Answer> optAnswer = answerRepository.findById(a3.getId());
         assertThatThrownBy(() -> optAnswer.orElseThrow(NoSuchElementException::new))
                 .isInstanceOf(NoSuchElementException.class);
     }
