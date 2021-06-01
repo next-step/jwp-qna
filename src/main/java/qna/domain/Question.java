@@ -55,10 +55,6 @@ public class Question extends BaseEntity {
 		return this;
 	}
 
-	public List<Answer> getAnswers() {
-		return answers;
-	}
-
 	public boolean isOwner(User writer) {
 		return this.writer.equals(writer);
 	}
@@ -100,5 +96,9 @@ public class Question extends BaseEntity {
 			", writer=" + writer +
 			", deleted=" + deleted +
 			'}';
+	}
+
+	public void toWriter(User user) {
+		this.writer = user;
 	}
 }
