@@ -1,7 +1,6 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Table(name = "question")
 @Entity
@@ -15,7 +14,7 @@ public class Question extends BaseEntity{
     @Column(length = 100, nullable = false)
     private String title;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writerId;
 

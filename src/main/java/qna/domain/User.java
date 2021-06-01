@@ -2,8 +2,9 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Table(name = "user")
