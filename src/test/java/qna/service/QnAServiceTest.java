@@ -17,6 +17,7 @@ import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.ContentType;
 import qna.domain.DateTimeStrategy;
+import qna.domain.DeleteHistories;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
@@ -185,15 +186,23 @@ class QnAServiceTest {
 
     private void verifyDeleteHistories(Answer... additionalAnswers) {
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
-        deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+        DeleteHistories deleteHistories =
+            new DeleteHistories(
+                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
 
         if (additionalAnswers != null) {
+
+            List<DeleteHistory> deleted = new ArrayList<>();
+
             for (Answer additionalAnswer : additionalAnswers) {
-                deleteHistories.add(
+                deleted.add(
                     new DeleteHistory(ContentType.ANSWER, additionalAnswer.getId(), additionalAnswer.getWriter(), LocalDateTime.now())
                 );
+            }
+
+            if (deleted.size() > 0) {
+                deleteHistories = deleteHistories.addAll(new DeleteHistories(deleted));
             }
         }
 

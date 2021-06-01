@@ -101,7 +101,7 @@ public class Question extends BaseEntity implements Serializable {
         return deleted;
     }
 
-    public List<DeleteHistory> delete(User loginUser, LocalDateTime deleteTime)
+    public DeleteHistories delete(User loginUser, LocalDateTime deleteTime)
         throws CannotDeleteException {
 
         verifyDeletedQuestion();
@@ -111,15 +111,12 @@ public class Question extends BaseEntity implements Serializable {
         return delete(deleteTime);
     }
 
-    private List<DeleteHistory> delete(LocalDateTime deleteTime) {
+    private DeleteHistories delete(LocalDateTime deleteTime) {
 
         this.deleted = true;
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(DeleteHistory.ofQuestion(id, writer, deleteTime));
-        deleteHistories.addAll(answers.deleteAnswers(deleteTime));
-
-        return deleteHistories;
+        DeleteHistories deleteHistories = new DeleteHistories(DeleteHistory.ofQuestion(id, writer, deleteTime));
+        return deleteHistories.addAll(answers.deleteAnswers(deleteTime));
     }
 
     private void verifyDeletedQuestion() throws CannotDeleteException {

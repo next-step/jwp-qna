@@ -35,12 +35,12 @@ public class Answers {
                       .anyMatch(answer -> !answer.isOwner(owner));
     }
 
-    public List<DeleteHistory> deleteAnswers(LocalDateTime deleteTime) {
+    public DeleteHistories deleteAnswers(LocalDateTime deleteTime) {
 
-        List<DeleteHistory> deleteHistories =
-            answers.stream()
-                   .map(answer -> answer.delete(deleteTime))
-                   .collect(toList());
+        DeleteHistories deleteHistories =
+            new DeleteHistories(answers.stream()
+                                       .map(answer -> answer.delete(deleteTime))
+                                       .collect(toList()));
 
         answers.clear();
 
