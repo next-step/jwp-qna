@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +13,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 public class QuestionRepositoryTest {
     @Autowired
-    private QuestionRepository questionRepository;
+    private QuestionRepository questions;
+
+    @Autowired
+    private UserRepository users;
+
+    private Question question1;
+    private Question question2;
+
+    @BeforeEach
+    void setUp() {
+        User questionWriter1 = new User("qwriter1", "password", "name", "sunju@slipp.net");
+        question1 = new Question("title3", "contents2").writeBy(questionWriter1);
+        users.save(questionWriter1);
+
+        User questionWriter2 = new User("qwriter2", "password", "name", "jung@slipp.net");
+        question2 = new Question("title3", "contents2").writeBy(questionWriter2);
+        users.save(questionWriter2);
+    }
 
     @Test
     @DisplayName("save 테스트")
     void saveTest() {
         // 데이터 테스트
-        assertThat(QuestionTest.QUESTION1.getId()).isNull();
-        Question actualQuestion = questionRepository.save(QuestionTest.QUESTION1);
+        assertThat(question1.getId()).isNull();
+        Question actualQuestion = questions.save(question1);
+        questions.flush();
         assertThat(actualQuestion.getId()).isNotNull();
-        assertThat(actualQuestion.getTitle()).isEqualTo(QuestionTest.QUESTION1.getTitle());
-        assertThat(actualQuestion.getContents()).isEqualTo(QuestionTest.QUESTION1.getContents());
+        assertThat(actualQuestion.getTitle()).isEqualTo(question1.getTitle());
+        assertThat(actualQuestion.getContents()).isEqualTo(question1.getContents());
         assertThat(actualQuestion.getCreatedAt()).isNotNull();
         assertThat(actualQuestion.getUpdatedAt()).isNotNull();
     }
@@ -30,9 +49,10 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("Question 여러개 save 테스트")
     void saveMultipleQuestionTest() {
-        Question actualQuestion1 = questionRepository.save(QuestionTest.QUESTION1);
-        Question actualQuestion2 = questionRepository.save(QuestionTest.QUESTION2);
-        List<Question> questionList = questionRepository.findAll();
+        Question actualQuestion1 = questions.save(question1);
+        Question actualQuestion2 = questions.save(question2);
+        questions.flush();
+        List<Question> questionList = questions.findAll();
         assertThat(questionList.size()).isEqualTo(2);
         assertThat(questionList).containsExactly(actualQuestion1, actualQuestion2);
     }
@@ -42,14 +62,14 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 질문 검색 테스트")
     void findByDeletedFalseTest() {
-        questionRepository.save(QuestionTest.QUESTION1);
-        questionRepository.save(QuestionTest.QUESTION2);
-        List<Question> expectedList = questionRepository.findAll();
-        List<Question> actualList = questionRepository.findByDeletedFalse();
+        Question actualQuestion1 = questions.save(question1);
+        Question actualQuestion2 = questions.save(question2);
+        questions.flush();
+        List<Question> actualList = questions.findByDeletedFalse();
 
         //findByDeletedFalse test
         assertThat(actualList.size()).isEqualTo(2);
-        assertThat(actualList).isEqualTo(expectedList);
+        assertThat(actualList).contains(actualQuestion1, actualQuestion2);
 
         //deleted false test
         for(Question question : actualList) {
@@ -60,11 +80,12 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("id 기준 검색 테스트")
     void findByIdAndDeletedFalseTest() {
-        Question expected = questionRepository.save(QuestionTest.QUESTION1);
-        Question actual = questionRepository.findByIdAndDeletedFalse(expected.getId())
+        Question actualQuestion1 = questions.save(question1);
+        questions.flush();
+        Question actual = questions.findByIdAndDeletedFalse(actualQuestion1.getId())
                                             .orElseThrow(IllegalArgumentException::new);
 
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isEqualTo(actualQuestion1);
         assertThat(actual.isDeleted()).isFalse();
     }
 }
