@@ -22,7 +22,6 @@ public class DeleteHistoryRepositoryTest {
     @Autowired
     private AnswerRepository answers;
 
-    private User expectedUser;
     private DeleteHistory deleteHistory1;
     private DeleteHistory deleteHistory2;
 

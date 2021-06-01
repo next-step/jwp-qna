@@ -22,8 +22,8 @@ public class AnswerRepositoryTest {
     private UserRepository users;
 
     private Question expectedQuestion;
-    private Answer expectedAnswer1;
-    private Answer expectedAnswer2;
+    private Answer answer1;
+    private Answer answer2;
 
     @BeforeEach
     void setUp() {
@@ -33,11 +33,11 @@ public class AnswerRepositoryTest {
         questions.save(expectedQuestion);
 
         User answerWriter = new User("awriter", "password", "name", "sunju@slipp.net");
-        expectedAnswer1 = new Answer(answerWriter, expectedQuestion, "Answers Contents");
+        answer1 = new Answer(answerWriter, expectedQuestion, "Answers Contents");
         users.save(answerWriter);
 
         User answerWriter2 = new User("awriter2", "password", "name", "sunju@slipp.net");
-        expectedAnswer2 = new Answer(answerWriter2, expectedQuestion, "Answers Contents2");
+        answer2 = new Answer(answerWriter2, expectedQuestion, "Answers Contents2");
         users.save(answerWriter2);
     }
 
@@ -45,12 +45,12 @@ public class AnswerRepositoryTest {
     @DisplayName("save 테스트")
     void saveTest() {
         assertThat(AnswerTest.ANSWER1.getId()).isNull();
-        Answer actualAnswer = answers.save(expectedAnswer1);
+        Answer actualAnswer = answers.save(answer1);
         answers.flush();
         assertThat(actualAnswer.getId()).isNotNull(); // id 생성 테스트
-        assertThat(actualAnswer.getWriter()).isEqualTo(expectedAnswer1.getWriter());
-        assertThat(actualAnswer.getQuestion()).isEqualTo(expectedAnswer1.getQuestion());
-        assertThat(actualAnswer.getContents()).isEqualTo(expectedAnswer1.getContents());
+        assertThat(actualAnswer.getWriter()).isEqualTo(answer1.getWriter());
+        assertThat(actualAnswer.getQuestion()).isEqualTo(answer1.getQuestion());
+        assertThat(actualAnswer.getContents()).isEqualTo(answer1.getContents());
         assertThat(actualAnswer.getCreatedAt()).isNotNull();
         assertThat(actualAnswer.getUpdatedAt()).isNotNull();
     }
@@ -58,8 +58,8 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("Answer 여러개 save 테스트")
     void saveMultipleAnswerTest() {
-        Answer savedAnswer1 = answers.save(expectedAnswer1);
-        Answer savedAnswer2 = answers.save(expectedAnswer2);
+        Answer savedAnswer1 = answers.save(answer1);
+        Answer savedAnswer2 = answers.save(answer2);
         answers.flush();
         List<Answer> answerList = answers.findAll();
         assertThat(answerList.size()).isEqualTo(2);
@@ -69,14 +69,14 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("question id 기준 검색 테스트")
     void findByQuestionAndDeletedFalseTest() {
-        Answer savedAnswer1 = answers.save(expectedAnswer1);
-        Answer savedAnswer2 = answers.save(expectedAnswer2);
+        Answer savedAnswer1 = answers.save(answer1);
+        Answer savedAnswer2 = answers.save(answer2);
         answers.flush();
-        List<Answer> actualList = answers.findByQuestionIdAndDeletedFalse(expectedAnswer1.getQuestion().getId());
+        List<Answer> actualList = answers.findByQuestionIdAndDeletedFalse(answer1.getQuestion().getId());
 
         //findByQuestionId test
         assertThat(actualList.size()).isEqualTo(2);
-        assertThat(actualList).containsExactly(savedAnswer1, savedAnswer2);
+        assertThat(actualList).contains(savedAnswer1, savedAnswer2);
 
         //deleted false test
         for(Answer answer : actualList) {
@@ -87,8 +87,7 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("id 기준 검색 테스트")
     void findByIdAndDeletedFalseTest() {
-        Answer savedAnswer1 = answers.save(expectedAnswer1);
-        Answer savedAnswer2 = answers.save(expectedAnswer2);
+        Answer savedAnswer1 = answers.save(answer1);
         answers.flush();
 
         Answer answer = answers.findByIdAndDeletedFalse(savedAnswer1.getId())
