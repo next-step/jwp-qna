@@ -114,11 +114,11 @@ public class Answer extends BaseTimeEntity {
                 '}';
     }
 
-    public DeleteHistory delete(User loginUser, LocalDateTime deletedDt) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser, LocalDateTime deletedDateTime) throws CannotDeleteException {
         validationUser(loginUser);
         setDeleted(true);
 
-        return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter(), deletedDt);
+        return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter(), deletedDateTime);
     }
 
     private void validationUser(User loginUser) throws CannotDeleteException {
