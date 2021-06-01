@@ -1,5 +1,8 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -8,7 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Question extends BaseEntity {
@@ -23,12 +27,15 @@ public class Question extends BaseEntity {
 	@Column(name = "contents")
 	private String contents;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
 
 	@Column(name = "deleted", nullable = false)
 	private boolean deleted = false;
+
+	@OneToMany(mappedBy = "question")
+	private final List<Answer> answers = new ArrayList<>();
 
 	protected Question() {
 	}
@@ -46,6 +53,10 @@ public class Question extends BaseEntity {
 	public Question writeBy(User writer) {
 		this.writer = writer;
 		return this;
+	}
+
+	public List<Answer> getAnswers() {
+		return answers;
 	}
 
 	public boolean isOwner(User writer) {
