@@ -18,6 +18,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -83,6 +84,10 @@ public class Question extends BaseEntity {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
+    }
+
+    public List<DeleteHistory> deleteAnswersAndReturnDeleteHistories(User loginUser) {
+        return answers.deleteAndReturnDeleteHistories(loginUser);
     }
 
     public Long getId() {
