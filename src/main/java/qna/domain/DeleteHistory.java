@@ -21,9 +21,12 @@ public class DeleteHistory {
     @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedByUser;
+
+    protected DeleteHistory() {
+    }
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;

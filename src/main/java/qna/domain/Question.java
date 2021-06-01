@@ -17,11 +17,11 @@ public class Question extends QnaAbstract {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer")
     private List<Answer> answers = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
