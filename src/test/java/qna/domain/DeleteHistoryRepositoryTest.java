@@ -139,17 +139,4 @@ class DeleteHistoryRepositoryTest {
         // then
         assertThat(deleteHistories.size()).isEqualTo(3);
     }
-
-    @Test
-    @DisplayName("삭제한 사용자 ID를 기준으로 목록 조회")
-    void find_by_deletedById() {
-        // given
-        repository.saveAll(this.deleteHistories);
-
-        // when
-        List<DeleteHistory> deleteHistories = repository.findByDeletedByUser(this.javajigiUser);
-
-        // then
-        assertThat(deleteHistories.size()).isEqualTo(1);
-    }
 }

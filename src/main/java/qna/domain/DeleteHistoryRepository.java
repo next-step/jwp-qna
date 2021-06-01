@@ -12,6 +12,4 @@ public interface DeleteHistoryRepository extends JpaRepository<DeleteHistory, Lo
     List<DeleteHistory> findByCreateDateGreaterThanEqual(LocalDateTime createDate);
 
     List<DeleteHistory> findByCreateDateBetweenOrderByCreateDateDesc(LocalDateTime startDateTime, LocalDateTime endDateTime);
-
-    List<DeleteHistory> findByDeletedByUser(User deletedByUser);
 }
