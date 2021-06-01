@@ -73,8 +73,8 @@ public class Question extends BaseEntity implements Serializable {
         answer.replyTo(this);
     }
 
-    public DeleteHistory deleteAnswer(Answer answer) {
-        return answers.remove(answer);
+    public DeleteHistory deleteAnswer(Answer answer, LocalDateTime deleteAnswer) {
+        return answers.delete(answer, deleteAnswer);
     }
 
     public Long getId() {
@@ -101,23 +101,22 @@ public class Question extends BaseEntity implements Serializable {
         return deleted;
     }
 
-    public List<DeleteHistory> delete(User loginUser, DateTimeStrategy dateTimeStrategy)
+    public List<DeleteHistory> delete(User loginUser, LocalDateTime deleteTime)
         throws CannotDeleteException {
 
         verifyDeletedQuestion();
         verifyDeletePermission(loginUser);
         verifyHasOtherUserAnswer();
 
-        return delete(dateTimeStrategy);
+        return delete(deleteTime);
     }
 
-    private List<DeleteHistory> delete(DateTimeStrategy dateTimeStrategy) {
+    private List<DeleteHistory> delete(LocalDateTime deleteTime) {
 
         this.deleted = true;
-        LocalDateTime deleteTime = dateTimeStrategy.now();
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(DeleteHistory.of(this, deleteTime));
+        deleteHistories.add(DeleteHistory.ofQuestion(id, writer, deleteTime));
         deleteHistories.addAll(answers.deleteAnswers(deleteTime));
 
         return deleteHistories;

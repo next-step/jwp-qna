@@ -3,6 +3,7 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,13 @@ import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
 class AnswersTest {
+
+    private DateTimeStrategy dateTimeStrategy;
+
+    @BeforeEach
+    void setUp() {
+        dateTimeStrategy = () -> LocalDateTime.of(2021, 6, 1, 0, 0, 0);
+    }
 
     @DisplayName("답변이 등록되면 답변 목록에 추가된다.")
     @Test
@@ -38,7 +46,7 @@ class AnswersTest {
             answerList.add(new Answer((long) i, JAVAJIGI, Q1, "contents"));
             answers.add(answerList.get(i));
         }
-        answers.remove(answerList.get(2));
+        answers.delete(answerList.get(2), dateTimeStrategy.now());
 
         assertThat(answers.getAnswers()).hasSize(2)
                                         .contains(answerList.get(0), answerList.get(1))

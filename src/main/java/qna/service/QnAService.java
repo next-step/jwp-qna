@@ -49,6 +49,6 @@ public class QnAService {
             userRepository.findById(loginUserId)
                           .orElseThrow(() -> new NotFoundException(MESSAGE_USER_NOT_FOUND));
 
-        deleteHistoryService.saveAll(question.delete(loginUser, dateTimeStrategy));
+        deleteHistoryService.saveAll(question.delete(loginUser, dateTimeStrategy.now()));
     }
 }

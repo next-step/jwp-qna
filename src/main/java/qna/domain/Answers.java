@@ -25,10 +25,9 @@ public class Answers {
         answers.add(answer);
     }
 
-    public DeleteHistory remove(Answer answer) {
+    public DeleteHistory delete(Answer answer, LocalDateTime deleteTime) {
         answers.remove(answer);
-        answer.delete();
-        return DeleteHistory.of(answer, LocalDateTime.now());
+        return answer.delete(deleteTime);
     }
 
     public boolean hasOtherUserAnswer(User owner) {
@@ -40,16 +39,11 @@ public class Answers {
 
         List<DeleteHistory> deleteHistories =
             answers.stream()
-                   .map(answer -> remove(answer, deleteTime))
+                   .map(answer -> answer.delete(deleteTime))
                    .collect(toList());
 
         answers.clear();
 
         return deleteHistories;
-    }
-
-    private DeleteHistory remove(Answer answer, LocalDateTime deleteTime) {
-        answer.delete();
-        return DeleteHistory.of(answer, deleteTime);
     }
 }

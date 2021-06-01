@@ -120,7 +120,7 @@ class QnAServiceTest {
     public void delete_이미_삭제된_질문() throws CannotDeleteException {
 
         Question deletedQuestion = new Question(2L, "title", "contents").writeBy(loginUser);
-        deletedQuestion.delete(loginUser, dateTimeStrategy);
+        deletedQuestion.delete(loginUser, dateTimeStrategy.now());
 
         when(questionRepository.findById(eq(deletedQuestion.getId())))
             .thenReturn(Optional.of(deletedQuestion));

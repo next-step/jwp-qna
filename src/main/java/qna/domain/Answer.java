@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -87,8 +88,9 @@ public class Answer extends BaseEntity implements Serializable {
         return deleted;
     }
 
-    public void delete() {
-        this.deleted = true;
+    public DeleteHistory delete(LocalDateTime deleteTime) {
+        deleted = true;
+        return DeleteHistory.ofAnswer(id, writer, deleteTime);
     }
 
     @Override
