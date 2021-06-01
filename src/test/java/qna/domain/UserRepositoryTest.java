@@ -20,7 +20,7 @@ class UserRepositoryTest {
 	@DisplayName("userId 로 한 명의 User 를 가지고 올 수 있다.")
 	void findByUserIdTest() {
 		String expectedUserId = "userId";
-		User testUser = new User(expectedUserId, "1234", "name", "email");
+		User testUser = new User(expectedUserId, "1234", "name", "email@email.com");
 		users.save(testUser);
 
 		User findUser = users.findByUserId(expectedUserId).orElseThrow(IllegalArgumentException::new);

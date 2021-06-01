@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.domain.vo.Contents;
+
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -33,7 +35,7 @@ class AnswerRepositoryTest {
 	@BeforeEach
 	void setup() {
 		user = new User("testUser", "password", "name", "test@test.net");
-		question = new Question("title1", "contents1").writeBy(user);
+		question = new Question("title1", "contents1", user);
 		entityManager.persist(user);
 		entityManager.persist(question);
 		answer = answers.save(new Answer(user, question, "Answers Contents1"));
@@ -79,8 +81,8 @@ class AnswerRepositoryTest {
 	@Test
 	@DisplayName("update 되면 updateAt 에 수정일이 들어간다.")
 	void updateTest() {
-		String contents = "update contents";
-		answer.setContents(contents);
+		Contents contents = Contents.of("update contents");
+		answer.changeContents(contents);
 
 		assertAll(
 			() -> assertThat(answer.getContents()).isEqualTo(contents),
