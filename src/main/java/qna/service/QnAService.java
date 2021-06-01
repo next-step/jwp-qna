@@ -39,29 +39,14 @@ public class QnAService {
 
         question.validateQuestionOwner(loginUser, question);
 
-        List<Answer> answers = answerRepository.findByQuestion(question);
+        Answers answers = new Answers(answerRepository.findByQuestion(question));
 
-        validateSameOwnerInAnswer(loginUser, answers);
+        answers.validateOwner(loginUser);
 
-        List<DeleteHistory> deleteHistories = deleteHistories(question, answers);
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.addDeletedQuestion(question);
+        deleteHistories.addDeletedAnswers(answers);
 
-        deleteHistoryService.saveAll(deleteHistories);
-    }
-
-    public void validateSameOwnerInAnswer(User loginUser, List<Answer> answers) throws CannotDeleteException {
-        for (Answer answer : answers) {
-            answer.validateSameOwnerInAnswer(loginUser);
-        }
-    }
-
-    public List<DeleteHistory> deleteHistories(Question question, List<Answer> answers) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.deleteQuestion();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
-        for (Answer answer : answers) {
-            answer.deleteAnswer();
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
-        return deleteHistories;
+        deleteHistoryService.saveAll(deleteHistories.deleteHistories());
     }
 }
