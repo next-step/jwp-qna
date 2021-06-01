@@ -22,7 +22,10 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false, length = 100)
     private String title;
 
-    private Long writerId;
+    //private Long writerId;
+    @OneToOne
+    @JoinColumn(name = "writer_id")
+    private User user;
 
     protected Question() {
     }
@@ -38,12 +41,14 @@ public class Question extends BaseTimeEntity {
   }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        //this.writerId = writer.getId();
+        this.user = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        //return this.writerId.equals(writer.getId());
+        return this.user.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -63,7 +68,8 @@ public class Question extends BaseTimeEntity {
     }
 
     public Long getWriterId() {
-        return writerId;
+        //return writerId;
+        return user.getId();
     }
 
     public boolean isDeleted() {
@@ -80,7 +86,7 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + user.getId() +
                 ", deleted=" + deleted +
                 '}';
     }

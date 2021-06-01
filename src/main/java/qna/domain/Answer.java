@@ -7,7 +7,6 @@ import qna.UnAuthorizedException;
 import qna.common.BaseTimeEntity;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Table(name = "answer")
@@ -23,9 +22,15 @@ public class Answer extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
 
-    private Long writerId;
+    @OneToOne
+    @JoinColumn(name = "writer_id")
+    private User user;
+
+    protected Answer() {}
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -42,17 +47,20 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        //this.writerId = writer.getId();
+        //this.questionId = question.getId();
+        this.user = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        //return this.writerId.equals(writer.getId());
+        return this.user.getId().equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question.setId(question.getId());
     }
 
     public Long getId() {
@@ -64,7 +72,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return user.getId();
     }
 
     public String getContents() {
@@ -83,8 +91,8 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writerId=" + user.getId() +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
