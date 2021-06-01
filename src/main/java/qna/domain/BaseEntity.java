@@ -1,13 +1,14 @@
 package qna.domain;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.util.Date;
 
 @MappedSuperclass
 public abstract class BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -15,4 +16,14 @@ public abstract class BaseEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+
+    BaseEntity(){}
+
+    BaseEntity(Long id){
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
 }

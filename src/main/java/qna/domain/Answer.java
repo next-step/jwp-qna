@@ -10,10 +10,6 @@ import java.util.Objects;
 @Entity
 public class Answer extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private Long writerId;
 
     private Long questionId;
@@ -30,7 +26,7 @@ public class Answer extends BaseEntity{
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+        super(id);
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -51,14 +47,6 @@ public class Answer extends BaseEntity{
 
     public void toQuestion(Question question) {
         this.questionId = question.getId();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getWriterId() {
@@ -96,7 +84,7 @@ public class Answer extends BaseEntity{
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", writerId=" + writerId +
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
