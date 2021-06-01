@@ -15,11 +15,11 @@ public class Answers {
         this.answers = new ArrayList<>();
     }
 
-    public List<DeleteHistory> delete(User loginUser) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+    public DeleteHistories delete(User loginUser) {
+        DeleteHistories deleteHistories = new DeleteHistories();
         for (Answer answer : answers) {
             final DeleteHistory deleteHistory = answer.delete(loginUser);
-            deleteHistories.add(deleteHistory);
+            deleteHistories.addHistory(deleteHistory);
         }
         return deleteHistories;
     }

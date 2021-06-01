@@ -12,10 +12,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Table;
 import java.util.Objects;
 
+@Table(name = "Question")
 @Entity
 public class Question extends BaseEntity {
     private static final String DELETE_NOT_ALLOWED = "질문을 삭제할 권한이 없습니다.";
@@ -89,17 +89,16 @@ public class Question extends BaseEntity {
         this.deleted.delete();
     }
 
-    public List<DeleteHistory> delete(User loginUser) {
+    public DeleteHistories delete(User loginUser) {
         checkIsOwner(loginUser);
         this.deleted.delete();
         return createDeleteHistories(loginUser);
     }
 
-    private List<DeleteHistory> createDeleteHistories(User loginUser) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, loginUser));
-        deleteHistories.addAll(this.answers.delete(loginUser));
-        return deleteHistories;
+    private DeleteHistories createDeleteHistories(User loginUser) {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.addHistory(DeleteHistory.ofQuestion(this.id, loginUser));
+        return deleteHistories.addAll(this.answers.delete(loginUser));
     }
 
     private void checkIsOwner(User loginUser) {

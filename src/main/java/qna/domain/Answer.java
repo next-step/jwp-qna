@@ -89,7 +89,7 @@ public class Answer extends BaseEntity {
             throw new CannotDeleteException(ANSWERS_EXISTED);
         }
         this.deleted.delete();
-        return new DeleteHistory(ContentType.ANSWER, this.id, loginUser);
+        return DeleteHistory.ofAnswer(this.id, loginUser);
     }
 
     @Override

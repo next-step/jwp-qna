@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -37,7 +35,7 @@ class AnswersTest {
             @Test
             @DisplayName("삭제이력 목록을 리턴한다.")
             void it_returns_delete_histories() {
-                List<DeleteHistory> actual = answers.delete(givenUser);
+                DeleteHistories actual = answers.delete(givenUser);
 
                 assertThat(actual.size()).isEqualTo(1);
             }
