@@ -2,14 +2,15 @@ package qna.domain;
 
 import org.springframework.lang.NonNull;
 import qna.CannotDeleteException;
-
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity{
+    private static final String NOT_DELETE_AUTH_EXCEPTION = "질문을 삭제할 권한이 없습니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,8 +28,8 @@ public class Question extends BaseEntity{
 
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {}
 
@@ -71,17 +72,32 @@ public class Question extends BaseEntity{
         return deleted;
     }
 
-    public void delete() {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        validOwner(loginUser);
+        answers.validOwner(loginUser);
+
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.addDeleteHistory(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addDeleteHistories(answers.delete());
+
         this.deleted = true;
+
+        return deleteHistories.getDeleteHistories();
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return this.answers;
     }
 
     public void addAnswers(Answer answer) {
         answers.add(answer);
         answer.toQuestion(this);
+    }
+
+    public void validOwner(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(NOT_DELETE_AUTH_EXCEPTION);
+        }
     }
 
     @Override
