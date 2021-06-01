@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -64,5 +65,14 @@ public class AnswerTest {
 
         assertThatThrownBy(() -> new Answer(1L, UserTest.SANJIGI, question, "답변내용"))
                 .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("answer 질문 작성자 아닐 경우 예외발생 테스트")
+    void checkOwner() throws CannotDeleteException {
+        answer.checkAnswerOwner(UserTest.JAVAJIGI);
+
+        assertThatThrownBy(() -> answer.checkAnswerOwner(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class);
     }
 }

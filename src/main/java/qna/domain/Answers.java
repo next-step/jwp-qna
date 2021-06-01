@@ -31,6 +31,10 @@ public class Answers {
         return deleteHistories;
     }
 
+    public List<Answer> getAnswers() {
+        return new ArrayList<>(answers);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
