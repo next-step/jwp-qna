@@ -18,7 +18,7 @@ public class DeleteHistory {
     private ContentType contentType;
 
     private Long contentId;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User deletedBy;
 
     @CreatedDate
