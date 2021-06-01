@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -9,6 +10,7 @@ import java.util.Objects;
 
 @Table(name = "answer")
 @Entity
+@Where(clause = "deleted = false")
 public class Answer extends BaseEntity {
 
     @Lob

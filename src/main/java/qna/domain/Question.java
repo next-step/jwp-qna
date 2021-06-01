@@ -1,9 +1,12 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 @Table(name = "question")
 @Entity
+@Where(clause = "deleted = false")
 public class Question extends BaseEntity{
     @Lob
     private String contents;
