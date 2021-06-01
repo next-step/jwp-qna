@@ -34,4 +34,22 @@ class AnswerRepositoryTest {
         assertThat(expected).isEqualTo(actual);
     }
 
+    @Test
+    void update() {
+        Answer expected = AnswerTest.A1;
+        Answer saved = answers.save(expected);
+
+        saved.setContents("Answer Contents Changed");
+        answers.flush();
+    }
+
+    @Test
+    void delete() {
+        Answer expected = AnswerTest.A1;
+        Answer saved = answers.save(expected);
+
+        answers.delete(saved);
+        answers.flush();
+    }
+
 }
