@@ -16,13 +16,23 @@ public class QuestionTest {
 	public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
 	@Test
+	@DisplayName("jpa 작성 메소드 사용(findByTitleContainingOrderByIdDesc)")
+	void select_start_with_order_by_id_desc() {
+		questionRepository.save(Q1);
+		questionRepository.save(Q2);
+
+		assertThat(questionRepository.findByTitleContainingOrderByIdDesc("title").get(0)).isEqualTo(
+			questionRepository.findById(2L).get());
+	}
+
+	@Test
 	@DisplayName("jpa 작성 메소드 사용(findByDeletedFalse)")
 	void use_written_method_findByDeletedFalse() {
 		Q1.setDeleted(true);
 		questionRepository.save(Q1);
 		assertThat(questionRepository.findByDeletedFalse().size()).isEqualTo(0);
 
-		Q1.setDeleted(false);
+		Q1.setDeleted(false); // ?
 		assertThat(questionRepository.findByDeletedFalse().size()).isEqualTo(1);
 	}
 
