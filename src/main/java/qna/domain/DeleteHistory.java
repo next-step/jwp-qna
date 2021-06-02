@@ -1,22 +1,15 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-public class DeleteHistory {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Table
+public class DeleteHistory extends AbstractEntity {
 
 	@Enumerated(EnumType.STRING)
     private ContentType contentType;
@@ -25,15 +18,12 @@ public class DeleteHistory {
 
 	private Long deletedById;
 
-	private LocalDateTime createDate = LocalDateTime.now();
-
     protected DeleteHistory() {}
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
-        this.createDate = createDate;
     }
 
     @Override
@@ -59,7 +49,7 @@ public class DeleteHistory {
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
                 ", deletedById=" + deletedById +
-                ", createDate=" + createDate +
+                ", createDate=" + createdAt +
                 '}';
     }
 }
