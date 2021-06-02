@@ -5,20 +5,31 @@ import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-public class Answer {
+@Table(name = "answer")
+public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "question_id")
     private Long questionId;
+
+    @Column(name = "contents")
     private String contents;
+
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
     protected Answer() {}
