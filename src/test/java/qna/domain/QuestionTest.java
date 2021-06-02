@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,8 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import javax.management.QueryEval;
 
 @DataJpaTest
 public class QuestionTest {
@@ -66,7 +65,7 @@ public class QuestionTest {
     @DisplayName("지우지 않은 글 조회")
     void findNotDeleted() {
         //given
-        userRepository.save(JAVAJIGI);
+        userRepository.save(user);
         //when
         questionRepository.save(question);
         questionRepository.save(new Question("질문2", "내용2"));
@@ -87,5 +86,18 @@ public class QuestionTest {
         //then
         assertThat(questions.size() > 0).isTrue();
         assertThat(questions.get(0).getTitle()).isEqualTo("title3");
+    }
+
+    @Test
+    @DisplayName("답변 리스트 불러오기")
+    void sizeAnswers() {
+        //given
+        userRepository.save(user);
+        //when
+        Question save = questionRepository.save(question);
+        save.addAnswer(new Answer(JAVAJIGI, save, "answer1"));
+        save.addAnswer(new Answer(SANJIGI, save, "answer2"));
+        //then
+        assertThat(save.answers.size()).isEqualTo(2);
     }
 }
