@@ -6,13 +6,13 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
@@ -34,8 +34,8 @@ public class Question extends BaseEntity {
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
 
-	@OneToMany(mappedBy = "question")
-	private List<Answer> answers = new ArrayList<>();
+	@Embedded
+	private Answers answers = new Answers();
 
 	@ColumnDefault("false")
 	@Column(name = "deleted", nullable = false)
@@ -65,7 +65,7 @@ public class Question extends BaseEntity {
 	}
 
 	public void addAnswer(Answer answer) {
-		answers.add(answer);
+		this.answers.add(answer);
 		answer.toQuestion(this);
 	}
 
@@ -113,7 +113,7 @@ public class Question extends BaseEntity {
 		this.updateAt = updateAt;
 	}
 
-	public List<Answer> getAnswers() {
+	public Answers getAnswers() {
 		return this.answers;
 	}
 
@@ -129,15 +129,17 @@ public class Question extends BaseEntity {
 	}
 
 	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+		validateDelete(loginUser);
+		this.setDeleted(true);
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
+		deleteHistories.addAll(this.answers.deleteAll(loginUser));
+		return deleteHistories;
+	}
+
+	private void validateDelete(User loginUser) throws CannotDeleteException {
 		if (!this.isOwner(loginUser)) {
 			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 		}
-		List<DeleteHistory> deleteHistories = new ArrayList<>();
-		this.setDeleted(true);
-		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
-		for (Answer answer : this.answers) {
-			deleteHistories.add(answer.delete(loginUser));
-		}
-		return deleteHistories;
 	}
 }

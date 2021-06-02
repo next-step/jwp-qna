@@ -99,7 +99,7 @@ public class AnswerRepositoryTest {
 		Answer saved = answers.save(answer);
 		answer.delete(writer);
 		answers.flush();
-		assertThat(answer.isDeleted()).isTrue();
+		assertThat(saved.isDeleted()).isTrue();
 	}
 
 }

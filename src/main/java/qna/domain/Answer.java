@@ -67,7 +67,7 @@ public class Answer extends BaseEntity {
 	}
 
 	public void toQuestion(Question question) {
-		if(Objects.nonNull(this.question)) {
+		if (Objects.nonNull(this.question)) {
 			this.question.getAnswers().remove(this);
 		}
 		this.question = question;
@@ -99,10 +99,14 @@ public class Answer extends BaseEntity {
 	}
 
 	public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+		validateDelete(loginUser);
+		this.setDeleted(true);
+		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+	}
+
+	private void validateDelete(User loginUser) throws CannotDeleteException {
 		if (!this.isOwner(loginUser)) {
 			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 		}
-		this.setDeleted(true);
-		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
 	}
 }

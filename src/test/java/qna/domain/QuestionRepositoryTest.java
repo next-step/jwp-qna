@@ -87,10 +87,8 @@ public class QuestionRepositoryTest {
 		List<DeleteHistory> deleteHistories = saved.delete(writer);
 		questions.flush();
 		Question findQuestion = questions.findById(saved.getId()).get();
-		assertThat(findQuestion.getAnswers()).hasSize(2);
+		assertThat(findQuestion.getAnswers().getSize()).isEqualTo(2);
 		assertThat(findQuestion.isDeleted()).isTrue();
-		for (Answer answerInQuestion : findQuestion.getAnswers()) {
-			assertThat(answerInQuestion.isDeleted()).isTrue();
-		}
+		assertThat(deleteHistories).hasSize(3);
 	}
 }
