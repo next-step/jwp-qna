@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class UserTest {
-    public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
-    
+    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+
     @Autowired
     private UserRepository users;
 
@@ -48,7 +48,7 @@ public class UserTest {
     void update() {
         String name = "mwkwon";
         User expected = users.save(UserTest.JAVAJIGI);
-        expected.setName(name);
+        expected.name(name);
         entityManager.flush();
         entityManager.clear();
         Optional<User> actual = users.findById(expected.getId());
