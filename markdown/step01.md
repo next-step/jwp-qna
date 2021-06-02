@@ -173,14 +173,6 @@ alter table user
 |구분|상세|구현 방법|
 |:---:|:---|---|
 |Convention|• 자바 코드 컨벤션을 지키면서 프로그래밍한다.<br>&nbsp;&nbsp;• https://naver.github.io/hackday-conventions-java/ <br>&nbsp;&nbsp;• https://google.github.io/styleguide/javaguide.html <br>&nbsp;&nbsp;•  https://myeonguni.tistory.com/1596 |- gradle-editorconfig 적용<br>- gradle-checkstyle 적용<br>- IntelliJ 적용<br>- Github 적용|
-|enum|• java enum을 적용해 프로그래밍을 구현한다.|• Code값들은 enum을 활용하여 구현한다.|
-|객체지향 생활 체조|• 규칙 3: 모든 원시값과 문자열을 포장한다.|• 원시값 또는 문자열을 객체(VO)로 포장한다.<br>• **1.1.3. 힌트** 참조|
-|객체지향 생활 체조|• 규칙 5: 줄여쓰지 않는다(축약 금지).|• 네이밍에 약어를 사용하지 않는다.|
-|객체지향 생활 체조|• 규칙 8: 일급 콜렉션을 쓴다.|• 값 객체(VO) 또는 엔티티(Entity)의 Collection을 일급 콜렉션으로 구현한다.|
-|예외 처리|• 예외 처리를 통해 에러가 발생하지 않도록 한다.|• **2.1.2. Exception Control** 참조|
-|메소드|• indent(인덴트, 들여쓰기) depth를 2가 넘지 않도록 구현한다. 1까지만 허용한다.<br>&nbsp;&nbsp;• 예를 들어 while문 안에 if문이 있으면 들여쓰기는 2이다.<br>&nbsp;&nbsp;• **힌트: indent(인덴트, 들여쓰기) depth를 줄이는 좋은 방법은 함수(또는 메소드)를 분리**하면 된다.|- < 2depth 규칙|
-|메소드|• 함수(또는 메소드)의 길이가 15라인을 넘어가지 않도록 구현한다.<br>&nbsp;&nbsp;• 함수(또는 메소드)가 한 가지 일만 잘 하도록 구현한다.|- 함수(또는 메서드) 15라인 이하|
-|메소드|• else 예약어를 쓰지 않는다.<br>&nbsp;&nbsp;• 힌트: if 조건절에서 값을 return하는 방식으로 구현하면 else를 사용하지 않아도 된다.<br>&nbsp;&nbsp;• else를 쓰지 말라고 하니 switch/case로 구현하는 경우가 있는데 switch/case도 허용하지 않는다.|- else 예약어 금지|
 |테스트|• 모든 기능을 TDD로 구현해 단위 테스트가 존재해야 한다. 단, UI(System.out, System.in) 로직은 제외<br>&nbsp;&nbsp;• 핵심 로직을 구현하는 코드와 UI를 담당하는 로직을 구분한다.<br>&nbsp;&nbsp;•UI 로직을 InputView, ResultView와 같은 클래스를 추가해 분리한다.|- 핵심 로직 단위테스트|
 
 ### 1.4. 비기능 요구사항
@@ -256,29 +248,22 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
     - [x] 2-2. Hands-on JPA Test code 작성
 - [x] 3.분석 및 설계
     - [x] 3-1.step01.md 초안 작성
-- [ ] 4.구현
+- [x] 4.구현
     - [x] 4-1.엔티티 매핑
         - [x] 4-1-1.`Answer`
         - [x] 4-1-2.`DeleteHistory`
         - [x] 4-1-3.`Question`
         - [x] 4-1-4.`User`
-    - [ ] 4-2.테스트 코드 작성
-        - [ ] 4-2-1.`AnswerTest`
-        - [ ] 4-2-2.`DeleteHistoryTest`
-        - [ ] 4-2-3.`QuestionTest`
-        - [ ] 4-2-4.`UserTest`
+    - [x] 4-2.테스트 코드 작성
+        - [x] 4-2-1.`AnswerTest`
+        - [x] 4-2-2.`DeleteHistoryTest`
+        - [x] 4-2-3.`QuestionTest`
+        - [x] 4-2-4.`UserTest`
 - [ ] 5.테스트
     - [ ] 5-1.Gradle build Success 확인
     - [ ] 5-2.checkstyle 문제없는지 확인 (Java Convention)
     - [ ] 5-3.요구사항 조건들 충족했는지 확인
-        - [ ] 5-3-1.< 2 Depth 규칙
-        - [ ] 5-3-2.함수(또는 메서드) 15라인 이하
-        - [ ] 5-3-3.else 예약어 금지
-        - [ ] 5-3-4.Code값들은 `enum`을 활용한다.
-        - [ ] 5-3-5.모든 원시값과 문자열을 포장한다.
-        - [ ] 5-3-6.일급콜렉션 활용
-        - [ ] 5-3-7.축약 금지
-        - [ ] 5-3-8.예외 처리
+        - [ ] 5-3-1.핵심 단위 로직 테스트
 - [ ] 6.인수인계
     - [ ] 6-1.소감 및 피드백 정리
         - [ ] 6-1-1.느낀점 & 배운점 작성
@@ -287,12 +272,6 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
         - [ ] 6-1-1.step5를 gregolee/java-lotto로 push : `git push origin step5`
         - [ ] 6-1-2.pull request(PR) 작성
     - [ ] 6-3.Slack을 통해 merge가 되는지 확인한 후에 미션 종료
-
-### 2.3. 설계
-
-#### 2.3.1. Domain-Driven-Design (DDD)
-
-![image](../documents/step1/DDD-step1.jpeg)
 
 ## 3. 인수인계
 

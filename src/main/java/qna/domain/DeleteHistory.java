@@ -42,6 +42,10 @@ public class DeleteHistory {
 		this.createDate = createDate;
 	}
 
+	public Long getId() {
+		return this.id;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

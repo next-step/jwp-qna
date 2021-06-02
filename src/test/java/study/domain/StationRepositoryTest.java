@@ -3,6 +3,7 @@ package study.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -25,6 +26,18 @@ class StationRepositoryTest {
 	private MemberRepository members;
 	@Autowired
 	private LineStationRepository lineStations;
+
+	//1.7.3. 다대일 단방향 연관 관계 - findByNameWithLine()
+	@BeforeEach
+	void initialize() {
+		Line line3 = lines.save(new Line("3호선"));
+		Station station = new Station("교대역");
+		station.setLine(line3);
+		stations.save(station);
+		line3.addStation(station);
+		lines.flush();
+		stations.flush();
+	}
 
 	@DisplayName("1.4. Spring Data JPA - save()")
 	@Test
