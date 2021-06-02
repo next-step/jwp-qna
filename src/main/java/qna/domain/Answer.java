@@ -103,9 +103,7 @@ public class Answer extends BaseEntity {
     }
 
     public DeleteHistory deleteByWriter(User loginUser) throws CannotDeleteException {
-        if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+        validateForOwnership(loginUser);
         this.deleted = true;
         return new DeleteHistory(ContentType.ANSWER, this.id, loginUser, LocalDateTime.now());
     }
@@ -119,5 +117,11 @@ public class Answer extends BaseEntity {
                 ", contents='" + this.contents + '\'' +
                 ", deleted=" + this.deleted +
                 '}';
+    }
+
+    private void validateForOwnership(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 }
