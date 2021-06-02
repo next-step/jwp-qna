@@ -19,8 +19,9 @@ public class DeleteHistory {
     @Column
     private Long contentId;
 
-    @Column
-    private Long deletedById;
+    @ManyToOne
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedByUser;
 
     @Column
     private LocalDateTime createDate = LocalDateTime.now();
@@ -29,23 +30,23 @@ public class DeleteHistory {
     }
 
     public DeleteHistory(Question question, User writer) {
-        this(ContentType.QUESTION, question.getId(), writer.getId());
+        this(ContentType.QUESTION, question.getId(), writer);
     }
 
     public DeleteHistory(Answer answer, User writer) {
-        this(ContentType.ANSWER, answer.getId(), writer.getId());
+        this(ContentType.ANSWER, answer.getId(), writer);
     }
 
-    private DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedByUser = deletedByUser;
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedByUser = deletedByUser;
         this.createDate = createDate;
     }
 
@@ -64,12 +65,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id)
             && contentType == that.contentType
             && Objects.equals(contentId, that.contentId)
-            && Objects.equals(deletedById, that.deletedById);
+            && Objects.equals(deletedByUser, that.deletedByUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, deletedByUser);
     }
 
     @Override
@@ -78,7 +79,7 @@ public class DeleteHistory {
             + "id=" + id
             + ", contentType=" + contentType
             + ", contentId=" + contentId
-            + ", deletedById=" + deletedById
+            + ", deletedById=" + deletedByUser.getId()
             + ", createDate=" + createDate
             + '}';
     }
