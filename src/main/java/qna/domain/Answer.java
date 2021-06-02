@@ -56,7 +56,7 @@ public class Answer extends QnaAbstract {
         return this.writer.equals(writer);
     }
 
-    public void checkDeleteAnswerAuthority(User deleter) throws CannotDeleteException {
+    public void checkAuthorityDeleteAnswer(User deleter) throws CannotDeleteException {
         if (!isOwner(deleter)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
@@ -102,8 +102,8 @@ public class Answer extends QnaAbstract {
         return deleted;
     }
 
-    public DeleteHistory setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory executeDeleted() {
+        this.deleted = true;
         return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
