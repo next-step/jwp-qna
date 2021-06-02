@@ -21,9 +21,10 @@ public class Answers {
     public Answers() {}
 
     public void add(Answer answer) {
-        if (!answers.contains(answer)) {
-            this.answers.add(answer);
+        if (answers.contains(answer)) {
+            throw new IllegalArgumentException("질문에 동일한 답변이 추가될 수 없습니다.");
         }
+        this.answers.add(answer);
     }
 
     public List<DeleteHistory> deleteAndReturnDeleteHistories(User loginUser) {
