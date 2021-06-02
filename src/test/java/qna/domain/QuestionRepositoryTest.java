@@ -24,7 +24,7 @@ class QuestionRepositoryTest {
     @BeforeEach
     void setUp() {
         User writer = userRepository.save(UserTest.JAVAJIGI);
-        this.savedQuestion = questionRepository.save(new Question("title1", "contents1").writeBy(writer));
+        this.savedQuestion = questionRepository.save(new Question("title1", "contents1", writer));
     }
 
     @DisplayName("save하면 pk가 존재한다")

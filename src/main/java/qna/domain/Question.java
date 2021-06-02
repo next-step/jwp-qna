@@ -1,9 +1,14 @@
 package qna.domain;
 
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.domain.base.BaseEntity;
+import qna.domain.wrapper.Answers;
+import qna.domain.wrapper.DeleteHistories;
+import qna.domain.wrapper.Deleted;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -14,6 +19,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -25,6 +33,13 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "write_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+
+    @Embedded
+    private Answers answers;
+
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
@@ -32,28 +47,22 @@ public class Question extends BaseEntity {
     @Column(name = "contents")
     private String contents;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "write_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
-    private User writer;
-
-    @Column(name = "deleted", nullable = false)
-    private boolean deleted;
+    @Embedded
+    private Deleted deleted;
 
     protected Question() {}
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    public Question(String title, String contents, User writer) {
+        this(null, title, contents, writer);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, String title, String contents, User writer) {
         this.id = id;
         this.title = title;
         this.contents = contents;
-    }
-
-    public Question writeBy(User writer) {
         this.writer = writer;
-        return this;
+        this.answers = new Answers();
+        this.deleted = new Deleted();
     }
 
     public boolean isOwner(User loginUser) {
@@ -62,6 +71,26 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.add(answer);
+    }
+
+    public boolean isDeleted() {
+        return deleted.isDeleted();
+    }
+
+    public DeleteHistories deleteAndReturnDeleteHistories(User loginUser) {
+        checkPossibleDelete(loginUser);
+        deleted.delete();
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(answers.deleteAndReturnDeleteHistories(loginUser));
+        return DeleteHistories.from(deleteHistories);
+    }
+
+    private void checkPossibleDelete(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -76,16 +105,8 @@ public class Question extends BaseEntity {
         return contents;
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
     public void setContents(final String contents) {
         this.contents = contents;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

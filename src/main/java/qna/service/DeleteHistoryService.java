@@ -5,8 +5,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import qna.domain.DeleteHistory;
 import qna.domain.DeleteHistoryRepository;
-
-import java.util.List;
+import qna.domain.wrapper.DeleteHistories;
 
 @Service
 public class DeleteHistoryService {
@@ -17,8 +16,8 @@ public class DeleteHistoryService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void saveAll(List<DeleteHistory> deleteHistories) {
-        deleteHistoryRepository.saveAll(deleteHistories);
+    public void saveAll(DeleteHistories deleteHistories) {
+        deleteHistoryRepository.saveAll(deleteHistories.toCollection());
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)

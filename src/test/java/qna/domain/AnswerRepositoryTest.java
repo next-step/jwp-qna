@@ -27,7 +27,7 @@ class AnswerRepositoryTest {
     @BeforeEach
     void setUp() {
         User writer = userRepository.save(UserTest.JAVAJIGI);
-        Question question = questionRepository.save(new Question("title1", "contents1").writeBy(writer));
+        Question question = questionRepository.save(new Question("title1", "contents1", writer));
         this.savedAnswer = answerRepository.save(new Answer(writer, question, "test"));
     }
 

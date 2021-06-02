@@ -1,11 +1,14 @@
 package qna.domain;
 
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.base.BaseEntity;
+import qna.domain.wrapper.Deleted;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -16,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -40,8 +44,8 @@ public class Answer extends BaseEntity {
     @Column(name = "contents")
     private String contents;
 
-    @Column(name = "deleted", nullable = false)
-    private boolean deleted;
+    @Embedded
+    private Deleted deleted;
 
     protected Answer() {}
 
@@ -54,6 +58,7 @@ public class Answer extends BaseEntity {
         this.writer = Optional.ofNullable(writer).orElseThrow(UnAuthorizedException::new);
         this.question = Optional.ofNullable(question).orElseThrow(NotFoundException::new);
         this.contents = contents;
+        this.deleted = new Deleted();
     }
 
     public boolean isOwner(User loginUser) {
@@ -62,6 +67,18 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
+    }
+
+    public DeleteHistory deleteAndReturnDeleteHistory(User loginUser) {
+        checkPossibleDelete(loginUser);
+        deleted.delete();
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    }
+
+    private void checkPossibleDelete(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -81,15 +98,11 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public void setContents(String contents) {
         this.contents = contents;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
