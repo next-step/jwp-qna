@@ -1,11 +1,22 @@
 package qna.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
     private String contents;
     private Long writerId;
     private boolean deleted = false;
+
+    protected Question() {}
 
     public Question(String title, String contents) {
         this(null, title, contents);
