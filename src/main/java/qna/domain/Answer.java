@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -15,7 +16,7 @@ public class Answer extends BaseEntity{
     private User writer;
 
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
 
     @Lob
