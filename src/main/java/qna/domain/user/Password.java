@@ -8,9 +8,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Password {
 
-	private final int LIMITED_MAXIMUM_TEXT = 20;
-
-	@Column(name = "password",length = LIMITED_MAXIMUM_TEXT, nullable = false)
+	@Column(name = "password",length = 20, nullable = false)
 	private String value;
 
 	protected Password() { }
@@ -20,7 +18,7 @@ public class Password {
 	}
 
 	protected void setValue(String value) {
-		if (Objects.isNull(value) || value.length() > LIMITED_MAXIMUM_TEXT){
+		if (Objects.isNull(value) || value.length() > 20){
 			throw new IllegalArgumentException("Invalid password value");
 		}
 		this.value = value;

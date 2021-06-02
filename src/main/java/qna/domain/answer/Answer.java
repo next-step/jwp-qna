@@ -20,10 +20,9 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.BaseEntity;
-import qna.domain.deletehistory.ContentType;
 import qna.domain.deletehistory.DeleteHistory;
-import qna.domain.user.User;
 import qna.domain.question.Question;
+import qna.domain.user.User;
 
 @Entity
 @Where(clause = "deleted = false")

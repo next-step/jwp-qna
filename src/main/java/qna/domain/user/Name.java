@@ -8,9 +8,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Name {
 
-	private final int LIMITED_MAXIMUM_TEXT = 20;
-
-	@Column(name = "name",length = LIMITED_MAXIMUM_TEXT, nullable = false)
+	@Column(name = "name",length = 20, nullable = false)
 	private String name;
 
 	public Name() { }
@@ -20,7 +18,7 @@ public class Name {
 	}
 
 	private void setName(String name) {
-		if (Objects.isNull(name) || name.length() > LIMITED_MAXIMUM_TEXT){
+		if (Objects.isNull(name) || name.length() > 20){
 			throw new IllegalArgumentException("Invalid Name value");
 		}
 		this.name = name;

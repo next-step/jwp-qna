@@ -8,9 +8,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Email {
 
-
-	private final Pattern emailPattern = Pattern.compile("^(.+)@(.+)$");
-	private final int LIMITED_MAXIMUM_TEXT = 40;
+	private static final Pattern emailPattern = Pattern.compile("^(.+)@(.+)$");
 
 	@Column(name = "email", length = 40)
 	private String value;
@@ -24,7 +22,7 @@ public class Email {
 	}
 
 	private void setValue(String value) {
-		if (value.length() > LIMITED_MAXIMUM_TEXT || emailPattern.asPredicate().test(value) == false){
+		if (value.length() > 40 || emailPattern.asPredicate().test(value) == false){
 			throw new IllegalArgumentException("Email 타입의 값이 아닙니다.");
 		}
 

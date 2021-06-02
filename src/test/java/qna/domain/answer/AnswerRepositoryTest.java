@@ -36,7 +36,7 @@ class AnswerRepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		savedUser = userRepository.save(new User("len", "password", "name", "email"));
+		savedUser = userRepository.save(new User("len", "password", "name", "email@naver.com"));
 
 		Question question = new Question("title", "Contents");
 		savedQuestion = questionRepository.save(question);
