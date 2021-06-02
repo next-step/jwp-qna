@@ -66,8 +66,8 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public void delete(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
     }
 
     @Override
