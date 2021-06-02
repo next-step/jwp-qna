@@ -80,7 +80,7 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void addDeleted(boolean deleted) {
+    public void delete(boolean deleted) {
         this.deleted = deleted;
     }
 

@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user",
-        uniqueConstraints = @UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = "user_id"))
+        uniqueConstraints = @UniqueConstraint(name = "UK_USER_USER_ID", columnNames = "user_id"))
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -28,15 +28,6 @@ public class User extends BaseEntity {
 
     @Column(length = 50)
     private String email;
-
-    @OneToMany(mappedBy = "writer")
-    private List<Answer> answers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "deletedBy")
-    private List<DeleteHistory> deleteHistories = new ArrayList<>();
-
-    @OneToMany(mappedBy = "writer")
-    private List<Question> questions = new ArrayList<>();
 
     protected User() {
     }
@@ -109,18 +100,6 @@ public class User extends BaseEntity {
 
     public String getEmail() {
         return email;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
-    public List<DeleteHistory> getDeleteHistories() {
-        return deleteHistories;
-    }
-
-    public List<Question> getQuestions() {
-        return questions;
     }
 
     @Override

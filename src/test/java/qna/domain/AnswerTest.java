@@ -92,7 +92,7 @@ public class AnswerTest {
     @Test
     void update() {
         Answer expected = answers.save(new Answer(user, question, "Answers Contents1"));
-        expected.addDeleted(true);
+        expected.delete(true);
         entityManager.flush();
         entityManager.clear();
         Optional<Answer> actual = answers.findById(expected.getId());

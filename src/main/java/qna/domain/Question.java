@@ -2,6 +2,7 @@ package qna.domain;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -70,7 +71,7 @@ public class Question extends BaseEntity {
     }
 
     public List<Answer> getAnswers() {
-        return this.answers;
+        return Collections.unmodifiableList(this.answers);
     }
 
     public boolean isContainAnswer(Answer answer) {
