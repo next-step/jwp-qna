@@ -8,7 +8,6 @@ public class Question extends AbstractEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @Column
     @Lob
     private String contents;
 
@@ -16,8 +15,10 @@ public class Question extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
-    @Column
     private boolean deleted = false;
+
+    @Embedded
+    private final Answers answers = new Answers();
 
     protected Question() {
     }
@@ -38,11 +39,12 @@ public class Question extends AbstractEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer == writer;
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public Long getId() {
@@ -51,6 +53,10 @@ public class Question extends AbstractEntity {
 
     public User getWriter() {
         return writer;
+    }
+
+    public Answers getAnswers() {
+        return answers;
     }
 
     public boolean isDeleted() {
