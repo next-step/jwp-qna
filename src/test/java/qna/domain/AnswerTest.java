@@ -42,7 +42,8 @@ public class AnswerTest {
         assertAll(
                 () -> assertThat(deleteHistory.getContentId()).isEqualTo(A1.getId()),
                 () -> assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER),
-                () -> assertThat(deleteHistory.getDeletedBy()).isEqualTo(A1.getWriter())
+                () -> assertThat(deleteHistory.getDeletedBy()).isEqualTo(A1.getWriter()),
+                () -> assertThat(deleteHistory.getCreateDate()).isNotNull()
         );
     }
 }
