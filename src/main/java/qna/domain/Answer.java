@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -30,7 +31,7 @@ public class Answer extends BaseDate {
     @Column(name = "deleted", columnDefinition = "boolean", nullable = false)
     private boolean deleted = false;
 
-    public Answer() {
+    protected Answer() {
     }
 
     public Answer(User writer, Question question, String contents) {
@@ -41,11 +42,11 @@ public class Answer extends BaseDate {
         this.id = id;
 
         if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException("답변은 로그인 하신 후에 작성 가능합니다.");
         }
 
         if (Objects.isNull(question)) {
-            throw new NotFoundException();
+            throw new NotFoundException("답변을 할 질문이 없습니다.");
         }
 
         this.writer = writer;
@@ -69,11 +70,19 @@ public class Answer extends BaseDate {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        answerAuthCheck(loginUser);
+        this.deleted = true;
+        return DeleteHistory.answerHistory(getId(), writer);
     }
 
-    public DeleteHistory deleteHistory(){
+    private void answerAuthCheck(User writer) throws CannotDeleteException {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
+    public DeleteHistory deleteHistory() {
         return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
     }
 

@@ -1,35 +1,15 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.NotFoundException;
+import qna.UnAuthorizedException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DataJpaTest
 public class UserTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-
-    @Autowired
-    UserRepository userRepository;
-
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
-
-    @BeforeEach
-    public void setup(){
-        userId = "dolilu";
-        password = "password";
-        name = "이정수";
-        email = "lsecret@naver.com";
-    }
 
     @Test
     @DisplayName("유저 생성")
@@ -39,27 +19,33 @@ public class UserTest {
     }
 
     @Test
-    @DisplayName("유저 저장")
-    public void saveUser() {
-
-        User user = new User(userId, password, name, email);
-        User saveUser = userRepository.save(user);
-
-        assertAll(
-                () -> assertThat(saveUser.getId()).isNotNull(),
-                () -> assertThat(saveUser.getUserId()).isEqualTo(userId),
-                () -> assertThat(saveUser.getPassword()).isEqualTo(password),
-                () -> assertThat(saveUser.getName()).isEqualTo(name),
-                () -> assertThat(saveUser.getEmail()).isEqualTo(email)
-        );
+    @DisplayName("User 수정")
+    public void userUpdate(){
+        User user = new User(1L, "javajigi", "password", "변경된 이름", "test@test.com");
+        JAVAJIGI.update(JAVAJIGI, user);
+        assertThat(JAVAJIGI.equalsNameAndEmail(user)).isTrue();
     }
 
     @Test
-    @DisplayName("유저 검색")
-    public void selectUser() {
-        User saveUser = userRepository.save(new User(userId, password, name, email));
-        User selectUser = userRepository.findByUserId(userId).orElseThrow(NotFoundException::new);
+    @DisplayName("User Update ID 비교")
+    public void userIdCheck(){
+        assertThatThrownBy(
+                () -> JAVAJIGI.update(SANJIGI, JAVAJIGI)
+        ).isInstanceOf(UnAuthorizedException.class).hasMessageContaining("로그인 한 계정만 수정이 가능 합니다.");
+    }
 
-        assertThat(selectUser.equals(saveUser)).isTrue();
+    @Test
+    @DisplayName("User Update PASSWORD 비교")
+    public void userPasswordCheck(){
+        assertThatThrownBy(
+                () -> JAVAJIGI.update(JAVAJIGI, new User("testId", "notMatchPassword", "test", "test@test.com"))
+        ).isInstanceOf(UnAuthorizedException.class).hasMessageContaining("패스워드를 잘 못 입력하셨습니다.");
+    }
+
+    @Test
+    @DisplayName("Guest User")
+    public void isGuestUser(){
+        User user = User.GUEST_USER;
+        assertThat(user.isGuestUser()).isTrue();
     }
 }

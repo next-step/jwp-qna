@@ -1,12 +1,16 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "question")
-public class Question extends BaseDate{
+public class Question extends BaseDate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition = "bigint")
@@ -26,7 +30,11 @@ public class Question extends BaseDate{
     @Column(name = "deleted", columnDefinition = "boolean", nullable = false)
     private boolean deleted = false;
 
-    public Question() {}
+    @Embedded
+    private final Answers answers = new Answers();
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -49,6 +57,7 @@ public class Question extends BaseDate{
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public Long getId() {
@@ -59,11 +68,26 @@ public class Question extends BaseDate{
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void checkOwnerUser(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
-    public DeleteHistory deleteHistory(){
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        this.checkOwnerUser(loginUser);
+        this.deleted = true;
+
+        deleteHistories.add(DeleteHistory.questionHistory(this.getId(), this.writer));
+        deleteHistories.addAll(answers.delete(loginUser));
+
+        return deleteHistories;
+    }
+
+    public DeleteHistory deleteHistory() {
         return new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
     }
 
