@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
-import qna.NotFoundException;
 import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.ContentType;
@@ -26,7 +25,6 @@ import qna.domain.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -113,7 +111,8 @@ class QnAServiceTest {
             .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(notFoundUserId, question.getId()))
-            .isInstanceOf(NotFoundException.class)
+            .as("test")
+            .isInstanceOf(RuntimeException.class)
             .hasMessage(QnAService.MESSAGE_USER_NOT_FOUND);
     }
 
