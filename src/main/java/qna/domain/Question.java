@@ -78,7 +78,7 @@ public class Question extends BaseEntity {
 
     public DeleteHistory deleteAndReturnDeleteHistory(User loginUser) {
         checkPossibleDelete(loginUser);
-        setDeleted(true);
+        deleted.delete();
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
@@ -106,10 +106,6 @@ public class Question extends BaseEntity {
 
     public void setContents(final String contents) {
         this.contents = contents;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted.setDeleted(deleted);
     }
 
     @Override
