@@ -1,13 +1,10 @@
 package qna.domain;
 
-import static qna.domain.UserTest.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.QuestionTest.Q1;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +13,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
-    public static final Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -28,17 +23,15 @@ public class AnswerRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    private User user;
+    private Question question;
+
     @BeforeEach
     void setup() {
-        userRepository.save(JAVAJIGI);
-        questionRepository.save(Q1);
-    }
-
-    @AfterEach
-    void deleteAll() {
-        userRepository.deleteAll();
-        questionRepository.deleteAll();
-        answerRepository.deleteAll();
+        user = new User("lkimilhol", "1234", "김일호", "lkimilhol@gmail.com");
+        question = new Question("질문", "내용");
+        userRepository.save(user);
+        questionRepository.save(question);
     }
 
     @Test
@@ -46,9 +39,9 @@ public class AnswerRepositoryTest {
     void create() {
         //given
         //when
-        Answer answer = answerRepository.save(A1);
+        Answer answer = answerRepository.save(new Answer(user, question, "Answer"));
         //then
-        assertThat(answer.getId()).isEqualTo(A1.getId());
+        assertThat(answer.getId() > 0).isTrue();
     }
 
     @Test
@@ -56,10 +49,10 @@ public class AnswerRepositoryTest {
     void findById() {
         //given
         //when
-        Answer save = answerRepository.save(A1);
-        Optional<Answer> answer = answerRepository.findByIdAndDeletedFalse(save.getId());
+        Answer answer = answerRepository.save(new Answer(user, question, "Answer"));
+        Optional<Answer> answerOptional = answerRepository.findByIdAndDeletedFalse(answer.getId());
         //then
-        assertThat(answer.isPresent()).isTrue();
+        assertThat(answerOptional.isPresent()).isTrue();
     }
 
     @Test
@@ -67,10 +60,10 @@ public class AnswerRepositoryTest {
     void findByQuestionId() {
         //given
         //when
-        Answer save = answerRepository.save(A1);
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(save.getQuestion().getId());
+        Answer answer = answerRepository.save(new Answer(user, question, "Answer"));
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestion().getId());
         //then
         assertThat(answers.size() > 0).isTrue();
-        assertThat(answers.get(0).getQuestion()).isEqualTo(save.getQuestion());
+        assertThat(answers.get(0).getQuestion()).isEqualTo(answer.getQuestion());
     }
 }
