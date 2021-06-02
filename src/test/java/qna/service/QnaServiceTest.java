@@ -58,8 +58,8 @@ class QnaServiceTest {
         qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
-        assertThat(question.getAnswers()).hasSize(1);
-        assertThat(question.getAnswers()).containsExactly(answer);
+        assertThat(question.getAnswers().getValue()).hasSize(1);
+        assertThat(question.getAnswers().getValue()).containsExactly(answer);
         verifyDeleteHistories();
     }
 
@@ -95,8 +95,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.ANSWER, new ContentId(answer.getId()), answer.getWriter(), LocalDateTime.now()),
-            new DeleteHistory(ContentType.QUESTION, new ContentId(question.getId()), question.getWriter(), LocalDateTime.now())
+                DeleteHistory.ofAnswer(new ContentId(answer.getId()), answer.getWriter(), LocalDateTime.now()),
+            DeleteHistory.ofQuestion(new ContentId(question.getId()), question.getWriter(), LocalDateTime.now())
         );
         verify(deleteHistoryService).saveAll(new DeleteHistories(deleteHistories));
     }

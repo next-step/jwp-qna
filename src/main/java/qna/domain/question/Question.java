@@ -2,10 +2,10 @@ package qna.domain.question;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
-import javax.persistence.CascadeType;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,7 +15,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Where;
 
@@ -23,7 +22,6 @@ import qna.CannotDeleteException;
 import qna.domain.BaseEntity;
 import qna.domain.answer.Answer;
 import qna.domain.answer.Answers;
-import qna.domain.deletehistory.ContentType;
 import qna.domain.deletehistory.DeleteHistories;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.user.User;
@@ -42,12 +40,9 @@ public class Question extends BaseEntity {
     @Embedded
     private Contents contents;
 
-    @OneToMany(mappedBy = "question",
-        fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
-    private List<Answer> answers = new ArrayList<>();
+
+    @Embedded
+    private Answers answers = new Answers(new ArrayList<>());
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id",
@@ -83,7 +78,7 @@ public class Question extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -117,15 +112,11 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         this.setDeleted(true);
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, getId(), user, LocalDateTime.now());
+        DeleteHistory deleteHistory = DeleteHistory.ofQuestion(getId(), user, LocalDateTime.now());
 
-        if (Objects.isNull(this.answers)) {
-            this.answers = new ArrayList<>();
-        }
-        Answers answers = new Answers(this.answers);
+        Answers answers = this.answers;
         DeleteHistories deleteHistories = answers.deletedBy(user);
         deleteHistories.add(deleteHistory);
         return deleteHistories;
     }
-
 }

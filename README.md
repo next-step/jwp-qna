@@ -165,11 +165,11 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
 
 -- 피드백 반영 및 리팩토링 변경 Todo
 
-- [ ] Question.java 에서 Answers 타입 이용하기
+- [x] Question.java 에서 Answers 타입 이용하기
 
   : @Embedded 사용
 
-- [ ] DeleteHistory 의 정적 메서드 변경
+- [x] DeleteHistory 의 정적 메서드 변경
 
 - [ ] ValueObject 의 유효성 검사
 

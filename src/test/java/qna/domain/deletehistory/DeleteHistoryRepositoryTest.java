@@ -28,7 +28,7 @@ class DeleteHistoryRepositoryTest {
 	void setUp() {
 		User deletedBy = userRepository.save(UserTest.JAVAJIGI);;
 		long contentId = 1L;
-		answerDeleteHistory = new DeleteHistory(ContentType.ANSWER, new ContentId(contentId), deletedBy, LocalDateTime.now());
+		answerDeleteHistory = DeleteHistory.ofAnswer(new ContentId(contentId), deletedBy, LocalDateTime.now());
 	}
 
 	@Test

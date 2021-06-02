@@ -37,14 +37,30 @@ public class DeleteHistory {
 
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, ContentId contentId, User deletedBy, LocalDateTime createDate) {
+    public static DeleteHistory ofQuestion(ContentId contentId, User deletedBy, LocalDateTime createDate){
+        return new DeleteHistory(ContentType.QUESTION, contentId, deletedBy, createDate);
+    }
+
+    public static DeleteHistory ofQuestion(Long contentId, User deletedBy, LocalDateTime createDate){
+        return new DeleteHistory(ContentType.QUESTION, contentId, deletedBy, createDate);
+    }
+
+    public static DeleteHistory ofAnswer(ContentId contentId, User deletedBy, LocalDateTime createDate){
+        return new DeleteHistory(ContentType.ANSWER, contentId, deletedBy, createDate);
+    }
+
+    public static DeleteHistory ofAnswer(Long contentId, User deletedBy, LocalDateTime createDate){
+        return new DeleteHistory(ContentType.ANSWER, contentId, deletedBy, createDate);
+    }
+
+    private DeleteHistory(ContentType contentType, ContentId contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
         this.createDate = createDate;
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this(contentType, new ContentId(contentId), deletedBy, createDate);
     }
     // for jpa
