@@ -49,7 +49,7 @@ public class DeleteHistory extends AbstractEntity {
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
                 ", deletedById=" + deletedById +
-                ", createDate=" + createdAt +
+                ", createAt=" + createdAt +
                 '}';
     }
 }
