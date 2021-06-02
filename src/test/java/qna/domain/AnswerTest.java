@@ -25,14 +25,15 @@ public class AnswerTest {
     }
 
     @Test
-    void 삭제시_삭제상태가_변경되는지_확인() throws CannotDeleteException {
+    void 삭제시_삭제상태가_변경되는지_확인() {
         User loginUser = UserTest.JAVAJIGI;
         A1.delete(loginUser);
         assertThat(A1.isDeleted()).isTrue();
     }
 
     @Test
-    void 삭제시_삭제이력을_반환하는지_확인() throws CannotDeleteException {
+    void 삭제시_삭제이력을_반환하는지_확인() {
+        //TODO - 답변삭제시 삭제 이력을 반환해야 한다.
         User loginUser = UserTest.JAVAJIGI;
         DeleteHistory deleteHistory = A1.delete(loginUser);
         assertThat(deleteHistory).isNotNull();
