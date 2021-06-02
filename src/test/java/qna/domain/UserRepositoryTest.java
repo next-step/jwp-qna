@@ -19,7 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 @DataJpaTest
-public class UserTest {
+public class UserRepositoryTest {
     public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
 

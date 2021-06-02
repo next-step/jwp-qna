@@ -15,7 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
-class AnswerTest {
+class AnswerRepositoryTest {
 
     @Autowired
     private TestEntityManager entityManager;

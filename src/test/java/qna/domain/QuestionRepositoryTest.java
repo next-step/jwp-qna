@@ -14,9 +14,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
-public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1", UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2", UserTest.SANJIGI);
+public class QuestionRepositoryTest {
+    public static final Question Q1 = new Question("title1", "contents1", UserRepositoryTest.JAVAJIGI);
+    public static final Question Q2 = new Question("title2", "contents2", UserRepositoryTest.SANJIGI);
 
     @Autowired
     private TestEntityManager entityManager;
@@ -183,8 +183,8 @@ public class QuestionTest {
     @Test
     void findByContentContains() {
         // given
-        userRepository.save(UserTest.JAVAJIGI);
-        userRepository.save(UserTest.SANJIGI);
+        userRepository.save(UserRepositoryTest.JAVAJIGI);
+        userRepository.save(UserRepositoryTest.SANJIGI);
         questionRepository.save(question1);
         questionRepository.save(question2);
         final String criteria = "contents";
