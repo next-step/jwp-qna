@@ -31,13 +31,13 @@ public class AnswerRepositoryTest {
         userRepository.save(alice);
         Question question = new Question("title", "contents");
         questionRepository.save(question);
-        Answer answer = new Answer(alice, question, "Answers Contents1");
+        Answer answer = new Answer(alice, question, "Answers Contents");
         answerRepository.save(answer);
 
         Question searchedQuestion = questionRepository
             .findById(question.getId())
             .orElseThrow(NotFoundException::new);
-        List<Answer> activeAnswers = searchedQuestion.getAnswers(false);
+        List<Answer> activeAnswers = searchedQuestion.getAnswers(Status.PUBLISHED);
 
         assertThat(activeAnswers.size()).isEqualTo(1);
         assertThat(activeAnswers).contains(answer);
@@ -70,10 +70,12 @@ public class AnswerRepositoryTest {
         answerRepository.save(answer);
 
         answer.setDeleted(true);
+        answerRepository.flush();
+
         Question searchedQuestion = questionRepository
             .findById(question.getId())
             .orElseThrow(NotFoundException::new);
-        List<Answer> activeAnswers = searchedQuestion.getAnswers(false);
+        List<Answer> activeAnswers = searchedQuestion.getAnswers(Status.PUBLISHED);
 
         assertThat(activeAnswers).isEmpty();
     }
@@ -127,6 +129,27 @@ public class AnswerRepositoryTest {
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
             answerRepository.findByIdAndDeletedFalse(answer.getId()).get()
         );
+    }
+
+    @DisplayName("User의 활성화된 답변 목록 가져오기")
+    @Test
+    void getQuestionsAndAnswersByUser() {
+        User alice = new User("alice", "password", "Alice", "alice@mail");
+        userRepository.save(alice);
+        Question question = new Question("title", "contents");
+        questionRepository.save(question);
+        Answer answer1 = new Answer(alice, question, "Answers Contents1");
+        Answer answer2 = new Answer(alice, question, "Answers Contents2");
+        answerRepository.save(answer1);
+        answerRepository.save(answer2);
+
+        User searchedUser = userRepository
+            .findById(alice.getId())
+            .orElseThrow(NotFoundException::new);
+        List<Answer> activeAnswers = searchedUser.getAnswers(Status.PUBLISHED);
+
+        assertThat(activeAnswers.size()).isEqualTo(2);
+        assertThat(activeAnswers).contains(answer1, answer2);
     }
 
 }

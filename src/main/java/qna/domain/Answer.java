@@ -51,6 +51,7 @@ public class Answer extends BaseEntity {
         this.question = question;
         this.contents = contents;
 
+        writer.addAnswer(this);
         question.addAnswer(this);
     }
 

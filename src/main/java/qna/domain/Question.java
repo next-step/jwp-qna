@@ -57,6 +57,7 @@ public class Question extends BaseEntity {
         }
 
         this.writer = writer;
+        writer.addQuestion(this);
         return this;
     }
 
@@ -96,8 +97,10 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers(boolean deleted) {
-        return answers.stream().filter(answer -> answer.isDeleted() == deleted).collect(Collectors.toList());
+    public List<Answer> getAnswers(Status status) {
+        return answers.stream()
+            .filter(answer -> answer.isDeleted() == status.isDeleted())
+            .collect(Collectors.toList());
     }
 
     @Override

@@ -1,6 +1,9 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.*;
 
@@ -33,6 +36,12 @@ public class User extends BaseEntity {
 
     @Column(length = EMAIL_LENGTH)
     private String email;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
 
     protected User() {
     }
@@ -105,6 +114,26 @@ public class User extends BaseEntity {
 
     public String getEmail() {
         return email;
+    }
+
+    public void addQuestion(Question question) {
+        this.questions.add(question);
+    }
+
+    public List<Question> getQuestions(Status status) {
+        return questions.stream()
+            .filter(question -> question.isDeleted() == status.isDeleted())
+            .collect(Collectors.toList());
+    }
+
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
+    }
+
+    public List<Answer> getAnswers(Status status) {
+        return answers.stream()
+            .filter(answer -> answer.isDeleted() == status.isDeleted())
+            .collect(Collectors.toList());
     }
 
     @Override

@@ -20,6 +20,9 @@ public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @DisplayName("진행 중인 질문 검색")
     @Test
     void findByDeletedFalse() {
@@ -111,6 +114,25 @@ public class QuestionRepositoryTest {
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
             questionRepository.findById(question.getId()).get()
         );
+    }
+
+    @DisplayName("User의 활성화된 질문 목록 가져오기")
+    @Test
+    void getQuestionsAndAnswersByUser() {
+        User alice = new User("alice", "password", "Alice", "alice@mail");
+        userRepository.save(alice);
+        Question question1 = new Question("title1", "contents1").writeBy(alice);
+        Question question2 = new Question("title2", "contents2").writeBy(alice);
+        questionRepository.save(question1);
+        questionRepository.save(question2);
+
+        User searchedUser = userRepository
+            .findById(alice.getId())
+            .orElseThrow(NotFoundException::new);
+        List<Question> activeQuestions = searchedUser.getQuestions(Status.PUBLISHED);
+
+        assertThat(activeQuestions.size()).isEqualTo(2);
+        assertThat(activeQuestions).contains(question1, question2);
     }
 
 }
