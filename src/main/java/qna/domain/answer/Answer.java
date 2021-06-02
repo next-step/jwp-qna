@@ -37,7 +37,7 @@ public class Answer extends BaseEntity {
         foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id",
         foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
