@@ -89,7 +89,7 @@ class QnaServiceTest {
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId()))
             .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.")
-            .hasCauseInstanceOf(CannotDeleteException.class);
+            .isInstanceOf(CannotDeleteException.class);
     }
 
     private void verifyDeleteHistories() {

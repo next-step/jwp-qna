@@ -2,7 +2,6 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
@@ -99,7 +98,7 @@ public class Question extends BaseTimeEntity {
         return writer;
     }
 
-    public List<DeleteHistory> deleteByOwner(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleteByOwner(User loginUser) {
         validateAuthority(loginUser);
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
@@ -120,17 +119,7 @@ public class Question extends BaseTimeEntity {
     }
 
     private List<DeleteHistory> deleteAllAnswerByOwner(User loginUser) {
-        return answers.stream().map(wrap(answer -> answer.deleteByOwner(loginUser))).collect(Collectors.toList());
-    }
-
-    public static <T, R, E extends Exception> Function<T, R> wrap(ExceptionFunction<T, R, E> function) {
-        return arg -> {
-            try {
-                return function.apply(arg);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
+        return answers.stream().map(answer -> answer.deleteByOwner(loginUser)).collect(Collectors.toList());
     }
 
     @Override

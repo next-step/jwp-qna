@@ -93,7 +93,7 @@ public class Answer extends BaseTimeEntity {
         return writer;
     }
 
-    public DeleteHistory deleteByOwner(User loginUser) throws CannotDeleteException {
+    public DeleteHistory deleteByOwner(User loginUser) {
         if (!writer.equals(loginUser)) {
             throw new CannotDeleteException(CHECK_ANSWER_AUTHORITY);
         }
