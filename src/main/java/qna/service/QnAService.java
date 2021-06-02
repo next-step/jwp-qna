@@ -9,7 +9,6 @@ import qna.domain.AnswerRepository;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.User;
-import qna.domain.wrapper.DeleteHistories;
 
 @Service
 public class QnAService {
@@ -34,7 +33,6 @@ public class QnAService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) {
         Question question = findQuestionById(questionId);
-        DeleteHistories deleteHistories = DeleteHistories.of(loginUser, question);
-        deleteHistoryService.saveAll(deleteHistories.getDeleteHistories());
+        deleteHistoryService.saveAll(question.deleteAndReturnDeleteHistories(loginUser));
     }
 }

@@ -4,6 +4,7 @@ import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 import qna.domain.base.BaseEntity;
 import qna.domain.wrapper.Answers;
+import qna.domain.wrapper.DeleteHistories;
 import qna.domain.wrapper.Deleted;
 
 import javax.persistence.Column;
@@ -19,6 +20,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -76,20 +78,19 @@ public class Question extends BaseEntity {
         return deleted.isDeleted();
     }
 
-    public DeleteHistory deleteAndReturnDeleteHistory(User loginUser) {
+    public DeleteHistories deleteAndReturnDeleteHistories(User loginUser) {
         checkPossibleDelete(loginUser);
         deleted.delete();
-        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(answers.deleteAndReturnDeleteHistories(loginUser));
+        return DeleteHistories.from(deleteHistories);
     }
 
     private void checkPossibleDelete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-    }
-
-    public List<DeleteHistory> deleteAnswersAndReturnDeleteHistories(User loginUser) {
-        return answers.deleteAndReturnDeleteHistories(loginUser);
     }
 
     public Long getId() {
