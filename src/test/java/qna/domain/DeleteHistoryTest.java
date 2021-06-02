@@ -34,4 +34,15 @@ public class DeleteHistoryTest {
 				LocalDateTime.of(2021, 6, 2, 23, 40)).size()).isEqualTo(
 			2);
 	}
+
+	@Test
+	@DisplayName("jpa less than 조회")
+	void select_less_than() {
+		DeleteHistory saveDH1 = deleteHistoryRepository.save(DH1);
+		DeleteHistory saveDH2 = deleteHistoryRepository.save(DH2);
+
+		assertThat(
+			deleteHistoryRepository.findByIdLessThan(saveDH2.getId()).get(0)).isEqualTo(saveDH1
+		);
+	}
 }
