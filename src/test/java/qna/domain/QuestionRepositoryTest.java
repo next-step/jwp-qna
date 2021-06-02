@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 
 @DataJpaTest
@@ -88,23 +89,20 @@ public class QuestionRepositoryTest {
 
     @DisplayName("메소드명에 조회 조건을 부여한 새로운 메소드(findByIdAndDeletedTrue)를 만들었을 때 정상적으로 조회되는지 확인하는 테스트")
     @Test
-    void findByIdAndDeletedTrue() {
+    void findByIdAndDeletedTrue() throws CannotDeleteException {
         // given
         final Question questionMarkedDeleted = questionRepository.save(question1);
-        questionMarkedDeleted.deleted(true);
+        questionMarkedDeleted.delete(user1);
         final Question questionMarkUndeleted = questionRepository.save(question2);
-        questionMarkUndeleted.deleted(false);
 
         // when
-        final Optional<Question> optActualMarkDeleted = questionRepository.findByIdAndDeletedTrue(
-            questionMarkedDeleted.getId());
-        final Question actualMarkDeleted = optActualMarkDeleted.orElseThrow(IllegalArgumentException::new);
+        final Question actualMarkDeleted = questionRepository.findByIdAndDeletedTrue(questionMarkedDeleted.getId())
+            .orElseThrow(IllegalArgumentException::new);
         final Optional<Question> optNotExistActualMarkDeleted = questionRepository.findByIdAndDeletedFalse(
             questionMarkedDeleted.getId());
 
-        final Optional<Question> optActualMarkUndeleted = questionRepository.findByIdAndDeletedFalse(
-            questionMarkUndeleted.getId());
-        final Question actualMarkUndeleted = optActualMarkUndeleted.orElseThrow(IllegalArgumentException::new);
+        final Question actualMarkUndeleted = questionRepository.findByIdAndDeletedFalse(questionMarkUndeleted.getId())
+            .orElseThrow(IllegalArgumentException::new);
         final Optional<Question> optNotExistActualMarkUndeletedNotExist = questionRepository.findByIdAndDeletedTrue(
             questionMarkUndeleted.getId());
 
@@ -147,11 +145,11 @@ public class QuestionRepositoryTest {
 
     @DisplayName("deteled = true 인 조건만 검색하는 테스트")
     @Test
-    void findByDeletedFalse() {
+    void findByDeletedFalse() throws CannotDeleteException {
         // given
         final Question savedQuestion1 = questionRepository.save(question1);
         final Question savedQuestion2 = questionRepository.save(question2);
-        savedQuestion2.deleted(true);
+        savedQuestion2.delete(user2);
 
         // when
         final List<Question> actual = questionRepository.findByDeletedFalse();

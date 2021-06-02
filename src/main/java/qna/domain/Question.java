@@ -89,7 +89,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void deleted(final boolean deleted) {
+    private void deleted(final boolean deleted) {
         this.deleted = deleted;
     }
 
