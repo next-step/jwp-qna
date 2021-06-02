@@ -1,8 +1,13 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.util.Date;
 
+@EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public abstract class BaseEntity {
 
@@ -11,10 +16,10 @@ public abstract class BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
+    @CreatedDate
+    private Date createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
     private Date updatedAt;
 
     BaseEntity(){}
