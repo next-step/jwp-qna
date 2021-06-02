@@ -31,4 +31,27 @@ public class AnswerTest {
 
 		assertThat(saveA1).isEqualTo(answerRepository.findById(saveA1.getId()).get());
 	}
+
+	@Test
+	@DisplayName("jpa 작성 메소드 사용(findByIdAndDeletedFalse)")
+	void use_written_method_findByIdAndDeletedFalse() {
+		Answer saveA1 = answerRepository.save(A1);
+		A2.setDeleted(true);
+		Answer saveA2 = answerRepository.save(A2);
+
+		assertThat(saveA1).isEqualTo(answerRepository.findByIdAndDeletedFalse(saveA1.getId()).get());
+		assertThat(answerRepository.findByIdAndDeletedFalse(saveA2.getId()).isPresent()).isFalse();
+	}
+
+	@Test
+	@DisplayName("jpa 작성 메소드 사용(findByQuestionIdAndDeletedFalse)")
+	void use_written_method_findByQuestionIdAndDeletedFalse() {
+		Answer saveA1 = answerRepository.save(A1);
+		A2.setDeleted(true);
+		Answer saveA2 = answerRepository.save(A2);
+
+		assertThat(saveA1).isEqualTo(answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId()).get(0));
+		assertThat(answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId()).get(0)).isEqualTo(
+			answerRepository.findById(saveA1.getId()).get());
+	}
 }
