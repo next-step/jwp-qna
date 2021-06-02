@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import qna.UnAuthorizedException;
 
 @Entity
-@Table
+@Table(name = "user")
 public class User {
 	public static final GuestUser GUEST_USER = new GuestUser();
 

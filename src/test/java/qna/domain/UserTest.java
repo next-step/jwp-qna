@@ -16,6 +16,17 @@ public class UserTest {
 	public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
 	@Test
+	@DisplayName("jpql 사용)")
+	void select_name_by_email_using_jpql() {
+		User saveA1 = userRepository.save(JAVAJIGI);
+		User saveA2 = userRepository.save(SANJIGI);
+
+		userRepository.findByEmail("javajigi");
+
+		assertThat((String)userRepository.findByEmail("javajigi").get(0)[0]).isEqualTo("javajigi");
+	}
+
+	@Test
 	@DisplayName("jpa 작성 메소드 사용(findByUserId)")
 	void use_written_method_findByUserId() {
 		User saveA1 = userRepository.save(JAVAJIGI);
