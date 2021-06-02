@@ -83,40 +83,38 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
-    }
-
-    public void setUserId(final String userId) {
-        this.userId = userId;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(final String password) {
-        this.password = password;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(final String email) {
-        this.email = email;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final User user = (User)o;
+        return Objects.equals(id, user.id) && Objects.equals(userId, user.userId) && Objects.equals(password,
+            user.password) && Objects.equals(name, user.name) && Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email);
     }
 
     @Override

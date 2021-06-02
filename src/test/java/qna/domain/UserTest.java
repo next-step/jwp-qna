@@ -8,11 +8,10 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
@@ -20,25 +19,32 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
 public class UserTest {
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+    public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
+    public static final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
 
     @Autowired
     private TestEntityManager entityManager;
 
     @Autowired
     private UserRepository userRepository;
+    private User user1;
+    private User user2;
+
+    @BeforeEach
+    void setup() {
+        user1 = new User("id1", "password1", "name1", "email1");
+        user2 = new User("id2", "password2", "name2", "email2");
+    }
 
     @DisplayName("객체 저장 테스트")
     @Test
     void save() {
         // given
-        final User expected = userRepository.save(JAVAJIGI);
+        final User expected = userRepository.save(user1);
 
         // when
-        final Optional<User> optActual = userRepository.findByUserId(JAVAJIGI.getUserId());
+        final Optional<User> optActual = userRepository.findByUserId(user1.getUserId());
         final User actual = optActual.orElseThrow(IllegalArgumentException::new);
 
         // then
@@ -49,16 +55,16 @@ public class UserTest {
     @Test
     void findByUserId() {
         // given
-        userRepository.save(JAVAJIGI);
+        final User expected = userRepository.save(user1);
 
         // when
-        final Optional<User> optUser = userRepository.findByUserId(JAVAJIGI.getUserId());
+        final Optional<User> optUser = userRepository.findByUserId(expected.getUserId());
+        final User user = optUser.orElseThrow(IllegalArgumentException::new);
 
         // then
-        final User user = optUser.orElseThrow(IllegalArgumentException::new);
         assertAll(
             () -> assertThat(user).isNotNull(),
-            () -> assertThat(user).isEqualTo(JAVAJIGI),
+            () -> assertThat(user).isEqualTo(expected),
             () -> assertThat(user.getId()).isNotNull()
         );
     }
@@ -67,8 +73,8 @@ public class UserTest {
     @Test
     void deleteAllInBatch() {
         // given
-        userRepository.save(JAVAJIGI);
-        userRepository.save(SANJIGI);
+        userRepository.save(user1);
+        userRepository.save(user2);
         userRepository.deleteAllInBatch();
 
         // when
@@ -82,8 +88,8 @@ public class UserTest {
     @Test
     void findAllWithSortId() {
         // given
-        userRepository.save(JAVAJIGI);
-        userRepository.save(SANJIGI);
+        final User expectedUser1 = userRepository.save(user1);
+        final User expectedUser2 = userRepository.save(user2);
 
         // when
         final List<User> actual = userRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
@@ -91,27 +97,27 @@ public class UserTest {
         // then
         assertAll(
             () -> assertThat(actual.size()).isEqualTo(2),
-            () -> assertThat(actual).containsExactly(SANJIGI, JAVAJIGI)
+            () -> assertThat(actual).containsExactly(expectedUser2, expectedUser1)
         );
     }
 
     @DisplayName("페이징 옵션을 사용해서 전체 검색 테스트")
     @Test
-    void name() {
+    void findAllWithPageRequestAndSort() {
         // given
         for (int i = 0; i < 20; i++) {
-            userRepository.save(new User("id" + i, "password", "name", "email"));
+            userRepository.save(new User("user" + i, "password", "name", "email"));
         }
 
         // when
-        final Page<User> actual = userRepository.findAll(PageRequest.of(1, 10));
+        final Page<User> actual = userRepository.findAll(PageRequest.of(1, 10, Sort.by("id").ascending()));
 
         // then
         assertAll(
             () -> assertThat(actual.getTotalElements()).isEqualTo(20),
             () -> assertThat(actual.getTotalPages()).isEqualTo(2),
             () -> assertThat(actual.getContent().size()).isEqualTo(10),
-            () -> assertThat(actual.getContent().get(0).getId()).isEqualTo(11L)
+            () -> assertThat(actual.getContent().get(0).getUserId()).isEqualTo("user10")
         );
     }
 

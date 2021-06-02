@@ -1,32 +1,56 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question("title1", "contents1", UserTest.JAVAJIGI);
+    public static final Question Q2 = new Question("title2", "contents2", UserTest.SANJIGI);
+
+    @Autowired
+    private TestEntityManager entityManager;
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private Question question1;
+    private Question question2;
+
+    private User user1;
+    private User user2;
+
+    @BeforeEach
+    void setup() {
+        user1 = new User("id1", "password1", "name1", "email1");
+        user2 = new User("id2", "password2", "name2", "email2");
+        entityManager.persist(user1);
+        entityManager.persist(user2);
+
+        question1 = new Question("title1", "contents1", user1);
+        question2 = new Question("title2", "contents2", user2);
+        entityManager.persist(question1);
+        entityManager.persist(question2);
+    }
 
     @DisplayName("저장 후 반환되는 객체 확인 테스트")
     @Test
     void save() {
         // when
-        final Question actual = questionRepository.save(Q1);
+        final Question actual = questionRepository.save(question1);
 
         // then
         assertAll(
@@ -34,8 +58,7 @@ public class QuestionTest {
             () -> assertThat(actual.getTitle()).isNotNull(),
             () -> assertThat(actual.getContents()).isNotNull(),
             () -> assertThat(actual.isDeleted()).isEqualTo(false),
-            () -> assertThat(actual.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
-            () -> assertThat(actual).isEqualTo(Q1)
+            () -> assertThat(actual.getWriterId()).isEqualTo(user1.getId())
         );
     }
 
@@ -43,10 +66,10 @@ public class QuestionTest {
     @Test
     void findById() {
         // given
-        final Question expected = questionRepository.save(Q1);
+        final Question expected = questionRepository.save(question1);
 
         // when
-        final Optional<Question> optActual = questionRepository.findById(Q1.getId());
+        final Optional<Question> optActual = questionRepository.findById(expected.getId());
         final Question actual = optActual.orElseThrow(IllegalArgumentException::new);
 
         // then
@@ -55,8 +78,8 @@ public class QuestionTest {
             () -> assertThat(actual.getTitle()).isNotNull(),
             () -> assertThat(actual.getContents()).isNotNull(),
             () -> assertThat(actual.isDeleted()).isEqualTo(false),
-            () -> assertThat(actual.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
-            () -> assertThat(actual).isEqualTo(Q1),
+            () -> assertThat(actual.getWriterId()).isEqualTo(user1.getId()),
+            () -> assertThat(actual).isEqualTo(expected),
             () -> assertThat(actual).isEqualTo(expected)
         );
     }
@@ -65,36 +88,33 @@ public class QuestionTest {
     @Test
     void findByIdAndDeletedTrue() {
         // given
-        assertThat(Q1.getId()).isNull();
-        assertThat(Q2.getId()).isNull();
-
-        final Question questionMarkedDeleted = questionRepository.save(Q1);
+        final Question questionMarkedDeleted = questionRepository.save(question1);
         questionMarkedDeleted.setDeleted(true);
-        final Question questionMarkUndeleted = questionRepository.save(Q2);
+        final Question questionMarkUndeleted = questionRepository.save(question2);
         questionMarkUndeleted.setDeleted(false);
 
-        assertThat(Q1.getId()).isNotNull();
-        assertThat(Q2.getId()).isNotNull();
-
         // when
-        final Optional<Question> optActualMarkDeleted = questionRepository.findByIdAndDeletedTrue(Q1.getId());
+        final Optional<Question> optActualMarkDeleted = questionRepository.findByIdAndDeletedTrue(
+            questionMarkedDeleted.getId());
         final Question actualMarkDeleted = optActualMarkDeleted.orElseThrow(IllegalArgumentException::new);
-        final Optional<Question> optNotExistActualMarkDeleted = questionRepository.findByIdAndDeletedFalse(Q1.getId());
+        final Optional<Question> optNotExistActualMarkDeleted = questionRepository.findByIdAndDeletedFalse(
+            questionMarkedDeleted.getId());
 
-        final Optional<Question> optActualMarkUndeleted = questionRepository.findByIdAndDeletedFalse(Q2.getId());
+        final Optional<Question> optActualMarkUndeleted = questionRepository.findByIdAndDeletedFalse(
+            questionMarkUndeleted.getId());
         final Question actualMarkUndeleted = optActualMarkUndeleted.orElseThrow(IllegalArgumentException::new);
         final Optional<Question> optNotExistActualMarkUndeletedNotExist = questionRepository.findByIdAndDeletedTrue(
-            Q2.getId());
+            questionMarkUndeleted.getId());
 
         // then
         assertAll(
             () -> assertThat(actualMarkDeleted).isNotNull(),
             () -> assertThat(actualMarkDeleted.getId()).isNotNull(),
-            () -> assertThat(actualMarkDeleted).isEqualTo(Q1),
+            () -> assertThat(actualMarkDeleted).isEqualTo(questionMarkedDeleted),
             () -> assertThat(actualMarkDeleted).isEqualTo(questionMarkedDeleted),
             () -> assertThat(actualMarkUndeleted).isNotNull(),
             () -> assertThat(actualMarkUndeleted.getId()).isNotNull(),
-            () -> assertThat(actualMarkUndeleted).isEqualTo(Q2),
+            () -> assertThat(actualMarkUndeleted).isEqualTo(questionMarkUndeleted),
             () -> assertThat(actualMarkUndeleted).isEqualTo(questionMarkUndeleted),
             () -> assertThatThrownBy(
                 () -> optNotExistActualMarkDeleted.orElseThrow(IllegalArgumentException::new)).isInstanceOf(
@@ -108,7 +128,7 @@ public class QuestionTest {
     @Test
     void existsById() {
         // given
-        final Question savedQuestion = questionRepository.save(Q1);
+        final Question savedQuestion = questionRepository.save(question1);
         final Long persistentId = savedQuestion.getId();
         final long notPersistentId = 2L;
 
@@ -127,9 +147,9 @@ public class QuestionTest {
     @Test
     void findByDeletedFalse() {
         // given
-        questionRepository.save(Q1);
-        final Question savedQuestion = questionRepository.save(Q2);
-        savedQuestion.setDeleted(true);
+        final Question savedQuestion1 = questionRepository.save(question1);
+        final Question savedQuestion2 = questionRepository.save(question2);
+        savedQuestion2.setDeleted(true);
 
         // when
         final List<Question> actual = questionRepository.findByDeletedFalse();
@@ -137,7 +157,7 @@ public class QuestionTest {
         // then
         assertAll(
             () -> assertThat(actual.size()).isEqualTo(1),
-            () -> assertThat(actual.get(0)).isEqualTo(Q1)
+            () -> assertThat(actual.get(0)).isEqualTo(savedQuestion1)
         );
     }
 
@@ -145,17 +165,17 @@ public class QuestionTest {
     @Test
     void findByTitle() {
         // given
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
+        questionRepository.save(question1);
+        questionRepository.save(question2);
 
         // when
-        final List<Question> actual = questionRepository.findByTitle(Q1.getTitle());
+        final List<Question> actual = questionRepository.findByTitle(question1.getTitle());
 
         // then
         assertAll(
             () -> assertThat(actual).isNotNull(),
             () -> assertThat(actual.size()).isEqualTo(1),
-            () -> assertThat(actual.get(0)).isEqualTo(Q1)
+            () -> assertThat(actual.get(0)).isEqualTo(question1)
         );
     }
 
@@ -163,8 +183,10 @@ public class QuestionTest {
     @Test
     void findByContentContains() {
         // given
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
+        questionRepository.save(question1);
+        questionRepository.save(question2);
         final String criteria = "contents";
 
         // when
@@ -174,7 +196,7 @@ public class QuestionTest {
         assertAll(
             () -> assertThat(actual).isNotNull(),
             () -> assertThat(actual.size()).isEqualTo(2),
-            () -> assertThat(actual).containsExactly(Q1, Q2)
+            () -> assertThat(actual).containsExactly(question1, question2)
         );
     }
 }
