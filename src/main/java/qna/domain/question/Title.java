@@ -8,10 +8,18 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Title {
 
-	@Column(length = 100, nullable = false)
+	private final int LIMITED_MAXIMUM_TEXT = 100;
+	@Column(length = LIMITED_MAXIMUM_TEXT, nullable = false)
 	private String value;
 
 	public Title(String value) {
+		setValue(value);
+	}
+
+	protected void setValue(String value) {
+		if (Objects.isNull(value) || value.length() > LIMITED_MAXIMUM_TEXT){
+			throw new IllegalArgumentException("Invalid Title value");
+		}
 		this.value = value;
 	}
 

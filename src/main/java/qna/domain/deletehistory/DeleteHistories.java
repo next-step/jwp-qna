@@ -1,5 +1,7 @@
 package qna.domain.deletehistory;
 
+import static java.util.Objects.*;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -9,6 +11,7 @@ public class DeleteHistories {
 	private final List<DeleteHistory> value;
 
 	public DeleteHistories(List<DeleteHistory> value) {
+		requireNonNull(value, "Found Null Value in DeleteHistories");
 		this.value = value;
 	}
 

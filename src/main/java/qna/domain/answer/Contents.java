@@ -1,5 +1,7 @@
 package qna.domain.answer;
 
+import static java.util.Objects.*;
+
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -14,6 +16,7 @@ public class Contents {
 	String value;
 
 	public Contents(String value) {
+		requireNonNull(value, "Found Null Value in Contents");
 		this.value = value;
 	}
 
@@ -31,6 +34,6 @@ public class Contents {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(value);
+		return hash(value);
 	}
 }

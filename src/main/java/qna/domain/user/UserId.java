@@ -8,10 +8,19 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class UserId {
 
-	@Column(name = "userId",length = 20, nullable = false, unique = true)
+	private final int LIMITED_MAXIMUM_TEXT = 20;
+
+	@Column(name = "userId",length = LIMITED_MAXIMUM_TEXT, nullable = false, unique = true)
 	private String value;
 
 	public UserId(String value) {
+		setValue(value);
+	}
+
+	private void setValue(String value) {
+		if (Objects.isNull(value) || value.length() > LIMITED_MAXIMUM_TEXT){
+			throw new IllegalArgumentException("Invalid UserId value");
+		}
 		this.value = value;
 	}
 

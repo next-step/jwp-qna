@@ -171,7 +171,7 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
 
 - [x] DeleteHistory 의 정적 메서드 변경
 
-- [ ] ValueObject 의 유효성 검사
+- [x] ValueObject 의 유효성 검사
 
   : DB의 유효성과 객체의 유효성은 다름
 
