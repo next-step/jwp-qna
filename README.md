@@ -60,3 +60,6 @@ alter table user
     - Answer(N) : User(1) 단방향 연관 관계 설정
     - Question(N) : User(1) 단방향 연관 관계 설정
     - Deleted_history(N) : user(1) 단방향 연관 관계 설정
+   
+3. QnaService의 deleteQuestion() 리팩토링
+   - 비즈니스 로직을 객체 도메인으로 옮겨 테스트 가능한 코드로 개선

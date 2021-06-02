@@ -1,8 +1,6 @@
 package qna.domain;
 
-import com.sun.istack.NotNull;
 import qna.UnAuthorizedException;
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -60,7 +58,7 @@ public class User extends BaseEntity{
     }
 
     public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
+        return password.equals(targetPassword);
     }
 
     public boolean equalsNameAndEmail(User target) {
