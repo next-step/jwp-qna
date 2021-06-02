@@ -10,6 +10,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static qna.domain.AnswerTest.A1;
+import static qna.domain.AnswerTest.A2;
+import static qna.domain.QuestionTest.Q1;
 
 class AnswerRepositoryTest extends JpaTest {
 
@@ -21,12 +23,12 @@ class AnswerRepositoryTest extends JpaTest {
     void findByQuestionIdAndDeletedFalse() {
         //given
         answers.save(A1);
-        answers.save(AnswerTest.A2);
+        answers.save(A2);
         A1.setDeleted(false);
-        AnswerTest.A2.setDeleted(true);
+        A2.setDeleted(true);
 
         //when
-        List<Answer> actual = answers.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        List<Answer> actual = answers.findByQuestionIdAndDeletedFalse(Q1.getId());
 
         //then
         assertThat(actual.size()).isEqualTo(1);

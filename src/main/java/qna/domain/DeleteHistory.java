@@ -16,7 +16,7 @@ public class DeleteHistory {
     private ContentType contentType;
 
     @Column(length = 6)
-    private LocalDateTime createDate;
+    private LocalDateTime createDate = LocalDateTime.now();
     private Long deletedById;
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
