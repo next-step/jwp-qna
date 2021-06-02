@@ -79,7 +79,7 @@ public class Answer extends BaseEntity{
     }
 
     public void delete() {
-        this.deleted = true;
+        deleted = true;
     }
 
     public void validOwner(User loginUser) throws CannotDeleteException {

@@ -16,11 +16,11 @@ public class Answers {
     protected Answers() {}
 
     public void add(Answer answer) {
-        answers.add(answer);
+        this.answers.add(answer);
     }
 
     public List<Answer> getAnswers() {
-        return this.answers;
+        return answers;
     }
 
     public void validOwner(User loginUser) throws CannotDeleteException {
@@ -29,11 +29,11 @@ public class Answers {
         }
     }
 
-    public DeleteHistories delete() {
+    public DeleteHistories delete(LocalDateTime deletedTime) {
         DeleteHistories deleteHistories = new DeleteHistories();
         for (Answer answer: answers) {
             answer.delete();
-            deleteHistories.addDeleteHistory(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+            deleteHistories.addDeleteHistory(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), deletedTime));
         }
         return deleteHistories;
     }

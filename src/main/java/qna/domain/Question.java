@@ -4,7 +4,6 @@ import org.springframework.lang.NonNull;
 import qna.CannotDeleteException;
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -72,13 +71,13 @@ public class Question extends BaseEntity{
         return deleted;
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser, LocalDateTime deletedTime) throws CannotDeleteException {
         validOwner(loginUser);
         answers.validOwner(loginUser);
 
         DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.addDeleteHistory(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
-        deleteHistories.addDeleteHistories(answers.delete());
+        deleteHistories.addDeleteHistory(new DeleteHistory(ContentType.QUESTION, id, writer, deletedTime));
+        deleteHistories.addDeleteHistories(answers.delete(deletedTime));
 
         this.deleted = true;
 
@@ -86,7 +85,7 @@ public class Question extends BaseEntity{
     }
 
     public Answers getAnswers() {
-        return this.answers;
+        return answers;
     }
 
     public void addAnswers(Answer answer) {
