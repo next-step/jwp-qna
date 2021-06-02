@@ -47,14 +47,18 @@ public class Question extends BaseTimeEntity {
 
     protected Question() {}
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
+    private Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    public static Question of(String title, String contents) {
+        return new Question(null, title, contents);
+    }
+
+    public static Question of(Long id, String title, String contents) {
+        return new Question(id, title, contents);
     }
 
     public Question writeBy(User writer) {
@@ -107,7 +111,7 @@ public class Question extends BaseTimeEntity {
         }
 
         this.deleted = true;
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer));
+        deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, this.id, this.writer));
 
         return deleteHistories;
     }

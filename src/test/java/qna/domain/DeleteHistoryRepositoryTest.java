@@ -21,8 +21,8 @@ public class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        User deletedUser = new User("tj", "ps", "김석진", "7271kim@naver.com");
-        deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, deletedUser);
+        User deletedUser = User.of("tj", "ps", "김석진", "7271kim@naver.com");
+        deleteHistory = DeleteHistory.of(ContentType.ANSWER, 1L, deletedUser);
         actual = repository.save(deleteHistory);
     }
 

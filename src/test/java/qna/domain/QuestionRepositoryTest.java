@@ -21,7 +21,7 @@ public class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        question = new Question("title", "contents");
+        question = Question.of("title", "contents");
         actual = repository.save(question);
     }
 

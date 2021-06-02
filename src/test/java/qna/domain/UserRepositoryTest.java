@@ -22,7 +22,7 @@ public class UserRepositoryTest {
 
     @BeforeEach
     void setup() {
-        user = new User("jin", "1234", "김석진", "7271kim@naver.com");
+        user = User.of("jin", "1234", "김석진", "7271kim@naver.com");
         actual = repository.save(user);
     }
 

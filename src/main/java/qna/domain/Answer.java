@@ -44,11 +44,7 @@ public class Answer extends BaseTimeEntity {
 
     protected Answer() {}
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
-    public Answer(Long id, User writer, Question question, String contents) {
+    private Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -62,6 +58,14 @@ public class Answer extends BaseTimeEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+    }
+
+    public static Answer of(User writer, Question question, String contents) {
+        return new Answer(null, writer, question, contents);
+    }
+
+    public static Answer of(Long id, User writer, Question question, String contents) {
+        return new Answer(id, writer, question, contents);
     }
 
     public void toQuestion(Question question) {
@@ -98,7 +102,7 @@ public class Answer extends BaseTimeEntity {
             throw new CannotDeleteException(CHECK_ANSWER_AUTHORITY);
         }
         this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer);
+        return DeleteHistory.of(ContentType.ANSWER, this.id, this.writer);
     }
 
     @Override

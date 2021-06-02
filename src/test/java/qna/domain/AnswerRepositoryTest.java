@@ -27,11 +27,11 @@ public class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        User writer = new User("tj", "ps", "김석진", "7271kim@naver.com");
-        User questionWriter = new User("tjs", "pss", "김석진2", "7271ki2m@naver.com");
-        Question question = new Question("질문", "입니다.").writeBy(questionWriter);
+        User writer = User.of("tj", "ps", "김석진", "7271kim@naver.com");
+        User questionWriter = User.of("tjs", "pss", "김석진2", "7271ki2m@naver.com");
+        Question question = Question.of("질문", "입니다.").writeBy(questionWriter);
 
-        answer = new Answer(writer, question, "Answers Contents1");
+        answer = Answer.of(writer, question, "Answers Contents1");
         actual = answers.save(answer);
         users.save(writer);
         users.save(questionWriter);
