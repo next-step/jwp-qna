@@ -69,7 +69,7 @@ public class AnswerRepositoryTest {
         Answer answer = new Answer(alice, question, "Answers Contents1");
         answerRepository.save(answer);
 
-        answer.setDeleted(true);
+        answer.delete();
         answerRepository.flush();
 
         Question searchedQuestion = questionRepository
@@ -90,7 +90,7 @@ public class AnswerRepositoryTest {
         Answer answer = new Answer(alice, question, "Answers Contents1");
         answerRepository.save(answer);
 
-        answer.setDeleted(true);
+        answer.delete();
         List<Answer> activeAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
         assertThat(activeAnswers).isEmpty();
@@ -124,7 +124,7 @@ public class AnswerRepositoryTest {
         Answer answer = new Answer(alice, question, "Answers Contents1");
         answerRepository.save(answer);
 
-        answer.setDeleted(true);
+        answer.delete();
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
             answerRepository.findByIdAndDeletedFalse(answer.getId()).get()

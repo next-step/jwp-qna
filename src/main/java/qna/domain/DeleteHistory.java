@@ -21,7 +21,7 @@ public class DeleteHistory {
 
     @ManyToOne
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
-    private User deletedByUser;
+    private User writer;
 
     @Column
     private LocalDateTime createDate = LocalDateTime.now();
@@ -37,16 +37,16 @@ public class DeleteHistory {
         this(ContentType.ANSWER, answer.getId(), writer);
     }
 
-    private DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
+    private DeleteHistory(ContentType contentType, Long contentId, User writer) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedByUser = deletedByUser;
+        this.writer = writer;
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User writer, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedByUser = deletedByUser;
+        this.writer = writer;
         this.createDate = createDate;
     }
 
@@ -65,12 +65,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id)
             && contentType == that.contentType
             && Objects.equals(contentId, that.contentId)
-            && Objects.equals(deletedByUser, that.deletedByUser);
+            && Objects.equals(writer.getId(), that.writer.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedByUser);
+        return Objects.hash(id, contentType, contentId, writer);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class DeleteHistory {
             + "id=" + id
             + ", contentType=" + contentType
             + ", contentId=" + contentId
-            + ", deletedById=" + deletedByUser.getId()
+            + ", deletedById=" + writer.getId()
             + ", createDate=" + createDate
             + '}';
     }

@@ -42,7 +42,7 @@ public class QuestionRepositoryTest {
     void findByDeletedFalse_AfterDeleteQuestion() {
         Question question = new Question("title", "contents");
         questionRepository.save(question);
-        question.setDeleted(true);
+        question.delete();
 
         List<Question> activeQuestions = questionRepository.findByDeletedFalse();
 
@@ -67,7 +67,7 @@ public class QuestionRepositoryTest {
     void findByIdAndDeletedFalse_AfterDeleteQuestion() {
         Question question = new Question("title", "contents");
         questionRepository.save(question);
-        question.setDeleted(true);
+        question.delete();
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
             questionRepository.findByIdAndDeletedFalse(question.getId()).get()
@@ -81,7 +81,7 @@ public class QuestionRepositoryTest {
         Question question = new Question("title", "contents");
         questionRepository.save(question);
 
-        question.setTitle(expected);
+        question.editTitle(expected);
 
         List<Question> activeQuestions = questionRepository.findByDeletedFalse();
 
@@ -97,7 +97,7 @@ public class QuestionRepositoryTest {
 
         assertThat(question.getUpdatedAt()).isEqualTo(question.getCreatedAt());
 
-        question.setTitle(expected);
+        question.editTitle(expected);
         questionRepository.flush();
 
         assertThat(question.getUpdatedAt()).isNotEqualTo(question.getCreatedAt());

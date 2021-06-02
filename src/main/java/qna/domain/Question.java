@@ -33,8 +33,8 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -77,12 +77,9 @@ public class Question extends BaseEntity {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void editTitle(String title) {
+        StringValidator.validate(title, TITLE_LENGTH);
         this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
     }
 
     public User getWriter() {
@@ -93,14 +90,16 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
+    }
+
+    public void publish() {
+        this.deleted = false;
     }
 
     public List<Answer> getAnswers(Status status) {
-        return answers.stream()
-            .filter(answer -> answer.isDeleted() == status.isDeleted())
-            .collect(Collectors.toList());
+        return answers.getAnswers(status);
     }
 
     @Override

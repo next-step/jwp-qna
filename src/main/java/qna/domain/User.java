@@ -37,11 +37,11 @@ public class User extends BaseEntity {
     @Column(length = EMAIL_LENGTH)
     private String email;
 
-    @OneToMany(mappedBy = "writer")
-    private List<Question> questions = new ArrayList<>();
+    @Embedded
+    private Questions questions = new Questions();
 
-    @OneToMany(mappedBy = "writer")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected User() {
     }
@@ -121,9 +121,7 @@ public class User extends BaseEntity {
     }
 
     public List<Question> getQuestions(Status status) {
-        return questions.stream()
-            .filter(question -> question.isDeleted() == status.isDeleted())
-            .collect(Collectors.toList());
+        return questions.getQuestions(status);
     }
 
     public void addAnswer(Answer answer) {
@@ -131,9 +129,7 @@ public class User extends BaseEntity {
     }
 
     public List<Answer> getAnswers(Status status) {
-        return answers.stream()
-            .filter(answer -> answer.isDeleted() == status.isDeleted())
-            .collect(Collectors.toList());
+        return answers.getAnswers(status);
     }
 
     @Override
