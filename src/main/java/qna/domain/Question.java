@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,10 +16,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import qna.exception.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
 
+    public static final String NO_PERMISSION_TO_DELETE_QUESTION = "질문을 삭제할 권한이 없습니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -64,6 +67,17 @@ public class Question extends BaseEntity {
 
     }
 
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(NO_PERMISSION_TO_DELETE_QUESTION);
+        }
+        deleted = true;
+
+        DeleteHistories deleteHistories = new DeleteHistories(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(getAnswers().deleteAnswers(loginUser));
+        return deleteHistories;
+    }
+
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
@@ -107,8 +121,8 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public Answers getAnswers() {
+        return new Answers(answers);
     }
 
     @Override
@@ -138,4 +152,5 @@ public class Question extends BaseEntity {
             ", deleted=" + deleted +
             '}';
     }
+
 }

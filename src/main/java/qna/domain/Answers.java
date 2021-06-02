@@ -14,6 +14,10 @@ public class Answers {
         this.answers = Arrays.asList(answers);
     }
 
+    public Answers(List<Answer> answers) {
+        this.answers = answers;
+    }
+
     public DeleteHistories deleteAnswers(User loginUser) throws CannotDeleteException {
         try {
             List<DeleteHistory> deleteHistories = answers.stream()
@@ -23,5 +27,11 @@ public class Answers {
         } catch (CannotDeleteException e) {
             throw new CannotDeleteException(CANNOT_DELETE_SOMEONE_ELSE_ANSWER);
         }
+    }
+
+    public List<Answer> undeletedAnswers() {
+        return answers.stream()
+            .filter(answer -> !answer.isDeleted())
+            .collect(Collectors.toList());
     }
 }

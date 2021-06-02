@@ -262,7 +262,8 @@ public class QuestionRepositoryTest {
 
         //When
         Question savedQuestion = questionRepository.findById(question.getId()).get();
-        List<Answer> answers = savedQuestion.getAnswers();
+
+        List<Answer> answers = savedQuestion.getAnswers().undeletedAnswers();
 
         //Then
         assertAll(
