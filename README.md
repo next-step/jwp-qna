@@ -2,6 +2,21 @@
 
 ## 요구사항
 
+### 2단계: 연관 관계 매핑
+
+- 1단계: 테이블 FK 기준
+- 2단계: 자연스러운 호출 객체 형태로 변경한다.
+
+- Question 일:다 Answer 양방향
+  - Question이 자신의 Answer 목록을 가져올 수 있다.
+    - 삭제 여부에 따른 Answer 목록 반환
+  - Answer 생성 과정에서 Question의 Answer 목록에도 추가되어야 한다.
+- User(Writer) 일:다 Answer
+- User(Writer) 일:다 Question
+- User 일:다 Delete History
+
+### 1단계: 엔티티 매핑
+
 - DDL에 맞춰 Entity 수정
 - Repository 메소드에 맞춰 테스트 작성
 - CustomException으로 예외 처리

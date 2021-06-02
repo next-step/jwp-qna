@@ -24,7 +24,26 @@ public class AnswerRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @DisplayName("질문의 답변 목록 검색")
+    @DisplayName("질문의 활성화된 답변 목록 검색")
+    @Test
+    void findByQuestionAndDeletedFalse() {
+        User alice = new User("alice", "password", "Alice", "alice@mail");
+        userRepository.save(alice);
+        Question question = new Question("title", "contents");
+        questionRepository.save(question);
+        Answer answer = new Answer(alice, question, "Answers Contents1");
+        answerRepository.save(answer);
+
+        Question searchedQuestion = questionRepository
+            .findById(question.getId())
+            .orElseThrow(NotFoundException::new);
+        List<Answer> activeAnswers = searchedQuestion.getAnswers(false);
+
+        assertThat(activeAnswers.size()).isEqualTo(1);
+        assertThat(activeAnswers).contains(answer);
+    }
+
+    @DisplayName("질문 ID로 활성화된 답변 목록 검색")
     @Test
     void findByQuestionIdAndDeletedFalse() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
@@ -40,7 +59,26 @@ public class AnswerRepositoryTest {
         assertThat(activeAnswers.contains(answer)).isTrue();
     }
 
-    @DisplayName("삭제된 답변으로 변경 후 질문의 답변 목록 검색")
+    @DisplayName("삭제된 답변으로 변경 후 질문의 활성화된 답변 목록 검색")
+    @Test
+    void findByQuestionAndDeletedFalse_AfterDeleteAnswer() {
+        User alice = new User("alice", "password", "Alice", "alice@mail");
+        userRepository.save(alice);
+        Question question = new Question("title", "contents");
+        questionRepository.save(question);
+        Answer answer = new Answer(alice, question, "Answers Contents1");
+        answerRepository.save(answer);
+
+        answer.setDeleted(true);
+        Question searchedQuestion = questionRepository
+            .findById(question.getId())
+            .orElseThrow(NotFoundException::new);
+        List<Answer> activeAnswers = searchedQuestion.getAnswers(false);
+
+        assertThat(activeAnswers).isEmpty();
+    }
+
+    @DisplayName("삭제된 답변으로 변경 후 질문 ID로 활성화된 답변 목록 검색")
     @Test
     void findByQuestionIdAndDeletedFalse_AfterDeleteAnswer() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
@@ -56,7 +94,7 @@ public class AnswerRepositoryTest {
         assertThat(activeAnswers).isEmpty();
     }
 
-    @DisplayName("활성화된 답변 검색")
+    @DisplayName("답변의 ID로 활성화된 답변 검색")
     @Test
     void findByIdAndDeletedFalse() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
@@ -71,10 +109,10 @@ public class AnswerRepositoryTest {
             .orElseThrow(NotFoundException::new);
 
         assertThat(actual.getId()).isEqualTo(answer.getId());
-        assertThat(actual.getQuestionId()).isEqualTo(question.getId());
+        assertThat(actual.getQuestion()).isEqualTo(question);
     }
 
-    @DisplayName("삭제된 답변으로 변경 후 답변 검색")
+    @DisplayName("삭제된 답변으로 변경 후 답변의 ID로 활성화된 답변 검색")
     @Test
     void findByIdAndDeletedFalse_AfterDeleteAnswer() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
