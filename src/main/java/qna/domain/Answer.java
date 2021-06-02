@@ -14,6 +14,7 @@ public class Answer extends AbstractEntity {
     private Question question;
 
     @Column
+    @Lob
     private String contents;
 
     @JoinColumn(name = "writer_id")
