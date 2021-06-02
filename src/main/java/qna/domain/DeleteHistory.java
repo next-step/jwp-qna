@@ -7,10 +7,9 @@ import java.util.Objects;
 @Entity
 public class DeleteHistory extends AbstractEntity {
 
-    @Column
+    @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
-    @Column
     private Long contentId;
 
     @JoinColumn
