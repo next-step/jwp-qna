@@ -98,6 +98,6 @@ public class QuestionTest {
         save.addAnswer(new Answer(JAVAJIGI, save, "answer1"));
         save.addAnswer(new Answer(SANJIGI, save, "answer2"));
         //then
-        assertThat(save.answers.size()).isEqualTo(2);
+        assertThat(save.getAnswers().size()).isEqualTo(2);
     }
 }

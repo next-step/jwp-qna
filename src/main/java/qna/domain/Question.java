@@ -29,7 +29,7 @@ public class Question extends BaseEntity {
     private boolean deleted = false;
 
     @Embedded
-    Answers answers = new Answers();
+    private final Answers answers = new Answers();
 
     public Question() {
     }
@@ -96,6 +96,10 @@ public class Question extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Answers getAnswers() {
+        return answers;
     }
 
     @Override
