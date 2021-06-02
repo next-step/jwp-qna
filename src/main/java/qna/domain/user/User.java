@@ -20,8 +20,6 @@ import qna.domain.BaseEntity;
 })
 public class User extends BaseEntity {
 
-    public static final GuestUser GUEST_USER = new GuestUser();
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

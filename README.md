@@ -176,6 +176,6 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
   : DB의 유효성과 객체의 유효성은 다름
 
 - [x] Question 과 Answer 의 Cascade 고려하기
-- [ ] GUEST_USER 제거
+- [x] GUEST_USER 제거
 - [ ] Question, Answer 에 대한 도메인 테스트 코드 추가
 
