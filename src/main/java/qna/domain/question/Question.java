@@ -1,13 +1,18 @@
-package qna.domain;
+package qna.domain.question;
+
+import org.hibernate.annotations.Where;
+import qna.domain.CreateAndUpdateTimeEntity;
+import qna.domain.Deleted;
+import qna.domain.user.User;
+import qna.domain.answer.Answer;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 @Table(name = "question")
 @Entity
+@Where(clause = "deleted = false")
 public class Question extends CreateAndUpdateTimeEntity {
 
     @Id
@@ -25,11 +30,11 @@ public class Question extends CreateAndUpdateTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @Column(name = "deleted")
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted = new Deleted();
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private AnswersInQuestion answers = new AnswersInQuestion();
 
     protected Question() {
         // empty
@@ -40,50 +45,52 @@ public class Question extends CreateAndUpdateTimeEntity {
         this.contents = contents;
     }
 
-    public Question writeBy(User writer) {
-        this.writer = writer;
-        return this;
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
-    public void addAnswer(Answer answer) {
-        if(this.answers.contains(answer)) {
-            return;
-        }
-
-        this.answers.add(answer);
-        answer.toQuestion(this);
-    }
-
     public Long getId() {
         return id;
     }
 
-    public void updateTitle(String title) {
-        this.title = title;
-    }
-
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public void delete() {
-        this.deleted = true;
+        this.deleted.delete();
+    }
+
+    public void addAnswer(Answer answer) {
+        if(this.answers.add(answer) == false){
+            return;
+        }
+        answer.toQuestion(this);
+    }
+
+    public List<Answer> getAnswers() {
+        return this.answers.getAnswers();
     }
 
     public boolean isSameTitle(String title) {
         return this.title.equals(title);
     }
 
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
     public boolean isSameContents(String contents) {
         return this.contents.equals(contents);
     }
 
+    public Question writeBy(User writer) {
+        this.writer = writer;
+        return this;
+    }
+
     public User getWriter() {
         return this.writer;
+    }
+
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     @Override
@@ -106,9 +113,5 @@ public class Question extends CreateAndUpdateTimeEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, title, contents, writer, deleted, answers);
-    }
-
-    public List<Answer> getAnswers() {
-        return Collections.unmodifiableList(this.answers);
     }
 }

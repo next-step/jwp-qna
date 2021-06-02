@@ -1,8 +1,11 @@
-package qna.domain;
+package qna.domain.answer;
 
 import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.CreateAndUpdateTimeEntity;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -63,7 +66,6 @@ public class Answer extends CreateAndUpdateTimeEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
-        question.addAnswer(this);
     }
 
     public Long getId() {
