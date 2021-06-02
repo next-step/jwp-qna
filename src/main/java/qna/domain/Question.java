@@ -1,6 +1,9 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +20,9 @@ public class Question extends QnaAbstract {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "answer")
-    private List<Answer> answers = new ArrayList<>();
+    //@OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    @Embedded
+    private Answers answers = new Answers();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -43,7 +46,7 @@ public class Question extends QnaAbstract {
         return this;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return this.answers;
     }
 
@@ -52,7 +55,27 @@ public class Question extends QnaAbstract {
     }
 
     public void addAnswer(Answer answer) {
+        answers.addAnswer(answer);
         answer.toQuestion(this);
+    }
+    public List<DeleteHistory> checkAuthorityDeleteQuestion(User deleter) throws CannotDeleteException {
+        if (!isOwner(deleter)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        answers.checkAuthorityDeleteAnswers(deleter);
+        return setDeletedQuestionAndAnswers();
+    }
+
+    private List<DeleteHistory> setDeletedQuestionAndAnswers() {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(executeDeleted());
+        deleteHistories.addAll(answers.executeDeleted());
+        return deleteHistories;
+    }
+
+    public DeleteHistory executeDeleted() {
+        this.deleted = true;
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
     public Long getId() {
@@ -79,8 +102,8 @@ public class Question extends QnaAbstract {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
+    public User getWriter() {
+        return this.writer;
     }
 
     public void setWriterId(User writerId) {
@@ -89,10 +112,6 @@ public class Question extends QnaAbstract {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

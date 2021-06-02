@@ -8,6 +8,6 @@ import java.util.Optional;
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
     Answer findByWriter(User writer);
     Answer findByWriterAndDeletedFalse(User writer);
-    List<Answer> findByQuestionAndDeletedFalse(Question question);
+    List<Answer> findByQuestion(Question question);
     Optional<Answer> findByIdAndDeletedFalse(Long id);
 }

@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.AnswerTest.A1;
@@ -77,15 +75,12 @@ public class QuestionRepositoryTest {
     @DisplayName("Question Q1에 등록된 Answer List 조회 테스트")
     @Test
     void findByQuestionId() {
-        questions.save(Q1);
-        answers.save(A1);
-        answers.save(A2);
+        Question expected = questions.save(Q1);
+        expected.addAnswer(answers.save(A1));
+        expected.addAnswer(answers.save(A2));
 
         Question actual = questions.findByWriter(UserTest.JAVAJIGI);
-        List<Answer> answers = actual.getAnswers();
-        answers.stream()
-                .forEach(
-                        answer -> assertThat(answer.getQuestionId()).isEqualTo(Q1.getId())
-                );
+        Answers answers = actual.getAnswers();
+        assertThat(answers.countAnswerOfOwner(UserTest.JAVAJIGI)).isEqualTo(1L);
     }
 }

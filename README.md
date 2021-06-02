@@ -166,13 +166,17 @@ alter table user
 </details>
 
 ---
-## 2단계 - 연관 관계 매핑
+
+<details>
+<summary style="font-Weight : bold; font-size : 25px;"> 2단계 - 연관 관계 매핑 </summary>
+<div>
 * 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
 
 ### 힌트
 * 다음 방식은 객체 설계를 테이블 설계에 맞춘 방법이다.
 * 외래 키를 객체에 그대로 가져온 부분이 문제
   * 관계형 데이터베이스는 연관된 객체를 찾을 때 외래 키를 사용해서 조인하면 되지만 ***객체에는 조인이라는 기능이 없다.***
+
 ```java
 List<Answer> findByQuestionIdAndDeletedFalse(Long questionId);
 ```
@@ -207,3 +211,24 @@ alter table question
 ### 기능 구현
 * 각각 엔터티의 외래키를 주입
   * 이때, 외래키는 일대다 관계에서 다 쪽에 주입한다.
+  
+### 기능 추가 수정
+* 조인 조회 시 지연로딩 설정 (FetchType.Lazy)
+* ```@EnableJpaAuditing``` 과 ```@EntityListeners(AuditingEntityListener.class)```를 이용해서 createAt 와 updateAt 자동 insert 되도록 반영
+</div>
+</details>
+
+---
+
+## 3단계 - 질문 삭제하기 리팩토링
+
+### 기능 요구사항
+* 질문 데이터를 완전히 삭제하는 것이 아니라 데이터의 상태를 삭제 상태(deleted - boolean type)로 변경한다.
+* 로그인 사용자와 질문한 사람이 같은 경우 삭제할 수 있다.
+* 답변이 없는 경우 삭제가 가능하다.
+* 질문자와 답변 글의 모든 답변자 같은 경우 삭제가 가능하다. 
+* 질문을 삭제할 때 답변 또한 삭제해야 하며, 답변의 삭제 또한 삭제 상태(deleted)를 변경한다.
+* 질문자와 답변자가 다른 경우 답변을 삭제할 수 없다.
+* 질문과 답변 삭제 이력에 대한 정보를 DeleteHistory를 활용해 남긴다.
+
+
