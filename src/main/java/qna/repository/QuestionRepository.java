@@ -1,9 +1,10 @@
-package qna.domain;
+package qna.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
+import qna.domain.Question;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByDeletedFalse();
@@ -12,5 +13,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findByTitleAndContents(String title, String contents);
 
-    long countByContents(String contents);
+    long countById(Long id);
 }
