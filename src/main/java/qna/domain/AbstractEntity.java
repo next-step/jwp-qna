@@ -13,7 +13,7 @@ public abstract class AbstractEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @Column
+    @Column(nullable = false)
     protected LocalDateTime createAt = LocalDateTime.now();
 
     @Column
