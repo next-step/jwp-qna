@@ -264,14 +264,14 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
     - [x] 5-2.checkstyle 문제없는지 확인 (Java Convention)
     - [x] 5-3.요구사항 조건들 충족했는지 확인
         - [x] 5-3-1.핵심 단위 로직 테스트
-- [ ] 6.인수인계
-    - [ ] 6-1.소감 및 피드백 정리
-        - [ ] 6-1-1.느낀점 & 배운점 작성
-        - [ ] 6-1-2.피드백 요청 정리
-    - [ ] 6-2.코드리뷰 요청 및 피드백
-        - [ ] 6-1-1.step5를 gregolee/java-lotto로 push : `git push origin step5`
-        - [ ] 6-1-2.pull request(PR) 작성
-    - [ ] 6-3.Slack을 통해 merge가 되는지 확인한 후에 미션 종료
+- [x] 6.인수인계
+    - [x] 6-1.소감 및 피드백 정리
+        - [x] 6-1-1.느낀점 & 배운점 작성
+        - [x] 6-1-2.피드백 요청 정리
+    - [x] 6-2.코드리뷰 요청 및 피드백
+        - [x] 6-1-1.step1를 gregolee/jwp-qna로 push : `git push origin step1`
+        - [x] 6-1-2.pull request(PR) 작성
+    - [x] 6-3.Slack을 통해 merge가 되는지 확인한 후에 미션 종료
 
 ## 3. 인수인계
 
@@ -279,12 +279,25 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
 
 #### 3.1.1. 느낀점
 
--
+- 엔티티 매핑
+  - 엔티티 매핑을 할때 DBMS DDL script가 `spring.jpa.hibernate.ddl-auto = create`와 일치하도록 작성하는 것을 신경쓰지 않았습니다.
+  - 그래서 해당 부분까지도 신경을 써서 작성을 해야 된다는 것을 간과했던 점이 부끄러웠습니다.
+- JPA활용시 DBMS에 의존적이지 않음
+  - 일반적으로 개발, 운영환경의 DBMS까지 구성해야하는 경우가 많았습니다.
+  - 상대적으로 적은 변경을 통한 환경구성으로 Persistence에 대한 테스트가 가능해졌습니다.
+    - 개발환경에는 H2 Database를 활용하고, 운영환경에서는 다른 DBMS를 활용하도록 구성 가능해졌습니다.
+    - 개발, 운영 환경에 따른 DDL script를 보유함으로써 환경구성을 하는 요소가 많이 필요했습니다.
+    - `application.properties`에 각 DBMS별 Dialect을 변경하면 DBMS 환경 구성이 보다 편리하게 이루어졌습니다.
+    - DBMS가 달라지면 SQL Query 수정 난이도가 대폭 감소하였습니다.  
 
 #### 3.1.2. 배운점
 
-- 
+- 엔티티 매핑
+  - 엔티티 매핑을 할때 DBMS DDL script가 `spring.jpa.hibernate.ddl-auto = create`와 일치하도록 작성
+- H2 데이터베이스
+  - 개발시 추가적인 DBMS 설치 및 세팅 없이 H2 데이터베이스를 사용(DBMS에 의존적인 환경을 덜어줄 수 있음)
+  - H2 데이터베이스를 사용한다면 아래의 프로퍼티를 추가하면 MySQL Dialect을 사용할 수 있다.
 
 ### 3.2. 피드백 요청
 
-- 
+- 피드백 요청 사항은 없습니다.
