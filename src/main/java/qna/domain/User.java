@@ -14,16 +14,16 @@ public class User extends AbstractEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(length = 20, nullable = false)
     private String userId;
 
-    @Column
+    @Column(length = 20, nullable = false)
     private String password;
 
-    @Column
+    @Column(length = 20, nullable = false)
     private String name;
 
-    @Column
+    @Column(length = 50)
     private String email;
 
     protected User() {
