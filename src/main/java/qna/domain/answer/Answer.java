@@ -4,11 +4,13 @@ import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.CreateAndUpdateTimeEntity;
+import qna.domain.Deleted;
 import qna.domain.question.Question;
 import qna.domain.user.User;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Optional;
 
 @Table(name = "answer")
 @Entity
@@ -31,24 +33,18 @@ public class Answer extends CreateAndUpdateTimeEntity {
     @Column(name = "contents")
     private String contents;
 
-    @Column(name = "deleted", nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted = new Deleted();
 
     protected Answer() {
         // empty
     }
 
     public Answer(User writer, Question question, String contents) {
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
-
-        this.writer = writer;
-        this.question = question;
+        this.writer = Optional.ofNullable(writer)
+                              .orElseThrow(() -> new UnAuthorizedException());
+        this.question = Optional.ofNullable(question)
+                                .orElseThrow(() -> new NotFoundException());;
         this.contents = contents;
     }
 
@@ -73,11 +69,11 @@ public class Answer extends CreateAndUpdateTimeEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public void delete() {
-        this.deleted = true;
+        this.deleted.delete();
     }
 
     public void updateContents(final String contents) {
