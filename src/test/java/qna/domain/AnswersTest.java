@@ -31,11 +31,12 @@ class AnswersTest {
 
     @Test
     void delete() {
+        LocalDateTime deletedTime = LocalDateTime.now();
         List<DeleteHistory> resultHistories = Arrays.asList(
                 new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
         );
         Answers answers = question.getAnswers();
-        DeleteHistories deleteHistories = answers.delete();
+        DeleteHistories deleteHistories = answers.delete(deletedTime);
         assertThat(deleteHistories.getDeleteHistories()).containsAll(resultHistories);
     }
 }

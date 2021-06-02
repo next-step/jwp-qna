@@ -9,6 +9,8 @@ import qna.CannotDeleteException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+
+import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -109,6 +111,7 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("Question에 다른 사람이 작성한 Answer 삭제시 예외 확인")
     void delete_another_user() throws CannotDeleteException {
+        LocalDateTime deletedTime = now();
         Question question = new Question(1L, "title1", "contents1").writeBy(user1);
         Answer answer1 = new Answer(user1, question, "Answers Contents1");
         Answer answer2 = new Answer(user2, question, "Answers Contents2");
@@ -116,7 +119,7 @@ public class QuestionRepositoryTest {
         question.addAnswers(answer2);
 
         assertThatThrownBy(() -> {
-            List<DeleteHistory> deleteHistories = question.delete(user1);
+            List<DeleteHistory> deleteHistories = question.delete(user1, deletedTime);
         }).isInstanceOf(CannotDeleteException.class)
                 .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
@@ -124,6 +127,7 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("Question과 Answer 삭제 테스트")
     void delete() throws CannotDeleteException {
+        LocalDateTime deletedTime = now();
         Question question = new Question(1L, "title1", "contents1").writeBy(user1);
         Answer answer1 = new Answer(user1, question, "Answers Contents1");
         Answer answer2 = new Answer(user1, question, "Answers Contents2");
@@ -135,6 +139,6 @@ public class QuestionRepositoryTest {
                 new DeleteHistory(ContentType.ANSWER, answer1.getId(), answer1.getWriter(), LocalDateTime.now()),
                 new DeleteHistory(ContentType.ANSWER, answer2.getId(), answer2.getWriter(), LocalDateTime.now())
         );
-        assertThat(question.delete(user1)).containsAll(resultHistories);
+        assertThat(question.delete(user1, deletedTime)).containsAll(resultHistories);
     }
 }
