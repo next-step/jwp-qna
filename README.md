@@ -160,9 +160,22 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
 - [x] deleteQuestion 리팩토링하기
 
   - [x] `@Where(clause = "deleted = false")` 엔티티에 붙이기.
-
   - [x] Question 에 answer List 속성 추가하기
-
   - [x] 속성 추가후, 도메인에서 answers 를 불러 올 수 있도록 수정
 
-    
+-- 피드백 반영 및 리팩토링 변경 Todo
+
+- [ ] Question.java 에서 Answers 타입 이용하기
+
+  : @Embedded 사용
+
+- [ ] DeleteHistory 의 정적 메서드 변경
+
+- [ ] ValueObject 의 유효성 검사
+
+  : DB의 유효성과 객체의 유효성은 다름
+
+- [ ] Question 과 Answer 의 Cascade 고려하기
+- [ ] GUEST_USER 제거
+- [ ] Question, Answer 에 대한 도메인 테스트 코드 추가
+
