@@ -177,5 +177,5 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
 
 - [x] Question 과 Answer 의 Cascade 고려하기
 - [x] GUEST_USER 제거
-- [ ] Question, Answer 에 대한 도메인 테스트 코드 추가
+- [x] Question, Answer 에 대한 도메인 테스트 코드 추가
 
