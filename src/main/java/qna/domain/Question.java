@@ -4,7 +4,6 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,16 +43,14 @@ public class Question extends BaseEntity {
     }
 
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
-        DeleteHistories deleteHistories = new DeleteHistories(deleteQuestion(loginUser));
+        DeleteHistories deleteHistories = deleteQuestion(loginUser);
         return deleteHistories.merge(answers.deleteAll(loginUser));
     }
 
-    private List<DeleteHistory> deleteQuestion(User loginUser) throws CannotDeleteException {
+    private DeleteHistories deleteQuestion(User loginUser) throws CannotDeleteException {
         checkQuestionOwner(loginUser);
         setDeleted(true);
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
-        return deleteHistories;
+        return new DeleteHistories(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
     }
 
     private void checkQuestionOwner(User loginUser) throws CannotDeleteException {

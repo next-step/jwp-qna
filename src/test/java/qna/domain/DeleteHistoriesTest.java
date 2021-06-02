@@ -3,7 +3,6 @@ package qna.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
@@ -16,17 +15,17 @@ import static qna.domain.UserTest.SANJIGI;
 
 class DeleteHistoriesTest {
 
-    private List<DeleteHistory> questionDeletes;
-    private List<DeleteHistory> answerDeletes;
+    private DeleteHistory questionDelete;
+    private DeleteHistories answerDeletes;
     private DeleteHistories deleteHistories;
 
     @Test
     @DisplayName("deleteHistoriy 들을 합친 컬렉션을 리턴한다.")
     void merge() {
-        questionDeletes = Collections.singletonList(new DeleteHistory(QUESTION, 1L, JAVAJIGI, now()));
-        answerDeletes = Collections.singletonList(new DeleteHistory(ANSWER, 1L, SANJIGI, now()));
+        questionDelete = new DeleteHistory(QUESTION, 1L, JAVAJIGI, now());
+        answerDeletes = new DeleteHistories(new DeleteHistory(ANSWER, 1L, SANJIGI, now()));
 
-        deleteHistories = new DeleteHistories(questionDeletes);
+        deleteHistories = new DeleteHistories(questionDelete);
 
         List<DeleteHistory> mergedResults = deleteHistories.merge(answerDeletes);
 
