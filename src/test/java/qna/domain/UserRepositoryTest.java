@@ -13,19 +13,17 @@ class UserRepositoryTest {
 	@Autowired
 	UserRepository users;
 
-	User expected;
+	User savedUser;
 
 	@BeforeEach
 	void setUp() {
-		expected = new User(
-			"wrallee",
-			"password",
-			"우찬",
-			"wrallee@gmail.com");
+		savedUser = new User("wrallee", "password", "우찬", "wrallee@gmail.com");
+		users.save(savedUser);
 	}
 
 	@Test
 	void save() {
+		User expected = new User("wrallee", "password", "우찬", "wrallee@gmail.com");
 		User actual = users.save(expected);
 		assertSame(expected, actual);
 		assertNotNull(actual.getCreatedAt());
@@ -34,9 +32,8 @@ class UserRepositoryTest {
 
 	@Test
 	void findByUserId() {
-		users.save(expected);
-		User actual = users.findByUserId("wrallee").orElse(null);
+		User actual = users.findByUserId(savedUser.getName()).orElse(null);
 		assertNotNull(actual);
-		assertSame(expected, actual);
+		assertSame(savedUser, actual);
 	}
 }
