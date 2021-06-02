@@ -34,7 +34,7 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
@@ -45,17 +45,25 @@ public class DeleteHistory {
         return id;
     }
 
+    public static DeleteHistory ofQuestion(Long contentId, User deletedBy) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deletedBy);
+    }
+
+    public static DeleteHistory ofAnswer(Long contentId, User deletedBy) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deletedBy);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof DeleteHistory)) return false;
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(getId(), that.getId()) && contentType == that.contentType && Objects.equals(contentId, that.contentId) && Objects.equals(deletedBy, that.deletedBy);
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), contentType, contentId, deletedBy);
+        return Objects.hash(getId());
     }
 
     @Override
@@ -65,6 +73,7 @@ public class DeleteHistory {
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
                 ", deletedBy=" + deletedBy +
+                ", createDate=" + createDate +
                 '}';
     }
 }

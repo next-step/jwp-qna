@@ -1,8 +1,9 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.domain.base.BaseEntity;
 
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -10,29 +11,34 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.util.Objects;
 
+@Table(name = "Question")
 @Entity
 public class Question extends BaseEntity {
+    private static final String DELETE_NOT_ALLOWED = "질문을 삭제할 권한이 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
+    @Embedded
+    private Title title;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deletion deleted;
+
+    @Embedded
+    private Answers answers;
 
     protected Question() {
     }
@@ -43,8 +49,10 @@ public class Question extends BaseEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
-        this.contents = contents;
+        this.title = new Title(title);
+        this.contents = new Contents(contents);
+        this.answers = new Answers();
+        this.deleted = new Deletion();
     }
 
     public Question writeBy(User writer) {
@@ -52,12 +60,9 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
@@ -65,11 +70,11 @@ public class Question extends BaseEntity {
     }
 
     public String getTitle() {
-        return this.title;
+        return this.title.getTitle();
     }
 
     public String getContents() {
-        return this.contents;
+        return this.contents.getContent();
     }
 
     public User getWriter() {
@@ -77,11 +82,29 @@ public class Question extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return this.deleted;
+        return this.deleted.isDeleted();
     }
 
     public void delete() {
-        this.deleted = true;
+        this.deleted.delete();
+    }
+
+    public DeleteHistories delete(User loginUser) {
+        checkIsOwner(loginUser);
+        this.deleted.delete();
+        return createDeleteHistories(loginUser);
+    }
+
+    private DeleteHistories createDeleteHistories(User loginUser) {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.addHistory(DeleteHistory.ofQuestion(this.id, loginUser));
+        return deleteHistories.addAll(this.answers.delete(loginUser));
+    }
+
+    private void checkIsOwner(User loginUser) {
+        if (!this.writer.equals(loginUser)) {
+            throw new CannotDeleteException(DELETE_NOT_ALLOWED);
+        }
     }
 
     @Override
@@ -89,12 +112,12 @@ public class Question extends BaseEntity {
         if (this == o) return true;
         if (!(o instanceof Question)) return false;
         Question question = (Question) o;
-        return isDeleted() == question.isDeleted() && Objects.equals(getId(), question.getId()) && Objects.equals(getTitle(), question.getTitle()) && Objects.equals(getContents(), question.getContents()) && Objects.equals(getWriter(), question.getWriter());
+        return Objects.equals(getId(), question.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getContents(), getWriter(), isDeleted());
+        return Objects.hash(getId());
     }
 
     @Override
@@ -105,6 +128,7 @@ public class Question extends BaseEntity {
                 ", contents='" + contents + '\'' +
                 ", writer=" + writer +
                 ", deleted=" + deleted +
+                ", answers=" + answers +
                 '}';
     }
 }

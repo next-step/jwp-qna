@@ -13,8 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("QuestionRepository")
 class QuestionRepositoryTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
     private Question question1 = new Question("title1", "content1");
     private Question question2 = new Question("title2", "content2");
     private User user1 = new User("user1", "password", "user1", "user1@test.com");

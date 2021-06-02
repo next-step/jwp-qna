@@ -3,21 +3,19 @@ package qna.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import qna.UnAuthorizedException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class UserTest {
+class UserTest {
     private static final String USER_ID = "user1";
     private static final String PASSWORD = "password2";
     private static final String NAME = "test";
     private static final String EMAIL = "test@test.com";
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-    private static final User user1 = new User(USER_ID, PASSWORD, NAME, EMAIL);
+    private User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
+    private User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+    private User user1 = new User(USER_ID, PASSWORD, NAME, EMAIL);
 
     @Nested
     @DisplayName("update 메서드는")
@@ -94,13 +92,6 @@ public class UserTest {
                 assertThat(givenUser.equalsNameAndEmail(compareUser)).isFalse();
             }
         }
-    }
-
-    @DisplayName("주어진 비밀번호와 입력받은 비밀번호의 일치여부를 리턴한다.")
-    @ParameterizedTest
-    @CsvSource({"password, true", "password2, false"})
-    void matchPassword(String password, boolean isMatch) {
-        assertThat(JAVAJIGI.matchPassword(password)).isEqualTo(isMatch);
     }
 
     @DisplayName("본인일 경우 게스트 사용자는 거짓을 리턴한다.")

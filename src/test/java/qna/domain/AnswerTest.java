@@ -2,13 +2,12 @@ package qna.domain;
 
 import org.junit.jupiter.api.Test;
 
-public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+class AnswerTest {
+    private User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
 
     @Test
     void canCrate() {
         Question question1 = new Question(1L, "title", "content");
-        new Answer(UserTest.JAVAJIGI, question1, "content");
+        new Answer(user1, question1, "content");
     }
 }
