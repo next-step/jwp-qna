@@ -1,17 +1,17 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 public class QuestionTest {
@@ -89,9 +89,9 @@ public class QuestionTest {
     void findByIdAndDeletedTrue() {
         // given
         final Question questionMarkedDeleted = questionRepository.save(question1);
-        questionMarkedDeleted.setDeleted(true);
+        questionMarkedDeleted.deleted(true);
         final Question questionMarkUndeleted = questionRepository.save(question2);
-        questionMarkUndeleted.setDeleted(false);
+        questionMarkUndeleted.deleted(false);
 
         // when
         final Optional<Question> optActualMarkDeleted = questionRepository.findByIdAndDeletedTrue(
@@ -149,7 +149,7 @@ public class QuestionTest {
         // given
         final Question savedQuestion1 = questionRepository.save(question1);
         final Question savedQuestion2 = questionRepository.save(question2);
-        savedQuestion2.setDeleted(true);
+        savedQuestion2.deleted(true);
 
         // when
         final List<Question> actual = questionRepository.findByDeletedFalse();

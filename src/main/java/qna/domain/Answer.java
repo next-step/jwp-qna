@@ -88,7 +88,7 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(final boolean deleted) {
+    public void deleted(final boolean deleted) {
         this.deleted = deleted;
     }
 
