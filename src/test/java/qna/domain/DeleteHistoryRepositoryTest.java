@@ -7,6 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import qna.domain.history.ContentType;
+import qna.domain.history.DeleteHistory;
+import qna.domain.history.DeleteHistoryRepository;
+import qna.domain.user.User;
+import qna.domain.user.UserRepository;
 
 import java.time.LocalDateTime;
 

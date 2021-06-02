@@ -1,4 +1,6 @@
-package qna.domain;
+package qna.domain.history;
+
+import qna.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

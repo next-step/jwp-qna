@@ -1,6 +1,7 @@
-package qna.domain;
+package qna.domain.user;
 
 import qna.UnAuthorizedException;
+import qna.domain.CreateAndUpdateTimeEntity;
 
 import javax.persistence.*;
 import java.util.Objects;
