@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -14,6 +15,7 @@ public class Answer extends BaseEntity{
     @ManyToOne
     private User writer;
 
+    @Where(clause = "deleted = false")
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
