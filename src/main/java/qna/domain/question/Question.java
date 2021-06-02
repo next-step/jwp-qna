@@ -1,13 +1,16 @@
 package qna.domain.question;
 
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.domain.CreateAndUpdateTimeEntity;
 import qna.domain.Deleted;
+import qna.domain.QnAExceptionMessage;
+import qna.domain.history.DeleteHistory;
+import qna.domain.history.DeleteHistorys;
 import qna.domain.user.User;
 import qna.domain.answer.Answer;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Table(name = "question")
@@ -45,6 +48,29 @@ public class Question extends CreateAndUpdateTimeEntity {
         this.contents = contents;
     }
 
+    public DeleteHistorys delete(final User loginUser) throws CannotDeleteException {
+        checkOwnerToQuestionAndAnswer(loginUser);
+        this.deleted.delete();
+        return makeDeleteHistorys();
+    }
+
+    private DeleteHistorys makeDeleteHistorys() {
+        DeleteHistorys deleteHistorys = DeleteHistorys.of(DeleteHistory.newInstanceOfQuestion(id, writer));
+        deleteHistorys.addAll(answers.deleteAll());
+        return deleteHistorys;
+    }
+
+    private void checkOwnerToQuestionAndAnswer(final User loginUser) throws CannotDeleteException {
+        checkOwner(loginUser);
+        this.answers.checkOwner(loginUser);
+    }
+
+    private void checkOwner(final User loginUser) throws CannotDeleteException {
+        if (isOwner(loginUser) == false) {
+            throw new CannotDeleteException(QnAExceptionMessage.NO_AUTH_QUESTION);
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -53,19 +79,11 @@ public class Question extends CreateAndUpdateTimeEntity {
         return deleted.isDeleted();
     }
 
-    public void delete() {
-        this.deleted.delete();
-    }
-
     public void addAnswer(Answer answer) {
         if(this.answers.add(answer) == false){
             return;
         }
         answer.toQuestion(this);
-    }
-
-    public List<Answer> getAnswers() {
-        return this.answers.getAnswers();
     }
 
     public boolean isSameTitle(String title) {

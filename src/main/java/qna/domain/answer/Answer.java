@@ -5,6 +5,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.CreateAndUpdateTimeEntity;
 import qna.domain.Deleted;
+import qna.domain.history.DeleteHistory;
 import qna.domain.question.Question;
 import qna.domain.user.User;
 
@@ -72,8 +73,9 @@ public class Answer extends CreateAndUpdateTimeEntity {
         return deleted.isDeleted();
     }
 
-    public void delete() {
+    public DeleteHistory delete() {
         this.deleted.delete();
+        return DeleteHistory.newInstanceOfAnswer(id, writer);
     }
 
     public void updateContents(final String contents) {
