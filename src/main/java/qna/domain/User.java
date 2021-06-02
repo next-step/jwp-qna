@@ -12,8 +12,6 @@ import qna.UnAuthorizedException;
 
 @Entity
 public class User extends BaseEntity {
-    public static final GuestUser GUEST_USER = new GuestUser();
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -126,12 +124,5 @@ public class User extends BaseEntity {
             ", name='" + name + '\'' +
             ", email='" + email + '\'' +
             '}';
-    }
-
-    private static class GuestUser extends User {
-        @Override
-        public boolean isGuestUser() {
-            return true;
-        }
     }
 }
