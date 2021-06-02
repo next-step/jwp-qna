@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import qna.CannotDeleteException;
+
 @DataJpaTest
 class AnswerRepositoryTest {
 
@@ -94,11 +96,11 @@ class AnswerRepositoryTest {
 
     @DisplayName("deleted 값을 변경하면 조회 결과가 달라지는지 테스트")
     @Test
-    void findByIdAndDeletedFalse() {
+    void findByIdAndDeletedFalse() throws CannotDeleteException {
         // given
         final Answer savedAnswer = answerRepository.save(answer1);
         final Answer savedAnswer2 = answerRepository.save(answer2);
-        savedAnswer2.deleted(true);
+        savedAnswer2.delete(user2);
 
         // when
         final Optional<Answer> optionalAnswer = answerRepository.findByWriterAndDeletedFalse(savedAnswer.getWriter());
@@ -114,11 +116,11 @@ class AnswerRepositoryTest {
 
     @DisplayName("Question ID와 deleted 값을 각각 설정해서 조회하는 테스트")
     @Test
-    void findByQuestionIdAndDeletedFalse() {
+    void findByQuestionIdAndDeletedFalse() throws CannotDeleteException {
         // given
         final Answer savedAnswer = answerRepository.save(answer1);
         final Answer savedAnswer2 = answerRepository.save(answer2);
-        savedAnswer2.deleted(true);
+        savedAnswer2.delete(user2);
 
         // when
         final List<Answer> actual = answerRepository.findByQuestionAndDeletedFalse(question1);
