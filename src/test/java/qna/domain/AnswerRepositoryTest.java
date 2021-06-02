@@ -3,7 +3,6 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class AnswerRepositoryTest {
 
     @Autowired
-    private AnswerRepository repository;
+    private AnswerRepository answers;
+
+    @Autowired
+    private UserRepository users;
+
+    @Autowired
+    private QuestionRepository questions;
 
     private Answer answer;
 
@@ -22,8 +27,15 @@ public class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-        actual = repository.save(answer);
+        User writer = new User("tj", "ps", "김석진", "7271kim@naver.com");
+        User questionWriter = new User("tjs", "pss", "김석진2", "7271ki2m@naver.com");
+        Question question = new Question("질문", "입니다.").writeBy(questionWriter);
+
+        answer = new Answer(writer, question, "Answers Contents1");
+        actual = answers.save(answer);
+        users.save(writer);
+        users.save(questionWriter);
+        questions.save(question);
     }
 
     @Test
@@ -35,18 +47,32 @@ public class AnswerRepositoryTest {
             () -> assertThat(actual.getUpdatedAt()).isNull(),
             () -> assertThat(actual.getContents()).isEqualTo(answer.getContents()),
             () -> assertThat(actual.isDeleted()).isEqualTo(answer.isDeleted()),
-            () -> assertThat(actual.getQuestionId()).isEqualTo(answer.getQuestionId()),
-            () -> assertThat(actual.getWriterId()).isEqualTo(answer.getWriterId()));
+            () -> assertThat(actual.getQuestion()).isEqualTo(answer.getQuestion()),
+            () -> assertThat(actual.getWriter()).isEqualTo(answer.getWriter()));
     }
 
     @Test
     @DisplayName("update 확인")
     void updata() {
         answer.setContents("change content");
-        repository.saveAndFlush(answer);
-        Answer finedAnswer = repository.findById(answer.getId()).get();
+        answers.saveAndFlush(answer);
+        Answer finedAnswer = answers.findById(answer.getId()).get();
         assertAll(
             () -> assertThat(finedAnswer.getContents()).isEqualTo("change content"),
             () -> assertThat(finedAnswer.getUpdatedAt()).isNotNull());
+    }
+
+    @Test
+    @DisplayName("question 연관관계 확인")
+    void qustionCheck() {
+        assertThat(actual.getQuestion()).isNotNull();
+        assertThat(actual.getQuestion().getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("writer 연관관계 확인")
+    void writerCheck() {
+        assertThat(actual.getWriter()).isNotNull();
+        assertThat(actual.getWriter().getId()).isNotNull();
     }
 }

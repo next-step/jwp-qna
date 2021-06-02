@@ -3,7 +3,6 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,7 @@ public class QuestionRepositoryTest {
             () -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
             () -> assertThat(actual.isDeleted()).isEqualTo(question.isDeleted()),
-            () -> assertThat(actual.getWriterId()).isEqualTo(question.getWriterId()));
+            () -> assertThat(actual.getWriter()).isEqualTo(question.getWriter()));
     }
 
     @Test

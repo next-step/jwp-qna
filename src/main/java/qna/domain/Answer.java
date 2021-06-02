@@ -4,18 +4,25 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseTimeEntity {
+
+    private static final String CHECK_ANSWER_AUTHORITY = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,8 +34,13 @@ public class Answer extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    private Long questionId;
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    User writer;
 
     protected Answer() {}
 
@@ -47,41 +59,22 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        question.addAnswer(this);
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
@@ -96,18 +89,27 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public User getWriter() {
+        return writer;
+    }
+
+    public DeleteHistory deleteByOwner(User loginUser) {
+        if (!writer.equals(loginUser)) {
+            throw new CannotDeleteException(CHECK_ANSWER_AUTHORITY);
+        }
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer);
     }
 
     @Override
     public String toString() {
         return "Answer{" +
             "id=" + id +
-            ", writerId=" + writerId +
-            ", questionId=" + questionId +
+            ", writerId=" + writer.getId() +
+            ", questionId=" + question.getId() +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';
     }
+
 }
