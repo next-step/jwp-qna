@@ -32,7 +32,7 @@ class UserRepositoryTest {
 
 	@Test
 	void findByUserId() {
-		User actual = users.findByUserId(savedUser.getName()).orElse(null);
+		User actual = users.findByUserId(savedUser.getUserId()).orElse(null);
 		assertNotNull(actual);
 		assertSame(savedUser, actual);
 	}
