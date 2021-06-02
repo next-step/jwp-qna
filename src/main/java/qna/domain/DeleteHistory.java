@@ -55,8 +55,7 @@ public class DeleteHistory extends BaseEntity {
         }
         final DeleteHistory that = (DeleteHistory)o;
         return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(
-            contentId, that.contentId) && Objects.equals(writer, that.writer) && Objects.equals(
-            createDate, that.createDate);
+            contentId, that.contentId) && Objects.equals(writer, that.writer);
     }
 
     @Override
