@@ -8,10 +8,10 @@ import java.util.Objects;
 
 public class DeleteHistories {
 
-    private final List<DeleteHistory> deleteHistories;
+    private final List<DeleteHistory> histories;
 
-    public DeleteHistories(List<DeleteHistory> deleteHistories) {
-        this.deleteHistories = Collections.unmodifiableList(deleteHistories);
+    public DeleteHistories(List<DeleteHistory> histories) {
+        this.histories = Collections.unmodifiableList(histories);
     }
 
     public DeleteHistories(DeleteHistory... deleteHistory) {
@@ -19,13 +19,13 @@ public class DeleteHistories {
     }
 
     public DeleteHistories addAll(DeleteHistories otherDeleteHistories) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>(this.deleteHistories);
-        deleteHistories.addAll(otherDeleteHistories.getDeleteHistories());
+        List<DeleteHistory> deleteHistories = new ArrayList<>(this.histories);
+        deleteHistories.addAll(otherDeleteHistories.getHistories());
         return new DeleteHistories(deleteHistories);
     }
 
-    public List<DeleteHistory> getDeleteHistories() {
-        return deleteHistories;
+    public List<DeleteHistory> getHistories() {
+        return histories;
     }
 
     @Override
@@ -37,11 +37,11 @@ public class DeleteHistories {
             return false;
         }
         DeleteHistories that = (DeleteHistories) o;
-        return Objects.equals(deleteHistories, that.deleteHistories);
+        return Objects.equals(histories, that.histories);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(deleteHistories);
+        return Objects.hash(histories);
     }
 }

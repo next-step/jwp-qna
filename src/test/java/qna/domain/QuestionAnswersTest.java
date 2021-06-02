@@ -12,7 +12,7 @@ import static qna.domain.QuestionTest.Q1;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
-class AnswersTest {
+class QuestionAnswersTest {
 
     private DateTimeStrategy dateTimeStrategy;
 
@@ -24,61 +24,61 @@ class AnswersTest {
     @DisplayName("답변이 등록되면 답변 목록에 추가된다.")
     @Test
     void addTest() {
-        Answers answers = new Answers();
+        QuestionAnswers questionAnswers = new QuestionAnswers();
         List<Answer> answerList = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
             answerList.add(new Answer((long) i, JAVAJIGI, Q1, "contents"));
-            answers.add(answerList.get(i));
+            questionAnswers.add(answerList.get(i));
         }
 
-        assertThat(answers.getAnswers()).hasSize(3)
-                                        .containsAll(answerList);
+        assertThat(questionAnswers.getAnswers()).hasSize(3)
+                                                .containsAll(answerList);
     }
 
     @DisplayName("답변이 삭제되면 답변 목록에서도 삭제된다.")
     @Test
     void removeTest() {
-        Answers answers = new Answers();
+        QuestionAnswers questionAnswers = new QuestionAnswers();
         List<Answer> answerList = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
             answerList.add(new Answer((long) i, JAVAJIGI, Q1, "contents"));
-            answers.add(answerList.get(i));
+            questionAnswers.add(answerList.get(i));
         }
-        answers.delete(answerList.get(2), dateTimeStrategy.now());
+        questionAnswers.delete(answerList.get(2), dateTimeStrategy.now());
 
-        assertThat(answers.getAnswers()).hasSize(2)
-                                        .contains(answerList.get(0), answerList.get(1))
-                                        .doesNotContain(answerList.get(2));
+        assertThat(questionAnswers.getAnswers()).hasSize(2)
+                                                .contains(answerList.get(0), answerList.get(1))
+                                                .doesNotContain(answerList.get(2));
     }
 
     @DisplayName("답변 중 질문자가 아닌 유저가 답변을 남기면 true")
     @Test
     void hasOtherUserAnswerTest() {
-        Answers answers = new Answers();
+        QuestionAnswers questionAnswers = new QuestionAnswers();
 
         for (int i = 0; i < 2; i++) {
-            answers.add(new Answer((long) i, JAVAJIGI, Q1, "contents"));
+            questionAnswers.add(new Answer((long) i, JAVAJIGI, Q1, "contents"));
         }
-        answers.add(new Answer(3L, SANJIGI, Q1, "contents"));
+        questionAnswers.add(new Answer(3L, SANJIGI, Q1, "contents"));
 
-        assertThat(answers.hasOtherUserAnswer(JAVAJIGI)).isTrue();
+        assertThat(questionAnswers.hasOtherUserAnswer(JAVAJIGI)).isTrue();
     }
 
     @DisplayName("모든 답변을 삭제하면 목록이 초기화된다.")
     @Test
     void deleteAnswersTest() {
-        Answers answers = new Answers();
+        QuestionAnswers questionAnswers = new QuestionAnswers();
         List<Answer> answerList = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
             answerList.add(new Answer((long) i, JAVAJIGI, Q1, "contents"));
-            answers.add(answerList.get(i));
+            questionAnswers.add(answerList.get(i));
         }
 
-        answers.deleteAnswers(LocalDateTime.now());
-        assertThat(answers.getAnswers()).hasSize(0);
+        questionAnswers.deleteAnswers(LocalDateTime.now());
+        assertThat(questionAnswers.getAnswers()).isEmpty();
         assertThat(answerList).allMatch(Answer::isDeleted);
     }
 }

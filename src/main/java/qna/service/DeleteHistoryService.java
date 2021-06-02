@@ -7,8 +7,6 @@ import qna.domain.DeleteHistories;
 import qna.domain.DeleteHistory;
 import qna.domain.DeleteHistoryRepository;
 
-import java.util.List;
-
 @Service
 public class DeleteHistoryService {
     private DeleteHistoryRepository deleteHistoryRepository;
@@ -19,7 +17,7 @@ public class DeleteHistoryService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveAll(DeleteHistories deleteHistories) {
-        deleteHistoryRepository.saveAll(deleteHistories.getDeleteHistories());
+        deleteHistoryRepository.saveAll(deleteHistories.getHistories());
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)

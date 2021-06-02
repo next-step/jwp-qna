@@ -41,7 +41,7 @@ public class Question extends BaseEntity implements Serializable {
     private User writer;
 
     @Embedded
-    private Answers answers;
+    private QuestionAnswers questionAnswers;
 
     @Column
     private boolean deleted = false;
@@ -56,7 +56,7 @@ public class Question extends BaseEntity implements Serializable {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.answers = new Answers();
+        this.questionAnswers = new QuestionAnswers();
     }
 
     public Question writeBy(User writer) {
@@ -69,16 +69,16 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
+        questionAnswers.add(answer);
         answer.replyTo(this);
     }
 
     public DeleteHistory deleteAnswer(Answer answer, LocalDateTime deleteTime) {
-        return answers.delete(answer, deleteTime);
+        return questionAnswers.delete(answer, deleteTime);
     }
 
     public DeleteHistories deleteAnswers(LocalDateTime deleteTime) {
-        return answers.deleteAnswers(deleteTime);
+        return questionAnswers.deleteAnswers(deleteTime);
     }
 
     public Long getId() {
@@ -98,7 +98,7 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public List<Answer> getAnswers() {
-        return new ArrayList<>(answers.getAnswers());
+        return new ArrayList<>(questionAnswers.getAnswers());
     }
 
     public boolean isDeleted() {
@@ -136,7 +136,7 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     private void verifyHasOtherUserAnswer() throws CannotDeleteException {
-        if (answers.hasOtherUserAnswer(writer)) {
+        if (questionAnswers.hasOtherUserAnswer(writer)) {
             throw new CannotDeleteException(MESSAGE_HAS_OTHER_USER_ANSWER);
         }
     }

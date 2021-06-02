@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @TestDataSourceConfig
-public class AnswerTest {
+class AnswerTest {
 
     @Autowired
     private AnswerRepository answerRepository;

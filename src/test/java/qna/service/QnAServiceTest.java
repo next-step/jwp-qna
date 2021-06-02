@@ -73,12 +73,12 @@ class QnAServiceTest {
     }
 
     @Test
-    public void delete_성공() throws Exception {
+    void delete_성공() throws Exception {
 
-        when(questionRepository.findById(eq(question.getId())))
+        when(questionRepository.findById(question.getId()))
             .thenReturn(Optional.of(question));
 
-        when(userRepository.findById(eq(loginUser.getId())))
+        when(userRepository.findById(loginUser.getId()))
             .thenReturn(Optional.of(loginUser));
 
         assertThat(question.isDeleted()).isFalse();
@@ -89,11 +89,11 @@ class QnAServiceTest {
     }
 
     @Test
-    public void delete_찾을_수_없는_질문() {
+    void delete_찾을_수_없는_질문() {
 
         long notFoundQuestionId = 9999L;
 
-        when(questionRepository.findById(eq(notFoundQuestionId)))
+        when(questionRepository.findById(notFoundQuestionId))
             .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(loginUser.getId(), notFoundQuestionId))
@@ -102,14 +102,14 @@ class QnAServiceTest {
     }
 
     @Test
-    public void delete_잘못된_사용자() {
+    void delete_잘못된_사용자() {
 
         long notFoundUserId = 9999L;
 
-        when(questionRepository.findById(eq(question.getId())))
+        when(questionRepository.findById(question.getId()))
             .thenReturn(Optional.of(question));
 
-        when(userRepository.findById(eq(notFoundUserId)))
+        when(userRepository.findById(notFoundUserId))
             .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(notFoundUserId, question.getId()))
@@ -118,15 +118,15 @@ class QnAServiceTest {
     }
 
     @Test
-    public void delete_이미_삭제된_질문() throws CannotDeleteException {
+    void delete_이미_삭제된_질문() throws CannotDeleteException {
 
         Question deletedQuestion = new Question(2L, "title", "contents").writeBy(loginUser);
         deletedQuestion.delete(loginUser, dateTimeStrategy.now());
 
-        when(questionRepository.findById(eq(deletedQuestion.getId())))
+        when(questionRepository.findById(deletedQuestion.getId()))
             .thenReturn(Optional.of(deletedQuestion));
 
-        when(userRepository.findById(eq(loginUser.getId())))
+        when(userRepository.findById(loginUser.getId()))
             .thenReturn(Optional.of(loginUser));
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(loginUser.getId(), deletedQuestion.getId()))
@@ -135,12 +135,12 @@ class QnAServiceTest {
     }
 
     @Test
-    public void delete_다른_사람이_쓴_글() {
+    void delete_다른_사람이_쓴_글() {
 
-        when(questionRepository.findById(eq(question.getId())))
+        when(questionRepository.findById(question.getId()))
             .thenReturn(Optional.of(question));
 
-        when(userRepository.findById(eq(otherUser.getId())))
+        when(userRepository.findById(otherUser.getId()))
             .thenReturn(Optional.of(otherUser));
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(otherUser.getId(), question.getId()))
@@ -149,15 +149,15 @@ class QnAServiceTest {
     }
 
     @Test
-    public void delete_성공_질문자_답변자_모두_같음() throws Exception {
+    void delete_성공_질문자_답변자_모두_같음() throws Exception {
 
         Answer answer2 = new Answer(2L, loginUser, question, "Answers Contents1");
         question.addAnswer(answer2);
 
-        when(questionRepository.findById(eq(question.getId())))
+        when(questionRepository.findById(question.getId()))
             .thenReturn(Optional.of(question));
 
-        when(userRepository.findById(eq(loginUser.getId())))
+        when(userRepository.findById(loginUser.getId()))
             .thenReturn(Optional.of(loginUser));
 
         qnAService.deleteQuestion(loginUser.getId(), question.getId());
@@ -168,15 +168,15 @@ class QnAServiceTest {
     }
 
     @Test
-    public void delete_답변_중_다른_사람이_쓴_글() {
+    void delete_답변_중_다른_사람이_쓴_글() {
 
         Answer answer2 = new Answer(2L, otherUser, question, "Answers Contents1");
         question.addAnswer(answer2);
 
-        when(questionRepository.findById(eq(question.getId())))
+        when(questionRepository.findById(question.getId()))
             .thenReturn(Optional.of(question));
 
-        when(userRepository.findById(eq(loginUser.getId())))
+        when(userRepository.findById(loginUser.getId()))
             .thenReturn(Optional.of(loginUser));
 
         assertThatThrownBy(() -> qnAService.deleteQuestion(loginUser.getId(), question.getId()))

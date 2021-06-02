@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
-public class QuestionTest {
+class QuestionTest {
     public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
     public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(SANJIGI);
 
@@ -113,7 +113,7 @@ public class QuestionTest {
         Q1.addAnswer(answer2);
 
         Q1.delete(JAVAJIGI, dateTimeStrategy.now());
-        assertThat(Q1.getAnswers()).hasSize(0);
+        assertThat(Q1.getAnswers()).isEmpty();
         assertThat(Q1.isDeleted()).isTrue();
         assertThat(answer1.isDeleted()).isTrue();
         assertThat(answer2.isDeleted()).isTrue();

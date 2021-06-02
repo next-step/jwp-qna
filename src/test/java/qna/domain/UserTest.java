@@ -11,7 +11,7 @@ import qna.config.TestDataSourceConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestDataSourceConfig
-public class UserTest {
+class UserTest {
     public static final User JAVAJIGI = new User(100L, "javajigi", "password", "name1", "javajigi@slipp.net");
     public static final User SANJIGI = new User(200L, "sanjigi", "password", "name2", "sanjigi@slipp.net");
 

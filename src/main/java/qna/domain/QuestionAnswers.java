@@ -1,8 +1,8 @@
 package qna.domain;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -11,7 +11,9 @@ import org.hibernate.annotations.Where;
 import static java.util.stream.Collectors.toList;
 
 @Embeddable
-public class Answers {
+public class QuestionAnswers implements Serializable {
+
+    private static final long serialVersionUID = 8457250053092405727L;
 
     @OneToMany(mappedBy = "question")
     @Where(clause = "deleted = 0")
