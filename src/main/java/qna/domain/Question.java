@@ -102,7 +102,7 @@ public class Question extends BaseTimeEntity {
         return writer;
     }
 
-    public List<DeleteHistory> deleteByOwner(User loginUser) {
+    public DeleteHistorys deleteByOwner(User loginUser) {
         validateAuthority(loginUser);
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
@@ -113,7 +113,7 @@ public class Question extends BaseTimeEntity {
         this.deleted = true;
         deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, this.id, this.writer));
 
-        return deleteHistories;
+        return DeleteHistorys.of(deleteHistories);
     }
 
     private void validateAuthority(User loginUser) throws CannotDeleteException {
