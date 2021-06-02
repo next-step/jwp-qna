@@ -1,8 +1,13 @@
 package qna.domain;
 
+import static qna.domain.ContentType.*;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,8 +20,12 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import qna.CannotDeleteException;
+
 @Entity
 public class Question extends BaseEntity {
+
+    private static final String HAS_NOT_DELETE_PERMISSION_MESSAGE = "질문을 삭제할 권한이 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,6 +91,47 @@ public class Question extends BaseEntity {
 
     public void deleted(final boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public int countOfAnswer() {
+        return answers.size();
+    }
+
+    public List<DeleteHistory> delete(final User user) throws CannotDeleteException {
+        verifyOwner(user);
+        deleted(true);
+
+        return Collections.unmodifiableList(histories(user));
+    }
+
+    private void verifyOwner(final User writer) throws CannotDeleteException {
+        Optional.ofNullable(writer)
+            .filter(this::isOwner)
+            .orElseThrow(() -> new CannotDeleteException(HAS_NOT_DELETE_PERMISSION_MESSAGE));
+    }
+
+    private List<DeleteHistory> histories(final User user) throws CannotDeleteException {
+        final List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(deleteHistory());
+        deleteHistories.addAll(answerDeleteHistories(user));
+
+        return deleteHistories;
+    }
+
+    private DeleteHistory deleteHistory() {
+        return new DeleteHistory(QUESTION, id, writer, LocalDateTime.now());
+    }
+
+    private List<DeleteHistory> answerDeleteHistories(final User user)
+        throws CannotDeleteException {
+
+        final List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        for (final Answer answer : answers) {
+            deleteHistories.add(answer.delete(user));
+        }
+
+        return deleteHistories;
     }
 
     @Override

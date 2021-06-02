@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import qna.NotFoundException;
+
 @DataJpaTest
 public class QuestionRepositoryTest {
     public static final Question Q1 = new Question("title1", "contents1", UserRepositoryTest.JAVAJIGI);
@@ -197,6 +199,27 @@ public class QuestionRepositoryTest {
             () -> assertThat(actual).isNotNull(),
             () -> assertThat(actual.size()).isEqualTo(2),
             () -> assertThat(actual).containsExactly(question1, question2)
+        );
+    }
+
+    @DisplayName("Question 과 Answer 를 연관 관계 매핑을 하고 정상적으로 저장되는지 확인하는 테스트")
+    @Test
+    void findByIdAndDeletedFalse() {
+        // given
+        final Answer answer1 = new Answer(user1, question1, "contents");
+        final Answer answer2 = new Answer(user1, question1, "contents2");
+        question1.addAnswer(answer1);
+        question1.addAnswer(answer2);
+
+        // when
+        final Question actual = questionRepository.findByIdAndDeletedFalse(question1.getId())
+            .orElseThrow(NotFoundException::new);
+
+        // then
+        assertAll(
+            () -> assertThat(actual).isNotNull(),
+            () -> assertThat(actual.isDeleted()).isEqualTo(false),
+            () -> assertThat(actual.countOfAnswer()).isEqualTo(2)
         );
     }
 }
