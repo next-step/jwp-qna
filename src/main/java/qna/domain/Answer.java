@@ -70,13 +70,9 @@ public class Answer extends BaseDate {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         answerAuthCheck(loginUser);
-        setDeleted(true);
+        this.deleted = true;
         return DeleteHistory.answerHistory(getId(), writer);
     }
 
