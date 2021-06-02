@@ -9,7 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.user.User;
 import qna.domain.user.UserRepository;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
@@ -37,8 +37,7 @@ class UserRepositoryTest {
 		// then
 		assertAll(() -> {
 			assertThat(expected.getId()).isNotNull();
-			assertThat(expected.matchUserId("javajigi")).isTrue();
-			assertThat(expected.matchPassword("password")).isTrue();
+			assertThatCode(() -> expected.checkOwner(JAVAJIGI)).doesNotThrowAnyException();
 			assertThat(expected.equalsNameAndEmail(JAVAJIGI)).isTrue();
 		});
 	}

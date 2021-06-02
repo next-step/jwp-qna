@@ -6,7 +6,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Deleted {
 
-	@Column(name = "deleted")
+	@Column(name = "deleted", nullable = false)
 	private boolean deleted = false;
 
 	public void delete() {
