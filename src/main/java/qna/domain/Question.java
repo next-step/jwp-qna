@@ -82,10 +82,6 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -96,10 +92,6 @@ public class Question extends BaseEntity {
 
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
