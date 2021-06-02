@@ -12,7 +12,7 @@ public class Question extends BaseEntity{
     private String contents;
 
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
     private boolean deleted = false;
