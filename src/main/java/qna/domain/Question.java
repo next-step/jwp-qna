@@ -5,10 +5,11 @@ import javax.persistence.*;
 @Entity
 public class Question extends AbstractEntity {
 
-    @Column
+    @Column(length = 100, nullable = false)
     private String title;
 
     @Column
+    @Lob
     private String contents;
 
     @JoinColumn(name = "writer_id")
