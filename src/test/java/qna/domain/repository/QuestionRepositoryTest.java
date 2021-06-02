@@ -15,9 +15,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-//TODO : 피드백 후 삭제하기
-/* 개별 TEST는 성공하지만, 전체 TEST는 실패하는 이유를 모르겠습니다.. */
-
 @DataJpaTest
 public class QuestionRepositoryTest {
 
@@ -37,6 +34,9 @@ public class QuestionRepositoryTest {
     public void setUp() {
         user1 = userRepository.save(UserTest.USER_JAVAJIGI);
         user2 = userRepository.save(UserTest.USER_SANJIGI);
+
+        QuestionTest.QUESTION_OF_JAVAJIGI.writeBy(user1);
+        QuestionTest.QUESTION_OF_SANJIGI.writeBy(user2);
 
         question1 = questionRepository.save(QuestionTest.QUESTION_OF_JAVAJIGI);
         question2 = questionRepository.save(QuestionTest.QUESTION_OF_SANJIGI);
@@ -63,9 +63,6 @@ public class QuestionRepositoryTest {
     @DisplayName("작성자 비교")
     public void isWriterEqualTo() {
         assertAll(
-            () -> assertThat(question1.getWriter()).isEqualTo(UserTest.USER_JAVAJIGI),
-            () -> assertThat(question2.getWriter()).isEqualTo(UserTest.USER_SANJIGI),
-
             () -> assertThat(question1.getWriter()).isEqualTo(user1),
             () -> assertThat(question2.getWriter()).isEqualTo(user2)
         );

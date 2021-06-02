@@ -10,9 +10,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-//TODO : 피드백 후 삭제하기
-/* 개별 TEST는 성공하지만, 전체 TEST는 실패하는 이유를 모르겠습니다.. */
-
 @DataJpaTest
 public class AnswerRepositoryTest {
 
@@ -39,19 +36,18 @@ public class AnswerRepositoryTest {
         user1 = userRepository.save(UserTest.USER_JAVAJIGI);
         user2 = userRepository.save(UserTest.USER_SANJIGI);
 
+        QuestionTest.QUESTION_OF_JAVAJIGI.writeBy(user1);
+        QuestionTest.QUESTION_OF_SANJIGI.writeBy(user2);
+
         question1 = questionRepository.save(QuestionTest.QUESTION_OF_JAVAJIGI);
         question2 = questionRepository.save(QuestionTest.QUESTION_OF_SANJIGI);
+
+        AnswerTest.ANSWER_OF_JAVAJIGI.writeBy(question1, user1);
+        AnswerTest.ANSWER_OF_SANJIGI.writeBy(question2, user1);
 
         answer1 = answerRepository.save(AnswerTest.ANSWER_OF_JAVAJIGI);
         answer2 = answerRepository.save(AnswerTest.ANSWER_OF_SANJIGI);
     }
-
-    /*@AfterEach
-    public void end() {
-        questionRepository.deleteAll();
-        answerRepository.deleteAll();
-        userRepository.deleteAll();
-    }*/
 
     @Test
     public void exists() {
@@ -59,9 +55,9 @@ public class AnswerRepositoryTest {
             () -> assertThat(answer1.getId()).isNotNull(),
             () -> assertThat(answer2.getId()).isNotNull(),
             () -> assertThat(answer1.getQuestion()).isEqualTo(question1),
-            () -> assertThat(answer2.getQuestion()).isEqualTo(question1),
+            () -> assertThat(answer2.getQuestion()).isEqualTo(question2),
             () -> assertThat(answer1.getWriter()).isEqualTo(user1),
-            () -> assertThat(answer2.getWriter()).isEqualTo(user2)
+            () -> assertThat(answer2.getWriter()).isEqualTo(user1)
         );
     }
 
@@ -76,11 +72,11 @@ public class AnswerRepositoryTest {
 
     @Test
     public void findByQuestionIdAndDeletedFalse() {
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.QUESTION_OF_JAVAJIGI.getId());
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
 
         assertAll(
-            () -> assertThat(answers.size()).isEqualTo(2),
-            () -> assertThat(answers).contains(answer1, answer2)
+            () -> assertThat(answers.size()).isEqualTo(1),
+            () -> assertThat(answers).contains(answer1)
         );
     }
 
@@ -88,7 +84,7 @@ public class AnswerRepositoryTest {
     public void findByQuestionIdAndDeletedFalse2() {
         answer2.deleted();
 
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.QUESTION_OF_JAVAJIGI.getId());
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
 
         assertAll(
             () -> assertThat(answers.size()).isEqualTo(1),

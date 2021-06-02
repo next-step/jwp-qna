@@ -79,6 +79,11 @@ public class Answer extends TraceDate implements Deleteable {
         this.question = question;
     }
 
+    public void writeBy(Question question, User writer) {
+        this.question = question;
+        this.writer = writer;
+    }
+
     @Override
     public void deleted() {
         this.deleted = true;
