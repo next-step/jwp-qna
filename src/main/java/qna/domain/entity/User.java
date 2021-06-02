@@ -25,17 +25,17 @@ import java.util.Objects;
  *     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
  */
 
-@Getter
 @NoArgsConstructor
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(name = "unique_user_id", columnNames={"userId"}))
 @EqualsAndHashCode(of = "id")
+@Getter(AccessLevel.PACKAGE)
 @ToString(of = {"id", "userId", "email", "name"})
 public class User extends TraceDate {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 50)
@@ -82,11 +82,11 @@ public class User extends TraceDate {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    public boolean matchUserId(String userId) {
         return this.userId.equals(userId);
     }
 
-    private boolean matchPassword(String targetPassword) {
+    public boolean matchPassword(String targetPassword) {
         return this.password.equals(targetPassword);
     }
 

@@ -4,11 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.domain.entity.DeleteHistory;
-import qna.domain.entity.User;
-import qna.domain.entity.UserTest;
-
-import java.time.LocalDateTime;
+import qna.domain.entity.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -20,29 +16,26 @@ public class DeleteHistoryRepositoryTest {
     private UserRepository userRepository;
 
     @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
     private User user;
+    private Question question;
 
     @BeforeEach
     public void setUp() {
         user = userRepository.save(UserTest.USER_JAVAJIGI);
+        question = questionRepository.save(QuestionTest.QUESTION_OF_JAVAJIGI);
     }
 
     @Test
     public void exists() {
-        DeleteHistory deleteHistory = DeleteHistory.builder()
-                .user(user)
-                .contentType(DeleteHistory.ContentType.ANSWER)
-                .contentId(1l)
-                .createDate(LocalDateTime.now())
-                .build();
-
-        DeleteHistory actual = deleteHistoryRepository.save(deleteHistory);
+        DeleteHistory actual = deleteHistoryRepository.save(question.deleteHistory());
 
         assertAll(
-            () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual.getContentType()).isEqualTo(DeleteHistory.ContentType.ANSWER)
+            () -> assertThat(actual).isNotNull()
         );
     }
 }

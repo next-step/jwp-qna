@@ -58,19 +58,7 @@ public class UserRepositoryTest {
         Optional<User> userOptional = userRepository.findByUserId(userId);
         assertAll(
             () -> assertThat(userOptional).isNotEmpty(),
-            () -> assertThat(userOptional.get().getUserId()).isEqualTo(userId)
-        );
-    }
-
-    @Test
-    @DisplayName("동일성 비교")
-    public void isSameAs() {
-        User actual1 = userRepository.findByUserId(UserTest.USER_JAVAJIGI.getUserId()).get();
-        User actual2 = userRepository.findByUserId(UserTest.USER_SANJIGI.getUserId()).get();
-
-        assertAll(
-            () -> assertThat(actual1).isSameAs(user1),
-            () -> assertThat(actual2).isSameAs(user2)
+            () -> assertThat(userOptional.get().matchUserId(userId)).isTrue()
         );
     }
 }

@@ -63,8 +63,8 @@ public class QuestionRepositoryTest {
     @DisplayName("작성자 비교")
     public void isWriterEqualTo() {
         assertAll(
-            () -> assertThat(question1.getWriter()).isEqualTo(user1),
-            () -> assertThat(question2.getWriter()).isEqualTo(user2)
+            () -> assertThat(question1.isOwner(user1)).isTrue(),
+            () -> assertThat(question2.isOwner(user2)).isTrue()
         );
     }
 

@@ -54,10 +54,10 @@ public class AnswerRepositoryTest {
         assertAll(
             () -> assertThat(answer1.getId()).isNotNull(),
             () -> assertThat(answer2.getId()).isNotNull(),
-            () -> assertThat(answer1.getQuestion()).isEqualTo(question1),
-            () -> assertThat(answer2.getQuestion()).isEqualTo(question2),
-            () -> assertThat(answer1.getWriter()).isEqualTo(user1),
-            () -> assertThat(answer2.getWriter()).isEqualTo(user1)
+            () -> assertThat(answer1.isEqualQuestion(question1)).isTrue(),
+            () -> assertThat(answer2.isEqualQuestion(question2)).isTrue(),
+            () -> assertThat(answer1.isOwner(user1)).isTrue(),
+            () -> assertThat(answer2.isOwner(user1)).isTrue()
         );
     }
 

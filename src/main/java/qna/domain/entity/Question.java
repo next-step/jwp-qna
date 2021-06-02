@@ -1,11 +1,10 @@
 package qna.domain.entity;
 
-import lombok.ToString;
+import lombok.*;
 import qna.domain.entity.common.Deleteable;
+import qna.domain.entity.common.Owner;
 import qna.domain.entity.common.TraceDate;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +22,14 @@ import java.util.List;
  *     primary key (id)
  * )
  */
-@Getter
 @NoArgsConstructor
 @Entity
+@Getter(AccessLevel.PACKAGE)
 @ToString(of = {"id", "contents", "title", "writer", "deleted"})
-public class Question extends TraceDate implements Deleteable {
+public class Question extends TraceDate implements Deleteable<DeleteHistory>, Owner<User> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Lob
@@ -66,17 +65,27 @@ public class Question extends TraceDate implements Deleteable {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
         this.answers.add(answer);
         answer.toQuestion(this);
     }
 
     @Override
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    @Override
     public void deleted() {
         this.deleted = true;
+    }
+
+    @Override
+    public DeleteHistory deleteHistory() {
+        return DeleteHistory.ContentType.QUESTION.getDeleteHistory(this.id, this.writer);
+    }
+
+    public boolean isDeleted() {
+        return deleted;
     }
 }

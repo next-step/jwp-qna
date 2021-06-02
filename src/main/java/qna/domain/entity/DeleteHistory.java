@@ -1,9 +1,7 @@
 package qna.domain.entity;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -18,17 +16,16 @@ import java.time.LocalDateTime;
  *     primary key (id)
  * )
  */
-@Getter
 @NoArgsConstructor
 @Entity
-@EqualsAndHashCode(of={"id", "contentType", "contentId", "deletedById"})
+@Getter(AccessLevel.PACKAGE)
+@EqualsAndHashCode(of={"id"})
 public class DeleteHistory {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //TODO
     private Long contentId;
 
     @Enumerated(EnumType.STRING)
@@ -40,16 +37,29 @@ public class DeleteHistory {
     @JoinColumn(name="deleted_by_id")
     private User user;
 
-
-    @Builder
-    public DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
         this.contentId = contentId;
         this.contentType = contentType;
         this.user = user;
         this.createDate = createDate;
     }
 
-    public enum ContentType {
-        ANSWER, QUESTION
+    enum ContentType {
+        ANSWER("답변"), QUESTION("질문");
+
+        private final String remark;
+
+        ContentType(String remark) {
+            this.remark = remark;
+        }
+
+        protected DeleteHistory getDeleteHistory(Long contentId, User user) {
+            return new DeleteHistory(this, contentId, user, LocalDateTime.now());
+        }
+
+        @Override
+        public String toString() {
+            return remark;
+        }
     }
 }
