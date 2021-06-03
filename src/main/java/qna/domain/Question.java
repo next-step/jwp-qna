@@ -4,7 +4,6 @@ import static qna.domain.ContentType.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -97,8 +96,8 @@ public class Question extends BaseEntity {
         return answers.size();
     }
 
-    public List<DeleteHistory> delete(final User user) throws CannotDeleteException {
-        final List<DeleteHistory> deleteHistories = Collections.unmodifiableList(histories(validUser(user)));
+    public DeleteHistories delete(final User user) throws CannotDeleteException {
+        final DeleteHistories deleteHistories = new DeleteHistories(histories(validUser(user)));
         deleted();
 
         return deleteHistories;

@@ -52,6 +52,29 @@ class DeleteHistoryRepositoryTest {
         );
     }
 
+    @DisplayName("DeleteHistory 2 개를 가지고 있는 DeleteHistory 를 저장하면 동일한 DeleteHistory 2 개가 반환되는지 테스트")
+    @Test
+    void given_DeleteHistoriesHasElements_when_saveAll_then_ReturnSameElements() {
+        // given
+        final List<DeleteHistory> expected = deleteHistories(user1);
+        final DeleteHistories deleteHistories = new DeleteHistories(expected);
+
+        // when
+        final List<DeleteHistory> actual = deleteHistoryRepository.saveAll(deleteHistories);
+
+        // then
+        assertAll(
+            () -> assertThat(actual.size()).isEqualTo(2),
+            () -> assertThat(actual).isEqualTo(expected)
+        );
+    }
+
+    private List<DeleteHistory> deleteHistories(final User writer) {
+        return Arrays.asList(
+            new DeleteHistory(QUESTION, 1L, writer, LocalDateTime.now()),
+            new DeleteHistory(ANSWER, 1L, writer, LocalDateTime.now()));
+    }
+
     @DisplayName("Indexed Query Parameter 테스트")
     @Test
     void findById() {
