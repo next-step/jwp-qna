@@ -2,6 +2,7 @@ package qna.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -19,8 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.domain.Answer;
 import qna.domain.AnswerRepository;
-import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
+import qna.domain.DeleteHistorys;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.QuestionTest;
@@ -45,8 +46,8 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-        answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
+        question = Question.of(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        answer = Answer.of(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
     }
 
@@ -82,7 +83,7 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
+        Answer answer2 = Answer.of(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
@@ -94,8 +95,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-            new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()),
-            new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()));
-        verify(deleteHistoryService).saveAll(deleteHistories);
+            answer.createDeleteHistory(),
+            question.createDeleteHistory());
+        verify(deleteHistoryService).saveAll(refEq(DeleteHistorys.of(deleteHistories)));
     }
 }

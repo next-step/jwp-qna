@@ -47,19 +47,27 @@ public class Question extends BaseTimeEntity {
 
     protected Question() {}
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
+    private Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
     }
 
+    public static Question of(String title, String contents) {
+        return new Question(null, title, contents);
+    }
+
+    public static Question of(Long id, String title, String contents) {
+        return new Question(id, title, contents);
+    }
+
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public boolean isOwner(User writer) {
@@ -71,34 +79,13 @@ public class Question extends BaseTimeEntity {
             this.answers.add(answer);
             answer.toQuestion(this);
         }
-
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
+    public void updateContents(String contents) {
         this.contents = contents;
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public User getWriter() {
-        return writer;
-    }
-
-    public List<DeleteHistory> deleteByOwner(User loginUser) {
+    public DeleteHistorys deleteByOwner(User loginUser) {
         validateAuthority(loginUser);
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
@@ -107,9 +94,17 @@ public class Question extends BaseTimeEntity {
         }
 
         this.deleted = true;
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer));
+        deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, this.id, this.writer));
 
-        return deleteHistories;
+        return DeleteHistorys.of(deleteHistories);
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public DeleteHistory createDeleteHistory() {
+        return DeleteHistory.of(ContentType.QUESTION, this.id, writer);
     }
 
     private void validateAuthority(User loginUser) throws CannotDeleteException {
@@ -120,17 +115,6 @@ public class Question extends BaseTimeEntity {
 
     private List<DeleteHistory> deleteAllAnswerByOwner(User loginUser) {
         return answers.stream().map(answer -> answer.deleteByOwner(loginUser)).collect(Collectors.toList());
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", contents='" + contents + '\'' +
-            ", writerId=" + writer.getId() +
-            ", deleted=" + deleted +
-            '}';
     }
 
 }

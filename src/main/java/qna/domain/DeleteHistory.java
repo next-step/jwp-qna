@@ -42,10 +42,14 @@ public class DeleteHistory {
 
     protected DeleteHistory() {}
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
+    }
+
+    public static DeleteHistory of(ContentType contentType, Long contentId, User deletedBy) {
+        return new DeleteHistory(contentType, contentId, deletedBy);
     }
 
     @Override
@@ -66,38 +70,11 @@ public class DeleteHistory {
         return Objects.hash(id, contentType, contentId, deletedBy);
     }
 
-    @Override
-    public String toString() {
-        return "DeleteHistory{" +
-            "id=" + id +
-            ", contentType=" + contentType +
-            ", contentId=" + contentId +
-            ", deletedBy=" + deletedBy.getId() +
-            ", createDate=" + createDate +
-            '}';
-    }
-
-    public Long getContentId() {
-        return contentId;
-    }
-
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(ContentType contentType) {
+    public void updateContentType(ContentType contentType) {
         this.contentType = contentType;
-    }
-
-    public User getDeletedBy() {
-        return deletedBy;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
     }
 }

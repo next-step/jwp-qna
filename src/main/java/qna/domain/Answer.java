@@ -44,11 +44,7 @@ public class Answer extends BaseTimeEntity {
 
     protected Answer() {}
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
-    public Answer(Long id, User writer, Question question, String contents) {
+    private Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -64,33 +60,33 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
+    public static Answer of(User writer, Question question, String contents) {
+        return new Answer(null, writer, question, contents);
+    }
+
+    public static Answer of(Long id, User writer, Question question, String contents) {
+        return new Answer(id, writer, question, contents);
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
     public void toQuestion(Question question) {
         question.addAnswer(this);
         this.question = question;
     }
 
-    public Long getId() {
-        return id;
+    public boolean hasQuestion() {
+        return question != null && question.getId() != null;
     }
 
-    public Question getQuestion() {
-        return question;
+    public boolean hasWriter() {
+        return writer != null && writer.getId() != null;
     }
 
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
+    public void updateContents(String contents) {
         this.contents = contents;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public User getWriter() {
-        return writer;
     }
 
     public DeleteHistory deleteByOwner(User loginUser) {
@@ -98,18 +94,15 @@ public class Answer extends BaseTimeEntity {
             throw new CannotDeleteException(CHECK_ANSWER_AUTHORITY);
         }
         this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer);
+        return DeleteHistory.of(ContentType.ANSWER, this.id, this.writer);
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-            "id=" + id +
-            ", writerId=" + writer.getId() +
-            ", questionId=" + question.getId() +
-            ", contents='" + contents + '\'' +
-            ", deleted=" + deleted +
-            '}';
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public DeleteHistory createDeleteHistory() {
+        return DeleteHistory.of(ContentType.ANSWER, this.id, writer);
     }
 
 }

@@ -21,8 +21,8 @@ public class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        User deletedUser = new User("tj", "ps", "김석진", "7271kim@naver.com");
-        deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, deletedUser);
+        User deletedUser = User.of("tj", "ps", "김석진", "7271kim@naver.com");
+        deleteHistory = DeleteHistory.of(ContentType.ANSWER, 1L, deletedUser);
         actual = repository.save(deleteHistory);
     }
 
@@ -31,18 +31,15 @@ public class DeleteHistoryRepositoryTest {
     void save() {
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getCreateDate()).isNotNull(),
-            () -> assertThat(actual.getContentId()).isEqualTo(deleteHistory.getContentId()),
-            () -> assertThat(actual.getContentType()).isEqualTo(deleteHistory.getContentType()),
-            () -> assertThat(actual.getDeletedBy()).isEqualTo(deleteHistory.getDeletedBy()));
+            () -> assertThat(actual).isSameAs(deleteHistory));
     }
 
     @Test
     @DisplayName("update 확인")
     void updata() {
-        deleteHistory.setContentType(ContentType.QUESTION);
+        deleteHistory.updateContentType(ContentType.QUESTION);
         repository.save(deleteHistory);
         DeleteHistory finedDeleteHistory = repository.findById(deleteHistory.getId()).get();
-        assertThat(finedDeleteHistory.getContentType()).isEqualTo(ContentType.QUESTION);
+        assertThat(finedDeleteHistory).isSameAs(deleteHistory);
     }
 }

@@ -27,11 +27,11 @@ public class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        User writer = new User("tj", "ps", "김석진", "7271kim@naver.com");
-        User questionWriter = new User("tjs", "pss", "김석진2", "7271ki2m@naver.com");
-        Question question = new Question("질문", "입니다.").writeBy(questionWriter);
+        User writer = User.of("tj", "ps", "김석진", "7271kim@naver.com");
+        User questionWriter = User.of("tjs", "pss", "김석진2", "7271ki2m@naver.com");
+        Question question = Question.of("질문", "입니다.").writeBy(questionWriter);
 
-        answer = new Answer(writer, question, "Answers Contents1");
+        answer = Answer.of(writer, question, "Answers Contents1");
         actual = answers.save(answer);
         users.save(writer);
         users.save(questionWriter);
@@ -43,36 +43,27 @@ public class AnswerRepositoryTest {
     void save() {
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getCreatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isNull(),
-            () -> assertThat(actual.getContents()).isEqualTo(answer.getContents()),
-            () -> assertThat(actual.isDeleted()).isEqualTo(answer.isDeleted()),
-            () -> assertThat(actual.getQuestion()).isEqualTo(answer.getQuestion()),
-            () -> assertThat(actual.getWriter()).isEqualTo(answer.getWriter()));
+            () -> assertThat(actual).isSameAs(answer));
     }
 
     @Test
     @DisplayName("update 확인")
     void updata() {
-        answer.setContents("change content");
+        answer.updateContents("change content");
         answers.saveAndFlush(answer);
         Answer finedAnswer = answers.findById(answer.getId()).get();
-        assertAll(
-            () -> assertThat(finedAnswer.getContents()).isEqualTo("change content"),
-            () -> assertThat(finedAnswer.getUpdatedAt()).isNotNull());
+        assertThat(finedAnswer).isSameAs(answer);
     }
 
     @Test
     @DisplayName("question 연관관계 확인")
     void qustionCheck() {
-        assertThat(actual.getQuestion()).isNotNull();
-        assertThat(actual.getQuestion().getId()).isNotNull();
+        assertThat(actual.hasQuestion()).isTrue();
     }
 
     @Test
     @DisplayName("writer 연관관계 확인")
     void writerCheck() {
-        assertThat(actual.getWriter()).isNotNull();
-        assertThat(actual.getWriter().getId()).isNotNull();
+        assertThat(actual.hasWriter()).isTrue();
     }
 }
