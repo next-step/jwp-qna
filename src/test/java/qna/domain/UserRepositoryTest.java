@@ -6,31 +6,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
 public class UserRepositoryTest {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Test
     @DisplayName("save 테스트")
     void saveTest() {
-        // 데이터 테스트
-        assertThat(UserTest.SUNJU.getId()).isNull();
-        userRepository.findAll();
-        User actualUser1 = userRepository.save(UserTest.SUNJU);
-        assertThat(actualUser1.getId()).isNotNull(); // id 생성 테스트
-        assertThat(actualUser1.getUserId()).isEqualTo(UserTest.SUNJU.getUserId());
-        assertThat(actualUser1.getPassword()).isEqualTo(UserTest.SUNJU.getPassword());
-        assertThat(actualUser1.getName()).isEqualTo(UserTest.SUNJU.getName());
-        assertThat(actualUser1.getEmail()).isEqualTo(UserTest.SUNJU.getEmail());
-        assertThat(actualUser1.getCreatedAt()).isNotNull();
-        assertThat(actualUser1.getUpdatedAt()).isNotNull();
+        assertThat(UserTest.JAVAJIGI.getId()).isNull();
+        User actualUser = userRepository.save(UserTest.JAVAJIGI);
+        assertThat(actualUser.getId()).isNotNull(); // id 생성 테스트
+        assertThat(actualUser.getUserId()).isEqualTo(UserTest.JAVAJIGI.getUserId());
+        assertThat(actualUser.getPassword()).isEqualTo(UserTest.JAVAJIGI.getPassword());
+        assertThat(actualUser.getName()).isEqualTo(UserTest.JAVAJIGI.getName());
+        assertThat(actualUser.getEmail()).isEqualTo(UserTest.JAVAJIGI.getEmail());
+        assertThat(actualUser.getCreatedAt()).isNotNull();
+        assertThat(actualUser.getUpdatedAt()).isNotNull();
+    }
 
-        // 리스트 테스트
+    @Test
+    @DisplayName("User 여러명 save 테스트")
+    void saveMultipleUserTest() {
+        User actualUser1 = userRepository.save(UserTest.JAVAJIGI);
         User actualUser2 = userRepository.save(UserTest.SANJIGI);
         List<User> userList = userRepository.findAll();
         assertThat(userList.size()).isEqualTo(2);
@@ -38,8 +39,8 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("id 기준 검색 테스트")
-    void findByIdAndDeletedFalse() {
+    @DisplayName("user id 기준 검색 테스트")
+    void findByUserIdTest() {
         User expected = userRepository.save(UserTest.JAVAJIGI);
         User actual = userRepository.findByUserId(expected.getUserId())
                                               .orElseThrow(IllegalArgumentException::new);
