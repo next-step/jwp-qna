@@ -5,6 +5,7 @@ import qna.CannotDeleteException;
 import qna.domain.CreateAndUpdateTimeEntity;
 import qna.domain.Deleted;
 import qna.domain.QnAExceptionMessage;
+import qna.domain.history.ContentType;
 import qna.domain.history.DeleteHistory;
 import qna.domain.history.DeleteHistorys;
 import qna.domain.user.User;
@@ -55,7 +56,7 @@ public class Question extends CreateAndUpdateTimeEntity {
     }
 
     private DeleteHistorys makeDeleteHistorys() {
-        DeleteHistorys deleteHistorys = DeleteHistorys.of(DeleteHistory.newInstanceOfQuestion(id, writer));
+        DeleteHistorys deleteHistorys = DeleteHistorys.of(DeleteHistory.newInstance(ContentType.QUESTION, id, writer));
         deleteHistorys.addAll(answers.deleteAll());
         return deleteHistorys;
     }

@@ -15,7 +15,7 @@ class DeleteHistorysTest {
 	@Test
 	@DisplayName("한개의 원소로 생성 테스트")
 	void constructorTest() {
-		assertThat(DeleteHistorys.of(DeleteHistory.newInstanceOfQuestion(1l, UserTest.JAVAJIGI)))
+		assertThat(DeleteHistorys.of(DeleteHistory.newInstance(ContentType.QUESTION,1l, UserTest.JAVAJIGI)))
 			.isNotNull()
 			.extracting(value -> value.values().size())
 			.isEqualTo(1);
@@ -25,8 +25,8 @@ class DeleteHistorysTest {
 	@DisplayName("복수의 원소를 가진 리스트로 생성 테스트")
 	void constructorTestWithListParameter() {
 		// given
-		List<DeleteHistory> expected = Arrays.asList(DeleteHistory.newInstanceOfQuestion(1l, UserTest.JAVAJIGI),
-													 DeleteHistory.newInstanceOfQuestion(2l, UserTest.SANJIGI));
+		List<DeleteHistory> expected = Arrays.asList(DeleteHistory.newInstance(ContentType.QUESTION, 1l, UserTest.JAVAJIGI),
+													 DeleteHistory.newInstance(ContentType.QUESTION, 2l, UserTest.SANJIGI));
 
 		// when
 		DeleteHistorys actual = DeleteHistorys.of(expected);
@@ -43,9 +43,9 @@ class DeleteHistorysTest {
 	@DisplayName("두개의 DeleteHistorys를 합치는 addAll 테스트")
 	void addAllTest() {
 		// given
-		DeleteHistorys deleteHistorys = DeleteHistorys.of(DeleteHistory.newInstanceOfQuestion(1l, UserTest.JAVAJIGI));
-		List<DeleteHistory> expected = Arrays.asList(DeleteHistory.newInstanceOfQuestion(1l, UserTest.JAVAJIGI),
-													 DeleteHistory.newInstanceOfQuestion(2l, UserTest.SANJIGI));
+		DeleteHistorys deleteHistorys = DeleteHistorys.of(DeleteHistory.newInstance(ContentType.QUESTION, 1l, UserTest.JAVAJIGI));
+		List<DeleteHistory> expected = Arrays.asList(DeleteHistory.newInstance(ContentType.QUESTION,1l, UserTest.JAVAJIGI),
+													 DeleteHistory.newInstance(ContentType.QUESTION,2l, UserTest.SANJIGI));
 
 		// when
 		deleteHistorys.addAll(DeleteHistorys.of(expected));

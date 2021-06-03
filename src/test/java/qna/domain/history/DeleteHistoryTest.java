@@ -13,7 +13,7 @@ class DeleteHistoryTest {
 	@DisplayName("Question contentType으로 생성하는 정적메서드 테스트")
 	void newInstanceOfQuestionTest() {
 		// when
-		DeleteHistory deleteHistory = DeleteHistory.newInstanceOfQuestion(1L, UserTest.JAVAJIGI);
+		DeleteHistory deleteHistory = DeleteHistory.newInstance(ContentType.QUESTION, 1L, UserTest.JAVAJIGI);
 
 		assertAll(() -> {
 			assertThat(deleteHistory).isNotNull();
@@ -26,7 +26,7 @@ class DeleteHistoryTest {
 	@DisplayName("Answer contentType으로 생성하는 정적메서드 테스트")
 	void newInstanceOfAnswerTest() {
 		// when
-		DeleteHistory deleteHistory = DeleteHistory.newInstanceOfAnswer(1L, UserTest.JAVAJIGI);
+		DeleteHistory deleteHistory = DeleteHistory.newInstance(ContentType.ANSWER, 1L, UserTest.JAVAJIGI);
 
 		assertAll(() -> {
 			assertThat(deleteHistory).isNotNull();
