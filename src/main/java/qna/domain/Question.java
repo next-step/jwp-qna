@@ -36,10 +36,6 @@ public class Question extends UpdatableEntity {
         return this.writer.equals(writer);
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
-
     public User writer() {
         return writer;
     }

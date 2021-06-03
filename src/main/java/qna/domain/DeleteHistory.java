@@ -5,6 +5,7 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -16,14 +17,15 @@ public class DeleteHistory extends AbstractEntity {
 
 	private Long contentId;
 
-	private Long deletedById;
+	@ManyToOne
+	private User deletedBy;
 
     protected DeleteHistory() {}
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedBy = deletedBy;
     }
 
     @Override
@@ -34,12 +36,12 @@ public class DeleteHistory extends AbstractEntity {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, deletedBy);
     }
 
     @Override
@@ -48,7 +50,7 @@ public class DeleteHistory extends AbstractEntity {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedBy=" + deletedBy.getId() +
                 ", createAt=" + createdAt +
                 '}';
     }
