@@ -30,7 +30,7 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
@@ -41,10 +41,22 @@ public class DeleteHistory {
         return id;
     }
 
+    public static DeleteHistory ofQuestion(Long id, User deletedBy) {
+        return new DeleteHistory(ContentType.QUESTION, id, deletedBy, LocalDateTime.now());
+    }
+
+    public static DeleteHistory ofAnswer(Long id, User deletedBy) {
+        return new DeleteHistory(ContentType.ANSWER, id, deletedBy, LocalDateTime.now());
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&

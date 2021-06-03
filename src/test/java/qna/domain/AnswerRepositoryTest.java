@@ -75,19 +75,4 @@ public class AnswerRepositoryTest {
         assertThat(actual.getId()).isEqualTo(savedAnswer.getId());
         assertThat(actual.isDeleted()).isFalse();
     }
-
-    @DisplayName("question_id를 통해 삭제되지 않은 answer 객체들을 조회하는지 확인한다")
-    @Test
-    void check_findByQuestionIdAndDeletedFalse() {
-        //Given
-        Answer anotherAnswer = new Answer(savedUser, savedQuestion, "AnswerContents");
-        anotherAnswer = answerRepository.save(anotherAnswer);
-
-        //When
-        List<Answer> actualList = answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId());
-
-        //Then
-        assertThat(actualList).hasSize(2)
-                .containsExactly(savedAnswer, anotherAnswer);
-    }
 }
