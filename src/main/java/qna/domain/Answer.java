@@ -104,6 +104,6 @@ public class Answer extends BaseTimeEntity {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+        return DeleteHistory.ofAnswer(this.id, this.writer);
     }
 }

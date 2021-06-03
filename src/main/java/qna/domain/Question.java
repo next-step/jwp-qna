@@ -101,7 +101,7 @@ public class Question extends BaseTimeEntity {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         validateUser(loginUser);
         this.deleted = true;
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
+        deleteHistories.add(DeleteHistory.ofQuestion(this.id, this.writer));
         deleteHistories.addAll(validateAnswersWriter(loginUser));
 
         return deleteHistories;
