@@ -8,8 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import qna.UnAuthorizedException;
-
 @Entity
 public class User extends BaseEntity {
     @Id
@@ -41,40 +39,6 @@ public class User extends BaseEntity {
         this.password = password;
         this.name = name;
         this.email = email;
-    }
-
-    public void update(final User loginUser, final User target) {
-        if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException();
-        }
-
-        this.name = target.name;
-        this.email = target.email;
-    }
-
-    private boolean matchUserId(final String userId) {
-        return this.userId.equals(userId);
-    }
-
-    public boolean matchPassword(final String targetPassword) {
-        return this.password.equals(targetPassword);
-    }
-
-    public boolean equalsNameAndEmail(final User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
-
-        return name.equals(target.name) &&
-            email.equals(target.email);
-    }
-
-    public boolean isGuestUser() {
-        return false;
     }
 
     public Long getId() {
