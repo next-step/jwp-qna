@@ -2,6 +2,8 @@ package qna.domain;
 
 import javax.persistence.*;
 
+import java.util.Objects;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Table(name = "question")
@@ -39,7 +41,7 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.user.equals(writer);
+        return Objects.equals(this.user, writer);
     }
 
     public void addAnswer(Answer answer) {

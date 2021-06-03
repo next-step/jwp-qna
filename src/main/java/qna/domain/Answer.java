@@ -47,11 +47,11 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.user.getId().equals(writer.getId());
+        return this.user.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.question.setId(question.getId());
+        this.question = question;
     }
 
     public Long getId() {
