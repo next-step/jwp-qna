@@ -15,12 +15,14 @@ public class DeleteHistory extends BaseEntity {
 
 	private Long contentId;
 
-	private Long deletedById;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User deletedBy;
 
-	public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
+	public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
 		this.contentType = contentType;
 		this.contentId = contentId;
-		this.deletedById = deletedById;
+		this.deletedBy = deletedBy;
 	}
 
 	protected DeleteHistory() {
@@ -34,6 +36,10 @@ public class DeleteHistory extends BaseEntity {
 		return contentType;
 	}
 
+	public User getDeletedBy() {
+		return deletedBy;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -42,12 +48,12 @@ public class DeleteHistory extends BaseEntity {
 		return Objects.equals(id, that.id) &&
 				contentType == that.contentType &&
 				Objects.equals(contentId, that.contentId) &&
-				Objects.equals(deletedById, that.deletedById);
+				Objects.equals(deletedBy, that.deletedBy);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, contentType, contentId, deletedById);
+		return Objects.hash(id, contentType, contentId, deletedBy);
 	}
 
 	@Override
@@ -56,7 +62,7 @@ public class DeleteHistory extends BaseEntity {
 				"id=" + id +
 				", contentType=" + contentType +
 				", contentId=" + contentId +
-				", deletedById=" + deletedById +
+				", deletedById=" + deletedBy +
 				", createAt=" + getCreatedAt() +
 				'}';
 	}
