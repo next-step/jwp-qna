@@ -54,7 +54,7 @@ public class AnswerRepositoryTest {
         a1 = answerRepository.save(A1);
         a2 = answerRepository.save(A2);
         a3 = answerRepository.save(A3);
-        a3.deleteAnswer();
+        a3.delete();
     }
 
     @DisplayName("Answer 저장")
