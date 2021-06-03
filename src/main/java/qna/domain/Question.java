@@ -3,7 +3,6 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class Question extends BaseTimeEntity {
     private boolean deleted = false;
 
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
     @Embedded
