@@ -12,32 +12,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
-    public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
+	public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+	public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
 
-    @Autowired
-    private TestEntityManager entityManager;
+	@Autowired
+	private TestEntityManager entityManager;
 
-    @Autowired
-    private QuestionRepository questions;
+	@Autowired
+	private QuestionRepository questions;
 
-    @Test
-    public void save(){
-        Question q1 = questions.save(Q1);
+	@Test
+	public void save () {
+		Question q1 = questions.save(Q1);
 
-        entityManager.flush();
+		entityManager.flush();
 
-        assertThat(q1.id()).isNotNull();
-    }
+		assertThat(q1.id()).isNotNull();
+	}
 
-    @Test
-    public void findByIdAndDeletedFalse(){
-        Question q1 = questions.save(Q1);
+	@Test
+	public void findByIdAndDeletedFalse () {
+		Question q1 = questions.save(Q1);
 
-        entityManager.flush();
+		entityManager.flush();
 
-        final Optional<Question> findQ1 = questions.findByIdAndDeletedFalse(q1.id());
+		final Optional<Question> findQ1 = questions.findByIdAndDeletedFalse(q1.id());
 
-        assertThat(findQ1).isNotEmpty();
-    }
+		assertThat(findQ1).isNotEmpty();
+	}
 }
