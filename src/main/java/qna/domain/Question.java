@@ -25,11 +25,6 @@ public class Question {
 	private LocalDateTime createdAt = LocalDateTime.now();
 
 	public Question(String title, String contents) {
-		this(null, title, contents);
-	}
-
-	public Question(Long id, String title, String contents) {
-		this.id = id;
 		this.title = title;
 		this.contents = contents;
 	}
@@ -54,40 +49,24 @@ public class Question {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getTitle() {
 		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
 	}
 
 	public String getContents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
 	public Long getWriterId() {
 		return writerId;
-	}
-
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
 	}
 
 	public boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+	public void delete() {
+		this.deleted = true;
 	}
 
 	@Override
