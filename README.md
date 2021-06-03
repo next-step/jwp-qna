@@ -61,9 +61,12 @@ alter table user
 ```
 
 ### 기능목록
-1. [ ] 엔티티 4개 생성
+1. [x] 엔티티 4개 생성
 2. [ ] 연관관계 생성
 
 ### sql 로깅
 - spring.jpa.properties.hibernate.format_sql=true 
 - spring.jpa.show-sql=true
+
+### auto ddl
+- spring.jpa.hibernate.ddl-auto

@@ -3,14 +3,29 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table
 public class Answer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column
     private Long writerId;
+    @Column
     private Long questionId;
+    @Lob
+    @Column
     private String contents;
+    @Column(nullable = false)
     private boolean deleted = false;
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
