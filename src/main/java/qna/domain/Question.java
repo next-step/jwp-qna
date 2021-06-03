@@ -5,11 +5,14 @@ import java.util.Objects;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Where;
+
 import qna.exceptions.UnAuthorizedException;
 import qna.validators.StringValidator;
 
 @Table
 @Entity
+@Where(clause = "deleted=false")
 public class Question extends BaseEntity {
 
     private static final int TITLE_LENGTH = 100;

@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,15 +22,18 @@ public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     @DisplayName("진행 중인 질문 검색")
     @Test
-    void findByDeletedFalse() {
+    void findAll() {
         Question question1 = new Question("title", "contents");
         Question question2 = new Question("title2", "contents2");
         questionRepository.save(question1);
         questionRepository.save(question2);
 
-        List<Question> activeQuestions = questionRepository.findByDeletedFalse();
+        List<Question> activeQuestions = questionRepository.findAll();
 
         assertThat(activeQuestions.size()).isEqualTo(2);
         assertThat(activeQuestions).contains(question1, question2);
@@ -36,24 +41,24 @@ public class QuestionRepositoryTest {
 
     @DisplayName("삭제한 질문으로 변경 후 진행 중인 질문 검색")
     @Test
-    void findByDeletedFalse_AfterDeleteQuestion() {
+    void findAll_AfterDeleteQuestion() {
         Question question = new Question("title", "contents");
         questionRepository.save(question);
         question.delete();
 
-        List<Question> activeQuestions = questionRepository.findByDeletedFalse();
+        List<Question> activeQuestions = questionRepository.findAll();
 
         assertThat(activeQuestions).isEmpty();
     }
 
     @DisplayName("진행 중인 질문을 ID로 검색")
     @Test
-    void findByIdAndDeletedFalse() {
+    void findById() {
         Question question = new Question("title", "contents");
         questionRepository.save(question);
 
         Question actual = questionRepository
-            .findByIdAndDeletedFalse(question.getId())
+            .findById(question.getId())
             .orElseThrow(NotFoundException::new);
 
         assertThat(actual.getId()).isEqualTo(question.getId());
@@ -61,13 +66,15 @@ public class QuestionRepositoryTest {
 
     @DisplayName("삭제한 질문으로 변경 후 진행 중인 질문을 ID로 검색")
     @Test
-    void findByIdAndDeletedFalse_AfterDeleteQuestion() {
+    void findById_AfterDeleteQuestion() {
         Question question = new Question("title", "contents");
-        questionRepository.save(question);
         question.delete();
+        questionRepository.save(question);
+
+        entityManager.clear();
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
-            questionRepository.findByIdAndDeletedFalse(question.getId()).get()
+            questionRepository.findById(question.getId()).get()
         );
     }
 
@@ -80,7 +87,7 @@ public class QuestionRepositoryTest {
 
         question.editTitle(expected);
 
-        List<Question> activeQuestions = questionRepository.findByDeletedFalse();
+        List<Question> activeQuestions = questionRepository.findAll();
 
         assertThat(activeQuestions.get(0).getTitle()).isEqualTo(expected);
     }
