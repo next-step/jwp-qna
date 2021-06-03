@@ -46,7 +46,7 @@ class QnaServiceTest {
 	@Test
 	public void delete_성공 () throws Exception {
 		when(questionRepository.findByIdAndDeletedFalse(question.id())).thenReturn(Optional.of(question));
-		when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer));
+//		when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer));
 
 		assertThat(question.deleted()).isFalse();
 		qnaService.deleteQuestion(UserTest.JAVAJIGI, question.id());
@@ -66,7 +66,7 @@ class QnaServiceTest {
 	@Test
 	public void delete_성공_질문자_답변자_같음 () throws Exception {
 		when(questionRepository.findByIdAndDeletedFalse(question.id())).thenReturn(Optional.of(question));
-		when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer));
+//		when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer));
 
 		qnaService.deleteQuestion(UserTest.JAVAJIGI, question.id());
 
@@ -81,7 +81,7 @@ class QnaServiceTest {
 		question.addAnswer(answer2);
 
 		when(questionRepository.findByIdAndDeletedFalse(question.id())).thenReturn(Optional.of(question));
-		when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer, answer2));
+//		when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer, answer2));
 
 		assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question.id()))
 				.isInstanceOf(CannotDeleteException.class);
