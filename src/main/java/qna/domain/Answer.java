@@ -4,11 +4,14 @@ import java.util.Objects;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Where;
+
 import qna.exceptions.NotFoundException;
 import qna.exceptions.UnAuthorizedException;
 
 @Table
 @Entity
+@Where(clause = "deleted=false")
 public class Answer extends BaseEntity {
 
     @Id
