@@ -1,6 +1,5 @@
 package qna.domain.question;
 
-import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 import qna.domain.CreateAndUpdateTimeEntity;
 import qna.domain.Deleted;
@@ -16,7 +15,6 @@ import java.util.Objects;
 
 @Table(name = "question")
 @Entity
-@Where(clause = "deleted = false")
 public class Question extends CreateAndUpdateTimeEntity {
 
     @Id

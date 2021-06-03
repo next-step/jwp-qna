@@ -1,6 +1,5 @@
 package qna.domain.answer;
 
-import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.CreateAndUpdateTimeEntity;
@@ -16,7 +15,6 @@ import java.util.Optional;
 
 @Table(name = "answer")
 @Entity
-@Where(clause = "deleted = false")
 public class Answer extends CreateAndUpdateTimeEntity {
 
     @Id
