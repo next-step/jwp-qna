@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.question;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import qna.CannotDeleteException;
+import qna.domain.user.UserTest;
+import qna.domain.user.User;
+import qna.domain.user.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -98,10 +102,10 @@ class QuestionRepositoryTest {
 
 	@Test
 	@DisplayName("delete 컬럼이 false인 모든 question 조회 테스트")
-	void findByDeletedFalseTest() {
+	void findByDeletedFalseTest() throws CannotDeleteException {
 		// given
 		Question notHaveQuestion = questions.save(new Question("title1", "contents1").writeBy(writer)); // default false
-		notHaveQuestion.delete();
+		notHaveQuestion.delete(writer);
 
 		// when
 		assertThat(questions.findByDeletedFalse())
@@ -122,10 +126,10 @@ class QuestionRepositoryTest {
 
 	@Test
 	@DisplayName("delete 컬럼이 true인 question Id 조회 테스트")
-	void findByIdAndDeletedFalseTestWithDeleteTure() {
+	void findByIdAndDeletedFalseTestWithDeleteTure() throws CannotDeleteException {
 		// given
 		Question notHaveQuestion = questions.save(new Question("title1", "contents1").writeBy(writer)); // default false
-		notHaveQuestion.delete();
+		notHaveQuestion.delete(writer);
 
 		// when
 		assertThat(questions.findByIdAndDeletedFalse(notHaveQuestion.getId()))

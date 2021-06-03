@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.user;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -7,11 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
+import static qna.domain.user.UserTest.JAVAJIGI;
+import static qna.domain.user.UserTest.SANJIGI;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -36,8 +35,7 @@ class UserRepositoryTest {
 		// then
 		assertAll(() -> {
 			assertThat(expected.getId()).isNotNull();
-			assertThat(expected.matchUserId("javajigi")).isTrue();
-			assertThat(expected.matchPassword("password")).isTrue();
+			assertThatCode(() -> expected.checkOwner(JAVAJIGI)).doesNotThrowAnyException();
 			assertThat(expected.equalsNameAndEmail(JAVAJIGI)).isTrue();
 		});
 	}

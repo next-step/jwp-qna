@@ -1,6 +1,7 @@
-package qna.domain;
+package qna.domain.user;
 
 import qna.UnAuthorizedException;
+import qna.domain.CreateAndUpdateTimeEntity;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -9,8 +10,6 @@ import java.util.StringJoiner;
 @Table(name = "user")
 @Entity
 public class User extends CreateAndUpdateTimeEntity {
-
-    private static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +39,12 @@ public class User extends CreateAndUpdateTimeEntity {
     }
 
     public void update(User loginUser, User target) {
+        checkOwner(loginUser);
+        this.name = target.name;
+        this.email = target.email;
+    }
+
+    public void checkOwner(final User loginUser) {
         if (matchUserId(loginUser.userId) == false) {
             throw new UnAuthorizedException();
         }
@@ -47,16 +52,13 @@ public class User extends CreateAndUpdateTimeEntity {
         if (matchPassword(loginUser.password) == false) {
             throw new UnAuthorizedException();
         }
-
-        this.name = target.name;
-        this.email = target.email;
     }
 
-    public boolean matchUserId(String userId) {
+    private boolean matchUserId(String userId) {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
+    private boolean matchPassword(String targetPassword) {
         return this.password.equals(targetPassword);
     }
 
@@ -69,23 +71,12 @@ public class User extends CreateAndUpdateTimeEntity {
                 email.equals(target.email);
     }
 
-    public boolean isGuestUser() {
-        return false;
-    }
-
     public Long getId() {
         return id;
     }
 
     public String getUserId() {
         return this.userId;
-    }
-
-    private static class GuestUser extends User {
-        @Override
-        public boolean isGuestUser() {
-            return true;
-        }
     }
 
     @Override
