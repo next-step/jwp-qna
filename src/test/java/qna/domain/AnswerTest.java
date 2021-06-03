@@ -2,9 +2,11 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -35,5 +37,15 @@ public class AnswerTest {
 		assertThat(answer.isOwner(null)).isFalse();
 		assertThat(answer.isOwner(UserTest.SANJIGI)).isFalse();
 		assertThat(answer.isOwner(UserTest.JAVAJIGI)).isTrue();
+	}
+
+	@Test
+	@DisplayName("작성자가 일치하지 않은경우 answer제거 실패")
+	void test_작성자불일치_답변제거() {
+		Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "test");
+		Assertions.assertThatThrownBy(() -> {
+			answer.delete(UserTest.SANJIGI);
+		}).isInstanceOf(CannotDeleteException.class)
+			.hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 	}
 }

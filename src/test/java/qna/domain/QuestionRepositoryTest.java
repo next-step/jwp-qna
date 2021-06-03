@@ -82,7 +82,7 @@ class QuestionRepositoryTest {
 	@Test
 	@DisplayName("question의 answer 목록 반환 테스트")
 	void test_questionAnswers() {
-		assertThat(this.question.getAnswers()).contains(this.answer);
+		assertThat(this.question.getAnswers().isContains(this.answer)).isTrue();
 	}
 
 	private void isEqualTo(Question expected, Question actual) {

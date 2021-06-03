@@ -1,10 +1,7 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -13,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import qna.CannotDeleteException;
 
@@ -37,8 +33,8 @@ public class Question extends BaseEntity {
 	@Column(name = "deleted", nullable = false)
 	private boolean deleted = false;
 
-	@OneToMany(mappedBy = "question")
-	private final List<Answer> answers = new ArrayList<>();
+	@Embedded
+	private final Answers answers = new Answers();
 
 	protected Question() {
 	}
@@ -58,7 +54,7 @@ public class Question extends BaseEntity {
 		return this;
 	}
 
-	public List<Answer> getAnswers() {
+	public Answers getAnswers() {
 		return answers;
 	}
 
@@ -95,23 +91,6 @@ public class Question extends BaseEntity {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Question question = (Question)o;
-		return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
-			question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer,
-			question.writer) && Objects.equals(answers, question.answers);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, title, contents, writer, deleted, answers);
-	}
-
-	@Override
 	public String toString() {
 		return "Question{" +
 			"id=" + id +
@@ -135,5 +114,7 @@ public class Question extends BaseEntity {
 		if (!this.isOwner(user)) {
 			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 		}
+
+		this.deleted = true;
 	}
 }
