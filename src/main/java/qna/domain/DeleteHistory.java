@@ -37,6 +37,10 @@ public class DeleteHistory extends BaseEntity {
     protected DeleteHistory() {
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public DeleteHistory(
         final ContentType contentType, final Long contentId, final User writer, final LocalDateTime createDate) {
         this.contentType = contentType;
