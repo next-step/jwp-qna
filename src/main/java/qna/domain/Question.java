@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
 
@@ -42,7 +43,7 @@ public class Question extends BaseEntity{
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writerId.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -81,4 +82,10 @@ public class Question extends BaseEntity{
         this.deleted = deleted;
     }
 
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+    }
 }
