@@ -42,37 +42,30 @@ public class AnswerRepositoryTest {
     @DisplayName("정상적으로 전 후 데이터가 들어가 있는지 확인한다.")
     void save() {
         assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getCreatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isNull(),
-            () -> assertThat(actual.getContents()).isEqualTo(answer.getContents()),
-            () -> assertThat(actual.isDeleted()).isEqualTo(answer.isDeleted()),
-            () -> assertThat(actual.getQuestion()).isEqualTo(answer.getQuestion()),
-            () -> assertThat(actual.getWriter()).isEqualTo(answer.getWriter()));
+            () -> assertThat(actual.id()).isNotNull(),
+            () -> assertThat(actual).isSameAs(answer));
     }
 
     @Test
     @DisplayName("update 확인")
     void updata() {
-        answer.setContents("change content");
+        answer.updateContents("change content");
         answers.saveAndFlush(answer);
-        Answer finedAnswer = answers.findById(answer.getId()).get();
-        assertAll(
-            () -> assertThat(finedAnswer.getContents()).isEqualTo("change content"),
-            () -> assertThat(finedAnswer.getUpdatedAt()).isNotNull());
+        Answer finedAnswer = answers.findById(answer.id()).get();
+        assertThat(finedAnswer).isSameAs(answer);
     }
 
     @Test
     @DisplayName("question 연관관계 확인")
     void qustionCheck() {
-        assertThat(actual.getQuestion()).isNotNull();
-        assertThat(actual.getQuestion().getId()).isNotNull();
+        assertThat(actual.question()).isNotNull();
+        assertThat(actual.question().id()).isNotNull();
     }
 
     @Test
     @DisplayName("writer 연관관계 확인")
     void writerCheck() {
-        assertThat(actual.getWriter()).isNotNull();
-        assertThat(actual.getWriter().getId()).isNotNull();
+        assertThat(actual.writer()).isNotNull();
+        assertThat(actual.writer().id()).isNotNull();
     }
 }

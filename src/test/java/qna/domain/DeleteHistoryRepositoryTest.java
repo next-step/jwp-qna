@@ -30,19 +30,16 @@ public class DeleteHistoryRepositoryTest {
     @DisplayName("정상적으로 전 후 데이터가 들어가 있는지 확인한다.")
     void save() {
         assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getCreateDate()).isNotNull(),
-            () -> assertThat(actual.getContentId()).isEqualTo(deleteHistory.getContentId()),
-            () -> assertThat(actual.getContentType()).isEqualTo(deleteHistory.getContentType()),
-            () -> assertThat(actual.getDeletedBy()).isEqualTo(deleteHistory.getDeletedBy()));
+            () -> assertThat(actual.id()).isNotNull(),
+            () -> assertThat(actual).isSameAs(deleteHistory));
     }
 
     @Test
     @DisplayName("update 확인")
     void updata() {
-        deleteHistory.setContentType(ContentType.QUESTION);
+        deleteHistory.updateContentType(ContentType.QUESTION);
         repository.save(deleteHistory);
-        DeleteHistory finedDeleteHistory = repository.findById(deleteHistory.getId()).get();
-        assertThat(finedDeleteHistory.getContentType()).isEqualTo(ContentType.QUESTION);
+        DeleteHistory finedDeleteHistory = repository.findById(deleteHistory.id()).get();
+        assertThat(finedDeleteHistory).isSameAs(deleteHistory);
     }
 }

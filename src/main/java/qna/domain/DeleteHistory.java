@@ -76,32 +76,17 @@ public class DeleteHistory {
             "id=" + id +
             ", contentType=" + contentType +
             ", contentId=" + contentId +
-            ", deletedBy=" + deletedBy.getId() +
+            ", deletedBy=" + deletedBy.id() +
             ", createDate=" + createDate +
             '}';
     }
 
-    public Long getContentId() {
-        return contentId;
-    }
-
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(ContentType contentType) {
+    public void updateContentType(ContentType contentType) {
         this.contentType = contentType;
     }
 
-    public User getDeletedBy() {
-        return deletedBy;
-    }
-
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
 }

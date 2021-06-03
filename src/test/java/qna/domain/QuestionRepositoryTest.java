@@ -29,23 +29,16 @@ public class QuestionRepositoryTest {
     @DisplayName("정상적으로 전 후 데이터가 들어가 있는지 확인한다.")
     void save() {
         assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getCreatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isNull(),
-            () -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
-            () -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
-            () -> assertThat(actual.isDeleted()).isEqualTo(question.isDeleted()),
-            () -> assertThat(actual.getWriter()).isEqualTo(question.getWriter()));
+            () -> assertThat(actual.id()).isNotNull(),
+            () -> assertThat(actual).isSameAs(question));
     }
 
     @Test
     @DisplayName("update 확인")
     void updata() {
-        question.setContents("change content");
+        question.updateContents("change content");
         repository.saveAndFlush(question);
-        Question finedQuestion = repository.findById(question.getId()).get();
-        assertAll(
-            () -> assertThat(finedQuestion.getContents()).isEqualTo("change content"),
-            () -> assertThat(finedQuestion.getUpdatedAt()).isNotNull());
+        Question finedQuestion = repository.findById(question.id()).get();
+        assertThat(finedQuestion).isSameAs(question);
     }
 }

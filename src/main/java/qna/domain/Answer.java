@@ -73,28 +73,24 @@ public class Answer extends BaseTimeEntity {
         this.question = question;
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
-    public Question getQuestion() {
+    public Question question() {
         return question;
     }
 
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
+    public void updateContents(String contents) {
         this.contents = contents;
     }
 
-    public boolean isDeleted() {
-        return deleted;
+    public User writer() {
+        return writer;
     }
 
-    public User getWriter() {
-        return writer;
+    public boolean isDeleted() {
+        return this.deleted;
     }
 
     public DeleteHistory deleteByOwner(User loginUser) {
@@ -109,8 +105,8 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
             "id=" + id +
-            ", writerId=" + writer.getId() +
-            ", questionId=" + question.getId() +
+            ", writerId=" + writer.id() +
+            ", questionId=" + question.id() +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';

@@ -3,7 +3,6 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,23 +29,16 @@ public class UserRepositoryTest {
     @DisplayName("정상적으로 전 후 데이터가 들어가 있는지 확인한다.")
     void save() {
         assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getCreatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isNull(),
-            () -> assertThat(actual.getEmail()).isEqualTo(user.getEmail()),
-            () -> assertThat(actual.getName()).isEqualTo(user.getName()),
-            () -> assertThat(actual.getPassword()).isEqualTo(user.getPassword()),
-            () -> assertThat(actual.getUserId()).isEqualTo(user.getUserId()));
+            () -> assertThat(actual.id()).isNotNull(),
+            () -> assertThat(actual).isSameAs(user));
     }
 
     @Test
     @DisplayName("update 확인")
     void updata() {
-        user.setEmail("change Email");
+        user.updateEmail("change Email");
         repository.saveAndFlush(user);
-        repository.findById(user.getId()).get();
-        assertAll(
-            () -> assertThat(user.getEmail()).isEqualTo("change Email"),
-            () -> assertThat(user.getUpdatedAt()).isNotNull());
+        User finedUser = repository.findById(user.id()).get();
+        assertThat(finedUser).isSameAs(user);
     }
 }

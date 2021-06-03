@@ -21,11 +21,11 @@ public abstract class BaseTimeEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public LocalDateTime getCreatedAt() {
+    public LocalDateTime createdAt() {
         return createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public LocalDateTime updatedAt() {
         return updatedAt;
     }
 
