@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -107,14 +106,13 @@ class DeleteHistoryRepositoryTest {
     @Test
     void example_interface() {
         // given
-        final DeleteHistory deleteHistory = new DeleteHistory(null, 1L, user1, null);
+        final DeleteHistory deleteHistory = new DeleteHistory(QUESTION, 1L, user1, LocalDateTime.now());
         final DeleteHistory expected = deleteHistoryRepository.save(deleteHistory);
-        final DeleteHistory probe = new DeleteHistory(null, 1L, user1, null);
 
         // when
-        final Optional<DeleteHistory> optActual = deleteHistoryRepository.findOne(Example.of(probe));
-        final DeleteHistory actual = optActual.orElseThrow(IllegalArgumentException::new);
-        final long actualCount = deleteHistoryRepository.count(Example.of(probe));
+        final DeleteHistory actual = deleteHistoryRepository.findOne(Example.of(expected))
+            .orElseThrow(IllegalArgumentException::new);
+        final long actualCount = deleteHistoryRepository.count(Example.of(expected));
 
         // then
         assertAll(
@@ -132,7 +130,7 @@ class DeleteHistoryRepositoryTest {
         final DeleteHistory deleteHistory2 = new DeleteHistory(null, 2L, user2, null);
         deleteHistoryRepository.save(deleteHistory);
         deleteHistoryRepository.save(deleteHistory2);
-        final Collection<Long> ids = Arrays.asList(1L, 2L);
+        final Collection<Long> ids = Arrays.asList(deleteHistory.getId(), deleteHistory2.getId());
 
         // when
         final List<DeleteHistory> actual = deleteHistoryRepository.findByIdsWithNative(ids);
@@ -152,11 +150,11 @@ class DeleteHistoryRepositoryTest {
         final DeleteHistory deleteHistory = new DeleteHistory(ANSWER, 1L, user1, null);
         final Long id = entityManager.persistAndGetId(deleteHistory, Long.class);
         deleteHistoryRepository.updateDeleteHistorySetContentTypeById(QUESTION, id);
+        final DeleteHistory probe = new DeleteHistory(QUESTION, 1L, user1, null);
 
         // when
-        final DeleteHistory probe = new DeleteHistory(QUESTION, 1L, user1, null);
-        final Optional<DeleteHistory> optActual = deleteHistoryRepository.findOne(Example.of(probe));
-        final DeleteHistory actual = optActual.orElseThrow(IllegalArgumentException::new);
+        final DeleteHistory actual = deleteHistoryRepository.findOne(Example.of(probe))
+            .orElseThrow(IllegalArgumentException::new);
 
         // then
         assertAll(

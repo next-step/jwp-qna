@@ -103,8 +103,8 @@ class AnswerRepositoryTest {
         savedAnswer2.delete(user2);
 
         // when
-        final Optional<Answer> optionalAnswer = answerRepository.findByWriterAndDeletedFalse(savedAnswer.getWriter());
-        final Optional<Answer> optionalAnswer2 = answerRepository.findByWriterAndDeletedFalse(savedAnswer2.getWriter());
+        final Optional<Answer> optionalAnswer = answerRepository.findByWriterAndDeletedFalse(user1);
+        final Optional<Answer> optionalAnswer2 = answerRepository.findByWriterAndDeletedFalse(user2);
 
         // then
         final Answer actual = optionalAnswer.orElseThrow(IllegalArgumentException::new);
