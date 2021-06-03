@@ -12,9 +12,10 @@ public class Answer extends BaseEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Question question;
 
     @Lob
@@ -25,14 +26,14 @@ public class Answer extends BaseEntity{
 
     protected Answer () { }
 
-    public Answer(Long userId, Question question, String contents) {
-        this(null, userId, question, contents);
+    public Answer(User user, Question question, String contents) {
+        this(null, user, question, contents);
     }
 
-    public Answer(Long id, Long userId, Question question, String contents) {
+    public Answer(Long id, User user, Question question, String contents) {
         this.id = id;
 
-        if (Objects.isNull(userId)) {
+        if (Objects.isNull(user)) {
             throw new UnAuthorizedException();
         }
 
@@ -40,13 +41,13 @@ public class Answer extends BaseEntity{
             throw new NotFoundException();
         }
 
-        this.userId = userId;
+        this.user = user;
         this.question = question;
         this.contents = contents;
     }
 
-    public boolean isOwner(Long userId) {
-        return this.userId.equals(userId);
+    public boolean isOwner(User user) {
+        return this.user.equals(user);
     }
 
     public void toQuestion(Question question) {
@@ -61,8 +62,8 @@ public class Answer extends BaseEntity{
         this.id = id;
     }
 
-    public Long writerId() {
-        return userId;
+    public User writer() {
+        return user;
     }
 
     public Long questionId() {
@@ -93,7 +94,7 @@ public class Answer extends BaseEntity{
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writer=" + userId +
+                ", writer=" + user.id() +
                 ", questionId=" + question.id() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +

@@ -3,33 +3,37 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.UserTest.JAVAJIGI;
 
 
-@DataJpaTest
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI.id());
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI.id());
-
-    @Autowired
-    private QuestionRepository questions;
+    public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
+    public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Test
-    public void save(){
-        final Question q1 = questions.save(Q1);
+    public void 질문_주인인지_확인_GREEN(){
+        User maeve = new User(3L, "maeve", "password", "maeve", "maeve.woo@cyworldlabs.com");
 
-        assertThat(q1.id()).isNotNull();
+        Question question = new Question("title", "머시깽이");
+
+        question.writeBy(maeve);
+
+        assertThat(question.isOwner(maeve)).isTrue();
     }
 
     @Test
-    public void findByIdAndDeletedFalse(){
-        final Question q1 = questions.save(Q1);
+    public void 질문_주인인지_확인_RED(){
+        User maeve = new User(3L, "maeve", "password", "maeve", "maeve.woo@cyworldlabs.com");
 
-        final Optional<Question> findQ1 = questions.findByIdAndDeletedFalse(q1.id());
+        Question question = new Question("title", "머시깽이");
 
-        assertThat(findQ1).isNotEmpty();
+        question.writeBy(maeve);
+
+        assertThat(question.isOwner(JAVAJIGI)).isFalse();
     }
 }

@@ -14,7 +14,9 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    private Long userId;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -31,13 +33,13 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Question writeBy(Long userId) {
-        this.userId = userId;
+    public Question writeBy(User user) {
+        this.user = user;
         return this;
     }
 
     public boolean isOwner(User user) {
-        return this.userId.equals(user.id());
+        return this.user.equals(user);
     }
 
     public void addAnswer(Answer answer) {
@@ -68,12 +70,13 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Long writerId() {
-        return userId;
+    public User writer() {
+        return user;
     }
 
-    public void writer(Long userId) {
-        this.userId = userId;
+    public void writer(User user) {
+        this.user = user;
+
     }
 
     public boolean deleted() {
@@ -90,7 +93,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + userId +
+                ", writerId=" + user.id() +
                 ", deleted=" + deleted +
                 '}';
     }
