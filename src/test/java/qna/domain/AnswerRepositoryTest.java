@@ -16,11 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class AnswerRepositoryTest {
-    public static Answer A1;
-    public static Answer A2;
-    public static Answer A3;
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -36,24 +32,20 @@ public class AnswerRepositoryTest {
     private Answer a3;
 
     private Question q1;
+    private Question q2;
 
     @BeforeEach
     void setUp() {
 
-        User javajigi = userRepository.save(UserRepositoryTest.JAVAJIGI);
-        User sanjigi = userRepository.save(UserRepositoryTest.SANJIGI);
-        User insup = userRepository.save(UserRepositoryTest.INSUP);
+        User javajigi = userRepository.save(new User("javajigi", "1234", "javajigi", "a@email.com"));
+        User sanjigi = userRepository.save(new User("sanjigi", "1234", "sanjigi", "b@email.com"));
 
-        q1 = questionRepository.save(QuestionRepositoryTest.Q1.writeBy(javajigi));
-        Question q2 = questionRepository.save(QuestionRepositoryTest.Q2.writeBy(sanjigi));
+        q1 = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi));
+        q2 = questionRepository.save(new Question("title2", "contents2").writeBy(sanjigi));
 
-        A1 = new Answer(javajigi, q1, "Answers Contents1");
-        A2 = new Answer(sanjigi, q2, "Answers Contents2");
-        A3 = new Answer(insup, q2, "Answers Contents3");
-
-        a1 = answerRepository.save(A1);
-        a2 = answerRepository.save(A2);
-        a3 = answerRepository.save(A3);
+        a1 = answerRepository.save(new Answer(javajigi, q1, "Answers Contents1"));
+        a2 = answerRepository.save(new Answer(javajigi, q2, "Answers Contents2"));
+        a3 = answerRepository.save(new Answer(sanjigi, q2, "Answers Contents3"));
         a3.delete();
     }
 
@@ -93,7 +85,7 @@ public class AnswerRepositoryTest {
     @DisplayName("동일한 QuestionId를 가지고 있는 항목 확인")
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        List<Answer> answerList = answerRepository.findByQuestion(QuestionRepositoryTest.Q2);
+        List<Answer> answerList = answerRepository.findByQuestion(q2);
         assertThat(answerList).hasSize(1);
     }
 }

@@ -38,14 +38,18 @@ class QnAServiceTest {
 
     private Question question;
     private Answer answer;
+    private User javajigi;
+    private User sanjigi;
 
     @BeforeEach
     public void setUp() {
-        question = new Question("title1", "contents1").writeBy(UserRepositoryTest.JAVAJIGI);
-        answer = new Answer(UserRepositoryTest.JAVAJIGI, question, "Answers Contents1");
+        javajigi = new User("javajigi", "1234", "javajigi", "a@email.com");
+        sanjigi = new User("sanjigi", "1234", "sanjigi", "b@email.com");
+        question = new Question("title1", "contents1").writeBy(javajigi);
+        answer = new Answer(javajigi, question, "Answers Contents1");
 
         ReflectionTestUtils.setField(question, "id", 1L);
-        ReflectionTestUtils.setField(UserRepositoryTest.JAVAJIGI, "id", 1L);
+        ReflectionTestUtils.setField(javajigi, "id", 1L);
         ReflectionTestUtils.setField(answer, "id", 1L);
 
         question.addAnswer(answer);
@@ -55,16 +59,12 @@ class QnAServiceTest {
 
     @Test
     public void delete_성공() throws Exception {
-        //given
         when(answerRepository.findByQuestion(question)).thenReturn(Arrays.asList(answer));
 
-        //when, then
         assertThat(question.isDeleted()).isFalse();
 
-        //when
-        qnAService.deleteQuestion(UserRepositoryTest.JAVAJIGI, question.getId());
+        qnAService.deleteQuestion(javajigi, question.getId());
 
-        //then
         assertThat(question.isDeleted()).isTrue();
         verifyDeleteHistories();
     }
@@ -72,19 +72,16 @@ class QnAServiceTest {
     @Test
     public void delete_다른_사람이_쓴_글() {
         //when, then
-        assertThatThrownBy(() -> qnAService.deleteQuestion(UserRepositoryTest.SANJIGI, question.getId()))
+        assertThatThrownBy(() -> qnAService.deleteQuestion(sanjigi, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
     public void delete_성공_질문자_답변자_같음() throws Exception {
-        //given
         when(answerRepository.findByQuestion(question)).thenReturn(Arrays.asList(answer));
 
-        //when
-        qnAService.deleteQuestion(UserRepositoryTest.JAVAJIGI, question.getId());
+        qnAService.deleteQuestion(javajigi, question.getId());
 
-        //then
         assertThat(question.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
         verifyDeleteHistories();
@@ -92,12 +89,10 @@ class QnAServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() {
-        //given
-        Answer answer2 = new Answer(UserRepositoryTest.SANJIGI, question, "Answers Contents1");
+        Answer answer2 = new Answer(sanjigi, question, "Answers Contents1");
         when(answerRepository.findByQuestion(question)).thenReturn(Arrays.asList(answer, answer2));
 
-        //when, then
-        assertThatThrownBy(() -> qnAService.deleteQuestion(UserRepositoryTest.JAVAJIGI, question.getId()))
+        assertThatThrownBy(() -> qnAService.deleteQuestion(javajigi, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 

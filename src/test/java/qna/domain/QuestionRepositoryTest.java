@@ -15,10 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class QuestionRepositoryTest {
-    public static final Question Q1 = new Question("title1", "contents1");
-    public static final Question Q2 = new Question("title2", "contents2");
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -31,22 +28,16 @@ public class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        User javajigi = userRepository.save(UserRepositoryTest.JAVAJIGI);
-        User sanjigi = userRepository.save(UserRepositoryTest.SANJIGI);
+        User javajigi = userRepository.save(new User("javajigi", "1234", "javajigi", "a@email.com"));
+        User insup = userRepository.save(new User("insup", "1234", "insup", "b@email.com"));
 
-        Q1.writeBy(javajigi);
-        Q2.writeBy(sanjigi);
-
-        q1 = questionRepository.save(Q1);
-        q2 = questionRepository.save(Q2);
+        q1 = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi));
+        q2 = questionRepository.save(new Question("title2", "contents2").writeBy(insup));
         q2.delete();
-
-
     }
 
     @Test
     void save() {
-        //then
         assertAll(
                 () -> assertThat(q1.getId()).isNotNull(),
                 () -> assertThat(q1.getTitle()).isEqualTo("title1")
@@ -55,20 +46,16 @@ public class QuestionRepositoryTest {
 
     @Test
     void findByIdAndDeletedTrue() {
-        //when, then
         Optional<Question> optQuestion = questionRepository.findByIdAndDeletedFalse(q2.getId());
 
-        //then
         assertThatThrownBy(() -> optQuestion.orElseThrow(NoSuchElementException::new))
                 .isInstanceOf(NoSuchElementException.class);
     }
 
     @Test
     void findByDeletedFalse() {
-        //when
         List<Question> questions = questionRepository.findAll();
 
-        //then
         assertAll(
                 () -> assertThat(questions).hasSize(1),
                 () -> assertThat(questions).containsExactly(q1)
