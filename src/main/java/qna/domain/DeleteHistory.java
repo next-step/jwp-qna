@@ -1,12 +1,11 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "delete_history")
-public class DeleteHistory {
+public class DeleteHistory extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -18,13 +17,10 @@ public class DeleteHistory {
 
 	private Long deletedById;
 
-	private LocalDateTime createDate = LocalDateTime.now();
-
-	public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+	public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
 		this.contentType = contentType;
 		this.contentId = contentId;
 		this.deletedById = deletedById;
-		this.createDate = createDate;
 	}
 
 	protected DeleteHistory() {
@@ -61,7 +57,7 @@ public class DeleteHistory {
 				", contentType=" + contentType +
 				", contentId=" + contentId +
 				", deletedById=" + deletedById +
-				", createDate=" + createDate +
+				", createAt=" + getCreatedAt() +
 				'}';
 	}
 }

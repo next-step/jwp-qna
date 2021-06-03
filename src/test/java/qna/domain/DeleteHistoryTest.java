@@ -4,13 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.time.LocalDateTime;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
 class DeleteHistoryTest {
-	public static final DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 2L, LocalDateTime.now());
+	public static final DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 2L);
 
 	private final DeleteHistoryRepository deleteHistoryRepository;
 

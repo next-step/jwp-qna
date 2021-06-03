@@ -8,7 +8,6 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,10 +47,10 @@ public class QnaService {
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         question.delete();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriterId(), LocalDateTime.now()));
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriterId()));
         for (Answer answer : answers) {
             answer.delete();
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId(), LocalDateTime.now()));
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId()));
         }
         deleteHistoryService.saveAll(deleteHistories);
     }

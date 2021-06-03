@@ -3,12 +3,11 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -24,11 +23,6 @@ public class User {
 
 	@Column(length = 50)
 	private String email;
-
-	@Column(nullable = false)
-	private LocalDateTime createdAt = LocalDateTime.now();
-
-	private LocalDateTime updatedAt;
 
 	protected User() {
 	}
