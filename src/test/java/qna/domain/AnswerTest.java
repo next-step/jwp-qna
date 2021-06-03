@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,12 +12,9 @@ import qna.config.TestDataSourceConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
 
 @TestDataSourceConfig
-public class AnswerTest {
+class AnswerTest {
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -27,11 +25,16 @@ public class AnswerTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    private DateTimeStrategy dateTimeStrategy;
+
     private Question question;
     private User user;
 
     @BeforeEach
     void setUp() {
+
+        dateTimeStrategy = () -> LocalDateTime.of(2021, 6, 1, 0, 0, 0);
+
         user = userRepository.save(new User("user", "pwd", "name", "email"));
 
         question = new Question(1L, "title1", "contents1").writeBy(user);
@@ -70,7 +73,7 @@ public class AnswerTest {
 
         Answer deletedAnswer = new Answer(user, question, "contents");
         deletedAnswer = answerRepository.save(deletedAnswer);
-        deletedAnswer.delete();
+        deletedAnswer.delete(dateTimeStrategy.now());
 
         Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId());
         assertFalse(actual.isPresent());

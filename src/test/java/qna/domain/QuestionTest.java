@@ -1,117 +1,121 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import qna.config.TestDataSourceConfig;
+import qna.CannotDeleteException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
-@TestDataSourceConfig
-public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
+class QuestionTest {
+    public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
+    public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(SANJIGI);
 
-    @Autowired
-    private QuestionRepository questionRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private AnswerRepository answerRepository;
+    private DateTimeStrategy dateTimeStrategy;
 
     @BeforeEach
     void setUp() {
-        Q1.writeBy(userRepository.save(JAVAJIGI));
-        Q2.writeBy(userRepository.save(SANJIGI));
+        dateTimeStrategy = () -> LocalDateTime.of(2021, 6, 1, 0, 0, 0);
     }
 
-    @DisplayName("question 저장 검증")
+    @DisplayName("writeBy로 질문자 설정 가능")
     @Test
-    void saveTest() {
-        Question saved = questionRepository.save(Q1);
-
-        assertNotNull(saved.getId());
-        assertEquals(Q1.getTitle(), saved.getTitle());
-        assertEquals(Q1.getContents(), saved.getContents());
+    void writeByTest() {
+        Question question = new Question("title", "contents").writeBy(JAVAJIGI);
+        assertThat(question.getWriter()).isEqualTo(JAVAJIGI);
+        assertThat(question.getWriter()).isNotEqualTo(SANJIGI);
     }
 
-    @DisplayName("삭제되지 않은 데이터 찾아오기")
+    @DisplayName("질문자 동일여부 테스트")
     @Test
-    void findByIdAndDeletedFalseTest() {
-
-        Question expected = questionRepository.save(Q1);
-        Question actual = questionRepository.findByIdAndDeletedFalse(expected.getId())
-                                            .orElseThrow(IllegalArgumentException::new);
-
-        assertFalse(actual.isDeleted());
-        equals(expected, actual);
+    void isOwnerTest() {
+        assertTrue(Q1.isOwner(JAVAJIGI));
+        assertTrue(Q2.isOwner(SANJIGI));
+        assertFalse(Q1.isOwner(SANJIGI));
+        assertFalse(Q2.isOwner(JAVAJIGI));
     }
 
-    @DisplayName("findByDeletedFalse 검증")
+    @DisplayName("질문에 답변 추가 테스트")
     @Test
-    void findByDeletedFalseTest() {
+    void addAnswerTest() {
 
-        List<Question> expected = new ArrayList<>();
-        expected.add(questionRepository.save(Q1));
-        expected.add(questionRepository.save(Q2));
+        Answer answer1 = new Answer(1L, JAVAJIGI, Q1, "contents");
+        Answer answer2 = new Answer(2L, JAVAJIGI, Q1, "contents");
+        Answer answer3 = new Answer(3L, JAVAJIGI, Q1, "contents");
 
-        List<Question> actual = questionRepository.findByDeletedFalse();
+        Q1.addAnswer(answer1);
+        Q1.addAnswer(answer2);
+        Q1.addAnswer(answer3);
+        Q1.addAnswer(answer3); // duplicate test
 
-        for (int i = 0; i < expected.size(); i++) {
-            assertFalse(actual.get(i).isDeleted());
-            equals(expected.get(i), actual.get(i));
-        }
+        assertThat(Q1.getAnswers()).hasSize(3)
+                                   .contains(answer1, answer2, answer3);
+
+        assertThat(answer1.getQuestion()).isEqualTo(Q1);
+        assertThat(answer2.getQuestion()).isEqualTo(Q1);
+        assertThat(answer3.getQuestion()).isEqualTo(Q1);
     }
 
-    @DisplayName("getAnswers는 지워지지 않은 답변만 가져옴")
+    @DisplayName("질문 목록에서 답변 삭제 테스트")
     @Test
-    void getAnswersTest() {
+    void deleteAnswerTest() {
 
-        User user = new User("id", "pwd", "name", "email");
-        user = userRepository.save(user);
+        Answer answer1 = new Answer(1L, JAVAJIGI, Q1, "contents");
+        Answer answer2 = new Answer(2L, JAVAJIGI, Q1, "contents");
 
-        Question question = new Question("title", "contents");
-        question = questionRepository.save(question);
+        Q1.addAnswer(answer1);
+        Q1.addAnswer(answer2);
+        Q1.deleteAnswer(answer2, dateTimeStrategy.now());
 
-        Answer answer1 = new Answer(user, question, "contents1");
-        answer1 = answerRepository.save(answer1);
-        question.addAnswer(answer1);
-
-        Answer answer2 = new Answer(user, question, "contents2");
-        answer2 = answerRepository.save(answer2);
-        question.addAnswer(answer2);
-
-        question.deleteAnswer(answer2);
-        assertTrue(answer2.isDeleted());
-
-        questionRepository.flush();
-
-        Optional<Question> actual = questionRepository.findById(question.getId());
-        assertTrue(actual.isPresent());
-
-        List<Answer> answers = actual.get().getAnswers();
-        assertEquals(1, answers.size());
-
-        for (Answer answer : answers) {
-            assertFalse(answer.isDeleted());
-        }
+        assertThat(Q1.getAnswers()).hasSize(1)
+                                   .contains(answer1)
+                                   .doesNotContain(answer2);
     }
 
-    private void equals(Question expected, Question actual) {
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getTitle(), actual.getTitle());
-        assertEquals(expected.getContents(), actual.getContents());
-        assertEquals(expected.getWriter(), actual.getWriter());
+    @DisplayName("로그인 사용자와 질문한 사람이 다르면 질문 삭제 불가")
+    @Test
+    void deleteFailTest01() {
+        assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> Q1.delete(SANJIGI, dateTimeStrategy.now()));
+    }
+
+    @DisplayName("답변자 중 질문자와 다른 사람이 1명이라도 존재하면 질문 삭제 불가")
+    @Test
+    void deleteFailTest02() {
+        Q1.addAnswer(new Answer(1L, JAVAJIGI, Q1, "answer1"));
+        Q1.addAnswer(new Answer(2L, SANJIGI, Q1, "answer2"));
+
+        assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> Q1.delete(JAVAJIGI, dateTimeStrategy.now()));
+    }
+
+    @DisplayName("이미 삭제된 질문을 삭제하려고 시도하면 예외 발생")
+    @Test
+    void deleteFailTest03() throws CannotDeleteException {
+
+        Question question = new Question(3L, "title", "contents").writeBy(JAVAJIGI);
+        question.delete(JAVAJIGI, dateTimeStrategy.now());
+
+        assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> question.delete(JAVAJIGI, dateTimeStrategy.now()));
+    }
+
+    @DisplayName("질문 삭제 성공 시 질문과 답변 모두 삭제")
+    @Test
+    void deleteSuccess() throws CannotDeleteException {
+        Answer answer1 = new Answer(1L, JAVAJIGI, Q1, "answer1");
+        Answer answer2 = new Answer(2L, JAVAJIGI, Q1, "answer2");
+
+        Q1.addAnswer(answer1);
+        Q1.addAnswer(answer2);
+
+        Q1.delete(JAVAJIGI, dateTimeStrategy.now());
+        assertThat(Q1.getAnswers()).isEmpty();
+        assertThat(Q1.isDeleted()).isTrue();
+        assertThat(answer1.isDeleted()).isTrue();
+        assertThat(answer2.isDeleted()).isTrue();
     }
 }

@@ -10,8 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 public class DeleteHistory implements Serializable {
@@ -33,7 +31,6 @@ public class DeleteHistory implements Serializable {
     @JoinColumn(name = "deleted_by_id")
     private User deletedBy;
 
-    @CreatedDate
     private LocalDateTime createDate;
 
     public DeleteHistory() { }
@@ -43,6 +40,14 @@ public class DeleteHistory implements Serializable {
         this.contentId = contentId;
         this.deletedBy = deletedBy;
         this.createDate = createDate;
+    }
+
+    public static DeleteHistory ofQuestion(Long contentId, User writer, LocalDateTime createDate) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, writer, createDate);
+    }
+
+    public static DeleteHistory ofAnswer(Long contentId, User writer, LocalDateTime createDate) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, writer, createDate);
     }
 
     @Override

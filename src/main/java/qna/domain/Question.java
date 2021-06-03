@@ -1,12 +1,12 @@
 package qna.domain;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -14,13 +14,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = -5316964078122252034L;
+
+    public static final String MESSAGE_ALREADY_DELETED = "이미 삭제된 질문입니다.";
+    public static final String MESSAGE_HAS_NOT_DELETE_PERMISSION = "질문을 삭제할 권한이 없습니다.";
+    public static final String MESSAGE_HAS_OTHER_USER_ANSWER = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,9 +40,8 @@ public class Question extends BaseEntity implements Serializable {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    @Where(clause = "deleted = 0")
-    private Set<Answer> answers = new HashSet<>();
+    @Embedded
+    private QuestionAnswers questionAnswers;
 
     @Column
     private boolean deleted = false;
@@ -54,6 +56,7 @@ public class Question extends BaseEntity implements Serializable {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.questionAnswers = new QuestionAnswers();
     }
 
     public Question writeBy(User writer) {
@@ -66,17 +69,16 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public void addAnswer(Answer answer) {
-        if (answers.contains(answer)) {
-            return;
-        }
-
-        answers.add(answer);
+        questionAnswers.add(answer);
         answer.replyTo(this);
     }
 
-    public void deleteAnswer(Answer answer) {
-        answers.remove(answer);
-        answer.delete();
+    public DeleteHistory deleteAnswer(Answer answer, LocalDateTime deleteTime) {
+        return questionAnswers.delete(answer, deleteTime);
+    }
+
+    public DeleteHistories deleteAnswers(LocalDateTime deleteTime) {
+        return questionAnswers.deleteAnswers(deleteTime);
     }
 
     public Long getId() {
@@ -96,15 +98,47 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public List<Answer> getAnswers() {
-        return new ArrayList<>(answers);
+        return new ArrayList<>(questionAnswers.getAnswers());
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void delete() {
+    public DeleteHistories delete(User loginUser, LocalDateTime deleteTime)
+        throws CannotDeleteException {
+
+        verifyDeletedQuestion();
+        verifyDeletePermission(loginUser);
+        verifyHasOtherUserAnswer();
+
+        return delete(deleteTime);
+    }
+
+    private DeleteHistories delete(LocalDateTime deleteTime) {
+
         this.deleted = true;
+
+        DeleteHistories deleteHistories = new DeleteHistories(DeleteHistory.ofQuestion(id, writer, deleteTime));
+        return deleteHistories.addAll(deleteAnswers(deleteTime));
+    }
+
+    private void verifyDeletedQuestion() throws CannotDeleteException {
+        if (isDeleted()) {
+            throw new CannotDeleteException(MESSAGE_ALREADY_DELETED);
+        }
+    }
+
+    private void verifyDeletePermission(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(MESSAGE_HAS_NOT_DELETE_PERMISSION);
+        }
+    }
+
+    private void verifyHasOtherUserAnswer() throws CannotDeleteException {
+        if (questionAnswers.hasOtherUserAnswer(writer)) {
+            throw new CannotDeleteException(MESSAGE_HAS_OTHER_USER_ANSWER);
+        }
     }
 
     @Override
