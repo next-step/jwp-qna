@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +54,7 @@ public class QuestionTest {
 
     @DisplayName("Quesiton 과 Answer 를 모두 작성한 사용자가 Question 을 삭제하면 DeleteHistory 리스트가 반환되는지 테스트")
     @Test
-    void given_WriterThatWriteQuestionAndAnswer_when_DeleteQuestion_then_ReturnDeleteHistory() throws
+    void given_WriterWriteQuestionAndAnswer_when_DeleteQuestion_then_ReturnDeleteHistories() throws
         CannotDeleteException {
         // given
         final Question question = new Question("title", "contents", writer);
@@ -61,23 +62,23 @@ public class QuestionTest {
         final Answer answer2 = new Answer(writer, question, "contents");
         question.addAnswer(answer1);
         question.addAnswer(answer2);
-        final DeleteHistory[] expected = expectedDeleteHistories(question, answer1, answer2);
+        final DeleteHistories expected = new DeleteHistories(expectedDeleteHistories(question, answer1, answer2));
 
         // when
-        final List<DeleteHistory> actual = question.delete(writer);
+        final DeleteHistories actual = question.delete(writer);
 
         // then
         assertAll(
             () -> assertThat(actual.size()).isEqualTo(3),
-            () -> assertThat(actual).containsExactly(expected)
+            () -> assertThat(actual).isEqualTo(expected)
         );
     }
 
-    private DeleteHistory[] expectedDeleteHistories(final Question question, final Answer answer1,
+    private List<DeleteHistory> expectedDeleteHistories(final Question question, final Answer answer1,
         final Answer answer2) {
-        return new DeleteHistory[] {
+        return Arrays.asList(
             new DeleteHistory(ContentType.QUESTION, question.getId(), writer, LocalDateTime.now()),
             new DeleteHistory(ContentType.ANSWER, answer1.getId(), writer, LocalDateTime.now()),
-            new DeleteHistory(ContentType.ANSWER, answer2.getId(), writer, LocalDateTime.now())};
+            new DeleteHistory(ContentType.ANSWER, answer2.getId(), writer, LocalDateTime.now()));
     }
 }
