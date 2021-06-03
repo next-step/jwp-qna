@@ -15,6 +15,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import qna.CannotDeleteException;
+
 @Entity
 public class Question extends BaseEntity {
 	@Id
@@ -127,5 +129,11 @@ public class Question extends BaseEntity {
 		}
 		this.writer = user;
 		user.getQuestions().add(this);
+	}
+
+	public void delete(User user) throws CannotDeleteException {
+		if (!this.isOwner(user)) {
+			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+		}
 	}
 }

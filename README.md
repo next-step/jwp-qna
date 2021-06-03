@@ -36,7 +36,7 @@
 
   - [ ] Question delete구현
 
-    - [ ] question 작성자가 아니면 오류 발생
+    - [x] question 작성자가 아니면 오류 발생
     - [ ] Question 내에서 answer delete요청 (일급컬렉션 구현)
 
   - [ ] Answer delete구현
