@@ -16,29 +16,23 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private AnswerRepository answers;
 
-    @Test
-    public void save() {
-        User user = new User(1L, "cjs", "password", "name", "chajs226@gmail.com");
-        Question question = new Question("initTestTitle", "initTestContents");
-        Answer answer = new Answer(user, question, "initTestContents");
-        answers.save(answer);
+    @Autowired
+    private QuestionRepository questions;
 
-        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, answer.getId(), user.getId(), LocalDateTime.now());
-        DeleteHistory actual = deleteHistories.save(expected);
-
-        assertThat(actual.getId()).isNotNull();
-    }
+    @Autowired
+    private UserRepository users;
 
     @Test
-    public void findByContentId() {
-        User user = new User(1L, "cjs", "password", "name", "chajs226@gmail.com");
-        Question question = new Question("initTestTitle", "initTestContents");
-        Answer answer = new Answer(user, question, "initTestContents");
-        Answer expectedAnswer = answers.save(answer);
+    public void save_테스트() {
+        User writer_saved = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        Question question_saved = questions.save(new Question("title1", "contents1").writeBy(writer_saved));
+        Answer answer = new Answer(writer_saved, question_saved, "Answers Contents1");
+        answer.toQuestion(question_saved);
+        Answer answer_saved = answers.save(answer);
 
-        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, answer.getId(), user.getId(), LocalDateTime.now());
-        DeleteHistory actual = deleteHistories.save(expected);
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, answer_saved.getId(), writer_saved, LocalDateTime.now());
+        DeleteHistory actual = deleteHistories.save(deleteHistory);
 
-        assertThat(actual.getContentId()).isEqualTo(expectedAnswer.getId());
+        assertThat(actual.getContentId()).isEqualTo(answer_saved.getId());
     }
 }

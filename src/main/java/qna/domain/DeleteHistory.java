@@ -1,14 +1,12 @@
 package qna.domain;
 
-import qna.common.BaseTimeEntity;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Table(name = "delete_history")
 @Entity
-public class DeleteHistory extends BaseTimeEntity {
+public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,12 +18,14 @@ public class DeleteHistory extends BaseTimeEntity {
 
     private LocalDateTime createDate = LocalDateTime.now();
 
-    private Long deletedById;
+    @ManyToOne
+    @JoinColumn(name = "deleted_by_id")
+    private User user;
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.user = user;
         this.createDate = createDate;
     }
 
@@ -37,7 +37,8 @@ public class DeleteHistory extends BaseTimeEntity {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                //Objects.equals(deletedById, that.deletedById);
+                Objects.equals(user, that.user);
     }
 
     public Long getId() {
@@ -50,7 +51,7 @@ public class DeleteHistory extends BaseTimeEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, user);
     }
 
     @Override
@@ -59,7 +60,7 @@ public class DeleteHistory extends BaseTimeEntity {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + user.getId() +
                 ", createDate=" + createDate +
                 '}';
     }

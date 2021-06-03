@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -12,19 +13,26 @@ class UserRepositoryTest {
     @Autowired
     UserRepository users;
 
-    @Test
-    public void save() {
-        User expected = new User("chajs", "1234", "차준성", "chajs226@gmail.com");
-        User actual = users.save(expected);
-
-        assertThat(actual.getId()).isNotNull();
+    @BeforeEach
+    void setUp() {
+        users.save(UserTest.JAVAJIGI);
     }
 
     @Test
-    public void findById() {
-        User expected = new User("chajs", "1234", "차준성", "chajs226@gmail.com");
-        User actual = users.save(expected);
+    public void save_테스트() {
+        User user_saved = users.save(UserTest.JUNSEONG);
+        assertThat(user_saved.getId()).isNotNull();
+    }
 
-        assertThat(actual.getUserId()).isEqualTo("chajs");
+    @Test
+    public void findById_테스트() {
+        User actual = users.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
+        assertThat(actual.getUserId()).isEqualTo("javajigi");
+    }
+
+    @Test
+    public void matchPassword_테스트() {
+        User actual = users.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
+        assertThat(actual.matchPassword("password")).isTrue();
     }
 }

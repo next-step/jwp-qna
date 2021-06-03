@@ -4,3 +4,10 @@
     * delete_history
     * question
     * user
+
+##2단계 요구사항
+* 엔티티 관계 매핑
+  * answer : question = 다대일
+  * answer : user = 다대일
+  * delete_history : user = 다대일
+  * question : user = 다대일

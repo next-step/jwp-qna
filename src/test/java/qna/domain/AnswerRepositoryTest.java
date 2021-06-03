@@ -1,33 +1,38 @@
 package qna.domain;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.QuestionTest.Q1;
+import static qna.domain.AnswerTest.A1;
+import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
 class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answers;
 
-    @Test
-    public void save() {
-        User user = new User(1L, "cjs", "password", "name", "chajs226@gmail.com");
-        Question question = new Question("initTestTitle", "initTestContents");
-        Answer expected = new Answer(user, question, "initTestContents");
+    @Autowired
+    private QuestionRepository questions;
 
-        Answer actual = answers.save(expected);
-        assertThat(actual.getId()).isNotNull();
+    @Autowired
+    private UserRepository users;
+
+    @Test
+    public void answer_to_question_save_테스트() {
+        User user = users.save(JAVAJIGI);
+        Question question = questions.save(Q1);
+        A1.toQuestion(question);
+        Answer actual = answers.save(A1);
+        assertThat(actual.getContents()).isEqualTo("Answers Contents1");
     }
 
     @Test
-    public void findByContents() {
-        User user = new User(1L, "cjs", "password", "name", "chajs226@gmail.com");
-        Question question = new Question("initTestTitle", "initTestContents");
-        Answer expected = new Answer(user, question, "initTestContents");
-
-        Answer actual = answers.save(expected);
-        assertThat(actual.getContents()).isEqualTo("initTestContents");
+    public void isOwner_테스트() {
+        User user = users.save(JAVAJIGI);
+        Question question = questions.save(Q1);
+        A1.toQuestion(question);
+        Answer actual = answers.save(A1);
+        assertThat(actual.isOwner(JAVAJIGI)).isTrue();
     }
 }
