@@ -3,7 +3,7 @@ package qna.domain;
 import javax.persistence.*;
 
 @Entity
-public class Question extends BaseTime{
+public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,6 +18,9 @@ public class Question extends BaseTime{
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -74,8 +77,6 @@ public class Question extends BaseTime{
                 ", contents='" + contents + '\'' +
                 ", writerId=" + writerId +
                 ", deleted=" + deleted +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 '}';
     }
 }
