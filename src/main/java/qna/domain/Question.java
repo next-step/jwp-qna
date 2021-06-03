@@ -89,8 +89,8 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    private void deleted(final boolean deleted) {
-        this.deleted = deleted;
+    private void deleted() {
+        this.deleted = true;
     }
 
     public int countOfAnswer() {
@@ -98,14 +98,14 @@ public class Question extends BaseEntity {
     }
 
     public List<DeleteHistory> delete(final User user) throws CannotDeleteException {
-        verifyOwner(user);
-        deleted(true);
+        final List<DeleteHistory> deleteHistories = Collections.unmodifiableList(histories(validUser(user)));
+        deleted();
 
-        return Collections.unmodifiableList(histories(user));
+        return deleteHistories;
     }
 
-    private void verifyOwner(final User writer) throws CannotDeleteException {
-        Optional.ofNullable(writer)
+    private User validUser(final User writer) throws CannotDeleteException {
+        return Optional.ofNullable(writer)
             .filter(this::isOwner)
             .orElseThrow(() -> new CannotDeleteException(HAS_NOT_DELETE_PERMISSION_MESSAGE));
     }

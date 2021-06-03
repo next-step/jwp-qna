@@ -71,16 +71,8 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(final Question question) {
-        this.question = question;
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public User getWriter() {
-        return writer;
     }
 
     public Long getQuestionId() {
@@ -95,19 +87,19 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    private void deleted(final boolean deleted) {
-        this.deleted = deleted;
+    private void deleted() {
+        this.deleted = true;
     }
 
     public DeleteHistory delete(final User user) throws CannotDeleteException {
-        verifyOwner(user);
-        deleted(true);
+        final DeleteHistory deleteHistory = new DeleteHistory(ANSWER, id, validUser(user), LocalDateTime.now());
+        deleted();
 
-        return new DeleteHistory(ANSWER, id, writer, LocalDateTime.now());
+        return deleteHistory;
     }
 
-    private void verifyOwner(final User writer) throws CannotDeleteException {
-        Optional.ofNullable(writer)
+    private User validUser(final User writer) throws CannotDeleteException {
+        return Optional.ofNullable(writer)
             .filter(this::isOwner)
             .orElseThrow(() -> new CannotDeleteException(HAS_ANOTHER_WRITER_MESSAGE));
     }
