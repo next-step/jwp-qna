@@ -60,13 +60,19 @@ public class User extends BaseEntity {
         return this.password.equals(targetPassword);
     }
 
-    public boolean equalsNameAndEmail(User target) {
+    public boolean equalsEmail(User target) {
         if (Objects.isNull(target)) {
             return false;
         }
 
-        return name.equals(target.name) &&
-                email.equals(target.email);
+        return email.equals(target.email);
+    }
+    public boolean equalsName(User target) {
+        if (Objects.isNull(target)) {
+            return false;
+        }
+
+        return name.equals(target.name);
     }
 
     public boolean isGuestUser() {
@@ -81,35 +87,35 @@ public class User extends BaseEntity {
         this.id = id;
     }
 
-    public String getUserId() {
+    public String userId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void userId(String userId) {
         this.userId = userId;
     }
 
-    public String getPassword() {
+    public String password() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void password(String password) {
         this.password = password;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public void setName(String name) {
+    public void name(String name) {
         this.name = name;
     }
 
-    public String getEmail() {
+    public String email() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void email(String email) {
         this.email = email;
     }
 

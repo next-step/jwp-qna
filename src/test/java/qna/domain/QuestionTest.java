@@ -8,36 +8,32 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.UserTest.JAVAJIGI;
 
 
-@DataJpaTest
 public class QuestionTest {
-    public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+    public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
     public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
 
-    @Autowired
-    private TestEntityManager entityManager;
-
-    @Autowired
-    private QuestionRepository questions;
-
     @Test
-    public void save(){
-        Question q1 = questions.save(Q1);
+    public void 질문_주인인지_확인_GREEN(){
+        User maeve = new User(3L, "maeve", "password", "maeve", "maeve.woo@cyworldlabs.com");
 
-        entityManager.flush();
+        Question question = new Question("title", "머시깽이");
 
-        assertThat(q1.id()).isNotNull();
+        question.writeBy(maeve);
+
+        assertThat(question.isOwner(maeve)).isTrue();
     }
 
     @Test
-    public void findByIdAndDeletedFalse(){
-        Question q1 = questions.save(Q1);
+    public void 질문_주인인지_확인_RED(){
+        User maeve = new User(3L, "maeve", "password", "maeve", "maeve.woo@cyworldlabs.com");
 
-        entityManager.flush();
+        Question question = new Question("title", "머시깽이");
 
-        final Optional<Question> findQ1 = questions.findByIdAndDeletedFalse(q1.id());
+        question.writeBy(maeve);
 
-        assertThat(findQ1).isNotEmpty();
+        assertThat(question.isOwner(JAVAJIGI)).isFalse();
     }
 }
