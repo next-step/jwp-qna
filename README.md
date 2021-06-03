@@ -64,3 +64,33 @@ add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 Q. 유저 삭제 테스트케이스를 userRepository.delete(JAVAJIGI) 를 실행하여 단독 테스트케이스 실행시에 성공을 했었는데요. 전체 테스트케이스 실행에서는 실패가 되었습니다.  
 다른 테스트케이스 실행이 영향을 끼칠 수 있을거 같아서 @BeforeEach 애노테이션으로 userRepository.deleteAll()을 실행하게 하였는데 마찬가지로 테스트케이스는 실패하였습니다.  
 원인이 무엇일까요?
+
+
+## 2단계 요구사항
+
+아래의 DDL을 보고 연관관계 매핑을 한다.
+
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
+```
+
+* 연관관계 매핑을 하여 외래키가 제대로 걸리는지 테스트한다.
+* 테스트 케이스에서 데이터가 의도한 대로 CRUD 되었는지 확인한다.
