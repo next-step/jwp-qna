@@ -1,8 +1,9 @@
-package qna.domain;
+package qna.domain.user;
 
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import qna.UnAuthorizedException;
+import qna.domain.BaseEntity;
 
 @Entity
 @Table(uniqueConstraints = {
@@ -18,32 +20,33 @@ import qna.UnAuthorizedException;
 })
 public class User extends BaseEntity {
 
-    public static final GuestUser GUEST_USER = new GuestUser();
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false, unique = true)
-    private String userId;
+    @Embedded
+    private UserId userId;
 
-    @Column(length = 20, nullable = false)
-    private String password;
+    @Embedded
+    private Password password;
 
-    @Column(length = 20, nullable = false)
-    private String name;
+    @Embedded
+    private Name name;
 
-    @Column(length = 40)
-    private String email;
+    @Embedded
+    private Email email;
 
-    protected User() {
-    }
+    protected User() { }
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
     }
 
     public User(Long id, String userId, String password, String name, String email) {
+        this(id, new UserId(userId), new Password(password), new Name(name), new Email(email));
+    }
+
+    public User(Long id, UserId userId, Password password, Name name, Email email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -64,11 +67,11 @@ public class User extends BaseEntity {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    private boolean matchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
+    public boolean matchPassword(Password targetPassword) {
         return this.password.equals(targetPassword);
     }
 
@@ -85,45 +88,10 @@ public class User extends BaseEntity {
         return false;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
-        return userId;
+        return userId.getValue();
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     @Override
     public String toString() {

@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.answer;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -11,6 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
+
+import qna.domain.user.User;
+import qna.domain.user.UserRepository;
+import qna.domain.question.Question;
+import qna.domain.question.QuestionRepository;
 
 @DirtiesContext
 @DataJpaTest
@@ -31,12 +36,12 @@ class AnswerRepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		savedUser = userRepository.save(new User("len", "password", "name", "email"));
+		savedUser = userRepository.save(new User("len", "password", "name", "email@naver.com"));
 
 		Question question = new Question("title", "Contents");
 		savedQuestion = questionRepository.save(question);
 
-		answer = new Answer(savedUser, savedQuestion, "Answer Contents");
+		answer = new Answer(savedUser, savedQuestion, new Contents("Answer Contents"));
 	}
 
 	@Test
@@ -44,26 +49,24 @@ class AnswerRepositoryTest {
 
 		Answer save = repository.save(answer);
 
-		Answer answer1 = repository.findByIdAndDeletedFalse(save.getId())
+		Answer answer1 = repository.findById(save.getId())
 			.orElseThrow(EntityNotFoundException::new);
 		assertThat(answer1).isEqualTo(save);
 
-		save.deleted(true);
-
-		assertThatThrownBy(() -> repository.findByIdAndDeletedFalse(save.getId())
-			.orElseThrow(EntityNotFoundException::new)).isInstanceOf(EntityNotFoundException.class);
+		save.setDeleted(new Deleted(true));
+		assertThat(repository.findAll()).hasSize(0);
 	}
 
 	@Test
 	void findByQuestionIdAndDeletedFalseTest() {
 
-		Answer answer = new Answer(savedUser, savedQuestion, "Answer Contents");
-		Answer answer2 = new Answer(savedUser, savedQuestion, "another Contents");
+		Answer answer = new Answer(savedUser, savedQuestion, new Contents("Answer Contents"));
+		Answer answer2 = new Answer(savedUser, savedQuestion, new Contents("another Contents"));
 
 		repository.save(answer);
 		repository.save(answer2);
 
-		List<Answer> answers = repository.findByQuestionIdAndDeletedFalse(savedQuestion.getId());
+		List<Answer> answers = repository.findByQuestionId(savedQuestion.getId());
 		assertThat(answers).containsExactly(answer, answer2);
 	}
 }

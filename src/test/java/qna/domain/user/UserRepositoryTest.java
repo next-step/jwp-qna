@@ -1,6 +1,4 @@
-package qna.domain;
-
-import static org.junit.jupiter.api.Assertions.*;
+package qna.domain.user;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,7 @@ class UserRepositoryTest {
 	@Test
 	void saveAndFind() {
 		User save = repository.save(UserTest.JAVAJIGI);
-		User user = repository.findByUserId(save.getUserId()).get();
+		User user = repository.findByUserId(new UserId(save.getUserId())).get();
 		Assertions.assertThat(save).isEqualTo(user);
 	}
 }

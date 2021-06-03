@@ -1,51 +1,58 @@
-package qna.domain;
+package qna.domain.answer;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
-import org.springframework.lang.NonNull;
+import org.hibernate.annotations.Where;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.BaseEntity;
+import qna.domain.deletehistory.DeleteHistory;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 
 @Entity
+@Where(clause = "deleted = false")
 public class Answer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id",
         foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id",
         foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @NonNull
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted = new Deleted(false);
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer(User writer, Question question, Contents contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, Contents contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -75,46 +82,27 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return writer;
     }
 
-    public void setWriter(User writerId) {
-        this.writer = writerId;
+    public boolean deleted() {
+        return deleted.value == true;
     }
 
-    public Question getQuestion() {
-        return question;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void deleted(boolean deleted) {
+    public void setDeleted(Deleted deleted) {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writer +
-                ", questionId=" + question +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+    public void setDeleted(boolean deleted) {
+        this.setDeleted(new Deleted(deleted));
     }
+
+	public DeleteHistory deletedBy(User user) {
+        if (isOwner(user) == false) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.setDeleted(true);
+        return DeleteHistory.ofAnswer(getId(), user, LocalDateTime.now());
+	}
 }

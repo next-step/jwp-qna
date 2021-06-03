@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.question;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -10,7 +10,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 
+import qna.domain.user.User;
+import qna.domain.user.UserRepository;
+import qna.domain.user.UserTest;
+
+@DirtiesContext
 @DataJpaTest
 class QuestionRepositoryTest {
 
@@ -41,7 +47,7 @@ class QuestionRepositoryTest {
 		repository.save(q1);
 		repository.save(q2);
 
-		List<Question> questions = repository.findByDeletedFalse();
+		List<Question> questions = repository.findAll();
 		assertThat(questions).containsExactly(q1);
 	}
 
@@ -55,14 +61,13 @@ class QuestionRepositoryTest {
 		q1.setDeleted(false);
 		Question save1 = repository.save(q1);
 
-		Question question = repository.findByIdAndDeletedFalse(save1.getId()).orElseThrow(EntityNotFoundException::new);
+		Question question = repository.findById(save1.getId()).orElseThrow(EntityNotFoundException::new);
 		assertThat(question).isEqualTo(save1);
 
-		Question q2 = QuestionTest.Q1.writeBy(save);
+		Question q2 = QuestionTest.Q2.writeBy(save);
 		q2.setDeleted(true);
-		Question save2 = repository.save(q2);
 
-		assertThatThrownBy(() -> repository.findByIdAndDeletedFalse(save2.getId()).orElseThrow(EntityNotFoundException::new)).isInstanceOf(EntityNotFoundException.class);
+		assertThat(repository.findAll()).hasSize(1);
 
 	}
 }
