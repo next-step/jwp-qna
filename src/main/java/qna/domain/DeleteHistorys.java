@@ -19,7 +19,7 @@ public final class DeleteHistorys {
         return Collections.unmodifiableList(list);
     }
 
-    public int size() {
+    public int totalCount() {
         return list.size();
     }
 

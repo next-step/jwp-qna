@@ -29,7 +29,7 @@ public class QuestionRepositoryTest {
     @DisplayName("정상적으로 전 후 데이터가 들어가 있는지 확인한다.")
     void save() {
         assertAll(
-            () -> assertThat(actual.id()).isNotNull(),
+            () -> assertThat(actual.getId()).isNotNull(),
             () -> assertThat(actual).isSameAs(question));
     }
 
@@ -38,7 +38,7 @@ public class QuestionRepositoryTest {
     void updata() {
         question.updateContents("change content");
         repository.saveAndFlush(question);
-        Question finedQuestion = repository.findById(question.id()).get();
+        Question finedQuestion = repository.findById(question.getId()).get();
         assertThat(finedQuestion).isSameAs(question);
     }
 }

@@ -82,27 +82,16 @@ public class User extends BaseTimeEntity {
             email.equals(target.email);
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public boolean isGuestUser() {
         return false;
     }
 
-    public Long id() {
-        return id;
-    }
-
     public void updateEmail(String email) {
         this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-            "id=" + id +
-            ", userId='" + userId + '\'' +
-            ", password='" + password + '\'' +
-            ", name='" + name + '\'' +
-            ", email='" + email + '\'' +
-            '}';
     }
 
     private static class GuestUser extends User {

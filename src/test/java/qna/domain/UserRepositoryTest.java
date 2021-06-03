@@ -29,7 +29,7 @@ public class UserRepositoryTest {
     @DisplayName("정상적으로 전 후 데이터가 들어가 있는지 확인한다.")
     void save() {
         assertAll(
-            () -> assertThat(actual.id()).isNotNull(),
+            () -> assertThat(actual.getId()).isNotNull(),
             () -> assertThat(actual).isSameAs(user));
     }
 
@@ -38,7 +38,7 @@ public class UserRepositoryTest {
     void updata() {
         user.updateEmail("change Email");
         repository.saveAndFlush(user);
-        User finedUser = repository.findById(user.id()).get();
+        User finedUser = repository.findById(user.getId()).get();
         assertThat(finedUser).isSameAs(user);
     }
 }

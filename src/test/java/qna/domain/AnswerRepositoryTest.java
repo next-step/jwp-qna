@@ -42,7 +42,7 @@ public class AnswerRepositoryTest {
     @DisplayName("정상적으로 전 후 데이터가 들어가 있는지 확인한다.")
     void save() {
         assertAll(
-            () -> assertThat(actual.id()).isNotNull(),
+            () -> assertThat(actual.getId()).isNotNull(),
             () -> assertThat(actual).isSameAs(answer));
     }
 
@@ -51,21 +51,19 @@ public class AnswerRepositoryTest {
     void updata() {
         answer.updateContents("change content");
         answers.saveAndFlush(answer);
-        Answer finedAnswer = answers.findById(answer.id()).get();
+        Answer finedAnswer = answers.findById(answer.getId()).get();
         assertThat(finedAnswer).isSameAs(answer);
     }
 
     @Test
     @DisplayName("question 연관관계 확인")
     void qustionCheck() {
-        assertThat(actual.question()).isNotNull();
-        assertThat(actual.question().id()).isNotNull();
+        assertThat(actual.hasQuestion()).isTrue();
     }
 
     @Test
     @DisplayName("writer 연관관계 확인")
     void writerCheck() {
-        assertThat(actual.writer()).isNotNull();
-        assertThat(actual.writer().id()).isNotNull();
+        assertThat(actual.hasWriter()).isTrue();
     }
 }

@@ -21,12 +21,4 @@ public abstract class BaseTimeEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public LocalDateTime createdAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime updatedAt() {
-        return updatedAt;
-    }
-
 }

@@ -66,6 +66,10 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
@@ -75,11 +79,6 @@ public class Question extends BaseTimeEntity {
             this.answers.add(answer);
             answer.toQuestion(this);
         }
-
-    }
-
-    public Long id() {
-        return id;
     }
 
     public void updateContents(String contents) {
@@ -100,6 +99,14 @@ public class Question extends BaseTimeEntity {
         return DeleteHistorys.of(deleteHistories);
     }
 
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public DeleteHistory createDeleteHistory() {
+        return DeleteHistory.of(ContentType.QUESTION, this.id, writer);
+    }
+
     private void validateAuthority(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException(CHECK_AUTHORITY);
@@ -108,25 +115,6 @@ public class Question extends BaseTimeEntity {
 
     private List<DeleteHistory> deleteAllAnswerByOwner(User loginUser) {
         return answers.stream().map(answer -> answer.deleteByOwner(loginUser)).collect(Collectors.toList());
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public User writer() {
-        return this.writer;
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", contents='" + contents + '\'' +
-            ", writerId=" + writer.id() +
-            ", deleted=" + deleted +
-            '}';
     }
 
 }

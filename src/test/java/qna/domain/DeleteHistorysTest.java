@@ -25,6 +25,6 @@ public class DeleteHistorysTest {
     @Test
     @DisplayName("생성 테스트")
     void create() {
-        assertThat(deleteHistorys.size()).isEqualTo(2);
+        assertThat(deleteHistorys.totalCount()).isEqualTo(2);
     }
 }
