@@ -4,6 +4,7 @@ import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -55,11 +56,16 @@ public class Question {
         }
     }
 
+    public DeleteHistory questionDeleteHistory() {
+        delete();
+        return new DeleteHistory(ContentType.QUESTION, getId(), getWriter(), LocalDateTime.now());
+    }
+
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
     }
 
-    public void deleteQuestion() {
+    public void delete() {
         this.deleted = true;
     }
 

@@ -8,11 +8,6 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 @Service
 public class QnAService {
     private static final Logger log = LoggerFactory.getLogger(QnAService.class);
@@ -44,8 +39,9 @@ public class QnAService {
         answers.validateOwner(loginUser);
 
         DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.addDeletedQuestion(question);
-        deleteHistories.addDeletedAnswers(answers);
+
+        deleteHistories.addDeleteHistory(question.questionDeleteHistory());
+        deleteHistories.addDeleteHistories(answers.answersDeleteHistories());
 
         deleteHistoryService.saveAll(deleteHistories.deleteHistories());
     }
