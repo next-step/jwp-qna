@@ -1,76 +1,74 @@
 package qna.domain.entity;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.domain.repository.UserRepository;
-import java.util.Optional;
+import org.junit.jupiter.api.*;
+import qna.UnAuthorizedException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DataJpaTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserTest {
-    public static final User USER_JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User USER_SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-
-    @Autowired
-    private UserRepository userRepository;
-
-    private User user1;
-    private User user2;
-
-    @BeforeEach
-    public void setUp() {
-        user1 = userRepository.save(USER_JAVAJIGI);
-        user2 = userRepository.save(USER_SANJIGI);
-    }
+    public static final User USER_JAVAJIGI = new User(1L, "javajigi", "password", "javajigi", "javajigi@slipp.net");
+    public static final User USER_SANJIGI = new User(2L, "sanjigi", "password", "sanjigi", "sanjigi@slipp.net");
 
     @Test
-    public void exists() {
+    @Order(1)
+    @DisplayName("사용자 정보 확인")
+    void check() {
         assertAll(
-            () -> assertThat(user1.getId()).isNotNull(),
-            () -> assertThat(user2.getId()).isNotNull()
+            () -> assertThat(USER_JAVAJIGI.getId()).isEqualTo(1L),
+            () -> assertThat(USER_JAVAJIGI.getUserId()).isEqualTo("javajigi"),
+            () -> assertThat(USER_JAVAJIGI.getPassword()).isEqualTo("password"),
+            () -> assertThat(USER_JAVAJIGI.getName()).isEqualTo("javajigi"),
+            () -> assertThat(USER_JAVAJIGI.getEmail()).isEqualTo("javajigi@slipp.net")
         );
     }
 
     @Test
-    @DisplayName("동등성 비교")
-    public void isEqualTo() {
-        assertAll(
-            () -> assertThat(user1).isEqualTo(USER_JAVAJIGI),
-            () -> assertThat(user2).isEqualTo(USER_SANJIGI)
-        );
+    @DisplayName("사용자 동등성")
+    void isEqualTo() {
+        assertThat(USER_JAVAJIGI).isEqualTo(User.builder().id(1L).build());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"javajigi", "sanjigi"})
-    public void findByUserId(String userId) {
-        //TODO : 피드백 후 삭제하기
-        /* Optional 객체에 경우 보통 어떤식으로 테스트를 하는건가요? */
+    @Test
+    @DisplayName("사용자 정보 업데이트 성공")
+    void updateSucess() {
+        //When
+        User login = User.builder()
+                .userId("javajigi")
+                .build();
 
-        /*User user = userRepository.findByUserId(userId).orElseThrow(()->new RuntimeException("존재하지 않습니다."));
-        assertThat(user.getUserId()).isEqualTo(userId);*/
+        User update = User.builder()
+                .name("포비").email("javajigi@naver.com")
+                .password("password")
+                .build();
 
-        Optional<User> userOptional = userRepository.findByUserId(userId);
+
+        USER_JAVAJIGI.update(login, update);
+
         assertAll(
-            () -> assertThat(userOptional).isNotEmpty(),
-            () -> assertThat(userOptional.get().getUserId()).isEqualTo(userId)
+            () -> assertThat(USER_JAVAJIGI.getName()).isEqualTo("포비"),
+            () -> assertThat(USER_JAVAJIGI.getEmail()).isEqualTo("javajigi@naver.com")
         );
     }
 
     @Test
-    @DisplayName("동일성 비교")
-    public void isSameAs() {
-        User actual1 = userRepository.findByUserId(USER_JAVAJIGI.getUserId()).get();
-        User actual2 = userRepository.findByUserId(USER_SANJIGI.getUserId()).get();
-
+    @DisplayName("사용자 정보 업데이트 실패")
+    void updateFail() {
         assertAll(
-            () -> assertThat(actual1).isSameAs(user1),
-            () -> assertThat(actual2).isSameAs(user2)
+            () -> assertThrows(UnAuthorizedException.class, () -> {
+                User login = User.builder().userId("hun").build();
+                User update = User.builder().password("password").build();
+
+                USER_JAVAJIGI.update(login, update);
+            }),
+            () -> assertThrows(UnAuthorizedException.class, () -> {
+                User login = User.builder().userId("javajigi").build();
+                User update = User.builder().password("1").build();
+
+                USER_JAVAJIGI.update(login, update);
+            })
         );
     }
 }

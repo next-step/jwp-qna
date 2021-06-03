@@ -50,8 +50,11 @@ public class User extends TraceDate {
     @Column(length = 20, nullable = false)
     private String userId;
 
-    @OneToMany(mappedBy = "writer")
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+    private List<Answer> answers = new ArrayList<>();
 
     public boolean isGuestUser() {
         return false;
@@ -79,7 +82,11 @@ public class User extends TraceDate {
         this.email = target.email;
     }
 
-    public boolean matchPassword(String targetPassword) {
+    private boolean matchUserId(String userId) {
+        return this.userId.equals(userId);
+    }
+
+    private boolean matchPassword(String targetPassword) {
         return this.password.equals(targetPassword);
     }
 
@@ -88,15 +95,11 @@ public class User extends TraceDate {
             return false;
         }
 
-        return name.equals(target.name) &&
-                email.equals(target.email);
-    }
-
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
+        return this.name.equals(target.name) && this.email.equals(target.email);
     }
 
     private static class GuestUser extends User {
+
         @Override
         public boolean isGuestUser() {
             return true;
