@@ -33,7 +33,6 @@ public class Answers {
 	protected Answers() { }
 
 	public DeleteHistories deletedBy(User user) throws CannotDeleteException {
-
 		return new DeleteHistories(getValue().stream()
 			.map(answer -> answer.deletedBy(user))
 			.collect(Collectors.toList()));
