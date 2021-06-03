@@ -2,7 +2,6 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -22,9 +21,7 @@ public class Answers {
     }
 
     public List<Answer> getAnswers() {
-        return answers.stream()
-            .filter(answer -> !answer.isDeleted())
-            .collect(Collectors.toList());
+        return answers;
     }
 
 }

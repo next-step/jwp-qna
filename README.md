@@ -7,13 +7,22 @@
 - 1단계: 테이블 FK 기준
 - 2단계: 자연스러운 호출 객체 형태로 변경한다.
 
+#### 연관 관계
+
 - Question 일:다 Answer 양방향
   - Question이 자신의 Answer 목록을 가져올 수 있다.
     - 삭제 여부에 따른 Answer 목록 반환
   - Answer 생성 과정에서 Question의 Answer 목록에도 추가되어야 한다.
-- User(Writer) 일:다 Answer 양방향
-- User(Writer) 일:다 Question 양방향
+- User(Writer) 일:다 Answer 단방향
+- User(Writer) 일:다 Question 단방향
 - User(Writer) 일:다 Delete History 단방향
+
+#### 기능 추가
+
+- Cascade
+- Lazy loading
+- `@Embeddable`, `@Embedded`
+- `@Where`
 
 ### 1단계: 엔티티 매핑
 

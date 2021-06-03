@@ -62,7 +62,7 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+        return Objects.equals(this.writer.getId(), writer.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -79,6 +79,7 @@ public class Question extends BaseEntity {
 
     public void editTitle(String title) {
         StringValidator.validate(title, TITLE_LENGTH);
+
         this.title = title;
     }
 
@@ -92,10 +93,6 @@ public class Question extends BaseEntity {
 
     public void delete() {
         this.deleted = true;
-    }
-
-    public void publish() {
-        this.deleted = false;
     }
 
     public List<Answer> getAnswers() {

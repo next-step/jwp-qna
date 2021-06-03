@@ -58,7 +58,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+        return Objects.equals(this.writer.getId(), writer.getId());
     }
 
     public Long getId() {
@@ -79,10 +79,6 @@ public class Answer extends BaseEntity {
 
     public void delete() {
         this.deleted = true;
-    }
-
-    public void publish() {
-        this.deleted = false;
     }
 
     @Override
