@@ -13,9 +13,13 @@ public class Answer extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private Long writerId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User writer;
 
-	private Long questionId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "question_id")
+	private Question question;
 
 	@Lob
 	private String contents;
@@ -24,6 +28,10 @@ public class Answer extends BaseEntity {
 	private boolean deleted = false;
 
 	protected Answer() {
+	}
+
+	public Answer(String contents) {
+		this.contents = contents;
 	}
 
 	public Answer(User writer, Question question, String contents) {
@@ -35,29 +43,33 @@ public class Answer extends BaseEntity {
 			throw new NotFoundException();
 		}
 
-		this.writerId = writer.getId();
-		this.questionId = question.getId();
+		this.writer = writer;
+		this.question = question;
 		this.contents = contents;
 	}
 
 	public boolean isOwner(User writer) {
-		return writer.getId().equals(this.writerId);
+		return writer.equals(this.writer);
 	}
 
 	public void toQuestion(Question question) {
-		this.questionId = question.getId();
+		this.question = question;
+	}
+
+	public void writeBy(User writer) {
+		this.writer = writer;
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public Long getWriterId() {
-		return writerId;
+	public User getWriter() {
+		return writer;
 	}
 
-	public Long getQuestionId() {
-		return questionId;
+	public Question getQuestion() {
+		return question;
 	}
 
 	public String getContents() {
@@ -76,8 +88,8 @@ public class Answer extends BaseEntity {
 	public String toString() {
 		return "Answer{" +
 				"id=" + id +
-				", writerId=" + writerId +
-				", questionId=" + questionId +
+				", writerId=" + writer.getId() +
+				", questionId=" + question.getId() +
 				", contents='" + contents + '\'' +
 				", deleted=" + deleted +
 				'}';
