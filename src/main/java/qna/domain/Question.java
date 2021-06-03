@@ -14,16 +14,14 @@ public class Question extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", nullable = false)
+    @Column(nullable = false)
     private String title;
 
-    @Column(name = "contents")
     private String contents;
 
-    @Column(name = "writer_id")
     private Long writerId;
 
-    @Column(name = "deleted", nullable = false)
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Question() {}

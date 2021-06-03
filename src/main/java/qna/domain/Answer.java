@@ -17,19 +17,15 @@ import javax.persistence.Table;
 public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "writer_id")
     private Long writerId;
 
-    @Column(name = "question_id")
     private Long questionId;
 
-    @Column(name = "contents")
     private String contents;
 
-    @Column(name = "deleted", nullable = false)
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Answer() {}

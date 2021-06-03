@@ -19,17 +19,13 @@ public class DeleteHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "content_type")
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
-    @Column(name = "content_id")
     private Long contentId;
 
-    @Column(name = "deleted_by_id")
     private Long deletedById;
 
-    @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
     protected DeleteHistory() {}
