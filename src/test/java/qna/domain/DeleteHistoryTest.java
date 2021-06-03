@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -8,13 +9,18 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
 class DeleteHistoryTest {
-	public static final DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 2L);
+	private DeleteHistory deleteHistory;
 
 	private final DeleteHistoryRepository deleteHistoryRepository;
 
 	@Autowired
 	DeleteHistoryTest(DeleteHistoryRepository deleteHistoryRepository) {
 		this.deleteHistoryRepository = deleteHistoryRepository;
+	}
+
+	@BeforeEach
+	void setUp() {
+		deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 2L);
 	}
 
 	@Test
