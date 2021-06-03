@@ -6,13 +6,12 @@ import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 @Embeddable
 public class Answers {
 
-    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
     private List<Answer> answers = new ArrayList<>();
 
     protected Answers() {
@@ -22,9 +21,9 @@ public class Answers {
         this.answers.add(answer);
     }
 
-    public List<Answer> getAnswers(Status status) {
+    public List<Answer> getAnswers() {
         return answers.stream()
-            .filter(answer -> answer.isDeleted() == status.isDeleted())
+            .filter(answer -> !answer.isDeleted())
             .collect(Collectors.toList());
     }
 

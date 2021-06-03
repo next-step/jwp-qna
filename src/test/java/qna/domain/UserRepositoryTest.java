@@ -75,6 +75,7 @@ public class UserRepositoryTest {
         userRepository.save(alice);
 
         userRepository.delete(alice);
+        userRepository.flush();
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
             userRepository.findById(alice.getId()).get()

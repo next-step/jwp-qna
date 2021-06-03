@@ -55,7 +55,6 @@ public class Question extends BaseEntity {
         }
 
         this.writer = writer;
-        writer.addQuestion(this);
         return this;
     }
 
@@ -96,8 +95,8 @@ public class Question extends BaseEntity {
         this.deleted = false;
     }
 
-    public List<Answer> getAnswers(Status status) {
-        return answers.getAnswers(status);
+    public List<Answer> getAnswers() {
+        return answers.getAnswers();
     }
 
     @Override

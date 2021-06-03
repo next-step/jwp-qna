@@ -12,13 +12,7 @@
     - 삭제 여부에 따른 Answer 목록 반환
   - Answer 생성 과정에서 Question의 Answer 목록에도 추가되어야 한다.
 - User(Writer) 일:다 Answer 양방향
-  - User이 자신의 Answer 목록을 가져올 수 있다.
-    - 삭제 여부에 따른 Answer 목록 반환
-  - Answer 생성 과정에서 User의 Answer 목록에도 추가되어야 한다.
 - User(Writer) 일:다 Question 양방향
-  - User이 자신의 Question 목록을 가져올 수 있다.
-    - 삭제 여부에 따른 Question 목록 반환
-  - Question 생성 과정에서 User의 Question 목록에도 추가되어야 한다.
 - User(Writer) 일:다 Delete History 단방향
 
 ### 1단계: 엔티티 매핑

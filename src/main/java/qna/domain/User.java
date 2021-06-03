@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.*;
@@ -34,12 +33,6 @@ public class User extends BaseEntity {
 
     @Column(length = EMAIL_LENGTH)
     private String email;
-
-    @Embedded
-    private Questions questions = new Questions();
-
-    @Embedded
-    private Answers answers = new Answers();
 
     protected User() {
     }
@@ -112,22 +105,6 @@ public class User extends BaseEntity {
 
     public String getEmail() {
         return email;
-    }
-
-    public void addQuestion(Question question) {
-        this.questions.add(question);
-    }
-
-    public List<Question> getQuestions(Status status) {
-        return questions.getQuestions(status);
-    }
-
-    public void addAnswer(Answer answer) {
-        this.answers.add(answer);
-    }
-
-    public List<Answer> getAnswers(Status status) {
-        return answers.getAnswers(status);
     }
 
     @Override
