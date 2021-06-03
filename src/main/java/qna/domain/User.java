@@ -17,7 +17,7 @@ public class User extends UpdatableEntity {
 
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
     @Column(length = 20, nullable = false)
