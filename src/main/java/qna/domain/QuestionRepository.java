@@ -9,5 +9,4 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByDeletedFalse();
 
     Optional<Question> findByIdAndDeletedFalse(Long id);
-    List<Question> findByTitle(String title);
 }
