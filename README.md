@@ -179,7 +179,7 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
 - [x] GUEST_USER 제거
 - [x] Question, Answer 에 대한 도메인 테스트 코드 추가
 
-- [ ] 테스트 코드에서만 사용되는 메소드 제거   
+- [x] 테스트 코드에서만 사용되는 메소드 제거   
 - [ ] Answers 에 대한 테스트 코드 작성 
 - [ ] 생성자 코드에 대한 생각 정의.
 

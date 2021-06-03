@@ -96,7 +96,7 @@ class QnaServiceTest {
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
                 DeleteHistory.ofAnswer(new ContentId(answer.getId()), answer.getWriter(), LocalDateTime.now()),
-            DeleteHistory.ofQuestion(new ContentId(question.getId()), question.getWriter(), LocalDateTime.now())
+            DeleteHistory.ofQuestion(question.getId(), question.getWriter(), LocalDateTime.now())
         );
         verify(deleteHistoryService).saveAll(new DeleteHistories(deleteHistories));
     }

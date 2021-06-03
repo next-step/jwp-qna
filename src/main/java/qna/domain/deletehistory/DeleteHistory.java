@@ -37,10 +37,6 @@ public class DeleteHistory {
 
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public static DeleteHistory ofQuestion(ContentId contentId, User deletedBy, LocalDateTime createDate){
-        return new DeleteHistory(ContentType.QUESTION, contentId, deletedBy, createDate);
-    }
-
     public static DeleteHistory ofQuestion(Long contentId, User deletedBy, LocalDateTime createDate){
         return new DeleteHistory(ContentType.QUESTION, contentId, deletedBy, createDate);
     }
