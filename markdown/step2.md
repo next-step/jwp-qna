@@ -33,10 +33,16 @@ alter table question
 ### Entity
 
 - [ ] 단순 밸류 값으로 매핑된 것 객체로 변경
-  - [ ] Answer에 있는 questionId 변경
-  - [ ] Answer에 있는 writerId 변경
+  - [X] Answer에 있는 questionId 변경
+  - [X] Answer에 있는 writerId 변경
   - [ ] DeleteHistory에 있는 deletedById 변경
   - [ ] Question에 있는 writerId 변경
 - [ ] 다대일, 일대다, 일대일 설정
-- [ ] 연관관계의 주인인 엔티티에 편의메서드 추가
-- [ ] 주인이 아닌 엔티티에 ReadOnly 추가
+
+### 테스트
+
+- [ ] 지연로딩이 잘 동작하는지
+
+### 리팩토링
+
+- [ ] 안쓰는 코드들 제거
