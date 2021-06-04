@@ -2,6 +2,30 @@
 
 ## 요구사항
 
+### 2단계: 연관 관계 매핑
+
+- 1단계: 테이블 FK 기준
+- 2단계: 자연스러운 호출 객체 형태로 변경한다.
+
+#### 연관 관계
+
+- Question 일:다 Answer 양방향
+  - Question이 자신의 Answer 목록을 가져올 수 있다.
+    - 삭제 여부에 따른 Answer 목록 반환
+  - Answer 생성 과정에서 Question의 Answer 목록에도 추가되어야 한다.
+- User(Writer) 일:다 Answer 단방향
+- User(Writer) 일:다 Question 단방향
+- User(Writer) 일:다 Delete History 단방향
+
+#### 기능 추가
+
+- Cascade
+- Lazy loading
+- `@Embeddable`, `@Embedded`
+- `@Where`
+
+### 1단계: 엔티티 매핑
+
 - DDL에 맞춰 Entity 수정
 - Repository 메소드에 맞춰 테스트 작성
 - CustomException으로 예외 처리
@@ -41,6 +65,11 @@ create table question
   writer_id  bigint,
   primary key (id)
 )
+
+alter table question
+  add constraint fk_question_writer
+    foreign key (writer_id)
+      references user
 ```
 
 ### Answer
@@ -57,6 +86,16 @@ create table answer
   writer_id   bigint,
   primary key (id)
 )
+
+alter table answer
+  add constraint fk_answer_to_question
+    foreign key (question_id)
+      references question
+
+alter table answer
+  add constraint fk_answer_writer
+    foreign key (writer_id)
+      references user
 ```
 
 ### Delete History
@@ -71,4 +110,9 @@ create table delete_history
   deleted_by_id bigint,
   primary key (id)
 )
+
+alter table delete_history
+  add constraint fk_delete_history_to_user
+    foreign key (deleted_by_id)
+      references user
 ```

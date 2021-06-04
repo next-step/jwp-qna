@@ -11,8 +11,6 @@ import qna.validators.StringValidator;
 @Entity
 public class User extends BaseEntity {
 
-    public static final GuestUser GUEST_USER = new GuestUser();
-
     private static final int USER_ID_LENGTH = 20;
     private static final int PASSWORD_LENGTH = 20;
     private static final int NAME_LENGTH = 20;
@@ -83,16 +81,8 @@ public class User extends BaseEntity {
         return name.equals(target.name) && email.equals(target.email);
     }
 
-    public boolean isGuestUser() {
-        return false;
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getUserId() {
@@ -103,28 +93,12 @@ public class User extends BaseEntity {
         this.userId = userId;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @Override
@@ -140,10 +114,4 @@ public class User extends BaseEntity {
             + '}';
     }
 
-    private static class GuestUser extends User {
-        @Override
-        public boolean isGuestUser() {
-            return true;
-        }
-    }
 }

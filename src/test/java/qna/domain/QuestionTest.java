@@ -47,4 +47,5 @@ public class QuestionTest {
             new Question(TEXT_LENGTH_111, "contents")
         );
     }
+
 }

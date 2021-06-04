@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,78 +18,120 @@ import qna.exceptions.NotFoundException;
 public class AnswerRepositoryTest {
 
     @Autowired
-    private AnswerRepository answers;
+    private AnswerRepository answerRepository;
 
     @Autowired
-    private QuestionRepository questions;
+    private QuestionRepository questionRepository;
 
     @Autowired
-    private UserRepository users;
+    private UserRepository userRepository;
 
-    @DisplayName("질문의 답변 목록 검색")
+    @Autowired
+    private EntityManager entityManager;
+
+    @DisplayName("질문의 활성화된 답변 목록 검색")
     @Test
-    void findByQuestionIdAndDeletedFalse() {
+    void findByQuestionAndDeletedFalse() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
-        users.save(alice);
         Question question = new Question("title", "contents");
-        questions.save(question);
-        Answer answer = new Answer(alice, question, "Answers Contents1");
-        answers.save(answer);
+        Answer answer = new Answer(alice, question, "Answers Contents");
+        userRepository.save(alice);
+        questionRepository.save(question);
 
-        List<Answer> activeAnswers = answers.findByQuestionIdAndDeletedFalse(question.getId());
+        entityManager.clear();
+
+        Question actualQuestion = questionRepository
+            .findById(question.getId())
+            .orElseThrow(NotFoundException::new);
+        List<Answer> activeAnswers = actualQuestion.getAnswers();
 
         assertThat(activeAnswers.size()).isEqualTo(1);
-        assertThat(activeAnswers.contains(answer)).isTrue();
+        assertThat(activeAnswers.get(0).getId()).isEqualTo(answer.getId());
     }
 
-    @DisplayName("삭제된 답변으로 변경 후 질문의 답변 목록 검색")
+    @DisplayName("질문 ID로 활성화된 답변 목록 검색")
     @Test
-    void findByQuestionIdAndDeletedFalse_AfterDeleteAnswer() {
+    void findByQuestion() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
-        users.save(alice);
         Question question = new Question("title", "contents");
-        questions.save(question);
-        Answer answer = new Answer(alice, question, "Answers Contents1");
-        answers.save(answer);
+        Answer answer = new Answer(alice, question, "Answers Contents");
+        userRepository.save(alice);
+        questionRepository.save(question);
 
-        answer.setDeleted(true);
-        List<Answer> activeAnswers = answers.findByQuestionIdAndDeletedFalse(question.getId());
+        List<Answer> activeAnswers = answerRepository.findByQuestion(question);
+
+        assertThat(activeAnswers.size()).isEqualTo(1);
+        assertThat(activeAnswers).contains(answer);
+    }
+
+    @DisplayName("삭제된 답변으로 변경 후 질문의 활성화된 답변 목록 검색")
+    @Test
+    void findByQuestion_AfterDeleteAnswer() {
+        User alice = new User("alice", "password", "Alice", "alice@mail");
+        Question question = new Question("title", "contents");
+        Answer answer = new Answer(alice, question, "Answers Contents");
+        userRepository.save(alice);
+        questionRepository.save(question);
+
+        answer.delete();
+        answerRepository.flush();
+        entityManager.clear();
+
+        Question searchedQuestion = questionRepository
+            .findById(question.getId())
+            .orElseThrow(NotFoundException::new);
+        List<Answer> activeAnswers = searchedQuestion.getAnswers();
 
         assertThat(activeAnswers).isEmpty();
     }
 
-    @DisplayName("활성화된 답변 검색")
+    @DisplayName("삭제된 답변으로 변경 후 질문 ID로 활성화된 답변 목록 검색")
     @Test
-    void findByIdAndDeletedFalse() {
+    void findByQuestionIdAndDeletedFalse_AfterDeleteAnswer() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
-        users.save(alice);
         Question question = new Question("title", "contents");
-        questions.save(question);
         Answer answer = new Answer(alice, question, "Answers Contents1");
-        answers.save(answer);
+        userRepository.save(alice);
+        questionRepository.save(question);
 
-        Answer actual = answers
-            .findByIdAndDeletedFalse(answer.getId())
+        answer.delete();
+        List<Answer> activeAnswers = answerRepository.findByQuestion(question);
+
+        assertThat(activeAnswers).isEmpty();
+    }
+
+    @DisplayName("답변의 ID로 활성화된 답변 검색")
+    @Test
+    void findById() {
+        User alice = new User("alice", "password", "Alice", "alice@mail");
+        Question question = new Question("title", "contents");
+        Answer answer = new Answer(alice, question, "Answers Contents1");
+        userRepository.save(alice);
+        questionRepository.save(question);
+
+        Answer actual = answerRepository
+            .findById(answer.getId())
             .orElseThrow(NotFoundException::new);
 
         assertThat(actual.getId()).isEqualTo(answer.getId());
-        assertThat(actual.getQuestionId()).isEqualTo(question.getId());
+        assertThat(actual.getQuestion()).isEqualTo(question);
     }
 
-    @DisplayName("삭제된 답변으로 변경 후 답변 검색")
+    @DisplayName("삭제된 답변으로 변경 후 답변의 ID로 활성화된 답변 검색")
     @Test
-    void findByIdAndDeletedFalse_AfterDeleteAnswer() {
+    void findById_AfterDeleteAnswer() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
-        users.save(alice);
         Question question = new Question("title", "contents");
-        questions.save(question);
         Answer answer = new Answer(alice, question, "Answers Contents1");
-        answers.save(answer);
+        userRepository.save(alice);
+        questionRepository.save(question);
 
-        answer.setDeleted(true);
+        answer.delete();
+        answerRepository.flush();
+        entityManager.clear();
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
-            answers.findByIdAndDeletedFalse(answer.getId()).get()
+            answerRepository.findById(answer.getId()).get()
         );
     }
 

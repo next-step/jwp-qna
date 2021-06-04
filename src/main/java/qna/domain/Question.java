@@ -1,14 +1,18 @@
 package qna.domain;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.Where;
 
 import qna.exceptions.UnAuthorizedException;
 import qna.validators.StringValidator;
 
 @Table
 @Entity
+@Where(clause = "deleted=false")
 public class Question extends BaseEntity {
 
     private static final int TITLE_LENGTH = 100;
@@ -23,11 +27,15 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    @Column
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -49,56 +57,46 @@ public class Question extends BaseEntity {
             throw new UnAuthorizedException();
         }
 
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return Objects.equals(this.writer.getId(), writer.getId());
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void editTitle(String title) {
+        StringValidator.validate(title, TITLE_LENGTH);
+
         this.title = title;
     }
 
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers.getAnswers();
     }
 
     @Override
@@ -107,7 +105,7 @@ public class Question extends BaseEntity {
             + "id=" + id
             + ", title='" + title + '\''
             + ", contents='" + contents + '\''
-            + ", writerId=" + writerId
+            + ", writerId=" + writer.getId()
             + ", deleted=" + deleted
             + ", createdAt=" + getCreatedAt()
             + ", updatedAt=" + getUpdatedAt()

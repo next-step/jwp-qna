@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,49 +20,45 @@ import qna.exceptions.NotFoundException;
 public class QuestionRepositoryTest {
 
     @Autowired
-    private QuestionRepository questions;
+    private QuestionRepository questionRepository;
 
     @Autowired
-    private AnswerRepository answers;
-
-    @Autowired
-    private UserRepository users;
+    private EntityManager entityManager;
 
     @DisplayName("진행 중인 질문 검색")
     @Test
-    void findByDeletedFalse() {
+    void findAll() {
         Question question1 = new Question("title", "contents");
         Question question2 = new Question("title2", "contents2");
-        questions.save(question1);
-        questions.save(question2);
+        questionRepository.save(question1);
+        questionRepository.save(question2);
 
-        List<Question> activeQuestions = questions.findByDeletedFalse();
+        List<Question> activeQuestions = questionRepository.findAll();
 
         assertThat(activeQuestions.size()).isEqualTo(2);
-        assertThat(activeQuestions.contains(question1)).isTrue();
-        assertThat(activeQuestions.contains(question2)).isTrue();
+        assertThat(activeQuestions).contains(question1, question2);
     }
 
     @DisplayName("삭제한 질문으로 변경 후 진행 중인 질문 검색")
     @Test
-    void findByDeletedFalse_AfterDeleteQuestion() {
+    void findAll_AfterDeleteQuestion() {
         Question question = new Question("title", "contents");
-        questions.save(question);
-        question.setDeleted(true);
+        questionRepository.save(question);
+        question.delete();
 
-        List<Question> activeQuestions = questions.findByDeletedFalse();
+        List<Question> activeQuestions = questionRepository.findAll();
 
         assertThat(activeQuestions).isEmpty();
     }
 
     @DisplayName("진행 중인 질문을 ID로 검색")
     @Test
-    void findByIdAndDeletedFalse() {
+    void findById() {
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
 
-        Question actual = questions
-            .findByIdAndDeletedFalse(question.getId())
+        Question actual = questionRepository
+            .findById(question.getId())
             .orElseThrow(NotFoundException::new);
 
         assertThat(actual.getId()).isEqualTo(question.getId());
@@ -68,13 +66,15 @@ public class QuestionRepositoryTest {
 
     @DisplayName("삭제한 질문으로 변경 후 진행 중인 질문을 ID로 검색")
     @Test
-    void findByIdAndDeletedFalse_AfterDeleteQuestion() {
+    void findById_AfterDeleteQuestion() {
         Question question = new Question("title", "contents");
-        questions.save(question);
-        question.setDeleted(true);
+        question.delete();
+        questionRepository.save(question);
+
+        entityManager.clear();
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
-            questions.findByIdAndDeletedFalse(question.getId()).get()
+            questionRepository.findById(question.getId()).get()
         );
     }
 
@@ -83,11 +83,11 @@ public class QuestionRepositoryTest {
     @ValueSource(strings = {"New Title"})
     void update(String expected) {
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
 
-        question.setTitle(expected);
+        question.editTitle(expected);
 
-        List<Question> activeQuestions = questions.findByDeletedFalse();
+        List<Question> activeQuestions = questionRepository.findAll();
 
         assertThat(activeQuestions.get(0).getTitle()).isEqualTo(expected);
     }
@@ -97,26 +97,27 @@ public class QuestionRepositoryTest {
     @ValueSource(strings = {"New Title"})
     void updateUpdatedAt(String expected) {
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
 
-        assertThat(question.getUpdatedAt()).isNull();
+        assertThat(question.getUpdatedAt()).isEqualTo(question.getCreatedAt());
 
-        question.setTitle(expected);
-        questions.flush();
+        question.editTitle(expected);
+        questionRepository.flush();
 
-        assertThat(question.getUpdatedAt()).isNotNull();
+        assertThat(question.getUpdatedAt()).isNotEqualTo(question.getCreatedAt());
     }
 
     @DisplayName("삭제하기")
     @Test
     void delete() {
         Question question = new Question("title", "contents");
-        questions.save(question);
+        questionRepository.save(question);
 
-        questions.delete(question);
+        questionRepository.delete(question);
+        questionRepository.flush();
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
-            questions.findById(question.getId()).get()
+            questionRepository.findById(question.getId()).get()
         );
     }
 
