@@ -10,16 +10,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AnswerRepositoryTest extends JpaTest {
-    private User user1;
-    private User user2;
     private Question question1;
     private Answer answer1;
     private Answer answer2;
 
     @BeforeEach
     void setUp() {
-        user1 = new User("userId1", "1234", "userName1", "userEmail1");
-        user2 = new User("userId2", "1234", "userName2", "userEmail2");
+        User user1 = new User("userId1", "1234", "userName1", "userEmail1");
+        User user2 = new User("userId2", "1234", "userName2", "userEmail2");
         getUsers().saveAll(Arrays.asList(user1, user2));
 
         question1 = new Question("title1", "contents1").writeBy(user1);
