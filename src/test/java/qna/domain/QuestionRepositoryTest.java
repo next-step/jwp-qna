@@ -30,7 +30,7 @@ class QuestionRepositoryTest extends JpaTest {
     @Test
     void findByDeletedFalse() {
         //given
-        question1.deleteQuestion();
+        question1.delete();
 
         //when
         List<Question> actual = getQuestions().findByDeletedFalse();
@@ -58,8 +58,8 @@ class QuestionRepositoryTest extends JpaTest {
     @Test
     void findByIdAndDeletedFalseException() {
         //given
-        question1.deleteQuestion();
-        question2.deleteQuestion();
+        question1.delete();
+        question2.delete();
 
         //when
         assertThatThrownBy(() -> getQuestions().findByIdAndDeletedFalse(question1.getId())

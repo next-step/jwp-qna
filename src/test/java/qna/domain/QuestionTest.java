@@ -11,7 +11,7 @@ public class QuestionTest {
     @Test
     void deleteQuestion() {
         //when
-        DeleteHistory actual = Q1.deleteQuestion();
+        DeleteHistory actual = Q1.delete();
 
         //then
         assertThat(actual.getDeletedBy()).isSameAs(UserTest.JAVAJIGI);
