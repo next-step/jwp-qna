@@ -29,10 +29,12 @@ class AnswerRepositoryTest {
 
     @Test
     public void isOwner_테스트() {
-        User user = users.save(JAVAJIGI);
-        Question question = questions.save(Q1);
-        A1.toQuestion(question);
-        Answer actual = answers.save(A1);
-        assertThat(actual.isOwner(JAVAJIGI)).isTrue();
+        User user = new User("chajs226", "1q2w3e", "차준성", "chajs226@gmail.com");
+        Question question = new Question("qeustionsTitle", "questionContents").writeBy(user);
+        Question question_saved = questions.save(question);
+        Answer answer = new Answer(user, question, "contents");
+        answer.toQuestion(question);
+        Answer actual = answers.save(answer);
+        assertThat(actual.isOwner(user)).isTrue();
     }
 }

@@ -30,7 +30,7 @@ class DeleteHistoryRepositoryTest {
         answer.toQuestion(question_saved);
         Answer answer_saved = answers.save(answer);
 
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, answer_saved.getId(), writer_saved, LocalDateTime.now());
+        DeleteHistory deleteHistory = DeleteHistory.forAnswerOf(answer_saved.getId(), writer_saved);
         DeleteHistory actual = deleteHistories.save(deleteHistory);
 
         assertThat(actual.getContentId()).isEqualTo(answer_saved.getId());
