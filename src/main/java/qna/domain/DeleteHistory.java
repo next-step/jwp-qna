@@ -5,6 +5,8 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -18,6 +20,7 @@ public class DeleteHistory extends AbstractEntity {
 	private Long contentId;
 
 	@ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
 	private User deletedBy;
 
     protected DeleteHistory() {}

@@ -8,11 +8,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import qna.UnAuthorizedException;
 
 @Entity
-@Table
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = "userId", name = "UK_a3imlf41l37utmxiquukk8ajc")
+    }
+)
 public class User extends UpdatableEntity {
 
     public static final GuestUser GUEST_USER = new GuestUser();
