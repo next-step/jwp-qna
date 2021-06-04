@@ -12,26 +12,23 @@ import java.util.NoSuchElementException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class UserTest {
-    public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
-    public static final User INSUP = new User("insup", "password", "name", "insup@slipp.net");
+public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
 
     private User javajigi;
+    private User insup;
 
     @BeforeEach
     void setUp() {
-        javajigi = userRepository.save(JAVAJIGI);
+        javajigi = userRepository.save(new User("javajigi", "1234", "javajigi", "a@email.com"));
+        insup = userRepository.save(new User("insup", "1234", "insup", "b@email.com"));
     }
 
     @DisplayName("저장")
     @Test
     void save() {
-        //when, then
         assertThat(javajigi).isNotNull();
         assertThat(javajigi.getUserId()).isEqualTo("javajigi");
     }
@@ -39,11 +36,9 @@ public class UserTest {
     @DisplayName("userId로 찾기")
     @Test
     void findByUserId() {
-        //when
         User findUser = userRepository.findByUserId("javajigi")
                 .orElseThrow(NoSuchElementException::new);
 
-        //then
         assertThat(findUser).isEqualTo(javajigi);
         assertThat(findUser).isSameAs(javajigi);
     }
