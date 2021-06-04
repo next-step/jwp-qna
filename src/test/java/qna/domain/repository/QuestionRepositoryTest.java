@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.domain.entity.Question;
 import qna.domain.entity.QuestionTest;
 import qna.domain.entity.User;
@@ -81,8 +82,8 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("질문 삭제후 삭제되지 않은 질문리스트 조회")
-    public void findByDeletedFalse2() {
-        question1.deleted();
+    public void findByDeletedFalse2() throws CannotDeleteException {
+        question1.deleted(user1);
 
         List<Question> deletedQuestions = questionRepository.findByDeletedFalse();
 

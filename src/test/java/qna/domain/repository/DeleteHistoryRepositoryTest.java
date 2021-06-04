@@ -4,7 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.domain.entity.*;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -31,11 +34,12 @@ public class DeleteHistoryRepositoryTest {
     }
 
     @Test
-    public void exists() {
-        DeleteHistory actual = deleteHistoryRepository.save(question.deleteHistory());
+    public void exists() throws CannotDeleteException {
+        List<DeleteHistory> actual = deleteHistoryRepository.saveAll(question.deleted(user).list());
 
         assertAll(
-            () -> assertThat(actual).isNotNull()
+            () -> assertThat(actual).isNotNull(),
+            () -> assertThat(actual.size()).isEqualTo(1)
         );
     }
 }
