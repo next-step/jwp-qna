@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
 import qna.domain.Question;
 import qna.domain.User;
 import qna.domain.UserTest;
@@ -21,14 +22,10 @@ public class QuestionRepositoryTest {
 	private QuestionRepository questions;
 	private final UserRepository users;
 
-	private User testUser;
-
 	@Autowired
 	public QuestionRepositoryTest(QuestionRepository questions, UserRepository users) {
 		this.questions = questions;
 		this.users = users;
-
-		this.testUser = users.save(UserTest.JAVAJIGI);
 	}
 
 	@Test
@@ -78,12 +75,27 @@ public class QuestionRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("질문 삭제 : 성공")
+	@DisplayName("질문 삭제 성공 : 동일 작성자, 답변이 없는 경우")
 	void deleteSuccess() {
-		Question question = new Question(1L, "title1", "contents1").writeBy(testUser);
+		User writer = users.save(UserTest.JAVAJIGI);
+
+		Question question = new Question(1L, "title1", "contents1").writeBy(writer);
 		question = questions.save(question);
-		question.delete(testUser);
+		question.delete(writer);
 		Question result = questions.findByIdAndDeletedFalse(question.getId()).orElse(null);
 		assertThat(result).isNull();
+	}
+
+	@Test
+	@DisplayName("질문 삭제 실패 : 동일 작성자가 아닌 경우")
+	void deleteFailOfWriter() {
+		User writer = users.save(UserTest.JAVAJIGI);
+		User other = users.save(UserTest.SANJIGI);
+
+		Question question = new Question(1L, "title1", "contents1").writeBy(writer);
+		Question savedQuestion = questions.save(question);
+		assertThatThrownBy(() -> savedQuestion.delete(other))
+			.isInstanceOf(CannotDeleteException.class)
+			.hasMessage("질문을 삭제할 권한이 없습니다.");
 	}
 }
