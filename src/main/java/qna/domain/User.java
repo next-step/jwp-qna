@@ -1,122 +1,145 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
-
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import qna.UnAuthorizedException;
+
+@Entity
 public class User {
-    public static final GuestUser GUEST_USER = new GuestUser();
+	public static final GuestUser GUEST_USER = new GuestUser();
 
-    private Long id;
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private User() {
-    }
+	@Column(name = "created_at", nullable = false)
+	private LocalDateTime createdAt = LocalDateTime.now();
 
-    public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
-    }
+	@Column(length = 50)
+	private String email;
 
-    public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
-    }
+	@Column(nullable = false, length = 20)
+	private String name;
 
-    public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException();
-        }
+	@Column(nullable = false, length = 20)
+	private String password;
 
-        if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException();
-        }
+	@Column(name = "updated_at")
+	private LocalDateTime updatedAt;
 
-        this.name = target.name;
-        this.email = target.email;
-    }
+	@Column(name = "user_id", nullable = false, length = 20, unique = true)
+	private String userId;
 
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
-    }
+	public User() {
+	}
 
-    public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
-    }
+	public User(String userId, String password, String name, String email) {
+		this(null, userId, password, name, email);
+	}
 
-    public boolean equalsNameAndEmail(User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
+	public User(Long id, String userId, String password, String name, String email) {
+		this.id = id;
+		this.userId = userId;
+		this.password = password;
+		this.name = name;
+		this.email = email;
+	}
 
-        return name.equals(target.name) &&
-                email.equals(target.email);
-    }
+	public void update(User loginUser, User target) {
+		if (!matchUserId(loginUser.userId)) {
+			throw new UnAuthorizedException();
+		}
 
-    public boolean isGuestUser() {
-        return false;
-    }
+		if (!matchPassword(target.password)) {
+			throw new UnAuthorizedException();
+		}
 
-    public Long getId() {
-        return id;
-    }
+		this.name = target.name;
+		this.email = target.email;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	private boolean matchUserId(String userId) {
+		return this.userId.equals(userId);
+	}
 
-    public String getUserId() {
-        return userId;
-    }
+	public boolean matchPassword(String targetPassword) {
+		return this.password.equals(targetPassword);
+	}
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+	public boolean equalsNameAndEmail(User target) {
+		if (Objects.isNull(target)) {
+			return false;
+		}
 
-    public String getPassword() {
-        return password;
-    }
+		return name.equals(target.name) && email.equals(target.email);
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public boolean isGuestUser() {
+		return false;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getUserId() {
+		return userId;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    private static class GuestUser extends User {
-        @Override
-        public boolean isGuestUser() {
-            return true;
-        }
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	@Override
+	public String toString() {
+		return "User{"
+			+ "id=" + id
+			+ ", userId='" + userId + '\''
+			+ ", password='" + password + '\''
+			+ ", name='" + name + '\''
+			+ ", email='" + email + '\''
+			+ '}';
+	}
+
+	private static class GuestUser extends User {
+		@Override
+		public boolean isGuestUser() {
+			return true;
+		}
+	}
 }
