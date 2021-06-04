@@ -1,7 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Answers {
 
@@ -11,10 +11,13 @@ public class Answers {
         this.answers = answers;
     }
 
-    public DeleteHistories deleteAnswers(User loginUser) {
-        List<DeleteHistory> histories = answers.stream()
-                .map(answer -> answer.delete(loginUser))
-                .collect(Collectors.toList());
-        return new DeleteHistories(histories);
+    public void deleteAnswers(User loginUser) {
+        for (Answer answer : answers) {
+            answer.deletedByUser(loginUser);
+        }
+    }
+
+    public List<Answer> getAnswers() {
+        return new ArrayList<>(this.answers);
     }
 }

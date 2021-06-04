@@ -4,7 +4,6 @@ import org.springframework.lang.NonNull;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,15 +28,6 @@ public class Question extends BaseEntity {
 
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "writer")
-    private List<Answer> wroteAnswers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "writer")
-    private List<Answer> wroteQuestions  = new ArrayList<>();
-
-    @OneToMany(mappedBy = "deletedBy")
-    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     private boolean deleted = false;
 
@@ -71,48 +61,32 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriterId(User writer) {
-        this.writer = writer;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+    public void deletedByUser(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
+        delete();
+    }
+
+    public void delete() {
         this.deleted = true;
-        DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.addDeleteHistory(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
-        DeleteHistories answerDeleteHistories = getAnswers().deleteAnswers(loginUser);
-        return deleteHistories.concat(answerDeleteHistories);
     }
 
     @Override
@@ -126,7 +100,8 @@ public class Question extends BaseEntity {
                 '}';
     }
 
-    private Answers getAnswers() {
+    public Answers getAnswers() {
         return new Answers(answers);
     }
+
 }

@@ -7,8 +7,6 @@ import qna.domain.DeleteHistories;
 import qna.domain.DeleteHistory;
 import qna.domain.DeleteHistoryRepository;
 
-import java.util.List;
-
 @Service
 public class DeleteHistoryService {
     private DeleteHistoryRepository deleteHistoryRepository;
