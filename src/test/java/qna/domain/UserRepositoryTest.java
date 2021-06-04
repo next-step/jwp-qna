@@ -2,7 +2,6 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -13,9 +12,6 @@ import static qna.domain.UserTest.JAVAJIGI;
 
 class UserRepositoryTest extends JpaTest {
 
-    @Autowired
-    private UserRepository users;
-
     @DisplayName("유저를 생성해서 저장한다.")
     @Test
     void save() {
@@ -23,7 +19,7 @@ class UserRepositoryTest extends JpaTest {
         User javajigi = JAVAJIGI;
 
         //when
-        User actual = users.save(javajigi);
+        User actual = getUsers().save(javajigi);
 
         //then
         assertAll(() -> {
@@ -39,10 +35,10 @@ class UserRepositoryTest extends JpaTest {
     @Test
     void findByUserId() {
         //given
-        User user = users.save(JAVAJIGI);
+        User user = getUsers().save(JAVAJIGI);
 
         //when
-        User actual = users.findByUserId(user.getUserId())
+        User actual = getUsers().findByUserId(user.getUserId())
                 .orElseThrow(EntityNotFoundException::new);
 
         //then
@@ -56,7 +52,7 @@ class UserRepositoryTest extends JpaTest {
         User javajigi = JAVAJIGI;
 
         //when
-        assertThatThrownBy(() -> users.findByUserId(javajigi.getUserId())
+        assertThatThrownBy(() -> getUsers().findByUserId(javajigi.getUserId())
                 .orElseThrow(EntityNotFoundException::new))
                 .isInstanceOf(EntityNotFoundException.class); //then
     }

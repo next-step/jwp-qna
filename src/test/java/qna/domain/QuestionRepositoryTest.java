@@ -3,7 +3,6 @@ package qna.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Arrays;
@@ -27,31 +26,28 @@ class QuestionRepositoryTest extends JpaTest {
         getQuestions().saveAll(Arrays.asList(question1, question2));
     }
 
-    @Autowired
-    private QuestionRepository questions;
-
     @DisplayName("삭제 상태가 아닌 질문들을 조회한다.")
     @Test
     void findByDeletedFalse() {
         //given
-        question1.setDeleted(false);
-        question2.setDeleted(true);
+        question1.deleteQuestion();
 
         //when
-        List<Question> actual = questions.findByDeletedFalse();
+        List<Question> actual = getQuestions().findByDeletedFalse();
 
         //then
         assertThat(actual.size()).isEqualTo(1);
+        assertThat(actual.get(0)).isSameAs(question2);
     }
 
     @DisplayName("질문 아이디에 해당하는 질문이 삭제 상태가 아닌 것을 리턴한다.")
     @Test
     void findByIdAndDeletedFalse() {
         //given
-        question1.setDeleted(false);
+        //Question1 삭제하지 않음
 
         //when
-        Question actual = questions.findByIdAndDeletedFalse(question1.getId())
+        Question actual = getQuestions().findByIdAndDeletedFalse(question1.getId())
                 .orElseThrow(EntityNotFoundException::new);
 
         //then
@@ -62,10 +58,11 @@ class QuestionRepositoryTest extends JpaTest {
     @Test
     void findByIdAndDeletedFalseException() {
         //given
-        question1.setDeleted(true);
+        question1.deleteQuestion();
+        question2.deleteQuestion();
 
         //when
-        assertThatThrownBy(() -> questions.findByIdAndDeletedFalse(question1.getId())
+        assertThatThrownBy(() -> getQuestions().findByIdAndDeletedFalse(question1.getId())
                 .orElseThrow(EntityNotFoundException::new))
                 .isInstanceOf(EntityNotFoundException.class); //then
     }

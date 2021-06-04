@@ -3,6 +3,7 @@ package qna.domain;
 import qna.domain.base.BaseEntity;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 public class Question extends BaseEntity {
@@ -60,8 +61,9 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory deleteQuestion(){
+        this.deleted = true;
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
     @Override
