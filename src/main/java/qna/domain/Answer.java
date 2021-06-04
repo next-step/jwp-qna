@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -21,7 +22,7 @@ public class Answer extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
-    private Question questionId;
+    private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
@@ -52,7 +53,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writerId = writer;
-        this.questionId = question;
+        this.question = question;
         this.contents = contents;
     }
 
@@ -61,8 +62,8 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question;
-        questionId.getAnswers().add(this);
+        this.question = question;
+        question.getAnswers().add(this);
     }
 
 
@@ -73,10 +74,6 @@ public class Answer extends BaseEntity {
 
     public void setWriterId(User writerId) {
         this.writerId = writerId;
-    }
-
-    public Question getQuestionId() {
-        return questionId;
     }
 
     public String getContents() {
@@ -96,4 +93,9 @@ public class Answer extends BaseEntity {
     }
 
 
+    public void isWrittenBySomeoneElse(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
 }

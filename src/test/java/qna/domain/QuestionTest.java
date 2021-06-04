@@ -4,8 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.time.LocalDateTime;
+import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -43,5 +42,15 @@ public class QuestionTest {
 
         question.setTitle("cheer up!!!!");
         assertThat(actual.getTitle()).isEqualTo("cheer up!!!!");
+    }
+
+    @DisplayName("다른 사람이 쓴 질문을 삭제하는 경우")
+    @Test
+    public void delete_다른_사람이_쓴_글() {
+        assertThatThrownBy(() -> Q1.delete(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class);
+
+        assertThatThrownBy(() -> Q2.delete(UserTest.JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class);
     }
 }

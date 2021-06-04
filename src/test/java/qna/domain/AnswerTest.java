@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -60,5 +61,15 @@ public class AnswerTest {
 
         assertThat(actual.getCreatedAt()).isAfter(now);
         assertThat(actual.getUpdatedAt()).isAfter(now);
+    }
+
+    @DisplayName("답변 중 다른 사람이 쓴게 있는 경우")
+    @Test
+    public void delete_답변_중_다른_사람이_쓴_글() {
+        assertThatThrownBy(() -> A1.isWrittenBySomeoneElse(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class);
+
+        assertThatThrownBy(() -> A2.isWrittenBySomeoneElse(UserTest.JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class);
     }
 }
