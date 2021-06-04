@@ -10,7 +10,6 @@ import java.util.List;
 import static javax.persistence.FetchType.*;
 
 @Entity
-@Table (name = "T_question")
 public class Question extends BaseEntity {
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -26,7 +25,7 @@ public class Question extends BaseEntity {
 	@JoinColumn (name = "user_id")
 	private User user;
 
-	@OneToMany(mappedBy = "question", fetch = LAZY)
+	@OneToMany(mappedBy = "question")
 	private List<Answer> answers = new ArrayList<> ();
 
 	@Column (nullable = false)
@@ -55,7 +54,7 @@ public class Question extends BaseEntity {
 	}
 
 	public void addAnswer (Answer answer) {
-		answer.toQuestion(this);
+		answer.question(this);
 		this.answers.add (answer);
 	}
 
@@ -67,29 +66,8 @@ public class Question extends BaseEntity {
 		this.id = id;
 	}
 
-	public String title () {
-		return title;
-	}
-
-	public void title (String title) {
-		this.title = title;
-	}
-
-	public String contents () {
-		return contents;
-	}
-
-	public void contents (String contents) {
-		this.contents = contents;
-	}
-
 	public User writer () {
 		return user;
-	}
-
-	public void writer (User user) {
-		this.user = user;
-
 	}
 
 	public boolean deleted () {

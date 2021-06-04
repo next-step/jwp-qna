@@ -9,7 +9,6 @@ import java.util.Objects;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-@Table(name = "T_delete_history")
 public class DeleteHistory {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

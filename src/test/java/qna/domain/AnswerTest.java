@@ -31,7 +31,7 @@ public class AnswerTest {
         Answer answer = new Answer(1L, JAVAJIGI, question, "머식꺵깽이야");
 
         assertThat(answer.writer()).isEqualTo(JAVAJIGI);
-        assertThat(answer.questionId()).isEqualTo(1L);
+        assertThat(answer.question().id()).isEqualTo(1L);
         assertThat(answer.isOwner(JAVAJIGI)).isTrue();
     }
 
