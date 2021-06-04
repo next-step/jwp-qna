@@ -1,16 +1,44 @@
 package qna.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
 public class Answer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
     private Long writerId;
+
+    @Column
     private Long questionId;
+
+    @Column
+    @Lob
     private String contents;
+
+    @Column(nullable= false)
     private boolean deleted = false;
+
+    @Column(nullable= false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable= false)
+    private LocalDateTime updatedAt;
+
+    public Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
