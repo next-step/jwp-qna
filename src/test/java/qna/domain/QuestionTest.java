@@ -63,4 +63,12 @@ public class QuestionTest {
         assertThat(notDeletedQuestions.size()).isEqualTo(1);
     }
 
+    @Test
+    @DisplayName(value = "DB에 저장되면 날짜 데이터가 생성된다")
+    void createdAtAndUpdatedAtAreExists() {
+        Question question = questionRepository.getOne(QUESTION_ID);
+        assertThat(question.getCreatedAt()).isNotNull();
+        assertThat(question.getUpdatedAt()).isNotNull();
+    }
+
 }
