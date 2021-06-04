@@ -1,18 +1,31 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
 
 class QuestionRepositoryTest extends JpaTest {
+    private Question question1;
+    private Question question2;
+
+    @BeforeEach
+    void setUp() {
+        User user1 = new User("userId1", "1234", "userName1", "userEmail1");
+        User user2 = new User("userId2", "1234", "userName2", "userEmail2");
+        getUsers().saveAll(Arrays.asList(user1, user2));
+
+        question1 = new Question("title1", "contents1").writeBy(user1);
+        question2 = new Question("title2", "contents2").writeBy(user2);
+        getQuestions().saveAll(Arrays.asList(question1, question2));
+    }
 
     @Autowired
     private QuestionRepository questions;
@@ -21,8 +34,6 @@ class QuestionRepositoryTest extends JpaTest {
     @Test
     void findByDeletedFalse() {
         //given
-        Question question1 = questions.save(Q1);
-        Question question2 = questions.save(Q2);
         question1.setDeleted(false);
         question2.setDeleted(true);
 
@@ -37,7 +48,6 @@ class QuestionRepositoryTest extends JpaTest {
     @Test
     void findByIdAndDeletedFalse() {
         //given
-        Question question1 = questions.save(Q1);
         question1.setDeleted(false);
 
         //when
@@ -52,7 +62,6 @@ class QuestionRepositoryTest extends JpaTest {
     @Test
     void findByIdAndDeletedFalseException() {
         //given
-        Question question1 = questions.save(Q1);
         question1.setDeleted(true);
 
         //when
