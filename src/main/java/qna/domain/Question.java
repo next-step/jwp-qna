@@ -30,8 +30,8 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String title;
+    @Embedded
+    private Title title;
 
     @Lob
     private String contents;
@@ -55,7 +55,7 @@ public class Question extends BaseEntity {
 
     public Question(final Long id, final String title, final String contents, final User writer) {
         this.id = id;
-        this.title = title;
+        this.title = new Title(title);
         this.contents = contents;
         this.writer = writer;
     }
@@ -72,7 +72,7 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 
