@@ -78,6 +78,10 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public boolean isWriterUser(User user) {
+        return writer.isSameUser(user);
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;

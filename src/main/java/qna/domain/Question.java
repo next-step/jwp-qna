@@ -3,14 +3,13 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity {
 
     private static final String AUTH_ERROR_MESSAGE = "질문을 삭제할 권한이 없습니다.";
+    private static final String NOT_MATCH_ANSWERS_WRITER_ERROR_MESSAGE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,8 +28,8 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
 
@@ -53,7 +52,7 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         if (!isContainAnswer(answer)) {
-            answers.add(answer);
+            answers.addAnswer(answer);
             answer.toQuestion(this);
         }
     }
@@ -79,12 +78,18 @@ public class Question extends BaseEntity {
     }
 
     public boolean isSameByAnswersSize(int size) {
-        return answers.size() == size;
+        return answers.isSameSize(size);
     }
 
-    public void checkQuestionWriterUser(User loginUser) throws CannotDeleteException {
+    public void checkValidSameUserByQuestionWriter(User loginUser) throws CannotDeleteException {
         if (!this.writer.isSameUser(loginUser)) {
             throw new CannotDeleteException(AUTH_ERROR_MESSAGE);
+        }
+    }
+
+    public void checkValidPossibleDeleteAnswers(User loginUser) throws CannotDeleteException {
+        if (!answers.isEmpty() && !answers.isAllSameWriter(loginUser)) {
+            throw new CannotDeleteException(NOT_MATCH_ANSWERS_WRITER_ERROR_MESSAGE);
         }
     }
 

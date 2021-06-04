@@ -156,9 +156,10 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
 ### 기능 구현 목록
 * [x] 로그인 사용자와 질문한 사람이 같은지 비교 기능
     * 로그인 사용자와 질문한 사람이 다른 경우 CannotDeleteException 발생
-* [ ] 질문에 답변이 존재하는지 여부 확인
+* [x] 질문에 답변이 존재하는지 여부 확인
     * question entity의 answers 일급 컬렉션 생성
     * 질문에 답변이 있는지 없는지 여부 확인 기능
-* [ ] 질문에 대한 답변이 존재하는 경우 질문자와 답변자의 사용자가 같은지 비교 기능
+* [x] 질문에 대한 답변이 존재하는 경우 질문자와 답변자의 사용자가 같은지 유효성 검사 기능
+    * 질문에 대한 답변이 존재하지않을 시 유효성 검사 진행하지않음.
     * 질문에 대한 답변들중 하나라도 작성자가 다르면 CannotDeleteException 발생
 * [ ] 삭제 히스토리 생성 기능
