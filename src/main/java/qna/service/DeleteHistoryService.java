@@ -10,19 +10,19 @@ import java.util.List;
 
 @Service
 public class DeleteHistoryService {
-	private DeleteHistoryRepository deleteHistoryRepository;
+    private DeleteHistoryRepository deleteHistoryRepository;
 
-	public DeleteHistoryService (DeleteHistoryRepository deleteHistoryRepository) {
-		this.deleteHistoryRepository = deleteHistoryRepository;
-	}
+    public DeleteHistoryService(DeleteHistoryRepository deleteHistoryRepository) {
+        this.deleteHistoryRepository = deleteHistoryRepository;
+    }
 
-	@Transactional (propagation = Propagation.REQUIRES_NEW)
-	public void saveAll (List<DeleteHistory> deleteHistories) {
-		deleteHistoryRepository.saveAll(deleteHistories);
-	}
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void saveAll(List<DeleteHistory> deleteHistories) {
+        deleteHistoryRepository.saveAll(deleteHistories);
+    }
 
-	@Transactional (propagation = Propagation.REQUIRES_NEW)
-	public void save (DeleteHistory deleteHistory) {
-		deleteHistoryRepository.save(deleteHistory);
-	}
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void save(DeleteHistory deleteHistory) {
+        deleteHistoryRepository.save(deleteHistory);
+    }
 }

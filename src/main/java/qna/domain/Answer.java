@@ -7,99 +7,97 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table (name = "t_answer")
-public class Answer extends BaseEntity {
-	@Id
-	@GeneratedValue (strategy = GenerationType.IDENTITY)
-	private Long id;
+@Table(name = "t_answer")
+public class Answer extends BaseEntity{
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private User user;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private User user;
 
-	@ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Question question;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Question question;
 
-	@Lob
-	private String contents;
+    @Lob
+    private String contents;
 
-	@Column (nullable = false)
-	private boolean deleted;
+    @Column(nullable = false)
+    private boolean deleted;
 
-	protected Answer () {
-	}
+    protected Answer () { }
 
-	public Answer (User user, Question question, String contents) {
-		this(null, user, question, contents);
-	}
+    public Answer(User user, Question question, String contents) {
+        this(null, user, question, contents);
+    }
 
-	public Answer (Long id, User user, Question question, String contents) {
-		this.id = id;
+    public Answer(Long id, User user, Question question, String contents) {
+        this.id = id;
 
-		if (Objects.isNull(user)) {
-			throw new UnAuthorizedException();
-		}
+        if (Objects.isNull(user)) {
+            throw new UnAuthorizedException();
+        }
 
-		if (Objects.isNull(question)) {
-			throw new NotFoundException();
-		}
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
 
-		this.user = user;
-		this.question = question;
-		this.contents = contents;
-	}
+        this.user = user;
+        this.question = question;
+        this.contents = contents;
+    }
 
-	public boolean isOwner (User user) {
-		return this.user.equals(user);
-	}
+    public boolean isOwner(User user) {
+        return this.user.equals(user);
+    }
 
-	public void toQuestion (Question question) {
-		this.question = question;
-	}
+    public void toQuestion(Question question) {
+        this.question = question;
+    }
 
-	public Long id () {
-		return id;
-	}
+    public Long id() {
+        return id;
+    }
 
-	public void id (Long id) {
-		this.id = id;
-	}
+    public void id(Long id) {
+        this.id = id;
+    }
 
-	public User writer () {
-		return user;
-	}
+    public User writer() {
+        return user;
+    }
 
-	public Long questionId () {
-		return question.id();
-	}
+    public Long questionId() {
+        return question.id();
+    }
 
-	public void questionId (Question question) {
-		this.question = question;
-	}
+    public void questionId(Question question) {
+        this.question = question;
+    }
 
-	public String contents () {
-		return contents;
-	}
+    public String contents() {
+        return contents;
+    }
 
-	public void contents (String contents) {
-		this.contents = contents;
-	}
+    public void contents(String contents) {
+        this.contents = contents;
+    }
 
-	public boolean deleted () {
-		return deleted;
-	}
+    public boolean deleted() {
+        return deleted;
+    }
 
-	public void deleted (boolean deleted) {
-		this.deleted = deleted;
-	}
+    public void deleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 
-	@Override
-	public String toString () {
-		return "Answer{" +
-				"id=" + id +
-				", writer=" + user.id() +
-				", questionId=" + question.id() +
-				", contents='" + contents + '\'' +
-				", deleted=" + deleted +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "id=" + id +
+                ", writer=" + user.id() +
+                ", questionId=" + question.id() +
+                ", contents='" + contents + '\'' +
+                ", deleted=" + deleted +
+                '}';
+    }
 }
