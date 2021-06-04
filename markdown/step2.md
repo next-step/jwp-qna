@@ -32,11 +32,11 @@ alter table question
 
 ### Entity
 
-- [ ] 단순 밸류 값으로 매핑된 것 객체로 변경
+- [X] 단순 밸류 값으로 매핑된 것 객체로 변경
   - [X] Answer에 있는 questionId 변경
   - [X] Answer에 있는 writerId 변경
   - [X]] DeleteHistory에 있는 deletedById 변경
-  - [ ] Question에 있는 writerId 변경
+  - [X] Question에 있는 writerId 변경
 - [ ] 다대일, 일대다, 일대일 설정
 
 ### 테스트
