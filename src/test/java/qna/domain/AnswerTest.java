@@ -3,6 +3,8 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,15 @@ public class AnswerTest {
 	@DisplayName(value = "저장된 entity 를 select 하여 반환한다")
 	void select() {
 		assertThat(answerRepository.findByIdAndDeletedFalse(A2.getId()).get()).isEqualTo(A2);
+	}
+
+	@Test
+	@DisplayName(value = "update를 수행하면 update_at 이 컬럼이 갱신된다")
+	void updateAtHasChanged() {
+		LocalDateTime updatedAt = A2.getUpdatedAt();
+	    A2.setContents("updated answer");
+	    answerRepository.saveAndFlush(A2);
+	    assertThat(A2.getUpdatedAt()).isNotEqualTo(updatedAt);
 	}
 
 }
