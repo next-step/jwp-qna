@@ -14,11 +14,11 @@ public class Answer extends BaseEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "wirter_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
 	private User writer;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "question_id")
+	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
 	private Question question;
 
 	@Lob
