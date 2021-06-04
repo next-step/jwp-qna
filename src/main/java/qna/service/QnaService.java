@@ -6,7 +6,6 @@ import qna.CannotDeleteException;
 import qna.domain.*;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,8 +44,7 @@ public class QnaService {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(question.delete());
         for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+            deleteHistories.add(answer.delete());
         }
         deleteHistoryService.saveAll(deleteHistories);
     }

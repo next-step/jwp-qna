@@ -32,8 +32,7 @@ class AnswerRepositoryTest extends JpaTest {
     @Test
     void findByQuestionIdAndDeletedFalse() {
         //given
-        answer1.setDeleted(false);
-        answer2.setDeleted(true);
+        answer2.delete();
 
         //when
         List<Answer> actual = getAnswers().findByQuestionIdAndDeletedFalse(question1.getId());
@@ -47,7 +46,7 @@ class AnswerRepositoryTest extends JpaTest {
     @Test
     void findByIdAndDeletedFalse() {
         //given
-        answer1.setDeleted(false);
+        //Answer 삭제하지 않음
 
         //when
         Answer actual = getAnswers().findByIdAndDeletedFalse(answer1.getId())
@@ -61,7 +60,7 @@ class AnswerRepositoryTest extends JpaTest {
     @Test
     void findByIdAndDeletedFalseIfPresent() {
         //given
-        answer1.setDeleted(true);
+        answer1.delete();
 
         //when
         assertThatThrownBy(() -> getAnswers().findByIdAndDeletedFalse(answer1.getId())
