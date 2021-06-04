@@ -4,8 +4,6 @@ import lombok.*;
 import qna.domain.entity.common.TraceDate;
 import qna.UnAuthorizedException;
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -25,16 +23,14 @@ import java.util.Objects;
  *     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
  */
 
-@NoArgsConstructor
-@Entity
-@Table(uniqueConstraints = @UniqueConstraint(name = "unique_user_id", columnNames={"userId"}))
-@EqualsAndHashCode(of = "id")
-@Getter(AccessLevel.PACKAGE)
+@Getter
 @ToString(of = {"id", "userId", "email", "name"})
+@EqualsAndHashCode(of = "id")
+@Entity @NoArgsConstructor
+@Table(uniqueConstraints = @UniqueConstraint(name = "unique_user_id", columnNames={"userId"}))
 public class User extends TraceDate {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    @Getter
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -49,12 +45,6 @@ public class User extends TraceDate {
 
     @Column(length = 20, nullable = false)
     private String userId;
-
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
-    private List<Question> questions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
-    private List<Answer> answers = new ArrayList<>();
 
     public boolean isGuestUser() {
         return false;

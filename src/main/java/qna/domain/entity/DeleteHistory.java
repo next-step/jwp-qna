@@ -16,13 +16,11 @@ import java.time.LocalDateTime;
  *     primary key (id)
  * )
  */
-@NoArgsConstructor
-@Entity
-@Getter(AccessLevel.PACKAGE)
-@EqualsAndHashCode(of={"id"})
+@Getter
+@EqualsAndHashCode(of = "id")
+@Entity @NoArgsConstructor
 public class DeleteHistory {
 
-    @Getter
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -34,7 +32,7 @@ public class DeleteHistory {
     private LocalDateTime createDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="deleted_by_id")
+    @JoinColumn(name="deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User user;
 
     private DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
