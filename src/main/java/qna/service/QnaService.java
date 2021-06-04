@@ -54,8 +54,6 @@ public class QnaService {
 
     private void deleteHistoryCreate(Question question, User loginUser) {
 
-        new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
-
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.addDeleteHistory(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
 
