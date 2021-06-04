@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ class DeleteHistoryRepositoryTest {
 		User user = new User("testUser", "testPassword", "testName", "testEmail");
 		User savedUser = this.userRepository.save(user);
 		this.deleteHistory = this.deleteHistoryRepository.save(
-			new DeleteHistory(ContentType.ANSWER, 1L, savedUser, null));
+			new DeleteHistory(ContentType.ANSWER, 1L, savedUser, LocalDateTime.now()));
 	}
 
 	@Test

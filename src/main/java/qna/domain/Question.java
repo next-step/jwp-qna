@@ -1,5 +1,9 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -34,7 +38,7 @@ public class Question extends BaseEntity {
 	private boolean deleted = false;
 
 	@Embedded
-	private final Answers answers = new Answers();
+	private Answers answers = new Answers();
 
 	protected Question() {
 	}
@@ -90,18 +94,6 @@ public class Question extends BaseEntity {
 		this.deleted = deleted;
 	}
 
-	@Override
-	public String toString() {
-		return "Question{" +
-			"id=" + id +
-			", title='" + title + '\'' +
-			", contents='" + contents + '\'' +
-			", writer=" + writer +
-			", deleted=" + deleted +
-			", answers=" + answers +
-			'}';
-	}
-
 	public void toWriter(User user) {
 		if (this.writer != null) {
 			user.getQuestions().remove(this);
@@ -110,11 +102,35 @@ public class Question extends BaseEntity {
 		user.getQuestions().add(this);
 	}
 
-	public void delete(User user) throws CannotDeleteException {
+	public List<DeleteHistory> delete(User user) throws CannotDeleteException {
 		if (!this.isOwner(user)) {
 			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 		}
 
-		this.deleted = true;
+		List<DeleteHistory> deleteHistories = this.answers.deleteAnswers(user);
+		this.setDeleted(true);
+
+		DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, this.id, this.writer,
+			LocalDateTime.now());
+
+		deleteHistories.add(deleteHistory);
+		return deleteHistories;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Question question = (Question)o;
+		return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
+			question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer,
+			question.writer) && Objects.equals(answers, question.answers);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, title, contents, writer, deleted, answers);
 	}
 }

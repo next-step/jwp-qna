@@ -30,18 +30,18 @@
 
 ## Step3 - 질문 삭제하기 리팩터링
 
-- [ ] 일급 컬렉션으로 엔티티 개선
+- [x] 일급 컬렉션으로 엔티티 개선
 
-- [ ] QnaService 로직 도메인 으로 분리
+- [x] QnaService 로직 도메인 으로 분리
 
-  - [ ] Question delete구현
+  - [x] Question delete구현
 
     - [x] question 작성자가 아니면 오류 발생
-    - [ ] Question 내에서 answer delete요청 (일급컬렉션 구현)
+    - [x] Question 내에서 answer delete요청 (일급컬렉션 구현)
 
-  - [ ] Answer delete구현
+  - [x] Answer delete구현
 
-    - [ ] Answer 작성자가 아니면 오류발생
+    - [x] Answer 작성자가 아니면 오류발생
 
       Answer가 없으면 Question 삭제됨
 
@@ -49,4 +49,4 @@
 
       Answer의 작성자가 Question과 다르면 오류발생으로 삭제되지않음
 
-  - [ ] 각 Content삭제 후 DeleteHistory 생성
+  - [x] 각 Content삭제 후 DeleteHistory 생성

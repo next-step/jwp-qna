@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -42,7 +43,11 @@ public class Answer extends BaseEntity {
 	}
 
 	public Answer(User writer, Question question, String contents) {
+		this(null, writer, question, contents);
+	}
 
+	public Answer(Long id, User writer, Question question, String contents) {
+		this.id = id;
 		if (Objects.isNull(writer)) {
 			throw new UnAuthorizedException();
 		}
@@ -119,10 +124,11 @@ public class Answer extends BaseEntity {
 		return Objects.hash(id, question, writer, contents, deleted);
 	}
 
-	public void delete(User loginUser) throws CannotDeleteException {
+	public DeleteHistory delete(User loginUser) throws CannotDeleteException {
 		if (!this.isOwner(loginUser)) {
 			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 		}
-		this.deleted = true;
+		this.setDeleted(true);
+		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
 	}
 }
