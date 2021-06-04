@@ -154,7 +154,7 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
 * 3개 이상의 인스턴스 변수를 가진 클래스를 쓰지 않는다.
 
 ### 기능 구현 목록
-* [ ] 로그인 사용자와 질문한 사람이 같은지 비교 기능
+* [x] 로그인 사용자와 질문한 사람이 같은지 비교 기능
     * 로그인 사용자와 질문한 사람이 다른 경우 CannotDeleteException 발생
 * [ ] 질문에 답변이 존재하는지 여부 확인
     * question entity의 answers 일급 컬렉션 생성

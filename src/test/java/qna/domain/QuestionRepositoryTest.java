@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ class QuestionRepositoryTest {
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(user.getId()).isNotNull(),
-                () -> assertThat(actual.getId()).isEqualTo(user.getId())
+                () -> assertThat(actual.getId()).isEqualTo(expected.getId())
         );
     }
 

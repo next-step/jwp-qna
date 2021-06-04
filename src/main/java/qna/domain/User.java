@@ -92,6 +92,10 @@ public class User extends BaseEntity {
         return email;
     }
 
+    public boolean isSameUser(User user) {
+        return this.equals(user);
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;

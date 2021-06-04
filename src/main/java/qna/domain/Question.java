@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +9,8 @@ import java.util.List;
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity {
+
+    private static final String AUTH_ERROR_MESSAGE = "질문을 삭제할 권한이 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,10 +51,6 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
-    }
-
     public void addAnswer(Answer answer) {
         if (!isContainAnswer(answer)) {
             answers.add(answer);
@@ -74,6 +74,20 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public boolean isContainAnswer(Answer answer) {
+        return answers.contains(answer);
+    }
+
+    public boolean isSameByAnswersSize(int size) {
+        return answers.size() == size;
+    }
+
+    public void checkQuestionWriterUser(User loginUser) throws CannotDeleteException {
+        if (!this.writer.isSameUser(loginUser)) {
+            throw new CannotDeleteException(AUTH_ERROR_MESSAGE);
+        }
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -83,13 +97,5 @@ public class Question extends BaseEntity {
                 ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
-    }
-
-    public boolean isContainAnswer(Answer answer) {
-        return answers.contains(answer);
-    }
-
-    public boolean isSameByAnswersSize(int size) {
-        return answers.size() == size;
     }
 }
