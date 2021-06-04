@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 public class AnswersTest {
@@ -37,7 +35,6 @@ public class AnswersTest {
     @BeforeEach
     void setup() {
         user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
-
         userRepository.save(user1);
 
         question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
@@ -53,8 +50,10 @@ public class AnswersTest {
     @Test
     void deleteAnswersFailTest() {
         User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        userRepository.save(user2);
 
         Answers answers = new Answers(Lists.newArrayList(answer1, answer2));
+
         assertThatThrownBy(() -> answers.deleteAnswers(user2))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
@@ -65,14 +64,8 @@ public class AnswersTest {
     void deleteAnswersTest() {
         Answers answers = new Answers(Arrays.asList(answer1, answer2));
 
-        DeleteHistory deleteHistoryFirst = new DeleteHistory(ContentType.ANSWER, answer1.getId(), user1, LocalDateTime.now());
-        DeleteHistory deleteHistorySecond = new DeleteHistory(ContentType.ANSWER, answer2.getId(), user1, LocalDateTime.now());
-        DeleteHistories deleteHistories = new DeleteHistories(Arrays.asList(deleteHistoryFirst, deleteHistorySecond));
+        answers.deleteAnswers(user1);
 
-        assertAll(
-                () -> assertThat(answers.deleteAnswers(user1)).isEqualTo(deleteHistories),
-                () -> assertThat(answer1.isDeleted()).isTrue(),
-                () -> assertThat(answer2.isDeleted()).isTrue()
-        );
+        assertThat(answers.getAnswers()).extracting("deleted").contains(true);
     }
 }

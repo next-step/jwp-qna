@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,7 +66,7 @@ public class AnswerTest {
     @Test
     @DisplayName("question id 값으로 deleted false 리스트 확인")
     void findByQuestionIdAndDeletedFalseTest() {
-        List<Answer> actualList = answerRepository.findByQuestionAndDeletedFalse(question1);
+        List<Answer> actualList = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
 
         assertThat(actualList).contains(answer1);
     }
@@ -89,19 +88,8 @@ public class AnswerTest {
     @Test
     void deleteFailTest() {
         //when & then
-        assertThatThrownBy(() -> answer1.delete(user2)).isInstanceOf(CannotDeleteException.class)
+        assertThatThrownBy(() -> answer1.deletedByUser(user2)).isInstanceOf(CannotDeleteException.class)
                 .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 
-    @DisplayName("삭제하면 답변이 삭제 상태가 되고, 삭제 내역을 반환한다.")
-    @Test
-    void deleteSuccessTest() {
-        //when
-        DeleteHistory delete = answer2.delete(user2);
-        //then
-        assertAll(
-                () -> assertThat(answer2.isDeleted()).isTrue(),
-                () -> assertThat(delete).isEqualTo(new DeleteHistory(ContentType.ANSWER, answer2.getId(), answer2.getWriter(), LocalDateTime.now()))
-        );
-    }
 }

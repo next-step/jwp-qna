@@ -4,16 +4,18 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
+import qna.service.QnaService;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class QuestionTest {
@@ -23,6 +25,7 @@ public class QuestionTest {
 
     @Autowired
     private UserRepository userRepository;
+
 
     private User user1;
     private User user2;
@@ -74,30 +77,11 @@ public class QuestionTest {
         );
     }
 
-    @DisplayName("질문 작성자가 아닌 사용자는 질문을 지울 수 없다.")
     @Test
+    @DisplayName("질문 작성자가 아닌 사용자는 질문을 지울 수 없다.")
     void deleteFailTest() {
-        assertThatThrownBy(() -> question1.delete(user2)).isInstanceOf(CannotDeleteException.class)
+        assertThatThrownBy(() -> question1.deletedByUser(user2)).isInstanceOf(CannotDeleteException.class)
                 .hasMessageContaining("질문을 삭제할 권한이 없습니다.");
     }
 
-    @DisplayName("삭제하면 질문이 삭제 상태가 되고, 삭제 내역 목록을 반환한다.")
-    @Test
-    void deleteSuccessTest() {
-        //given
-        Answer givenAnswer = new Answer(user1, question1, "Answers Contents1");
-        question1.addAnswer(givenAnswer);
-
-        DeleteHistory givenQuestionDeleteHistory = new DeleteHistory(ContentType.QUESTION, question1.getId(), user1, LocalDateTime.now());
-        DeleteHistory givenAnswerDeleteHistory = new DeleteHistory(ContentType.ANSWER, givenAnswer.getId(), user1, LocalDateTime.now());
-        DeleteHistories expectation = new DeleteHistories(Lists.newArrayList(givenQuestionDeleteHistory)).concat(new DeleteHistories(Lists.newArrayList(givenAnswerDeleteHistory)));
-
-        //when
-        DeleteHistories delete = question1.delete(user1);
-        //then
-        assertAll(
-                () -> assertThat(question1.isDeleted()).isTrue(),
-                () -> assertThat(delete).isEqualTo(expectation)
-        );
-    }
 }
