@@ -62,6 +62,7 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         this.questionId = question;
+        questionId.getAnswers().add(this);
     }
 
 
@@ -76,10 +77,6 @@ public class Answer extends BaseEntity {
 
     public Question getQuestionId() {
         return questionId;
-    }
-
-    public void setQuestionId(Question questionId) {
-        this.questionId = questionId;
     }
 
     public String getContents() {
