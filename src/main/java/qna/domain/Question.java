@@ -2,12 +2,12 @@ package qna.domain;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,18 +18,18 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
 
-
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
     private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
+
     }
 
     public Question(String title, String contents) {
@@ -48,36 +48,19 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+        return this.writer.equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
         if (!isContainAnswer(answer)) {
-            this.answers.add(answer);
+            answers.add(answer);
+            answer.toQuestion(this);
         }
-        answer.toQuestion(this);
     }
 
     public Long getId() {
         return id;
     }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public List<Answer> getAnswers() {
-        return Collections.unmodifiableList(this.answers);
-    }
-
-    public boolean isContainAnswer(Answer answer) {
-        return this.answers.contains(answer);
-    }
-
 
     public User getWriter() {
         return writer;
@@ -87,7 +70,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void addDeleted(boolean deleted) {
+    public void delete(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -100,5 +83,13 @@ public class Question extends BaseEntity {
                 ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public boolean isContainAnswer(Answer answer) {
+        return answers.contains(answer);
+    }
+
+    public boolean isSameByAnswersSize(int size) {
+        return answers.size() == size;
     }
 }

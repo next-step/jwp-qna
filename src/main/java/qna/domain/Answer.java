@@ -13,7 +13,7 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
@@ -51,7 +51,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+        return this.writer.equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
@@ -69,12 +69,6 @@ public class Answer extends BaseEntity {
     public Question getQuestion() {
         return question;
     }
-
-
-    public String getContents() {
-        return contents;
-    }
-
 
     public boolean isDeleted() {
         return deleted;
