@@ -1,9 +1,13 @@
 package qna.domain;
 
+import org.springframework.data.annotation.ReadOnlyProperty;
 import qna.domain.base.BaseEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -22,6 +26,10 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    @ReadOnlyProperty
+    private final List<Answer> answers = new ArrayList<>();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -47,6 +55,7 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public Long getId() {
@@ -76,4 +85,9 @@ public class Question extends BaseEntity {
                 ", writer=" + writer +
                 '}';
     }
+
+    public List<Answer> getAnswers() {
+        return Collections.unmodifiableList(answers);
+    }
+
 }
