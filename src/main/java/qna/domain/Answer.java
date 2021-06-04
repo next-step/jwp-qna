@@ -54,6 +54,7 @@ public class Answer extends BaseEntity {
 
 	public void toQuestion(Question question) {
 		this.question = question;
+		question.addAnswerData(this);
 	}
 
 	public void writeBy(User writer) {

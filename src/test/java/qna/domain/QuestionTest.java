@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.transaction.Transactional;
+import java.util.List;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
@@ -15,16 +18,20 @@ public class QuestionTest {
 
 	private final QuestionRepository questionRepository;
 	private final UserRepository userRepository;
+	private final AnswerRepository answerRepository;
+
+	private User user;
 
 	@Autowired
-	public QuestionTest(QuestionRepository questionRepository, UserRepository userRepository) {
+	public QuestionTest(QuestionRepository questionRepository, UserRepository userRepository, AnswerRepository answerRepository) {
 		this.questionRepository = questionRepository;
 		this.userRepository = userRepository;
+		this.answerRepository = answerRepository;
 	}
 
 	@BeforeEach
 	void setUp() {
-		User user = userRepository.save(UserTest.JAVAJIGI);
+		user = userRepository.save(UserTest.JAVAJIGI);
 		Question question = questionRepository.save(new Question("title1", "contents1"));
 		question.writeBy(user);
 	}
@@ -46,5 +53,17 @@ public class QuestionTest {
 		Question question = questionRepository.findAll().get(0);
 		User actual = question.getWriter();
 		assertThat(actual.getUserId()).isEqualTo("javajigi");
+	}
+
+	@Test
+	@Transactional
+	void getAnswer_test() {
+		String contents = "Answers Contents1";
+		Question question = questionRepository.findAll().get(0);
+		Answer answer = answerRepository.save(new Answer(user, question, contents));
+		question.addAnswer(answer);
+
+		List<Answer> actual = question.getAnswers();
+		assertThat(actual.get(0).getContents()).isEqualTo(contents);
 	}
 }
