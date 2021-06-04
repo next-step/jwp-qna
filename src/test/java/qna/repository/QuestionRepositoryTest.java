@@ -11,12 +11,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.domain.Question;
+import qna.domain.User;
+import qna.domain.UserTest;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
 
 	@Autowired
 	private QuestionRepository questions;
+	private final UserRepository users;
+
+	private User testUser;
+
+	@Autowired
+	public QuestionRepositoryTest(QuestionRepository questions, UserRepository users) {
+		this.questions = questions;
+		this.users = users;
+
+		this.testUser = users.save(UserTest.JAVAJIGI);
+	}
 
 	@Test
 	@DisplayName("저장")
@@ -29,6 +42,7 @@ public class QuestionRepositoryTest {
 			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
 		);
 	}
+
 	@Test
 	@DisplayName("삭제 되지 않는 질문 조회")
 	void findByDeletedFalse() {
@@ -61,5 +75,15 @@ public class QuestionRepositoryTest {
 		Question actual2 = questions.findByIdAndDeletedFalse(expected2.getId()).orElse(null);
 		assertThat(actual1).isEqualTo(expected1);
 		assertThat(actual2).isNull();
+	}
+
+	@Test
+	@DisplayName("질문 삭제 : 성공")
+	void deleteSuccess() {
+		Question question = new Question(1L, "title1", "contents1").writeBy(testUser);
+		question = questions.save(question);
+		question.delete(testUser);
+		Question result = questions.findByIdAndDeletedFalse(question.getId()).orElse(null);
+		assertThat(result).isNull();
 	}
 }

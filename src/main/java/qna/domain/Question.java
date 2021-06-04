@@ -16,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
+
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity{
@@ -116,4 +118,14 @@ public class Question extends BaseEntity{
                 ", deleted=" + deleted +
                 '}';
     }
+
+	public void delete(User user) {
+		if (!isOwner(user)) {
+			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+		}
+		for (Answer answer : answers) {
+			answer.existOtherUserAnswer(user);
+		}
+		setDeleted(true);
+	}
 }
