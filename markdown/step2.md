@@ -37,12 +37,8 @@ alter table question
   - [X] Answer에 있는 writerId 변경
   - [X]] DeleteHistory에 있는 deletedById 변경
   - [X] Question에 있는 writerId 변경
-- [ ] 다대일, 일대다, 일대일 설정
-
-### 테스트
-
-- [ ] 지연로딩이 잘 동작하는지
+- [X] 다대일, 일대다, 일대일 설정
 
 ### 리팩토링
 
-- [ ] 안쓰는 코드들 제거
+- [X] 안쓰는 코드들 제거
