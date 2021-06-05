@@ -5,10 +5,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -64,7 +66,7 @@ public class AnswerTest {
     @Test
     @DisplayName("question id 값으로 deleted false 리스트 확인")
     void findByQuestionIdAndDeletedFalseTest() {
-        List<Answer> actualList = answerRepository.findByQuestionAndDeletedFalse(question1);
+        List<Answer> actualList = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
 
         assertThat(actualList).contains(answer1);
     }
@@ -81,4 +83,13 @@ public class AnswerTest {
                 () -> assertThat(result.getContents()).isEqualTo(answer1.getContents())
         ) ;
     }
+
+    @DisplayName("작성자가 아닌 사용자는 답변을 삭제할 수 없다.")
+    @Test
+    void deleteFailTest() {
+        //when & then
+        assertThatThrownBy(() -> answer1.deletedByUser(user2)).isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
+
 }

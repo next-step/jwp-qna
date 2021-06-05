@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.springframework.lang.NonNull;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -53,42 +54,35 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
     }
 
-    public void setWriterId(User writer) {
-        this.writer = writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public void deletedByUser(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        delete();
     }
 
     public void delete() {
@@ -106,7 +100,8 @@ public class Question extends BaseEntity {
                 '}';
     }
 
-    public List<Answer> getAnswers() {
-        return new ArrayList<>(answers);
+    public Answers getAnswers() {
+        return new Answers(answers);
     }
+
 }
