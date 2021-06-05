@@ -63,7 +63,7 @@ public class Answer extends BaseEntity {
 
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(NO_PERMISSION_TO_DELETE_ANSWER);
         }

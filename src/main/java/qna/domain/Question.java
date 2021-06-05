@@ -74,7 +74,7 @@ public class Question extends BaseEntity {
 
     }
 
-    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(NO_PERMISSION_TO_DELETE_QUESTION);
         }

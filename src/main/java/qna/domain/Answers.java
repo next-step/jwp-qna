@@ -18,7 +18,7 @@ public class Answers {
         this.answers = answers;
     }
 
-    public DeleteHistories deleteAnswers(User loginUser) throws CannotDeleteException {
+    public DeleteHistories deleteAnswers(User loginUser) {
         try {
             return answers.stream()
                 .map(answer -> answer.delete(loginUser))
