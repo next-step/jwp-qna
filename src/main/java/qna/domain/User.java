@@ -25,9 +25,14 @@ public class User extends BaseEntity {
     private Name name;
 
     @Column(length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
     protected User() {
+    }
+
+    public User(final String userId, final String password, final String name) {
+        this(null, userId, password, name, null);
     }
 
     public User(final String userId, final String password, final String name, final String email) {
@@ -39,7 +44,7 @@ public class User extends BaseEntity {
         this.userId = new UserId(userId);
         this.password = new Password(password);
         this.name = new Name(name);
-        this.email = email;
+        this.email = new Email(email);
     }
 
     public Long getId() {
