@@ -161,6 +161,10 @@ public class User extends BaseEntity {
                 '}';
     }
 
+    public List<DeleteHistory> getDeleteHistories() {
+        return new ArrayList<>(deleteHistories);
+    }
+
     private static class GuestUser extends User {
         @Override
         public boolean isGuestUser() {
