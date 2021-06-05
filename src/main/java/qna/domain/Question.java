@@ -136,4 +136,16 @@ public class Question extends BaseEntity {
 	public boolean isAnswerContains(Answer answer) {
 		return this.answers.isContains(answer);
 	}
+
+	@Override
+	public String toString() {
+		return "Question{" +
+			"id=" + id +
+			", title='" + title + '\'' +
+			", contents='" + contents + '\'' +
+			", writerID=" + writer.getId() +
+			", deleted=" + deleted +
+			", answers=" + answers +
+			'}';
+	}
 }

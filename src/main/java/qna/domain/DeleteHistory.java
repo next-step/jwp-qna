@@ -88,4 +88,15 @@ public class DeleteHistory {
 		this.deletedBy = user;
 		user.getDeleteHistories().add(this);
 	}
+
+	@Override
+	public String toString() {
+		return "DeleteHistory{" +
+			"id=" + id +
+			", contentType=" + contentType +
+			", contentId=" + contentId +
+			", deletedBy=" + deletedBy +
+			", createDate=" + createDate +
+			'}';
+	}
 }

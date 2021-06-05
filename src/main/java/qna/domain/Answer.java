@@ -126,4 +126,15 @@ public class Answer extends BaseEntity {
 		this.setDeleted(true);
 		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
 	}
+
+	@Override
+	public String toString() {
+		return "Answer{" +
+			"id=" + id +
+			", questionID=" + question.getId() +
+			", writerID=" + writer.getId() +
+			", contents='" + contents + '\'' +
+			", deleted=" + deleted +
+			'}';
+	}
 }
