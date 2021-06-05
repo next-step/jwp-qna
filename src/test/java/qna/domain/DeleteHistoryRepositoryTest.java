@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -131,17 +132,15 @@ class DeleteHistoryRepositoryTest {
         // given
         final DeleteHistory deleteHistory = new DeleteHistory(QUESTION, 1L, user1, LocalDateTime.now());
         final DeleteHistory expected = deleteHistoryRepository.save(deleteHistory);
+        final DeleteHistory probe = new DeleteHistory(QUESTION, null, null);
 
         // when
-        final DeleteHistory actual = deleteHistoryRepository.findOne(Example.of(expected))
-            .orElseThrow(IllegalArgumentException::new);
-        final long actualCount = deleteHistoryRepository.count(Example.of(expected));
+        final Optional<DeleteHistory> actual = deleteHistoryRepository.findOne(Example.of(probe));
 
         // then
         assertAll(
-            () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual).isEqualTo(expected),
-            () -> assertThat(actualCount).isEqualTo(1)
+            () -> assertThat(actual.isPresent()).isEqualTo(true),
+            () -> assertThat(actual.orElse(null)).isEqualTo(expected)
         );
     }
 
@@ -173,16 +172,18 @@ class DeleteHistoryRepositoryTest {
         final DeleteHistory deleteHistory = new DeleteHistory(ANSWER, 1L, user1, null);
         final Long id = entityManager.persistAndGetId(deleteHistory, Long.class);
         deleteHistoryRepository.updateDeleteHistorySetContentTypeById(QUESTION, id);
-        final DeleteHistory probe = new DeleteHistory(QUESTION, 1L, user1, null);
+        final DeleteHistory probe = new DeleteHistory(QUESTION, null, null, null);
+        final DeleteHistory expected = deleteHistoryRepository.findById(id)
+            .orElseThrow(NullPointerException::new);
 
         // when
-        final DeleteHistory actual = deleteHistoryRepository.findOne(Example.of(probe))
-            .orElseThrow(IllegalArgumentException::new);
+        final Optional<DeleteHistory> actual = deleteHistoryRepository.findOne(Example.of(probe));
 
         // then
         assertAll(
-            () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual).isEqualTo(deleteHistory)
+            () -> assertThat(actual.isPresent()).isEqualTo(true),
+            () -> assertThat(actual.orElse(null)).isEqualTo(expected)
+
         );
     }
 }
