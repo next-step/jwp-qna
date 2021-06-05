@@ -80,7 +80,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isWrittenBy(User writer) {
-        return true;
+        return writer.equals(this.writer);
     }
 
     @Override
