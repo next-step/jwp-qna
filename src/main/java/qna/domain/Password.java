@@ -1,30 +1,25 @@
 package qna.domain;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import qna.util.StringValidateUtils;
+
 @Embeddable
 public class Password {
 
-    @Column(name = "password", nullable = false, length = 20)
+    public static final int LENGTH = 20;
+
+    @Column(name = "password", nullable = false, length = LENGTH)
     private String password;
 
+    protected Password() {
+    }
+
     public Password(final String password) {
-        this.password = validPassword(password);
-    }
-
-    public Password() {
-    }
-
-    private String validPassword(final String password) {
-        return Optional.ofNullable(password)
-            .filter(string -> string.trim().length() > 0)
-            .filter(string -> string.trim().length() <= 20)
-            .map(String::trim)
-            .orElseThrow(IllegalArgumentException::new);
+        this.password = StringValidateUtils.validate(password, LENGTH);
     }
 
     @Override

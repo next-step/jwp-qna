@@ -1,28 +1,23 @@
 package qna.domain;
 
-import java.util.Optional;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+
+import qna.util.StringValidateUtils;
 
 @Embeddable
 public class Title {
 
-    @Column(name = "title", nullable = false, length = 100)
+    public static final int LENGTH = 100;
+
+    @Column(name = "title", nullable = false, length = LENGTH)
     private String value;
 
     protected Title() {
     }
 
     public Title(final String value) {
-        this.value = validText(value);
-    }
-
-    private String validText(final String text) {
-        return Optional.ofNullable(text)
-            .filter(string -> string.length() > 0)
-            .filter(string -> string.length() <= 100)
-            .orElseThrow(IllegalArgumentException::new);
+        this.value = StringValidateUtils.validate(value, LENGTH);
     }
 
     public String value() {
