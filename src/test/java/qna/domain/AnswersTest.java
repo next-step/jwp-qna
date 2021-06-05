@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,7 @@ class AnswersTest {
 		answers.addAnswer(answer1);
 		answers.addAnswer(answer2);
 
-		List<DeleteHistory> deleteHistories = answers.deleteAnswers(this.loginUser);
+		List<DeleteHistory> deleteHistories = answers.deleteAnswers(this.loginUser, LocalDateTime.now());
 		assertThat(deleteHistories.contains(answer1)).isFalse();
 		assertThat(deleteHistories.contains(answer2)).isFalse();
 		assertThat(answer1.isDeleted()).isTrue();
@@ -47,7 +48,7 @@ class AnswersTest {
 		answers.addAnswer(answer2);
 
 		assertThatThrownBy(() -> {
-			answers.deleteAnswers(this.loginUser);
+			answers.deleteAnswers(this.loginUser, LocalDateTime.now());
 		}).isInstanceOf(CannotDeleteException.class)
 			.hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 	}

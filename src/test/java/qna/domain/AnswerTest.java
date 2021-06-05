@@ -2,6 +2,8 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDateTime;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +46,7 @@ public class AnswerTest {
 	void test_작성자불일치_답변제거() {
 		Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "test");
 		Assertions.assertThatThrownBy(() -> {
-			answer.delete(UserTest.SANJIGI);
+			answer.delete(UserTest.SANJIGI, LocalDateTime.now());
 		}).isInstanceOf(CannotDeleteException.class)
 			.hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 	}
@@ -53,12 +55,14 @@ public class AnswerTest {
 	@DisplayName("작성자 일치시 답변제거")
 	void test_답변제거_작성자일치() throws CannotDeleteException {
 		Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "test");
-		DeleteHistory deleteHistory = answer.delete(UserTest.JAVAJIGI);
+		LocalDateTime deleteDate = LocalDateTime.of(2021, 4, 1, 0, 0);
+		DeleteHistory deleteHistory = answer.delete(UserTest.JAVAJIGI, deleteDate);
 
 		assertThat(deleteHistory.getDeletedBy()).isEqualTo(UserTest.JAVAJIGI);
 		assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER);
 		assertThat(deleteHistory.getContentId()).isEqualTo(answer.getId());
 		assertThat(deleteHistory.getDeletedBy()).isEqualTo(answer.getWriter());
+		assertThat(deleteHistory.getCreateDate()).isEqualTo(deleteDate);
 		assertThat(deleteHistory.getCreateDate()).isNotNull();
 
 	}

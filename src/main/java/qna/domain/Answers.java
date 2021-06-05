@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,10 +18,11 @@ public class Answers {
 	protected Answers() {
 	}
 
-	public List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
+	public List<DeleteHistory> deleteAnswers(User loginUser, LocalDateTime deleteDateTime) throws
+		CannotDeleteException {
 		List<DeleteHistory> deleteHistories = new ArrayList<>();
 		for (Answer answer : this.answers) {
-			deleteHistories.add(answer.delete(loginUser));
+			deleteHistories.add(answer.delete(loginUser, deleteDateTime));
 		}
 		return deleteHistories;
 	}

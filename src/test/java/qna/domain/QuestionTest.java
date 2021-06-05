@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ public class QuestionTest {
 	@DisplayName("질문 작성자가 아닌경우 오류발생")
 	void test_질문삭제_권한없음() {
 		assertThatThrownBy(() -> {
-			question.delete(UserTest.JAVAJIGI);
+			question.delete(UserTest.JAVAJIGI, LocalDateTime.now());
 		}).isInstanceOf(CannotDeleteException.class)
 			.hasMessageContaining("질문을 삭제할 권한이 없습니다.");
 	}
@@ -35,7 +36,7 @@ public class QuestionTest {
 	@Test
 	@DisplayName("질문 작성자 일치하는 경우 삭제")
 	void test_질문삭제() throws CannotDeleteException {
-		List<DeleteHistory> deleteHistories = this.question.delete(this.loginUser);
+		List<DeleteHistory> deleteHistories = this.question.delete(this.loginUser, LocalDateTime.now());
 		assertThat(deleteHistories.size()).isEqualTo(1);
 		assertThat(this.question.isDeleted()).isTrue();
 	}

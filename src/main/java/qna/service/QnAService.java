@@ -1,5 +1,6 @@
 package qna.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ public class QnAService {
 	@Transactional
 	public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
 		Question question = findQuestionById(questionId);
-		List<DeleteHistory> deleteHistories = question.delete(loginUser);
+		List<DeleteHistory> deleteHistories = question.delete(loginUser, LocalDateTime.now());
 		deleteHistoryService.saveAll(deleteHistories);
 	}
 }

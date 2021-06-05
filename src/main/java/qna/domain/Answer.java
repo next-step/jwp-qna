@@ -116,12 +116,12 @@ public class Answer extends BaseEntity {
 		return Objects.hash(id, question, writer, contents, deleted);
 	}
 
-	public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+	public DeleteHistory delete(User loginUser, LocalDateTime deleteDateTime) throws CannotDeleteException {
 		if (!this.isOwner(loginUser)) {
 			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 		}
 		this.deleted.delete();
-		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, deleteDateTime);
 	}
 
 	@Override
