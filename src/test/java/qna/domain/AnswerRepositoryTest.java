@@ -12,7 +12,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static qna.domain.AnswerTest.A1;
+import static qna.domain.AnswerTest.*;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.UserTest.JAVAJIGI;
 
@@ -29,7 +29,8 @@ class AnswerRepositoryTest {
 
     private Answer answer1;
     private Answer answer2;
-    private Answer answer3;
+
+    private Answer deletedAnswer1;
 
     private Question question;
 
@@ -37,14 +38,9 @@ class AnswerRepositoryTest {
     void setUp() {
         question = questions.save(Q1);
 
-        answer1 = new Answer(JAVAJIGI, Q1, "질문에 답변드립니다.");
-        answer2 = new Answer(JAVAJIGI, Q1, "질문에 추가 답변드립니다.");
-        answer3 = new Answer(JAVAJIGI, Q1, "실수로 달은 답변입니다.");
-        answer3.setDeleted(true);
-
-        answers.save(answer1);
-        answers.save(answer2);
-        answers.save(answer3);
+        answer1 = answers.save(A1);
+        answer2 = answers.save(A2);
+        deletedAnswer1 = answers.save(DELETED_ANSWER1);
     }
 
     @Test
@@ -57,7 +53,7 @@ class AnswerRepositoryTest {
         Optional<Answer> actualResult = answers.findById(expectedResult.getId());
 
         // Then
-        assertThat(actualResult.get()).isEqualTo(expectedResult);
+        assertThat(actualResult).containsSame(expectedResult);
     }
 
     @Test
@@ -83,19 +79,19 @@ class AnswerRepositoryTest {
         Optional<Answer> foundAnswer = answers.findByIdAndDeletedFalse(nonDeletedAnswer.getId());
 
         // Then
-        assertThat(foundAnswer.isPresent()).isTrue();
+        assertThat(foundAnswer).isPresent();
     }
 
     @Test
     @DisplayName("findByIdAndDeletedFalse_오류_데이터_없음")
     void findByIdAndDeletedFalse_오류_데이터_없음() {
         // Given
-        Answer deletedAnswer = answer3;
+        Answer deletedAnswer = deletedAnswer1;
 
         // When
         Optional<Answer> foundAnswer = answers.findByIdAndDeletedFalse(deletedAnswer.getId());
 
         // Then
-        assertThat(foundAnswer.isPresent()).isFalse();
+        assertThat(foundAnswer).isEmpty();
     }
 }
