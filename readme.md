@@ -15,7 +15,7 @@
 
 - [x] DeleteHistory
   - [x] 도메인 클래스 구현
-  - [ ] DeleteHistory 저장 후 반환된 Id로 조회 했을 때 같은 객체가 조회 되어야 한다.
+  - [x] DeleteHistory 저장 후 반환된 Id로 조회 했을 때 같은 객체가 조회 되어야 한다.
 
   
 - [ ] Question
