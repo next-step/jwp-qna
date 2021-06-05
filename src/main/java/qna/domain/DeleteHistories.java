@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,7 +8,7 @@ public class DeleteHistories {
     private final List<DeleteHistory> deleteHistories;
 
     public DeleteHistories(DeleteHistory... deleteHistories) {
-        this.deleteHistories = new ArrayList<>(Arrays.asList(deleteHistories));
+        this(Arrays.asList(deleteHistories));
     }
 
     public DeleteHistories(List<DeleteHistory> deleteHistories) {
