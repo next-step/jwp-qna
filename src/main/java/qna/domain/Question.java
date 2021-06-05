@@ -53,8 +53,12 @@ public class Question extends BaseEntity {
 		return this;
 	}
 
-	public Answers getAnswers() {
-		return answers;
+	public void addAnswerInQuestion(Answer answer) {
+		this.answers.addAnswer(answer);
+	}
+
+	public void removeAnswerInQuestion(Answer answer) {
+		this.answers.removeAnswer(answer);
 	}
 
 	public boolean isOwner(User writer) {
@@ -127,5 +131,9 @@ public class Question extends BaseEntity {
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, title, contents, writer, deleted, answers);
+	}
+
+	public boolean isAnswerContains(Answer answer) {
+		return this.answers.isContains(answer);
 	}
 }
