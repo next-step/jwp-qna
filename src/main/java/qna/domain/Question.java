@@ -56,6 +56,13 @@ public class Question extends BaseEntity {
         this(null, title, contents, writer);
     }
 
+    public Question(String title, String contents, User writer, boolean deleted) {
+        this.title = title;
+        this.contents = contents;
+        this.writer = writer;
+        this.deleted = deleted;
+    }
+
     public Question(Long id, String title, String contents, User writer) {
         this.id = id;
         this.title = title;
@@ -100,21 +107,12 @@ public class Question extends BaseEntity {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public Question setDeleted(boolean deleted) {
-        this.deleted = deleted;
-        return this;
     }
 
     public User getWriter() {
@@ -153,4 +151,8 @@ public class Question extends BaseEntity {
             '}';
     }
 
+    public void update(Question question) {
+        this.title = question.getTitle();
+        this.contents = question.getContents();
+    }
 }

@@ -19,6 +19,7 @@ import qna.domain.User;
 @DataJpaTest
 public class QuestionRepositoryTest {
 
+    private static final boolean DELETED = true;
     @Autowired
     private QuestionRepository questionRepository;
 
@@ -136,7 +137,7 @@ public class QuestionRepositoryTest {
         List<Question> questions = new ArrayList<>();
         questions.add(new Question("질문있어요1", "내용입니다1", questioner));
         questions.add(new Question("질문있어요2", "내용입니다2", questioner));
-        questions.add(new Question("질문있어요3", "내용입니다3", questioner).setDeleted(true));
+        questions.add(new Question("질문있어요3", "내용입니다3", questioner, DELETED));
         questionRepository.saveAll(questions);
 
         //When
@@ -200,11 +201,11 @@ public class QuestionRepositoryTest {
         //Given
         User questioner = new User("test1", "1234", "홍길동", "hong@test.com");
         Question question = new Question("질문있어요", "내용입니다.", questioner);
-        questionRepository.save(question);
+        Question savedQuestion = questionRepository.save(question);
 
         //When
-        Question savedQuestion = questionRepository.findById(question.getId()).get();
-        savedQuestion.setTitle("제목 변경");
+        Question modifyQuestion = new Question("질문수정했어요", "내용수정했습니다.");
+        savedQuestion.update(modifyQuestion);
 
         //Then
         Question actual = questionRepository.findById(savedQuestion.getId()).get();
