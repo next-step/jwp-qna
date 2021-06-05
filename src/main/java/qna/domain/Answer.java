@@ -21,7 +21,7 @@ import qna.exception.UnAuthorizedException;
 @Entity
 public class Answer extends BaseEntity {
 
-    public static final String NO_PERMISSION_TO_DELETE_ANSWER = "답변을 삭제할 권한이 없습니다.";
+    private static final String NO_PERMISSION_TO_DELETE_ANSWER = "답변을 삭제할 권한이 없습니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
