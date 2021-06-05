@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,14 @@ public class QuestionTest {
 	@Autowired
 	QuestionRepository questionRepository;
 
-	public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-	public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+	Question Q1;
+	Question Q2;
+
+	@BeforeEach
+	void setUp() {
+		Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+		Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+	}
 
 	@Test
 	@DisplayName("jpa 작성 메소드 사용(findByTitleContainingOrderByIdDesc)")
@@ -32,7 +39,7 @@ public class QuestionTest {
 		questionRepository.save(Q1);
 		assertThat(questionRepository.findByDeletedFalse().size()).isEqualTo(0);
 
-		Q1.setDeleted(false); // ?
+		Q1.setDeleted(false);
 		assertThat(questionRepository.findByDeletedFalse().size()).isEqualTo(1);
 	}
 
