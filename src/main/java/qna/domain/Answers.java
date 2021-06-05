@@ -20,10 +20,9 @@ public class Answers {
 
     public DeleteHistories deleteAnswers(User loginUser) throws CannotDeleteException {
         try {
-            List<DeleteHistory> deleteHistories = answers.stream()
+            return answers.stream()
                 .map(answer -> answer.delete(loginUser))
-                .collect(Collectors.toList());
-            return new DeleteHistories(deleteHistories);
+                .collect(Collectors.collectingAndThen(Collectors.toList(), DeleteHistories::new));
         } catch (CannotDeleteException e) {
             throw new CannotDeleteException(CANNOT_DELETE_SOMEONE_ELSE_ANSWER);
         }
