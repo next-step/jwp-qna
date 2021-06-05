@@ -14,14 +14,14 @@ public class Answers {
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
-    public Answers() {
+    protected Answers() {
     }
 
     public Answers(List<Answer> answers) {
         this.answers = answers;
     }
 
-    public void validateOwners(User loginUser) throws CannotDeleteException {
+    void validateOwners(User loginUser) throws CannotDeleteException {
         for (Answer answer : answers) {
             validateOwner(loginUser, answer);
         }
@@ -33,7 +33,7 @@ public class Answers {
         }
     }
 
-    public void deleteAllAndAddHistories(List<DeleteHistory> deleteHistories) {
+    void deleteAllAndAddHistories(List<DeleteHistory> deleteHistories) {
         for (Answer answer : answers) {
             answer.setDeleted(true);
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));

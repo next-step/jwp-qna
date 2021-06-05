@@ -10,9 +10,10 @@ public class DeleteHistory extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
+    @Column(name = "content_id")
     private Long contentId;
 
-    @JoinColumn
+    @JoinColumn(name = "deleted_by_id")
     @OneToOne(fetch = FetchType.LAZY)
     private User deleter;
 
