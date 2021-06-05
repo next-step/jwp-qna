@@ -79,10 +79,24 @@ public class Question extends BaseEntity {
 	}
 
 	public void delete(User loggedInUser) throws CannotDeleteException {
+		validateWriter(loggedInUser);
+		validateAnswersOwner(loggedInUser);
+		this.answers.forEach(Answer::delete);
+		this.deleted = true;
+	}
+
+	private void validateWriter(User loggedInUser) throws CannotDeleteException {
 		if (!this.writer.matchUser(loggedInUser)) {
 			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 		}
-		this.deleted = true;
+	}
+
+	private void validateAnswersOwner(User loggedInUser) throws CannotDeleteException {
+		for (Answer answer : this.answers) {
+			if (!answer.isOwner(loggedInUser)) {
+				throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+			}
+		}
 	}
 
 	@Override

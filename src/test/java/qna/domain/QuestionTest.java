@@ -94,7 +94,25 @@ public class QuestionTest {
 
 	@Test
 	@DisplayName("질문이 삭제될 떄 답변도 같이 삭제되어야 한다")
-	void answer_delete_test() {
+	void answer_delete_test() throws CannotDeleteException {
+		User loggedInUser = user;
+		Question question = questionRepository.findFirstByTitle("title1").get();
+		Answer answer = answerRepository.save(new Answer(user, question, "not loggedInUser"));
+		question.addAnswer(answer);
 
+		question.delete(loggedInUser);
+		assertThat(answer.isDeleted()).isTrue();
+	}
+
+	@Test
+	@DisplayName("로그인 유저가 아닌 다른작성자의 질문이 있으면 익셉션이 발생한다")
+	void answer_delete_test2() {
+		User loggedInUser = user;
+		Question question = questionRepository.findFirstByTitle("title1").get();
+		Answer answer = answerRepository.save(new Answer(user2, question, "not loggedInUser"));
+		question.addAnswer(answer);
+
+		assertThatThrownBy(() -> question.delete(loggedInUser))
+				.isInstanceOf(CannotDeleteException.class);
 	}
 }
