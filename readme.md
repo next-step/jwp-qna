@@ -3,3 +3,10 @@
 
 - [ ] 아래의 DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
 - [ ] @DataJpaTest를 사용하여 학습 테스트를 해 본다.
+
+## 구현 목록
+- [ ] Answer
+  - [ ] Answer 저장 후 그 Id로 조회 했을 때 같은 객체가 조회 되어야 한다.
+  - [ ] 특정 Question에 대한 Answer 중 삭제 되지 않은 것만 조회
+  - [ ] 특정 AnswerId로 삭제 되지 않은 Answer 조회 했을 때 해당 Answer가 삭제되어 있을 때
+  - [ ] 특정 AnswerId로 삭제 되지 않은 Answer 조회 했을 때 해당 Answer가 삭제되어 있지 않을 때
