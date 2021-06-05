@@ -1,6 +1,8 @@
 package qna.domain;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -19,14 +21,16 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answers;
 
+    private User user1;
+    private User user2;
     private Question question1;
     private Answer answer1;
     private Answer answer2;
 
     @BeforeEach
     void setUp() {
-        User user1 = new User("userId1", "1234", "userName1", "userEmail1");
-        User user2 = new User("userId2", "1234", "userName2", "userEmail2");
+        user1 = new User("userId1", "1234", "userName1", "userEmail1");
+        user2 = new User("userId2", "1234", "userName2", "userEmail2");
         question1 = new Question("title1", "contents1").writeBy(user1);
         answer1 = new Answer(user1, question1, "contents1");
         answer2 = new Answer(user2, question1, "contents2");
@@ -37,7 +41,7 @@ class AnswerRepositoryTest {
     @Test
     void findByQuestionIdAndDeletedFalse() {
         //given
-        answer2.delete();
+        answer2.delete(user2);
 
         //when
         List<Answer> actual = answers.findByQuestionIdAndDeletedFalse(question1.getId());
@@ -65,7 +69,7 @@ class AnswerRepositoryTest {
     @Test
     void findByIdAndDeletedFalseIfPresent() {
         //given
-        answer1.delete();
+        answer1.delete(user1);
 
         //when
         assertThatThrownBy(() -> answers.findByIdAndDeletedFalse(answer1.getId())

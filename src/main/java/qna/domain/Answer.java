@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.base.BaseEntity;
@@ -10,6 +11,7 @@ import java.util.Objects;
 
 @Entity
 public class Answer extends BaseEntity {
+    public static final String DELETE_EXCEPTION_MESSAGE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +52,7 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
@@ -70,9 +72,12 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public DeleteHistory delete() {
+    public DeleteHistory delete(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(DELETE_EXCEPTION_MESSAGE);
+        }
         this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+        return DeleteHistory.ofAnswer(id, writer, LocalDateTime.now());
     }
 
     @Override
