@@ -25,8 +25,8 @@ public class QuestionTest {
 	private UserRepository users;
 	@Autowired
 	private QuestionRepository questions;
-	private User savedJAVAJIGI;
-	private User savedSANJIGI;
+	private User savedJavajigi;
+	private User savedSangiji;
 
 	@DisplayName("테스트 초기화")
 	@BeforeEach
@@ -45,13 +45,13 @@ public class QuestionTest {
 	}
 
 	private void 각_답변별_작성자정보_저장() {
-		if (Objects.isNull(savedJAVAJIGI)) {
-			savedJAVAJIGI = users.save(Q1.getWriter());
-			Q1.writeBy(savedJAVAJIGI);
+		if (Objects.isNull(savedJavajigi)) {
+			savedJavajigi = users.save(Q1.getWriter());
+			Q1.writeBy(savedJavajigi);
 		}
-		if (Objects.isNull(savedSANJIGI)) {
-			savedSANJIGI = users.save(Q2.getWriter());
-			Q2.writeBy(savedSANJIGI);
+		if (Objects.isNull(savedSangiji)) {
+			savedSangiji = users.save(Q2.getWriter());
+			Q2.writeBy(savedSangiji);
 		}
 	}
 

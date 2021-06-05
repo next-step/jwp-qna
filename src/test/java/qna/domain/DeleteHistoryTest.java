@@ -28,8 +28,8 @@ public class DeleteHistoryTest {
 	private AnswerRepository answers;
 	@Autowired
 	private QuestionRepository questions;
-	private User savedJAVAJIGI;
-	private User savedSANJIGI;
+	private User savedJavajigi;
+	private User savedSangiji;
 	private Question savedQuestion;
 	private Answer savedAnswer;
 	private DeleteHistory deleteHistory1;
@@ -56,31 +56,33 @@ public class DeleteHistoryTest {
 	}
 
 	private void 삭제_히스토리_객체_초기화() {
-		deleteHistory1 = new DeleteHistory(ContentType.QUESTION, savedQuestion.getId(), savedQuestion.getWriter(), LocalDateTime.now());
-		deleteHistory2 = new DeleteHistory(ContentType.ANSWER, savedAnswer.getId(), savedAnswer.getWriter(), LocalDateTime.now());
+		deleteHistory1 = new DeleteHistory(ContentType.QUESTION, savedQuestion.getId(),
+			savedQuestion.getWriter(), LocalDateTime.now());
+		deleteHistory2 = new DeleteHistory(ContentType.ANSWER, savedAnswer.getId(),
+			savedAnswer.getWriter(), LocalDateTime.now());
 	}
 
 	private void 답변정보_저장() {
 		if (Objects.isNull(savedAnswer)) {
 			Answer tempAnswer = AnswerTest.A1;
 			tempAnswer.setQuestion(savedQuestion);
-			tempAnswer.setWriter(savedSANJIGI);
+			tempAnswer.setWriter(savedSangiji);
 			savedAnswer = answers.save(tempAnswer);
 		}
 	}
 
 	private void 질문정보_저장() {
 		if (Objects.isNull(savedQuestion)) {
-			savedQuestion = questions.save(QuestionTest.Q1.writeBy(savedJAVAJIGI));
+			savedQuestion = questions.save(QuestionTest.Q1.writeBy(savedJavajigi));
 		}
 	}
 
 	private void 작성자정보_저장() {
-		if (Objects.isNull(savedJAVAJIGI)) {
-			savedJAVAJIGI = users.save(UserTest.JAVAJIGI);
+		if (Objects.isNull(savedJavajigi)) {
+			savedJavajigi = users.save(UserTest.JAVAJIGI);
 		}
-		if (Objects.isNull(savedSANJIGI)) {
-			savedSANJIGI = users.save(UserTest.SANJIGI);
+		if (Objects.isNull(savedSangiji)) {
+			savedSangiji = users.save(UserTest.SANJIGI);
 		}
 	}
 

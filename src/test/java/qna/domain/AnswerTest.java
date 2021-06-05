@@ -23,8 +23,8 @@ public class AnswerTest {
 	private AnswerRepository answers;
 	@Autowired
 	private QuestionRepository questions;
-	private User savedJAVAJIGI;
-	private User savedSANJIGI;
+	private User savedJavajigi;
+	private User savedSangiji;
 	private Question savedQuestion1;
 	private Question savedQuestion2;
 
@@ -48,23 +48,23 @@ public class AnswerTest {
 
 	private void 각_답변별_질문정보_저장() {
 		if (Objects.isNull(savedQuestion1)) {
-			savedQuestion1 = questions.save(QuestionTest.Q1.writeBy(savedJAVAJIGI));
+			savedQuestion1 = questions.save(QuestionTest.Q1.writeBy(savedJavajigi));
 			A1.setQuestion(savedQuestion1);
 		}
 		if (Objects.isNull(savedQuestion2)) {
-			savedQuestion2 = questions.save(QuestionTest.Q2.writeBy(savedSANJIGI));
+			savedQuestion2 = questions.save(QuestionTest.Q2.writeBy(savedSangiji));
 			A2.setQuestion(savedQuestion2);
 		}
 	}
 
 	private void 각_답변별_작성자정보_저장() {
-		if (Objects.isNull(savedJAVAJIGI)) {
-			savedJAVAJIGI = users.save(UserTest.JAVAJIGI);
-			A1.setWriter(savedJAVAJIGI);
+		if (Objects.isNull(savedJavajigi)) {
+			savedJavajigi = users.save(UserTest.JAVAJIGI);
+			A1.setWriter(savedJavajigi);
 		}
-		if (Objects.isNull(savedSANJIGI)) {
-			savedSANJIGI = users.save(UserTest.SANJIGI);
-			A2.setWriter(savedSANJIGI);
+		if (Objects.isNull(savedSangiji)) {
+			savedSangiji = users.save(UserTest.SANJIGI);
+			A2.setWriter(savedSangiji);
 		}
 	}
 
@@ -144,15 +144,15 @@ public class AnswerTest {
 
 		//when
 		Optional<Answer> beforeChangeWriter = answers.findById(expected.getId());
-		expected.setWriter(savedSANJIGI);
+		expected.setWriter(savedSangiji);
 		Optional<Answer> afterChangeWriter = answers.findById(expected.getId());
 
 		//then
 		assertAll(
-			() -> assertThat(beforeChangeWriter.get().getWriter().equals(savedSANJIGI)).isTrue(),
-			() -> assertThat(beforeChangeWriter.get().getWriter().equals(savedJAVAJIGI)).isFalse(),
-			() -> assertThat(afterChangeWriter.get().getWriter().equals(savedSANJIGI)).isTrue(),
-			() -> assertThat(afterChangeWriter.get().getWriter().equals(savedJAVAJIGI)).isFalse()
+			() -> assertThat(beforeChangeWriter.get().getWriter().equals(savedSangiji)).isTrue(),
+			() -> assertThat(beforeChangeWriter.get().getWriter().equals(savedJavajigi)).isFalse(),
+			() -> assertThat(afterChangeWriter.get().getWriter().equals(savedSangiji)).isTrue(),
+			() -> assertThat(afterChangeWriter.get().getWriter().equals(savedJavajigi)).isFalse()
 		);
 	}
 
