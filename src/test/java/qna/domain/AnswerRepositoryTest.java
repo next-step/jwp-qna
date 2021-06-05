@@ -104,7 +104,7 @@ public class AnswerRepositoryTest {
     @DisplayName("작성자 확인 테스트")
     void isWrittenByTest() {
         Answer savedAnswer = answers.save(answer1);
-        assertThat(savedAnswer.isWrittenBy(answerWriter1));
+        assertThat(savedAnswer.isOwner(answerWriter1));
     }
 
     @Test
