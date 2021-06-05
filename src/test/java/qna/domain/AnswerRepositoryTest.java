@@ -24,19 +24,22 @@ public class AnswerRepositoryTest {
     private Question expectedQuestion;
     private Answer answer1;
     private Answer answer2;
+    private User questionWriter;
+    private User answerWriter1;
+    private User answerWriter2;
 
     @BeforeEach
     void setUp() {
-        User questionWriter = new User("qwriter", "password", "name", "sunju@slipp.net");
+        questionWriter = new User("qwriter", "password", "name", "sunju@slipp.net");
         expectedQuestion = new Question("title3", "contents2").writeBy(questionWriter);
         users.save(questionWriter);
         questions.save(expectedQuestion);
 
-        User answerWriter = new User("awriter", "password", "name", "sunju@slipp.net");
-        answer1 = new Answer(answerWriter, expectedQuestion, "Answers Contents");
-        users.save(answerWriter);
+        answerWriter1 = new User("awriter", "password", "name", "sunju@slipp.net");
+        answer1 = new Answer(answerWriter1, expectedQuestion, "Answers Contents");
+        users.save(answerWriter1);
 
-        User answerWriter2 = new User("awriter2", "password", "name", "sunju@slipp.net");
+        answerWriter2 = new User("awriter2", "password", "name", "sunju@slipp.net");
         answer2 = new Answer(answerWriter2, expectedQuestion, "Answers Contents2");
         users.save(answerWriter2);
     }
@@ -95,5 +98,27 @@ public class AnswerRepositoryTest {
         assertThat(answer).isEqualTo(savedAnswer1); // findById test
         assertThat(answer.isDeleted()).isEqualTo(false); //deleted false test
 
+    }
+
+    @Test
+    @DisplayName("작성자 확인 테스트")
+    void isWrittenByTest() {
+        Answer savedAnswer = answers.save(answer1);
+        assertThat(savedAnswer.isWrittenBy(answerWriter1));
+    }
+
+    @Test
+    @DisplayName("답변 삭제 테스트")
+    void deleteAnswerTest() {
+        Answer savedAnswer1 = answers.save(answer1);
+        answers.save(answer2);
+        answers.flush();
+        List<Answer> beforeDeleteList = answers.deletedFalse();
+        assertThat(beforeDeleteList.size()).isEqualTo(2);
+
+        savedAnswer1.delete();
+        answers.flush();
+        List<Answer> afterDeleteList = answers.deletedFalse();
+        assertThat(afterDeleteList.size()).isEqualTo(1);
     }
 }

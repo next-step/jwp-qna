@@ -79,6 +79,10 @@ public class Answer extends BaseEntity {
         this.deleted = true;
     }
 
+    public boolean isWrittenBy(User writer) {
+        return true;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
