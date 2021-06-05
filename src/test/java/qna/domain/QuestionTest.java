@@ -119,9 +119,9 @@ public class QuestionTest {
 	void deleteHistory_test() throws CannotDeleteException {
 		User loggedInUser = user;
 		Question question = questionRepository.findFirstByTitle("title1").get();
-		List<DeleteHistory> deleteHistories = question.delete(loggedInUser);
+		DeleteHistories deleteHistories = question.delete(loggedInUser);
 
-		DeleteHistory questionDeleteHistory = deleteHistories.stream()
+		DeleteHistory questionDeleteHistory = deleteHistories.getDeleteHistories().stream()
 				.filter(deleteHistory -> deleteHistory.getContentType() == ContentType.QUESTION)
 				.findFirst()
 				.get();

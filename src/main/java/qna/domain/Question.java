@@ -75,14 +75,14 @@ public class Question extends BaseEntity {
 		return deleted;
 	}
 
-	public List<DeleteHistory> delete(User loggedInUser) throws CannotDeleteException {
+	public DeleteHistories delete(User loggedInUser) throws CannotDeleteException {
 		validateWriter(loggedInUser);
 		validateAnswersOwner(loggedInUser);
 		List<DeleteHistory> deleteHistories = this.answers.stream().map(Answer::delete)
 				.collect(Collectors.toList());
 		this.deleted = true;
 		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loggedInUser));
-		return deleteHistories;
+		return new DeleteHistories(deleteHistories);
 	}
 
 	private void validateWriter(User loggedInUser) throws CannotDeleteException {
@@ -92,11 +92,8 @@ public class Question extends BaseEntity {
 	}
 
 	private void validateAnswersOwner(User loggedInUser) throws CannotDeleteException {
-		for (Answer answer : this.answers) {
-			if (!answer.isOwner(loggedInUser)) {
-				throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-			}
-		}
+		Answers answers = new Answers(this.answers);
+		answers.validateAnswersOwner(loggedInUser);
 	}
 
 	@Override
