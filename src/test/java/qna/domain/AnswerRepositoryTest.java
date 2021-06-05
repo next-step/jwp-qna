@@ -10,11 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static qna.domain.AnswerTest.*;
 import static qna.domain.QuestionTest.Q1;
-import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
 @DisplayName("AnswerRepository 테스트")

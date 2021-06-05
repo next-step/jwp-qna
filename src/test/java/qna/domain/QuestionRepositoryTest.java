@@ -10,9 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static qna.domain.AnswerTest.DELETED_ANSWER1;
-import static qna.domain.DeleteHistoryTest.DELETE_HISTORY_ANSWER1;
 import static qna.domain.QuestionTest.*;
 
 @DataJpaTest
@@ -45,7 +42,7 @@ class QuestionRepositoryTest {
         Optional<Question> actualResult = questions.findById(expectedResult.getId());
 
         // Then
-        assertThat(actualResult).contains(expectedResult);
+        assertThat(actualResult).containsSame(expectedResult);
     }
 
     @Test
@@ -71,7 +68,7 @@ class QuestionRepositoryTest {
         Optional<Question> actualResult = questions.findByIdAndDeletedFalse(targetId);
 
         // Then
-        assertThat(actualResult).contains(question1);
+        assertThat(actualResult).containsSame(question1);
     }
 
     @Test

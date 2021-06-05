@@ -41,6 +41,6 @@ class DeletedHistoryRepositoryTest {
         Optional<DeleteHistory> actualResult = deleteHistories.findById(expectedResult.getId());
 
         // Then
-        assertThat(actualResult).contains(expectedResult);
+        assertThat(actualResult).containsSame(expectedResult);
     }
 }
