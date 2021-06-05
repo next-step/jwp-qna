@@ -72,7 +72,7 @@ public class Answer extends BaseEntity {
         return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 

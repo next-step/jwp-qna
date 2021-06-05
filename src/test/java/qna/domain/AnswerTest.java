@@ -12,12 +12,6 @@ public class AnswerTest {
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Test
-    void 답변자가_맞는지_확인() {
-        User answerer = UserTest.JAVAJIGI;
-        assertThat(A1.isOwner(answerer)).isTrue();
-    }
-
-    @Test
     void 답변삭제시_질문자와_다를경우_예외발생() {
         User loginUser = UserTest.HOONHEE;
         assertThatThrownBy(() -> A1.delete(loginUser))
