@@ -51,6 +51,10 @@ public class User extends BaseEntity {
 		return this.userId.equals(userId);
 	}
 
+	public boolean matchUser(User user) {
+		return this.userId.equals(user.userId);
+	}
+
 	public boolean matchPassword(String targetPassword) {
 		return this.password.equals(targetPassword);
 	}
