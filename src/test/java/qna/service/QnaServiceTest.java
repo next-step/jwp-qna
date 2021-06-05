@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.domain.*;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -84,6 +83,28 @@ class QnaServiceTest {
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer, answer2));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId()))
+                .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    public void deleteQuestion_삭제권한_본인글_확인() throws Exception {
+        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+        assertThat(qnaService.findQuestionForDeleteWithSameWriterAuth(UserTest.JAVAJIGI, question.getId()).getId()).isEqualTo(question.getId());
+    }
+
+    @Test
+    public void deleteQuestion_삭제권한_다른사람답변여부_확인() throws Exception {
+        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
+
+        List<Answer> answers = qnaService.findAnswersForDeleteWithSameWriterAuth(UserTest.JAVAJIGI, question.getId());
+        assertThat(answers.get(0).getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+    }
+
+    @Test
+    public void deleteQuestion_삭제권한_다른사람답변여부_오류확인() throws Exception {
+        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
+
+        assertThatThrownBy(() -> qnaService.findAnswersForDeleteWithSameWriterAuth(UserTest.SANJIGI, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
