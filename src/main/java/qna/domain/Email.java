@@ -19,7 +19,7 @@ public class Email {
     }
 
     public Email(final String email) {
-        value = StringValidateUtils.validate(email, LENGTH);
+        value = StringValidateUtils.validateNullable(email, LENGTH);
     }
 
     @Override
