@@ -39,24 +39,24 @@ public class QuestionRepositoryTest {
     void saveTest() {
         // 데이터 테스트
         assertThat(question1.getId()).isNull();
-        Question actualQuestion = questions.save(question1);
+        Question savedQuestion = questions.save(question1);
         questions.flush();
-        assertThat(actualQuestion.getId()).isNotNull();
-        assertThat(actualQuestion.getTitle()).isEqualTo(question1.getTitle());
-        assertThat(actualQuestion.getContents()).isEqualTo(question1.getContents());
-        assertThat(actualQuestion.getCreatedAt()).isNotNull();
-        assertThat(actualQuestion.getUpdatedAt()).isNotNull();
+        assertThat(savedQuestion.getId()).isNotNull();
+        assertThat(savedQuestion.getTitle()).isEqualTo(question1.getTitle());
+        assertThat(savedQuestion.getContents()).isEqualTo(question1.getContents());
+        assertThat(savedQuestion.getCreatedAt()).isNotNull();
+        assertThat(savedQuestion.getUpdatedAt()).isNotNull();
     }
 
     @Test
     @DisplayName("Question 여러개 save 테스트")
     void saveMultipleQuestionTest() {
-        Question actualQuestion1 = questions.save(question1);
-        Question actualQuestion2 = questions.save(question2);
+        Question savedQuestion1 = questions.save(question1);
+        Question savedQuestion2 = questions.save(question2);
         questions.flush();
         List<Question> questionList = questions.findAll();
         assertThat(questionList.size()).isEqualTo(2);
-        assertThat(questionList).containsExactly(actualQuestion1, actualQuestion2);
+        assertThat(questionList).containsExactly(savedQuestion1, savedQuestion2);
     }
 
 
@@ -64,14 +64,14 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 질문 검색 테스트")
     void findByDeletedFalseTest() {
-        Question actualQuestion1 = questions.save(question1);
-        Question actualQuestion2 = questions.save(question2);
+        Question savedQuestion1 = questions.save(question1);
+        Question savedQuestion2 = questions.save(question2);
         questions.flush();
         List<Question> actualList = questions.findByDeletedFalse();
 
         //findByDeletedFalse test
         assertThat(actualList.size()).isEqualTo(2);
-        assertThat(actualList).contains(actualQuestion1, actualQuestion2);
+        assertThat(actualList).contains(savedQuestion1, savedQuestion2);
 
         //deleted false test
         for(Question question : actualList) {
@@ -82,12 +82,12 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("id 기준 검색 테스트")
     void findByIdAndDeletedFalseTest() {
-        Question actualQuestion1 = questions.save(question1);
+        Question savedQuestion = questions.save(question1);
         questions.flush();
-        Question actual = questions.findByIdAndDeletedFalse(actualQuestion1.getId())
+        Question actual = questions.findByIdAndDeletedFalse(savedQuestion.getId())
                                             .orElseThrow(IllegalArgumentException::new);
 
-        assertThat(actual).isEqualTo(actualQuestion1);
+        assertThat(actual).isEqualTo(savedQuestion);
         assertThat(actual.isDeleted()).isFalse();
     }
 
