@@ -71,7 +71,7 @@ public class User extends BaseEntity {
 	}
 
 	public void addQuestion(Question question) {
-		question.toWriter(this);
+		question.writeBy(this);
 	}
 
 	public void addAnswer(Answer answer) {

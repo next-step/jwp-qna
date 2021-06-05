@@ -49,7 +49,11 @@ public class Question extends BaseEntity {
 	}
 
 	public Question writeBy(User writer) {
+		if (this.writer != null) {
+			writer.getQuestions().remove(this);
+		}
 		this.writer = writer;
+		writer.getQuestions().add(this);
 		return this;
 	}
 
@@ -91,14 +95,6 @@ public class Question extends BaseEntity {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
-	}
-
-	public void toWriter(User user) {
-		if (this.writer != null) {
-			user.getQuestions().remove(this);
-		}
-		this.writer = user;
-		user.getQuestions().add(this);
 	}
 
 	public List<DeleteHistory> delete(User user) throws CannotDeleteException {
