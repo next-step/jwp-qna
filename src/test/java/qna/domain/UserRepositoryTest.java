@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -14,9 +16,20 @@ class UserRepositoryTest {
     @Autowired
     private UserRepository users;
 
+    private User u1;
+
+    @BeforeEach
+    void setUp() {
+        u1 = new User("seungyeol", "password", "name", "beck33333@naver.com");
+    }
+    @AfterEach
+    void deleteAll() {
+        users.deleteAll();
+    }
+
     @Test
     void save() {
-        User expected = UserTest.JAVAJIGI;
+        User expected = u1;
         User actual = users.save(expected);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
@@ -32,7 +45,7 @@ class UserRepositoryTest {
 
     @Test
     void findByName() {
-        User expected = UserTest.JAVAJIGI;
+        User expected = u1;
         users.save(expected);
         User actual = users.findByUserId(expected.getUserId()).get();
         assertThat(actual).isEqualTo(expected);
@@ -41,7 +54,7 @@ class UserRepositoryTest {
 
     @Test
     void update() {
-        User expected = UserTest.JAVAJIGI;
+        User expected = u1;
         User saved = users.save(expected);
 
         saved.setEmail("beck33333@naver.com");
@@ -50,7 +63,7 @@ class UserRepositoryTest {
 
     @Test
     void delete() {
-        User expected = UserTest.JAVAJIGI;
+        User expected = u1;
         User saved = users.save(expected);
 
         users.delete(saved);
