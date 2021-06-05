@@ -4,10 +4,13 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Question {
@@ -31,8 +34,9 @@ public class Question {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
-	@Column(name = "writer_id")
-	private Long writerId;
+	@ManyToOne
+	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+	private User writer;
 
 	public Question() {
 	}
@@ -48,12 +52,12 @@ public class Question {
 	}
 
 	public Question writeBy(User writer) {
-		this.writerId = writer.getId();
+		this.writer = writer;
 		return this;
 	}
 
 	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
+		return this.writer.equals(writer);
 	}
 
 	public void addAnswer(Answer answer) {
@@ -84,12 +88,12 @@ public class Question {
 		this.contents = contents;
 	}
 
-	public Long getWriterId() {
-		return writerId;
+	public User getWriter() {
+		return writer;
 	}
 
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
+	public void setWriter(User writerId) {
+		this.writer = writer;
 	}
 
 	public boolean isDeleted() {
@@ -106,7 +110,7 @@ public class Question {
 			+ "id=" + id
 			+ ", title='" + title + '\''
 			+ ", contents='" + contents + '\''
-			+ ", writerId=" + writerId
+			+ ", writer=" + writer
 			+ ", deleted=" + deleted
 			+ '}';
 	}

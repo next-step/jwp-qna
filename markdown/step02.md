@@ -181,17 +181,17 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
     - [x] 2-2. Hands-on JPA Test code 작성
 - [x] 3.분석 및 설계
     - [x] 3-1.step02.md 초안 작성
-- [ ] 4.구현
-    - [ ] 4-1.연관 관계 매핑
-        - [ ] 4-1-1.`Answer`
-        - [ ] 4-1-2.`DeleteHistory`
-        - [ ] 4-1-3.`Question`
-        - [ ] 4-1-4.`User`
-    - [ ] 4-2.테스트 코드 작성
-        - [ ] 4-2-1.`AnswerTest`
-        - [ ] 4-2-2.`DeleteHistoryTest`
-        - [ ] 4-2-3.`QuestionTest`
-        - [ ] 4-2-4.`UserTest`
+- [x] 4.구현
+    - [x] 4-1.테스트 코드 작성
+        - [x] 4-1-1.`AnswerTest`
+        - [x] 4-1-2.`DeleteHistoryTest`
+        - [x] 4-1-3.`QuestionTest`
+        - [x] 4-1-4.`UserTest`
+    - [x] 4-2.연관 관계 매핑
+        - [x] 4-2-1.`Answer`
+        - [x] 4-2-2.`DeleteHistory`
+        - [x] 4-2-3.`Question`
+        - [x] 4-2-4.`User`
 - [ ] 5.테스트
     - [ ] 5-1.Gradle build Success 확인
     - [ ] 5-2.checkstyle 문제없는지 확인 (Java Convention)

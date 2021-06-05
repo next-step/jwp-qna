@@ -3,8 +3,10 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Objects;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -20,7 +22,38 @@ public class QuestionTest {
 	public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
 	@Autowired
+	private UserRepository users;
+	@Autowired
 	private QuestionRepository questions;
+	private User savedJAVAJIGI;
+	private User savedSANJIGI;
+
+	@DisplayName("테스트 초기화")
+	@BeforeEach
+	void setup() {
+		모든_레포지토리_데이터_삭제();
+		초기_정보_저장();
+	}
+
+	private void 초기_정보_저장() {
+		각_답변별_작성자정보_저장();
+	}
+
+	private void 모든_레포지토리_데이터_삭제() {
+		users.deleteAll();
+		questions.deleteAll();
+	}
+
+	private void 각_답변별_작성자정보_저장() {
+		if (Objects.isNull(savedJAVAJIGI)) {
+			savedJAVAJIGI = users.save(Q1.getWriter());
+			Q1.writeBy(savedJAVAJIGI);
+		}
+		if (Objects.isNull(savedSANJIGI)) {
+			savedSANJIGI = users.save(Q2.getWriter());
+			Q2.writeBy(savedSANJIGI);
+		}
+	}
 
 	@DisplayName("Question 저장 : save()")
 	@Test
@@ -35,11 +68,11 @@ public class QuestionTest {
 		//then
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.isOwner(UserTest.JAVAJIGI)).isTrue(),
+			() -> assertThat(actual.isOwner(Q1.getWriter())).isTrue(),
 			() -> assertThat(actual.getTitle()).isEqualTo(Q1.getTitle()),
 			() -> assertThat(actual.getContents()).isEqualTo(Q1.getContents()),
 			() -> assertThat(actual2.getId()).isNotNull(),
-			() -> assertThat(actual2.isOwner(UserTest.SANJIGI)).isTrue(),
+			() -> assertThat(actual2.isOwner(Q2.getWriter())).isTrue(),
 			() -> assertThat(actual2.getTitle()).isEqualTo(Q2.getTitle()),
 			() -> assertThat(actual2.getContents()).isEqualTo(Q2.getContents())
 		);
@@ -60,11 +93,11 @@ public class QuestionTest {
 		//then
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.isOwner(UserTest.JAVAJIGI)).isTrue(),
+			() -> assertThat(actual.isOwner(Q1.getWriter())).isTrue(),
 			() -> assertThat(actual.getTitle()).isEqualTo(Q1.getTitle()),
 			() -> assertThat(actual.getContents()).isEqualTo(Q1.getContents()),
 			() -> assertThat(actual2.getId()).isNotNull(),
-			() -> assertThat(actual2.isOwner(UserTest.SANJIGI)).isTrue(),
+			() -> assertThat(actual2.isOwner(Q2.getWriter())).isTrue(),
 			() -> assertThat(actual2.getTitle()).isEqualTo(Q2.getTitle()),
 			() -> assertThat(actual2.getContents()).isEqualTo(Q2.getContents())
 		);

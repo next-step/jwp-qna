@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -21,6 +22,16 @@ public class UserTest {
 
 	@Autowired
 	private UserRepository users;
+
+	@DisplayName("테스트 초기화")
+	@BeforeEach
+	void setup() {
+		모든_레포지토리_데이터_삭제();
+	}
+
+	private void 모든_레포지토리_데이터_삭제() {
+		users.deleteAll();
+	}
 
 	@DisplayName("User 저장 : save()")
 	@Test
