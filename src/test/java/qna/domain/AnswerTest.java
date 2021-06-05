@@ -1,166 +1,44 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
+import static org.assertj.core.api.Assertions.*;
+import static qna.domain.ContentType.*;
+
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import qna.CannotDeleteException;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+public class AnswerTest {
 
-@DataJpaTest
-class AnswerTest {
+    private final User writer = new User("id", "password", "name", "email");
+    private final User anotherUser = new User("id2", "password2", "name2", "email2");
 
-    @Autowired
-    private TestEntityManager entityManager;
-
-    @Autowired
-    private AnswerRepository answerRepository;
-
-    private Answer answer1;
-    private Answer answer2;
-
-    private Question question1;
-    private Question question2;
-
-    private User user1;
-    private User user2;
-
-    @BeforeEach
-    void setup() {
-        user1 = new User("id1", "password1", "name1", "email1");
-        user2 = new User("id2", "password2", "name2", "email2");
-        entityManager.persist(user1);
-        entityManager.persist(user2);
-
-        question1 = new Question("title1", "contents1", user1);
-        question2 = new Question("title2", "contents2", user2);
-        entityManager.persist(question1);
-        entityManager.persist(question2);
-
-        answer1 = new Answer(user1, question1, "Answers Contents1");
-        answer2 = new Answer(user2, question2, "Answers Contents2");
-    }
-
-    @DisplayName("Entity 데이터를 DB에 저장하는 테스트")
+    @DisplayName("Answer 를 작성하지 않은 사용자로 Answer 에 삭제 메시지를 보내면 CannotDeleteException 이 발생하는지 테스트")
     @Test
-    void save() {
+    void given_UserNotOwnAnswer_when_DeleteAnswer_then_ThrowCannotDeleteException() {
         // given
-        final Answer actual = answerRepository.save(answer1);
+        final Answer answer = new Answer(writer, new Question("title", "contents", writer), "contents");
+
+        // when
+        final Throwable throwable = catchThrowable(() -> answer.delete(anotherUser));
 
         // then
-        assertAll(
-            () -> assertThat(actual.getId()).isNotNull()
-        );
+        assertThat(throwable).isInstanceOf(CannotDeleteException.class);
     }
 
-    @DisplayName("DB에 저장할 때 반환된 Entity 와 DB 에서 조회한 데이터가 일치하는지 확인하는 테스트")
+    @DisplayName("Answer 를 작성한 사용자로 Answer 에 삭제 메시지를 보내면 DeleteHistory 를 반환하는지 테스트")
     @Test
-    void findById() {
+    void given_UserOwnAnswer_when_DeleteAnswer_then_DeleteHistory() throws CannotDeleteException {
         // given
-        final Answer expected = answerRepository.save(answer1);
+        final Answer answer = new Answer(writer, new Question("title", "contents", writer), "contents");
+        final DeleteHistory expected = new DeleteHistory(ANSWER, answer.getId(), writer, LocalDateTime.now());
 
         // when
-        final Optional<Answer> optAnswer = answerRepository.findById(expected.getId());
-        final Answer actual = optAnswer.orElseThrow(IllegalArgumentException::new);
+        final DeleteHistory actual = answer.delete(writer);
 
         // then
-        assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual).isEqualTo(expected),
-            () -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted())
-        );
-    }
-
-    @DisplayName("DB에 저장된 데이터 수를 확인하는 테스트")
-    @Test
-    void count() {
-        // given
-        answerRepository.save(answer1);
-        answerRepository.save(answer2);
-
-        // when
-        final long actual = answerRepository.count();
-
-        // when
-        assertThat(actual).isEqualTo(2);
-    }
-
-    @DisplayName("deleted 값을 변경하면 조회 결과가 달라지는지 테스트")
-    @Test
-    void findByIdAndDeletedFalse() {
-        // given
-        final Answer savedAnswer = answerRepository.save(answer1);
-        final Answer savedAnswer2 = answerRepository.save(answer2);
-        savedAnswer2.setDeleted(true);
-
-        // when
-        final Optional<Answer> optionalAnswer = answerRepository.findByWriterAndDeletedFalse(savedAnswer.getWriter());
-        final Optional<Answer> optionalAnswer2 = answerRepository.findByWriterAndDeletedFalse(savedAnswer2.getWriter());
-
-        // then
-        final Answer actual = optionalAnswer.orElseThrow(IllegalArgumentException::new);
-        assertThat(actual).isEqualTo(savedAnswer);
-        assertThatThrownBy(() ->
-            optionalAnswer2.orElseThrow(IllegalArgumentException::new)
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("Question ID와 deleted 값을 각각 설정해서 조회하는 테스트")
-    @Test
-    void findByQuestionIdAndDeletedFalse() {
-        // given
-        final Answer savedAnswer = answerRepository.save(answer1);
-        final Answer savedAnswer2 = answerRepository.save(answer2);
-        savedAnswer2.setDeleted(true);
-
-        // when
-        final List<Answer> actual = answerRepository.findByQuestionAndDeletedFalse(question1);
-
-        // then
-        assertAll(
-            () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual.size()).isEqualTo(1),
-            () -> assertThat(actual.get(0)).isEqualTo(savedAnswer)
-        );
-    }
-
-    @DisplayName("saveAll 과 findAll 테스트")
-    @Test
-    void findAll() {
-        // given
-        final List<Answer> answers = Arrays.asList(answer1, answer2);
-        final List<Answer> savedAnswers = answerRepository.saveAll(answers);
-
-        // when
-        final List<Answer> findAll = answerRepository.findAll();
-
-        // then
-        assertAll(
-            () -> assertThat(savedAnswers.size()).isEqualTo(2),
-            () -> assertThat(findAll.size()).isEqualTo(2),
-            () -> assertThat(savedAnswers).isEqualTo(findAll)
-        );
-    }
-
-    @Test
-    void delete() {
-        // given
-        final Answer savedAnswer1 = answerRepository.save(answer1);
-        final Answer savedAnswer2 = answerRepository.save(answer2);
-        answerRepository.delete(savedAnswer1);
-        answerRepository.deleteById(savedAnswer2.getId());
-
-        // when
-        final long actual = answerRepository.count();
-
-        // then
-        assertThat(actual).isEqualTo(0);
+        assertThat(actual).isEqualTo(expected);
     }
 }

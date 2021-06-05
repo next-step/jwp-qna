@@ -1,8 +1,12 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,15 +16,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.CannotDeleteException;
+
 @Entity
 public class Question extends BaseEntity {
+
+    private static final String HAS_NOT_DELETE_PERMISSION_MESSAGE = "질문을 삭제할 권한이 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String title;
+    @Embedded
+    private Title title;
 
     @Lob
     private String contents;
@@ -32,6 +40,9 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    @Embedded
+    private final Answers answers = new Answers();
+
     protected Question() {
     }
 
@@ -41,7 +52,7 @@ public class Question extends BaseEntity {
 
     public Question(final Long id, final String title, final String contents, final User writer) {
         this.id = id;
-        this.title = title;
+        this.title = new Title(title);
         this.contents = contents;
         this.writer = writer;
     }
@@ -51,14 +62,14 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(final Answer answer) {
-        answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 
@@ -74,8 +85,42 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(final boolean deleted) {
-        this.deleted = deleted;
+    private void deleted() {
+        this.deleted = true;
+    }
+
+    public int countOfAnswer() {
+        return answers.size();
+    }
+
+    public DeleteHistories delete(final User user) throws CannotDeleteException {
+        final User writer = validUser(user);
+        final DeleteHistories deleteHistories = new DeleteHistories(deleteHistories(writer));
+        deleted();
+
+        return deleteHistories;
+    }
+
+    private User validUser(final User writer) throws CannotDeleteException {
+        return Optional.ofNullable(writer)
+            .filter(this::isOwner)
+            .orElseThrow(() -> new CannotDeleteException(HAS_NOT_DELETE_PERMISSION_MESSAGE));
+    }
+
+    private List<DeleteHistory> deleteHistories(final User user) throws CannotDeleteException {
+        final List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(questionHistory());
+        deleteHistories.addAll(answersHistories(user));
+
+        return deleteHistories;
+    }
+
+    private DeleteHistory questionHistory() {
+        return DeleteHistory.ofQuestion(id, writer);
+    }
+
+    private List<DeleteHistory> answersHistories(final User user) throws CannotDeleteException {
+        return answers.delete(user);
     }
 
     @Override

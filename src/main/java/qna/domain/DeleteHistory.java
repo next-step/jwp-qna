@@ -1,5 +1,7 @@
 package qna.domain;
 
+import static qna.domain.ContentType.*;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -37,12 +39,31 @@ public class DeleteHistory extends BaseEntity {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(
-        final ContentType contentType, final Long contentId, final User writer, final LocalDateTime createDate) {
+    public DeleteHistory(final ContentType contentType, final Long contentId, final User writer) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+        this.writer = writer;
+    }
+
+    public DeleteHistory(final ContentType contentType, final Long contentId, final User writer,
+        final LocalDateTime createDate) {
+
         this.contentType = contentType;
         this.contentId = contentId;
         this.writer = writer;
         this.createDate = createDate;
+    }
+
+    public static DeleteHistory ofAnswer(final Long id, final User user) {
+        return new DeleteHistory(ANSWER, id, user);
+    }
+
+    public static DeleteHistory ofQuestion(final long id, final User user) {
+        return new DeleteHistory(QUESTION, id, user);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
@@ -55,8 +76,7 @@ public class DeleteHistory extends BaseEntity {
         }
         final DeleteHistory that = (DeleteHistory)o;
         return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(
-            contentId, that.contentId) && Objects.equals(writer, that.writer) && Objects.equals(
-            createDate, that.createDate);
+            contentId, that.contentId) && Objects.equals(writer, that.writer);
     }
 
     @Override

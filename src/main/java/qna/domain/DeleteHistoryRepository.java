@@ -22,7 +22,7 @@ public interface DeleteHistoryRepository extends JpaRepository<DeleteHistory, Lo
         nativeQuery = true)
     List<DeleteHistory> findByIdsWithNative(@Param("ids") Collection<Long> ids);
 
-    @Modifying
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("update DeleteHistory d set d.contentType = :contentType where d.id = :id")
     int updateDeleteHistorySetContentTypeById(@Param("contentType") ContentType contentType, @Param("id") Long id);
 }

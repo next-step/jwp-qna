@@ -13,11 +13,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseEntity {
+
+    private static final String HAS_ANOTHER_WRITER_MESSAGE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -64,16 +68,8 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(final Question question) {
-        this.question = question;
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public User getWriter() {
-        return writer;
     }
 
     public Long getQuestionId() {
@@ -84,12 +80,29 @@ public class Answer extends BaseEntity {
         return contents;
     }
 
+    public void setContents(final String contents) {
+        this.contents = contents;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(final boolean deleted) {
-        this.deleted = deleted;
+    private void deleted() {
+        this.deleted = true;
+    }
+
+    public DeleteHistory delete(final User user) throws CannotDeleteException {
+        final User writer = validUser(user);
+        deleted();
+
+        return DeleteHistory.ofAnswer(id, writer);
+    }
+
+    private User validUser(final User writer) throws CannotDeleteException {
+        return Optional.ofNullable(writer)
+            .filter(this::isOwner)
+            .orElseThrow(() -> new CannotDeleteException(HAS_ANOTHER_WRITER_MESSAGE));
     }
 
     @Override

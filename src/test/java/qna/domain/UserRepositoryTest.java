@@ -19,7 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 @DataJpaTest
-public class UserTest {
+public class UserRepositoryTest {
     public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
 
@@ -117,7 +117,7 @@ public class UserTest {
             () -> assertThat(actual.getTotalElements()).isEqualTo(20),
             () -> assertThat(actual.getTotalPages()).isEqualTo(2),
             () -> assertThat(actual.getContent().size()).isEqualTo(10),
-            () -> assertThat(actual.getContent().get(0).getUserId()).isEqualTo("user10")
+            () -> assertThat(actual.getContent().get(0).getUserId()).isEqualTo(new UserId("user10"))
         );
     }
 
@@ -125,8 +125,8 @@ public class UserTest {
     @Test
     void persistVsMerge() {
         // given
-        final User user = new User(1L, "id", "password", "name", "email");
-        final User unmanagedUser = new User(1L, "id", "password", "name", "email");
+        final User user = new User(1L, "id-1", "password", "name", "email");
+        final User unmanagedUser = new User(1L, "id-1", "password", "name", "email");
         final User managedUser = userRepository.save(user);
         final EntityManager entityManager = this.entityManager.getEntityManager();
         final User mergedUser = entityManager.merge(user);
@@ -143,7 +143,8 @@ public class UserTest {
             () -> assertThat(managedUserActual).as("persist 후 반환된 객체").isEqualTo(true),
             () -> assertThat(unmanagedUserActual).as("persist 하지 않은 객체").isEqualTo(false),
             () -> assertThat(mergedUserActual).as("merge 실행 후 반환된 객체").isEqualTo(true),
-            () -> assertThat(user).as("persist 전후 객체 비교").isNotEqualTo(managedUser),
+            () -> assertThat(user).as("persist 전후 객체 비교").isEqualTo(managedUser),
+            () -> assertThat(user == managedUser).as("persist 전후 객체 비교").isEqualTo(false),
             () -> assertThat(managedUser).as("persist 후 반환된 객체와 merge 후 반환된 객체 비교").isEqualTo(mergedUser)
         );
     }

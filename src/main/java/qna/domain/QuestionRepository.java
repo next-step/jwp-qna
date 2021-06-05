@@ -15,7 +15,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     Optional<Question> findByIdAndDeletedTrue(Long id);
 
     @Query(value = "SELECT q FROM Question q WHERE q.title = :title")
-    List<Question> findByTitle(@Param("title") String title);
+    List<Question> findByTitle(@Param("title") Title title);
 
     List<Question> findByContentsContains(String content);
 
