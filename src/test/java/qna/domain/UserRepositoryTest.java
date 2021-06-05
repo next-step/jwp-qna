@@ -117,7 +117,7 @@ public class UserRepositoryTest {
             () -> assertThat(actual.getTotalElements()).isEqualTo(20),
             () -> assertThat(actual.getTotalPages()).isEqualTo(2),
             () -> assertThat(actual.getContent().size()).isEqualTo(10),
-            () -> assertThat(actual.getContent().get(0).getUserId()).isEqualTo("user10")
+            () -> assertThat(actual.getContent().get(0).getUserId()).isEqualTo(new UserId("user10"))
         );
     }
 

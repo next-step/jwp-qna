@@ -18,8 +18,8 @@ public class User extends BaseEntity {
     @Embedded
     private UserId userId;
 
-    @Column(nullable = false, length = 20)
-    private String password;
+    @Embedded
+    private Password password;
 
     @Column(nullable = false, length = 20)
     private String name;
@@ -37,7 +37,7 @@ public class User extends BaseEntity {
     public User(final Long id, final String userId, final String password, final String name, final String email) {
         this.id = id;
         this.userId = new UserId(userId);
-        this.password = password;
+        this.password = new Password(password);
         this.name = name;
         this.email = email;
     }
@@ -50,7 +50,7 @@ public class User extends BaseEntity {
         return userId;
     }
 
-    public String getPassword() {
+    public Password getPassword() {
         return password;
     }
 
