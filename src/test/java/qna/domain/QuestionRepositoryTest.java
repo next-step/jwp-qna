@@ -34,10 +34,10 @@ class QuestionRepositoryTest {
         Question expected = new Question("title1", "contents").writeBy(user);
         Question actual = questions.save(expected);
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
+                () -> assertThat(actual.id()).isNotNull(),
+                () -> assertThat(actual.writer()).isEqualTo(expected.writer()),
                 () -> assertThat(user.id()).isNotNull(),
-                () -> assertThat(actual.getId()).isEqualTo(expected.getId())
+                () -> assertThat(actual.id()).isEqualTo(expected.id())
         );
     }
 
@@ -45,9 +45,9 @@ class QuestionRepositoryTest {
     @DisplayName("질문 테이블 아이디 정상 조회")
     void findById() {
         Question expected = questions.save(new Question("title1", "contents").writeBy(user));
-        Optional<Question> actual = questions.findById(expected.getId());
+        Optional<Question> actual = questions.findById(expected.id());
         assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get().getId()).isEqualTo(expected.getId());
+        assertThat(actual.get().id()).isEqualTo(expected.id());
         assertThat(actual.get() == expected).isTrue();
     }
 
@@ -61,7 +61,7 @@ class QuestionRepositoryTest {
         expected.addAnswer(answersContents1);
         expected.addAnswer(answersContents2);
         Question QuestionExpected = questions.save(expected);
-        Optional<Question> actual = questions.findById(QuestionExpected.getId());
+        Optional<Question> actual = questions.findById(QuestionExpected.id());
 
         assertThat(actual.isPresent()).isTrue();
         assertThat(actual.get().isContainAnswer(answersContents1)).isTrue();
@@ -75,7 +75,7 @@ class QuestionRepositoryTest {
         expected.delete();
         entityManager.flush();
         entityManager.clear();
-        Optional<Question> actual = questions.findById(expected.getId());
+        Optional<Question> actual = questions.findById(expected.id());
         assertThat(actual.isPresent()).isTrue();
         assertThat(actual.get().isDeleted()).isTrue();
     }
@@ -87,7 +87,7 @@ class QuestionRepositoryTest {
         questions.delete(expected);
         entityManager.flush();
         entityManager.clear();
-        Optional<Question> actual = questions.findById(expected.getId());
+        Optional<Question> actual = questions.findById(expected.id());
         assertThat(actual.isPresent()).isFalse();
     }
 }

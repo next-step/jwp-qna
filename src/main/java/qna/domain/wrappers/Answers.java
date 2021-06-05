@@ -47,13 +47,18 @@ public class Answers {
         return anyMatch;
     }
 
-    public List<DeleteHistory> createDeleteHistories(User loginUser) {
+    public List<DeleteHistory> createDeleteHistories() {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : answers) {
-            deleteHistories.add(DeleteHistory.create(ANSWER_CONTENT_TYPE, answer.getId(), loginUser));
-            answer.delete();
+            deleteHistories.add(new DeleteHistory(ANSWER_CONTENT_TYPE, answer.getId(), answer.writer()));
         }
         return deleteHistories;
+    }
+
+    public void delete() {
+        for (Answer answer : answers) {
+            answer.delete();
+        }
     }
 
     @Override

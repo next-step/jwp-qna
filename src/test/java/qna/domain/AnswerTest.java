@@ -12,8 +12,8 @@ public class AnswerTest {
     void 답변_작성자가_로그인_사용와_같은지_비교() {
         Answer answer = AnswerTest.A1;
 
-        User user = UserTest.JAVAJIGI;
-        User other = UserTest.SANJIGI;
+        User user = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+        User other = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
         assertThat(answer.isWriterUser(user)).isTrue();
         assertThat(answer.isWriterUser(other)).isFalse();

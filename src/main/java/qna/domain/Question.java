@@ -7,9 +7,6 @@ import qna.domain.wrappers.Deleted;
 import qna.domain.wrappers.Title;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -64,11 +61,11 @@ public class Question extends BaseEntity {
         }
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
-    public User getWriter() {
+    public User writer() {
         return writer;
     }
 
@@ -76,44 +73,35 @@ public class Question extends BaseEntity {
         return deleted.isDeleted();
     }
 
-    public void delete() {
-        this.deleted = Deleted.createByDelete();
-    }
-
     public boolean isContainAnswer(Answer answer) {
         return answers.contains(answer);
     }
 
-    public void checkValidSameUserByQuestionWriter(User loginUser) throws CannotDeleteException {
+    public void checkPossibleDelete(User loginUser) throws CannotDeleteException {
+        this.checkValidSameUserByQuestionWriter(loginUser);
+        this.checkValidPossibleDeleteAnswers(loginUser);
+    }
+
+    public void delete() {
+        this.deleted = Deleted.createByDelete();
+        this.answers.delete();
+    }
+
+    public Answers answers() {
+        return answers;
+    }
+
+    private void checkValidSameUserByQuestionWriter(User loginUser) throws CannotDeleteException {
         if (!this.writer.isSameUser(loginUser)) {
             throw new CannotDeleteException(AUTH_ERROR_MESSAGE);
         }
     }
 
-    public void checkValidPossibleDeleteAnswers(User loginUser) throws CannotDeleteException {
+    private void checkValidPossibleDeleteAnswers(User loginUser) throws CannotDeleteException {
         if (!answers.isEmpty() && !answers.isAllSameWriter(loginUser)) {
             throw new CannotDeleteException(NOT_MATCH_ANSWERS_WRITER_ERROR_MESSAGE);
         }
         this.deleted = Deleted.createByDelete();
-    }
-
-    public List<DeleteHistory> createDeleteHistories(User loginUser) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(this.createDeleteHistory(loginUser));
-        List<DeleteHistory> deleteHistoriesByAnswers = this.createDeleteHistoriesByAnswers(loginUser);
-        deleteHistories.addAll(deleteHistoriesByAnswers);
-        return deleteHistories;
-    }
-
-    private List<DeleteHistory> createDeleteHistoriesByAnswers(User loginUser) {
-        if (!answers.isEmpty()) {
-            return answers.createDeleteHistories(loginUser);
-        }
-        return Collections.emptyList();
-    }
-
-    private DeleteHistory createDeleteHistory(User loginUser) {
-        return DeleteHistory.create(QUESTION_CONTENT_TYPE, id, loginUser);
     }
 
     @Override

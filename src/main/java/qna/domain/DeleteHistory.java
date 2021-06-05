@@ -5,6 +5,8 @@ import qna.domain.wrappers.ContentId;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,7 +24,7 @@ public class DeleteHistory {
     @Embedded
     private ContentId contentId = new ContentId();
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
 
@@ -33,17 +35,20 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    private DeleteHistory(ContentType contentType, long contentId, User deletedBy) {
+    public DeleteHistory(ContentType contentType, long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = new ContentId(contentId);
         this.deletedBy = deletedBy;
     }
 
-    public static DeleteHistory create(ContentType contentType, Long contendId, User user) {
-        return new DeleteHistory(contentType, contendId, user);
+    public static List<DeleteHistory> createDeleteHistories(Question question) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(Question.QUESTION_CONTENT_TYPE, question.id(), question.writer()));
+        deleteHistories.addAll(question.answers().createDeleteHistories());
+        return deleteHistories;
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 

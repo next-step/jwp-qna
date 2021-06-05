@@ -18,6 +18,12 @@ class AnswerRepositoryTest {
     private AnswerRepository answers;
 
     @Autowired
+    private UserRepository users;
+
+    @Autowired
+    private QuestionRepository questions;
+
+    @Autowired
     private EntityManager entityManager;
 
     private User user;
@@ -27,6 +33,8 @@ class AnswerRepositoryTest {
     void setUp() {
         user = new User("mwkwon", "password", "권민욱", "mwkwon0110@gmail.com");
         question = new Question("title", "content");
+        users.save(user);
+        questions.save(question);
     }
 
     @Test
@@ -36,7 +44,7 @@ class AnswerRepositoryTest {
         Answer actual = answers.save(expected);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter())
+                () -> assertThat(actual.writer()).isEqualTo(expected.writer())
         );
     }
 
@@ -57,7 +65,7 @@ class AnswerRepositoryTest {
 
         Optional<Answer> actual = answers.findById(expected.getId());
         assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get().getWriter().id()).isEqualTo(user.id());
+        assertThat(actual.get().writer().id()).isEqualTo(user.id());
     }
 
     @Test
@@ -67,7 +75,7 @@ class AnswerRepositoryTest {
 
         Optional<Answer> actual = answers.findById(expected.getId());
         assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get().getQuestion().getId()).isEqualTo(question.getId());
+        assertThat(actual.get().getQuestion().id()).isEqualTo(question.id());
     }
 
     @Test

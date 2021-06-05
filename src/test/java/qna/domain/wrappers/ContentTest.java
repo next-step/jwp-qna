@@ -1,7 +1,6 @@
 package qna.domain.wrappers;
 
 import org.junit.jupiter.api.Test;
-import qna.domain.wrappers.Contents;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

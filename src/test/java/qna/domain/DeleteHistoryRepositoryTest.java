@@ -21,17 +21,21 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private EntityManager entityManager;
 
+    @Autowired
+    private UserRepository users;
+
     private User user;
 
     @BeforeEach
     void setUp() {
         user = new User("mwkwon", "password", "권민욱", "mwkwon0110@gmail.com");
+        users.save(user);
     }
 
     @Test
     @DisplayName("회원 정보 테이블 정상 저장")
     void save() {
-        DeleteHistory expected = DeleteHistory.create(ContentType.QUESTION, 1L, user);
+        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, user);
         DeleteHistory actual = deleteHistories.save(expected);
         assertThat(actual.equals(expected)).isTrue();
     }
@@ -43,9 +47,9 @@ class DeleteHistoryRepositoryTest {
         entityManager.flush();
         entityManager.clear();
 
-        Optional<DeleteHistory> actual = deleteHistories.findById(expected.getId());
+        Optional<DeleteHistory> actual = deleteHistories.findById(expected.id());
         assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get().getId()).isEqualTo(expected.getId());
+        assertThat(actual.get().id()).isEqualTo(expected.id());
     }
 
     @Test
@@ -55,7 +59,7 @@ class DeleteHistoryRepositoryTest {
         expected.changeContentType(ContentType.ANSWER);
         entityManager.flush();
         entityManager.clear();
-        Optional<DeleteHistory> actual = deleteHistories.findById(expected.getId());
+        Optional<DeleteHistory> actual = deleteHistories.findById(expected.id());
         assertThat(actual.isPresent()).isTrue();
         assertThat(actual.get().isSameContentType(ContentType.ANSWER)).isTrue();
     }
@@ -67,12 +71,12 @@ class DeleteHistoryRepositoryTest {
         deleteHistories.delete(expected);
         entityManager.flush();
         entityManager.clear();
-        Optional<DeleteHistory> actual = deleteHistories.findById(expected.getId());
+        Optional<DeleteHistory> actual = deleteHistories.findById(expected.id());
         assertThat(actual.isPresent()).isFalse();
     }
 
     private DeleteHistory setUpTestDeleteHistory() {
-        DeleteHistory deleteHistory = DeleteHistory.create(ContentType.QUESTION, 1L, user);
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, user);
         return deleteHistories.save(deleteHistory);
     }
 

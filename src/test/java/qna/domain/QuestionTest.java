@@ -3,8 +3,6 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -15,19 +13,24 @@ public class QuestionTest {
     @Test
     void 질문_작성자와_현재_로그인_사용자가_다른_경우_에러_정상_발생_여부() {
         Question question = Q1;
-        User loginUser = UserTest.SANJIGI;
-        assertThatThrownBy(() -> question.checkValidSameUserByQuestionWriter(loginUser))
+        User loginUser = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+        assertThatThrownBy(() -> question.checkPossibleDelete(loginUser))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("질문을 삭제할 권한이 없습니다.");
     }
 
     @Test
     void 질문에_대한_답변_존재_시_질문자_답변자가_하나라도_다른_경우_에러_정상_발생_여부() {
+        User user1 = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");;
+        User user2 = new User(2L, "id", "password", "name", "email");
         Question question = QuestionTest.Q1;
-        question.addAnswer(AnswerTest.A1);
-        question.addAnswer(AnswerTest.A2);
 
-        assertThatThrownBy(() -> question.checkValidPossibleDeleteAnswers(UserTest.JAVAJIGI))
+        Answer answer1 = new Answer(1L, user1, question, "contents");
+        Answer answer2 = new Answer(1L, user2, question, "contents");
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+
+        assertThatThrownBy(() -> question.checkPossibleDelete(user1))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
@@ -41,15 +44,5 @@ public class QuestionTest {
 
         assertThat(question.isContainAnswer(answer1)).isTrue();
         assertThat(question.isContainAnswer(answer2)).isFalse();
-    }
-
-    @Test
-    void 질문_및_답변_삭제_히스토리_생성() {
-        Question question = new Question(1L, "title", "contents").writeBy(UserTest.JAVAJIGI);
-        Answer answer1 = new Answer(1L, UserTest.JAVAJIGI, question, "contents");
-        question.addAnswer(answer1);
-
-        List<DeleteHistory> deleteHistories = question.createDeleteHistories(UserTest.JAVAJIGI);
-        assertThat(deleteHistories.size()).isEqualTo(2);
     }
 }

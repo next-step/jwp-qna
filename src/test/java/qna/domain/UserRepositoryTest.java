@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,21 +22,27 @@ class UserRepositoryTest {
     @Autowired
     private EntityManager entityManager;
 
+    private User user;
+
+    @BeforeEach
+    void setUp() {
+        user = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+    }
+
     @Test
     @DisplayName("회원 정보 테이블 정상 저장")
     void save() {
-        User expected = UserTest.JAVAJIGI;
-        User actual = users.save(expected);
+        User actual = users.save(user);
         assertAll(
-                () -> assertThat(actual.id()).isNotNull()
-//                () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail())
+                () -> assertThat(actual.id()).isNotNull(),
+                () -> assertThat(actual.email()).isEqualTo(user.email())
         );
     }
 
     @Test
     @DisplayName("유저 아이디 기준 조회")
     void findById() {
-        User expected = users.save(UserTest.SANJIGI);
+        User expected = users.save(user);
         Optional<User> actual = users.findById(expected.id());
         assertThat(actual.isPresent()).isTrue();
         assertThat(actual.get().id()).isEqualTo(expected.id());
@@ -46,7 +53,7 @@ class UserRepositoryTest {
     @DisplayName("회원 정보 테이블 정상 수정")
     void update() {
         String name = "mwkwon";
-        User expected = users.save(UserTest.JAVAJIGI);
+        User expected = users.save(user);
         expected.name(name);
         entityManager.flush();
         entityManager.clear();
@@ -58,7 +65,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("회원 정보 테이블 정상 삭제")
     void delete() {
-        User expected = users.save(UserTest.SANJIGI);
+        User expected = users.save(user);
         users.delete(expected);
         entityManager.flush();
         entityManager.clear();
