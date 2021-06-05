@@ -1,14 +1,9 @@
 package qna.domain.entity;
 
-import lombok.ToString;
+import lombok.*;
 import qna.domain.entity.common.Deleteable;
-import qna.domain.entity.common.TraceDate;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -25,12 +20,11 @@ import java.util.Objects;
  *     primary key (id)
  * )
  */
-
 @Getter
-@NoArgsConstructor
-@Entity
-@ToString(of = {"id", "contents", "title", "writer", "deleted"})
-public class Answer extends TraceDate implements Deleteable {
+@ToString(of = {"id", "contents", "writer"})
+@EqualsAndHashCode(of = "id")
+@Entity @NoArgsConstructor
+public class Answer extends Deleteable<User, DeleteHistory> {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,53 +33,50 @@ public class Answer extends TraceDate implements Deleteable {
     private String contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id")
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id")
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @Column(nullable = false)
-    private boolean deleted;
-
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+    public Answer(User writer, String contents) {
+        this(null, writer, contents);
     }
 
     @Builder
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
-
+    public Answer(Long id, User writer, String contents) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
 
+        this.id = id;
+        this.writer = writer;
+        this.contents = contents;
+    }
+
+    public Answer toQuestion(Question question) {
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
 
-        this.writer = writer;
         this.question = question;
-        this.contents = contents;
-        this.deleted = false;
+        question.addAnswer(this);
+
+        return this;
     }
 
+    public boolean isEqualQuestion(Question question) {
+        return Objects.equals(this.question, question);
+    }
+
+    @Override
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
-        this.question = question;
-    }
-
-    public void writeBy(Question question, User writer) {
-        this.question = question;
-        this.writer = writer;
-    }
-
     @Override
-    public void deleted() {
-        this.deleted = true;
+    protected DeleteHistory appendDeleteHistory(User deleter) {
+        return DeleteHistory.ContentType.ANSWER.getDeleteHistory(this.id, deleter);
     }
 }

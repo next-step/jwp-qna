@@ -1,14 +1,18 @@
 package qna.domain.entity;
 
 import org.junit.jupiter.api.*;
-
+import qna.CannotDeleteException;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AnswerTest {
-    public static final Answer ANSWER_OF_JAVAJIGI = new Answer(UserTest.USER_JAVAJIGI, QuestionTest.QUESTION_OF_JAVAJIGI, "Answers Contents1");
-    public static final Answer ANSWER_OF_SANJIGI = new Answer(UserTest.USER_SANJIGI, QuestionTest.QUESTION_OF_JAVAJIGI, "Answers Contents2");
+    public static final Answer ANSWER_OF_JAVAJIGI = new Answer(1L, UserTest.USER_JAVAJIGI, "Answers Contents1")
+            .toQuestion(QuestionTest.QUESTION_OF_JAVAJIGI);
+
+    public static final Answer ANSWER_OF_SANJIGI = new Answer(2L, UserTest.USER_SANJIGI, "Answers Contents2")
+            .toQuestion(QuestionTest.QUESTION_OF_SANJIGI);
 
     @Test
     @Order(1)
@@ -31,12 +35,19 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("답변 삭제 확인")
-    void deleted() {
-        ANSWER_OF_SANJIGI.deleted();
+    @DisplayName("해당 답변에 주인이 삭제하는 경우")
+    void deleted() throws CannotDeleteException {
+        ANSWER_OF_SANJIGI.deleted(UserTest.USER_SANJIGI);
 
         assertAll(
             () -> assertThat(ANSWER_OF_SANJIGI.isDeleted()).isTrue()
         );
+    }
+
+    @Test
+    @DisplayName("다른 작성자가 작성한 답변을 삭제하는 경우 예외가 발생한다.")
+    void otherDeleted() {
+        assertThatThrownBy(() -> ANSWER_OF_SANJIGI.deleted(UserTest.USER_JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class);
     }
 }

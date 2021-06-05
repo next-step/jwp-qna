@@ -3,6 +3,8 @@ package qna.domain.repository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
+import qna.CannotDeleteException;
 import qna.domain.entity.*;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +12,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @DataJpaTest
 public class AnswerRepositoryTest {
 
@@ -36,14 +39,8 @@ public class AnswerRepositoryTest {
         user1 = userRepository.save(UserTest.USER_JAVAJIGI);
         user2 = userRepository.save(UserTest.USER_SANJIGI);
 
-        QuestionTest.QUESTION_OF_JAVAJIGI.writeBy(user1);
-        QuestionTest.QUESTION_OF_SANJIGI.writeBy(user2);
-
         question1 = questionRepository.save(QuestionTest.QUESTION_OF_JAVAJIGI);
         question2 = questionRepository.save(QuestionTest.QUESTION_OF_SANJIGI);
-
-        AnswerTest.ANSWER_OF_JAVAJIGI.writeBy(question1, user1);
-        AnswerTest.ANSWER_OF_SANJIGI.writeBy(question2, user1);
 
         answer1 = answerRepository.save(AnswerTest.ANSWER_OF_JAVAJIGI);
         answer2 = answerRepository.save(AnswerTest.ANSWER_OF_SANJIGI);
@@ -54,10 +51,10 @@ public class AnswerRepositoryTest {
         assertAll(
             () -> assertThat(answer1.getId()).isNotNull(),
             () -> assertThat(answer2.getId()).isNotNull(),
-            () -> assertThat(answer1.getQuestion()).isEqualTo(question1),
-            () -> assertThat(answer2.getQuestion()).isEqualTo(question2),
-            () -> assertThat(answer1.getWriter()).isEqualTo(user1),
-            () -> assertThat(answer2.getWriter()).isEqualTo(user1)
+            () -> assertThat(answer1.isEqualQuestion(question1)).isTrue(),
+            () -> assertThat(answer2.isEqualQuestion(question2)).isTrue(),
+            () -> assertThat(answer1.isOwner(user1)).isTrue(),
+            () -> assertThat(answer2.isOwner(user2)).isTrue()
         );
     }
 
@@ -81,8 +78,8 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    public void findByQuestionIdAndDeletedFalse2() {
-        answer2.deleted();
+    public void findByQuestionIdAndDeletedFalse2() throws CannotDeleteException {
+        answer2.deleted(user2);
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
 
@@ -102,5 +99,4 @@ public class AnswerRepositoryTest {
             () -> assertThat(answerOptional.get()).isEqualTo(answer1)
         );
     }
-
 }

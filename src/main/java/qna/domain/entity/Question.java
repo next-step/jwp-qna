@@ -1,13 +1,11 @@
 package qna.domain.entity;
 
-import lombok.ToString;
+import lombok.*;
+import qna.CannotDeleteException;
+import qna.domain.entity.collection.Answers;
+import qna.domain.entity.collection.DeleteHistories;
 import qna.domain.entity.common.Deleteable;
-import qna.domain.entity.common.TraceDate;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,13 +22,12 @@ import java.util.List;
  * )
  */
 @Getter
-@NoArgsConstructor
-@Entity
-@ToString(of = {"id", "contents", "title", "writer", "deleted"})
-public class Question extends TraceDate implements Deleteable {
+@ToString(of = {"id", "contents", "title", "writer"})
+@EqualsAndHashCode(of = "id")
+@Entity @NoArgsConstructor
+public class Question extends Deleteable<User, DeleteHistories> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Lob
@@ -39,15 +36,12 @@ public class Question extends TraceDate implements Deleteable {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private boolean deleted;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id")
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_to_user"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -58,7 +52,6 @@ public class Question extends TraceDate implements Deleteable {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.deleted = false;
     }
 
     public Question writeBy(User writer) {
@@ -66,17 +59,28 @@ public class Question extends TraceDate implements Deleteable {
         return this;
     }
 
+    protected void addAnswer(Answer answer) {
+        this.answers.add(answer);
+    }
+
+    @Override
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
-    public void addAnswer(Answer answer) {
-        this.answers.add(answer);
-        answer.toQuestion(this);
+    @Override
+    protected void validation(User deleter) throws CannotDeleteException {
+        super.validation(deleter);
+
+        if (answers.nonOnlyOwner(deleter)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     @Override
-    public void deleted() {
-        this.deleted = true;
+    protected DeleteHistories appendDeleteHistory(User deleter) throws CannotDeleteException {
+        return new DeleteHistories()
+                .append(DeleteHistory.ContentType.QUESTION.getDeleteHistory(this.id, deleter))
+                .append(answers.deleted(deleter));
     }
 }

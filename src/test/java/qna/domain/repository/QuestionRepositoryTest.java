@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.domain.entity.Question;
 import qna.domain.entity.QuestionTest;
 import qna.domain.entity.User;
@@ -63,8 +64,8 @@ public class QuestionRepositoryTest {
     @DisplayName("작성자 비교")
     public void isWriterEqualTo() {
         assertAll(
-            () -> assertThat(question1.getWriter()).isEqualTo(user1),
-            () -> assertThat(question2.getWriter()).isEqualTo(user2)
+            () -> assertThat(question1.isOwner(user1)).isTrue(),
+            () -> assertThat(question2.isOwner(user2)).isTrue()
         );
     }
 
@@ -81,8 +82,8 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("질문 삭제후 삭제되지 않은 질문리스트 조회")
-    public void findByDeletedFalse2() {
-        question1.deleted();
+    public void findByDeletedFalse2() throws CannotDeleteException {
+        question1.deleted(user1);
 
         List<Question> deletedQuestions = questionRepository.findByDeletedFalse();
 
@@ -94,12 +95,33 @@ public class QuestionRepositoryTest {
     }
 
     @Test
+    @DisplayName("질문 삭제 가능 리스트 조회")
     public void findByIdAndDeletedFalse() {
         Optional<Question> questionOptional = questionRepository.findByIdAndDeletedFalse(question1.getId());
 
         assertAll(
-            () -> assertThat(questionOptional).isNotEmpty(),
-            () -> assertThat(questionOptional.get()).isEqualTo(question1)
+                () -> assertThat(questionOptional).isNotEmpty(),
+                () -> assertThat(questionOptional.get()).isEqualTo(question1)
+        );
+    }
+
+    @Test
+    @DisplayName("질문 삭제 가능 리스트중에서 질문 하나를 정상 삭제후 질문 리스트 확인")
+    public void findByIdAndDeletedFalse2() throws CannotDeleteException {
+        List<Question> beforeQuestions = questionRepository.findByDeletedFalse();
+
+        assertAll(
+            () -> assertThat(beforeQuestions).isNotEmpty(),
+            () -> assertThat(beforeQuestions.size()).isEqualTo(2),
+            () -> assertThat(beforeQuestions.get(0).isOwner(user1)).isTrue()
+        );
+
+        beforeQuestions.get(0).deleted(user1);
+
+        List<Question> afterQuestions = questionRepository.findByDeletedFalse();
+        assertAll(
+            () -> assertThat(afterQuestions).isNotEmpty(),
+            () -> assertThat(afterQuestions.size()).isEqualTo(1)
         );
     }
 }

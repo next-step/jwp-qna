@@ -4,8 +4,6 @@ import lombok.*;
 import qna.domain.entity.common.TraceDate;
 import qna.UnAuthorizedException;
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -26,16 +24,14 @@ import java.util.Objects;
  */
 
 @Getter
-@NoArgsConstructor
-@Entity
-@Table(uniqueConstraints = @UniqueConstraint(name = "unique_user_id", columnNames={"userId"}))
-@EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "userId", "email", "name"})
+@EqualsAndHashCode(of = "id")
+@Entity @NoArgsConstructor
+@Table(uniqueConstraints = @UniqueConstraint(name = "unique_user_id", columnNames={"userId"}))
 public class User extends TraceDate {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 50)
@@ -49,12 +45,6 @@ public class User extends TraceDate {
 
     @Column(length = 20, nullable = false)
     private String userId;
-
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
-    private List<Question> questions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
-    private List<Answer> answers = new ArrayList<>();
 
     public boolean isGuestUser() {
         return false;
@@ -82,11 +72,11 @@ public class User extends TraceDate {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    public boolean matchUserId(String userId) {
         return this.userId.equals(userId);
     }
 
-    private boolean matchPassword(String targetPassword) {
+    public boolean matchPassword(String targetPassword) {
         return this.password.equals(targetPassword);
     }
 
