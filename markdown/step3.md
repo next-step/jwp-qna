@@ -17,8 +17,8 @@
 ## TODO LIST
 
 - [ ] 서비스 레이어에서 get으로 entity의 상태를 가져와 비교하는 행위를 Entity의 책임으로 부여
-  - [ ] Question 비즈니스 영역 분리
-  - [ ] Answer 비즈니스 영역 분리
+  - [X] Question 비즈니스 영역 분리
+  - [X] Answer 비즈니스 영역 분리
   - [ ] DeleteHistory 비즈니스 영역 분리
 - [ ] 일급 컬렉션 추가
   - [ ] Answers

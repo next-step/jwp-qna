@@ -3,6 +3,7 @@ package qna.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 
 import java.util.List;
 
@@ -27,10 +28,18 @@ public class QuestionTest {
     @Test
     void deleteQuestion() {
         //when
-        DeleteHistory actual = question3.delete();
+        DeleteHistory actual = question3.delete(UserTest.SANJIGI);
 
         //then
         assertThat(actual.getDeletedBy()).isSameAs(UserTest.SANJIGI);
+    }
+
+    @DisplayName("질문을 삭제할 때 본인이 만든 질문이 아닌 경우 예외를 발생시킨다.")
+    @Test
+    void deleteQuestionException() {
+        assertThatThrownBy(() -> question3.delete(UserTest.JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContainingAll(Question.DELETE_EXCEPTION_MESSAGE);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.springframework.data.annotation.ReadOnlyProperty;
+import qna.CannotDeleteException;
 import qna.domain.base.BaseEntity;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
+    public static final String DELETE_EXCEPTION_MESSAGE = "질문을 삭제할 권한이 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,7 +51,7 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
@@ -70,9 +72,13 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public DeleteHistory delete(){
+    public DeleteHistory delete(User loginUser){
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(DELETE_EXCEPTION_MESSAGE);
+        }
+
         this.deleted = true;
-        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+        return DeleteHistory.ofQuestion(id, writer, LocalDateTime.now());
     }
 
     @Override
