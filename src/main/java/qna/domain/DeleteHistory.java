@@ -10,6 +10,7 @@ public class DeleteHistory extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
+    @Column(name = "content_id")
     private Long contentId;
 
     @JoinColumn
