@@ -44,11 +44,6 @@ public class Question extends BaseEntity {
 	}
 
 	public Question(String title, String contents) {
-		this(null, title, contents);
-	}
-
-	public Question(Long id, String title, String contents) {
-		this.id = id;
 		this.title = title;
 		this.contents = contents;
 	}

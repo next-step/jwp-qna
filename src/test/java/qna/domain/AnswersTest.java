@@ -18,15 +18,15 @@ class AnswersTest {
 	@BeforeEach
 	void setup() {
 		this.loginUser = new User(99L, "testUser", "testPassword", "testName", "testEmail");
-		this.question = new Question(1L, "testQuestion", "testContents").writeBy(this.loginUser);
+		this.question = new Question("testQuestion", "testContents").writeBy(this.loginUser);
 	}
 
 	@Test
 	@DisplayName("답변 목록 삭제 테스트")
 	void test_deleteAnswers() throws CannotDeleteException {
 		Answers answers = new Answers();
-		Answer answer1 = new Answer(1L, this.loginUser, this.question, "answer1");
-		Answer answer2 = new Answer(2L, this.loginUser, this.question, "answer2");
+		Answer answer1 = new Answer(this.loginUser, this.question, "answer1");
+		Answer answer2 = new Answer(this.loginUser, this.question, "answer2");
 		answers.addAnswer(answer1);
 		answers.addAnswer(answer2);
 
@@ -41,8 +41,8 @@ class AnswersTest {
 	@DisplayName("답변중 작성자가 다르면 삭제실패")
 	void test_deleteAnswer_diffWriter() {
 		Answers answers = new Answers();
-		Answer answer1 = new Answer(1L, this.loginUser, this.question, "answer1");
-		Answer answer2 = new Answer(2L, UserTest.JAVAJIGI, this.question, "answer2");
+		Answer answer1 = new Answer(this.loginUser, this.question, "answer1");
+		Answer answer2 = new Answer(UserTest.JAVAJIGI, this.question, "answer2");
 		answers.addAnswer(answer1);
 		answers.addAnswer(answer2);
 

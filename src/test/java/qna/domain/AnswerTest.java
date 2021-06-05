@@ -52,7 +52,7 @@ public class AnswerTest {
 	@Test
 	@DisplayName("작성자 일치시 답변제거")
 	void test_답변제거_작성자일치() throws CannotDeleteException {
-		Answer answer = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "test");
+		Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "test");
 		DeleteHistory deleteHistory = answer.delete(UserTest.JAVAJIGI);
 
 		assertThat(deleteHistory.getDeletedBy()).isEqualTo(UserTest.JAVAJIGI);
