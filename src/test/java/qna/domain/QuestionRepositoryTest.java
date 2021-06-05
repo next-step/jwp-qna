@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,7 @@ class QuestionRepositoryTest {
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
-                () -> assertThat(user.getId()).isNotNull(),
+                () -> assertThat(user.id()).isNotNull(),
                 () -> assertThat(actual.getId()).isEqualTo(expected.getId())
         );
     }
@@ -67,15 +66,13 @@ class QuestionRepositoryTest {
         assertThat(actual.isPresent()).isTrue();
         assertThat(actual.get().isContainAnswer(answersContents1)).isTrue();
         assertThat(actual.get().isContainAnswer(answersContents2)).isTrue();
-        assertThat(actual.get().isSameByAnswersSize(2)).isTrue();
-
     }
 
     @Test
     @DisplayName("질문 테이블 정상 수정")
     void update() {
         Question expected = questions.save(new Question("title1", "contents").writeBy(user));
-        expected.delete(true);
+        expected.delete();
         entityManager.flush();
         entityManager.clear();
         Optional<Question> actual = questions.findById(expected.getId());

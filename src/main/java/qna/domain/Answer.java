@@ -2,6 +2,8 @@ package qna.domain;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.wrappers.Contents;
+import qna.domain.wrappers.Deleted;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -9,6 +11,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,11 +24,11 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents = new Contents();
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted = new Deleted();
 
     protected Answer() {
     }
@@ -47,11 +50,7 @@ public class Answer extends BaseEntity {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
+        this.contents = new Contents(contents);
     }
 
     public void toQuestion(Question question) {
@@ -71,11 +70,11 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
-    public void delete(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = Deleted.createByDelete();
     }
 
     public boolean isWriterUser(User user) {
@@ -83,15 +82,15 @@ public class Answer extends BaseEntity {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        Answer answer = (Answer) object;
-        return deleted == answer.deleted &&
-                Objects.equals(id, answer.id) &&
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answer answer = (Answer) o;
+        return Objects.equals(id, answer.id) &&
                 Objects.equals(writer, answer.writer) &&
                 Objects.equals(question, answer.question) &&
-                Objects.equals(contents, answer.contents);
+                Objects.equals(contents, answer.contents) &&
+                Objects.equals(deleted, answer.deleted);
     }
 
     @Override
@@ -103,10 +102,10 @@ public class Answer extends BaseEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writer.getId() +
+                ", writerId=" + writer.id() +
                 ", questionId=" + question.getId() +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
+                ", " + contents.toString() + '\'' +
+                ", " + deleted.toString() +
                 '}';
     }
 }

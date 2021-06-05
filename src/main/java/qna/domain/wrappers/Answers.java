@@ -1,4 +1,9 @@
-package qna.domain;
+package qna.domain.wrappers;
+
+import qna.domain.Answer;
+import qna.domain.ContentType;
+import qna.domain.DeleteHistory;
+import qna.domain.User;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -9,11 +14,13 @@ import java.util.Objects;
 
 @Embeddable
 public class Answers {
+    private static final ContentType ANSWER_CONTENT_TYPE = ContentType.ANSWER;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
-    private List<Answer> answers = new ArrayList<>();
+    private List<Answer> answers;
 
     public Answers() {
+        this.answers = new ArrayList<>();
     }
 
     public Answers(List<Answer> answers) {
@@ -28,10 +35,6 @@ public class Answers {
         return answers.contains(answer);
     }
 
-    public boolean isSameSize(int size) {
-        return answers.size() == size;
-    }
-
     public void addAnswer(Answer answer) {
         answers.add(answer);
     }
@@ -42,6 +45,15 @@ public class Answers {
             anyMatch = answer.isWriterUser(loginUser);
         }
         return anyMatch;
+    }
+
+    public List<DeleteHistory> createDeleteHistories(User loginUser) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : answers) {
+            deleteHistories.add(DeleteHistory.create(ANSWER_CONTENT_TYPE, answer.getId(), loginUser));
+            answer.delete();
+        }
+        return deleteHistories;
     }
 
     @Override

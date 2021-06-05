@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.springframework.data.annotation.CreatedDate;
+import qna.domain.wrappers.ContentId;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,8 +19,8 @@ public class DeleteHistory {
     @Enumerated(value = EnumType.STRING)
     private ContentType contentType;
 
-    @Column(name = "content_id")
-    private Long contentId;
+    @Embedded
+    private ContentId contentId = new ContentId();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
@@ -32,17 +33,14 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, long contentId, User deletedBy) {
         this.contentType = contentType;
-        this.contentId = contentId;
+        this.contentId = new ContentId(contentId);
         this.deletedBy = deletedBy;
-        this.createDate = createDate;
     }
 
-    public DeleteHistory(ContentType contentType, long contentId, User deletedBy) {
-        this.contentType = contentType;
-        this.contentId = contentId;
-        this.deletedBy = deletedBy;
+    public static DeleteHistory create(ContentType contentType, Long contendId, User user) {
+        return new DeleteHistory(contentType, contendId, user);
     }
 
     public Long getId() {
@@ -65,12 +63,13 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedBy, that.deletedBy);
+                Objects.equals(deletedBy, that.deletedBy) &&
+                Objects.equals(createDate, that.createDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedBy);
+        return Objects.hash(id, contentType, contentId, deletedBy, createDate);
     }
 
     @Override
@@ -78,8 +77,8 @@ public class DeleteHistory {
         return "DeleteHistory{" +
                 "id=" + id +
                 ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", deletedById=" + deletedBy.getId() +
+                ", " + contentId.toString() +
+                ", deletedById=" + deletedBy.id() +
                 ", createDate=" + createDate +
                 '}';
     }

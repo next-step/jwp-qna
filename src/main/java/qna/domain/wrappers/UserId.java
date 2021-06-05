@@ -14,7 +14,7 @@ public class UserId {
     @Column(name = "user_id", nullable = false, length = USER_ID_MAX_LENGTH)
     private String userId;
 
-    protected UserId() {
+    public UserId() {
     }
 
     public UserId(String userId) {

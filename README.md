@@ -176,6 +176,6 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
         * 유효성 검사 기능
     * email 원시값 포장 객체
         * 유효성 검사 기능
-* [ ] 삭제 히스토리 생성 기능
+* [x] 삭제 히스토리 생성 기능
     * 질문 삭제 히스토리 기능
     * 답변 삭제 히스토리 기능

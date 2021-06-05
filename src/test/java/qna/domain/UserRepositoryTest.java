@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.wrappers.UserName;
 
 import javax.persistence.EntityManager;
 import java.util.Optional;
@@ -26,8 +27,8 @@ class UserRepositoryTest {
         User expected = UserTest.JAVAJIGI;
         User actual = users.save(expected);
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail())
+                () -> assertThat(actual.id()).isNotNull()
+//                () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail())
         );
     }
 
@@ -35,9 +36,9 @@ class UserRepositoryTest {
     @DisplayName("유저 아이디 기준 조회")
     void findById() {
         User expected = users.save(UserTest.SANJIGI);
-        Optional<User> actual = users.findById(expected.getId());
+        Optional<User> actual = users.findById(expected.id());
         assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get().getId()).isEqualTo(expected.getId());
+        assertThat(actual.get().id()).isEqualTo(expected.id());
         assertThat(actual.get() == expected).isTrue();
     }
 
@@ -46,12 +47,12 @@ class UserRepositoryTest {
     void update() {
         String name = "mwkwon";
         User expected = users.save(UserTest.JAVAJIGI);
-        expected.setName(name);
+        expected.name(name);
         entityManager.flush();
         entityManager.clear();
-        Optional<User> actual = users.findById(expected.getId());
+        Optional<User> actual = users.findById(expected.id());
         assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get().getName()).isEqualTo(name);
+        assertThat(actual.get().name()).isEqualTo(new UserName(name));
     }
 
     @Test
@@ -61,7 +62,7 @@ class UserRepositoryTest {
         users.delete(expected);
         entityManager.flush();
         entityManager.clear();
-        Optional<User> actual = users.findById(expected.getId());
+        Optional<User> actual = users.findById(expected.id());
         assertThat(actual.isPresent()).isFalse();
     }
 }

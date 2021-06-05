@@ -10,7 +10,7 @@ public class Contents {
     @Lob
     private String contents;
 
-    protected Contents() {
+    public Contents() {
     }
 
     public Contents(String contents) {

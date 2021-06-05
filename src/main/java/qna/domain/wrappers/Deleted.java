@@ -10,15 +10,16 @@ public class Deleted {
     @Column(nullable = false)
     private boolean deleted;
 
-    protected Deleted() {
+    public Deleted() {
+        this.deleted = false;
     }
 
-    public Deleted(boolean deleted) {
+    private Deleted(boolean deleted) {
         this.deleted = deleted;
     }
 
-    public void delete(boolean deleted) {
-        this.deleted = deleted;
+    public static Deleted createByDelete() {
+        return new Deleted(true);
     }
 
     public boolean isDeleted() {

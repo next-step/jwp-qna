@@ -10,7 +10,7 @@ public class ContentId {
     @Column(name = "content_id")
     private Long contentId;
 
-    protected ContentId() {
+    public ContentId() {
     }
 
     public ContentId(Long contentId) {

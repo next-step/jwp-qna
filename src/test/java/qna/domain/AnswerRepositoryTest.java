@@ -9,7 +9,6 @@ import javax.persistence.EntityManager;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.useRepresentation;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -58,7 +57,7 @@ class AnswerRepositoryTest {
 
         Optional<Answer> actual = answers.findById(expected.getId());
         assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get().getWriter().getId()).isEqualTo(user.getId());
+        assertThat(actual.get().getWriter().id()).isEqualTo(user.id());
     }
 
     @Test
@@ -75,12 +74,11 @@ class AnswerRepositoryTest {
     @DisplayName("답변 테이블 수정")
     void update() {
         Answer expected = answers.save(new Answer(user, question, "Answers Contents1"));
-        expected.delete(true);
+        expected.delete();
         entityManager.flush();
         entityManager.clear();
         Optional<Answer> actual = answers.findById(expected.getId());
         assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get().isDeleted()).isTrue();
     }
 
     @Test

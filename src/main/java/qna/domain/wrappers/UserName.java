@@ -14,7 +14,7 @@ public class UserName {
     @Column(nullable = false, length = 20)
     private String name;
 
-    protected UserName() {
+    public UserName() {
     }
 
     public UserName(String name) {

@@ -13,7 +13,7 @@ public class UserEmail {
     @Column(length = 50)
     private String email;
 
-    protected UserEmail() {
+    public UserEmail() {
     }
 
     public UserEmail(String email) {

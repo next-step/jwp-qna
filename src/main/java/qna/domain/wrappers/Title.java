@@ -13,7 +13,7 @@ public class Title {
     @Column(nullable = false, length = TITLE_MAX_LENGTH)
     private String title;
 
-    protected Title() {
+    public Title() {
     }
 
     public Title(String title) {

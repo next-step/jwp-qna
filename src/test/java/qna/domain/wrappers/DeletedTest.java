@@ -14,8 +14,6 @@ public class DeletedTest {
 
     @Test
     void 삭제_여부_삭제로_변경() {
-        Deleted deleted = new Deleted();
-        deleted.delete(true);
-        assertThat(deleted).isEqualTo(new Deleted(true));
+        assertThat(Deleted.createByDelete()).isNotEqualTo(new Deleted());
     }
 }

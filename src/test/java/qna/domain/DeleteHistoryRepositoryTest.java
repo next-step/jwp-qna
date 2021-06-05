@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +31,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("회원 정보 테이블 정상 저장")
     void save() {
-        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, user);
+        DeleteHistory expected = DeleteHistory.create(ContentType.QUESTION, 1L, user);
         DeleteHistory actual = deleteHistories.save(expected);
         assertThat(actual.equals(expected)).isTrue();
     }
@@ -73,7 +72,7 @@ class DeleteHistoryRepositoryTest {
     }
 
     private DeleteHistory setUpTestDeleteHistory() {
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, user);
+        DeleteHistory deleteHistory = DeleteHistory.create(ContentType.QUESTION, 1L, user);
         return deleteHistories.save(deleteHistory);
     }
 

@@ -1,6 +1,10 @@
 package qna.domain;
 
 import qna.UnAuthorizedException;
+import qna.domain.wrappers.UserEmail;
+import qna.domain.wrappers.UserId;
+import qna.domain.wrappers.UserName;
+import qna.domain.wrappers.UserPassword;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -15,17 +19,17 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false, length = 20)
-    private String userId;
+    @Embedded
+    private UserId userId = new UserId();
 
-    @Column(nullable = false, length = 20)
-    private String password;
+    @Embedded
+    private UserPassword password = new UserPassword();
 
-    @Column(nullable = false, length = 20)
-    private String name;
+    @Embedded
+    private UserName name = new UserName();
 
-    @Column(length = 50)
-    private String email;
+    @Embedded
+    private UserEmail email = new UserEmail();
 
     protected User() {
     }
@@ -36,18 +40,18 @@ public class User extends BaseEntity {
 
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+        this.userId = new UserId(userId);
+        this.password = new UserPassword(password);
+        this.name = new UserName(name);
+        this.email = new UserEmail(email);
     }
 
     public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
+        if (!matchUserId(loginUser.userId())) {
             throw new UnAuthorizedException();
         }
 
-        if (!matchPassword(target.password)) {
+        if (!matchPassword(target.password())) {
             throw new UnAuthorizedException();
         }
 
@@ -55,13 +59,14 @@ public class User extends BaseEntity {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    private boolean matchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
+    public boolean matchPassword(UserPassword targetPassword) {
         return this.password.equals(targetPassword);
     }
+
 
     public boolean equalsNameAndEmail(User target) {
         if (Objects.isNull(target)) {
@@ -76,41 +81,48 @@ public class User extends BaseEntity {
         return false;
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
-    public String getName() {
+    public void id(Long id) {
+        this.id = id;
+    }
+
+    public UserId userId() {
+        return userId;
+    }
+
+    public void userId(String userId) {
+        this.userId = new UserId(userId);
+    }
+
+    public UserPassword password() {
+        return password;
+    }
+
+    public void password(String password) {
+        this.password = new UserPassword(password);
+    }
+
+    public UserName name() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void name(String name) {
+        this.name = new UserName(name);
     }
 
-    public String getEmail() {
+    public UserEmail email() {
         return email;
+    }
+
+    public void email(String email) {
+        this.email = new UserEmail(email);
     }
 
     public boolean isSameUser(User user) {
         return this.equals(user);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        User user = (User) object;
-        return Objects.equals(id, user.id) &&
-                Objects.equals(userId, user.userId) &&
-                Objects.equals(password, user.password) &&
-                Objects.equals(name, user.name) &&
-                Objects.equals(email, user.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, userId, password, name, email);
     }
 
     @Override
