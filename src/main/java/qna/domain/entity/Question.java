@@ -43,9 +43,6 @@ public class Question extends Deleteable<User, DeleteHistories> {
     @Embedded
     private Answers answers = new Answers();
 
-    @Transient
-    private final DeleteHistories deleteHistories = new DeleteHistories();
-
     public Question(String title, String contents) {
         this(null, title, contents);
     }
@@ -82,12 +79,8 @@ public class Question extends Deleteable<User, DeleteHistories> {
 
     @Override
     protected DeleteHistories appendDeleteHistory(User deleter) throws CannotDeleteException {
-        return deleteHistories
+        return new DeleteHistories()
                 .append(DeleteHistory.ContentType.QUESTION.getDeleteHistory(this.id, deleter))
                 .append(answers.deleted(deleter));
-    }
-
-    public List<DeleteHistory> getDeleteHistories() {
-        return deleteHistories.list();
     }
 }
