@@ -87,13 +87,13 @@ class QnaServiceTest {
     }
 
     @Test
-    public void deleteQuestion_삭제권한_본인글_확인() throws Exception {
+    public void delete_삭제권한_본인글_확인() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         assertThat(qnaService.findQuestionForDeleteWithSameWriterAuth(UserTest.JAVAJIGI, question.getId()).getId()).isEqualTo(question.getId());
     }
 
     @Test
-    public void deleteQuestion_삭제권한_다른사람답변여부_확인() throws Exception {
+    public void delete_삭제권한_다른사람답변여부_확인() throws Exception {
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
         List<Answer> answers = qnaService.findAnswersForDeleteWithSameWriterAuth(UserTest.JAVAJIGI, question.getId());
@@ -101,11 +101,20 @@ class QnaServiceTest {
     }
 
     @Test
-    public void deleteQuestion_삭제권한_다른사람답변여부_오류확인() throws Exception {
+    public void delete_삭제권한_다른사람답변여부_오류확인() throws Exception {
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
         assertThatThrownBy(() -> qnaService.findAnswersForDeleteWithSameWriterAuth(UserTest.SANJIGI, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    public void delete_답변_없는경우_삭제_확인() throws Exception {
+        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+
+        qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
+        assertThat(question.isDeleted()).isTrue();
+
     }
 
     private void verifyDeleteHistories() {
