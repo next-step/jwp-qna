@@ -14,6 +14,9 @@ public class Answers {
 	@OneToMany(mappedBy = "question")
 	private final List<Answer> answers = new ArrayList<>();
 
+	protected Answers() {
+	}
+
 	public List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
 		List<DeleteHistory> deleteHistories = new ArrayList<>();
 		for (Answer answer : this.answers) {
