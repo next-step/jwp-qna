@@ -3,18 +3,30 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User  extends BaseEntity {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "user_id", nullable = false, unique = true, length = 20)
     private String userId;
+
+    @OneToMany(mappedBy = "writer")
+    List<Answer> answers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
+    List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    List<DeleteHistory> deletedHistories = new ArrayList<>();
 
     @Column(name = "password", nullable = false, length = 20)
     private String password;
@@ -114,6 +126,23 @@ public class User  extends BaseEntity {
         this.email = email;
     }
 
+
+    public static GuestUser getGuestUser() {
+        return GUEST_USER;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public List<DeleteHistory> getDeletedHistories() {
+        return deletedHistories;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -121,6 +150,9 @@ public class User  extends BaseEntity {
         User user = (User) o;
         return Objects.equals(id, user.id) &&
                 Objects.equals(userId, user.userId) &&
+                Objects.equals(answers, user.answers) &&
+                Objects.equals(questions, user.questions) &&
+                Objects.equals(deletedHistories, user.deletedHistories) &&
                 Objects.equals(password, user.password) &&
                 Objects.equals(name, user.name) &&
                 Objects.equals(email, user.email);
@@ -128,7 +160,7 @@ public class User  extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email);
+        return Objects.hash(id, userId, answers, questions, deletedHistories, password, name, email);
     }
 
     @Override
