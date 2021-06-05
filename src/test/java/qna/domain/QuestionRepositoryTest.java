@@ -20,14 +20,16 @@ public class QuestionRepositoryTest {
 
     private Question question1;
     private Question question2;
+    private User questionWriter1;
+    private User questionWriter2;
 
     @BeforeEach
     void setUp() {
-        User questionWriter1 = new User("qwriter1", "password", "name", "sunju@slipp.net");
+        questionWriter1 = new User("qwriter1", "password", "name", "sunju@slipp.net");
         question1 = new Question("title3", "contents2").writeBy(questionWriter1);
         users.save(questionWriter1);
 
-        User questionWriter2 = new User("qwriter2", "password", "name", "jung@slipp.net");
+        questionWriter2 = new User("qwriter2", "password", "name", "jung@slipp.net");
         question2 = new Question("title3", "contents2").writeBy(questionWriter2);
         users.save(questionWriter2);
     }
@@ -87,5 +89,27 @@ public class QuestionRepositoryTest {
 
         assertThat(actual).isEqualTo(actualQuestion1);
         assertThat(actual.isDeleted()).isFalse();
+    }
+
+    @Test
+    @DisplayName("작성자 확인 테스트")
+    void isWrittenByTest() {
+        Question savedQuestion = questions.save(question1);
+        assertThat(savedQuestion.isWrittenBy(questionWriter1));
+    }
+
+    @Test
+    @DisplayName("답변 삭제 테스트")
+    void deleteAnswerTest() {
+        Question savedQuestion = questions.save(question1);
+        questions.save(question2);
+        questions.flush();
+        List<Question> beforeDeleteList = questions.deletedFalse();
+        assertThat(beforeDeleteList.size()).isEqualTo(2);
+
+        savedQuestion.delete();
+        questions.flush();
+        List<Question> afterDeleteList = questions.deletedFalse();
+        assertThat(afterDeleteList.size()).isEqualTo(1);
     }
 }
