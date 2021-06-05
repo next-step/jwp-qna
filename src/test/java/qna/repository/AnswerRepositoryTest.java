@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
 import qna.domain.Answer;
 import qna.domain.QuestionTest;
 import qna.domain.UserTest;
@@ -49,5 +50,25 @@ public class AnswerRepositoryTest {
 		expected.setDeleted(true);
 		actual = answers.findByIdAndDeletedFalse(expected.getId()).orElse(null);
 		assertThat(actual).isNull();
+	}
+
+	@Test
+	@DisplayName("답변 삭제 성공 : 동일 작성자")
+	void deleteSuccess() {
+		Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+		answers.save(answer);
+		answer.delete(UserTest.JAVAJIGI);
+		Answer actual = answers.findByIdAndDeletedFalse(answer.getId()).orElse(null);
+		assertThat(actual).isNull();
+	}
+	@Test
+	@DisplayName("답변 삭제 실패 : 다른 작성자")
+	void deleteFail() {
+		Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+		answers.save(answer);
+
+		assertThatThrownBy(() -> answer.delete(UserTest.SANJIGI))
+			.isInstanceOf(CannotDeleteException.class)
+			.hasMessage("답변을 삭제할 권한이 없습니다.");
 	}
 }

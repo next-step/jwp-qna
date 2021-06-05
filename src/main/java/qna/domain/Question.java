@@ -142,7 +142,7 @@ public class Question extends BaseEntity{
 			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 		}
 		for (Answer answer : answers) {
-			answer.existOtherUserAnswer(user);
+			answer.delete(user);
 		}
 		setDeleted(true);
 	}

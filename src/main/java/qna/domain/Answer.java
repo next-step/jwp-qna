@@ -139,9 +139,10 @@ public class Answer extends BaseEntity{
         return Objects.hash(id, writer, question);
     }
 
-    public void existOtherUserAnswer(User user) {
+    public void delete(User user) {
         if (!isOwner(user)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
         }
+        setDeleted(true);
     }
 }
