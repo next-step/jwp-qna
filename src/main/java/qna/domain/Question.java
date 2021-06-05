@@ -2,7 +2,9 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,7 +41,7 @@ public class Question extends BaseEntity{
 	@Column(name = "deleted", nullable = false)
 	private boolean deleted = false;
 
-	@OneToMany(mappedBy = "question")
+	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
 	private List<Answer> answers = new ArrayList<>();
 
 	protected Question(){
@@ -65,6 +67,7 @@ public class Question extends BaseEntity{
     }
 
     public void addAnswer(Answer answer) {
+		answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -118,6 +121,21 @@ public class Question extends BaseEntity{
                 ", deleted=" + deleted +
                 '}';
     }
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Question question = (Question)o;
+		return id.equals(question.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 
 	public void delete(User user) {
 		if (!isOwner(user)) {

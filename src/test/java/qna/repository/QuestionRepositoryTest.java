@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.CannotDeleteException;
+import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.User;
 import qna.domain.UserTest;
@@ -18,14 +19,19 @@ import qna.domain.UserTest;
 @DataJpaTest
 public class QuestionRepositoryTest {
 
-	@Autowired
-	private QuestionRepository questions;
+	private final QuestionRepository questions;
 	private final UserRepository users;
+
+	private final User writer;
+	private final User other;
 
 	@Autowired
 	public QuestionRepositoryTest(QuestionRepository questions, UserRepository users) {
 		this.questions = questions;
 		this.users = users;
+
+		writer = users.save(UserTest.JAVAJIGI);
+		other = users.save(UserTest.SANJIGI);
 	}
 
 	@Test
@@ -77,8 +83,6 @@ public class QuestionRepositoryTest {
 	@Test
 	@DisplayName("질문 삭제 성공 : 동일 작성자, 답변이 없는 경우")
 	void deleteSuccess() {
-		User writer = users.save(UserTest.JAVAJIGI);
-
 		Question question = new Question(1L, "title1", "contents1").writeBy(writer);
 		question = questions.save(question);
 		question.delete(writer);
@@ -89,13 +93,24 @@ public class QuestionRepositoryTest {
 	@Test
 	@DisplayName("질문 삭제 실패 : 동일 작성자가 아닌 경우")
 	void deleteFailOfWriter() {
-		User writer = users.save(UserTest.JAVAJIGI);
-		User other = users.save(UserTest.SANJIGI);
-
 		Question question = new Question(1L, "title1", "contents1").writeBy(writer);
 		Question savedQuestion = questions.save(question);
 		assertThatThrownBy(() -> savedQuestion.delete(other))
 			.isInstanceOf(CannotDeleteException.class)
 			.hasMessage("질문을 삭제할 권한이 없습니다.");
+	}
+
+	@Test
+	@DisplayName("질문 삭제 실패 : 동일 작성자가 아닌 경우")
+	void deleteFailOfAnswer() {
+		Question question = new Question(1L, "title1", "contents1").writeBy(writer);
+		Answer otherWriterAnswer =  new Answer(other, question, "Answers Contents2");;
+
+		question.addAnswer(otherWriterAnswer);
+		Question savedQuestion = questions.save(question);
+
+		assertThatThrownBy(() -> savedQuestion.delete(writer))
+			.isInstanceOf(CannotDeleteException.class)
+			.hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 	}
 }
