@@ -72,7 +72,7 @@ public class AnswerRepositoryTest {
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
 
         assertAll(
-            () -> assertThat(answers.size()).isEqualTo(2),
+            () -> assertThat(answers.size()).isEqualTo(1),
             () -> assertThat(answers).contains(answer1)
         );
     }
@@ -99,5 +99,4 @@ public class AnswerRepositoryTest {
             () -> assertThat(answerOptional.get()).isEqualTo(answer1)
         );
     }
-
 }

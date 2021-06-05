@@ -2,8 +2,8 @@ package qna.domain.entity;
 
 import org.junit.jupiter.api.*;
 import qna.CannotDeleteException;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -42,5 +42,12 @@ public class AnswerTest {
         assertAll(
             () -> assertThat(ANSWER_OF_SANJIGI.isDeleted()).isTrue()
         );
+    }
+
+    @Test
+    @DisplayName("다른 작성자가 작성한 답변을 삭제하는 경우 예외가 발생한다.")
+    void otherDeleted() {
+        assertThatThrownBy(() -> ANSWER_OF_SANJIGI.deleted(UserTest.USER_JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class);
     }
 }

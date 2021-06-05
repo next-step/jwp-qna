@@ -95,12 +95,33 @@ public class QuestionRepositoryTest {
     }
 
     @Test
+    @DisplayName("질문 삭제 가능 리스트 조회")
     public void findByIdAndDeletedFalse() {
         Optional<Question> questionOptional = questionRepository.findByIdAndDeletedFalse(question1.getId());
 
         assertAll(
-            () -> assertThat(questionOptional).isNotEmpty(),
-            () -> assertThat(questionOptional.get()).isEqualTo(question1)
+                () -> assertThat(questionOptional).isNotEmpty(),
+                () -> assertThat(questionOptional.get()).isEqualTo(question1)
+        );
+    }
+
+    @Test
+    @DisplayName("질문 삭제 가능 리스트중에서 질문 하나를 정상 삭제후 질문 리스트 확인")
+    public void findByIdAndDeletedFalse2() throws CannotDeleteException {
+        List<Question> beforeQuestions = questionRepository.findByDeletedFalse();
+
+        assertAll(
+            () -> assertThat(beforeQuestions).isNotEmpty(),
+            () -> assertThat(beforeQuestions.size()).isEqualTo(2),
+            () -> assertThat(beforeQuestions.get(0).isOwner(user1)).isTrue()
+        );
+
+        beforeQuestions.get(0).deleted(user1);
+
+        List<Question> afterQuestions = questionRepository.findByDeletedFalse();
+        assertAll(
+            () -> assertThat(afterQuestions).isNotEmpty(),
+            () -> assertThat(afterQuestions.size()).isEqualTo(1)
         );
     }
 }

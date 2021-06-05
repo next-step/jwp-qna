@@ -12,7 +12,7 @@ public class QuestionTest {
     public static final Question QUESTION_OF_JAVAJIGI = new Question(1L, "title1", "contents1")
             .writeBy(UserTest.USER_JAVAJIGI);
 
-    public static final Question QUESTION_OF_SANJIGI = new Question(1L, "title2", "contents2")
+    public static final Question QUESTION_OF_SANJIGI = new Question(2L, "title2", "contents2")
             .writeBy(UserTest.USER_SANJIGI);
 
     @Test
