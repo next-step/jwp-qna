@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "t_answer")
 public class Answer extends BaseEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -50,7 +49,7 @@ public class Answer extends BaseEntity{
         return this.user.equals(user);
     }
 
-    public void toQuestion(Question question) {
+    public void question(Question question) {
         this.question = question;
     }
 
@@ -66,20 +65,8 @@ public class Answer extends BaseEntity{
         return user;
     }
 
-    public Long questionId() {
-        return question.id();
-    }
-
-    public void questionId(Question question) {
-        this.question = question;
-    }
-
-    public String contents() {
-        return contents;
-    }
-
-    public void contents(String contents) {
-        this.contents = contents;
+    public Question question() {
+        return question;
     }
 
     public boolean deleted() {

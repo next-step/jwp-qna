@@ -6,7 +6,6 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "T_user")
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -91,32 +90,12 @@ public class User extends BaseEntity {
         return userId;
     }
 
-    public void userId(String userId) {
-        this.userId = userId;
-    }
-
-    public String password() {
-        return password;
-    }
-
-    public void password(String password) {
-        this.password = password;
-    }
-
     public String name() {
         return name;
     }
 
-    public void name(String name) {
-        this.name = name;
-    }
-
     public String email() {
         return email;
-    }
-
-    public void email(String email) {
-        this.email = email;
     }
 
     @Override

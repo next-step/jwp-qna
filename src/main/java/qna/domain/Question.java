@@ -1,99 +1,114 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.FetchType.*;
 
 @Entity
-@Table(name = "T_question")
 public class Question extends BaseEntity {
-    @Id @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue (strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+	@Column (length = 100, nullable = false)
+	private String title;
 
-    @Lob
-    private String contents;
+	@Lob
+	private String contents;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id")
-    private User user;
+	@OneToOne (fetch = LAZY, cascade = CascadeType.MERGE)
+	@JoinColumn (name = "user_id")
+	private User user;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+	@OneToMany(mappedBy = "question")
+	private List<Answer> answers = new ArrayList<> ();
 
-    protected Question () { }
+	@Column (nullable = false)
+	private boolean deleted = false;
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
+	protected Question () {
+	}
 
-    public Question(Long id, String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
-    }
+	public Question (String title, String contents) {
+		this(null, title, contents);
+	}
 
-    public Question writeBy(User user) {
-        this.user = user;
-        return this;
-    }
+	public Question (Long id, String title, String contents) {
+		this.id = id;
+		this.title = title;
+		this.contents = contents;
+	}
 
-    public boolean isOwner(User user) {
-        return this.user.equals(user);
-    }
+	public Question writeBy (User user) {
+		this.user = user;
+		return this;
+	}
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
+	public boolean isOwner (User user) {
+		return this.user.equals(user);
+	}
 
-    public Long id() {
-        return id;
-    }
+	public void addAnswer (Answer answer) {
+		answer.question(this);
+		this.answers.add (answer);
+	}
 
-    public void id(Long id) {
-        this.id = id;
-    }
+	public Long id () {
+		return id;
+	}
 
-    public String title() {
-        return title;
-    }
+	public void id (Long id) {
+		this.id = id;
+	}
 
-    public void title(String title) {
-        this.title = title;
-    }
+	public User writer () {
+		return user;
+	}
 
-    public String contents() {
-        return contents;
-    }
+	public boolean deleted () {
+		return deleted;
+	}
 
-    public void contents(String contents) {
-        this.contents = contents;
-    }
+	public void deleted (boolean deleted) {
+		this.deleted = deleted;
+	}
 
-    public User writer() {
-        return user;
-    }
+	@Override
+	public String toString () {
+		return "Question{" +
+				"id=" + id +
+				", title='" + title + '\'' +
+				", contents='" + contents + '\'' +
+				", writerId=" + user.id() +
+				", deleted=" + deleted +
+				'}';
+	}
 
-    public void writer(User user) {
-        this.user = user;
-    }
+	public List<DeleteHistory> deleteQuestion(User loginUser) throws CannotDeleteException {
+		if (!this.isOwner(loginUser)) {
+			throw new CannotDeleteException ("질문을 삭제할 권한이 없습니다.");
+		}
 
-    public boolean deleted() {
-        return deleted;
-    }
+		for (Answer answer: this.answers) {
+			if(!answer.isOwner (loginUser)) {
+				throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+			}
+		}
 
-    public void deleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+		List<DeleteHistory> deleteHistories = new ArrayList<> ();
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + user.id() +
-                ", deleted=" + deleted +
-                '}';
-    }
+		this.deleted(true);
+		deleteHistories.add (new DeleteHistory (ContentType.QUESTION, this.id, this.writer (), LocalDateTime.now ()));
+
+		for (Answer answer: this.answers) {
+			answer.deleted (true);
+			deleteHistories.add (new DeleteHistory (ContentType.ANSWER, answer.id(), answer.writer (), LocalDateTime.now ()));
+		}
+		return deleteHistories;
+	}
 }
