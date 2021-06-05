@@ -1,15 +1,24 @@
 package qna.domain;
 
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.NotFoundException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class AnswerRepositoryTest extends JpaTest {
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class AnswerRepositoryTest {
+
+    @Autowired
+    private AnswerRepository answers;
+
     private Question question1;
     private Answer answer1;
     private Answer answer2;
@@ -18,14 +27,10 @@ class AnswerRepositoryTest extends JpaTest {
     void setUp() {
         User user1 = new User("userId1", "1234", "userName1", "userEmail1");
         User user2 = new User("userId2", "1234", "userName2", "userEmail2");
-        getUsers().saveAll(Arrays.asList(user1, user2));
-
         question1 = new Question("title1", "contents1").writeBy(user1);
-        getQuestions().save(question1);
-
         answer1 = new Answer(user1, question1, "contents1");
         answer2 = new Answer(user2, question1, "contents2");
-        getAnswers().saveAll(Arrays.asList(answer1, answer2));
+        answers.saveAll(Arrays.asList(answer1, answer2));
     }
 
     @DisplayName("질문 아이디에 해당하는 답변 목록 중 삭제 상태가 아닌 것들만 리턴한다")
@@ -35,7 +40,7 @@ class AnswerRepositoryTest extends JpaTest {
         answer2.delete();
 
         //when
-        List<Answer> actual = getAnswers().findByQuestionIdAndDeletedFalse(question1.getId());
+        List<Answer> actual = answers.findByQuestionIdAndDeletedFalse(question1.getId());
 
         //then
         assertThat(actual.size()).isEqualTo(1);
@@ -49,22 +54,22 @@ class AnswerRepositoryTest extends JpaTest {
         //Answer 삭제하지 않음
 
         //when
-        Answer actual = getAnswers().findByIdAndDeletedFalse(answer1.getId())
-                .orElseThrow(EntityNotFoundException::new);
+        Answer actual = answers.findByIdAndDeletedFalse(answer1.getId())
+                .orElseThrow(NotFoundException::new);
 
         //then
         assertThat(actual).isSameAs(answer1);
     }
 
-    @DisplayName("답변 아이디에 해당하는 답변이 삭제 상태라면 EntityNotFoundException 을 발생시킨다.")
+    @DisplayName("답변 아이디에 해당하는 답변이 삭제 상태라면 NotFoundException 을 발생시킨다.")
     @Test
     void findByIdAndDeletedFalseIfPresent() {
         //given
         answer1.delete();
 
         //when
-        assertThatThrownBy(() -> getAnswers().findByIdAndDeletedFalse(answer1.getId())
-                .orElseThrow(EntityNotFoundException::new))
-                .isInstanceOf(EntityNotFoundException.class); //then
+        assertThatThrownBy(() -> answers.findByIdAndDeletedFalse(answer1.getId())
+                .orElseThrow(NotFoundException::new))
+                .isInstanceOf(NotFoundException.class); //then
     }
 }
