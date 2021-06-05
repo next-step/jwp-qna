@@ -25,8 +25,8 @@ public class Question extends BaseEntity{
     @JoinColumn(name = "writer_id")
     private User writerId;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
         //JPA need no-arg constructor
@@ -88,27 +88,29 @@ public class Question extends BaseEntity{
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
-        for (Answer answer : answers) {
-            answer.isWrittenBySomeoneElse(loginUser);
-        }
+        answers.isWrittenBySomeoneElse(loginUser);
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        this.setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.getId(), this.getWriterId(), LocalDateTime.now()));
-        for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId(), LocalDateTime.now()));
-        }
+
+        DeleteHistory deleteHistory = this.delete();
+        deleteHistories.add(deleteHistory);
+
+        deleteHistories.addAll(answers.delete());
 
         return deleteHistories;
+    }
+
+    public DeleteHistory delete() {
+        this.setDeleted(true);
+        return new DeleteHistory(ContentType.QUESTION, this.getId(), this.getWriterId(), LocalDateTime.now());
+    }
+
+    public Answers answers() {
+        return answers;
     }
 }

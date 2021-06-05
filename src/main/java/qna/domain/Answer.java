@@ -63,7 +63,7 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
-        question.getAnswers().add(this);
+        question.answers().add(this);
     }
 
 
@@ -92,10 +92,8 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
-
-    public void isWrittenBySomeoneElse(User loginUser) throws CannotDeleteException {
-        if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
+    public DeleteHistory delete() {
+        this.setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriterId(), LocalDateTime.now());
     }
 }

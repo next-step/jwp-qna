@@ -66,10 +66,7 @@ public class AnswerTest {
     @DisplayName("답변 중 다른 사람이 쓴게 있는 경우")
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() {
-        assertThatThrownBy(() -> A1.isWrittenBySomeoneElse(UserTest.SANJIGI))
-                .isInstanceOf(CannotDeleteException.class);
-
-        assertThatThrownBy(() -> A2.isWrittenBySomeoneElse(UserTest.JAVAJIGI))
+        assertThatThrownBy(() -> QuestionTest.Q1.delete(UserTest.SANJIGI))
                 .isInstanceOf(CannotDeleteException.class);
     }
 }

@@ -37,7 +37,6 @@ public class QnaService {
         Question question = findQuestionById(questionId);
         List<DeleteHistory> deleteHistories = question.delete(loginUser);
 
-
         deleteHistoryService.saveAll(deleteHistories);
     }
 }
