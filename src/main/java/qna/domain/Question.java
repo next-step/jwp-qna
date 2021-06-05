@@ -5,6 +5,7 @@ import qna.CannotDeleteException;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "question")
@@ -66,10 +67,6 @@ public class Question extends BaseEntity {
 		return title;
 	}
 
-	public String getContents() {
-		return contents;
-	}
-
 	public User getWriter() {
 		return writer;
 	}
@@ -78,11 +75,14 @@ public class Question extends BaseEntity {
 		return deleted;
 	}
 
-	public void delete(User loggedInUser) throws CannotDeleteException {
+	public List<DeleteHistory> delete(User loggedInUser) throws CannotDeleteException {
 		validateWriter(loggedInUser);
 		validateAnswersOwner(loggedInUser);
-		this.answers.forEach(Answer::delete);
+		List<DeleteHistory> deleteHistories = this.answers.stream().map(Answer::delete)
+				.collect(Collectors.toList());
 		this.deleted = true;
+		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loggedInUser));
+		return deleteHistories;
 	}
 
 	private void validateWriter(User loggedInUser) throws CannotDeleteException {

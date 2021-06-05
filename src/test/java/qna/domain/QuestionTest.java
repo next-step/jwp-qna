@@ -13,11 +13,9 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-
 @DataJpaTest
 public class QuestionTest {
 	public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-	public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
 	private final QuestionRepository questionRepository;
 	private final UserRepository userRepository;
@@ -114,5 +112,19 @@ public class QuestionTest {
 
 		assertThatThrownBy(() -> question.delete(loggedInUser))
 				.isInstanceOf(CannotDeleteException.class);
+	}
+
+	@Test
+	@DisplayName("질문을 삭제하면 질문에 대한 히스토리가 반환된다")
+	void deleteHistory_test() throws CannotDeleteException {
+		User loggedInUser = user;
+		Question question = questionRepository.findFirstByTitle("title1").get();
+		List<DeleteHistory> deleteHistories = question.delete(loggedInUser);
+
+		DeleteHistory questionDeleteHistory = deleteHistories.stream()
+				.filter(deleteHistory -> deleteHistory.getContentType() == ContentType.QUESTION)
+				.findFirst()
+				.get();
+		assertThat(questionDeleteHistory.getContentId()).isEqualTo(question.getId());
 	}
 }
