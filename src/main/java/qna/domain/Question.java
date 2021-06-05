@@ -18,6 +18,7 @@ public class Question extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
+    @Column(nullable = false)
     private boolean deleted = false;
 
     @Embedded

@@ -20,6 +20,7 @@ public class Answer extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Answer() {
