@@ -163,3 +163,20 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
     * 질문에 대한 답변이 존재하지않을 시 유효성 검사 진행하지않음.
     * 질문에 대한 답변들중 하나라도 작성자가 다르면 CannotDeleteException 발생
 * [ ] 삭제 히스토리 생성 기능
+    * 질문 삭제 히스토리 기능
+    * 답변 삭제 히스토리 기능
+* [ ] 원시값 포장 
+    * id 원시값 포장 객체
+    * title 원시값 포장 객체
+        * 유효성 검사 기능
+    * contents 원시값 포장 객체
+    * deleted 원시값 포장 객체
+    * contentId 원시값 포장 객체
+    * userId 원시값 포장 객체
+        * 유효성 검사 기능
+    * password 원시값 포장 객체
+        * 유효성 검사 기능
+    * name 원시값 포장 객체
+        * 유효성 검사 기능
+    * email 원시값 포장 객체
+        * 유효성 검사 기능
