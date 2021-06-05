@@ -1,7 +1,9 @@
 package qna.domain;
 
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Column;
@@ -13,11 +15,11 @@ import java.time.LocalDateTime;
 @EntityListeners({AuditingEntityListener.class})
 public class BaseEntity {
 
-    @CreatedBy
+    @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createAt;
 
-    @LastModifiedBy
+    @LastModifiedDate
     private LocalDateTime updateAt;
 
     public LocalDateTime getCreateAt() {

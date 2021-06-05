@@ -21,6 +21,9 @@ public class Answer extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    protected Answer() {
+    }
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
@@ -99,4 +102,5 @@ public class Answer extends BaseEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
