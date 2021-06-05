@@ -34,8 +34,8 @@ public class Question extends BaseEntity {
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
 
-	@Column(name = "deleted", nullable = false)
-	private boolean deleted = false;
+	@Embedded
+	private Deleted deleted = new Deleted();
 
 	@Embedded
 	private Answers answers = new Answers();
@@ -90,11 +90,7 @@ public class Question extends BaseEntity {
 	}
 
 	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+		return deleted.isDeleted();
 	}
 
 	public List<DeleteHistory> delete(User user) throws CannotDeleteException {
@@ -103,7 +99,7 @@ public class Question extends BaseEntity {
 		}
 
 		List<DeleteHistory> deleteHistories = this.answers.deleteAnswers(user);
-		this.setDeleted(true);
+		this.deleted.delete();
 
 		DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, this.id, this.writer,
 			LocalDateTime.now());

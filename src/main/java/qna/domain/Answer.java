@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -36,8 +37,8 @@ public class Answer extends BaseEntity {
 	@Column(name = "contents")
 	private String contents;
 
-	@Column(name = "deleted", nullable = false)
-	private boolean deleted = false;
+	@Embedded
+	private Deleted deleted = new Deleted();
 
 	protected Answer() {
 	}
@@ -87,11 +88,7 @@ public class Answer extends BaseEntity {
 	}
 
 	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+		return deleted.isDeleted();
 	}
 
 	public void toWriter(User user) {
@@ -123,7 +120,7 @@ public class Answer extends BaseEntity {
 		if (!this.isOwner(loginUser)) {
 			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 		}
-		this.setDeleted(true);
+		this.deleted.delete();
 		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
 	}
 
