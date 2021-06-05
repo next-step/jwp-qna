@@ -17,14 +17,14 @@ public class AnswerRepositoryTest {
     public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Test
-    public void save(){
+    public void save() {
         Answer javajigi = answerRepository.save(A1);
 
         assertThat(javajigi.id()).isNotNull();
     }
 
     @Test
-    public void findByIdAndDeletedFalse(){
+    public void findByIdAndDeletedFalse() {
         Answer javajigi = answerRepository.save(A1);
 
         Optional<Answer> find = answerRepository.findByIdAndDeletedFalse(javajigi.id());

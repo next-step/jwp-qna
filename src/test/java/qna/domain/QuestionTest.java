@@ -16,7 +16,7 @@ public class QuestionTest {
     public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Test
-    public void 질문_주인인지_확인_GREEN(){
+    public void 질문_주인인지_확인_GREEN() {
         User maeve = new User(3L, "maeve", "password", "maeve", "maeve.woo@cyworldlabs.com");
 
         Question question = new Question("title", "머시깽이");
@@ -27,7 +27,7 @@ public class QuestionTest {
     }
 
     @Test
-    public void 질문_주인인지_확인_RED(){
+    public void 질문_주인인지_확인_RED() {
         User maeve = new User(3L, "maeve", "password", "maeve", "maeve.woo@cyworldlabs.com");
 
         Question question = new Question("title", "머시깽이");

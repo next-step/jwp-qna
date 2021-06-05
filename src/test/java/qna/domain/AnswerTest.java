@@ -56,7 +56,7 @@ public class AnswerTest {
     }
 
     @Test
-    public void 답변_주인확인_테스트(){
+    public void 답변_주인확인_테스트() {
         User maeve = new User(3L, "maeve", "password", "maeve", "maeve.woo@cyworldlabs.com");
 
         Question question = new Question("title", "머시깽이");

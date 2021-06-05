@@ -12,74 +12,74 @@ import static javax.persistence.FetchType.*;
 @Entity
 public class Question extends BaseEntity {
 	@Id
-	@GeneratedValue (strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column (length = 100, nullable = false)
+	@Column(length = 100, nullable = false)
 	private String title;
 
 	@Lob
 	private String contents;
 
-	@OneToOne (fetch = LAZY, cascade = CascadeType.MERGE)
+	@OneToOne(fetch = LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn (name = "user_id")
 	private User user;
 
 	@OneToMany(mappedBy = "question")
 	private List<Answer> answers = new ArrayList<> ();
 
-	@Column (nullable = false)
+	@Column(nullable = false)
 	private boolean deleted = false;
 
-	protected Question () {
+	protected Question() {
 	}
 
-	public Question (String title, String contents) {
+	public Question(String title, String contents) {
 		this(null, title, contents);
 	}
 
-	public Question (Long id, String title, String contents) {
+	public Question(Long id, String title, String contents) {
 		this.id = id;
 		this.title = title;
 		this.contents = contents;
 	}
 
-	public Question writeBy (User user) {
+	public Question writeBy(User user) {
 		this.user = user;
 		return this;
 	}
 
-	public boolean isOwner (User user) {
+	public boolean isOwner(User user) {
 		return this.user.equals(user);
 	}
 
-	public void addAnswer (Answer answer) {
+	public void addAnswer(Answer answer) {
 		answer.question(this);
 		this.answers.add (answer);
 	}
 
-	public Long id () {
+	public Long id() {
 		return id;
 	}
 
-	public void id (Long id) {
+	public void id(Long id) {
 		this.id = id;
 	}
 
-	public User writer () {
+	public User writer() {
 		return user;
 	}
 
-	public boolean deleted () {
+	public boolean deleted() {
 		return deleted;
 	}
 
-	public void deleted (boolean deleted) {
+	public void deleted(boolean deleted) {
 		this.deleted = deleted;
 	}
 
 	@Override
-	public String toString () {
+	public String toString() {
 		return "Question{" +
 				"id=" + id +
 				", title='" + title + '\'' +
@@ -95,9 +95,7 @@ public class Question extends BaseEntity {
 		}
 
 		for (Answer answer: this.answers) {
-			if(!answer.isOwner (loginUser)) {
-				throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-			}
+			checkOwner(answer, loginUser);
 		}
 
 		List<DeleteHistory> deleteHistories = new ArrayList<> ();
@@ -110,5 +108,11 @@ public class Question extends BaseEntity {
 			deleteHistories.add (new DeleteHistory (ContentType.ANSWER, answer.id(), answer.writer (), LocalDateTime.now ()));
 		}
 		return deleteHistories;
+	}
+
+	private void checkOwner(Answer answer, User loginUser) throws CannotDeleteException {
+		if(!answer.isOwner (loginUser)) {
+			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+		}
 	}
 }

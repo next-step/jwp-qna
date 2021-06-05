@@ -18,7 +18,7 @@ public class UserRepositoryTest {
   private UserRepository users;
 
   @Test
-  public void save(){
+  public void save() {
     User javajigi = users.save(JAVAJIGI);
 
     assertAll(
@@ -28,7 +28,7 @@ public class UserRepositoryTest {
   }
 
   @Test
-  public void findByUserId(){
+  public void findByUserId() {
     users.save(JAVAJIGI);
 
     final Optional<User> byUserId = users.findByUserId(JAVAJIGI.userId());

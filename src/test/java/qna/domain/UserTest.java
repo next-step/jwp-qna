@@ -19,7 +19,7 @@ public class UserTest {
 
 
   @Test
-  public void 사용자_정보수정_테스트_GREEN(){
+  public void 사용자_정보수정_테스트_GREEN() {
     User user = new User(3L, "maeve", "password", "name", "maeve.woo@cyworldlabs.com");
     user.update(user, new User("maeve", "password", "changed", "accidentlywoo@gmail.com"));
 
@@ -28,7 +28,7 @@ public class UserTest {
   }
 
   @Test
-  public void 사용자_정보수정_테스트_RED_id_missmatch(){
+  public void 사용자_정보수정_테스트_RED_id_missmatch() {
     User user = new User(3L, "maeve", "password", "name", "maeve.woo@cyworldlabs.com");
 
     assertThatThrownBy(() -> {
@@ -37,7 +37,7 @@ public class UserTest {
   }
 
   @Test
-  public void 사용자_정보수정_테스트_RED_password_missmatch(){
+  public void 사용자_정보수정_테스트_RED_password_missmatch() {
     User user = new User(3L, "maeve", "password", "name", "maeve.woo@cyworldlabs.com");
 
     assertThatThrownBy(() -> {
