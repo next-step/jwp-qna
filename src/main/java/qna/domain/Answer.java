@@ -83,6 +83,10 @@ public class Answer extends BaseEntity {
         return contents;
     }
 
+    public void setContents(final String contents) {
+        this.contents = contents;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }

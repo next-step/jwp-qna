@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,9 @@ class AnswerRepositoryTest {
 
     @Autowired
     private TestEntityManager entityManager;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -164,5 +169,104 @@ class AnswerRepositoryTest {
 
         // then
         assertThat(actual).isEqualTo(0);
+    }
+
+    @DisplayName("EntityManager#getReference 로 존재하지 않는 Entity 를 조회해서 결과를 확인하는 테스트")
+    @Test
+    void getReference() {
+        // given
+        final EntityManager em = this.entityManager.getEntityManager();
+        final long id = 1L;
+
+        // when
+        final Answer actual = em.getReference(Answer.class, id);
+
+        // then
+        assertAll(
+            () -> assertThat(actual.getId()).isNotNull(),
+            () -> assertThatThrownBy(actual::getContents)
+        );
+    }
+
+    @DisplayName("EntityManager#find 로 Entity 를 조회한 결과가 EntityManager#getReference 결과와 같은지 확인하는 테스트")
+    @Test
+    void find() {
+        // given
+        final EntityManager entityManager = this.entityManager.getEntityManager();
+        entityManager.persist(answer1);
+        final long id = answer1.getId();
+        final Answer proxy = entityManager.getReference(Answer.class, id);
+
+        // when
+        final Answer actual = entityManager.find(Answer.class, id);
+
+        // then
+        assertAll(
+            () -> assertThat(proxy.getId()).isEqualTo(id),
+            () -> assertThat(proxy.getContents()).isNotNull(),
+            () -> assertThat(actual.getContents()).isEqualTo(proxy.getContents()),
+            () -> assertThat(actual).isEqualTo(proxy),
+            () -> assertThat(actual == proxy).isTrue()
+        );
+    }
+
+    @DisplayName("Question 을 저장하면 연관 관계를 맺은 Answer 도 같이 저장되는지 테스트")
+    @Test
+    void cascadeSave() {
+        // given
+        final Question question = new Question("title", "content", user1);
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+
+        // when
+        final Question actual = questionRepository.save(question);
+
+        // then
+        assertAll(
+            () -> assertThat(actual.countOfAnswer()).isEqualTo(2),
+            () -> assertThat(answerRepository.findAll().size()).as("DB 에 저장된 Answer 개수 확인").isEqualTo(2)
+        );
+    }
+
+    @DisplayName("Question 을 연관 관계를 맺은 Answer 도 삭제되는지 테스트")
+    @Test
+    void cascadeDelete() {
+        // given
+        final Question question = new Question("title", "content", user1);
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+        questionRepository.save(question);
+
+        // when
+        questionRepository.delete(question);
+
+        // then
+        assertAll(
+            () -> assertThat(answerRepository.findAll().size()).as("DB 에 저장된 Answer 개수 확인").isEqualTo(0),
+            () -> assertThatThrownBy(() -> questionRepository.findById(question.getId())
+                .orElseThrow(NullPointerException::new))
+                .isInstanceOf(NullPointerException.class)
+        );
+    }
+
+    @DisplayName("Question 을 연관 관계를 맺은 Answer 도 업데이트되는지 테스트")
+    @Test
+    void cascadeUpdate() {
+        // given
+        final Question question = new Question("title", "content", user1);
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+        questionRepository.save(question);
+        final String newContent = "new content";
+        answer1.setContents(newContent);
+
+        // when
+        questionRepository.save(question);
+
+        // then
+        final Answer actual = answerRepository.findById(answer1.getId()).orElseThrow(NullPointerException::new);
+        assertAll(
+            () -> assertThat(actual.getContents()).isEqualTo(newContent)
+        );
     }
 }
