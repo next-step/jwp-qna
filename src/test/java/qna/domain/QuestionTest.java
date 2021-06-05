@@ -13,13 +13,17 @@ public class QuestionTest {
 	@Autowired
 	QuestionRepository questions;
 
-	Question Q1;
-	Question Q2;
+	private Question Q1;
+	private Question Q2;
+	private User JAVAJIGI;
+	private User SANJIGI;
 
 	@BeforeEach
 	void setUp() {
-		Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-		Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+		JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+		SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+		Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+		Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
 	}
 
 	@Test

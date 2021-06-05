@@ -12,15 +12,20 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class AnswerTest {
 	@Autowired
 	private AnswerRepository answers;
+
 	private Answer A1;
 	private Answer A2;
 	private Question Q1;
+	private User JAVAJIGI;
+	private User SANJIGI;
 
 	@BeforeEach
 	void setUp() {
-		Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-		A1 = new Answer(UserTest.JAVAJIGI, Q1, "Answers Contents1");
-		A2 = new Answer(UserTest.SANJIGI, Q1, "Answers Contents2");
+		JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+		SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+		Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+		A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
+		A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
 	}
 
 	@Test
