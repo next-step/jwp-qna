@@ -5,22 +5,29 @@
 - [ ] @DataJpaTest를 사용하여 학습 테스트를 해 본다.
 
 ## 기능 및 테스트 구현 목록
-- [ ] Answer
-  - [ ] 도메인 클래스 구현
-  - [ ] Answer 저장 후 그 Id로 조회 했을 때 같은 객체가 조회 되어야 한다.
-  - [ ] 특정 Question에 대한 Answer 중 삭제 되지 않은 것만 조회
-  - [ ] 특정 AnswerId로 삭제 되지 않은 Answer 조회 했을 때 해당 Answer가 삭제되어 있을 때
-  - [ ] 특정 AnswerId로 삭제 되지 않은 Answer 조회 했을 때 해당 Answer가 삭제되어 있지 않을 때
+- [x] Answer
+  - [x] 도메인 클래스 구현
+  - [x] Answer 저장 후 반환된 Id로 조회 했을 때 같은 객체가 조회 되어야 한다.
+  - [x] 특정 Question에 대한 Answer 중 삭제 되지 않은 것만 조회
+  - [x] 특정 AnswerId로 삭제 되지 않은 Answer 조회 했을 때 조회 결과가 있어야 한다.
+  - [x] 특정 AnswerId로 삭제 된 Answer 조회 했을 때 조회 결과가 없어야 한다.
   
 
-- [ ] DeleteHistory
-  - [ ] 도메인 클래스 구현
+- [x] DeleteHistory
+  - [x] 도메인 클래스 구현
+  - [ ] DeleteHistory 저장 후 반환된 Id로 조회 했을 때 같은 객체가 조회 되어야 한다.
 
   
 - [ ] Question
   - [ ] 도메인 클래스 구현
+  - [ ] Question 저장 후 반환된 Id로 조회 했을 때 같은 객체가 조회 되어야 한다.
+  - [ ] 삭제된 상태가 아닌 Question만 조회 했을 때 조회 결과가 있어야 한다.
+  - [ ] 삭제된 상태가 아닌 Question을 아이디로 조회 했을 때 조회 결과가 있어야 한다.
+  - [ ] 삭제된 상태인 Question을 아이디로 조회 했을 때 조회 결과가 없어야 한다.
 
   
-- [ ] History
+- [ ] User
   - [ ] 도메인 클래스 구현
+  - [ ] User 저장 후 반환된 Id로 조회 했을 때 같은 객체가 조회 되어야 한다.
+  - [ ] User 를 UserId로 조회 했을 때 유효한 결과가 조회 되어야 한다.
   
