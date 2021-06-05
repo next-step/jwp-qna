@@ -82,10 +82,24 @@ public class QuestionRepositoryTest {
 
 	@Test
 	@DisplayName("질문 삭제 성공 : 동일 작성자, 답변이 없는 경우")
-	void deleteSuccess() {
+	void deleteSuccessWithNoAnswer() {
 		Question question = new Question(1L, "title1", "contents1").writeBy(writer);
 		question = questions.save(question);
 		question.delete(writer);
+		Question result = questions.findByIdAndDeletedFalse(question.getId()).orElse(null);
+		assertThat(result).isNull();
+	}
+
+	@Test
+	@DisplayName("질문 삭제 성공 : 동일 작성자, 동일 작성자의 답변")
+	void deleteSuccessWithAnswer() {
+		Question question = new Question(1L, "title1", "contents1").writeBy(writer);
+		Answer otherWriterAnswer =  new Answer(writer, question, "Answers Contents2");;
+
+		question.addAnswer(otherWriterAnswer);
+		question = questions.save(question);
+		question.delete(writer);
+
 		Question result = questions.findByIdAndDeletedFalse(question.getId()).orElse(null);
 		assertThat(result).isNull();
 	}
