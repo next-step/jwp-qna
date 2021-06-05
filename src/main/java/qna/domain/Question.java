@@ -1,8 +1,15 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -16,7 +23,11 @@ public class Question extends UpdatableEntity {
     private String contents;
 
     @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private List<Answer> answers = new ArrayList<>();
 
     private boolean deleted = false;
 
@@ -34,10 +45,6 @@ public class Question extends UpdatableEntity {
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
     }
 
     public User writer() {

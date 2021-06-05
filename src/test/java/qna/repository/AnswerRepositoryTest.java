@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -47,6 +48,7 @@ class AnswerRepositoryTest {
 	}
 
 	@Test
+	@DisplayName("삭제되지 않은 Answer만 조회되는지 검증")
 	void findByQuestionIdAndDeletedFalse() {
 		List<Answer> notDeletedAnswers = repository.findByQuestionIdAndDeletedFalse(question.getId());
 		assertThat(notDeletedAnswers)

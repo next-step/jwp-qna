@@ -1,27 +1,28 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
-
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
 
 @Entity
 @Table
 public class Answer extends UpdatableEntity {
 
     @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     @Column(columnDefinition = "clob")
     private String contents;
@@ -41,16 +42,12 @@ public class Answer extends UpdatableEntity {
         }
 
         this.writer = writer;
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
-    }
-
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
     }
 
     public User writer() {
@@ -70,7 +67,7 @@ public class Answer extends UpdatableEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writer.getId() +
-                ", questionId=" + questionId +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
