@@ -1,8 +1,5 @@
 package qna.domain;
 
-import static qna.domain.ContentType.*;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -97,7 +94,8 @@ public class Question extends BaseEntity {
     }
 
     public DeleteHistories delete(final User user) throws CannotDeleteException {
-        final DeleteHistories deleteHistories = new DeleteHistories(histories(validUser(user)));
+        final User writer = validUser(user);
+        final DeleteHistories deleteHistories = new DeleteHistories(deleteHistories(writer));
         deleted();
 
         return deleteHistories;
@@ -109,16 +107,20 @@ public class Question extends BaseEntity {
             .orElseThrow(() -> new CannotDeleteException(HAS_NOT_DELETE_PERMISSION_MESSAGE));
     }
 
-    private List<DeleteHistory> histories(final User user) throws CannotDeleteException {
+    private List<DeleteHistory> deleteHistories(final User user) throws CannotDeleteException {
         final List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(deleteHistory());
-        deleteHistories.addAll(answers.delete(user));
+        deleteHistories.add(questionHistory());
+        deleteHistories.addAll(answersHistories(user));
 
         return deleteHistories;
     }
 
-    private DeleteHistory deleteHistory() {
-        return new DeleteHistory(QUESTION, id, writer, LocalDateTime.now());
+    private DeleteHistory questionHistory() {
+        return DeleteHistory.ofQuestion(id, writer);
+    }
+
+    private List<DeleteHistory> answersHistories(final User user) throws CannotDeleteException {
+        return answers.delete(user);
     }
 
     @Override

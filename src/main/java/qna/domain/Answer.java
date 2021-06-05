@@ -1,8 +1,5 @@
 package qna.domain;
 
-import static qna.domain.ContentType.*;
-
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -96,10 +93,10 @@ public class Answer extends BaseEntity {
     }
 
     public DeleteHistory delete(final User user) throws CannotDeleteException {
-        final DeleteHistory deleteHistory = new DeleteHistory(ANSWER, id, validUser(user), LocalDateTime.now());
+        final User writer = validUser(user);
         deleted();
 
-        return deleteHistory;
+        return DeleteHistory.ofAnswer(id, writer);
     }
 
     private User validUser(final User writer) throws CannotDeleteException {
