@@ -20,8 +20,8 @@ public class Question extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     private boolean deleted = false;
 
@@ -88,24 +88,18 @@ public class Question extends BaseEntity{
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        if(!this.answers.isEmpty() && !isAllNotDeletedAnswersOwnedByWriter()){
+        if(this.answers.existsOtherOwnedAnswer(this.writer)){
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         this.deleted = true;
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.getId(), this.getWriter(), LocalDateTime.now()));
-        for(Answer answer: this.answers){
-            deleteHistories.add(answer.delete());
-        }
+        deleteHistories.addAll(this.answers.delete());
         return deleteHistories;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers answers() {
         return answers;
-    }
-
-    private boolean isAllNotDeletedAnswersOwnedByWriter(){
-        return this.answers.stream().allMatch(answer -> answer.isOwner(this.writer) || answer.isDeleted());
     }
 
     @Override

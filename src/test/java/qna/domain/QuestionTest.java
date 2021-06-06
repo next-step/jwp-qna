@@ -32,7 +32,7 @@ public class QuestionTest {
     public void 질문을삭제하면_답변도삭제해야한다() throws Exception{
         Q2.addAnswer(A2);
         Q2.delete(UserTest.SANJIGI);
-        assertThat(Q1.getAnswers().stream().allMatch(Answer::isDeleted)).isTrue();
+        assertThat(Q2.answers().answers().stream().allMatch(Answer::isDeleted)).isTrue();
     }
 
     @Test
