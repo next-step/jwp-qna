@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,13 +28,15 @@ class DeleteHistoriesTest {
     @Test
     void addAll() {
         //given
-        DeleteHistories deleteHistories1 = new DeleteHistories();
+        List<DeleteHistory> deleteHistoryList1 = new ArrayList<>();
         DeleteHistory ofAnswer = DeleteHistory.ofAnswer(1L, UserTest.JAVAJIGI, LocalDateTime.now());
-        deleteHistories1.add(ofAnswer);
+        deleteHistoryList1.add(ofAnswer);
+        DeleteHistories deleteHistories1 = new DeleteHistories(deleteHistoryList1);
 
-        DeleteHistories deleteHistories2 = new DeleteHistories();
+        List<DeleteHistory> deleteHistoryList2 = new ArrayList<>();
         DeleteHistory ofQuestion = DeleteHistory.ofQuestion(1L, UserTest.JAVAJIGI, LocalDateTime.now());
-        deleteHistories2.add(ofQuestion);
+        deleteHistoryList2.add(ofQuestion);
+        DeleteHistories deleteHistories2 = new DeleteHistories(deleteHistoryList2);
 
         //when
         deleteHistories1.addAll(deleteHistories2);

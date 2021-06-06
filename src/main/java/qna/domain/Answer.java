@@ -19,7 +19,9 @@ public class Answer extends BaseEntity {
 
     @Embedded
     private Contents contents;
-    private boolean deleted = false;
+
+    @Embedded
+    private Deleted deleted;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -50,6 +52,7 @@ public class Answer extends BaseEntity {
         this.writer = writer;
         this.question = question;
         this.contents = new Contents(contents);
+        this.deleted = new Deleted();
     }
 
     private boolean isOwner(User writer) {
@@ -68,7 +71,7 @@ public class Answer extends BaseEntity {
         return writer;
     }
 
-    public boolean isDeleted() {
+    public Deleted isDeleted() {
         return deleted;
     }
 
@@ -79,7 +82,7 @@ public class Answer extends BaseEntity {
     }
 
     private void delete() {
-        this.deleted = true;
+        deleted.delete();
     }
 
     private void validateOwner(User loginUser) {

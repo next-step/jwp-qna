@@ -16,17 +16,19 @@ public class Question extends BaseEntity {
 
     @Embedded
     private Contents contents;
-    private boolean deleted = false;
+
+    @Embedded
+    private Deleted deleted;
 
     @Embedded
     private Title title;
 
+    @Embedded
+    private Answers answers;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-
-    @Embedded
-    private Answers answers;
 
     protected Question() {
     }
@@ -40,6 +42,7 @@ public class Question extends BaseEntity {
         this.title = new Title(title);
         this.contents = new Contents(contents);
         this.answers = new Answers();
+        this.deleted = new Deleted();
     }
 
     public Question writeBy(User writer) {
@@ -64,7 +67,7 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public boolean isDeleted() {
+    public Deleted isDeleted() {
         return deleted;
     }
 
@@ -88,7 +91,7 @@ public class Question extends BaseEntity {
     }
 
     private void delete() {
-        this.deleted = true;
+        deleted.delete();
     }
 
     public Answers getAnswers() {
