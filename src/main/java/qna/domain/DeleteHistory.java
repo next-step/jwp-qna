@@ -18,22 +18,28 @@ public class DeleteHistory {
     @Column(name = "content_id")
     private Long contentId;
 
-    @Column(name = "deleted_by_id")
-    private Long deletedById;
+    @ManyToOne
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deleteUser;
 
     @Column(name = "deleted_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deleteUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deleteUser = deleteUser;
         this.createDate = createDate;
     }
 
-    public DeleteHistory() {
-
+    protected DeleteHistory() {
     }
+
+    public void setWriter(User deleteUser) {
+        this.deleteUser = deleteUser;
+    }
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -43,12 +49,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(deleteUser.getUserId(), that.deleteUser.getUserId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, deleteUser.getUserId());
     }
 
     @Override
@@ -57,7 +63,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + deleteUser.getUserId() +
                 ", createDate=" + createDate +
                 '}';
     }

@@ -18,12 +18,24 @@ public class QuestionRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 
+    @Autowired
+    AnswerRepository answerRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
     private Question savedQuestion;
+    private Answer savedAnswer;
+    private User savedUser;
+
 
     @BeforeEach
     void setUp() {
-        Question expect = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-        savedQuestion = questionRepository.save(expect);
+        savedUser = userRepository.save(new User( "javajigi", "password", "name", "javajigi@slipp.net"));
+        savedQuestion = questionRepository.save(new Question("title1", "contents1").writeBy(savedUser));
+        savedAnswer = new Answer(savedUser, "Answers Contents1");
+        savedAnswer.toQuestion(savedQuestion);  //toQuestion을 통해 추가하지 않으면 question 조회시 answers size 0, DataJpaTest영향?
+        savedAnswer = answerRepository.save(savedAnswer);
     }
 
     @DisplayName("저장")
@@ -31,7 +43,7 @@ public class QuestionRepositoryTest {
     public void save(){
         assertThat(savedQuestion.getTitle()).isEqualTo("title1");
         assertThat(savedQuestion.getContents()).isEqualTo("contents1");
-        assertThat(savedQuestion.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+        assertThat(savedQuestion.getWriterId()).isEqualTo(savedUser.getId());
     }
 
     @DisplayName("Id로 삭제되지 않은 Question 조회")
@@ -40,7 +52,7 @@ public class QuestionRepositoryTest {
         Question actual = questionRepository.findByIdAndDeletedFalse(1L).get();
         assertThat(actual.getTitle()).isEqualTo("title1");
         assertThat(actual.getContents()).isEqualTo("contents1");
-        assertThat(actual.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+        assertThat(actual.getWriterId()).isEqualTo(savedUser.getId());
     }
 
     @DisplayName("삭제되지 않은 Question 조회")
@@ -50,7 +62,7 @@ public class QuestionRepositoryTest {
         assertFalse(questionList.isEmpty());
         assertThat(questionList.get(0).getTitle()).isEqualTo("title1");
         assertThat(questionList.get(0).getContents()).isEqualTo("contents1");
-        assertThat(questionList.get(0).getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+        assertThat(questionList.get(0).getWriterId()).isEqualTo(savedUser.getId());
     }
 
     @DisplayName("삭제후 조회 확인")

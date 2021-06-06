@@ -21,6 +21,7 @@
   
 ### 작업순서
 * Step1 리뷰 반영 (JPA Auditing 적용, 접근 제어자 public -> protected 변경)
-  * JPA Auditing 적용
+  * JPA Auditing 적용한 BaseEntity 생성하여 중복 필드 관리
   * 접근 제어자 적절하게 변경
   * 텍스트 정렬
+* 연관관계 매핑

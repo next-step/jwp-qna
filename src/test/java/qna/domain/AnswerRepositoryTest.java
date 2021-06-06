@@ -17,20 +17,31 @@ public class AnswerRepositoryTest {
     @Autowired
     AnswerRepository answerRepository;
 
+    @Autowired
+    QuestionRepository questionRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
     private Answer savedAnswer;
+    private Question savedQuestion;
+    private User savedUser;
+
 
     @BeforeEach
     void setUp() {
-        Answer expect = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-        savedAnswer = answerRepository.save(expect);
+        savedUser = userRepository.save(new User( "javajigi", "password", "name", "javajigi@slipp.net"));
+        savedQuestion = questionRepository.save(new Question("title1", "contents1").writeBy(savedUser));
+        savedAnswer = answerRepository.save(new Answer(savedUser, savedQuestion, "Answers Contents1"));
     }
 
     @DisplayName("저장")
     @Test
     public void save(){
         assertThat(savedAnswer.getId()).isNotNull();
-        assertThat(savedAnswer.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
-        assertThat(savedAnswer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId());
+        assertThat(savedAnswer.getWriter()).isEqualTo(savedUser);
+        assertThat(savedAnswer.getQuestion()).isEqualTo(savedQuestion);
+        assertThat(savedAnswer.getWriter()).isEqualTo(savedUser);
         assertThat(savedAnswer.getContents()).isEqualTo("Answers Contents1");
     }
 
@@ -44,17 +55,17 @@ public class AnswerRepositoryTest {
     @DisplayName("questionId로 삭제되지 않은 answer 검색")
     @Test
     public void findByQuestionIdAndDeletedFalse(){
-        Answer actual = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId()).get(0);
+        Answer actual = answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId()).get(0);
         assertThat(actual).isEqualTo(savedAnswer);
     }
 
     @DisplayName("삭제 테스트")
     @Test
     public void delete(){
-        Answer actual = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId()).get(0);
+        Answer actual = answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId()).get(0);
         assertThat(actual).isEqualTo(savedAnswer);
         actual.setDeleted(true);
-        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId());
         assertTrue(answerList.isEmpty());
     }
 

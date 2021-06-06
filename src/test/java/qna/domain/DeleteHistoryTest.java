@@ -16,11 +16,16 @@ public class DeleteHistoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private DeleteHistory savedDeleteHistory;
+    private User savedUser;
 
     @BeforeEach
     void setUp() {
-        DeleteHistory expect = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+        savedUser = userRepository.save(new User( "javajigi", "password", "name", "javajigi@slipp.net"));
+        DeleteHistory expect = new DeleteHistory(ContentType.QUESTION, 1L, savedUser, LocalDateTime.now());
         savedDeleteHistory = deleteHistoryRepository.save(expect);
     }
 

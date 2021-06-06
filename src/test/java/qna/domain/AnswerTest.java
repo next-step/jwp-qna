@@ -18,8 +18,8 @@ public class AnswerTest {
     @DisplayName("Answer 생성")
     @Test
     public void newAnswer(){
-        assertThat(A1.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
-        assertThat(A1.getQuestionId()).isEqualTo(QuestionTest.Q1.getId());
+        assertThat(A1.getWriter()).isEqualTo(UserTest.JAVAJIGI);
+        assertThat(A1.getQuestion()).isEqualTo(QuestionTest.Q1);
         assertThat(A1.getContents()).isEqualTo("Answers Contents1");
     }
 

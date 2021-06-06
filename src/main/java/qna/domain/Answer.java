@@ -11,17 +11,23 @@ import java.util.Objects;
 @Table(name = "answer")
 public class Answer extends BaseEntity{
 
-    @Column(name = "writer_id")
-    private Long writerId;
-
-    @Column(name = "question_id")
-    private Long questionId;
-
     @Lob
     private String contents;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    @ManyToOne
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
+
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
+
+
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -38,37 +44,45 @@ public class Answer extends BaseEntity{
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
-    protected Answer() {
-
+    public Answer(User writer, String contents) {
+        this.writer = writer;
+        this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
+        if (!question.getAnswers().contains(this)) {
+            question.getAnswers().add(this);
+        }
     }
+
 
     public Long getWriterId() {
-        return writerId;
+        return writer.getId();
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public void setWriter(User writer) {
+        this.writer = writer;
+        if (!writer.getAnswers().contains(this)) {
+            writer.getAnswers().add(this);
+        }
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
@@ -91,10 +105,11 @@ public class Answer extends BaseEntity{
     public String toString() {
         return "Answer{" +
                 "id=" + getId() +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writerId=" + writer.getId() +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
