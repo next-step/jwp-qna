@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,10 +29,10 @@ public class QuestionTest {
     @Test
     void deleteQuestion() {
         //when
-        DeleteHistory actual = question3.delete(UserTest.SANJIGI);
+        List<DeleteHistory> actual = question3.delete(UserTest.SANJIGI);
 
         //then
-        assertThat(actual.getDeletedBy()).isSameAs(UserTest.SANJIGI);
+        assertThat(actual).containsExactly(DeleteHistory.ofQuestion(question3.getId(), UserTest.SANJIGI, LocalDateTime.now()));
     }
 
     @DisplayName("질문을 삭제할 때 본인이 만든 질문이 아닌 경우 예외를 발생시킨다.")

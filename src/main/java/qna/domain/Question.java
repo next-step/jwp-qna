@@ -72,13 +72,30 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public DeleteHistory delete(User loginUser){
+    public List<DeleteHistory> delete(User loginUser) {
+        validOwner(loginUser);
+        delete();
+        return generateDeleteHistories(loginUser);
+    }
+
+    private List<DeleteHistory> generateDeleteHistories(User loginUser) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        DeleteHistory ofQuestion = DeleteHistory.ofQuestion(id, writer, LocalDateTime.now());
+        deleteHistories.add(ofQuestion);
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(loginUser));
+        }
+        return deleteHistories;
+    }
+
+    private void validOwner(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(DELETE_EXCEPTION_MESSAGE);
         }
+    }
 
+    private void delete() {
         this.deleted = true;
-        return DeleteHistory.ofQuestion(id, writer, LocalDateTime.now());
     }
 
     @Override
