@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.util.List;
 
@@ -17,6 +18,9 @@ public class QuestionRepositoryTest {
 
     @Autowired
     private UserRepository users;
+
+    @Autowired
+    private AnswerRepository answers;
 
     private Question question1;
     private Question question2;
@@ -100,16 +104,31 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("답변 삭제 테스트")
-    void deleteAnswerTest() {
+    void deleteAnswerTest() throws CannotDeleteException {
         Question savedQuestion = questions.save(question1);
         questions.save(question2);
         questions.flush();
         List<Question> beforeDeleteList = questions.deletedFalse();
         assertThat(beforeDeleteList.size()).isEqualTo(2);
 
-        savedQuestion.delete();
+        savedQuestion.delete(questionWriter1);
         questions.flush();
         List<Question> afterDeleteList = questions.deletedFalse();
         assertThat(afterDeleteList.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("Answer list 조회 테스트")
+    void getAnswerList() {
+        Question savedQuestion = questions.save(question1);
+        questions.save(question2);
+
+        User answerWriter = new User("awriter", "password", "name", "sunju@slipp.net");
+        users.save(answerWriter);
+        Answer answer = new Answer(answerWriter, savedQuestion, "Answers Contents");
+        answers.save(answer);
+
+        questions.flush();
+        assertThat(savedQuestion.getAnswers().size()).isEqualTo(1);
     }
 }

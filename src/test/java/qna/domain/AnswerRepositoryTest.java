@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.util.List;
 
@@ -109,14 +110,14 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("답변 삭제 테스트")
-    void deleteAnswerTest() {
+    void deleteAnswerTest() throws CannotDeleteException {
         Answer savedAnswer1 = answers.save(answer1);
         answers.save(answer2);
         answers.flush();
         List<Answer> beforeDeleteList = answers.deletedFalse();
         assertThat(beforeDeleteList.size()).isEqualTo(2);
 
-        savedAnswer1.delete();
+        savedAnswer1.delete(answerWriter1);
         answers.flush();
         List<Answer> afterDeleteList = answers.deletedFalse();
         assertThat(afterDeleteList.size()).isEqualTo(1);
