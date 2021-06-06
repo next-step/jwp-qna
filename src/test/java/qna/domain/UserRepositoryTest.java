@@ -1,63 +1,50 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.persistence.EntityNotFoundException;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.NotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.UserTest.JAVAJIGI;
 
-class UserRepositoryTest extends JpaTest {
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class UserRepositoryTest {
 
     @Autowired
     private UserRepository users;
+    private User user1;
 
-    @DisplayName("유저를 생성해서 저장한다.")
-    @Test
-    void save() {
-        //given
-        User javajigi = JAVAJIGI;
-
-        //when
-        User actual = users.save(javajigi);
-
-        //then
-        assertAll(() -> {
-            assertThat(actual.getId()).isEqualTo(javajigi.getId());
-            assertThat(actual.getUserId()).isEqualTo(javajigi.getUserId());
-            assertThat(actual.getPassword()).isEqualTo(javajigi.getPassword());
-            assertThat(actual.getName()).isEqualTo(javajigi.getName());
-            assertThat(actual.getEmail()).isEqualTo(javajigi.getEmail());
-        });
+    @BeforeEach
+    void setUp() {
+        user1 = new User("user1", "password1", "name1", "email1");
+        users.save(user1);
     }
 
     @DisplayName("유저아이디에 해당하는 유저를 리턴한다.")
     @Test
     void findByUserId() {
-        //given
-        User user = users.save(JAVAJIGI);
-
         //when
-        User actual = users.findByUserId(user.getUserId())
-                .orElseThrow(EntityNotFoundException::new);
+        User actual = users.findByUserId(user1.getUserId())
+                .orElseThrow(NotFoundException::new);
 
         //then
-        assertThat(actual).isSameAs(user);
+        assertThat(actual).isSameAs(user1);
     }
 
     @DisplayName("유저아이디에 해당하는 유저가 없다면 예외를 발생시킨다.")
     @Test
     void findByUserIdException() {
         //given
-        User javajigi = JAVAJIGI;
+        User noneUser = new User(-1L, "", "", "", "");
 
         //when
-        assertThatThrownBy(() -> users.findByUserId(javajigi.getUserId())
-                .orElseThrow(EntityNotFoundException::new))
-                .isInstanceOf(EntityNotFoundException.class); //then
+        assertThatThrownBy(() -> users.findByUserId(noneUser.getUserId())
+                .orElseThrow(NotFoundException::new))
+                .isInstanceOf(NotFoundException.class); //then
     }
 }
