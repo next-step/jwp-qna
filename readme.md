@@ -54,8 +54,8 @@ QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 
 - [x] Question
   - [x] User에 대한 연관 관계 매핑 적용
   - [x] 깨지는 기존 테스트 해결
-  - [ ] setDelete -> delete 변경
-    - [ ] 변경에 따른 연관 테스트 수정
+  - [x] setDelete -> delete 변경
+    - [x] 변경에 따른 연관 테스트 수정
 
 - [x] DeleteHistory
   - [x] User에 대한 연관 관계 매핑 적용
