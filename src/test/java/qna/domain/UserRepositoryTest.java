@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,13 @@ class UserRepositoryTest {
         userJavajigi = users.save(JAVAJIGI);
         userSanjigi = users.save(SANJIGI);
         userJordy = users.save(JORDY);
+    }
+    
+    @AfterEach
+    void setDown() {
+        userJavajigi.setId(null);
+        userSanjigi.setId(null);
+        userJordy.setId(null);
     }
 
     @Test
