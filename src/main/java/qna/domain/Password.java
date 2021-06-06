@@ -49,4 +49,11 @@ public class Password {
     public int hashCode() {
         return Objects.hash(password);
     }
+
+    @Override
+    public String toString() {
+        return "Password{" +
+                "password='" + password + '\'' +
+                '}';
+    }
 }

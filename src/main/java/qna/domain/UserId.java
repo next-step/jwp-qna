@@ -49,4 +49,11 @@ public class UserId {
     public int hashCode() {
         return Objects.hash(userId);
     }
+
+    @Override
+    public String toString() {
+        return "UserId{" +
+                "userId='" + userId + '\'' +
+                '}';
+    }
 }
