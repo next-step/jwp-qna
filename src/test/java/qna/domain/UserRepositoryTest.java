@@ -57,7 +57,7 @@ class UserRepositoryTest {
         User expected = u1;
         User saved = users.save(expected);
 
-        saved.setEmail("beck33333@naver.com");
+        saved.setEmail(new Email("beck33333@naver.com"));
         users.flush();
     }
 
