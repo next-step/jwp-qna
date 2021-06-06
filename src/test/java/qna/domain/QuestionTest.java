@@ -16,6 +16,20 @@ public class QuestionTest {
 	UserRepository users;
 
 	@Test
+	@DisplayName("질문을 조회하고 해당 질문의 작성자를 조회함")
+	void select_not_deleted_question_with_writer() {
+		User JAVAJIGI = makeJavajigi();
+		Question Q1 = new Question("title1", "contents1").writtenBy(JAVAJIGI);
+
+		users.save(JAVAJIGI);
+		Question saveQ1 = questions.save(Q1);
+
+		Question question = questions.findByIdAndDeletedFalse(saveQ1.getId()).get();
+
+		assertThat(question.getWriter().getUserId()).isEqualTo("javajigi");
+	}
+
+	@Test
 	@DisplayName("jpa 작성 메소드 사용(findByTitleContainingOrderByIdDesc)")
 	void select_start_with_order_by_id_desc() {
 		User JAVAJIGI = makeJavajigi();

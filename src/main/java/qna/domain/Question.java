@@ -37,15 +37,11 @@ public class Question {
 	private String title;
 
 	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
+	private LocalDateTime updatedAt = LocalDateTime.now();
 
 	@ManyToOne
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User user;
-
-	public void setWriter(final User user) {
-		this.user = user;
-	}
 
 	protected Question() {
 
@@ -89,6 +85,14 @@ public class Question {
 
 	public Long getWriterId() {
 		return user.getId();
+	}
+
+	public User getWriter() {
+		return this.user;
+	}
+
+	public void setWriter(final User user) {
+		this.user = user;
 	}
 
 	public boolean isDeleted() {
