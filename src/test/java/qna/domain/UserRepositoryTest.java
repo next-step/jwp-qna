@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.UserTest.*;
@@ -28,7 +28,7 @@ class UserRepositoryTest {
         userSanjigi = users.save(SANJIGI);
         userJordy = users.save(JORDY);
     }
-    
+
     @AfterEach
     void setDown() {
         userJavajigi.setId(null);
@@ -43,10 +43,11 @@ class UserRepositoryTest {
         User expectedResult = userJavajigi;
 
         // When
-        Optional<User> actualResult = users.findById(expectedResult.getId());
+        User actualResult = users.findById(expectedResult.getId())
+                .orElseThrow(EntityNotFoundException::new);
 
         // Then
-        assertThat(actualResult).containsSame(expectedResult);
+        assertThat(actualResult).isEqualTo(expectedResult);
     }
 
     @Test
@@ -56,9 +57,10 @@ class UserRepositoryTest {
         User expectedResult = userJordy;
 
         // When
-        Optional<User> actualResult = users.findByUserId(expectedResult.getUserId());
+        User actualResult = users.findByUserId(expectedResult.getUserId())
+                .orElseThrow(EntityNotFoundException::new);
 
         // Then
-        assertThat(actualResult).containsSame(expectedResult);
+        assertThat(actualResult).isEqualTo(expectedResult);
     }
 }

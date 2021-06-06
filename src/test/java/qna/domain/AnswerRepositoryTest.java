@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +41,7 @@ class AnswerRepositoryTest {
 
         answer1 = answers.save(new Answer(user, question, "Answers Contents1"));
         answer2 = answers.save(new Answer(user, question, "Answers Contents2"));
-        
+
         Answer deleAnswer1 = new Answer(user, question, "Deleted Content1");
         deleAnswer1.setDeleted(true);
         deletedAnswer1 = answers.save(deleAnswer1);
@@ -53,10 +54,12 @@ class AnswerRepositoryTest {
         Answer expectedResult = answer1;
 
         // When
-        Optional<Answer> actualResult = answers.findById(expectedResult.getId());
+        Answer actualResult = answers.findById(expectedResult.getId())
+                .orElseThrow(EntityNotFoundException::new);
+        ;
 
         // Then
-        assertThat(actualResult).containsSame(expectedResult);
+        assertThat(actualResult).isEqualTo(expectedResult);
     }
 
     @Test

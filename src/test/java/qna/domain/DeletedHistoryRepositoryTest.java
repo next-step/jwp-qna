@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.AnswerTest.DELETED_ANSWER1;
@@ -38,9 +38,10 @@ class DeletedHistoryRepositoryTest {
         DeleteHistory expectedResult = deleteHistoryAnswer;
 
         // When
-        Optional<DeleteHistory> actualResult = deleteHistories.findById(expectedResult.getId());
+        DeleteHistory actualResult = deleteHistories.findById(expectedResult.getId())
+                .orElseThrow(EntityNotFoundException::new);
 
         // Then
-        assertThat(actualResult).containsSame(expectedResult);
+        assertThat(actualResult).isEqualTo(expectedResult);
     }
 }

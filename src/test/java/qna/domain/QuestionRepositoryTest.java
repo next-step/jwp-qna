@@ -1,19 +1,16 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.QuestionTest.*;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 @DisplayName("QuestionRepository 테스트")
@@ -32,8 +29,8 @@ class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        User javajigi = users.save(new User( "javajigi", "password", "name", "javajigi@slipp.net"));
-        User sanjigi = users.save(new User( "sanjigi", "password", "name", "sanjigi@slipp.net"));
+        User javajigi = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        User sanjigi = users.save(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
 
         question1 = questions.save(new Question("title1", "contents1").writeBy(javajigi));
         question2 = questions.save(new Question("title2", "contents2").writeBy(sanjigi));
@@ -80,10 +77,11 @@ class QuestionRepositoryTest {
         long targetId = question1.getId();
 
         // When
-        Optional<Question> actualResult = questions.findByIdAndDeletedFalse(targetId);
+        Question actualResult = questions.findByIdAndDeletedFalse(targetId)
+                .orElseThrow(EntityNotFoundException::new);
 
         // Then
-        assertThat(actualResult).containsSame(question1);
+        assertThat(actualResult).isEqualTo(question1);
     }
 
     @Test
