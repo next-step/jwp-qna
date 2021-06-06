@@ -109,9 +109,4 @@ public class Question extends BaseEntity {
                 ", answers=" + answers +
                 '}';
     }
-
-    public List<Answer> getAnswers() {
-        return Collections.unmodifiableList(answers);
-    }
-
 }

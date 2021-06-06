@@ -2,7 +2,6 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Lob;
 import java.util.Objects;
 
 @Embeddable
@@ -14,7 +13,7 @@ public class Deleted {
     protected Deleted() {
     }
 
-    public Deleted(boolean deleted) { //TODO: 컨텐츠의 역할이 흐릿함.. 비즈니스가 추가된 후에 검증로직 추가해야 할듯
+    public Deleted(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -22,7 +21,7 @@ public class Deleted {
         return deleted;
     }
 
-    public void delete(){
+    public void delete() {
         this.deleted = true;
     }
 
