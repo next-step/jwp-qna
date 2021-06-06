@@ -2,13 +2,17 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -31,6 +35,15 @@ public class User extends BaseEntity {
 
 	@Column(name = "email", nullable = false, length = 50)
 	private String email;
+
+	@OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+    private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+    private List<Answer> answers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "deletedUser", cascade = CascadeType.ALL)
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
 	protected User() {
 	}
@@ -122,6 +135,22 @@ public class User extends BaseEntity {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        User user = (User)o;
+        return Objects.equals(id, user.id) &&
+            Objects.equals(userId, user.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId);
+    }
+
+    @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
@@ -130,6 +159,10 @@ public class User extends BaseEntity {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return new ArrayList<>(deleteHistories);
     }
 
     private static class GuestUser extends User {

@@ -10,13 +10,34 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
+import qna.domain.Answer;
+import qna.domain.ContentType;
+import qna.domain.DeleteHistory;
 import qna.domain.Question;
+import qna.domain.User;
+import qna.domain.UserTest;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
 
+	private final QuestionRepository questions;
+	private final UserRepository users;
+	private final DeleteHistoryRepository deleteHistories;
+
+	private final User writer;
+	private final User other;
+
 	@Autowired
-	private QuestionRepository questions;
+	public QuestionRepositoryTest(QuestionRepository questions, UserRepository users,
+		DeleteHistoryRepository deleteHistories) {
+		this.questions = questions;
+		this.users = users;
+		this.deleteHistories = deleteHistories;
+
+		writer = users.save(UserTest.JAVAJIGI);
+		other = users.save(UserTest.SANJIGI);
+	}
 
 	@Test
 	@DisplayName("저장")
@@ -29,6 +50,7 @@ public class QuestionRepositoryTest {
 			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
 		);
 	}
+
 	@Test
 	@DisplayName("삭제 되지 않는 질문 조회")
 	void findByDeletedFalse() {
@@ -61,5 +83,64 @@ public class QuestionRepositoryTest {
 		Question actual2 = questions.findByIdAndDeletedFalse(expected2.getId()).orElse(null);
 		assertThat(actual1).isEqualTo(expected1);
 		assertThat(actual2).isNull();
+	}
+
+	@Test
+	@DisplayName("질문 삭제 성공 : 동일 작성자, 답변이 없는 경우")
+	void deleteSuccessWithNoAnswer() {
+		Question question = new Question(1L, "title1", "contents1").writeBy(writer);
+		question = questions.save(question);
+		List<DeleteHistory> deletes = question.delete(writer);
+		deleteHistories.saveAll(deletes);
+
+		Question result = questions.findByIdAndDeletedFalse(question.getId()).orElse(null);
+		assertThat(result).isNull();
+
+		User user = users.findById(writer.getId()).get();
+		assertThat(user.getDeleteHistories().size()).isEqualTo(1);
+	}
+
+	@Test
+	@DisplayName("질문 삭제 성공 : 동일 작성자, 동일 작성자의 답변")
+	void deleteSuccessWithAnswer() {
+		Question question = new Question(1L, "title1", "contents1").writeBy(writer);
+		Answer otherWriterAnswer =  new Answer(writer, question, "Answers Contents2");
+
+		question.addAnswer(otherWriterAnswer);
+		question = questions.save(question);
+		List<DeleteHistory> deletes = question.delete(writer);
+		deleteHistories.saveAll(deletes);
+
+		Question result = questions.findByIdAndDeletedFalse(question.getId()).orElse(null);
+		assertThat(result).isNull();
+
+		User user = users.findById(writer.getId()).get();
+		assertThat(user.getDeleteHistories().size()).isEqualTo(2);
+	}
+
+	@Test
+	@DisplayName("질문 삭제 실패 : 동일 작성자가 아닌 경우")
+	void deleteFailOfWriter() {
+		Question question = new Question(1L, "title1", "contents1").writeBy(writer);
+		Question savedQuestion = questions.save(question);
+		assertThatThrownBy(() -> savedQuestion.delete(other))
+			.isInstanceOf(CannotDeleteException.class)
+			.hasMessage("질문을 삭제할 권한이 없습니다.");
+	}
+
+	@Test
+	@DisplayName("질문 삭제 실패 : 동일 작성자가 아닌 경우")
+	void deleteFailOfAnswer() {
+		Question question = new Question(1L, "title1", "contents1").writeBy(writer);
+		Answer otherWriterAnswer1 =  new Answer(writer, question, "Answers Contents2");
+		Answer otherWriterAnswer2 =  new Answer(other, question, "Answers Contents3");
+
+		question.addAnswer(otherWriterAnswer1);
+		question.addAnswer(otherWriterAnswer2);
+		Question savedQuestion = questions.save(question);
+
+		assertThatThrownBy(() -> savedQuestion.delete(writer))
+			.isInstanceOf(CannotDeleteException.class)
+			.hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 	}
 }

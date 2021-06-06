@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,8 +30,8 @@ public class DeleteHistory {
     @Column(name = "content_id")
     private Long contentId;
 
-    @ManyToOne
-    @JoinColumn(name = "deleted_by_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedUser;
 
     @Column(name = "create_date")
@@ -43,6 +45,13 @@ public class DeleteHistory {
         this.contentId = contentId;
         this.deletedUser = deletedUser;
         this.createDate = createDate;
+    }
+
+    public DeleteHistory(ContentType contentType, Long contentId,  User deletedUser) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+        this.deletedUser = deletedUser;
+        this.createDate = LocalDateTime.now();
     }
 
     @Override

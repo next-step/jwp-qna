@@ -7,8 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
 import qna.domain.Answer;
+import qna.domain.DeleteHistory;
 import qna.domain.QuestionTest;
+import qna.domain.User;
 import qna.domain.UserTest;
 
 @DataJpaTest
@@ -16,12 +19,15 @@ public class AnswerRepositoryTest {
 	private final AnswerRepository answers;
 	private final QuestionRepository questions;
 	private final UserRepository users;
+	private final DeleteHistoryRepository deleteHistories;
 
 	@Autowired
-	public AnswerRepositoryTest(AnswerRepository answers, QuestionRepository questions, UserRepository users) {
+	public AnswerRepositoryTest(AnswerRepository answers, QuestionRepository questions, UserRepository users,
+		DeleteHistoryRepository deleteHistories) {
 		this.answers = answers;
 		this.questions = questions;
 		this.users = users;
+		this.deleteHistories = deleteHistories;
 
 		users.save(UserTest.JAVAJIGI);
 		users.save(UserTest.SANJIGI);
@@ -49,5 +55,31 @@ public class AnswerRepositoryTest {
 		expected.setDeleted(true);
 		actual = answers.findByIdAndDeletedFalse(expected.getId()).orElse(null);
 		assertThat(actual).isNull();
+	}
+
+	@Test
+	@DisplayName("답변 삭제 성공 : 동일 작성자")
+	void deleteSuccess() {
+		Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+		answers.save(answer);
+		DeleteHistory delete = answer.delete(UserTest.JAVAJIGI);
+		deleteHistories.save(delete);
+
+		Answer actual = answers.findByIdAndDeletedFalse(answer.getId()).orElse(null);
+		assertThat(actual).isNull();
+
+		User user = users.findById(UserTest.JAVAJIGI.getId()).get();
+		assertThat(user.getDeleteHistories().size()).isEqualTo(1);
+	}
+
+	@Test
+	@DisplayName("답변 삭제 실패 : 다른 작성자")
+	void deleteFail() {
+		Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+		answers.save(answer);
+
+		assertThatThrownBy(() -> answer.delete(UserTest.SANJIGI))
+			.isInstanceOf(CannotDeleteException.class)
+			.hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 	}
 }
