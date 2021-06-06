@@ -29,8 +29,8 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user1 = new User("userId1", "1234", "userName1", "userEmail1");
-        user2 = new User("userId2", "1234", "userName2", "userEmail2");
+        user1 = new User("userId1", "pass@1234AB", "userName1", "user1@nextstep.camp");
+        user2 = new User("userId2", "pass@1234AB", "userName2", "user2@nextstep.camp");
         question1 = new Question("title1", "contents1").writeBy(user1);
         answer1 = new Answer(user1, question1, "contents1");
         answer2 = new Answer(user2, question1, "contents2");

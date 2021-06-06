@@ -24,3 +24,6 @@
   - [X] Answers
   - [X] DeleteHistories
 - [ ] 원시값 클래스로 감싸기
+  - [X] 이메일
+  - [X] 비밀번호
+  - [ ] 유저이름

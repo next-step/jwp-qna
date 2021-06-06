@@ -17,14 +17,14 @@ public class User extends BaseEntity {
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
-    @Column(length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
     @Column(length = 20, nullable = false)
     private String name;
 
-    @Column(length = 20, nullable = false)
-    private String password;
+    @Embedded
+    private Password password;
 
     protected User() {
     }
@@ -36,9 +36,9 @@ public class User extends BaseEntity {
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
         this.userId = userId;
-        this.password = password;
+        this.password = new Password(password);
         this.name = name;
-        this.email = email;
+        this.email = new Email(email);
     }
 
     public void update(User loginUser, User target) {
@@ -46,7 +46,7 @@ public class User extends BaseEntity {
             throw new UnAuthorizedException();
         }
 
-        if (!matchPassword(target.password)) {
+        if (!matchPassword(target.password.getPassword())) {
             throw new UnAuthorizedException();
         }
 
@@ -59,7 +59,7 @@ public class User extends BaseEntity {
     }
 
     public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
+        return this.password.equals(new Password(targetPassword));
     }
 
     public boolean equalsNameAndEmail(User target) {
@@ -83,7 +83,7 @@ public class User extends BaseEntity {
         return userId;
     }
 
-    public String getPassword() {
+    public Password getPassword() {
         return password;
     }
 
@@ -91,7 +91,7 @@ public class User extends BaseEntity {
         return name;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 

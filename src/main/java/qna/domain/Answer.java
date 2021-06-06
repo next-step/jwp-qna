@@ -73,7 +73,7 @@ public class Answer extends BaseEntity {
     }
 
     public DeleteHistory delete(User loginUser) {
-        validOwner(loginUser);
+        validateOwner(loginUser);
         delete();
         return DeleteHistory.ofAnswer(id, writer, LocalDateTime.now());
     }
@@ -82,7 +82,7 @@ public class Answer extends BaseEntity {
         this.deleted = true;
     }
 
-    private void validOwner(User loginUser) {
+    private void validateOwner(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(DELETE_EXCEPTION_MESSAGE);
         }

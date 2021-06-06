@@ -69,7 +69,7 @@ public class Question extends BaseEntity {
     }
 
     public DeleteHistories delete(User loginUser) {
-        validOwner(loginUser);
+        validateOwner(loginUser);
         delete();
         return generateDeleteHistories(loginUser);
     }
@@ -81,7 +81,7 @@ public class Question extends BaseEntity {
         return deleteHistories;
     }
 
-    private void validOwner(User loginUser) {
+    private void validateOwner(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(DELETE_EXCEPTION_MESSAGE);
         }
