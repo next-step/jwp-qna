@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,34 +18,38 @@ public class AnswerTest {
 	@Autowired
 	private AnswerRepository answerRepository;
 
-	@BeforeEach
-	void init() {
-		answerRepository.save(A2);
-	}
-
 	@Test
 	@DisplayName(value = "answer entity 가 DB에 저장되면 id 값, 저장 날짜가 할당된다")
 	void save() {
-		Answer persistedA1 = answerRepository.save(A1);
+		Answer persist = answerRepository.save(new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "답변입니다"));
 		assertAll(
-			() -> assertThat(persistedA1.getId()).isNotNull(),
-			() -> assertThat(persistedA1.getCreatedAt()).isNotNull()
+			() -> assertThat(persist.getId()).isNotNull(),
+			() -> assertThat(persist.getCreatedAt()).isNotNull(),
+			() -> assertThat(persist.getUpdatedAt()).isNotNull()
 		);
 	}
 
 	@Test
 	@DisplayName(value = "저장된 entity 를 select 하여 반환한다")
 	void select() {
-		assertThat(answerRepository.findByIdAndDeletedFalse(A2.getId()).get()).isEqualTo(A2);
+	    Answer insert = insertAnswer();
+		Answer selectById = answerRepository.findByIdAndDeletedFalse(insert.getId()).get();
+		assertThat(selectById).isNotNull();
 	}
 
 	@Test
 	@DisplayName(value = "update를 수행하면 update_at 이 컬럼이 갱신된다")
 	void updateAtHasChanged() {
-		LocalDateTime updatedAt = A2.getUpdatedAt();
-	    A2.setContents("updated answer");
-	    answerRepository.saveAndFlush(A2);
-	    assertThat(A2.getUpdatedAt()).isNotEqualTo(updatedAt);
+		Answer origin = insertAnswer();
+		LocalDateTime originUpdatedAt = origin.getUpdatedAt();
+	    origin.setContents("답변 추가 입니다");
+	    Answer updated = answerRepository.saveAndFlush(origin);
+	    assertThat(updated.getUpdatedAt()).isNotEqualTo(originUpdatedAt);
+	}
+
+	private Answer insertAnswer() {
+		Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "답변입니다!!");
+		return answerRepository.saveAndFlush(answer);
 	}
 
 }
