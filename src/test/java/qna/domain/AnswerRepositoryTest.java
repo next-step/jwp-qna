@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,10 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.AnswerTest.*;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 @DisplayName("AnswerRepository 테스트")
@@ -39,26 +34,16 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        users.save(JAVAJIGI);
-        users.save(SANJIGI);
+        User user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
 
-        question = questions.save(Q1);
+        question = question = questions.save(new Question("title1", "contents1").writeBy(user));
 
-        answer1 = answers.save(A1);
-        answer2 = answers.save(A2);
-        deletedAnswer1 = answers.save(DELETED_ANSWER1);
-    }
-
-    @AfterEach
-    void setDown() {
-        JAVAJIGI.setId(null);
-        SANJIGI.setId(null);
-
-        question.setId(null);
-
-        answer1.setId(null);
-        answer2.setId(null);
-        deletedAnswer1.setId(null);
+        answer1 = answers.save(new Answer(user, question, "Answers Contents1"));
+        answer2 = answers.save(new Answer(user, question, "Answers Contents2"));
+        
+        Answer deleAnswer1 = new Answer(user, question, "Deleted Content1");
+        deleAnswer1.setDeleted(true);
+        deletedAnswer1 = answers.save(deleAnswer1);
     }
 
     @Test

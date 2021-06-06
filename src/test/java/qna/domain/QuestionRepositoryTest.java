@@ -32,24 +32,19 @@ class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        users.save(JAVAJIGI);
-        users.save(SANJIGI);
+        User javajigi = users.save(new User( "javajigi", "password", "name", "javajigi@slipp.net"));
+        User sanjigi = users.save(new User( "sanjigi", "password", "name", "sanjigi@slipp.net"));
 
-        question1 = questions.save(Q1);
-        question2 = questions.save(Q2);
-        deletedQuestion1 = questions.save(DELETED_QUESTION1);
-        deletedQuestion2 = questions.save(DELETED_QUESTION2);
-    }
+        question1 = questions.save(new Question("title1", "contents1").writeBy(javajigi));
+        question2 = questions.save(new Question("title2", "contents2").writeBy(sanjigi));
 
-    @AfterEach
-    void setDown() {
-        JAVAJIGI.setId(null);
-        SANJIGI.setId(null);
+        deletedQuestion1 = new Question("deleted question title1", "deleted question content1").writeBy(sanjigi);
+        deletedQuestion1.setDeleted(true);
+        deletedQuestion1 = questions.save(deletedQuestion1);
 
-        Q1.setId(null);
-        Q2.setId(null);
-        deletedQuestion1.setId(null);
-        deletedQuestion2.setId(null);
+        deletedQuestion2 = new Question("deleted question title2", "deleted question content2").writeBy(sanjigi);
+        deletedQuestion2.setDeleted(true);
+        deletedQuestion2 = questions.save(deletedQuestion2);
     }
 
     @Test
