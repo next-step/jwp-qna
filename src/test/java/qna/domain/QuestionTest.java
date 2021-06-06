@@ -16,6 +16,25 @@ public class QuestionTest {
 	UserRepository users;
 
 	@Test
+	@DisplayName("작성자 업데이트 확인")
+	void update_writer() {
+		User JAVAJIGI = makeJavajigi();
+		Question Q1 = new Question("title1", "contents1").writtenBy(JAVAJIGI);
+
+		users.save(JAVAJIGI);
+		Question saveQ1 = questions.save(Q1);
+
+		User SANJIGI = makeSanjigi();
+		users.save(SANJIGI);
+		saveQ1.setWriter(SANJIGI);
+		questions.flush();
+
+		Question expected = questions.findById(saveQ1.getId()).get();
+
+		assertThat(expected.getWriter().getUserId()).isEqualTo("sanjigi");
+	}
+
+	@Test
 	@DisplayName("user 를 만들지 않고 question 을 넣으면 에러 발생")
 	void fk_error() {
 		User JAVAJIGI = makeJavajigi();
