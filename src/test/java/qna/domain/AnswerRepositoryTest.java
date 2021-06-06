@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -12,25 +13,44 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answers;
-    private Answer answer;
+
+    @Autowired
+    private QuestionRepository questions;
+
+    @Autowired
+    private UserRepository users;
+
+    private User savedUser;
+    private Question savedQuestion;
+    private Answer savedAnswer;
 
     @BeforeEach
     void setUp() {
-        answer = answers.save(AnswerTest.A1);
+        savedUser = users.save(new User("fdevjc", "password", "yang", "email@email.com"));
+        savedQuestion = questions.save(new Question("title1", "content1").writeBy(savedUser));
+        savedAnswer = answers.save(new Answer(savedUser, savedQuestion, "contents"));
     }
 
     @Test
-    void findByQuestionIdAndDeletedFalse() {
-        Answer expected = answers.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId()).get(0);
+    @DisplayName("질문을 통해 deleted가 false인 답변을 조회한다.")
+    void findByQuestionAndDeletedFalse() {
+        //when
+        Answer expected = answers.findByQuestionAndDeletedFalse(savedQuestion).get(0);
+
+        //then
         assertAll(
                 () -> assertThat(expected.isDeleted()).isFalse(),
-                () -> assertThat(expected.getQuestionId()).isEqualTo(AnswerTest.A1.getQuestionId())
+                () -> assertThat(expected.getQuestion()).isNotNull()
         );
     }
 
     @Test
+    @DisplayName("답변_id를 통해 deleted가 false인 답변을 조회한다.")
     void findByIdAndDeletedFalse() {
-        Answer expected = answers.findByIdAndDeletedFalse(answer.getId()).get();
+        //when
+        Answer expected = answers.findByIdAndDeletedFalse(savedAnswer.getId()).get();
+
+        //then
         assertAll(
                 () -> assertThat(expected).isNotNull(),
                 () -> assertThat(expected.isDeleted()).isFalse()

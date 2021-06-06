@@ -3,10 +3,12 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class User extends BaseTimeEntity {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -24,6 +26,12 @@ public class User extends BaseTimeEntity {
 
     @Column(length = 50)
     private String email;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
 
     private User() {
     }
@@ -93,7 +101,6 @@ public class User extends BaseTimeEntity {
     public String getEmail() {
         return email;
     }
-
 
     @Override
     public String toString() {
