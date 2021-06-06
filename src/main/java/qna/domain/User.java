@@ -1,10 +1,8 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -19,14 +17,15 @@ public class User extends BaseEntity {
     @Column(name = "user_id", nullable = false, unique = true, length = 20)
     private String userId;
 
-    @OneToMany(mappedBy = "writer")
-    List<Answer> answers = new ArrayList<>();
+    @Embedded
+    Answers answers;
 
-    @OneToMany(mappedBy = "writer")
-    List<Question> questions = new ArrayList<>();
+    @Embedded
+    Questions questions;
 
-    @OneToMany(mappedBy = "user")
-    List<DeleteHistory> deletedHistories = new ArrayList<>();
+    @Embedded
+    DeleteHistories deleteHistories;
+
 
     @Column(name = "password", nullable = false, length = 20)
     private String password;
@@ -34,8 +33,8 @@ public class User extends BaseEntity {
     @Column(name = "name", nullable = false, length = 20)
     private String name;
 
-    @Column(name = "email", length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
@@ -49,7 +48,7 @@ public class User extends BaseEntity {
         this.userId = userId;
         this.password = password;
         this.name = name;
-        this.email = email;
+        this.email = new Email(email);
     }
 
     public void update(User loginUser, User target) {
@@ -118,11 +117,11 @@ public class User extends BaseEntity {
         this.name = name;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(Email email) {
         this.email = email;
     }
 
@@ -131,16 +130,16 @@ public class User extends BaseEntity {
         return GUEST_USER;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
-    public List<Question> getQuestions() {
+    public Questions getQuestions() {
         return questions;
     }
 
-    public List<DeleteHistory> getDeletedHistories() {
-        return deletedHistories;
+    public DeleteHistories getDeletedHistories() {
+        return deleteHistories;
     }
 
     @Override
@@ -152,7 +151,7 @@ public class User extends BaseEntity {
                 Objects.equals(userId, user.userId) &&
                 Objects.equals(answers, user.answers) &&
                 Objects.equals(questions, user.questions) &&
-                Objects.equals(deletedHistories, user.deletedHistories) &&
+                Objects.equals(deleteHistories, user.deleteHistories) &&
                 Objects.equals(password, user.password) &&
                 Objects.equals(name, user.name) &&
                 Objects.equals(email, user.email);
@@ -160,7 +159,7 @@ public class User extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, answers, questions, deletedHistories, password, name, email);
+        return Objects.hash(id, userId, answers, questions, deleteHistories, password, name, email);
     }
 
     @Override
