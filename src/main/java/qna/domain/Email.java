@@ -12,7 +12,7 @@ public class Email {
     private static final Pattern EMAIL_PATTERN = PatternEnum.EMAIL.toPattern();
     public static final String INVALID_EMAIL_MESSAGE = "잘못된 이메일 형식입니다.";
 
-    @Column(length = 50)
+    @Column(length = MAXIMUM_EMAIL_LENGTH)
     private String email;
 
     protected Email() {

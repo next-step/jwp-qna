@@ -12,7 +12,7 @@ public class Password {
     private static final Pattern PASSWORD_PATTERN = PatternEnum.PASSWORD.toPattern();
     public static final String INVALID_PASSWORD_MESSAGE = "잘못된 비밀번호 형식입니다.";
 
-    @Column(length = 20, nullable = false)
+    @Column(length = MAXIMUM_PASSWORD_LENGTH, nullable = false)
     private String password;
 
     protected Password() {

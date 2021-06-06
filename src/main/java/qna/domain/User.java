@@ -14,14 +14,14 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false, unique = true)
-    private String userId;
+    @Embedded
+    private UserId userId;
 
     @Embedded
     private Email email;
 
-    @Column(length = 20, nullable = false)
-    private String name;
+    @Embedded
+    private Name name;
 
     @Embedded
     private Password password;
@@ -35,9 +35,9 @@ public class User extends BaseEntity {
 
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
-        this.userId = userId;
+        this.userId = new UserId(userId);
         this.password = new Password(password);
-        this.name = name;
+        this.name = new Name(name);
         this.email = new Email(email);
     }
 
@@ -46,7 +46,7 @@ public class User extends BaseEntity {
             throw new UnAuthorizedException();
         }
 
-        if (!matchPassword(target.password.getPassword())) {
+        if (!matchPassword(target.password)) {
             throw new UnAuthorizedException();
         }
 
@@ -54,12 +54,12 @@ public class User extends BaseEntity {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    private boolean matchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
-        return this.password.equals(new Password(targetPassword));
+    public boolean matchPassword(Password targetPassword) {
+        return this.password.equals(targetPassword);
     }
 
     public boolean equalsNameAndEmail(User target) {
@@ -79,7 +79,7 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
@@ -87,7 +87,7 @@ public class User extends BaseEntity {
         return password;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
@@ -100,9 +100,9 @@ public class User extends BaseEntity {
         return "User{" +
                 "id=" + id +
                 ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
+                ", email=" + email +
+                ", name=" + name +
+                ", password=" + password +
                 '}';
     }
 

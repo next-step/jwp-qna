@@ -24,7 +24,7 @@ class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user1 = new User("userId1", "pass@1234AB", "userName1", "user@nextstep.camp");
+        user1 = new User("userId1", "pass@1234AB", "userName", "user@nextstep.camp");
     }
 
     @DisplayName("삭제 이력을 저장한다.")
