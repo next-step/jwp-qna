@@ -14,13 +14,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 public class QuestionRepositoryTest {
     @Autowired
-    private QuestionRepository questions;
+    private QuestionRepository questionRepository;
 
     @Autowired
-    private UserRepository users;
+    private UserRepository userRepository;
 
     @Autowired
-    private AnswerRepository answers;
+    private AnswerRepository answerRepository;
 
     private Question question1;
     private Question question2;
@@ -31,11 +31,11 @@ public class QuestionRepositoryTest {
     void setUp() {
         questionWriter1 = new User("qwriter1", "password", "name", "sunju@slipp.net");
         question1 = new Question("title3", "contents2").writeBy(questionWriter1);
-        users.save(questionWriter1);
+        userRepository.save(questionWriter1);
 
         questionWriter2 = new User("qwriter2", "password", "name", "jung@slipp.net");
         question2 = new Question("title3", "contents2").writeBy(questionWriter2);
-        users.save(questionWriter2);
+        userRepository.save(questionWriter2);
     }
 
     @Test
@@ -43,8 +43,8 @@ public class QuestionRepositoryTest {
     void saveTest() {
         // 데이터 테스트
         assertThat(question1.getId()).isNull();
-        Question savedQuestion = questions.save(question1);
-        questions.flush();
+        Question savedQuestion = questionRepository.save(question1);
+        questionRepository.flush();
         assertThat(savedQuestion.getId()).isNotNull();
         assertThat(savedQuestion.getTitle()).isEqualTo(question1.getTitle());
         assertThat(savedQuestion.getContents()).isEqualTo(question1.getContents());
@@ -55,10 +55,10 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("Question 여러개 save 테스트")
     void saveMultipleQuestionTest() {
-        Question savedQuestion1 = questions.save(question1);
-        Question savedQuestion2 = questions.save(question2);
-        questions.flush();
-        List<Question> questionList = questions.findAll();
+        Question savedQuestion1 = questionRepository.save(question1);
+        Question savedQuestion2 = questionRepository.save(question2);
+        questionRepository.flush();
+        List<Question> questionList = questionRepository.findAll();
         assertThat(questionList.size()).isEqualTo(2);
         assertThat(questionList).containsExactly(savedQuestion1, savedQuestion2);
     }
@@ -68,10 +68,10 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 질문 검색 테스트")
     void findByDeletedFalseTest() {
-        Question savedQuestion1 = questions.save(question1);
-        Question savedQuestion2 = questions.save(question2);
-        questions.flush();
-        List<Question> actualList = questions.findByDeletedFalse();
+        Question savedQuestion1 = questionRepository.save(question1);
+        Question savedQuestion2 = questionRepository.save(question2);
+        questionRepository.flush();
+        List<Question> actualList = questionRepository.findByDeletedFalse();
 
         //findByDeletedFalse test
         assertThat(actualList.size()).isEqualTo(2);
@@ -86,9 +86,9 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("id 기준 검색 테스트")
     void findByIdAndDeletedFalseTest() {
-        Question savedQuestion = questions.save(question1);
-        questions.flush();
-        Question actual = questions.findByIdAndDeletedFalse(savedQuestion.getId())
+        Question savedQuestion = questionRepository.save(question1);
+        questionRepository.flush();
+        Question actual = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId())
                                             .orElseThrow(IllegalArgumentException::new);
 
         assertThat(actual).isEqualTo(savedQuestion);
@@ -98,37 +98,37 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("작성자 확인 테스트")
     void isWrittenByTest() {
-        Question savedQuestion = questions.save(question1);
+        Question savedQuestion = questionRepository.save(question1);
         assertThat(savedQuestion.isOwner(questionWriter1));
     }
 
     @Test
     @DisplayName("답변 삭제 테스트")
     void deleteAnswerTest() throws CannotDeleteException {
-        Question savedQuestion = questions.save(question1);
-        questions.save(question2);
-        questions.flush();
-        List<Question> beforeDeleteList = questions.deletedFalse();
+        Question savedQuestion = questionRepository.save(question1);
+        questionRepository.save(question2);
+        questionRepository.flush();
+        List<Question> beforeDeleteList = questionRepository.deletedFalse();
         assertThat(beforeDeleteList.size()).isEqualTo(2);
 
         savedQuestion.delete(questionWriter1);
-        questions.flush();
-        List<Question> afterDeleteList = questions.deletedFalse();
+        questionRepository.flush();
+        List<Question> afterDeleteList = questionRepository.deletedFalse();
         assertThat(afterDeleteList.size()).isEqualTo(1);
     }
 
     @Test
     @DisplayName("Answer list 조회 테스트")
     void getAnswerList() {
-        Question savedQuestion = questions.save(question1);
-        questions.save(question2);
+        Question savedQuestion = questionRepository.save(question1);
+        questionRepository.save(question2);
 
         User answerWriter = new User("awriter", "password", "name", "sunju@slipp.net");
-        users.save(answerWriter);
+        userRepository.save(answerWriter);
         Answer answer = new Answer(answerWriter, savedQuestion, "Answers Contents");
-        answers.save(answer);
+        answerRepository.save(answer);
 
-        questions.flush();
+        questionRepository.flush();
         assertThat(savedQuestion.getAnswers().size()).isEqualTo(1);
     }
 }
