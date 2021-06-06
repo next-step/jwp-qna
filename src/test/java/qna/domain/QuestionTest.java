@@ -1,109 +1,48 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import javax.persistence.EntityManager;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-@DataJpaTest
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
-    
-    @Autowired
-    private QuestionRepository questions;
 
-    @Autowired
-    private UserRepository users;
-
-    @Autowired
-    private AnswerRepository answers;
-
-    @Autowired
-    private EntityManager entityManager;
-
-    private User user;
-
-    @BeforeEach
-    void setUp() {
-        user = new User("mwkwon", "password", "권민욱", "mwkwon0110@gmail.com");
-        users.save(user);
+    @Test
+    void 질문_작성자와_현재_로그인_사용자가_다른_경우_에러_정상_발생_여부() {
+        Question question = Q1;
+        User loginUser = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+        assertThatThrownBy(() -> question.checkPossibleDelete(loginUser))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("질문을 삭제할 권한이 없습니다.");
     }
 
     @Test
-    @DisplayName("질문 테이블 정상 저장 테스트")
-    void save() {
-        Question expected = new Question("title1", "contents").writeBy(user);
-        Question actual = questions.save(expected);
-        assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
-                () -> assertThat(user.getId()).isNotNull(),
-                () -> assertThat(actual.getId()).isEqualTo(user.getId())
-        );
+    void 질문에_대한_답변_존재_시_질문자_답변자가_하나라도_다른_경우_에러_정상_발생_여부() {
+        User user1 = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");;
+        User user2 = new User(2L, "id", "password", "name", "email");
+        Question question = QuestionTest.Q1;
+
+        Answer answer1 = new Answer(1L, user1, question, "contents");
+        Answer answer2 = new Answer(1L, user2, question, "contents");
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+
+        assertThatThrownBy(() -> question.checkPossibleDelete(user1))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 
     @Test
-    @DisplayName("질문 테이블 아이디 정상 조회 테스트")
-    void findById() {
-        Question expected = questions.save(new Question("title1", "contents").writeBy(user));
-        Optional<Question> actual = questions.findById(expected.getId());
-        assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get().getId()).isEqualTo(expected.getId());
-        assertThat(actual.get() == expected).isTrue();
-    }
+    void 질문에_답변_객제_존재_여부_확인() {
+        Question question = Q1;
+        Answer answer1 = new Answer(100L, UserTest.JAVAJIGI, question, "contents1");
+        Answer answer2 = new Answer(101L, UserTest.JAVAJIGI, question, "contents2");
+        question.addAnswer(answer1);
 
-    @Test
-    @DisplayName("question entity를 이용하여 답변 리스트 정상 조회 테스트")
-    void findAnswersByQuestion() {
-        Question expected = new Question("title1", "contents").writeBy(user);
-        questions.save(expected);
-        entityManager.flush();
-        entityManager.clear();
-
-        List<Answer> answers = Arrays.asList(
-                new Answer(user, expected, "Answers Contents1"),
-                new Answer(user, expected, "Answers Contents1"));
-        List<Answer> exceptedAnswers = this.answers.saveAll(answers);
-
-        Optional<Question> actual = questions.findById(expected.getId());
-
-        assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get().isContainAnswer(answers.get(0))).isTrue();
-        assertThat(actual.get().isContainAnswer(answers.get(1))).isTrue();
-        assertThat(actual.get().getAnswers().size()).isEqualTo(answers.size());
-
-    }
-
-    @Test
-    @DisplayName("질문 테이블 정상 수정 테스트")
-    void update() {
-        Question expected = questions.save(new Question("title1", "contents").writeBy(user));
-        expected.addDeleted(true);
-        entityManager.flush();
-        entityManager.clear();
-        Optional<Question> actual = questions.findById(expected.getId());
-        assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get().isDeleted()).isTrue();
-    }
-
-    @Test
-    @DisplayName("질문 테이블 정상 삭제 테스트")
-    void delete() {
-        Question expected = questions.save(new Question("title1", "contents").writeBy(user));
-        questions.delete(expected);
-        entityManager.flush();
-        entityManager.clear();
-        Optional<Question> actual = questions.findById(expected.getId());
-        assertThat(actual.isPresent()).isFalse();
+        assertThat(question.isContainAnswer(answer1)).isTrue();
+        assertThat(question.isContainAnswer(answer2)).isFalse();
     }
 }
