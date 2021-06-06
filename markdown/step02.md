@@ -195,9 +195,9 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
     - [ ] 4-3.리뷰어님 피드백 반영
         - [x] 4-3-1.생성자 접근제어자 `public` -> `protected` 변경
         - [x] 4-3-2.getter/setter 제거
-        - [ ] 4-3-3.반복적인 필드 추상클래스 활용
-            - [ ] 4-3-3-1.중복된 필드 모아놓기
-            - [ ] 4-3-3-2.jpa auditing 적용
+        - [x] 4-3-3.반복적인 필드 추상클래스 활용
+            - [x] 4-3-3-1.중복된 필드 모아놓기
+            - [x] 4-3-3-2.jpa auditing 적용
         - [ ] 4-3-4.테스트 영역 구분
             - [ ] 4-3-4-1.`AnswerTest` -> `AnswerTest`, `AnswerRepositoryTest`
             - [ ] 4-3-4-2.`DeleteHistoryTest` -> `DeleteHistoryTest`, `DeleteHistoryRepositoryTest`

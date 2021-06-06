@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +15,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
-public class Answer {
+public class Answer extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,18 +25,12 @@ public class Answer {
 	@Lob
 	private String contents;
 
-	@Column(name = "created_at", nullable = false)
-	private LocalDateTime createdAt = LocalDateTime.now();
-
 	@Column(nullable = false)
 	private boolean deleted = false;
 
 	@ManyToOne
 	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
 	private Question question;
-
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
 
 	@OneToOne
 	@JoinColumn(name = "wirter_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
@@ -125,14 +118,12 @@ public class Answer {
 		return deleted == answer.deleted
 			&& Objects.equals(id, answer.id)
 			&& Objects.equals(contents, answer.contents)
-			&& Objects.equals(createdAt, answer.createdAt)
 			&& Objects.equals(question, answer.question)
-			&& Objects.equals(updatedAt, answer.updatedAt)
 			&& Objects.equals(writer, answer.writer);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, contents, createdAt, deleted, question, updatedAt, writer);
+		return Objects.hash(id, contents, deleted, question, writer);
 	}
 }
