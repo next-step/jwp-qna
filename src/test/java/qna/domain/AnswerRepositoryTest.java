@@ -1,13 +1,13 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.exception.CannotDeleteException;
 
+import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 
@@ -20,6 +20,10 @@ class AnswerRepositoryTest {
     private UserRepository users;
     @Autowired
     private QuestionRepository questions;
+
+    @Autowired
+    private DeleteHistoryRepository deleteHistories;
+
 
     private User u1;
     private Question q1;
@@ -72,5 +76,30 @@ class AnswerRepositoryTest {
         answers.delete(saved);
         answers.flush();
     }
+
+
+    @Test
+    @DisplayName("답변을 성공적으로 지우는 테스트")
+    void deleteAnswerSuccess() {
+        Answer expected = new Answer(u1,q1,"contents");
+        expected.delete(u1);
+
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, expected.getId(), u1,now());
+        deleteHistories.save(deleteHistory);
+    }
+
+
+    @Test
+    @DisplayName("답변을 지우는데 실패하는 테스트")
+    void deleteAnswerFailed() {
+        Answer expected = new Answer(u1,q1,"contents");
+        User u2 = new User("baek", "password", "temp", "beck33@naver.com");
+
+
+        assertThatThrownBy(() -> expected.delete(u2))
+                .isInstanceOf(CannotDeleteException.class);
+
+    }
+
 
 }

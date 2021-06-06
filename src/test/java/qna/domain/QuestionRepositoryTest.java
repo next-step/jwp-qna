@@ -6,8 +6,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.exception.CannotDeleteException;
 
+import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 
@@ -18,13 +21,17 @@ class QuestionRepositoryTest {
     private QuestionRepository questions;
     @Autowired
     private UserRepository users;
+    @Autowired
+    private DeleteHistoryRepository deleteHistories;
+    @Autowired
+    private AnswerRepository answers;
 
-    private Question q1;
     private User u1;
+
     @BeforeEach
     void setUp() {
-        q1 = new Question("제목 이에요", "본문 입니다.");
         u1 = new User("seungyeol", "password", "name", "beck33333@naver.com");
+        users.save(u1);
     }
 
     @AfterEach
@@ -35,7 +42,7 @@ class QuestionRepositoryTest {
 
     @Test
     void save() {
-        Question expected = q1;
+        Question expected = new Question("제목 이에요", "본문 입니다.").writeBy(u1);
         Question actual = questions.save(expected);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
@@ -48,28 +55,39 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    void saveWithWriter() {
-        Question expected = q1;
-        q1.setWriter(users.save(u1));
+    @DisplayName("질문을 성공적으로 지우는 테스트")
+    void deleteAnswerSuccess() {
+        Question question = new Question("제목 이에요", "본문 입니다.").writeBy(u1);
+        Answer answer = new Answer(u1, question, "contents");
+        answers.save(answer);
+        questions.save(question);
 
-        Question actual = questions.save(expected);
-        assertThat(actual.getWriter()).isEqualTo(expected.getWriter());
+        question.delete(u1);
+
+        assertThat(question.getAnswers().size()).isEqualTo(0);
+
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), u1, now());
+        deleteHistories.save(deleteHistory);
     }
 
     @Test
-    void updateWithWriter() {
-        Question given = q1;
-        questions.save(given);
+    @DisplayName("질문을 지우는데 실패하는 테스트")
+    void deleteAnswerFailed() {
+        Question question = new Question("제목 이에요", "본문 입니다.").writeBy(u1);
+        Answer answer = new Answer(u1, question, "contents");
+        answers.save(answer);
+        questions.save(question);
 
-        given.setWriter(users.save(u1));
-        questions.flush();
-        assertThat(given.getWriter().getUserId()).isEqualTo("seungyeol");
+        User u2 = new User("baek", "password", "temp", "beck33@naver.com");
+
+        assertThatThrownBy(() -> question.delete(u2))
+                .isInstanceOf(CannotDeleteException.class);
+
     }
-
 
     @Test
     void findByName() {
-        Question expected = q1;
+        Question expected = new Question("제목 이에요", "본문 입니다.").writeBy(u1);
         questions.save(expected);
         Question actual = questions.findById(expected.getId()).get();
         assertThat(actual).isEqualTo(expected);
@@ -78,7 +96,7 @@ class QuestionRepositoryTest {
 
     @Test
     void update() {
-        Question expected = q1;
+        Question expected = new Question("제목 이에요", "본문 입니다.").writeBy(u1);
         Question saved = questions.save(expected);
 
         saved.setContents("Question Contents Changed");
@@ -87,7 +105,7 @@ class QuestionRepositoryTest {
 
     @Test
     void delete() {
-        Question expected = q1;
+        Question expected = new Question("제목 이에요", "본문 입니다.").writeBy(u1);
         Question saved = questions.save(expected);
 
         questions.delete(saved);

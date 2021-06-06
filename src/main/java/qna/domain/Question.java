@@ -1,26 +1,29 @@
 package qna.domain;
 
+import qna.exception.CannotDeleteException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "question")
-public class Question  extends BaseEntity {
+public class Question extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
 
-    @ManyToOne
-    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name="fk_question_writer"))
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     List<Answer> answers = new ArrayList<>();
 
     @Lob
@@ -46,6 +49,16 @@ public class Question  extends BaseEntity {
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
+    }
+
+    public void delete(User user) {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        for (Answer answer : answers) {
+            answer.delete(user);
+        }
+        setDeleted(true);
     }
 
     public boolean isOwner(User writer) {
