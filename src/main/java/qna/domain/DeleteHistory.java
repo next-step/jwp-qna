@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static java.time.LocalDateTime.now;
+
 @Entity
 @Table(name = "delete_history")
 public class DeleteHistory {
@@ -20,7 +22,7 @@ public class DeleteHistory {
     private Long contentId;
 
     @Column(name = "create_date")
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate = now();
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,6 +37,10 @@ public class DeleteHistory {
         this.contentId = contentId;
         this.user = user;
         this.createDate = createDate;
+    }
+
+    public DeleteHistory(ContentType question, Long id, User writer) {
+        this(question,id,writer,now());
     }
 
     public void setId(Long id) {

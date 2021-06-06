@@ -43,14 +43,14 @@ public class DeleteHistories {
 
     public void addQuestion(Question question) {
         DeleteHistory deleteHistory =
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter());
 
         this.deletedHistories.add(deleteHistory);
     }
 
     public void addAnswer(Answer answer) {
         DeleteHistory deleteHistory =
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter());
 
         this.deletedHistories.add(deleteHistory);
 
