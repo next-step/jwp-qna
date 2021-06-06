@@ -5,7 +5,6 @@ import qna.domain.base.BaseEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -104,7 +103,7 @@ public class Question extends BaseEntity {
                 ", deleted=" + deleted +
                 ", title='" + title + '\'' +
                 ", writer=" + writer +
+                ", answers=" + answers +
                 '}';
     }
-
 }
