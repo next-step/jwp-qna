@@ -3,6 +3,8 @@ package qna.domain;
 import javax.persistence.*;
 import java.io.Writer;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 public class Question extends BaseEntity {
     @Id
@@ -15,7 +17,7 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
