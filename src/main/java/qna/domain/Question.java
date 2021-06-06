@@ -1,10 +1,10 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -13,12 +13,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import qna.exception.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
 
+    public static final String NO_PERMISSION_TO_DELETE_QUESTION = "질문을 삭제할 권한이 없습니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,8 +37,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question", cascade = CascadeType.PERSIST)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -53,6 +54,13 @@ public class Question extends BaseEntity {
         this(null, title, contents, writer);
     }
 
+    public Question(String title, String contents, User writer, boolean deleted) {
+        this.title = title;
+        this.contents = contents;
+        this.writer = writer;
+        this.deleted = deleted;
+    }
+
     public Question(Long id, String title, String contents, User writer) {
         this.id = id;
         this.title = title;
@@ -62,6 +70,17 @@ public class Question extends BaseEntity {
 
     protected Question() {
 
+    }
+
+    public DeleteHistories delete(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(NO_PERMISSION_TO_DELETE_QUESTION);
+        }
+        deleted = true;
+
+        DeleteHistories deleteHistories = new DeleteHistories(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(getAnswers().deleteAnswers(loginUser));
+        return deleteHistories;
     }
 
     public Question writeBy(User writer) {
@@ -82,40 +101,23 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public Question setDeleted(boolean deleted) {
-        this.deleted = deleted;
-        return this;
     }
 
     public User getWriter() {
         return writer;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -145,5 +147,10 @@ public class Question extends BaseEntity {
             ", writer.id=" + writer.getId() +
             ", deleted=" + deleted +
             '}';
+    }
+
+    public void update(Question question) {
+        this.title = question.getTitle();
+        this.contents = question.getContents();
     }
 }

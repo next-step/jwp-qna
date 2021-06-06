@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,12 +14,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseEntity {
 
+    private static final String NO_PERMISSION_TO_DELETE_ANSWER = "답변을 삭제할 권한이 없습니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -60,7 +63,16 @@ public class Answer extends BaseEntity {
 
     }
 
-    public boolean isOwner(User writer) {
+    public DeleteHistory delete(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(NO_PERMISSION_TO_DELETE_ANSWER);
+        }
+        deleted = true;
+
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    }
+
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
@@ -72,24 +84,8 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public Question getQuestion() {
@@ -120,11 +116,11 @@ public class Answer extends BaseEntity {
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
-                ", writer.id=" + writer.getId() +
-                ", question.id=" + question.getId() +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", writer.id=" + writer.getId() +
+            ", question.id=" + question.getId() +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            '}';
     }
 }
