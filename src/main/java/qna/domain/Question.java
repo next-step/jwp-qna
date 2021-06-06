@@ -6,10 +6,13 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -36,8 +39,13 @@ public class Question {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
-	@Column(name = "writer_id")
-	private Long writerId;
+	@ManyToOne
+	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+	private User user;
+
+	public void setWriter(final User user) {
+		this.user = user;
+	}
 
 	protected Question() {
 
@@ -53,13 +61,14 @@ public class Question {
 		this.contents = contents;
 	}
 
-	public Question writeBy(User writer) {
-		this.writerId = writer.getId();
+	public Question writtenBy(User writer) {
+		setWriter(writer);
+
 		return this;
 	}
 
 	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
+		return this.user.equals(writer);
 	}
 
 	public void addAnswer(Answer answer) {
@@ -70,32 +79,16 @@ public class Question {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getTitle() {
 		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
 	}
 
 	public String getContents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
 	public Long getWriterId() {
-		return writerId;
-	}
-
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
+		return user.getId();
 	}
 
 	public boolean isDeleted() {
@@ -104,16 +97,5 @@ public class Question {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
-	}
-
-	@Override
-	public String toString() {
-		return "Question{" +
-			"id=" + id +
-			", title='" + title + '\'' +
-			", contents='" + contents + '\'' +
-			", writerId=" + writerId +
-			", deleted=" + deleted +
-			'}';
 	}
 }

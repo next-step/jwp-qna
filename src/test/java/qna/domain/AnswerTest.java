@@ -17,7 +17,7 @@ public class AnswerTest {
 	void save() {
 		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
 		User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-		Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+		Question Q1 = new Question("title1", "contents1").writtenBy(JAVAJIGI);
 		Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
 		Answer A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
 
@@ -31,7 +31,7 @@ public class AnswerTest {
 	@DisplayName("jpa 데이터 인서트 후 동일성 확인")
 	void is_same_object() {
 		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-		Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+		Question Q1 = new Question("title1", "contents1").writtenBy(JAVAJIGI);
 		Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
 
 		Answer saveA1 = answers.save(A1);
@@ -44,7 +44,7 @@ public class AnswerTest {
 	void use_written_method_findByIdAndDeletedFalse() {
 		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
 		User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-		Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+		Question Q1 = new Question("title1", "contents1").writtenBy(JAVAJIGI);
 		Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
 		Answer A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
 
@@ -61,7 +61,7 @@ public class AnswerTest {
 	void use_written_method_findByQuestionIdAndDeletedFalse() {
 		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
 		User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-		Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+		Question Q1 = new Question("title1", "contents1").writtenBy(JAVAJIGI);
 		Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
 		Answer A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
 

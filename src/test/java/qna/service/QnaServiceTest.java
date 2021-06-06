@@ -40,7 +40,7 @@ class QnaServiceTest {
 	@Test
 	public void delete_성공() throws Exception {
 		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-		Question question = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
+		Question question = new Question(1L, "title1", "contents1").writtenBy(JAVAJIGI);
 		Answer answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
 		question.addAnswer(answer);
 
@@ -58,7 +58,7 @@ class QnaServiceTest {
 	public void delete_다른_사람이_쓴_글() throws Exception {
 		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
 		User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-		Question question = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
+		Question question = new Question(1L, "title1", "contents1").writtenBy(JAVAJIGI);
 		Answer answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
 		question.addAnswer(answer);
 
@@ -71,7 +71,7 @@ class QnaServiceTest {
 	@Test
 	public void delete_성공_질문자_답변자_같음() throws Exception {
 		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-		Question question = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
+		Question question = new Question(1L, "title1", "contents1").writtenBy(JAVAJIGI);
 		Answer answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
 		question.addAnswer(answer);
 
@@ -89,10 +89,10 @@ class QnaServiceTest {
 	public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
 		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
 		User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-		Question question = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
+		Question question = new Question(1L, "title1", "contents1").writtenBy(JAVAJIGI);
 		Answer answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
 		question.addAnswer(answer);
-		Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+		Question Q1 = new Question("title1", "contents1").writtenBy(JAVAJIGI);
 
 		Answer answer2 = new Answer(2L, SANJIGI, Q1, "Answers Contents1");
 		question.addAnswer(answer2);
@@ -107,7 +107,7 @@ class QnaServiceTest {
 
 	private void verifyDeleteHistories() {
 		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-		Question question = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
+		Question question = new Question(1L, "title1", "contents1").writtenBy(JAVAJIGI);
 		Answer answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
 		question.addAnswer(answer);
 
