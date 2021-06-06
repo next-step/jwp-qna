@@ -39,4 +39,20 @@ public class UserRepositoryTest {
         assertThat(actual).isEqualTo(savedUser);
     }
 
+
+    @DisplayName("userName update테스트 && updatedAt 갱신 확인")
+    @Test
+    public void updateUserName() {
+
+        //when
+        savedUser.setName("springjigi");
+
+        //then
+        User actual = userRepository.findByUserId("javajigi").get();
+        assertThat(actual).isEqualTo(savedUser);
+        assertThat(actual.getUpdatedAt()).isAfter(savedUser.getCreatedAt());
+        System.out.println(actual.getCreatedAt());
+        System.out.println(actual.getUpdatedAt());
+    }
+
 }

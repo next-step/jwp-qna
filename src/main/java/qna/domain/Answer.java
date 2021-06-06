@@ -9,10 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Answer extends BaseEntity{
 
     @Column(name = "writer_id")
     private Long writerId;
@@ -26,18 +23,12 @@ public class Answer {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();;
-
-    @Column(name = "updatedAt")
-    private LocalDateTime updatedAt = LocalDateTime.now();;
-
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+        setId(id);
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -52,7 +43,7 @@ public class Answer {
         this.contents = contents;
     }
 
-    public Answer() {
+    protected Answer() {
 
     }
 
@@ -62,14 +53,6 @@ public class Answer {
 
     public void toQuestion(Question question) {
         this.questionId = question.getId();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getWriterId() {
@@ -107,7 +90,7 @@ public class Answer {
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", writerId=" + writerId +
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
