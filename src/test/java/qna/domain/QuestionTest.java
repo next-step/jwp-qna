@@ -29,7 +29,7 @@ public class QuestionTest {
     @Test
     void deleteQuestion() {
         //when
-        List<DeleteHistory> actual = question3.delete(UserTest.SANJIGI);
+        List<DeleteHistory> actual = question3.delete(UserTest.SANJIGI).getDeleteHistories();
 
         //then
         assertThat(actual).containsExactly(DeleteHistory.ofQuestion(question3.getId(), UserTest.SANJIGI, LocalDateTime.now()));

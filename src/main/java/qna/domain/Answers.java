@@ -19,8 +19,8 @@ public class Answers {
     protected Answers() {
     }
 
-    public List<DeleteHistory> deleteAll(User loginUser) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+    public DeleteHistories deleteAll(User loginUser) {
+        DeleteHistories deleteHistories = new DeleteHistories();
         for (Answer answer : answers) {
             deleteHistories.add(answer.delete(loginUser));
         }

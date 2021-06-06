@@ -44,7 +44,7 @@ class AnswersTest {
         answers.add(answer2);
 
         //when
-        List<DeleteHistory> actual = answers.deleteAll(UserTest.JAVAJIGI);
+        List<DeleteHistory> actual = answers.deleteAll(UserTest.JAVAJIGI).getDeleteHistories();
 
         //then
         assertAll(() -> {

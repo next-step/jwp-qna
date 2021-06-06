@@ -20,7 +20,7 @@
   - [X] Question 비즈니스 영역 분리
   - [X] Answer 비즈니스 영역 분리
   - [X] Question이 삭제되면 관련된 Answer들은 모두 삭제
-- [ ] 일급 컬렉션 추가
-  - [ ] Answers
-  - [ ] DeleteHistories
+- [X] 일급 컬렉션 추가
+  - [X] Answers
+  - [X] DeleteHistories
 - [ ] 원시값 클래스로 감싸기

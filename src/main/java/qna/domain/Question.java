@@ -5,7 +5,6 @@ import qna.domain.base.BaseEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -70,14 +69,14 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public List<DeleteHistory> delete(User loginUser) {
+    public DeleteHistories delete(User loginUser) {
         validOwner(loginUser);
         delete();
         return generateDeleteHistories(loginUser);
     }
 
-    private List<DeleteHistory> generateDeleteHistories(User loginUser) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+    private DeleteHistories generateDeleteHistories(User loginUser) {
+        DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(DeleteHistory.ofQuestion(id, writer, LocalDateTime.now()));
         deleteHistories.addAll(answers.deleteAll(loginUser));
         return deleteHistories;
