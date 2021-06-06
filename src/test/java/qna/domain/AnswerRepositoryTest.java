@@ -39,8 +39,7 @@ public class AnswerRepositoryTest {
 
         //then
         assertAll(
-                () -> assertThat(expected.isDeleted()).isFalse(),
-                () -> assertThat(expected.getQuestion()).isNotNull()
+                () -> assertThat(expected.isDeleted()).isFalse()
         );
     }
 
