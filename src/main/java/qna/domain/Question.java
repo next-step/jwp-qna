@@ -51,14 +51,16 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public void delete(User user) {
+    public void delete(User user,DeleteHistories deleteHistories) {
         if (!isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
+
         for (Answer answer : answers) {
-            answer.delete(user);
+            answer.delete(user,deleteHistories);
         }
         setDeleted(true);
+        deleteHistories.addQuestion(this);
     }
 
     public boolean isOwner(User writer) {
@@ -66,6 +68,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
