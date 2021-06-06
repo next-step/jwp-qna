@@ -71,7 +71,7 @@ public class User extends BaseEntity {
 	}
 
 	public void addQuestion(Question question) {
-		question.toWriter(this);
+		question.writeBy(this);
 	}
 
 	public void addAnswer(Answer answer) {
@@ -136,20 +136,6 @@ public class User extends BaseEntity {
 	}
 
 	@Override
-	public String toString() {
-		return "User{" +
-			"id=" + id +
-			", userId='" + userId + '\'' +
-			", password='" + password + '\'' +
-			", name='" + name + '\'' +
-			", email='" + email + '\'' +
-			", questions=" + questions +
-			", answers=" + answers +
-			", deleteHistories=" + deleteHistories +
-			'}';
-	}
-
-	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
@@ -173,5 +159,19 @@ public class User extends BaseEntity {
 		public boolean isGuestUser() {
 			return true;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "User{" +
+			"id=" + id +
+			", userId='" + userId + '\'' +
+			", password='" + password + '\'' +
+			", name='" + name + '\'' +
+			", email='" + email + '\'' +
+			", questions=" + questions +
+			", answers=" + answers +
+			", deleteHistories=" + deleteHistories +
+			'}';
 	}
 }

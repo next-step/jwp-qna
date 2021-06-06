@@ -1,9 +1,11 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -13,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -34,14 +37,13 @@ public class Answer extends BaseEntity {
 	@Column(name = "contents")
 	private String contents;
 
-	@Column(name = "deleted", nullable = false)
-	private boolean deleted = false;
+	@Embedded
+	private Deleted deleted = new Deleted();
 
 	protected Answer() {
 	}
 
 	public Answer(User writer, Question question, String contents) {
-
 		if (Objects.isNull(writer)) {
 			throw new UnAuthorizedException();
 		}
@@ -67,10 +69,10 @@ public class Answer extends BaseEntity {
 
 	public void toQuestion(Question question) {
 		if (this.question != null) {
-			this.question.getAnswers().remove(this);
+			this.question.removeAnswerInQuestion(this);
 		}
 		this.question = question;
-		this.question.getAnswers().add(this);
+		this.question.addAnswerInQuestion(this);
 	}
 
 	public Question getQuestion() {
@@ -86,11 +88,7 @@ public class Answer extends BaseEntity {
 	}
 
 	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+		return deleted.isDeleted();
 	}
 
 	public void toWriter(User user) {
@@ -116,5 +114,24 @@ public class Answer extends BaseEntity {
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, question, writer, contents, deleted);
+	}
+
+	public DeleteHistory delete(User loginUser, LocalDateTime deleteDateTime) throws CannotDeleteException {
+		if (!this.isOwner(loginUser)) {
+			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+		}
+		this.deleted.delete();
+		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, deleteDateTime);
+	}
+
+	@Override
+	public String toString() {
+		return "Answer{" +
+			"id=" + id +
+			", questionID=" + question.getId() +
+			", writerID=" + writer.getId() +
+			", contents='" + contents + '\'' +
+			", deleted=" + deleted +
+			'}';
 	}
 }
