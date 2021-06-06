@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import qna.NotFoundException;
@@ -26,7 +27,7 @@ public class Answer extends DateEntity {
     @Column(name = "question_id")
     private Long questionId;
 
-    @Column(columnDefinition = "clob")
+    @Lob
     private String contents;
 
     @Column(name = "deleted", nullable = false)
