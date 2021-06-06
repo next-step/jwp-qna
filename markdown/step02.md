@@ -221,11 +221,10 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
             - [x] 4-3-6-6.`QuestionRepositoryTest`
             - [x] 4-3-6-7.`UserTest`
             - [x] 4-3-6-8.`UserRepositoryTest`
-- [ ] 5.테스트
-    - [ ] 5-1.Gradle build Success 확인
-    - [ ] 5-2.checkstyle 문제없는지 확인 (Java Convention)
-    - [ ] 5-3.요구사항 조건들 충족했는지 확인
-        - [ ] 5-3-1.핵심 단위 로직 테스트
+- [x] 5.테스트
+    - [x] 5-1.Gradle build Success 확인
+    - [x] 5-2.요구사항 조건들 충족했는지 확인
+        - [x] 5-2-1.핵심 단위 로직 테스트
 - [ ] 6.인수인계
     - [x] 6-1.소감 및 피드백 정리
         - [x] 6-1-1.느낀점 & 배운점 작성
