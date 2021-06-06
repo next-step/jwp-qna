@@ -94,24 +94,19 @@ public class Question extends BaseEntity {
 				throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 		}
 
-		for (Answer answer: this.answers) {
-			checkOwner(answer, loginUser);
-		}
-
 		List<DeleteHistory> deleteHistories = new ArrayList<> ();
 
 		this.deleted(true);
 		deleteHistories.add (new DeleteHistory (ContentType.QUESTION, this.id, this.writer (), LocalDateTime.now ()));
 
 		for (Answer answer: this.answers) {
-			answer.deleted (true);
-			deleteHistories.add (new DeleteHistory (ContentType.ANSWER, answer.id(), answer.writer (), LocalDateTime.now ()));
+			deleteHistories.add (answer.deleteAnswer(loginUser));
 		}
 		return deleteHistories;
 	}
 
 	private void checkOwner(Answer answer, User loginUser) {
-		if(!answer.isOwner (loginUser)) {
+		if(!answer.isOwner(loginUser)) {
 			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 		}
 	}
