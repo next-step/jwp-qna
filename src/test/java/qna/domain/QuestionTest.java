@@ -18,8 +18,8 @@ public class QuestionTest {
 	@Test
 	@DisplayName("jpa 작성 메소드 사용(findByTitleContainingOrderByIdDesc)")
 	void select_start_with_order_by_id_desc() {
-		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-		User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+		User JAVAJIGI = makeJavajigi();
+		User SANJIGI = makeSanjigi();
 		Question Q1 = new Question("title1", "contents1").writtenBy(JAVAJIGI);
 		Question Q2 = new Question("title2", "contents2").writtenBy(SANJIGI);
 
@@ -35,7 +35,7 @@ public class QuestionTest {
 	@Test
 	@DisplayName("jpa 작성 메소드 사용(findByDeletedFalse)")
 	void use_written_method_findByDeletedFalse() {
-		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+		User JAVAJIGI = makeJavajigi();
 		Question Q1 = new Question("title1", "contents1").writtenBy(JAVAJIGI);
 
 		users.save(JAVAJIGI);
@@ -50,7 +50,7 @@ public class QuestionTest {
 	@Test
 	@DisplayName("jpa 작성 메소드 사용(findByIdAndDeletedFalse)")
 	void use_written_method_findByIdAndDeletedFalse() {
-		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+		User JAVAJIGI = makeJavajigi();
 		Question Q1 = new Question("title1", "contents1").writtenBy(JAVAJIGI);
 
 		users.save(JAVAJIGI);
@@ -59,5 +59,13 @@ public class QuestionTest {
 
 		saveQ1.setDeleted(true);
 		assertThat(questions.findByIdAndDeletedFalse(saveQ1.getId()).isPresent()).isFalse();
+	}
+
+	private User makeSanjigi() {
+		return new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+	}
+
+	private User makeJavajigi() {
+		return new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
 	}
 }
