@@ -1,23 +1,34 @@
 package qna.domain;
 
+import qna.exception.CannotDeleteException;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
-public class Question  extends BaseEntity {
+public class Question extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    List<Answer> answers = new ArrayList<>();
+
     @Lob
     @Column(name = "contents")
     private String contents;
-
-    @Column(name = "writer_id")
-    private Long writerId;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
@@ -36,12 +47,22 @@ public class Question  extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
+    public void delete(User user) {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        for (Answer answer : answers) {
+            answer.delete(user);
+        }
+        setDeleted(true);
+    }
+
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -50,6 +71,14 @@ public class Question  extends BaseEntity {
 
     public Long getId() {
         return id;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
     }
 
     public void setId(Long id) {
@@ -72,12 +101,12 @@ public class Question  extends BaseEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -94,7 +123,7 @@ public class Question  extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }

@@ -1,20 +1,31 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User  extends BaseEntity {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "user_id", nullable = false, unique = true, length = 20)
     private String userId;
+
+    @Embedded
+    Answers answers;
+
+    @Embedded
+    Questions questions;
+
+    @Embedded
+    DeleteHistories deleteHistories;
+
 
     @Column(name = "password", nullable = false, length = 20)
     private String password;
@@ -22,8 +33,8 @@ public class User  extends BaseEntity {
     @Column(name = "name", nullable = false, length = 20)
     private String name;
 
-    @Column(name = "email", length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
@@ -37,7 +48,7 @@ public class User  extends BaseEntity {
         this.userId = userId;
         this.password = password;
         this.name = name;
-        this.email = email;
+        this.email = new Email(email);
     }
 
     public void update(User loginUser, User target) {
@@ -106,12 +117,29 @@ public class User  extends BaseEntity {
         this.name = name;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(Email email) {
         this.email = email;
+    }
+
+
+    public static GuestUser getGuestUser() {
+        return GUEST_USER;
+    }
+
+    public Answers getAnswers() {
+        return answers;
+    }
+
+    public Questions getQuestions() {
+        return questions;
+    }
+
+    public DeleteHistories getDeletedHistories() {
+        return deleteHistories;
     }
 
     @Override
@@ -121,6 +149,9 @@ public class User  extends BaseEntity {
         User user = (User) o;
         return Objects.equals(id, user.id) &&
                 Objects.equals(userId, user.userId) &&
+                Objects.equals(answers, user.answers) &&
+                Objects.equals(questions, user.questions) &&
+                Objects.equals(deleteHistories, user.deleteHistories) &&
                 Objects.equals(password, user.password) &&
                 Objects.equals(name, user.name) &&
                 Objects.equals(email, user.email);
@@ -128,7 +159,7 @@ public class User  extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email);
+        return Objects.hash(id, userId, answers, questions, deleteHistories, password, name, email);
     }
 
     @Override

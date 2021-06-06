@@ -8,7 +8,8 @@ import java.util.Objects;
 @Table(name = "delete_history")
 public class DeleteHistory {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "content_type")
@@ -18,21 +19,64 @@ public class DeleteHistory {
     @Column(name = "content_id")
     private Long contentId;
 
-    @Column(name = "deleted_by_id")
-    private Long deletedById;
+//    @Column(name = "deleted_by_id")
+//    private Long deletedById;
 
     @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User user;
+
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+
+    public DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.user = user;
         this.createDate = createDate;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setContentType(ContentType contentType) {
+        this.contentType = contentType;
+    }
+
+    public void setContentId(Long contentId) {
+        this.contentId = contentId;
+    }
+
+    public void setCreateDate(LocalDateTime createDate) {
+        this.createDate = createDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -42,12 +86,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, user);
     }
 
     @Override
@@ -56,7 +100,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + user +
                 ", createDate=" + createDate +
                 '}';
     }
