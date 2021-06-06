@@ -50,21 +50,9 @@ public class QuestionTest {
         question3.addAnswer(answer2);
 
         //when
-        List<Answer> actual = question3.getAnswers();
+        Answers actual = question3.getAnswers();
 
         //then
-        assertThat(actual).containsExactly(answer1, answer2);
-    }
-
-    @DisplayName("질문에서 얻어온 답변들 컬렉션에 추가할 수 없다.")
-    @Test
-    void getAnswersException() {
-        //given
-        question3.addAnswer(answer1);
-        List<Answer> actual = question3.getAnswers();
-
-        //when
-        assertThatThrownBy(() -> actual.add(answer2))
-                .isInstanceOf(UnsupportedOperationException.class); //then
+        assertThat(actual.getAnswers()).containsExactly(answer1, answer2);
     }
 }

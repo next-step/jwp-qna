@@ -1,13 +1,11 @@
 package qna.domain;
 
-import org.springframework.data.annotation.ReadOnlyProperty;
 import qna.CannotDeleteException;
 import qna.domain.base.BaseEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -29,9 +27,11 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    @ReadOnlyProperty
-    private final List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -41,9 +41,7 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
-    }
-
-    protected Question() {
+        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {
@@ -80,11 +78,8 @@ public class Question extends BaseEntity {
 
     private List<DeleteHistory> generateDeleteHistories(User loginUser) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        DeleteHistory ofQuestion = DeleteHistory.ofQuestion(id, writer, LocalDateTime.now());
-        deleteHistories.add(ofQuestion);
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.delete(loginUser));
-        }
+        deleteHistories.add(DeleteHistory.ofQuestion(id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(answers.deleteAll(loginUser));
         return deleteHistories;
     }
 
@@ -98,6 +93,10 @@ public class Question extends BaseEntity {
         this.deleted = true;
     }
 
+    public Answers getAnswers() {
+        return answers;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -107,10 +106,6 @@ public class Question extends BaseEntity {
                 ", title='" + title + '\'' +
                 ", writer=" + writer +
                 '}';
-    }
-
-    public List<Answer> getAnswers() {
-        return Collections.unmodifiableList(answers);
     }
 
 }
