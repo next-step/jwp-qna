@@ -16,6 +16,22 @@ public class QuestionTest {
 	UserRepository users;
 
 	@Test
+	@DisplayName("연관관계 제거")
+	void delete_writer() {
+		User JAVAJIGI = makeJavajigi();
+		Question Q1 = new Question("title1", "contents1").writtenBy(JAVAJIGI);
+
+		users.save(JAVAJIGI);
+		Question saveQ1 = questions.save(Q1);
+
+		Question expected = questions.findById(saveQ1.getId()).get();
+		expected.setWriter(null);
+		questions.flush();
+
+		assertThat(expected.getWriter()).isNull();
+	}
+
+	@Test
 	@DisplayName("작성자 업데이트 확인")
 	void update_writer() {
 		User JAVAJIGI = makeJavajigi();
