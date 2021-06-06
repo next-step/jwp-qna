@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Question extends BaseEntity {
@@ -31,6 +34,9 @@ public class Question extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
+
+	@OneToMany(mappedBy = "question")
+	private List<Answer> answers = new ArrayList<>();
 
 	protected Question() {
 	}
@@ -61,6 +67,10 @@ public class Question extends BaseEntity {
 		return writer;
 	}
 
+	public List<Answer> answers() {
+		return this.answers;
+	}
+
 	public Question writeBy(User writer) {
 		this.writer = writer;
 		return this;
@@ -71,7 +81,8 @@ public class Question extends BaseEntity {
 	}
 
 	public void addAnswer(Answer answer) {
-		answer.toQuestion(this);
+		answers.add(answer);
+		answer.question(this);
 	}
 
 	public boolean isDeleted() {
@@ -84,33 +95,36 @@ public class Question extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return "Question{"
-			+ "id=" + id
-			+ ", title='" + title + '\''
-			+ ", contents='" + contents + '\''
-			+ ", writer=" + writer
-			+ ", deleted=" + deleted
-			+ '}';
+		return "Question{" +
+			"id=" + id +
+			", contents='" + contents + '\'' +
+			", deleted=" + deleted +
+			", title='" + title + '\'' +
+			", writer=" + writer +
+			", answers=" + answers +
+			'}';
 	}
 
 	@Override
-	public boolean equals(Object object) {
-		if (this == object) {
+	public boolean equals(Object o) {
+		if (this == o) {
 			return true;
 		}
-		if (!(object instanceof Question)) {
+		if (!(o instanceof Question)) {
 			return false;
 		}
-		Question question = (Question) object;
+		Question question = (Question) o;
 		return deleted == question.deleted
 			&& Objects.equals(id, question.id)
 			&& Objects.equals(contents, question.contents)
 			&& Objects.equals(title, question.title)
-			&& Objects.equals(writer, question.writer);
+			&& writer.equals(question.writer)
+			&& answers.containsAll(question.answers)
+			&& question.answers.containsAll(answers);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, contents, deleted, title, writer);
+		return Objects.hash(id, contents, deleted, title, writer, answers);
 	}
 }

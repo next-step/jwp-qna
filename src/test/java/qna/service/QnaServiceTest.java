@@ -22,7 +22,6 @@ import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
-import qna.domain.QuestionTest;
 import qna.domain.UserTest;
 
 @ExtendWith(MockitoExtension.class)
@@ -93,7 +92,7 @@ class QnaServiceTest {
 	@DisplayName("delete_답변_중_다른_사람이_쓴_글")
 	@Test
 	public void deletePostingWrittenByTheOthers() throws Exception {
-		Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
+		Answer answer2 = new Answer(2L, UserTest.SANJIGI, question, "Answers Contents1");
 		question.addAnswer(answer2);
 
 		when(questionRepository.findByIdAndDeletedFalse(question.id()))

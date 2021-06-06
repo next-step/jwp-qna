@@ -59,9 +59,10 @@ public class Answer extends BaseEntity {
 		this.contents = contents;
 	}
 
-	public void toQuestion(Question question) {
-		this.question = question;
-	}
+	public void addQuestion(Question question) {
+		question(question);
+		question.answers().add(this);
+	};
 
 	public Long id() {
 		return id;
@@ -77,6 +78,10 @@ public class Answer extends BaseEntity {
 
 	public Question question() {
 		return question;
+	}
+
+	public void question(Question question) {
+		this.question = question;
 	}
 
 	public String contents() {
