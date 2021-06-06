@@ -33,35 +33,8 @@ public class QnaService {
 
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
-
-        Question question = findQuestionForDeleteWithSameWriterAuth(loginUser, questionId);
-        List<Answer> answers = findAnswersForDeleteWithSameWriterAuth(loginUser, questionId);
-
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.setDeleted(true);
-        deleteHistories.add( DeleteHistory.forQuestionOf(questionId, loginUser));
-        for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(DeleteHistory.forAnswerOf(answer.getId(), loginUser));
-        }
-        deleteHistoryService.saveAll(deleteHistories);
-    }
-
-    public Question findQuestionForDeleteWithSameWriterAuth(User loginUser, Long questionId)  throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-        if (!question.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-        return question;
-    }
-
-    public List<Answer> findAnswersForDeleteWithSameWriterAuth(User loginUser, Long questionId) throws CannotDeleteException {
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
-        }
-        return answers;
+        List<DeleteHistory> deleteHistories = question.deleteQuestion(questionId, loginUser);
+        deleteHistoryService.saveAll(deleteHistories);
     }
 }
