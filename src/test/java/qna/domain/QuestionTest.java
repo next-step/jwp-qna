@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,47 +17,40 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
-    private long QUESTION_ID;
-
-    @BeforeEach
-    void init() {
-        questionRepository.save(Q1);
-        List<Question> list = questionRepository.findAll();
-        this.QUESTION_ID = list.get(0).getId();
-    }
-
     @Test
     @DisplayName(value = "저장된 질문을 select 하여 저장한 데이터 맞는지 검증한다")
     void select() {
-        List<Question> list = questionRepository.findAll();
-        long id = list.get(0).getId();
-        Question question = questionRepository.findByIdAndDeletedFalse(id).get();
-        assertThat(question.getTitle()).isEqualTo("title1");
-        assertThat(question.getContents()).isEqualTo("contents1");
+        Question insert = insertQuestion();
+        Question question = questionRepository.findByIdAndDeletedFalse(insert.getId()).get();
+        assertThat(question.getTitle()).isEqualTo("question test title");
+        assertThat(question.getContents()).isEqualTo("question test content");
     }
 
     @Test
     @DisplayName(value = "새로운 질문을 저장한다")
     void insert() {
-        Question question = questionRepository.save(Q2);
-        assertThat(question).isEqualTo(Q2);
+        Question actual = insertQuestion();
+        Question question = questionRepository.save(actual);
+        assertThat(question).isEqualTo(actual);
     }
 
     @Test
     @DisplayName(value = "질문의 제목을 수정하고 DB에 반영이 되었는지 검증힌다")
     void update() {
+        Question origin = insertQuestion();
         final String newTitle = "질문 있습니다~";
-        Question question = questionRepository.getOne(QUESTION_ID);
+        Question question = questionRepository.getOne(origin.getId());
         question.setTitle(newTitle);
         questionRepository.saveAndFlush(question);
 
-        Question afterUpdate = questionRepository.findByIdAndDeletedFalse(QUESTION_ID).get();
+        Question afterUpdate = questionRepository.findByIdAndDeletedFalse(origin.getId()).get();
         assertThat(afterUpdate.getTitle()).isEqualTo(newTitle);
     }
 
     @Test
     @DisplayName(value = "삭제되지 않은 모든 질문을 select 한다")
     void selectWhereNotDelete() {
+        insertQuestion();
         List<Question> notDeletedQuestions = questionRepository.findByDeletedFalse();
         assertThat(notDeletedQuestions.size()).isEqualTo(1);
     }
@@ -66,9 +58,15 @@ public class QuestionTest {
     @Test
     @DisplayName(value = "DB에 저장되면 날짜 데이터가 생성된다")
     void createdAtAndUpdatedAtAreExists() {
-        Question question = questionRepository.getOne(QUESTION_ID);
+        insertQuestion();
+        Question question = questionRepository.getOne(insertQuestion().getId());
         assertThat(question.getCreatedAt()).isNotNull();
         assertThat(question.getUpdatedAt()).isNotNull();
+    }
+
+    private Question insertQuestion() {
+        Question actual = new Question("question test title", "question test content").writeBy(UserTest.JAVAJIGI);
+        return questionRepository.saveAndFlush(actual);
     }
 
 }
