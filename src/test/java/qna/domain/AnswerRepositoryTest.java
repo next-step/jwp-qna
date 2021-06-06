@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.AnswerTest.*;
 import static qna.domain.QuestionTest.Q1;
+import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 @DisplayName("AnswerRepository 테스트")
@@ -20,6 +23,9 @@ class AnswerRepositoryTest {
 
     @Autowired
     private AnswerRepository answers;
+
+    @Autowired
+    private UserRepository users;
 
     @Autowired
     private QuestionRepository questions;
@@ -33,11 +39,26 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        users.save(JAVAJIGI);
+        users.save(SANJIGI);
+
         question = questions.save(Q1);
 
         answer1 = answers.save(A1);
         answer2 = answers.save(A2);
         deletedAnswer1 = answers.save(DELETED_ANSWER1);
+    }
+
+    @AfterEach
+    void setDown() {
+        JAVAJIGI.setId(null);
+        SANJIGI.setId(null);
+
+        question.setId(null);
+
+        answer1.setId(null);
+        answer2.setId(null);
+        deletedAnswer1.setId(null);
     }
 
     @Test
