@@ -3,9 +3,6 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -23,8 +20,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
 
 
     @Column(nullable = false)
@@ -41,6 +38,7 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {
@@ -92,26 +90,26 @@ public class Question extends BaseEntity {
                 '}';
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
-        if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+    public DeleteHistories deleteWithAnswers(User loginUser) throws CannotDeleteException {
+        validateOwner(loginUser);
+        validateDeletable(loginUser);
 
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
-        }
-
-        //TODO Answer 삭제
-
+        DeleteHistories deleteHistories = new DeleteHistories();
         this.deleted = true;
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, loginUser, LocalDateTime.now()));
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, loginUser));
+        deleteHistories.addAll(answers.delete(loginUser));
         return deleteHistories;
     }
 
-    public List<Answer> getAnswer() {
-        return answers;
+    private void validateDeletable(User loginUser) throws CannotDeleteException {
+        if (!answers.isDeletable(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
+    private void validateOwner(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 }
