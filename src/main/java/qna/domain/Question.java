@@ -1,8 +1,12 @@
 package qna.domain;
 
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "question")
 @Entity
@@ -20,6 +24,9 @@ public class Question extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writerId;
+
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
         //JPA need no-arg constructor
@@ -42,11 +49,7 @@ public class Question extends BaseEntity{
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        return this.writerId.equals(writer);
     }
 
     public String getTitle() {
@@ -81,4 +84,29 @@ public class Question extends BaseEntity{
         this.deleted = deleted;
     }
 
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        answers.isWrittenBySomeoneElse(loginUser);
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        DeleteHistory deleteHistory = this.delete();
+        deleteHistories.add(deleteHistory);
+
+        deleteHistories.addAll(answers.delete());
+
+        return deleteHistories;
+    }
+
+    public DeleteHistory delete() {
+        this.setDeleted(true);
+        return new DeleteHistory(ContentType.QUESTION, this.getId(), this.getWriterId(), LocalDateTime.now());
+    }
+
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+    }
 }

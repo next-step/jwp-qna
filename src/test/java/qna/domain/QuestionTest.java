@@ -4,8 +4,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -43,5 +46,39 @@ public class QuestionTest {
 
         question.setTitle("cheer up!!!!");
         assertThat(actual.getTitle()).isEqualTo("cheer up!!!!");
+    }
+
+    @DisplayName("다른 사람이 쓴 질문을 삭제하는 경우")
+    @Test
+    public void delete_다른_사람이_쓴_글() {
+        assertThatThrownBy(() -> Q1.delete(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("질문을 삭제할 권한이 없습니다.");
+
+        assertThatThrownBy(() -> Q2.delete(UserTest.JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("질문을 삭제할 권한이 없습니다.");
+    }
+
+    @DisplayName("답변 중 다른 사람이 쓴게 있는 경우")
+    @Test
+    public void delete_답변_중_다른_사람이_쓴_글() {
+        Q1.addAnswer(AnswerTest.A1);
+        Q1.addAnswer(AnswerTest.A2);
+
+        assertThatThrownBy(() -> Q1.delete(UserTest.JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
+
+    @DisplayName("delete 성공_질문자_답변자_같음")
+    @Test
+    public void delete_성공_질문자_답변자_같음() throws CannotDeleteException {
+        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        question.addAnswer(AnswerTest.A1);
+        question.delete(UserTest.JAVAJIGI);
+
+        assertThat(question.isDeleted()).isTrue();
+        assertThat(AnswerTest.A1.isDeleted()).isTrue();
     }
 }

@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -21,7 +22,7 @@ public class Answer extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
-    private Question questionId;
+    private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
@@ -31,18 +32,7 @@ public class Answer extends BaseEntity {
         //JPA need no-arg constructor
     }
 
-    public Answer(String contents, boolean deleted) {
-        this.contents = contents;
-        this.deleted = deleted;
-    }
-
     public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
-    public Answer(Long id, User writer, Question question, String contents) {
-
-
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -52,16 +42,17 @@ public class Answer extends BaseEntity {
         }
 
         this.writerId = writer;
-        this.questionId = question;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writerId.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question;
+        this.question = question;
+        question.addAnswer(this);
     }
 
 
@@ -72,14 +63,6 @@ public class Answer extends BaseEntity {
 
     public void setWriterId(User writerId) {
         this.writerId = writerId;
-    }
-
-    public Question getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Question questionId) {
-        this.questionId = questionId;
     }
 
     public String getContents() {
@@ -98,5 +81,8 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
-
+    public DeleteHistory delete() {
+        this.setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriterId(), LocalDateTime.now());
+    }
 }
