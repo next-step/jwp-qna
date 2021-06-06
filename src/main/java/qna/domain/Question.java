@@ -14,12 +14,12 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
     private boolean deleted = false;
 
-    @Column(length = 100)
-    private String title;
+    @Embedded
+    private Title title;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -37,8 +37,8 @@ public class Question extends BaseEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
-        this.contents = contents;
+        this.title = new Title(title);
+        this.contents = new Contents(contents);
         this.answers = new Answers();
     }
 
@@ -99,9 +99,9 @@ public class Question extends BaseEntity {
     public String toString() {
         return "Question{" +
                 "id=" + id +
-                ", contents='" + contents + '\'' +
+                ", contents=" + contents +
                 ", deleted=" + deleted +
-                ", title='" + title + '\'' +
+                ", title=" + title +
                 ", writer=" + writer +
                 ", answers=" + answers +
                 '}';

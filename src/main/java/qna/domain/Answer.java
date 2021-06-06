@@ -17,8 +17,8 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
     private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -49,7 +49,7 @@ public class Answer extends BaseEntity {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
+        this.contents = new Contents(contents);
     }
 
     private boolean isOwner(User writer) {
@@ -92,7 +92,7 @@ public class Answer extends BaseEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", contents='" + contents + '\'' +
+                ", contents=" + contents +
                 ", deleted=" + deleted +
                 ", question=" + question +
                 ", writer=" + writer +
