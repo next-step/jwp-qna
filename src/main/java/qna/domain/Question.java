@@ -3,6 +3,7 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,18 +84,28 @@ public class Question extends BaseEntity{
         this.deleted = deleted;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        if(!this.answers.isEmpty() && !isAllAnswersOwnedByWriter()){
-            throw new CannotDeleteException("답변이 있는 질문은 삭제할 수 없습니다.");
+        if(!this.answers.isEmpty() && !isAllNotDeletedAnswersOwnedByWriter()){
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         this.deleted = true;
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.getId(), this.getWriter(), LocalDateTime.now()));
+        for(Answer answer: this.answers){
+            deleteHistories.add(answer.delete());
+        }
+        return deleteHistories;
     }
 
-    private boolean isAllAnswersOwnedByWriter(){
-        return this.answers.stream().allMatch( answer -> answer.isOwner(this.writer));
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    private boolean isAllNotDeletedAnswersOwnedByWriter(){
+        return this.answers.stream().allMatch(answer -> answer.isOwner(this.writer) || answer.isDeleted());
     }
 
     @Override
