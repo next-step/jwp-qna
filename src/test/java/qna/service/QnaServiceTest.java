@@ -47,14 +47,14 @@ class QnaServiceTest {
     }
 
     @Test
-    public void delete_성공() throws Exception {
+    public void delete_성공() {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
-        assertThat(question.isDeleted()).isFalse();
+        assertThat(question.isDeleted()).isEqualTo(new Deleted(false));
         qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
 
-        assertThat(question.isDeleted()).isTrue();
+        assertThat(question.isDeleted()).isEqualTo(new Deleted(true));
         verifyDeleteHistories();
     }
 
@@ -67,14 +67,14 @@ class QnaServiceTest {
     }
 
     @Test
-    public void delete_성공_질문자_답변자_같음() throws Exception {
+    public void delete_성공_질문자_답변자_같음() {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
         qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
 
-        assertThat(question.isDeleted()).isTrue();
-        assertThat(answer.isDeleted()).isTrue();
+        assertThat(question.isDeleted()).isEqualTo(new Deleted(true));
+        assertThat(answer.isDeleted()).isEqualTo(new Deleted(true));
         verifyDeleteHistories();
     }
 

@@ -21,7 +21,7 @@ class UserRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user1 = new User("user1", "password1", "name1", "email1");
+        user1 = new User("user1", "pass@1234AB", "name", "user@nextstep.camp");
         users.save(user1);
     }
 
@@ -40,7 +40,7 @@ class UserRepositoryTest {
     @Test
     void findByUserIdException() {
         //given
-        User noneUser = new User(-1L, "", "", "", "");
+        User noneUser = new User(1L, "user2", "pass@1234AB", "앙리뒤프레2세", "user@nextstep.camp");
 
         //when
         assertThatThrownBy(() -> users.findByUserId(noneUser.getUserId())

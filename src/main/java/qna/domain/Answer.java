@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.base.BaseEntity;
@@ -10,14 +11,17 @@ import java.util.Objects;
 
 @Entity
 public class Answer extends BaseEntity {
+    public static final String DELETE_EXCEPTION_MESSAGE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    private String contents;
-    private boolean deleted = false;
+    @Embedded
+    private Contents contents;
+
+    @Embedded
+    private Deleted deleted;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -47,10 +51,11 @@ public class Answer extends BaseEntity {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
+        this.contents = new Contents(contents);
+        this.deleted = new Deleted();
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
@@ -66,20 +71,31 @@ public class Answer extends BaseEntity {
         return writer;
     }
 
-    public boolean isDeleted() {
+    public Deleted isDeleted() {
         return deleted;
     }
 
-    public DeleteHistory delete() {
-        this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    public DeleteHistory delete(User loginUser) {
+        validateOwner(loginUser);
+        delete();
+        return DeleteHistory.ofAnswer(id, writer, LocalDateTime.now());
+    }
+
+    private void delete() {
+        deleted.delete();
+    }
+
+    private void validateOwner(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(DELETE_EXCEPTION_MESSAGE);
+        }
     }
 
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", contents='" + contents + '\'' +
+                ", contents=" + contents +
                 ", deleted=" + deleted +
                 ", question=" + question +
                 ", writer=" + writer +

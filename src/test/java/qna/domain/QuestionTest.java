@@ -3,7 +3,9 @@ package qna.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,10 +29,18 @@ public class QuestionTest {
     @Test
     void deleteQuestion() {
         //when
-        DeleteHistory actual = question3.delete();
+        List<DeleteHistory> actual = question3.delete(UserTest.SANJIGI).getDeleteHistories();
 
         //then
-        assertThat(actual.getDeletedBy()).isSameAs(UserTest.SANJIGI);
+        assertThat(actual).containsExactly(DeleteHistory.ofQuestion(question3.getId(), UserTest.SANJIGI, LocalDateTime.now()));
+    }
+
+    @DisplayName("질문을 삭제할 때 본인이 만든 질문이 아닌 경우 예외를 발생시킨다.")
+    @Test
+    void deleteQuestionException() {
+        assertThatThrownBy(() -> question3.delete(UserTest.JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContainingAll(Question.DELETE_EXCEPTION_MESSAGE);
     }
 
     @Test
@@ -40,21 +50,9 @@ public class QuestionTest {
         question3.addAnswer(answer2);
 
         //when
-        List<Answer> actual = question3.getAnswers();
+        Answers actual = question3.getAnswers();
 
         //then
-        assertThat(actual).containsExactly(answer1, answer2);
-    }
-
-    @DisplayName("질문에서 얻어온 답변들 컬렉션에 추가할 수 없다.")
-    @Test
-    void getAnswersException() {
-        //given
-        question3.addAnswer(answer1);
-        List<Answer> actual = question3.getAnswers();
-
-        //when
-        assertThatThrownBy(() -> actual.add(answer2))
-                .isInstanceOf(UnsupportedOperationException.class); //then
+        assertThat(actual.getAnswers()).containsExactly(answer1, answer2);
     }
 }
