@@ -225,14 +225,14 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
     - [x] 5-1.Gradle build Success 확인
     - [x] 5-2.요구사항 조건들 충족했는지 확인
         - [x] 5-2-1.핵심 단위 로직 테스트
-- [ ] 6.인수인계
+- [x] 6.인수인계
     - [x] 6-1.소감 및 피드백 정리
         - [x] 6-1-1.느낀점 & 배운점 작성
         - [x] 6-1-2.피드백 요청 정리
-    - [ ] 6-2.코드리뷰 요청 및 피드백
-        - [ ] 6-1-1.step2를 gregolee/jwp-qna로 push : `git push origin step2`
-        - [ ] 6-1-2.pull request(PR) 작성
-    - [ ] 6-3.Slack을 통해 merge가 되는지 확인한 후에 미션 종료
+    - [x] 6-2.코드리뷰 요청 및 피드백
+        - [x] 6-1-1.step2를 gregolee/jwp-qna로 push : `git push origin step2`
+        - [x] 6-1-2.pull request(PR) 작성
+    - [x] 6-3.Slack을 통해 merge가 되는지 확인한 후에 미션 종료
 
 ## 3. 인수인계
 
@@ -244,6 +244,10 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
   - 테이블 연관 관계을 주로 개발하다보니 생각보다 쉽지 않았습니다.
   - 과거 연관 관계 매핑에 대한 지식을 알고 있었으나, 패러다임에 대한 이해를 할 수 있었습니다.
   - 객체 지향적 프로그래밍을 위해서는 객체의 연관 관계와 테이블의 연관 관계를 이해하고 있어야 함을 알았습니다.  
+- 리뷰 진행 간 부족했던 점
+  - 기존의 엔티티를 수정하지 않고 진행하려 했으며,
+  - 코드 중복 제거에 대한 노력 필요하고
+  - 테스트 영역에 대한 세분화 필요했습니다.
 
 #### 3.1.2. 배운점
 
