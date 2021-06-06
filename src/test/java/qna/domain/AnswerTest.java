@@ -7,10 +7,4 @@ public class AnswerTest {
     public static final Answer DELETED_ANSWER1 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Deleted Content1");
     public static final Answer DELETED_ANSWER2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Deleted Content2");
     public static final Answer DELETED_ANSWER3 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Deleted Content3");
-
-    static {
-        DELETED_ANSWER1.setDeleted(true);
-        DELETED_ANSWER2.setDeleted(true);
-        DELETED_ANSWER3.setDeleted(true);
-    }
 }
