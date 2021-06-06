@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.CannotDeleteException;
 import qna.domain.Answer;
-import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.QuestionTest;
 import qna.domain.User;
@@ -63,8 +62,8 @@ public class AnswerRepositoryTest {
 	void deleteSuccess() {
 		Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
 		answers.save(answer);
-		answer.delete(UserTest.JAVAJIGI);
-		addDeleteHistory(UserTest.JAVAJIGI, answer.getId());
+		DeleteHistory delete = answer.delete(UserTest.JAVAJIGI);
+		deleteHistories.save(delete);
 
 		Answer actual = answers.findByIdAndDeletedFalse(answer.getId()).orElse(null);
 		assertThat(actual).isNull();
@@ -81,11 +80,6 @@ public class AnswerRepositoryTest {
 
 		assertThatThrownBy(() -> answer.delete(UserTest.SANJIGI))
 			.isInstanceOf(CannotDeleteException.class)
-			.hasMessage("답변을 삭제할 권한이 없습니다.");
-	}
-
-	private void addDeleteHistory(User writer, Long id) {
-		DeleteHistory history = new DeleteHistory(ContentType.ANSWER, id, writer);
-		deleteHistories.save(history);
+			.hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 	}
 }

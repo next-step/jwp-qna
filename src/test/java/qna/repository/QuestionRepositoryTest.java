@@ -90,8 +90,8 @@ public class QuestionRepositoryTest {
 	void deleteSuccessWithNoAnswer() {
 		Question question = new Question(1L, "title1", "contents1").writeBy(writer);
 		question = questions.save(question);
-		question.delete(writer);
-		addDeleteHistory(writer, question.getId());
+		List<DeleteHistory> deletes = question.delete(writer);
+		deleteHistories.saveAll(deletes);
 
 		Question result = questions.findByIdAndDeletedFalse(question.getId()).orElse(null);
 		assertThat(result).isNull();
@@ -108,14 +108,14 @@ public class QuestionRepositoryTest {
 
 		question.addAnswer(otherWriterAnswer);
 		question = questions.save(question);
-		question.delete(writer);
-		addDeleteHistory(writer, question.getId());
+		List<DeleteHistory> deletes = question.delete(writer);
+		deleteHistories.saveAll(deletes);
 
 		Question result = questions.findByIdAndDeletedFalse(question.getId()).orElse(null);
 		assertThat(result).isNull();
 
 		User user = users.findById(writer.getId()).get();
-		assertThat(user.getDeleteHistories().size()).isEqualTo(1);
+		assertThat(user.getDeleteHistories().size()).isEqualTo(2);
 	}
 
 	@Test
@@ -132,18 +132,15 @@ public class QuestionRepositoryTest {
 	@DisplayName("질문 삭제 실패 : 동일 작성자가 아닌 경우")
 	void deleteFailOfAnswer() {
 		Question question = new Question(1L, "title1", "contents1").writeBy(writer);
-		Answer otherWriterAnswer =  new Answer(other, question, "Answers Contents2");
+		Answer otherWriterAnswer1 =  new Answer(writer, question, "Answers Contents2");
+		Answer otherWriterAnswer2 =  new Answer(other, question, "Answers Contents3");
 
-		question.addAnswer(otherWriterAnswer);
+		question.addAnswer(otherWriterAnswer1);
+		question.addAnswer(otherWriterAnswer2);
 		Question savedQuestion = questions.save(question);
 
 		assertThatThrownBy(() -> savedQuestion.delete(writer))
 			.isInstanceOf(CannotDeleteException.class)
-			.hasMessage("답변을 삭제할 권한이 없습니다.");
-	}
-
-	private void addDeleteHistory(User writer, Long id) {
-		DeleteHistory history = new DeleteHistory(ContentType.QUESTION, id, writer);
-		deleteHistories.save(history);
+			.hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 	}
 }
