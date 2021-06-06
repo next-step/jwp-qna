@@ -68,7 +68,7 @@ public class QuestionTest {
 		Answer answer = answerRepository.save(new Answer(user, question, contents));
 		question.addAnswer(answer);
 
-		List<Answer> actual = question.getAnswers();
+		List<Answer> actual = question.getAnswers().getAnswers();
 		assertThat(actual.get(0).getContents()).isEqualTo(contents);
 	}
 
