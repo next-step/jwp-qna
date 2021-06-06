@@ -15,4 +15,13 @@ public class QuestionTest {
                 .isInstanceOf(CannotDeleteException.class);
     }
 
+    @Test
+    public void 답변이_있는경우__삭제할_수없다(){
+        Answer A1 = new Answer(UserTest.SANJIGI, Q1, "contents");
+        Q1.addAnswer(A1);
+
+        assertThatThrownBy(() -> Q1.delete(UserTest.JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class);
+    }
+
 }
