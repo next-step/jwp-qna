@@ -16,6 +16,15 @@ public class QuestionTest {
 	UserRepository users;
 
 	@Test
+	@DisplayName("user 를 만들지 않고 question 을 넣으면 에러 발생")
+	void fk_error() {
+		User JAVAJIGI = makeJavajigi();
+		Question Q1 = new Question("title1", "contents1").writtenBy(JAVAJIGI);
+
+		assertThatThrownBy(() -> questions.save(Q1)).isInstanceOf(RuntimeException.class);
+	}
+
+	@Test
 	@DisplayName("질문을 조회하고 해당 질문의 작성자를 조회함")
 	void select_not_deleted_question_with_writer() {
 		User JAVAJIGI = makeJavajigi();
