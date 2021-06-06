@@ -2,7 +2,6 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -13,13 +12,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.UniqueConstraint;
-
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
 public class Answer {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -45,7 +43,7 @@ public class Answer {
 	@JoinColumn(name = "wirter_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
 	private User writer;
 
-	public Answer() {
+	protected Answer() {
 	}
 
 	public Answer(User writer, Question question, String contents) {
@@ -68,52 +66,40 @@ public class Answer {
 		this.contents = contents;
 	}
 
-	public boolean isOwner(User writer) {
-		return this.writer.equals(writer);
-	}
-
 	public void toQuestion(Question question) {
 		this.question = question;
 	}
 
-	public Long getId() {
+	public Long id() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public User getWriter() {
+	public User writer() {
 		return writer;
 	}
 
-	public void setWriter(User writer) {
+	public void writtenBy(User writer) {
 		this.writer = writer;
 	}
 
-	public Question getQuestion() {
+	public Question question() {
 		return question;
 	}
 
-	public void setQuestion(Question question) {
-		this.question = question;
-	}
-
-	public String getContents() {
+	public String contents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
-		this.contents = contents;
+	public boolean isOwner(User writer) {
+		return this.writer.equals(writer);
 	}
 
 	public boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+	public void delete() {
+		this.deleted = true;
 	}
 
 	@Override
@@ -125,5 +111,28 @@ public class Answer {
 			+ ", contents='" + contents + '\''
 			+ ", deleted=" + deleted
 			+ '}';
+	}
+
+	@Override
+	public boolean equals(Object obejct) {
+		if (this == obejct) {
+			return true;
+		}
+		if (!(obejct instanceof Answer)) {
+			return false;
+		}
+		Answer answer = (Answer) obejct;
+		return deleted == answer.deleted
+			&& Objects.equals(id, answer.id)
+			&& Objects.equals(contents, answer.contents)
+			&& Objects.equals(createdAt, answer.createdAt)
+			&& Objects.equals(question, answer.question)
+			&& Objects.equals(updatedAt, answer.updatedAt)
+			&& Objects.equals(writer, answer.writer);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, contents, createdAt, deleted, question, updatedAt, writer);
 	}
 }

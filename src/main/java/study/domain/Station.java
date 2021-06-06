@@ -46,11 +46,11 @@ public class Station {
 		this.lineStation = lineStation;
 	}
 
-	public Long getId() {
+	public Long id() {
 		return this.id;
 	}
 
-	public String getName() {
+	public String name() {
 		return this.name;
 	}
 
@@ -58,17 +58,17 @@ public class Station {
 		this.name = name;
 	}
 
-	public void setLine(Line line) {
+	public void line(Line line) {
 		this.line = line;
 	}
 
-	public Line getLine() {
+	public Line line() {
 		return this.line;
 	}
 
 	//1.7.4.4. 연관 관계 편의 메서드
-	public void setLineInteraction(Line line) {
+	public void addLineInteraction(Line line) {
 		this.line = line;
-		line.getStations().add(this);
+		line.stations().add(this);
 	}
 }

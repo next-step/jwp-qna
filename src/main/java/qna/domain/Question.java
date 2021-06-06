@@ -1,7 +1,7 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
-
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 
 @Entity
 public class Question {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -38,7 +39,7 @@ public class Question {
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
 
-	public Question() {
+	protected Question() {
 	}
 
 	public Question(String title, String contents) {
@@ -49,6 +50,22 @@ public class Question {
 		this.id = id;
 		this.title = title;
 		this.contents = contents;
+	}
+
+	public Long id() {
+		return id;
+	}
+
+	public String title() {
+		return title;
+	}
+
+	public String contents() {
+		return contents;
+	}
+
+	public User writer() {
+		return writer;
 	}
 
 	public Question writeBy(User writer) {
@@ -64,44 +81,12 @@ public class Question {
 		answer.toQuestion(this);
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getContents() {
-		return contents;
-	}
-
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
-	public User getWriter() {
-		return writer;
-	}
-
-	public void setWriter(User writerId) {
-		this.writer = writer;
-	}
-
 	public boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+	public void delete() {
+		this.deleted = true;
 	}
 
 	@Override
@@ -113,5 +98,28 @@ public class Question {
 			+ ", writer=" + writer
 			+ ", deleted=" + deleted
 			+ '}';
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) {
+			return true;
+		}
+		if (!(object instanceof Question)) {
+			return false;
+		}
+		Question question = (Question) object;
+		return deleted == question.deleted
+			&& Objects.equals(id, question.id)
+			&& Objects.equals(contents, question.contents)
+			&& Objects.equals(createdAt, question.createdAt)
+			&& Objects.equals(title, question.title)
+			&& Objects.equals(updatedAt, question.updatedAt)
+			&& Objects.equals(writer, question.writer);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, contents, createdAt, deleted, title, updatedAt, writer);
 	}
 }

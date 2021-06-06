@@ -32,7 +32,7 @@ class StationRepositoryTest {
 	void initialize() {
 		Line line3 = lines.save(new Line("3호선"));
 		Station station = new Station("교대역");
-		station.setLine(line3);
+		station.line(line3);
 		stations.save(station);
 		line3.addStation(station);
 		lines.flush();
@@ -46,8 +46,8 @@ class StationRepositoryTest {
 		Station expected = new Station("잠실역");
 		Station actual = stations.save(expected);
 		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.getName()).isEqualTo(expected.getName())
+			() -> assertThat(actual.id()).isNotNull(),
+			() -> assertThat(actual.name()).isEqualTo(expected.name())
 		);
 	}
 
@@ -57,7 +57,7 @@ class StationRepositoryTest {
 	void findByName() {
 		String expected = "잠실역";
 		stations.save(new Station(expected));
-		String actual = stations.findByName(expected).getName();
+		String actual = stations.findByName(expected).name();
 		assertThat(actual).isEqualTo(expected);
 	}
 
@@ -66,7 +66,7 @@ class StationRepositoryTest {
 	@Order(3)
 	void identity() {
 		Station station1 = stations.save(new Station("잠실역"));
-		Station station2 = stations.findById(station1.getId()).get();
+		Station station2 = stations.findById(station1.id()).get();
 		assertThat(station1 == station2).isTrue();
 	}
 
@@ -89,7 +89,7 @@ class StationRepositoryTest {
 	@Order(5)
 	void saveWithLineThrownByException() {
 		Station expected = new Station("잠실역");
-		expected.setLine(new Line("2호선"));
+		expected.line(new Line("2호선"));
 		Station actual = stations.save(expected);
 		assertThatThrownBy(() -> stations.flush()).isInstanceOf(InvalidDataAccessApiUsageException.class);
 	}
@@ -99,7 +99,7 @@ class StationRepositoryTest {
 	@Order(6)
 	void saveWithLine() {
 		Station expected = new Station("잠실역");
-		expected.setLine(lines.save(new Line("2호선")));
+		expected.line(lines.save(new Line("2호선")));
 		Station actual = stations.save(expected);
 		stations.flush(); // transaction commit
 	}
@@ -113,7 +113,7 @@ class StationRepositoryTest {
 	void findByNameWithLine() {
 		Station actual = stations.findByName("교대역");
 		assertThat(actual).isNotNull();
-		assertThat(actual.getLine().getName()).isEqualTo("3호선");
+		assertThat(actual.line().name()).isEqualTo("3호선");
 	}
 
 	@DisplayName("1.7.3. 다대일 단방향 연관 관계 - 수정 : updateWithLine()")
@@ -121,7 +121,7 @@ class StationRepositoryTest {
 	@Order(8)
 	void updateWithLine() {
 		Station expected = stations.findByName("교대역");
-		expected.setLine(lines.save(new Line("2호선")));
+		expected.line(lines.save(new Line("2호선")));
 		stations.flush(); // transaction commit
 	}
 
@@ -130,7 +130,7 @@ class StationRepositoryTest {
 	@Order(9)
 	void removeLine() {
 		Station expected = stations.findByName("교대역");
-		expected.setLine(null);
+		expected.line(null);
 		stations.flush(); // transaction commit
 		/*
 		 * **주의사항**
@@ -143,7 +143,7 @@ class StationRepositoryTest {
 	@Order(10)
 	void findById() {
 		Line line = lines.findByName("3호선");
-		assertThat(line.getStations()).hasSize(1);
+		assertThat(line.stations()).hasSize(1);
 	}
 
 	/**
@@ -194,9 +194,9 @@ class StationRepositoryTest {
 		Line line6 = lines.save(new Line("6호선"));
 		Station station = stations.save(new Station("공덕역"));
 
-		station.setLineInteraction(line5);
-		station.setLineInteraction(line6);
-		assertThat(line5.getStations().contains(station)).isTrue(); // true
+		station.addLineInteraction(line5);
+		station.addLineInteraction(line6);
+		assertThat(line5.stations().contains(station)).isTrue(); // true
 	}
 
 	/**

@@ -45,14 +45,14 @@ public class UserTest {
 
 		//then
 		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
+			() -> assertThat(actual.id()).isNotNull(),
 			() -> assertThat(actual.equalsNameAndEmail(JAVAJIGI)).isTrue(),
-			() -> assertThat(actual.getPassword()).isEqualTo(JAVAJIGI.getPassword()),
-			() -> assertThat(actual.getUserId()).isEqualTo(JAVAJIGI.getUserId()),
-			() -> assertThat(actual2.getId()).isNotNull(),
+			() -> assertThat(actual.password()).isEqualTo(JAVAJIGI.password()),
+			() -> assertThat(actual.userId()).isEqualTo(JAVAJIGI.userId()),
+			() -> assertThat(actual2.id()).isNotNull(),
 			() -> assertThat(actual2.equalsNameAndEmail(SANJIGI)).isTrue(),
-			() -> assertThat(actual2.getPassword()).isEqualTo(SANJIGI.getPassword()),
-			() -> assertThat(actual2.getUserId()).isEqualTo(SANJIGI.getUserId())
+			() -> assertThat(actual2.password()).isEqualTo(SANJIGI.password()),
+			() -> assertThat(actual2.userId()).isEqualTo(SANJIGI.userId())
 		);
 	}
 
@@ -65,19 +65,19 @@ public class UserTest {
 		User expected2 = users.save(SANJIGI);
 
 		//when
-		User actual = users.findById(expected.getId()).get();
-		User actual2 = users.findById(expected2.getId()).get();
+		User actual = users.findById(expected.id()).get();
+		User actual2 = users.findById(expected2.id()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
+			() -> assertThat(actual.id()).isNotNull(),
 			() -> assertThat(actual.equalsNameAndEmail(expected)).isTrue(),
-			() -> assertThat(actual.getPassword()).isEqualTo(expected.getPassword()),
-			() -> assertThat(actual.getUserId()).isEqualTo(expected.getUserId()),
-			() -> assertThat(actual2.getId()).isNotNull(),
+			() -> assertThat(actual.password()).isEqualTo(expected.password()),
+			() -> assertThat(actual.userId()).isEqualTo(expected.userId()),
+			() -> assertThat(actual2.id()).isNotNull(),
 			() -> assertThat(actual2.equalsNameAndEmail(expected2)).isTrue(),
-			() -> assertThat(actual2.getPassword()).isEqualTo(expected2.getPassword()),
-			() -> assertThat(actual2.getUserId()).isEqualTo(expected2.getUserId())
+			() -> assertThat(actual2.password()).isEqualTo(expected2.password()),
+			() -> assertThat(actual2.userId()).isEqualTo(expected2.userId())
 		);
 	}
 
@@ -90,19 +90,19 @@ public class UserTest {
 		User expected2 = users.save(SANJIGI);
 
 		//when
-		User actual = users.findByUserId(expected.getUserId()).get();
-		User actual2 = users.findByUserId(expected2.getUserId()).get();
+		User actual = users.findByUserId(expected.userId()).get();
+		User actual2 = users.findByUserId(expected2.userId()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
+			() -> assertThat(actual.id()).isNotNull(),
 			() -> assertThat(actual.equalsNameAndEmail(expected)).isTrue(),
-			() -> assertThat(actual.getPassword()).isEqualTo(expected.getPassword()),
-			() -> assertThat(actual.getUserId()).isEqualTo(expected.getUserId()),
-			() -> assertThat(actual2.getId()).isNotNull(),
+			() -> assertThat(actual.password()).isEqualTo(expected.password()),
+			() -> assertThat(actual.userId()).isEqualTo(expected.userId()),
+			() -> assertThat(actual2.id()).isNotNull(),
 			() -> assertThat(actual2.equalsNameAndEmail(expected2)).isTrue(),
-			() -> assertThat(actual2.getPassword()).isEqualTo(expected2.getPassword()),
-			() -> assertThat(actual2.getUserId()).isEqualTo(expected2.getUserId())
+			() -> assertThat(actual2.password()).isEqualTo(expected2.password()),
+			() -> assertThat(actual2.userId()).isEqualTo(expected2.userId())
 		);
 	}
 
@@ -112,19 +112,18 @@ public class UserTest {
 	void setUserId() {
 		//given
 		User expected = users.save(JAVAJIGI);
-		String modifiedUserId = "pobi";
+		User modifiedUser = expected;
+		String modifiedEmail = "test@test.com";
+		String modifiedName = "테스터";
+		modifiedUser.changeEmail(modifiedEmail);
+		modifiedUser.changeName(modifiedName);
 
 		//when
-		expected.setUserId(modifiedUserId);
-		User actual = users.findByUserId(modifiedUserId).get();
+		expected.update(expected, modifiedUser);
+		User actual = users.findById(modifiedUser.id()).get();
 
 		//then
-		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.equalsNameAndEmail(expected)).isTrue(),
-			() -> assertThat(actual.getPassword()).isEqualTo(expected.getPassword()),
-			() -> assertThat(actual.getUserId()).isEqualTo(expected.getUserId())
-		);
+		assertThat(actual.equals(modifiedUser)).isTrue();
 	}
 
 	@DisplayName("User 삭제 : delete()")
@@ -133,12 +132,12 @@ public class UserTest {
 	void delete() {
 		//given
 		User expected = users.save(JAVAJIGI);
-		User beforeDeleteUser = users.findByUserId(expected.getUserId()).get();
+		User beforeDeleteUser = users.findByUserId(expected.userId()).get();
 
 		//when
 		users.delete(expected);
 		users.flush();
-		Optional<User> afterDeleteUserOptional = users.findByUserId(expected.getUserId());
+		Optional<User> afterDeleteUserOptional = users.findByUserId(expected.userId());
 
 		//then
 		assertAll(

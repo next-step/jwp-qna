@@ -181,7 +181,7 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
     - [x] 2-2. Hands-on JPA Test code 작성
 - [x] 3.분석 및 설계
     - [x] 3-1.step02.md 초안 작성
-- [x] 4.구현
+- [ ] 4.구현
     - [x] 4-1.테스트 코드 작성
         - [x] 4-1-1.`AnswerTest`
         - [x] 4-1-2.`DeleteHistoryTest`
@@ -192,19 +192,48 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
         - [x] 4-2-2.`DeleteHistory`
         - [x] 4-2-3.`Question`
         - [x] 4-2-4.`User`
-- [x] 5.테스트
-    - [x] 5-1.Gradle build Success 확인
-    - [x] 5-2.checkstyle 문제없는지 확인 (Java Convention)
-    - [x] 5-3.요구사항 조건들 충족했는지 확인
-        - [x] 5-3-1.핵심 단위 로직 테스트
-- [x] 6.인수인계
+    - [ ] 4-3.리뷰어님 피드백 반영
+        - [x] 4-3-1.생성자 접근제어자 `public` -> `protected` 변경
+        - [x] 4-3-2.getter/setter 제거
+        - [ ] 4-3-3.반복적인 필드 추상클래스 활용
+            - [ ] 4-3-3-1.중복된 필드 모아놓기
+            - [ ] 4-3-3-2.jpa auditing 적용
+        - [ ] 4-3-4.테스트 영역 구분
+            - [ ] 4-3-4-1.`AnswerTest` -> `AnswerTest`, `AnswerRepositoryTest`
+            - [ ] 4-3-4-2.`DeleteHistoryTest` -> `DeleteHistoryTest`, `DeleteHistoryRepositoryTest`
+            - [ ] 4-3-4-3.`QuestionTest` -> `QuestionTest`, `QuestionRepositoryTest`
+            - [ ] 4-3-4-4.`UserTest` -> `UserTest`, `UserRepositoryTest`
+        - [ ] 4-3-5.테스트 초기화 수정
+            - [ ] 4-3-5-1.`AnswerTest`
+            - [ ] 4-3-5-2.`AnswerRepositoryTest`
+            - [ ] 4-3-5-3.`DeleteHistoryTest`
+            - [ ] 4-3-5-4.`DeleteHistoryRepositoryTest`
+            - [ ] 4-3-5-5.`QuestionTest`
+            - [ ] 4-3-5-6.`QuestionRepositoryTest`
+            - [ ] 4-3-5-7.`UserTest`
+            - [ ] 4-3-5-8.`UserRepositoryTest`
+        - [ ] 4-3-6.불필요한 테스트 코드 정리
+            - [ ] 4-3-6-1.`AnswerTest`
+            - [ ] 4-3-6-2.`AnswerRepositoryTest`
+            - [ ] 4-3-6-3.`DeleteHistoryTest`
+            - [ ] 4-3-6-4.`DeleteHistoryRepositoryTest`
+            - [ ] 4-3-6-5.`QuestionTest`
+            - [ ] 4-3-6-6.`QuestionRepositoryTest`
+            - [ ] 4-3-6-7.`UserTest`
+            - [ ] 4-3-6-8.`UserRepositoryTest`
+- [ ] 5.테스트
+    - [ ] 5-1.Gradle build Success 확인
+    - [ ] 5-2.checkstyle 문제없는지 확인 (Java Convention)
+    - [ ] 5-3.요구사항 조건들 충족했는지 확인
+        - [ ] 5-3-1.핵심 단위 로직 테스트
+- [ ] 6.인수인계
     - [x] 6-1.소감 및 피드백 정리
         - [x] 6-1-1.느낀점 & 배운점 작성
         - [x] 6-1-2.피드백 요청 정리
-    - [x] 6-2.코드리뷰 요청 및 피드백
-        - [x] 6-1-1.step2를 gregolee/jwp-qna로 push : `git push origin step2`
-        - [x] 6-1-2.pull request(PR) 작성
-    - [x] 6-3.Slack을 통해 merge가 되는지 확인한 후에 미션 종료
+    - [ ] 6-2.코드리뷰 요청 및 피드백
+        - [ ] 6-1-1.step2를 gregolee/jwp-qna로 push : `git push origin step2`
+        - [ ] 6-1-2.pull request(PR) 작성
+    - [ ] 6-3.Slack을 통해 merge가 되는지 확인한 후에 미션 종료
 
 ## 3. 인수인계
 

@@ -56,17 +56,17 @@ public class DeleteHistoryTest {
 	}
 
 	private void 삭제_히스토리_객체_초기화() {
-		deleteHistory1 = new DeleteHistory(ContentType.QUESTION, savedQuestion.getId(),
-			savedQuestion.getWriter(), LocalDateTime.now());
-		deleteHistory2 = new DeleteHistory(ContentType.ANSWER, savedAnswer.getId(),
-			savedAnswer.getWriter(), LocalDateTime.now());
+		deleteHistory1 = new DeleteHistory(ContentType.QUESTION, savedQuestion.id(),
+			savedQuestion.writer(), LocalDateTime.now());
+		deleteHistory2 = new DeleteHistory(ContentType.ANSWER, savedAnswer.id(),
+			savedAnswer.writer(), LocalDateTime.now());
 	}
 
 	private void 답변정보_저장() {
 		if (Objects.isNull(savedAnswer)) {
 			Answer tempAnswer = AnswerTest.A1;
-			tempAnswer.setQuestion(savedQuestion);
-			tempAnswer.setWriter(savedSangiji);
+			tempAnswer.toQuestion(savedQuestion);
+			tempAnswer.writtenBy(savedSangiji);
 			savedAnswer = answers.save(tempAnswer);
 		}
 	}
@@ -110,8 +110,8 @@ public class DeleteHistoryTest {
 		DeleteHistory expected2 = deleteHistories.save(deleteHistory2);
 
 		//when
-		DeleteHistory actual = deleteHistories.findById(expected.getId()).get();
-		DeleteHistory actual2 = deleteHistories.findById(expected2.getId()).get();
+		DeleteHistory actual = deleteHistories.findById(expected.id()).get();
+		DeleteHistory actual2 = deleteHistories.findById(expected2.id()).get();
 
 		//then
 		assertAll(
@@ -125,12 +125,12 @@ public class DeleteHistoryTest {
 	void delete() {
 		//given
 		DeleteHistory expected = deleteHistories.save(deleteHistory1);
-		DeleteHistory beforeDeleteDeleteHistory = deleteHistories.findById(expected.getId()).get();
+		DeleteHistory beforeDeleteDeleteHistory = deleteHistories.findById(expected.id()).get();
 
 		//when
 		deleteHistories.delete(expected);
 		deleteHistories.flush();
-		Optional<DeleteHistory> afterDeleteDeleteHistoryOptional = deleteHistories.findById(expected.getId());
+		Optional<DeleteHistory> afterDeleteDeleteHistoryOptional = deleteHistories.findById(expected.id());
 
 		//then
 		assertAll(

@@ -49,22 +49,22 @@ public class AnswerTest {
 	private void 각_답변별_질문정보_저장() {
 		if (Objects.isNull(savedQuestion1)) {
 			savedQuestion1 = questions.save(QuestionTest.Q1.writeBy(savedJavajigi));
-			A1.setQuestion(savedQuestion1);
+			A1.toQuestion(savedQuestion1);
 		}
 		if (Objects.isNull(savedQuestion2)) {
 			savedQuestion2 = questions.save(QuestionTest.Q2.writeBy(savedSangiji));
-			A2.setQuestion(savedQuestion2);
+			A2.toQuestion(savedQuestion2);
 		}
 	}
 
 	private void 각_답변별_작성자정보_저장() {
 		if (Objects.isNull(savedJavajigi)) {
 			savedJavajigi = users.save(UserTest.JAVAJIGI);
-			A1.setWriter(savedJavajigi);
+			A1.writtenBy(savedJavajigi);
 		}
 		if (Objects.isNull(savedSangiji)) {
 			savedSangiji = users.save(UserTest.SANJIGI);
-			A2.setWriter(savedSangiji);
+			A2.writtenBy(savedSangiji);
 		}
 	}
 
@@ -79,16 +79,16 @@ public class AnswerTest {
 
 		//then
 		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.isOwner(A1.getWriter())).isTrue(),
-			() -> assertThat(actual.getQuestion()).isEqualTo(A1.getQuestion()),
-			() -> assertThat(actual.getWriter()).isEqualTo(A1.getWriter()),
-			() -> assertThat(actual.getContents()).isEqualTo(A1.getContents()),
-			() -> assertThat(actual2.getId()).isNotNull(),
-			() -> assertThat(actual2.isOwner(A2.getWriter())).isTrue(),
-			() -> assertThat(actual2.getQuestion()).isEqualTo(A2.getQuestion()),
-			() -> assertThat(actual2.getWriter()).isEqualTo(A2.getWriter()),
-			() -> assertThat(actual2.getContents()).isEqualTo(A2.getContents())
+			() -> assertThat(actual.id()).isNotNull(),
+			() -> assertThat(actual.isOwner(A1.writer())).isTrue(),
+			() -> assertThat(actual.question()).isEqualTo(A1.question()),
+			() -> assertThat(actual.writer()).isEqualTo(A1.writer()),
+			() -> assertThat(actual.contents()).isEqualTo(A1.contents()),
+			() -> assertThat(actual2.id()).isNotNull(),
+			() -> assertThat(actual2.isOwner(A2.writer())).isTrue(),
+			() -> assertThat(actual2.question()).isEqualTo(A2.question()),
+			() -> assertThat(actual2.writer()).isEqualTo(A2.writer()),
+			() -> assertThat(actual2.contents()).isEqualTo(A2.contents())
 		);
 	}
 
@@ -100,21 +100,21 @@ public class AnswerTest {
 		Answer expected2 = answers.save(A2);
 
 		//when
-		Answer actual = answers.findById(expected.getId()).get();
-		Answer actual2 = answers.findById(expected2.getId()).get();
+		Answer actual = answers.findById(expected.id()).get();
+		Answer actual2 = answers.findById(expected2.id()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.isOwner(A1.getWriter())).isTrue(),
-			() -> assertThat(actual.getQuestion()).isEqualTo(A1.getQuestion()),
-			() -> assertThat(actual.getWriter()).isEqualTo(A1.getWriter()),
-			() -> assertThat(actual.getContents()).isEqualTo(A1.getContents()),
-			() -> assertThat(actual2.getId()).isNotNull(),
-			() -> assertThat(actual2.isOwner(A2.getWriter())).isTrue(),
-			() -> assertThat(actual2.getQuestion()).isEqualTo(A2.getQuestion()),
-			() -> assertThat(actual2.getWriter()).isEqualTo(A2.getWriter()),
-			() -> assertThat(actual2.getContents()).isEqualTo(A2.getContents())
+			() -> assertThat(actual.id()).isNotNull(),
+			() -> assertThat(actual.isOwner(A1.writer())).isTrue(),
+			() -> assertThat(actual.question()).isEqualTo(A1.question()),
+			() -> assertThat(actual.writer()).isEqualTo(A1.writer()),
+			() -> assertThat(actual.contents()).isEqualTo(A1.contents()),
+			() -> assertThat(actual2.id()).isNotNull(),
+			() -> assertThat(actual2.isOwner(A2.writer())).isTrue(),
+			() -> assertThat(actual2.question()).isEqualTo(A2.question()),
+			() -> assertThat(actual2.writer()).isEqualTo(A2.writer()),
+			() -> assertThat(actual2.contents()).isEqualTo(A2.contents())
 		);
 	}
 
@@ -125,9 +125,9 @@ public class AnswerTest {
 		Answer expected = answers.save(A1);
 
 		//when
-		Optional<Answer> beforeSoftDelete = answers.findByIdAndDeletedFalse(expected.getId());
-		expected.setDeleted(true);
-		Optional<Answer> afterSoftDelete = answers.findByIdAndDeletedFalse(expected.getId());
+		Optional<Answer> beforeSoftDelete = answers.findByIdAndDeletedFalse(expected.id());
+		expected.delete();
+		Optional<Answer> afterSoftDelete = answers.findByIdAndDeletedFalse(expected.id());
 
 		//then
 		assertAll(
@@ -143,16 +143,16 @@ public class AnswerTest {
 		Answer expected = answers.save(A1);
 
 		//when
-		Optional<Answer> beforeChangeWriter = answers.findById(expected.getId());
-		expected.setWriter(savedSangiji);
-		Optional<Answer> afterChangeWriter = answers.findById(expected.getId());
+		Optional<Answer> beforeChangeWriter = answers.findById(expected.id());
+		expected.writtenBy(savedSangiji);
+		Optional<Answer> afterChangeWriter = answers.findById(expected.id());
 
 		//then
 		assertAll(
-			() -> assertThat(beforeChangeWriter.get().getWriter().equals(savedSangiji)).isTrue(),
-			() -> assertThat(beforeChangeWriter.get().getWriter().equals(savedJavajigi)).isFalse(),
-			() -> assertThat(afterChangeWriter.get().getWriter().equals(savedSangiji)).isTrue(),
-			() -> assertThat(afterChangeWriter.get().getWriter().equals(savedJavajigi)).isFalse()
+			() -> assertThat(beforeChangeWriter.get().writer().equals(savedSangiji)).isTrue(),
+			() -> assertThat(beforeChangeWriter.get().writer().equals(savedJavajigi)).isFalse(),
+			() -> assertThat(afterChangeWriter.get().writer().equals(savedSangiji)).isTrue(),
+			() -> assertThat(afterChangeWriter.get().writer().equals(savedJavajigi)).isFalse()
 		);
 	}
 
@@ -163,16 +163,16 @@ public class AnswerTest {
 		Answer expected = answers.save(A1);
 
 		//when
-		Optional<Answer> beforeChangeQuestion = answers.findById(expected.getId());
-		expected.setQuestion(savedQuestion2);
-		Optional<Answer> afterChangeQuestion = answers.findById(expected.getId());
+		Optional<Answer> beforeChangeQuestion = answers.findById(expected.id());
+		expected.toQuestion(savedQuestion2);
+		Optional<Answer> afterChangeQuestion = answers.findById(expected.id());
 
 		//then
 		assertAll(
-			() -> assertThat(beforeChangeQuestion.get().getQuestion().equals(savedQuestion2)).isTrue(),
-			() -> assertThat(beforeChangeQuestion.get().getQuestion().equals(savedQuestion1)).isFalse(),
-			() -> assertThat(afterChangeQuestion.get().getQuestion().equals(savedQuestion2)).isTrue(),
-			() -> assertThat(afterChangeQuestion.get().getQuestion().equals(savedQuestion1)).isFalse()
+			() -> assertThat(beforeChangeQuestion.get().question().equals(savedQuestion2)).isTrue(),
+			() -> assertThat(beforeChangeQuestion.get().question().equals(savedQuestion1)).isFalse(),
+			() -> assertThat(afterChangeQuestion.get().question().equals(savedQuestion2)).isTrue(),
+			() -> assertThat(afterChangeQuestion.get().question().equals(savedQuestion1)).isFalse()
 		);
 	}
 
@@ -181,12 +181,12 @@ public class AnswerTest {
 	void delete() {
 		//given
 		Answer expected = answers.save(A1);
-		Answer beforeDeleteAnswer = answers.findById(expected.getId()).get();
+		Answer beforeDeleteAnswer = answers.findById(expected.id()).get();
 
 		//when
 		answers.delete(expected);
 		answers.flush();
-		Optional<Answer> afterDeleteAnswerOptional = answers.findById(expected.getId());
+		Optional<Answer> afterDeleteAnswerOptional = answers.findById(expected.id());
 
 		//then
 		assertAll(

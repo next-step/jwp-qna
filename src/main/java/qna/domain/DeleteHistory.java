@@ -2,7 +2,6 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -18,6 +17,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "delete_history")
 public class DeleteHistory {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -36,29 +36,30 @@ public class DeleteHistory {
 	@JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
 	private User deleter;
 
-	public DeleteHistory() {
+	protected DeleteHistory() {
 	}
 
-	public DeleteHistory(ContentType contentType, Long contentId, User deleter, LocalDateTime createDate) {
+	public DeleteHistory(ContentType contentType, Long contentId, User deleter,
+		LocalDateTime createDate) {
 		this.contentType = contentType;
 		this.contentId = contentId;
 		this.deleter = deleter;
 		this.createDate = createDate;
 	}
 
-	public Long getId() {
+	public Long id() {
 		return this.id;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
+	public boolean equals(Object object) {
+		if (this == object) {
 			return true;
 		}
-		if (obj == null || getClass() != obj.getClass()) {
+		if (object == null || getClass() != object.getClass()) {
 			return false;
 		}
-		DeleteHistory that = (DeleteHistory)obj;
+		DeleteHistory that = (DeleteHistory) object;
 		return Objects.equals(id, that.id)
 			&& contentType == that.contentType
 			&& Objects.equals(contentId, that.contentId)

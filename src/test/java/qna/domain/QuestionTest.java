@@ -46,11 +46,11 @@ public class QuestionTest {
 
 	private void 각_답변별_작성자정보_저장() {
 		if (Objects.isNull(savedJavajigi)) {
-			savedJavajigi = users.save(Q1.getWriter());
+			savedJavajigi = users.save(Q1.writer());
 			Q1.writeBy(savedJavajigi);
 		}
 		if (Objects.isNull(savedSangiji)) {
-			savedSangiji = users.save(Q2.getWriter());
+			savedSangiji = users.save(Q2.writer());
 			Q2.writeBy(savedSangiji);
 		}
 	}
@@ -67,14 +67,14 @@ public class QuestionTest {
 
 		//then
 		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.isOwner(Q1.getWriter())).isTrue(),
-			() -> assertThat(actual.getTitle()).isEqualTo(Q1.getTitle()),
-			() -> assertThat(actual.getContents()).isEqualTo(Q1.getContents()),
-			() -> assertThat(actual2.getId()).isNotNull(),
-			() -> assertThat(actual2.isOwner(Q2.getWriter())).isTrue(),
-			() -> assertThat(actual2.getTitle()).isEqualTo(Q2.getTitle()),
-			() -> assertThat(actual2.getContents()).isEqualTo(Q2.getContents())
+			() -> assertThat(actual.id()).isNotNull(),
+			() -> assertThat(actual.isOwner(Q1.writer())).isTrue(),
+			() -> assertThat(actual.title()).isEqualTo(Q1.title()),
+			() -> assertThat(actual.contents()).isEqualTo(Q1.contents()),
+			() -> assertThat(actual2.id()).isNotNull(),
+			() -> assertThat(actual2.isOwner(Q2.writer())).isTrue(),
+			() -> assertThat(actual2.title()).isEqualTo(Q2.title()),
+			() -> assertThat(actual2.contents()).isEqualTo(Q2.contents())
 		);
 	}
 
@@ -87,19 +87,19 @@ public class QuestionTest {
 		Question expected2 = questions.save(Q2);
 
 		//when
-		Question actual = questions.findById(expected.getId()).get();
-		Question actual2 = questions.findById(expected2.getId()).get();
+		Question actual = questions.findById(expected.id()).get();
+		Question actual2 = questions.findById(expected2.id()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.isOwner(Q1.getWriter())).isTrue(),
-			() -> assertThat(actual.getTitle()).isEqualTo(Q1.getTitle()),
-			() -> assertThat(actual.getContents()).isEqualTo(Q1.getContents()),
-			() -> assertThat(actual2.getId()).isNotNull(),
-			() -> assertThat(actual2.isOwner(Q2.getWriter())).isTrue(),
-			() -> assertThat(actual2.getTitle()).isEqualTo(Q2.getTitle()),
-			() -> assertThat(actual2.getContents()).isEqualTo(Q2.getContents())
+			() -> assertThat(actual.id()).isNotNull(),
+			() -> assertThat(actual.isOwner(Q1.writer())).isTrue(),
+			() -> assertThat(actual.title()).isEqualTo(Q1.title()),
+			() -> assertThat(actual.contents()).isEqualTo(Q1.contents()),
+			() -> assertThat(actual2.id()).isNotNull(),
+			() -> assertThat(actual2.isOwner(Q2.writer())).isTrue(),
+			() -> assertThat(actual2.title()).isEqualTo(Q2.title()),
+			() -> assertThat(actual2.contents()).isEqualTo(Q2.contents())
 		);
 	}
 
@@ -111,9 +111,9 @@ public class QuestionTest {
 		Question expected = questions.save(Q1);
 
 		//when
-		Optional<Question> beforeSoftDelete = questions.findByIdAndDeletedFalse(expected.getId());
-		expected.setDeleted(true);
-		Optional<Question> afterSoftDelete = questions.findByIdAndDeletedFalse(expected.getId());
+		Optional<Question> beforeSoftDelete = questions.findByIdAndDeletedFalse(expected.id());
+		expected.delete();
+		Optional<Question> afterSoftDelete = questions.findByIdAndDeletedFalse(expected.id());
 
 		//then
 		assertAll(
@@ -128,12 +128,12 @@ public class QuestionTest {
 	void delete() {
 		//given
 		Question expected = questions.save(Q1);
-		Question beforeDeleteQuestion = questions.findById(expected.getId()).get();
+		Question beforeDeleteQuestion = questions.findById(expected.id()).get();
 
 		//when
 		questions.delete(expected);
 		questions.flush();
-		Optional<Question> afterDeleteQuestionOptional = questions.findById(expected.getId());
+		Optional<Question> afterDeleteQuestionOptional = questions.findById(expected.id());
 
 		//then
 		assertAll(
