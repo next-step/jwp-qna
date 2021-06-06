@@ -1,12 +1,10 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -130,7 +128,8 @@ public class DeleteHistoryTest {
 		//when
 		deleteHistories.delete(expected);
 		deleteHistories.flush();
-		Optional<DeleteHistory> afterDeleteDeleteHistoryOptional = deleteHistories.findById(expected.id());
+		Optional<DeleteHistory> afterDeleteDeleteHistoryOptional = deleteHistories
+			.findById(expected.id());
 
 		//then
 		assertAll(

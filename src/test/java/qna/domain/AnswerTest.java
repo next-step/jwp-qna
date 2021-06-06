@@ -1,11 +1,9 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.Objects;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,8 +12,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class AnswerTest {
-	public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-	public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents2");
+
+	public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1,
+		"Answers Contents1");
+	public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q2,
+		"Answers Contents2");
 
 	@Autowired
 	private UserRepository users;
@@ -170,7 +171,8 @@ public class AnswerTest {
 		//then
 		assertAll(
 			() -> assertThat(beforeChangeQuestion.get().question().equals(savedQuestion2)).isTrue(),
-			() -> assertThat(beforeChangeQuestion.get().question().equals(savedQuestion1)).isFalse(),
+			() -> assertThat(beforeChangeQuestion.get().question().equals(savedQuestion1))
+				.isFalse(),
 			() -> assertThat(afterChangeQuestion.get().question().equals(savedQuestion2)).isTrue(),
 			() -> assertThat(afterChangeQuestion.get().question().equals(savedQuestion1)).isFalse()
 		);

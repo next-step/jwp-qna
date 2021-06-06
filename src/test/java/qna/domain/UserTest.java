@@ -1,10 +1,8 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -17,8 +15,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserTest {
-	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1", "javajigi@slipp.net");
-	public static final User SANJIGI = new User(2L, "sanjigi", "password2", "name2", "sanjigi@slipp.net");
+
+	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1",
+		"javajigi@slipp.net");
+	public static final User SANJIGI = new User(2L, "sanjigi", "password2", "name2",
+		"sanjigi@slipp.net");
 
 	@Autowired
 	private UserRepository users;
