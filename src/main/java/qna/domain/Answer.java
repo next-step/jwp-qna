@@ -32,18 +32,7 @@ public class Answer extends BaseEntity {
         //JPA need no-arg constructor
     }
 
-    public Answer(String contents, boolean deleted) {
-        this.contents = contents;
-        this.deleted = deleted;
-    }
-
     public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
-    public Answer(Long id, User writer, Question question, String contents) {
-
-
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -63,7 +52,7 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
-        question.answers().add(this);
+        question.addAnswer(this);
     }
 
 

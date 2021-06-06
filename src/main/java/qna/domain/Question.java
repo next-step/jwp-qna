@@ -52,10 +52,6 @@ public class Question extends BaseEntity{
         return this.writerId.equals(writer);
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
-
     public String getTitle() {
         return title;
     }
@@ -110,7 +106,7 @@ public class Question extends BaseEntity{
         return new DeleteHistory(ContentType.QUESTION, this.getId(), this.getWriterId(), LocalDateTime.now());
     }
 
-    public Answers answers() {
-        return answers;
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
     }
 }
