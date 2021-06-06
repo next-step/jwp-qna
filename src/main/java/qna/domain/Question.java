@@ -60,11 +60,6 @@ public class Question extends BaseTimeEntity {
         return this.writer.equals(writer);
     }
 
-    public void addAnswer(Answer answer) {
-        answers.add(answer);
-        answer.toQuestion(this);
-    }
-
     public Long getId() {
         return id;
     }
