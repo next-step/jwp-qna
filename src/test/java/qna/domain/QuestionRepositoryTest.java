@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -28,7 +29,7 @@ class QuestionRepositoryTest {
     private Question deletedQuestion2;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws CannotDeleteException {
         User javajigi = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
         User sanjigi = users.save(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
 
@@ -36,11 +37,11 @@ class QuestionRepositoryTest {
         question2 = questions.save(new Question("title2", "contents2").writeBy(sanjigi));
 
         deletedQuestion1 = new Question("deleted question title1", "deleted question content1").writeBy(sanjigi);
-        deletedQuestion1.setDeleted(true);
+        deletedQuestion1.delete();
         deletedQuestion1 = questions.save(deletedQuestion1);
 
         deletedQuestion2 = new Question("deleted question title2", "deleted question content2").writeBy(sanjigi);
-        deletedQuestion2.setDeleted(true);
+        deletedQuestion2.delete();
         deletedQuestion2 = questions.save(deletedQuestion2);
     }
 

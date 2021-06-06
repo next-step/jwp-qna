@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.io.Writer;
 
@@ -62,8 +64,11 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() throws CannotDeleteException {
+        if(isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 데이터 입니다.");
+        }
+        this.deleted = true;
     }
 
     @Override
