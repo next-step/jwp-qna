@@ -3,11 +3,12 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.time.LocalDateTime.now;
 import static javax.persistence.FetchType.LAZY;
+import static qna.domain.ContentType.QUESTION;
 
 @Entity
 public class Question extends BaseEntity {
@@ -73,11 +74,13 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void delete() throws CannotDeleteException {
-        if(isDeleted()) {
+    public DeleteHistory delete() throws CannotDeleteException {
+        if (isDeleted()) {
             throw new CannotDeleteException("이미 삭제된 데이터 입니다.");
         }
         this.deleted = true;
+
+        return new DeleteHistory(QUESTION, this.id, this.writer, now());
     }
 
     @Override

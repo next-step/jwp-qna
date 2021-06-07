@@ -7,7 +7,9 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.util.Objects;
 
+import static java.time.LocalDateTime.now;
 import static javax.persistence.FetchType.LAZY;
+import static qna.domain.ContentType.ANSWER;
 
 @Entity
 public class Answer extends BaseEntity {
@@ -70,11 +72,13 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void delete() throws CannotDeleteException {
+    public DeleteHistory delete() throws CannotDeleteException {
         if(isDeleted()) {
             throw new CannotDeleteException("이미 삭제된 데이터 입니다.");
         }
         this.deleted = true;
+
+        return new DeleteHistory(ANSWER, this.id, this.writer, now());
     }
 
     @Override

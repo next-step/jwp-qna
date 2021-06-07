@@ -8,6 +8,8 @@ import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
+import static qna.domain.ContentType.ANSWER;
+import static qna.domain.ContentType.QUESTION;
 
 @Entity
 public class DeleteHistory {
@@ -35,6 +37,18 @@ public class DeleteHistory {
         this.contentId = contentId;
         this.user = user;
         this.createDate = createDate;
+    }
+
+    public boolean isAnswerType() {
+        return contentType.equals(ANSWER);
+    }
+
+    public boolean isQuestionType() {
+        return contentType.equals(QUESTION);
+    }
+
+    public boolean isWriter(User user) {
+        return user.equals(user);
     }
 
     protected Long getId() {
