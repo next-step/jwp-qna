@@ -229,10 +229,10 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
             - [x] 0-5-2-6.`QuestionRepositoryTest`
             - [x] 0-5-2-7.`UserTest`
             - [x] 0-5-2-8.`UserRepositoryTest`
-- [ ] 1.자바 코드 컨벤션을 위한 세팅
-    - [ ] 1-1.[gradle-editorconfig](https://naver.github.io/hackday-conventions-java/#editorconfig) 적용
-    - [ ] 1-2.[Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) 적용
-    - [ ] 1-3.[Github](https://naver.github.io/hackday-conventions-java/#_github) 적용
+- [x] 1.자바 코드 컨벤션을 위한 세팅
+    - [x] 1-1.[gradle-editorconfig](https://naver.github.io/hackday-conventions-java/#editorconfig) 적용
+    - [x] 1-2.[Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) 적용
+    - [x] 1-3.[Github](https://naver.github.io/hackday-conventions-java/#_github) 적용
 - [x] 2.학습
     - [x] 2-1. "래거시 코드 리팩토링 미션 소개" 영상 시청 [링크](https://edu.nextstep.camp/s/ffeVDScX/ls/x4dF36as)
 - [x] 3.분석 및 설계

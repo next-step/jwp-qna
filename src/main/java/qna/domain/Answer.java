@@ -65,7 +65,7 @@ public class Answer extends BaseEntity {
 		}
 		question(question);
 		question.addAnswer(this);
-	};
+	}
 
 	public Long id() {
 		return id;
