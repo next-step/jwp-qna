@@ -5,18 +5,22 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.QuestionTest.*;
 
 @DataJpaTest
 @DisplayName("QuestionRepository 테스트")
 class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questions;
+
+    @Autowired
+    private UserRepository users;
 
     private Question question1;
     private Question question2;
@@ -25,11 +29,20 @@ class QuestionRepositoryTest {
     private Question deletedQuestion2;
 
     @BeforeEach
-    void setUp() {
-        question1 = questions.save(Q1);
-        question2 = questions.save(Q2);
-        deletedQuestion1 = questions.save(DELETED_QUESTION1);
-        deletedQuestion2 = questions.save(DELETED_QUESTION2);
+    void setUp() throws CannotDeleteException {
+        User javajigi = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        User sanjigi = users.save(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
+
+        question1 = questions.save(new Question("title1", "contents1").writeBy(javajigi));
+        question2 = questions.save(new Question("title2", "contents2").writeBy(sanjigi));
+
+        deletedQuestion1 = new Question("deleted question title1", "deleted question content1").writeBy(sanjigi);
+        deletedQuestion1.delete();
+        deletedQuestion1 = questions.save(deletedQuestion1);
+
+        deletedQuestion2 = new Question("deleted question title2", "deleted question content2").writeBy(sanjigi);
+        deletedQuestion2.delete();
+        deletedQuestion2 = questions.save(deletedQuestion2);
     }
 
     @Test
@@ -65,10 +78,11 @@ class QuestionRepositoryTest {
         long targetId = question1.getId();
 
         // When
-        Optional<Question> actualResult = questions.findByIdAndDeletedFalse(targetId);
+        Question actualResult = questions.findByIdAndDeletedFalse(targetId)
+                .orElseThrow(EntityNotFoundException::new);
 
         // Then
-        assertThat(actualResult).containsSame(question1);
+        assertThat(actualResult).isEqualTo(question1);
     }
 
     @Test

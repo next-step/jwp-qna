@@ -1,8 +1,9 @@
+# Step 1. 엔티티 매핑
 ## 요구 사항
 **QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.**
 
-- [ ] 아래의 DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
-- [ ] @DataJpaTest를 사용하여 학습 테스트를 해 본다.
+- [x] 아래의 DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
+- [x] @DataJpaTest를 사용하여 학습 테스트를 해 본다.
 
 ## 기능 및 테스트 구현 목록
 - [x] Answer
@@ -31,3 +32,37 @@
   - [x] User 저장 후 반환된 Id로 조회 했을 때 같은 객체가 조회 되어야 한다.
   - [x] User 를 UserId로 조회 했을 때 유효한 결과가 조회 되어야 한다.
   
+# Step 2. 연관 관계 매핑
+## 요구 사항
+QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
+객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+
+## 도메인 관계
+- Answer n : 1 Question
+- Answer n : 1 User
+- Question n : 1 User
+- DeleteHistory n : 1 User
+
+## 기능 및 테스트 구현 목록
+- [x] Answer
+  - [x] Question에 대한 연관 관계 매핑 적용
+  - [x] User에 대한 연관 관계 매핑 적용
+  - [x] 깨지는 기존 테스트 해결
+  - [X] setDelete -> delete 변경
+    - [x] 변경에 따른 연관 테스트 수정
+
+- [x] Question
+  - [x] User에 대한 연관 관계 매핑 적용
+  - [x] 깨지는 기존 테스트 해결
+  - [x] setDelete -> delete 변경
+    - [x] 변경에 따른 연관 테스트 수정
+
+- [x] DeleteHistory
+  - [x] User에 대한 연관 관계 매핑 적용
+
+- [x] User
+  - [x] 깨지는 기존 테스트 해결
+  
+## Feedback 
+- [x] Answer 도메인의 setQuestion 없애기
+- [x] Answer, Question 도메인이 delete 메소드 실행시 DeleteHistory 인스턴스 반환하기

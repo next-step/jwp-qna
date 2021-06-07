@@ -5,13 +5,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.AnswerTest.*;
-import static qna.domain.QuestionTest.Q1;
 
 @DataJpaTest
 @DisplayName("AnswerRepository 테스트")
@@ -22,22 +22,29 @@ class AnswerRepositoryTest {
     private AnswerRepository answers;
 
     @Autowired
+    private UserRepository users;
+
+    @Autowired
     private QuestionRepository questions;
 
     private Answer answer1;
     private Answer answer2;
 
-    private Answer deletedAnswer1;
+    private Answer deletingAnswer1;
 
     private Question question;
 
     @BeforeEach
     void setUp() {
-        question = questions.save(Q1);
+        User user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
 
-        answer1 = answers.save(A1);
-        answer2 = answers.save(A2);
-        deletedAnswer1 = answers.save(DELETED_ANSWER1);
+        question = question = questions.save(new Question("title1", "contents1").writeBy(user));
+
+        answer1 = answers.save(new Answer(user, question, "Answers Contents1"));
+        answer2 = answers.save(new Answer(user, question, "Answers Contents2"));
+
+        deletingAnswer1 = new Answer(user, question, "Deleted Content1");
+        deletingAnswer1 = answers.save(deletingAnswer1);
     }
 
     @Test
@@ -47,17 +54,21 @@ class AnswerRepositoryTest {
         Answer expectedResult = answer1;
 
         // When
-        Optional<Answer> actualResult = answers.findById(expectedResult.getId());
+        Answer actualResult = answers.findById(expectedResult.getId())
+                .orElseThrow(EntityNotFoundException::new);
+        ;
 
         // Then
-        assertThat(actualResult).containsSame(expectedResult);
+        assertThat(actualResult).isEqualTo(expectedResult);
     }
 
     @Test
     @DisplayName("findByQuestionIdAndDeletedFalse_정상_삭제_되지_않은_데이터만_조회")
-    void findByQuestionIdAndDeletedFalse_정상_삭제_되지_않은_데이터만_조회() {
+    void findByQuestionIdAndDeletedFalse_정상_삭제_되지_않은_데이터만_조회() throws CannotDeleteException {
         // Given
         final int expectedResult = 2;
+        deletingAnswer1.delete();
+        answers.save(deletingAnswer1);
 
         // When
         List<Answer> foundQuestion = answers.findByQuestionIdAndDeletedFalse(question.getId());
@@ -81,12 +92,13 @@ class AnswerRepositoryTest {
 
     @Test
     @DisplayName("findByIdAndDeletedFalse_오류_데이터_없음")
-    void findByIdAndDeletedFalse_오류_데이터_없음() {
+    void findByIdAndDeletedFalse_오류_데이터_없음() throws CannotDeleteException {
         // Given
-        Answer deletedAnswer = deletedAnswer1;
+        deletingAnswer1.delete();
+        answers.save(deletingAnswer1);
 
         // When
-        Optional<Answer> foundAnswer = answers.findByIdAndDeletedFalse(deletedAnswer.getId());
+        Optional<Answer> foundAnswer = answers.findByIdAndDeletedFalse(deletingAnswer1.getId());
 
         // Then
         assertThat(foundAnswer).isEmpty();

@@ -1,6 +1,14 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.time.LocalDateTime.now;
+import static javax.persistence.FetchType.LAZY;
+import static qna.domain.ContentType.QUESTION;
 
 @Entity
 public class Question extends BaseEntity {
@@ -13,7 +21,13 @@ public class Question extends BaseEntity {
 
     @Lob
     private String contents;
-    private Long writerId;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+
+    @OneToMany(mappedBy = "question") // (1)
+    private List<Answer> answers = new ArrayList<>(); // (2)
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -32,56 +46,41 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.add(answer);
+    }
+
+    public void addAnswer(User writer, String contents) {
+        answers.add(new Answer(writer, this, contents));
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory delete() throws CannotDeleteException {
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 데이터 입니다.");
+        }
+        this.deleted = true;
+
+        return new DeleteHistory(QUESTION, this.id, this.writer, now());
     }
 
     @Override
@@ -90,7 +89,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
