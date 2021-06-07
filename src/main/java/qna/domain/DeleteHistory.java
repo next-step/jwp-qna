@@ -10,6 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import qna.domain.question.Answer;
+import qna.domain.question.Question;
+
 @Entity
 @Table
 public class DeleteHistory extends AbstractEntity {
@@ -25,10 +28,18 @@ public class DeleteHistory extends AbstractEntity {
 
     protected DeleteHistory() {}
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
+    }
+
+    public DeleteHistory(Question question) {
+        this(ContentType.QUESTION, question.getId(), question.writer());
+    }
+
+    public DeleteHistory(Answer answer) {
+        this(ContentType.ANSWER, answer.getId(), answer.writer());
     }
 
     @Override

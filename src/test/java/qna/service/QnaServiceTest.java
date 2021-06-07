@@ -15,12 +15,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import qna.CannotDeleteException;
-import qna.domain.Answer;
-import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
-import qna.domain.Question;
 import qna.domain.QuestionTest;
 import qna.domain.UserTest;
+import qna.domain.question.Answer;
+import qna.domain.question.Question;
 import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
 
@@ -92,8 +91,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.writer()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.writer())
+                new DeleteHistory(question),
+                new DeleteHistory(answer)
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

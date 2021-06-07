@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.question;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import qna.domain.UpdatableEntity;
+import qna.domain.User;
+import qna.domain.exception.question.AnswerOwnerNotMatchedException;
+import qna.domain.exception.question.QuestionOwnerNotMatchedException;
 
 @Entity
 @Table
@@ -55,18 +60,31 @@ public class Question extends UpdatableEntity {
         return deleted;
     }
 
-    public void delete() {
+    public AnswerList deleteBy(User loginUser) throws QuestionOwnerNotMatchedException, AnswerOwnerNotMatchedException {
+        if (!this.isOwner(loginUser)) {
+            throw new QuestionOwnerNotMatchedException();
+        }
+        for (Answer answer : answers) {
+            answer.deleteBy(loginUser);
+        }
+        AnswerList deletedAnswers = new AnswerList(this.answers);
+        this.answers.clear();
+        delete();
+        return deletedAnswers;
+    }
+
+    private void delete() {
         this.deleted = true;
     }
 
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writer.getId() +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", contents='" + contents + '\'' +
+            ", writerId=" + writer.getId() +
+            ", deleted=" + deleted +
+            '}';
     }
 }
