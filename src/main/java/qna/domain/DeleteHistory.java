@@ -40,6 +40,10 @@ public class DeleteHistory extends BaseEntity {
 		return deletedBy;
 	}
 
+	public Long getContentId() {
+		return contentId;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

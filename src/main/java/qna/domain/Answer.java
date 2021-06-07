@@ -81,8 +81,9 @@ public class Answer extends BaseEntity {
 		return deleted;
 	}
 
-	public void delete() {
+	public DeleteHistory delete() {
 		this.deleted = true;
+		return new DeleteHistory(ContentType.ANSWER, id, writer);
 	}
 
 	@Override
