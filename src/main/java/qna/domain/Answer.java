@@ -73,7 +73,7 @@ public class Answer extends BaseEntity {
     }
 
     public DeleteHistory delete() throws CannotDeleteException {
-        if(isDeleted()) {
+        if (isDeleted()) {
             throw new CannotDeleteException("이미 삭제된 데이터 입니다.");
         }
         this.deleted = true;
