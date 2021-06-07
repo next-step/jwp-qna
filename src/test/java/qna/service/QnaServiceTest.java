@@ -16,10 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import qna.CannotDeleteException;
 import qna.domain.DeleteHistory;
-import qna.domain.QuestionTest;
 import qna.domain.UserTest;
 import qna.domain.question.Answer;
 import qna.domain.question.Question;
+import qna.domain.question.QuestionTest;
 import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
 
@@ -42,7 +42,7 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        question = new Question(UserTest.JAVAJIGI, "title1", "contents1");
         answer = new Answer(UserTest.JAVAJIGI, question, "Answers Contents1");
     }
 

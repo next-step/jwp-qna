@@ -38,14 +38,10 @@ public class Question extends UpdatableEntity {
 
     protected Question() {}
 
-    public Question(String title, String contents) {
+    public Question(User writer, String title, String contents) {
+        this.writer = writer;
         this.title = title;
         this.contents = contents;
-    }
-
-    public Question writeBy(User writer) {
-        this.writer = writer;
-        return this;
     }
 
     public boolean isOwner(User writer) {

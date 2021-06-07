@@ -40,7 +40,7 @@ class AnswerRepositoryTest {
 	void before() throws AnswerOwnerNotMatchedException {
 		User javaJigi = userRepository.save(UserTest.JAVAJIGI);
 		question = questionRepository.save(new Question(
-			"question title", "question contents"
+			javaJigi, "question title", "question contents"
 		));
 		answer = repository.save(new Answer(javaJigi, this.question, notDeletedAnswerContents));
 		deletedAnswer = new Answer(javaJigi, question, "deleted answer contents");
