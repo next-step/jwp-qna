@@ -9,7 +9,6 @@ import java.util.Objects;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-@Table(name = "T_delete_history")
 public class DeleteHistory {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,6 +17,7 @@ public class DeleteHistory {
     private ContentType contentType;
 
     private Long contentId;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User deletedBy;
 

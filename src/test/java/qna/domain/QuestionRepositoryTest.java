@@ -22,7 +22,7 @@ public class QuestionRepositoryTest {
     private QuestionRepository questions;
 
     @Test
-    public void save(){
+    public void save() {
         Question q1 = questions.save(Q1);
 
         entityManager.flush();
@@ -31,7 +31,7 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    public void findByIdAndDeletedFalse(){
+    public void findByIdAndDeletedFalse() {
         Question q1 = questions.save(Q1);
 
         entityManager.flush();

@@ -1,14 +1,17 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "t_answer")
-public class Answer extends BaseEntity{
+public class Answer extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -50,7 +53,7 @@ public class Answer extends BaseEntity{
         return this.user.equals(user);
     }
 
-    public void toQuestion(Question question) {
+    public void question(Question question) {
         this.question = question;
     }
 
@@ -66,20 +69,8 @@ public class Answer extends BaseEntity{
         return user;
     }
 
-    public Long questionId() {
-        return question.id();
-    }
-
-    public void questionId(Question question) {
-        this.question = question;
-    }
-
-    public String contents() {
-        return contents;
-    }
-
-    public void contents(String contents) {
-        this.contents = contents;
+    public Question question() {
+        return question;
     }
 
     public boolean deleted() {
@@ -88,6 +79,16 @@ public class Answer extends BaseEntity{
 
     public void deleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public DeleteHistory delete(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        this.deleted(true);
+
+        return new DeleteHistory(ContentType.ANSWER, this.id(), this.writer (), LocalDateTime.now ());
     }
 
     @Override
