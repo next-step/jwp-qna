@@ -90,7 +90,7 @@ public class Question extends BaseEntity {
     private List<DeleteHistory> deleteAnswers(User writer) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-        for(Answer answer : answers) {
+        for (Answer answer : answers) {
             deleteHistories.add(answer.delete(writer));
         }
 

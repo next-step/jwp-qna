@@ -9,8 +9,7 @@ import qna.UnAuthorizedException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;;
+import static qna.domain.UserTest.SANJIGI;
 
 @DisplayName("Answer 테스트")
 public class AnswerTest {

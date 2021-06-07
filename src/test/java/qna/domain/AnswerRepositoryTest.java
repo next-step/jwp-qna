@@ -58,7 +58,6 @@ class AnswerRepositoryTest {
         // When
         Answer actualResult = answers.findById(expectedResult.getId())
                 .orElseThrow(EntityNotFoundException::new);
-        ;
 
         // Then
         assertThat(actualResult).isEqualTo(expectedResult);
