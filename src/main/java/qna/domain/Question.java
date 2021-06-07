@@ -46,6 +46,11 @@ public class Question extends AbstractEntity {
         answers.deleteAllAndAddHistories(deleteHistories);
     }
 
+    public void validateOwner(User loginUser) throws CannotDeleteException {
+        validateIsOwner(loginUser);
+        validateAnswerOwner(loginUser);
+    }
+
     public void validateAnswerOwner(User loginUser) throws CannotDeleteException {
         answers.validateOwners(loginUser);
     }
