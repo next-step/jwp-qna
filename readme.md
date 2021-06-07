@@ -65,4 +65,4 @@ QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 
   
 ## Feedback 
 - [x] Answer 도메인의 setQuestion 없애기
-- [ ] Answer, Question 도메인이 delete 메소드 실행시 DeleteHistory 인스턴스 반환하기
+- [x] Answer, Question 도메인이 delete 메소드 실행시 DeleteHistory 인스턴스 반환하기
