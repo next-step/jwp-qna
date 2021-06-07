@@ -26,9 +26,4 @@ public class DeleteHistoryService {
     public void save(DeleteHistory deleteHistory) {
         deleteHistoryRepository.save(deleteHistory);
     }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void saveAll_refactor(DeleteHistories deleteHistories) {
-        deleteHistoryRepository.saveAll(deleteHistories.getDeleteHistoryList());
-    }
 }
