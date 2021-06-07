@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import javax.persistence.*;
 
-@Table
 @Entity
 public class DeleteHistory {
 

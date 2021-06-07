@@ -11,7 +11,6 @@ import qna.exceptions.CannotDeleteException;
 import qna.exceptions.UnAuthorizedException;
 import qna.validators.StringValidator;
 
-@Table
 @Entity
 @Where(clause = "deleted=false")
 public class Question extends BaseEntity {
