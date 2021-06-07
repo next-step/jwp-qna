@@ -84,10 +84,10 @@ QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 
   - [ ] 연관 질문이 있는 경우 삭제 하도록 구현 
   - [ ] 처리한 결과로 DeleteHistory 반환
 
-- [ ] Answer에 delete 구현 기능 `
-  - [ ] 삭제시 상태를 변경하도록 구현
-  - [ ] 작성자 본인만 삭제가 가능하도록 구현
-  - [ ] 처리한 결과로 DeleteHistory 반환
+- [x] Answer에 delete 구현 기능 `
+  - [x] 삭제시 상태를 변경하도록 구현
+  - [x] 작성자 본인만 삭제가 가능하도록 구현
+  - [x] 처리한 결과로 DeleteHistory 반환
 
 - [ ] QnAService 세부 구현 변경 `
   - [ ] 1.Question으로 삭제
