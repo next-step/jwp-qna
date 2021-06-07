@@ -4,7 +4,6 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -14,11 +13,11 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
@@ -67,10 +66,6 @@ public class Answer extends BaseEntity {
         return writer;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -88,6 +83,6 @@ public class Answer extends BaseEntity {
 
     public DeleteHistory delete(User loginUser) {
         deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, loginUser, LocalDateTime.now());
+        return DeleteHistory.ofAnswerDeleteHistory(id, loginUser);
     }
 }
