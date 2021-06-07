@@ -26,9 +26,11 @@ class LineRepositoryTest {
 
     @Test
     public void findByNameWithLine() {
-        Station actual = stations.findByName("교대역");
+        saveWithLine();
+        Line line = lines.findById(1L).get();
+        Station actual = stations.findByName("잠실역");
         assertThat(actual).isNotNull();
-        assertThat(actual.getLine().getName()).isEqualTo("3호선");
+        assertThat(actual.getLine().getName()).isEqualTo("2호선");
     }
 
     @Test
