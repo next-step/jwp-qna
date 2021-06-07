@@ -17,13 +17,13 @@ public class BaseTimeEntity {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDateTime modifiedAt;
+    private LocalDateTime updatedAt;
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public LocalDateTime getModifiedAt() {
-        return modifiedAt;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 }
