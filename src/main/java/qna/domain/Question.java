@@ -60,7 +60,8 @@ public class Question extends BaseEntity {
             answer.delete(user,deleteHistories);
         }
         setDeleted(true);
-        deleteHistories.addQuestion(this);
+        DeleteHistory deleteHistory =  new DeleteHistory(ContentType.QUESTION, this.getId(), this.getWriter());
+        deleteHistories.addDeleteHistory(deleteHistory);
     }
 
     public boolean isOwner(User writer) {

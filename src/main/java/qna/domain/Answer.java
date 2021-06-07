@@ -35,7 +35,8 @@ public class Answer extends BaseEntity {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         setDeleted(true);
-        deleteHistories.addAnswer(this);
+        DeleteHistory deleteHistory =  new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter());
+        deleteHistories.addDeleteHistory(deleteHistory);
     }
 
     protected Answer() {
