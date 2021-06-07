@@ -64,6 +64,9 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
+        if(Objects.isNull(this.writer)) {
+            return false;
+        }
         return this.writer.equals(writer);
     }
 
