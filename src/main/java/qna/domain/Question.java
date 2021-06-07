@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.Where;
 
+import qna.exceptions.CannotDeleteException;
 import qna.exceptions.UnAuthorizedException;
 import qna.validators.StringValidator;
 
@@ -91,8 +92,17 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public DeleteHistories delete(User writer) throws CannotDeleteException {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        DeleteHistories deleteHistories = answers.delete(writer);
+
         this.deleted = true;
+        deleteHistories.add(new DeleteHistory(this, writer));
+
+        return deleteHistories;
     }
 
     public List<Answer> getAnswers() {

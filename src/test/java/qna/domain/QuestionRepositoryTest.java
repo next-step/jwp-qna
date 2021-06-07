@@ -14,10 +14,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.exceptions.CannotDeleteException;
 import qna.exceptions.NotFoundException;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -41,10 +45,12 @@ public class QuestionRepositoryTest {
 
     @DisplayName("삭제한 질문으로 변경 후 진행 중인 질문 검색")
     @Test
-    void findAll_AfterDeleteQuestion() {
-        Question question = new Question("title", "contents");
+    void findAll_AfterDeleteQuestion() throws CannotDeleteException {
+        User alice = new User("alice", "password", "Alice", "alice@mail");
+        userRepository.save(alice);
+        Question question = new Question("title", "contents").writeBy(alice);
+        question.delete(alice);
         questionRepository.save(question);
-        question.delete();
 
         List<Question> activeQuestions = questionRepository.findAll();
 
@@ -66,9 +72,11 @@ public class QuestionRepositoryTest {
 
     @DisplayName("삭제한 질문으로 변경 후 진행 중인 질문을 ID로 검색")
     @Test
-    void findById_AfterDeleteQuestion() {
-        Question question = new Question("title", "contents");
-        question.delete();
+    void findById_AfterDeleteQuestion() throws CannotDeleteException {
+        User alice = new User("alice", "password", "Alice", "alice@mail");
+        userRepository.save(alice);
+        Question question = new Question("title", "contents").writeBy(alice);
+        question.delete(alice);
         questionRepository.save(question);
 
         entityManager.clear();
