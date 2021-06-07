@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,6 +23,9 @@ public class QuestionRepositoryTest {
 
     @Autowired
     private AnswerRepository answerRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     private Question question1;
     private Question question2;
@@ -128,7 +133,9 @@ public class QuestionRepositoryTest {
         Answer answer = new Answer(answerWriter, savedQuestion, "Answers Contents");
         answerRepository.save(answer);
 
-        questionRepository.flush();
-        assertThat(savedQuestion.getAnswers().size()).isEqualTo(1);
+        entityManager.clear();
+
+        Question updatedQuestion = questionRepository.findById(1L).get();
+        assertThat(updatedQuestion.getAnswers().size()).isEqualTo(1);
     }
 }
