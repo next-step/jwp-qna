@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 
 public class QuestionTest {
 
@@ -62,11 +63,11 @@ public class QuestionTest {
 
 	@DisplayName("Question Soft delete : delete()")
 	@Test
-	void delete() {
+	void delete() throws CannotDeleteException {
 		//given
 
 		//when
-		questionWrittenByJavajigi.delete();
+		questionWrittenByJavajigi.delete(JAVAJIGI);
 
 		//then
 		assertThat(questionWrittenByJavajigi.isDeleted()).isTrue();

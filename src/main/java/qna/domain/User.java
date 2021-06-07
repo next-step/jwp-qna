@@ -53,6 +53,7 @@ public class User extends BaseEntity {
 
 		this.name = target.name;
 		this.email = target.email;
+		updatedAtNow();
 	}
 
 	private boolean matchUserId(String userId) {
@@ -63,14 +64,6 @@ public class User extends BaseEntity {
 		return this.password.equals(targetPassword);
 	}
 
-	public boolean equalsNameAndEmail(User target) {
-		if (Objects.isNull(target)) {
-			return false;
-		}
-
-		return name.equals(target.name) && email.equals(target.email);
-	}
-
 	public Long id() {
 		return id;
 	}
@@ -79,24 +72,18 @@ public class User extends BaseEntity {
 		return userId;
 	}
 
-	public String password() {
-		return password;
-	}
-
 	public String name() {
 		return name;
 	}
 
 	public void changeName(String name) {
 		this.name = name;
-	}
-
-	public String email() {
-		return email;
+		updatedAtNow();
 	}
 
 	public void changeEmail(String email) {
 		this.email = email;
+		updatedAtNow();
 	}
 
 	@Override

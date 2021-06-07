@@ -174,15 +174,14 @@ public class AnswerRepositoryTest {
 		Answer answerBeforeDelete = answers.findById(expectedAnswerWrittenByJavajigi.id()).get();
 
 		//when
-		answers.delete(expectedAnswerWrittenByJavajigi);
-		answers.flush();
+		answerBeforeDelete.delete();
 		Optional<Answer> afterDeleteAnswerOptional = answers
 			.findById(expectedAnswerWrittenByJavajigi.id());
 
 		//then
 		assertAll(
 			() -> assertThat(answerBeforeDelete).isNotNull(),
-			() -> assertThat(afterDeleteAnswerOptional.isPresent()).isFalse()
+			() -> assertThat(afterDeleteAnswerOptional.get().isDeleted()).isTrue()
 		);
 	}
 }

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
@@ -93,7 +94,7 @@ public class QuestionRepositoryTest {
 
 	@DisplayName("Question Soft delete - 조회 : findByIdAndDeletedFalse(), 수정 : delete()")
 	@Test
-	void setQuestionId() {
+	void softDelete() throws CannotDeleteException {
 		//given
 		Question expectedQuestionWrittenByJavajigi = questions
 			.save(instanceOfQuestionWrittenByJavajigi);
@@ -101,7 +102,7 @@ public class QuestionRepositoryTest {
 		//when
 		Optional<Question> questionWrittenByJavajigiBeforeSoftDelete = questions
 			.findByIdAndDeletedFalse(expectedQuestionWrittenByJavajigi.id());
-		expectedQuestionWrittenByJavajigi.delete();
+		expectedQuestionWrittenByJavajigi.delete(savedJavajigi);
 		Optional<Question> questionWrittenByJavajigiAfterSoftDelete = questions
 			.findByIdAndDeletedFalse(expectedQuestionWrittenByJavajigi.id());
 

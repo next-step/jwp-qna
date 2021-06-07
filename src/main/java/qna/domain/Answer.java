@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -26,7 +27,7 @@ public class Answer extends BaseEntity {
 	private String contents;
 
 	@Column(nullable = false)
-	private boolean deleted = false;
+	private Boolean deleted = Boolean.FALSE;
 
 	@ManyToOne
 	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -65,6 +66,7 @@ public class Answer extends BaseEntity {
 		}
 		question(question);
 		question.addAnswer(this);
+		updatedAtNow();
 	}
 
 	public Long id() {
@@ -77,6 +79,7 @@ public class Answer extends BaseEntity {
 
 	public void writtenBy(User writer) {
 		this.writer = writer;
+		updatedAtNow();
 	}
 
 	public Question question() {
@@ -85,14 +88,17 @@ public class Answer extends BaseEntity {
 
 	public void question(Question question) {
 		this.question = question;
-	}
-
-	public String contents() {
-		return contents;
+		updatedAtNow();
 	}
 
 	public boolean isOwner(User writer) {
 		return this.writer.equals(writer);
+	}
+
+	public void validateIsOwner(User loginUser) throws CannotDeleteException {
+		if (!isOwner(loginUser)) {
+			throw new CannotDeleteException("사용자와 답변의 작성자가 일치하지 않습니다.");
+		}
 	}
 
 	public boolean isDeleted() {
@@ -101,6 +107,7 @@ public class Answer extends BaseEntity {
 
 	public void delete() {
 		this.deleted = true;
+		updatedAtNow();
 	}
 
 	@Override
@@ -108,7 +115,6 @@ public class Answer extends BaseEntity {
 		return "Answer{"
 			+ "id=" + id
 			+ ", writer=" + writer
-			+ ", question=" + question
 			+ ", contents='" + contents + '\''
 			+ ", deleted=" + deleted
 			+ '}';

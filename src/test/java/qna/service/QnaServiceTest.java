@@ -3,11 +3,6 @@ package qna.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.domain.Answer;
 import qna.domain.AnswerRepository;
-import qna.domain.ContentType;
-import qna.domain.DeleteHistory;
+import qna.domain.DeleteHistoryGroup;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.User;
@@ -58,69 +52,58 @@ class QnaServiceTest {
 	@DisplayName("delete_성공")
 	@Test
 	public void deleteSuccess() throws Exception {
-		when(questionRepository.findByIdAndDeletedFalse(questionWrittenByJavajigi.id()))
-			.thenReturn(Optional.of(questionWrittenByJavajigi));
-		when(answerRepository.findByQuestionAndDeletedFalse(questionWrittenByJavajigi))
-			.thenReturn(Arrays.asList(answerWrittenByJavajigi));
+		//given
 
+		//when
 		assertThat(questionWrittenByJavajigi.isDeleted()).isFalse();
-		qnaService.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi.id());
+		qnaService.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi);
 
+		//then
 		assertThat(questionWrittenByJavajigi.isDeleted()).isTrue();
-		verifyDeleteHistories();
+		verifyDeleteHistories(questionWrittenByJavajigi);
 	}
 
 	@DisplayName("delete_다른_사람이_쓴_글")
 	@Test
-	public void deletePostWrittenByTheOthers() throws Exception {
-		when(questionRepository.findByIdAndDeletedFalse(questionWrittenByJavajigi.id()))
-			.thenReturn(Optional.of(questionWrittenByJavajigi));
+	public void deletePostWrittenByTheOthers() {
+		//given
 
-		assertThatThrownBy(() -> qnaService.deleteQuestion(SANJIGI, questionWrittenByJavajigi.id()))
+		//when
+
+		//then
+		assertThatThrownBy(() -> qnaService.deleteQuestion(SANJIGI, questionWrittenByJavajigi))
 			.isInstanceOf(CannotDeleteException.class);
 	}
 
 	@DisplayName("delete_성공_질문자_답변자_같음")
 	@Test
 	public void deleteSamePostByQuestionerAndAnswerer() throws Exception {
-		when(questionRepository.findByIdAndDeletedFalse(questionWrittenByJavajigi.id()))
-			.thenReturn(Optional.of(questionWrittenByJavajigi));
-		when(answerRepository.findByQuestionAndDeletedFalse(questionWrittenByJavajigi))
-			.thenReturn(Arrays.asList(answerWrittenByJavajigi));
+		//when
+		qnaService.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi);
 
-		qnaService.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi.id());
-
+		//then
 		assertThat(questionWrittenByJavajigi.isDeleted()).isTrue();
 		assertThat(answerWrittenByJavajigi.isDeleted()).isTrue();
-		verifyDeleteHistories();
+		verifyDeleteHistories(questionWrittenByJavajigi);
 	}
 
 	@DisplayName("delete_답변_중_다른_사람이_쓴_글")
 	@Test
-	public void deletePostingWrittenByTheOthers() throws Exception {
+	public void deletePostingWrittenByTheOthers() {
+		//given
 		Answer answer2 = new Answer(2L, SANJIGI, questionWrittenByJavajigi, "Answers Contents1");
 		questionWrittenByJavajigi.addAnswer(answer2);
 
-		when(questionRepository.findByIdAndDeletedFalse(questionWrittenByJavajigi.id()))
-			.thenReturn(Optional.of(questionWrittenByJavajigi));
-		when(answerRepository.findByQuestionAndDeletedFalse(questionWrittenByJavajigi)).thenReturn(
-			Arrays.asList(answerWrittenByJavajigi, answer2));
+		//when
 
+		//then
 		assertThatThrownBy(
-			() -> qnaService.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi.id()))
+			() -> qnaService.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi))
 			.isInstanceOf(CannotDeleteException.class);
 	}
 
-	private void verifyDeleteHistories() {
-		List<DeleteHistory> deleteHistories = Arrays.asList(
-			new DeleteHistory(ContentType.QUESTION, questionWrittenByJavajigi.id(),
-				questionWrittenByJavajigi
-					.writer(),
-				LocalDateTime.now()),
-			new DeleteHistory(ContentType.ANSWER, answerWrittenByJavajigi.id(),
-				answerWrittenByJavajigi
-					.writer(), LocalDateTime.now())
-		);
-		verify(deleteHistoryService).saveAll(deleteHistories);
+	private void verifyDeleteHistories(Question question) {
+		DeleteHistoryGroup deleteHistoryGroup = DeleteHistoryGroup.generateByQuestion(question);
+		verify(deleteHistoryService).saveAll(deleteHistoryGroup.deleteHistories());
 	}
 }

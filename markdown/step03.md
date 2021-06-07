@@ -336,28 +336,27 @@ A. Domain Model 영역에서 하는 것이 옳다.
     - [x] 3-1.step03.md 초안 작성
     - [x] 3-2.ATDD 초안 작성
 - [ ] 4.구현
-    - [ ] 4-1.TDD
-        - [ ] 4-1-1.일급컬렉션 적용
-            - [ ] 4-1-1-1.`AnswerGroup`
-        - [ ] 4-1-2.CASCADE 적용
-            - [ ] 4-1-2-1.`Question` : `Answer` 양방향 연관 관계 매핑
-            - [ ] 4-1-2-2.`Question` : CASCADE 적용
-        - [ ] 4-1-3.validation
-            - [ ] 4-1-3-1.`Question` : 삭제 유효성 검사
-                - [ ] 4-1-3-1-1.`Question` : 사용자 동일 유효성 검사
-                - [ ] 4-1-3-1-2.`Question` : 답변 없음 유효성 검사
-                - [ ] 4-1-3-1-3.`Question` : 전체 답변 사용자 동일 유효성 검사
-            - [ ] 4-1-3-2.`Answer` : 삭제 유효성 검사
-                - [ ] 4-1-3-2-1.`Answer` : 사용자 동일 유효성 검사
-            - [ ] 4-1-3-3.`AnswerGroup` : 삭제 유효성 검사
-                - [ ] 4-1-3-3-1.`AnswerGroup` : 사용자 동일 유효성 검사
-                - [ ] 4-1-3-3-2.`AnswerGroup` : 답변 없음 유효성 검사
-                - [ ] 4-1-3-3-3.`AnswerGroup` : 전체 답변 사용자 동일 유효성 검사
-        - [ ] 4-1-4.`repository.delete()` -> soft delete로 변경
-            - [ ] 4-1-4-1.`Question` : 질문 삭제
-            - [ ] 4-1-4-2.`Answer` : 답변 삭제
-            - [ ] 4-1-4-3.`AnswerGroup` : 답변 그룹 삭제
-        - [ ] 4-1-5.`DeleteHistory` : 삭제 완료 후 로깅 처리
+    - [x] 4-1.TDD
+        - [x] 4-1-1.일급컬렉션 적용
+            - [x] 4-1-1-1.`AnswerGroup`
+            - [x] 4-1-1-2.`DeleteHistoryGroup`
+        - [x] 4-1-2.CASCADE 적용
+            - [x] 4-1-2-1.`AnswerGroup` : `Answer`-`Question` 양방향 연관 관계 매핑
+            - [x] 4-1-2-2.`AnswerGroup` : CASCADE 적용
+        - [x] 4-1-3.validation
+            - [x] 4-1-3-1.`Question` : 삭제 유효성 검사
+                - [x] 4-1-3-1-1.`Question` : 사용자 동일 유효성 검사
+                - [x] 4-1-3-1-2.`Question` : 전체 답변 사용자 동일 유효성 검사
+            - [x] 4-1-3-2.`Answer` : 삭제 유효성 검사
+                - [x] 4-1-3-2-1.`Answer` : 사용자 동일 유효성 검사
+            - [x] 4-1-3-3.`AnswerGroup` : 삭제 유효성 검사
+                - [x] 4-1-3-3-1.`AnswerGroup` : 사용자 동일 유효성 검사
+                - [x] 4-1-3-3-2.`AnswerGroup` : 전체 답변 사용자 동일 유효성 검사
+        - [x] 4-1-4.`repository.delete()` -> soft delete로 변경
+            - [x] 4-1-4-1.`Question` : 질문 삭제
+            - [x] 4-1-4-2.`Answer` : 답변 삭제
+            - [x] 4-1-4-3.`AnswerGroup` : 답변 그룹 삭제
+        - [x] 4-1-5.`DeleteHistory` : 삭제 완료 후 로깅 처리
     - [ ] 4-2.추가 리팩터링
         - [ ] 4-2-1.
 - [ ] 5.테스트
