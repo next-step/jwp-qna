@@ -4,6 +4,8 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -22,6 +24,9 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @OneToMany(mappedBy = "question") // (1)
+    private List<Answer> answers = new ArrayList<>(); // (2)
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -49,7 +54,11 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.setQuestion(this);
+        answers.add(answer);
+    }
+
+    public void addAnswer(User writer, String contents) {
+        answers.add(new Answer(writer, this, contents));
     }
 
     public Long getId() {
