@@ -13,18 +13,25 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 class DeleteHistoryRepositoryTest {
 
 	@Autowired
+	UserRepository users;
+
+	@Autowired
 	DeleteHistoryRepository deleteHistories;
+
+	User savedWriter;
 
 	DeleteHistory savedDeleteHistory;
 
 	@BeforeEach
 	void setUp() {
-		savedDeleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+		User user = new User("wrallee", "pasword", "우찬", "wrallee@naver.com");
+		savedWriter = users.save(user);
+		savedDeleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, savedWriter, LocalDateTime.now());
 	}
 
 	@Test
 	void save() {
-		DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+		DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, savedWriter, LocalDateTime.now());
 		DeleteHistory actual = deleteHistories.save(expected);
 		assertSame(expected, actual);
 	}

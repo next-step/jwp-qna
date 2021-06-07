@@ -23,7 +23,7 @@ class UserRepositoryTest {
 
 	@Test
 	void save() {
-		User expected = new User("wrallee", "password", "우찬", "wrallee@gmail.com");
+		User expected = new User("test", "password", "테스트", "test@gmail.com");
 		User actual = users.save(expected);
 		assertSame(expected, actual);
 		assertNotNull(actual.getCreatedAt());

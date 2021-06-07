@@ -2,6 +2,30 @@
 
 ## 요구사항
 
+### Step2
+ - [x] 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+ - [x] 아래의 DDL 요구조건을 만족한다.
+   ```sql
+   alter table answer
+       add constraint fk_answer_to_question
+           foreign key (question_id)
+               references question (id)
+   
+   alter table answer
+       add constraint fk_answer_writer
+           foreign key (writer_id)
+               references user (id)
+   
+   alter table delete_history
+       add constraint fk_delete_history_to_user
+           foreign key (deleted_by_id)
+               references user (id)
+   
+   alter table question
+       add constraint fk_question_writer
+           foreign key (writer_id)
+               references user (id) 
+   ```
 ### Step1
  - [x] 아래의 DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
  - [x] @DataJpaTest를 사용하여 학습 테스트를 해 본다.
