@@ -67,6 +67,10 @@ public class DeleteHistory {
 		return user.getId();
 	}
 
+	public User getDeleter() {
+		return user;
+	}
+
 	public void setDeletedById(User deletedByUser) {
 		this.user = deletedByUser;
 	}
