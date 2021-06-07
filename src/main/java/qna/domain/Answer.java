@@ -1,20 +1,22 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
-public class Answer {
+public class Answer extends BaseEntity {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -23,22 +25,18 @@ public class Answer {
 	@Lob
 	private String contents;
 
-	@Column(name = "created_at", nullable = false)
-	private LocalDateTime createdAt = LocalDateTime.now();
-
 	@Column(nullable = false)
 	private boolean deleted = false;
 
-	@Column(name = "question_id")
-	private Long questionId;
+	@ManyToOne
+	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+	private Question question;
 
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
+	@OneToOne
+	@JoinColumn(name = "wirter_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+	private User writer;
 
-	@Column(name = "wirter_id")
-	private Long writerId;
-
-	public Answer() {
+	protected Answer() {
 	}
 
 	public Answer(User writer, Question question, String contents) {
@@ -56,67 +54,81 @@ public class Answer {
 			throw new NotFoundException();
 		}
 
-		this.writerId = writer.getId();
-		this.questionId = question.getId();
+		this.writer = writer;
+		this.question = question;
 		this.contents = contents;
 	}
 
-	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
-	}
+	public void addQuestion(Question question) {
+		question(question);
+		question.answers().add(this);
+	};
 
-	public void toQuestion(Question question) {
-		this.questionId = question.getId();
-	}
-
-	public Long getId() {
+	public Long id() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public User writer() {
+		return writer;
 	}
 
-	public Long getWriterId() {
-		return writerId;
+	public void writtenBy(User writer) {
+		this.writer = writer;
 	}
 
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
+	public Question question() {
+		return question;
 	}
 
-	public Long getQuestionId() {
-		return questionId;
+	public void question(Question question) {
+		this.question = question;
 	}
 
-	public void setQuestionId(Long questionId) {
-		this.questionId = questionId;
-	}
-
-	public String getContents() {
+	public String contents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
-		this.contents = contents;
+	public boolean isOwner(User writer) {
+		return this.writer.equals(writer);
 	}
 
 	public boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+	public void delete() {
+		this.deleted = true;
 	}
 
 	@Override
 	public String toString() {
 		return "Answer{"
 			+ "id=" + id
-			+ ", writerId=" + writerId
-			+ ", questionId=" + questionId
+			+ ", writer=" + writer
+			+ ", question=" + question
 			+ ", contents='" + contents + '\''
 			+ ", deleted=" + deleted
 			+ '}';
+	}
+
+	@Override
+	public boolean equals(Object obejct) {
+		if (this == obejct) {
+			return true;
+		}
+		if (!(obejct instanceof Answer)) {
+			return false;
+		}
+		Answer answer = (Answer) obejct;
+		return deleted == answer.deleted
+			&& Objects.equals(id, answer.id)
+			&& Objects.equals(contents, answer.contents)
+			&& Objects.equals(question, answer.question)
+			&& Objects.equals(writer, answer.writer);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, contents, deleted, question, writer);
 	}
 }

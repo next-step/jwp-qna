@@ -12,6 +12,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "line_station")
 public class LineStation {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

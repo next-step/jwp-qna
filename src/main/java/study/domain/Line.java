@@ -2,7 +2,6 @@ package study.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +13,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "line")
 public class Line {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -32,11 +32,11 @@ public class Line {
 		this.name = name;
 	}
 
-	public String getName() {
+	public String name() {
 		return this.name;
 	}
 
-	public List<Station> getStations() {
+	public List<Station> stations() {
 		return this.stations;
 	}
 
@@ -47,6 +47,6 @@ public class Line {
 	//1.7.4.4. 연관 관계 편의 메서드
 	public void addStationInteraction(Station station) {
 		stations.add(station);
-		station.setLine(this);
+		station.line(this);
 	}
 }

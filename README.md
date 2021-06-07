@@ -6,3 +6,5 @@
 학습 내용 정리 : [[Markdown 보기]](./markdown/handson_summary.md)
 
 1단계 - 엔티티 매핑 : [[Markdown 보기]](./markdown/step01.md)
+
+2단계 - 연관 관계 매핑 : [[Markdown 보기]](./markdown/step02.md)

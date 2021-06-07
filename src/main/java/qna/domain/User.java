@@ -1,26 +1,19 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
 import qna.UnAuthorizedException;
 
 @Entity
-public class User {
-	public static final GuestUser GUEST_USER = new GuestUser();
+public class User extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@Column(name = "created_at", nullable = false)
-	private LocalDateTime createdAt = LocalDateTime.now();
 
 	@Column(length = 50)
 	private String email;
@@ -31,13 +24,10 @@ public class User {
 	@Column(nullable = false, length = 20)
 	private String password;
 
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
-
 	@Column(name = "user_id", nullable = false, length = 20, unique = true)
 	private String userId;
 
-	public User() {
+	protected User() {
 	}
 
 	public User(String userId, String password, String name, String email) {
@@ -81,47 +71,31 @@ public class User {
 		return name.equals(target.name) && email.equals(target.email);
 	}
 
-	public boolean isGuestUser() {
-		return false;
-	}
-
-	public Long getId() {
+	public Long id() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getUserId() {
+	public String userId() {
 		return userId;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public String getPassword() {
+	public String password() {
 		return password;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getName() {
+	public String name() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void changeName(String name) {
 		this.name = name;
 	}
 
-	public String getEmail() {
+	public String email() {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public void changeEmail(String email) {
 		this.email = email;
 	}
 
@@ -136,10 +110,24 @@ public class User {
 			+ '}';
 	}
 
-	private static class GuestUser extends User {
-		@Override
-		public boolean isGuestUser() {
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) {
 			return true;
 		}
+		if (!(object instanceof User)) {
+			return false;
+		}
+		User user = (User) object;
+		return Objects.equals(id, user.id)
+			&& Objects.equals(email, user.email)
+			&& Objects.equals(name, user.name)
+			&& Objects.equals(password, user.password)
+			&& Objects.equals(userId, user.userId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, email, name, password, userId);
 	}
 }

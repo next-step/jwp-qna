@@ -1,83 +1,41 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
-import java.util.Optional;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJpaTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DeleteHistoryTest {
-	public static DeleteHistory DELETE_HISTORY_1 = new DeleteHistory(ContentType.QUESTION,
-		QuestionTest.Q1.getId(), QuestionTest.Q1.getWriterId(), LocalDateTime.now());
-	public static DeleteHistory DELETE_HISTORY_2 = new DeleteHistory(ContentType.ANSWER,
-		AnswerTest.A2.getId(), AnswerTest.A2.getWriterId(), LocalDateTime.now());
 
-	@Autowired
-	private DeleteHistoryRepository deleteHistories;
+	private Answer answer1;
+	private Question question1;
+	private DeleteHistory deleteHistory;
 
-	@DisplayName("DeleteHistory 저장 : save()")
-	@Test
-	@Order(1)
-	void save() {
-		//given
-
-		//when
-		DeleteHistory actual = deleteHistories.save(DELETE_HISTORY_1);
-		DeleteHistory actual2 = deleteHistories.save(DELETE_HISTORY_2);
-
-		//then
-		assertAll(
-			() -> assertThat(actual.equals(DELETE_HISTORY_1)).isTrue(),
-			() -> assertThat(actual2.equals(DELETE_HISTORY_2)).isTrue()
-		);
+	@BeforeEach
+	void initialize() {
+		question1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+		answer1 = new Answer(UserTest.JAVAJIGI, question1, "Answers Contents1");
+		deleteHistory = new DeleteHistory(ContentType.QUESTION, question1.id(), question1.writer(),
+			LocalDateTime.now());
 	}
 
-	@DisplayName("DeleteHistory 조회 : findById()")
+	@DisplayName("DeleteHistory : equals()")
 	@Test
-	@Order(2)
-	void findById() {
+	void equals() {
 		//given
-		DeleteHistory expected = deleteHistories.save(DELETE_HISTORY_1);
-		DeleteHistory expected2 = deleteHistories.save(DELETE_HISTORY_2);
+		DeleteHistory clonedDeleteHistory = new DeleteHistory(ContentType.QUESTION,
+			question1.id(), question1.writer(), LocalDateTime.now());
+		DeleteHistory deleteHistory2 = new DeleteHistory(ContentType.ANSWER,
+			answer1.id(), answer1.writer(), LocalDateTime.now());
 
 		//when
-		DeleteHistory actual = deleteHistories.findById(expected.getId()).get();
-		DeleteHistory actual2 = deleteHistories.findById(expected2.getId()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(actual.equals(expected)).isTrue(),
-			() -> assertThat(actual2.equals(expected2)).isTrue()
-		);
-	}
-
-	@DisplayName("DeleteHistory 삭제 : delete()")
-	@Test
-	@Order(3)
-	void delete() {
-		//given
-		DeleteHistory expected = deleteHistories.save(DELETE_HISTORY_1);
-		DeleteHistory beforeDeleteDeleteHistory = deleteHistories.findById(expected.getId()).get();
-
-		//when
-		deleteHistories.delete(expected);
-		deleteHistories.flush();
-		Optional<DeleteHistory> afterDeleteDeleteHistoryOptional = deleteHistories.findById(expected.getId());
-
-		//then
-		assertAll(
-			() -> assertThat(beforeDeleteDeleteHistory).isNotNull(),
-			() -> assertThat(afterDeleteDeleteHistoryOptional.isPresent()).isFalse()
+			() -> assertThat(deleteHistory.equals(clonedDeleteHistory)).isTrue(),
+			() -> assertThat(deleteHistory.equals(deleteHistory2)).isFalse()
 		);
 	}
 }

@@ -1,111 +1,69 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.Optional;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJpaTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class QuestionTest {
-	public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-	public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
-	@Autowired
-	private QuestionRepository questions;
+	private Question question1;
 
-	@DisplayName("Question 저장 : save()")
+	@BeforeEach
+	void initialize() {
+		question1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+	}
+
+	@DisplayName("Question : equals()")
 	@Test
 	@Order(1)
-	void save() {
+	void equals() {
 		//given
+		Question clonedQuestion1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+		Question question2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
 
 		//when
-		Question actual = questions.save(Q1);
-		Question actual2 = questions.save(Q2);
 
 		//then
 		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.isOwner(UserTest.JAVAJIGI)).isTrue(),
-			() -> assertThat(actual.getTitle()).isEqualTo(Q1.getTitle()),
-			() -> assertThat(actual.getContents()).isEqualTo(Q1.getContents()),
-			() -> assertThat(actual2.getId()).isNotNull(),
-			() -> assertThat(actual2.isOwner(UserTest.SANJIGI)).isTrue(),
-			() -> assertThat(actual2.getTitle()).isEqualTo(Q2.getTitle()),
-			() -> assertThat(actual2.getContents()).isEqualTo(Q2.getContents())
+			() -> assertThat(question1.equals(clonedQuestion1)).isTrue(),
+			() -> assertThat(question1.equals(question2)).isFalse()
 		);
 	}
 
-	@DisplayName("Question 조회 : findById()")
+	@DisplayName("Question 조회 : addAnswer()")
 	@Test
 	@Order(2)
-	void findById() {
+	void addAnswer() {
 		//given
-		Question expected = questions.save(Q1);
-		Question expected2 = questions.save(Q2);
+		Answer answer1 = new Answer(UserTest.JAVAJIGI, question1, "Answers Contents1");
 
 		//when
-		Question actual = questions.findById(expected.getId()).get();
-		Question actual2 = questions.findById(expected2.getId()).get();
+		question1.addAnswer(answer1);
 
 		//then
 		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.isOwner(UserTest.JAVAJIGI)).isTrue(),
-			() -> assertThat(actual.getTitle()).isEqualTo(Q1.getTitle()),
-			() -> assertThat(actual.getContents()).isEqualTo(Q1.getContents()),
-			() -> assertThat(actual2.getId()).isNotNull(),
-			() -> assertThat(actual2.isOwner(UserTest.SANJIGI)).isTrue(),
-			() -> assertThat(actual2.getTitle()).isEqualTo(Q2.getTitle()),
-			() -> assertThat(actual2.getContents()).isEqualTo(Q2.getContents())
+			() -> assertThat(question1.answers().size()).isEqualTo(1),
+			() -> assertThat(question1.answers().get(0).equals(answer1)).isTrue(),
+			() -> assertThat(answer1.question().equals(question1)).isTrue()
 		);
 	}
 
-	@DisplayName("Question Soft delete - 조회 : findByIdAndDeletedFalse(), 수정 : setDeleted()")
+	@DisplayName("Question Soft delete : delete()")
 	@Test
 	@Order(3)
-	void setQuestionId() {
-		//given
-		Question expected = questions.save(Q1);
-
-		//when
-		Optional<Question> beforeSoftDelete = questions.findByIdAndDeletedFalse(expected.getId());
-		expected.setDeleted(true);
-		Optional<Question> afterSoftDelete = questions.findByIdAndDeletedFalse(expected.getId());
-
-		//then
-		assertAll(
-			() -> assertThat(beforeSoftDelete.isPresent()).isTrue(),
-			() -> assertThat(afterSoftDelete.isPresent()).isFalse()
-		);
-	}
-
-	@DisplayName("Question 삭제 : delete()")
-	@Test
-	@Order(4)
 	void delete() {
 		//given
-		Question expected = questions.save(Q1);
-		Question beforeDeleteQuestion = questions.findById(expected.getId()).get();
 
 		//when
-		questions.delete(expected);
-		questions.flush();
-		Optional<Question> afterDeleteQuestionOptional = questions.findById(expected.getId());
+		question1.delete();
 
 		//then
-		assertAll(
-			() -> assertThat(beforeDeleteQuestion).isNotNull(),
-			() -> assertThat(afterDeleteQuestionOptional.isPresent()).isFalse()
-		);
+		assertThat(question1.isDeleted()).isTrue();
 	}
 }
