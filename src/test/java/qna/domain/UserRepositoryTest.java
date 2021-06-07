@@ -3,24 +3,27 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class UserRepositoryTest {
 
-	public static final User JAVAJIGI = new User("javajigi", "password1", "name1",
-		"javajigi@slipp.net");
-	public static final User SANJIGI = new User("sanjigi", "password2", "name2",
-		"sanjigi@slipp.net");
-
 	@Autowired
 	private UserRepository users;
+	private User instanceJavajigi;
+	private User instanceSanjigi;
+
+	@BeforeEach
+	void initialize() {
+		instanceJavajigi = new User(1L, "javajigi", "password1", "name1",
+			"javajigi@slipp.net");
+		instanceSanjigi = new User(2L, "sanjigi", "password2", "name2",
+			"sanjigi@slipp.net");
+	}
 
 	@DisplayName("User 저장 : save()")
 	@Test
@@ -28,13 +31,13 @@ public class UserRepositoryTest {
 		//given
 
 		//when
-		User actual = users.save(JAVAJIGI);
-		User actual2 = users.save(SANJIGI);
+		User actualJavajigi = users.save(instanceJavajigi);
+		User actualSanjigi = users.save(instanceSanjigi);
 
 		//then
 		assertAll(
-			() -> assertThat(actual).isNotNull(),
-			() -> assertThat(actual2).isNotNull()
+			() -> assertThat(actualJavajigi).isNotNull(),
+			() -> assertThat(actualSanjigi).isNotNull()
 		);
 	}
 
@@ -42,17 +45,17 @@ public class UserRepositoryTest {
 	@Test
 	void findById() {
 		//given
-		User expected = users.save(JAVAJIGI);
-		User expected2 = users.save(SANJIGI);
+		User expectedJavajigi = users.save(instanceJavajigi);
+		User expectedSanjigi = users.save(instanceSanjigi);
 
 		//when
-		User actual = users.findById(expected.id()).get();
-		User actual2 = users.findById(expected2.id()).get();
+		User actualJavajigi = users.findById(expectedJavajigi.id()).get();
+		User actualSanjigi = users.findById(expectedSanjigi.id()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(actual.equals(expected)).isTrue(),
-			() -> assertThat(actual2.equals(expected2)).isTrue()
+			() -> assertThat(actualJavajigi.equals(expectedJavajigi)).isTrue(),
+			() -> assertThat(actualSanjigi.equals(expectedSanjigi)).isTrue()
 		);
 	}
 
@@ -60,41 +63,39 @@ public class UserRepositoryTest {
 	@Test
 	void findByUserId() {
 		//given
-		User expected = users.save(JAVAJIGI);
-		User expected2 = users.save(SANJIGI);
+		User expectedJavajigi = users.save(instanceJavajigi);
+		User expectedSanjigi = users.save(instanceSanjigi);
 
 		//when
-		User actual = users.findByUserId(expected.userId()).get();
-		User actual2 = users.findByUserId(expected2.userId()).get();
+		User actualJavajigi = users.findByUserId(expectedJavajigi.userId()).get();
+		User actualSanjigi = users.findByUserId(expectedSanjigi.userId()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(actual.equals(expected)).isTrue(),
-			() -> assertThat(actual2.equals(expected2)).isTrue()
+			() -> assertThat(actualJavajigi.equals(expectedJavajigi)).isTrue(),
+			() -> assertThat(actualSanjigi.equals(expectedSanjigi)).isTrue()
 		);
 	}
 
-	@DisplayName("User 수정 : setUserId()")
+	@DisplayName("User 수정 : update()")
 	@Test
 	void setUserId() {
 		//given
-		User expected = users.save(JAVAJIGI);
-		User modifiedUser = 유저_이메일_및_이름_수정(expected);
+		User expectedJavajigi = users.save(instanceJavajigi);
+		User modifiedJavajigi = 유저_이메일_및_이름_수정(expectedJavajigi);
 
 		//when
-		expected.update(expected, modifiedUser);
-		User actual = users.findById(modifiedUser.id()).get();
+		expectedJavajigi.update(expectedJavajigi, modifiedJavajigi);
+		User actual = users.findById(modifiedJavajigi.id()).get();
 
 		//then
-		assertThat(actual.equals(modifiedUser)).isTrue();
+		assertThat(actual.equals(modifiedJavajigi)).isTrue();
 	}
 
-	private User 유저_이메일_및_이름_수정(User expected) {
-		User modifiedUser = expected;
-		String modifiedEmail = "test@test.com";
-		String modifiedName = "테스터";
-		modifiedUser.changeEmail(modifiedEmail);
-		modifiedUser.changeName(modifiedName);
+	private User 유저_이메일_및_이름_수정(User targetUser) {
+		User modifiedUser = targetUser;
+		modifiedUser.changeEmail("test@test.com");
+		modifiedUser.changeName("테스터");
 		return modifiedUser;
 	}
 
@@ -102,17 +103,17 @@ public class UserRepositoryTest {
 	@Test
 	void delete() {
 		//given
-		User expected = users.save(JAVAJIGI);
-		User beforeDeleteUser = users.findByUserId(expected.userId()).get();
+		User actualJavajigi = users.save(instanceJavajigi);
 
 		//when
-		users.delete(expected);
-		Optional<User> afterDeleteUserOptional = users.findByUserId(expected.userId());
+		User javajigiBeforeDelete = users.findByUserId(actualJavajigi.userId()).get();
+		users.delete(actualJavajigi);
+		Optional<User> javajigiAfterDelete = users.findByUserId(actualJavajigi.userId());
 
 		//then
 		assertAll(
-			() -> assertThat(beforeDeleteUser).isNotNull(),
-			() -> assertThat(afterDeleteUserOptional.isPresent()).isFalse()
+			() -> assertThat(javajigiBeforeDelete).isNotNull(),
+			() -> assertThat(javajigiAfterDelete.isPresent()).isFalse()
 		);
 	}
 }

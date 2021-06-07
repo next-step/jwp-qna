@@ -81,8 +81,14 @@ public class Question extends BaseEntity {
 	}
 
 	public void addAnswer(Answer answer) {
-		answers.add(answer);
+		if (!answers.contains(answer)) {
+			answers.add(answer);
+		}
 		answer.question(this);
+	}
+
+	public void removeAnswer(Answer answer) {
+		answers.remove(answer);
 	}
 
 	public boolean isDeleted() {

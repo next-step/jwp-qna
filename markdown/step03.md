@@ -210,25 +210,25 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
         - [x] 0-4-6.원본(next-step) git repository에서 merge된 나의 branch(gregolee)를 fetch : `git fetch upstream gregolee`
         - [x] 0-4-7.remote에서 가져온 나의 branch로 rebase : `git rebase upstream/gregolee`
         - [x] 0-4-7.gregolee -> step3로 체크아웃 : `git checkout -b step3`
-    - [ ] 0-5.리뷰어님의 리뷰를 반영한 코드로 수정
-        - [ ] 0-5-1.테스트 메서드 실행 순서가 서로 의존하게 작성하지 않기
-            - [ ] 0-5-1-1.`AnswerTest`
-            - [ ] 0-5-1-2.`AnswerRepositoryTest`
-            - [ ] 0-5-1-3.`DeleteHistoryTest`
-            - [ ] 0-5-1-4.`DeleteHistoryRepositoryTest`
-            - [ ] 0-5-1-5.`QuestionTest`
-            - [ ] 0-5-1-6.`QuestionRepositoryTest`
-            - [ ] 0-5-1-7.`UserTest`
-        - [ ] 0-5-2.클린코드 - 의미있게 구분하라. 그리고 테스트 코드는 이류 시민이 아니다.
-            - [ ] 0-5-2-8.`UserRepositoryTest`
-            - [ ] 0-5-2-1.`AnswerTest`
-            - [ ] 0-5-2-2.`AnswerRepositoryTest`
-            - [ ] 0-5-2-3.`DeleteHistoryTest`
-            - [ ] 0-5-2-4.`DeleteHistoryRepositoryTest`
-            - [ ] 0-5-2-5.`QuestionTest`
-            - [ ] 0-5-2-6.`QuestionRepositoryTest`
-            - [ ] 0-5-2-7.`UserTest`
-            - [ ] 0-5-2-8.`UserRepositoryTest`
+    - [x] 0-5.리뷰어님의 리뷰를 반영한 코드로 수정
+        - [x] 0-5-1.테스트 메서드 실행 순서가 서로 의존하게 작성하지 않기
+            - [x] 0-5-1-1.`AnswerTest`
+            - [x] 0-5-1-2.`AnswerRepositoryTest`
+            - [x] 0-5-1-3.`DeleteHistoryTest`
+            - [x] 0-5-1-4.`DeleteHistoryRepositoryTest`
+            - [x] 0-5-1-5.`QuestionTest`
+            - [x] 0-5-1-6.`QuestionRepositoryTest`
+            - [x] 0-5-1-7.`UserTest`
+            - [x] 0-5-1-8.`UserRepositoryTest`
+        - [x] 0-5-2.클린코드 - 의미있게 구분하라. 그리고 테스트 코드는 이류 시민이 아니다.
+            - [x] 0-5-2-1.`AnswerTest`
+            - [x] 0-5-2-2.`AnswerRepositoryTest`
+            - [x] 0-5-2-3.`DeleteHistoryTest`
+            - [x] 0-5-2-4.`DeleteHistoryRepositoryTest`
+            - [x] 0-5-2-5.`QuestionTest`
+            - [x] 0-5-2-6.`QuestionRepositoryTest`
+            - [x] 0-5-2-7.`UserTest`
+            - [x] 0-5-2-8.`UserRepositoryTest`
 - [ ] 1.자바 코드 컨벤션을 위한 세팅
     - [ ] 1-1.[gradle-editorconfig](https://naver.github.io/hackday-conventions-java/#editorconfig) 적용
     - [ ] 1-2.[Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) 적용

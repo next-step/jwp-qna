@@ -55,13 +55,16 @@ public class Answer extends BaseEntity {
 		}
 
 		this.writer = writer;
-		this.question = question;
+		changeQuestion(question);
 		this.contents = contents;
 	}
 
-	public void addQuestion(Question question) {
+	public void changeQuestion(Question question) {
+		if (!Objects.isNull(this.question)) {
+			this.question.removeAnswer(this);
+		}
 		question(question);
-		question.answers().add(this);
+		question.addAnswer(this);
 	};
 
 	public Long id() {
