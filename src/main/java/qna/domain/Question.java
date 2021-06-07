@@ -98,9 +98,9 @@ public class Question extends BaseEntity {
         }
 
         DeleteHistories deleteHistories = answers.delete(writer);
+        deleteHistories.add(new DeleteHistory(this, writer));
 
         this.deleted = true;
-        deleteHistories.add(new DeleteHistory(this, writer));
 
         return deleteHistories;
     }

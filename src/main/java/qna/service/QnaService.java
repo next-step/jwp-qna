@@ -33,6 +33,6 @@ public class QnaService {
 
         DeleteHistories deleteHistories = question.delete(loginUser);
 
-        deleteHistoryService.saveAll(deleteHistories.getDeleteHistories());
+        deleteHistoryService.saveAll(deleteHistories.toList());
     }
 }
