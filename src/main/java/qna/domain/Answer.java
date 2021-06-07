@@ -84,10 +84,6 @@ public class Answer {
 		return id;
 	}
 
-	public Long getWriterId() {
-		return user.getId();
-	}
-
 	public User getWriter() {
 		return this.user;
 	}

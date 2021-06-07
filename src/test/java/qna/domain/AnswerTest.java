@@ -19,6 +19,19 @@ public class AnswerTest {
 	private QuestionRepository questions;
 
 	@Test
+	@DisplayName("답변을 조회하고 연관된 질문 및 작성자를 조회")
+	void select_not_deleted_question_with_writer() {
+		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+		User saveJavajigi = users.save(JAVAJIGI);
+		Question Q1 = new Question("title1", "contents1").writtenBy(saveJavajigi);
+		Question saveQ1 = questions.save(Q1);
+		Answer saveA1 = answers.save(new Answer(saveJavajigi, saveQ1, "Answers Contents1"));
+
+		assertThat(saveA1.getWriter().getUserId()).isEqualTo("javajigi");
+		assertThat(saveA1.getQuestion().getTitle()).isEqualTo("title1");
+	}
+
+	@Test
 	@DisplayName("jpa 데이터 인서트")
 	void save() {
 		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
