@@ -22,6 +22,9 @@ class QuestionRepositoryTest {
     @Autowired
     private UserRepository users;
 
+    private User javajigi;
+    private User sanjigi;
+
     private Question question1;
     private Question question2;
 
@@ -30,18 +33,18 @@ class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() throws CannotDeleteException {
-        User javajigi = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
-        User sanjigi = users.save(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
+        javajigi = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        sanjigi = users.save(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
 
         question1 = questions.save(new Question("title1", "contents1").writeBy(javajigi));
         question2 = questions.save(new Question("title2", "contents2").writeBy(sanjigi));
 
         deletedQuestion1 = new Question("deleted question title1", "deleted question content1").writeBy(sanjigi);
-        deletedQuestion1.delete();
+        deletedQuestion1.delete(sanjigi);
         deletedQuestion1 = questions.save(deletedQuestion1);
 
         deletedQuestion2 = new Question("deleted question title2", "deleted question content2").writeBy(sanjigi);
-        deletedQuestion2.delete();
+        deletedQuestion2.delete(sanjigi);
         deletedQuestion2 = questions.save(deletedQuestion2);
     }
 
