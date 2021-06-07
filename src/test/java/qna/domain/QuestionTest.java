@@ -18,10 +18,7 @@ public class QuestionTest {
 	@Test
 	@DisplayName("연관관계 제거")
 	void delete_writer() {
-		User JAVAJIGI = makeJavajigi();
-		User saveJavajigi = users.save(JAVAJIGI);
-		Question Q1 = new Question("title1", "contents1").writtenBy(saveJavajigi);
-		Question saveQ1 = questions.save(Q1);
+		Question saveQ1 = saveQ1(saveJavajigi());
 
 		Question expected = questions.findById(saveQ1.getId()).get();
 		expected.setWriter(null);
@@ -32,14 +29,8 @@ public class QuestionTest {
 	@Test
 	@DisplayName("작성자 업데이트 확인")
 	void update_writer() {
-		User JAVAJIGI = makeJavajigi();
-		User saveJavajigi = users.save(JAVAJIGI);
-		Question Q1 = new Question("title1", "contents1").writtenBy(saveJavajigi);
-		Question saveQ1 = questions.save(Q1);
-
-		User SANJIGI = makeSanjigi();
-		User saveSanjigi = users.save(SANJIGI);
-		saveQ1.setWriter(saveSanjigi);
+		Question saveQ1 = saveQ1(saveJavajigi());
+		saveQ1.setWriter(saveSanjigi());
 
 		Question expected = questions.findById(saveQ1.getId()).get();
 
@@ -49,7 +40,7 @@ public class QuestionTest {
 	@Test
 	@DisplayName("user 를 만들지 않고 question 을 넣으면 에러 발생")
 	void fk_error() {
-		User JAVAJIGI = makeJavajigi();
+		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
 		Question Q1 = new Question("title1", "contents1").writtenBy(JAVAJIGI);
 
 		assertThatThrownBy(() -> questions.save(Q1)).isInstanceOf(RuntimeException.class);
@@ -58,10 +49,7 @@ public class QuestionTest {
 	@Test
 	@DisplayName("질문을 조회하고 해당 질문의 작성자를 조회함")
 	void select_not_deleted_question_with_writer() {
-		User JAVAJIGI = makeJavajigi();
-		User saveJavajigi = users.save(JAVAJIGI);
-		Question Q1 = new Question("title1", "contents1").writtenBy(saveJavajigi);
-		Question saveQ1 = questions.save(Q1);
+		Question saveQ1 = saveQ1(saveJavajigi());
 
 		Question question = questions.findByIdAndDeletedFalse(saveQ1.getId()).get();
 
@@ -71,15 +59,8 @@ public class QuestionTest {
 	@Test
 	@DisplayName("jpa 작성 메소드 사용(findByTitleContainingOrderByIdDesc)")
 	void select_start_with_order_by_id_desc() {
-		User JAVAJIGI = makeJavajigi();
-		User saveJavajigi = users.save(JAVAJIGI);
-		User SANJIGI = makeSanjigi();
-		User saveSanjigi = users.save(SANJIGI);
-		Question Q1 = new Question("title1", "contents1").writtenBy(saveJavajigi);
-		Question Q2 = new Question("title2", "contents2").writtenBy(saveSanjigi);
-
-		Question saveQ1 = questions.save(Q1);
-		Question saveQ2 = questions.save(Q2);
+		Question saveQ1 = saveQ1(saveJavajigi());
+		Question saveQ2 = saveQ2(saveSanjigi());
 
 		assertThat(questions.findByTitleContainingOrderByIdDesc("title").get(0)).isEqualTo(
 			questions.findById(saveQ2.getId()).get());
@@ -88,13 +69,7 @@ public class QuestionTest {
 	@Test
 	@DisplayName("jpa 작성 메소드 사용(findByDeletedFalse)")
 	void use_written_method_findByDeletedFalse() {
-		questions.deleteAll();
-		questions.flush();
-		users.deleteAll();
-		users.flush();
-
-		User JAVAJIGI = makeJavajigi();
-		User saveJavajigi = users.save(JAVAJIGI);
+		User saveJavajigi = saveJavajigi();
 		Question Q1 = new Question("title1", "contents1").writtenBy(saveJavajigi);
 		Q1.setDeleted(true);
 		questions.save(Q1);
@@ -107,10 +82,7 @@ public class QuestionTest {
 	@Test
 	@DisplayName("jpa 작성 메소드 사용(findByIdAndDeletedFalse)")
 	void use_written_method_findByIdAndDeletedFalse() {
-		User JAVAJIGI = makeJavajigi();
-		User saveJavajigi = users.save(JAVAJIGI);
-		Question Q1 = new Question("title1", "contents1").writtenBy(saveJavajigi);
-		Question saveQ1 = questions.save(Q1);
+		Question saveQ1 = saveQ1(saveJavajigi());
 
 		assertThat(questions.findByIdAndDeletedFalse(saveQ1.getId())).isEqualTo(questions.findById(saveQ1.getId()));
 
@@ -118,11 +90,23 @@ public class QuestionTest {
 		assertThat(questions.findByIdAndDeletedFalse(saveQ1.getId()).isPresent()).isFalse();
 	}
 
-	private User makeJavajigi() {
-		return new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+	private User saveJavajigi() {
+		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+		return users.save(JAVAJIGI);
 	}
 
-	private User makeSanjigi() {
-		return new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+	private User saveSanjigi() {
+		User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+		return users.save(SANJIGI);
+	}
+
+	private Question saveQ1(User user) {
+		Question Q1 = new Question("title1", "contents1").writtenBy(user);
+		return questions.save(Q1);
+	}
+
+	private Question saveQ2(User user) {
+		Question Q2 = new Question("title2", "contents2").writtenBy(user);
+		return questions.save(Q2);
 	}
 }
