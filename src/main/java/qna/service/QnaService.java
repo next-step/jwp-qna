@@ -49,7 +49,7 @@ public class QnaService {
         DeleteHistory questionDeleteHistory = question.delete();
         deleteHistories.add(questionDeleteHistory);
         for (Answer answer : answers) {
-            DeleteHistory answerDeleteHistory = answer.delete();
+            DeleteHistory answerDeleteHistory = answer.delete(loginUser);
             deleteHistories.add(answerDeleteHistory);
         }
         deleteHistoryService.saveAll(deleteHistories);

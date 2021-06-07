@@ -27,6 +27,8 @@ class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questions;
 
+    private User user;
+
     private Answer answer1;
     private Answer answer2;
 
@@ -36,7 +38,7 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        User user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
 
         question = question = questions.save(new Question("title1", "contents1").writeBy(user));
 
@@ -67,7 +69,7 @@ class AnswerRepositoryTest {
     void findByQuestionIdAndDeletedFalse_정상_삭제_되지_않은_데이터만_조회() throws CannotDeleteException {
         // Given
         final int expectedResult = 2;
-        deletingAnswer1.delete();
+        deletingAnswer1.delete(user);
         answers.save(deletingAnswer1);
 
         // When
@@ -94,7 +96,7 @@ class AnswerRepositoryTest {
     @DisplayName("findByIdAndDeletedFalse_오류_데이터_없음")
     void findByIdAndDeletedFalse_오류_데이터_없음() throws CannotDeleteException {
         // Given
-        deletingAnswer1.delete();
+        deletingAnswer1.delete(user);
         answers.save(deletingAnswer1);
 
         // When

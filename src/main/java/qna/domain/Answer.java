@@ -72,10 +72,13 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public DeleteHistory delete() throws CannotDeleteException {
+    public DeleteHistory delete(User writer) throws CannotDeleteException {
         if (isDeleted()) {
             throw new CannotDeleteException("이미 삭제된 데이터 입니다.");
+        } else if (!isOwner(writer)) {
+            throw new UnAuthorizedException("답변을 삭제할 권한이 없습니다.");
         }
+
         this.deleted = true;
 
         return new DeleteHistory(ANSWER, this.id, this.writer, now());
