@@ -30,11 +30,13 @@ public class Answer extends BaseEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    public void delete(User writer) {
+    public void delete(User writer, DeleteHistories deleteHistories) {
         if (!isOwner(writer)) {
-            throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         setDeleted(true);
+        DeleteHistory deleteHistory =  new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter());
+        deleteHistories.addDeleteHistory(deleteHistory);
     }
 
     protected Answer() {

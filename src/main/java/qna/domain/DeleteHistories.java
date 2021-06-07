@@ -15,6 +15,10 @@ public class DeleteHistories {
     public DeleteHistories() {
     }
 
+    public DeleteHistories(List<DeleteHistory> deleteHistories) {
+        this.deletedHistories = deleteHistories;
+    }
+
     public List<DeleteHistory> getDeletedHistories() {
         return deletedHistories;
     }
@@ -35,4 +39,9 @@ public class DeleteHistories {
     public int hashCode() {
         return Objects.hash(deletedHistories);
     }
+
+    public void addDeleteHistory(DeleteHistory deleteHistory) {
+        this.deletedHistories.add(deleteHistory);
+    }
+
 }

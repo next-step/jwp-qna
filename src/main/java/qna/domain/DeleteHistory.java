@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static java.time.LocalDateTime.now;
+
 @Entity
 @Table(name = "delete_history")
 public class DeleteHistory {
@@ -19,11 +21,8 @@ public class DeleteHistory {
     @Column(name = "content_id")
     private Long contentId;
 
-//    @Column(name = "deleted_by_id")
-//    private Long deletedById;
-
     @Column(name = "create_date")
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate = now();
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,12 +32,15 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-
     public DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.user = user;
         this.createDate = createDate;
+    }
+
+    public DeleteHistory(ContentType question, Long id, User writer) {
+        this(question,id,writer,now());
     }
 
     public void setId(Long id) {

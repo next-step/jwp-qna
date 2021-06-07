@@ -22,7 +22,7 @@ class AnswerRepositoryTest {
     private QuestionRepository questions;
 
     @Autowired
-    private DeleteHistoryRepository deleteHistories;
+    private DeleteHistoryRepository deleteHistoryRepository;
 
 
     private User u1;
@@ -82,10 +82,12 @@ class AnswerRepositoryTest {
     @DisplayName("답변을 성공적으로 지우는 테스트")
     void deleteAnswerSuccess() {
         Answer expected = new Answer(u1,q1,"contents");
-        expected.delete(u1);
 
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, expected.getId(), u1,now());
-        deleteHistories.save(deleteHistory);
+        DeleteHistories deleteHistories = new DeleteHistories();
+
+        expected.delete(u1,deleteHistories);
+
+        deleteHistoryRepository.saveAll(deleteHistories.getDeletedHistories());
     }
 
 
@@ -96,7 +98,8 @@ class AnswerRepositoryTest {
         User u2 = new User("baek", "password", "temp", "beck33@naver.com");
 
 
-        assertThatThrownBy(() -> expected.delete(u2))
+        DeleteHistories deleteHistories = new DeleteHistories();
+        assertThatThrownBy(() -> expected.delete(u2,deleteHistories))
                 .isInstanceOf(CannotDeleteException.class);
 
     }
