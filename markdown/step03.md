@@ -271,9 +271,9 @@ public enum CascadeType {
 #### 2.1.4. 래거시 코드 리팩토링하기
 
 ![image](../documents/step03/kisspng-spring-framework-web-application-modelviewco.png)
-출처 : https://www.cleanpng.com/png-spring-framework-web-application-modelviewco-2844098/
+<br>출처 : https://www.cleanpng.com/png-spring-framework-web-application-modelviewco-2844098/
 
-Q. Layered Architecture 기반 하에서 핵심 비즈니스 로직은 어디에 구현하는 것이 옮은가?
+Q. Layered Architecture 기반 하에서 핵심 비즈니스 로직은 어디에 구현하는 것이 옮은가?<br>
 A. Domain Model 영역에서 하는 것이 옳다.
 
 > Mockito는 최대한 늦게 하는 것을 권장(포비님 말씀)
@@ -335,11 +335,44 @@ A. Domain Model 영역에서 하는 것이 옳다.
 - [x] 3.분석 및 설계
     - [x] 3-1.step03.md 초안 작성
 - [ ] 4.구현
-    - [ ] 4-1.
+    - [ ] 4-1.TDD
+        - [ ] 4-1-1.일급컬렉션 적용
+            - [ ] 4-1-1-1.`AnswerGroup`
+        - [ ] 4-1-2.CASCADE 적용
+            - [ ] 4-1-2-1.`Question` : `Answer` 양방향 연관 관계 매핑
+            - [ ] 4-1-2-2.`Question` : CASCADE 적용
+        - [ ] 4-1-3.validation
+            - [ ] 4-1-3-1.`Question` : 삭제 유효성 검사
+                - [ ] 4-1-3-1-1.`Question` : 사용자 동일 유효성 검사
+                - [ ] 4-1-3-1-2.`Question` : 답변 없음 유효성 검사
+                - [ ] 4-1-3-1-3.`Question` : 전체 답변 사용자 동일 유효성 검사
+            - [ ] 4-1-3-2.`Answer` : 삭제 유효성 검사
+                - [ ] 4-1-3-2-1.`Answer` : 사용자 동일 유효성 검사
+            - [ ] 4-1-3-3.`AnswerGroup` : 삭제 유효성 검사
+                - [ ] 4-1-3-3-1.`AnswerGroup` : 사용자 동일 유효성 검사
+                - [ ] 4-1-3-3-2.`AnswerGroup` : 답변 없음 유효성 검사
+                - [ ] 4-1-3-3-3.`AnswerGroup` : 전체 답변 사용자 동일 유효성 검사
+        - [ ] 4-1-4.`repository.delete()` -> soft delete로 변경
+            - [ ] 4-1-4-1.`Question` : 질문 삭제
+            - [ ] 4-1-4-2.`Answer` : 답변 삭제
+            - [ ] 4-1-4-3.`AnswerGroup` : 답변 그룹 삭제
+        - [ ] 4-1-5.`DeleteHistory` : 삭제 완료 후 로깅 처리
+    - [ ] 4-2.추가 리팩터링
+        - [ ] 4-2-1.
 - [ ] 5.테스트
     - [ ] 5-1.Gradle build Success 확인
-    - [ ] 5-2.요구사항 조건들 충족했는지 확인
-        - [ ] 5-2-1.핵심 단위 로직 테스트
+    - [ ] 5-2.Google Java Style 적용 (indent : 2 -> 4 spaces)
+    - [ ] 5-3.요구사항 조건들 충족했는지 확인
+        - [ ] 5-3-1.핵심 단위 로직 테스트
+        - [ ] 5-3-2.< 2 Depth 규칙
+        - [ ] 5-3-3.함수(또는 메서드) 10라인 이하
+        - [ ] 5-3-4.else 예약어 금지
+        - [ ] 5-3-5.Code값들은 `enum`을 활용한다.
+        - [ ] 5-3-6.모든 원시값과 문자열을 포장한다.
+        - [ ] 5-3-7.일급콜렉션 활용
+        - [ ] 5-3-8.축약 금지
+        - [ ] 5-3-9.예외 처리
+        - [ ] 5-3-10.3항 연산자 금지
 - [ ] 6.인수인계
     - [ ] 6-1.소감 및 피드백 정리
         - [ ] 6-1-1.느낀점 & 배운점 작성
