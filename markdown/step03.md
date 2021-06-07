@@ -189,6 +189,103 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
 - **무책임하게 상위 메서드로 `throw`를 던지는 행위는 하지 않는 것**이 좋습니다. 상위 메서드들의 책임이 그만큼 증가하기 때문입니다.
 - `Checked Exception`은 기본 트랜잭션의 속성에서는 `rollback`을 진행하지 않는 점도 알고 있어야 실수를 방지할 수 있습니다.
 
+#### 2.1.3. 영속성 전이 : CASCADE
+
+> 출처 : 자바 ORM 표준 JPA 프로그래밍 (저 : 김영한)
+
+- 영속성 전이(Transitive Persistence)
+    - 특정 엔티티를 영속 상태로 만들 때 연관된 엔티티도 함께 영속 상태로 만들고 싶을때 사용
+    - JPA는 `CASCADE`옵션으로 영속성 전이를 제공
+    - 부모 엔티티를 저장할 때 자식 엔티티도 함께 저장
+- 사용 전
+    - 엔티티를 저장할 때 연관된 모든 엔티티는 영속 상태여야 한다.
+    - 부모 엔티티를 영속 상태로 만들고 자식 엔티티도 각각 영속 상태로 만든다.
+
+```java
+void 영속성_전이_미활용(EntityManager em) {
+    //저녁식사
+    Dinner dinner = new Dinner();
+    em.persist(dinner);
+    
+    //요리1 객체
+    Dish dish1 = new Dish();
+    dish1.setDinner(dinner);
+    dinner.getDishes().add(dish1);
+    em.persist(dish1);
+    
+    //요리2 객체
+    Dish dish2 = new Dish();
+    dish2.setDinner(dinner);
+    dinner.getDishes().add(dish2);
+    em.persist(dish2);
+}
+```    
+
+- 사용 후
+    - 부모만 영속 상태로 만들면 연관된 자식까지 한 번에 영속 상태로 만들 수 있다.
+
+```java
+@Entity
+public class Dinner {
+	...
+    @OneToMany(mappedBy = "dinner", cascade = CascadeType.PERSIST)
+    private List<Dish> dishes = new ArrayList<>();
+    ...
+}
+```
+
+```java
+void 영속성_전이_활용(EntityManager em) {
+    Dish dish1 = new Dish();
+    Dish dish2 = new Dish();
+
+    Dinner dinner = new Dinner();
+    dish1.setDinner(dinner);
+    dish2.setDinner(dinner);
+    dinner.getDishes().add(dish1);
+    dinner.getDishes().add(dish2);
+    
+    em.persist(dish2);
+}
+```    
+
+- `CASCADE` 종류
+    - `CascadeType` 코드
+
+```java
+public enum CascadeType {
+	ALL,        //모두 적용
+	PERSIST,    //영속 
+	MERGE,      //병합 
+	REMOVE,     //삭제
+	REFRESH,    //REFRESH
+	DETACH,     //DETACH
+}
+```
+
+> 다음처럼 여러 속성을 같이 활용 가능
+> <br>`cascade = {CascadeType.PERSIST, CascadeType.REMOVE}`
+
+> 참고로 `CascadeType.PERSIST`, `CascadeType.REMOVE`는 `em.persist()`, `em.remove()`를 실행할 때 바로 전이가 발생하지 않고 플러시를 호출할 때 전이가 발생한다.
+
+#### 2.1.4. 래거시 코드 리팩토링하기
+
+![image](../documents/step03/kisspng-spring-framework-web-application-modelviewco.png)
+출처 : https://www.cleanpng.com/png-spring-framework-web-application-modelviewco-2844098/
+
+Q. Layered Architecture 기반 하에서 핵심 비즈니스 로직은 어디에 구현하는 것이 옮은가?
+A. Domain Model 영역에서 하는 것이 옳다.
+
+> Mockito는 최대한 늦게 하는 것을 권장(포비님 말씀)
+
+- 래거시 코드 리팩토링
+    - 응용 애플리케이션(웹, 모바일 애플리케이션)을 개발할 때 TDD, OOP를 적용하려면 핵심 비즈니스 로직을 도메인 객체가 담당하도록 구현하는 것
+    - 테스트하기 쉬운 부분과 테스트하기 어려운 부분을 분리해 테스트하기 쉬운 부분에 대한 단위테스트를 구현하고, 지속적인 리팩토링
+- 단계별 진행 방법
+    - 1단계
+        - Service Layer 에 단위테스트를 추가한 후 비즈니스 로직을 도메인 객체로 이동하는 리팩토링
+        - Acceptance Test를 추가한 후 리팩토링
+
 ### 2.2. Todo List
 
 - [x] 0.기본 세팅
@@ -258,11 +355,11 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
 
 #### 3.1.1. 느낀점
 
-- 
+-
 
 #### 3.1.2. 배운점
 
-- 
+-
 
 ### 3.2. 피드백 요청
 
