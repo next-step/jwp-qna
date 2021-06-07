@@ -27,7 +27,7 @@ public class AnswerRepositoryTest {
     @BeforeEach
     void setUp() {
         savedUser = users.save(new User("fdevjc", "password", "yang", "email@email.com"));
-        savedQuestion = questions.save(new Question("title1", "content1").writeBy(savedUser));
+        savedQuestion = questions.save(new Question(new Title("title1"), "content1").writeBy(savedUser));
         savedAnswer = answers.save(new Answer(savedUser, savedQuestion, "contents"));
     }
 

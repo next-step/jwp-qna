@@ -25,7 +25,7 @@ public class QuestionRepositoryTest {
     @BeforeEach
     void setUp() {
         savedUser = users.save(new User("fdevjc", "password", "yang", "email@email.com"));
-        savedQuestion = questions.save(new Question("title1", "content1").writeBy(savedUser));
+        savedQuestion = questions.save(new Question(new Title("title1"), "content1").writeBy(savedUser));
     }
 
     @Test
@@ -41,7 +41,7 @@ public class QuestionRepositoryTest {
         );
 
         //when
-        expected.setDeleted(true);
+        expected.delete(savedUser);
         List<Question> expectedNotFind = questions.findByDeletedFalse();
 
         //then

@@ -9,8 +9,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question(new Title("title1"), "contents1").writeBy(UserTest.JAVAJIGI);
+    public static final Question Q2 = new Question(new Title("title2"), "contents2").writeBy(UserTest.SANJIGI);
 
     @Test
     @DisplayName("질문을 삭제할경우 삭제히스토리를 반환하며 질문의 deleted값이 true가 된다")
@@ -44,7 +44,7 @@ public class QuestionTest {
         //given
         User loginAndQuestionWriterUser = UserTest.JAVAJIGI;
         User answerWriterUser = UserTest.SANJIGI;
-        Question question = new Question("자바지기작성_제목", "자바지기작성_내용").writeBy(loginAndQuestionWriterUser);
+        Question question = new Question(new Title("자바지기작성_제목"), "자바지기작성_내용").writeBy(loginAndQuestionWriterUser);
         Answer answer = new Answer(answerWriterUser, question, "산지기_답변");
         question.addAnswer(answer);
 

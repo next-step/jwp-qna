@@ -26,7 +26,6 @@ class AnswersTest {
     void isDeletable_삭제가능한경우() {
         //given
         List<Answer> answerList = Arrays.asList(AnswerTest.A1,AnswerTest.A1);
-        System.out.println("answerList.size() = " + answerList.size());
         Answers answers = new Answers(answerList);
 
         //when && then
@@ -38,7 +37,6 @@ class AnswersTest {
     void isDeletable_답변이없는경우() {
         //given
         List<Answer> answerList = new ArrayList<>();
-        System.out.println("answerList.size() = " + answerList.size());
         Answers answers = new Answers(answerList);
 
         //when && then
@@ -50,7 +48,6 @@ class AnswersTest {
     void delete() {
         //given
         List<Answer> answerList = Arrays.asList(AnswerTest.A1,AnswerTest.A1);
-        System.out.println("answerList.size() = " + answerList.size());
         Answers answers = new Answers(answerList);
 
         //when
