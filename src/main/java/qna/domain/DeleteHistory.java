@@ -37,7 +37,6 @@ public class DeleteHistory {
 	private User user;
 
 	protected DeleteHistory() {
-
 	}
 
 	public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
@@ -71,7 +70,7 @@ public class DeleteHistory {
 		return user;
 	}
 
-	public void setDeletedById(User deletedByUser) {
+	public void setDeletedByUser(User deletedByUser) {
 		this.user = deletedByUser;
 	}
 

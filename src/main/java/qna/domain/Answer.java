@@ -49,7 +49,6 @@ public class Answer {
 	private User user;
 
 	protected Answer() {
-
 	}
 
 	public Answer(User writer, Question question, String contents) {

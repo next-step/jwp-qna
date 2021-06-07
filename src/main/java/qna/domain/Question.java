@@ -44,7 +44,6 @@ public class Question {
 	private User user;
 
 	protected Question() {
-
 	}
 
 	public Question(String title, String contents) {
@@ -101,5 +100,18 @@ public class Question {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	@Override
+	public String toString() {
+		return "Question{" +
+			"id=" + id +
+			", contents='" + contents + '\'' +
+			", createAt=" + createAt +
+			", deleted=" + deleted +
+			", title='" + title + '\'' +
+			", updatedAt=" + updatedAt +
+			", user=" + user +
+			'}';
 	}
 }
