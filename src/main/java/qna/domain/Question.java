@@ -28,8 +28,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
 
@@ -54,6 +54,11 @@ public class Question extends BaseEntity {
         answer.toQuestion(this);
     }
 
+    public void addAnswers(Answers answers) {
+        this.answers.add(answers);
+        this.answers.toQuestion(this);
+    }
+
     public Long getId() {
         return id;
     }
@@ -74,16 +79,15 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+    public void delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         this.deleted = true;
-
-        return new DeleteHistory(ContentType.QUESTION, this, LocalDateTime.now());
+        this.answers.delete(loginUser);
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 

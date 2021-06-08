@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 import qna.CannotDeleteException;
 
 import javax.persistence.EntityManager;
@@ -12,6 +13,7 @@ import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
@@ -108,8 +110,8 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("답변 삭제 테스트")
-    void deleteAnswerTest() throws CannotDeleteException {
+    @DisplayName("단일 질문 삭제 테스트")
+    void deleteSingleQuestionTest() throws CannotDeleteException {
         Question savedQuestion = questionRepository.save(question1);
         questionRepository.save(question2);
         questionRepository.flush();
@@ -120,6 +122,39 @@ public class QuestionRepositoryTest {
         questionRepository.flush();
         List<Question> afterDeleteList = questionRepository.deletedFalse();
         assertThat(afterDeleteList.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("질문, 답변 삭제 테스트_실패")
+    void deleteQuestionAndAnswerTest_shouldBeFail() throws CannotDeleteException {
+        Question savedQuestion = questionRepository.save(question1);
+
+        User answerWriter = new User("awriter", "password", "name", "sunju@slipp.net");
+        userRepository.save(answerWriter);
+        Answer answer = new Answer(answerWriter, savedQuestion, "Answers Contents");
+        savedQuestion.addAnswer(answer);
+        answerRepository.save(answer);
+
+        assertThatThrownBy(() -> savedQuestion.delete(answerWriter))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("질문을 삭제할 권한이 없습니다.");
+    }
+
+    @Test
+    @DisplayName("질문, 답변 삭제 테스트_성공")
+    void deleteQuestionAndAnswerTest_shouldBeSuccess() throws CannotDeleteException {
+        Question savedQuestion = questionRepository.save(question1);
+
+        Answer answer = new Answer(questionWriter1, savedQuestion, "Answers Contents");
+        savedQuestion.addAnswer(answer);
+        answerRepository.save(answer);
+
+        savedQuestion.delete(questionWriter1);
+
+        List<Question> questionList = questionRepository.deletedFalse();
+        assertThat(questionList.size()).isEqualTo(0);
+        List<Answer> answerList = answerRepository.deletedFalse();
+        assertThat(answerList.size()).isEqualTo(0);
     }
 
     @Test
@@ -135,7 +170,7 @@ public class QuestionRepositoryTest {
 
         entityManager.clear();
 
-        Question updatedQuestion = questionRepository.findById(1L).get();
-        assertThat(updatedQuestion.getAnswers().size()).isEqualTo(1);
+        Question updatedQuestion = questionRepository.findById(savedQuestion.getId()).get();
+        assertThat(updatedQuestion.getAnswers().asList().size()).isEqualTo(1);
     }
 }
