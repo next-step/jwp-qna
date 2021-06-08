@@ -3,37 +3,35 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-
     @Autowired
     private AnswerRepository answerRepository;
 
-    @ParameterizedTest
-    @MethodSource("generateData")
-    void save(Answer answer) {
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Test
+    void save() {
+        User user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
+        Question question = questionRepository.save(new Question("title1", "contents1"));
+        Answer answer = new Answer(user, question,"Answers Contents1");
+
         Answer actual = answerRepository.save(answer);
 
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getQuestionId()).isEqualTo(answer.getQuestionId()),
-            () -> assertThat(actual.getWriterId()).isEqualTo(answer.getWriterId()),
+            () -> assertThat(actual.getQuestion()).isEqualTo(answer.getQuestion()),
+            () -> assertThat(actual.getWriter()).isEqualTo(answer.getWriter()),
             () -> assertThat(actual.getContents()).isEqualTo(answer.getContents()),
             () -> assertThat(actual.getCreatedAt()).isNotNull()
         );
-    }
-
-    static List<Answer> generateData() {
-        return Arrays.asList(A1,A2);
     }
 }
