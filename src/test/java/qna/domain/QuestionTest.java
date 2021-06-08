@@ -17,6 +17,9 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     @DisplayName(value = "저장된 질문을 select 하여 저장한 데이터 맞는지 검증한다")
     void select() {
@@ -58,14 +61,14 @@ public class QuestionTest {
     @Test
     @DisplayName(value = "DB에 저장되면 날짜 데이터가 생성된다")
     void createdAtAndUpdatedAtAreExists() {
-        insertQuestion();
         Question question = questionRepository.getOne(insertQuestion().getId());
         assertThat(question.getCreatedAt()).isNotNull();
         assertThat(question.getUpdatedAt()).isNotNull();
     }
 
     private Question insertQuestion() {
-        Question actual = new Question("question test title", "question test content").writeBy(UserTest.JAVAJIGI);
+        User user = userRepository.saveAndFlush(UserTest.JAVAJIGI);
+        Question actual = new Question("question test title", "question test content").writeBy(user);
         return questionRepository.saveAndFlush(actual);
     }
 
