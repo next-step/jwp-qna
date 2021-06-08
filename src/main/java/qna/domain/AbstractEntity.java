@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @MappedSuperclass
 public abstract class AbstractEntity {
 
@@ -16,6 +18,7 @@ public abstract class AbstractEntity {
 	protected Long id;
 
 	@Column(nullable = false)
+	@CreationTimestamp
 	protected LocalDateTime createdAt = LocalDateTime.now();
 
 	protected AbstractEntity() {}
