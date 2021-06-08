@@ -23,20 +23,27 @@
 - 답변
   - 로그인 사용자 비교
   - 삭제 가능 여부 반환
-  - 삭제 기록 반환
+  - 답변 삭제
+  - 삭제 권한 에러: `CannotDeleteException`
+- `Answers`
+  - 삭제 가능 여부 반환
+  - 답변 삭제
 - 질문
-  - 전체 답변 삭제 가능 여부 반환
   - 로그인 사용자 비교
   - 답변 목록 삭제 처리
-    - 답변 삭제 기록 목록 반환
+    - 삭제한 답변 목록 반환
   - 질문 삭제 처리
-  - 질문, 답변 삭제 기록 목록 반환
+  - 삭제 권한 에러: `CannotDeleteException`
+- `QuestionRemover`
+  - 질문, 답변 삭제
+  - 삭제 기록 반환
+  - 삭제 권한 에러: `CannotDeleteException`
 
 #### 서비스 역할
 
 1. Login User, Question ID 입력
 2. 데이터베이스 Question ID 조회 → Question 반환
-3. Question 삭제 요청
+3. `QuestionRemover`에게 삭제 요청
    - 실패: `CannotDeleteException`
    - 성공: `List<DeleteHistory>` 반환
 4. `List<DeleteHistory>` 저장
