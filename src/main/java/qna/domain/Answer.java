@@ -6,7 +6,6 @@ import qna.UnAuthorizedException;
 import qna.domain.base.BaseEntity;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
