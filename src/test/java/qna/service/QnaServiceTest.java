@@ -34,6 +34,12 @@ class QnaServiceTest {
     private QnaService qnaService;
 
     private Question question;
+
+    private Question question1;
+    private Question question2;
+    private User writer1;
+    private User writer2;
+
     private Answer answer;
 
     @BeforeEach
@@ -41,6 +47,12 @@ class QnaServiceTest {
         question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
         answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
+
+        writer1 = new User("user1", "user1Pass", "User1", "user1@gmail.com");
+        writer2 = new User("user2", "user2Pass", "User2", "user2@gmail.com");
+
+        question1 = new Question("Question1 title", "Question1 contents").writeBy(writer1);
+        question2 = new Question("Question2 title", "Question2 contents").writeBy(writer2);
     }
 
     @Test
@@ -77,7 +89,7 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
+        Answer answer2 = new Answer(2L, UserTest.SANJIGI, question1, "Answers Contents1");
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));

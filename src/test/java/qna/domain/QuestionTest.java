@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -8,24 +9,36 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class QuestionTest {
-    public static final Question Q1 = new Question(
-            "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question(
-            "title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Autowired
     QuestionRepository questions;
 
+    private Question question1;
+    private Question question2;
+    private User writer1;
+    private User writer2;
+
     @BeforeEach
     void setUp() {
-        questions.save(Q1);
-        questions.save(Q2);
+        writer1 = new User("user1", "user1Pass", "User1", "user1@gmail.com");
+        writer2 = new User("user2", "user2Pass", "User2", "user2@gmail.com");
+
+        question1 = new Question("Question1 title", "Question1 contents").writeBy(writer1);
+        question2 = new Question("Question2 title", "Question2 contents").writeBy(writer2);
+
+        questions.save(question1);
+        questions.save(question2);
+    }
+
+    @Test
+    @DisplayName("Question save test")
+    void save() {
+        assertThat(questions.save(question1)).isEqualTo(question1);
     }
 
     @Test
@@ -35,7 +48,7 @@ public class QuestionTest {
         assertAll(
                 () -> assertThat(actual.size()).isEqualTo(2),
                 () -> assertThat(actual.stream()
-                        .filter(question -> question.isDeleted() != false)
+                        .filter(question -> question.isDeleted())
                         .count())
                         .isEqualTo(0)
         );
@@ -44,8 +57,8 @@ public class QuestionTest {
 
     @Test
     void findByIdAndDeletedFalse() {
-        Optional<Question> actual = questions.findByIdAndDeletedFalse(Q1.getId());
-        assertThat(actual.get()).isSameAs(Q1);
+        Optional<Question> actual = questions.findByIdAndDeletedFalse(question1.getId());
+        assertThat(actual.get()).isSameAs(question1);
     }
 
 }

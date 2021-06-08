@@ -30,7 +30,9 @@ public class Question {
     @Column(length = 100, nullable = false)
     private String title;
     private LocalDateTime updatedAt;
-    private Long writerId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -47,12 +49,12 @@ public class Question {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -84,11 +86,11 @@ public class Question {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return writer.getId();
     }
 
     public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+        this.writer.setId(writerId);
     }
 
     public boolean isDeleted() {
@@ -105,7 +107,7 @@ public class Question {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }
