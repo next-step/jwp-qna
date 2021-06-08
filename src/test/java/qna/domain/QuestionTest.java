@@ -57,7 +57,7 @@ public class QuestionTest {
 
     @DisplayName("답변 0 질문 삭제")
     @Test
-    void delete_EmtpyAnswers_success() throws CannotDeleteException {
+    void delete_EmtpyAnswers_success() {
         Question question = new Question(1L, "title", "contents").writeBy(alice);
 
         DeleteHistories deleteHistories = question.delete(alice);
@@ -68,7 +68,7 @@ public class QuestionTest {
 
     @DisplayName("아직 삭제되지 않은 모든 질문 삭제")
     @Test
-    void delete_UndeletedAnswers_success() throws CannotDeleteException {
+    void delete_UndeletedAnswers_success() {
         Question question = new Question("title", "contents").writeBy(alice);
         Answers answers = new Answers();
         Answer aliceAnswer1 = new Answer(1L, alice, question, "Alice Answer 1");

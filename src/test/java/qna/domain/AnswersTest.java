@@ -58,7 +58,7 @@ public class AnswersTest {
 
     @DisplayName("답변 삭제 처리 후 삭제 기록 반환")
     @Test
-    void delete_success() throws CannotDeleteException {
+    void delete_success() {
         Answers answers = new Answers();
         Answer aliceAnswer = new Answer(1L, alice, question, "Alice Answer");
         Answer othersDeletedAnswer = new Answer(2L, trudy, question, "Trudy Deleted Answer");

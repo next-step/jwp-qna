@@ -45,7 +45,7 @@ public class QuestionRepositoryTest {
 
     @DisplayName("삭제한 질문으로 변경 후 진행 중인 질문 검색")
     @Test
-    void findAll_AfterDeleteQuestion() throws CannotDeleteException {
+    void findAll_AfterDeleteQuestion() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
         userRepository.save(alice);
         Question question = new Question("title", "contents").writeBy(alice);
@@ -72,7 +72,7 @@ public class QuestionRepositoryTest {
 
     @DisplayName("삭제한 질문으로 변경 후 진행 중인 질문을 ID로 검색")
     @Test
-    void findById_AfterDeleteQuestion() throws CannotDeleteException {
+    void findById_AfterDeleteQuestion() {
         User alice = new User("alice", "password", "Alice", "alice@mail");
         userRepository.save(alice);
         Question question = new Question("title", "contents").writeBy(alice);
