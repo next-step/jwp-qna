@@ -16,7 +16,7 @@ class DeleteHistoriesTest {
     void add() {
         //given
         DeleteHistories deleteHistories = new DeleteHistories();
-        DeleteHistory deleteHistory = DeleteHistory.ofAnswer(1L, UserTest.JAVAJIGI, LocalDateTime.now());
+        DeleteHistory deleteHistory = DeleteHistory.ofAnswer(1L, UserTest.JAVAJIGI);
 
         //when
         deleteHistories.add(deleteHistory);
@@ -29,12 +29,12 @@ class DeleteHistoriesTest {
     void addAll() {
         //given
         List<DeleteHistory> deleteHistoryList1 = new ArrayList<>();
-        DeleteHistory ofAnswer = DeleteHistory.ofAnswer(1L, UserTest.JAVAJIGI, LocalDateTime.now());
+        DeleteHistory ofAnswer = DeleteHistory.ofAnswer(1L, UserTest.JAVAJIGI);
         deleteHistoryList1.add(ofAnswer);
         DeleteHistories deleteHistories1 = new DeleteHistories(deleteHistoryList1);
 
         List<DeleteHistory> deleteHistoryList2 = new ArrayList<>();
-        DeleteHistory ofQuestion = DeleteHistory.ofQuestion(1L, UserTest.JAVAJIGI, LocalDateTime.now());
+        DeleteHistory ofQuestion = DeleteHistory.ofQuestion(1L, UserTest.JAVAJIGI);
         deleteHistoryList2.add(ofQuestion);
         DeleteHistories deleteHistories2 = new DeleteHistories(deleteHistoryList2);
 
@@ -53,7 +53,7 @@ class DeleteHistoriesTest {
         List<DeleteHistory> deleteHistoryList = deleteHistories.getDeleteHistories();
 
         //when
-        assertThatThrownBy(() -> deleteHistoryList.add(DeleteHistory.ofAnswer(1L, UserTest.JAVAJIGI, LocalDateTime.now())))
+        assertThatThrownBy(() -> deleteHistoryList.add(DeleteHistory.ofAnswer(1L, UserTest.JAVAJIGI)))
                 .isInstanceOf(UnsupportedOperationException.class); //then
     }
 }

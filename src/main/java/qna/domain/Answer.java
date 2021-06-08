@@ -76,7 +76,7 @@ public class Answer extends BaseEntity {
     public DeleteHistory delete(User loginUser) {
         validateOwner(loginUser);
         delete();
-        return DeleteHistory.ofAnswer(id, writer, LocalDateTime.now());
+        return DeleteHistory.ofAnswer(id, writer);
     }
 
     private void delete() {

@@ -31,8 +31,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     void save() {
         //given
-        DeleteHistory deleteHistory = new DeleteHistory(
-                ContentType.ANSWER, 1L, user1, LocalDateTime.now());
+        DeleteHistory deleteHistory = DeleteHistory.ofAnswer(1L, user1);
 
         //when
         DeleteHistory actual = deleteHistories.save(deleteHistory);
@@ -45,8 +44,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     void findById() {
         //given
-        DeleteHistory deleteHistory = deleteHistories.save(new DeleteHistory(
-                ContentType.QUESTION, 1L, user1, LocalDateTime.now()));
+        DeleteHistory deleteHistory = deleteHistories.save(DeleteHistory.ofQuestion(1L, user1));
 
         //when
         DeleteHistory actual = deleteHistories.findById(deleteHistory.getId())

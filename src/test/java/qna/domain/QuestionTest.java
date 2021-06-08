@@ -32,7 +32,7 @@ public class QuestionTest {
         List<DeleteHistory> actual = question3.delete(UserTest.SANJIGI).getDeleteHistories();
 
         //then
-        assertThat(actual).containsExactly(DeleteHistory.ofQuestion(question3.getId(), UserTest.SANJIGI, LocalDateTime.now()));
+        assertThat(actual).containsExactly(DeleteHistory.ofQuestion(question3.getId(), UserTest.SANJIGI));
     }
 
     @DisplayName("질문을 삭제할 때 본인이 만든 질문이 아닌 경우 예외를 발생시킨다.")
