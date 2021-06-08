@@ -44,17 +44,45 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
+    public List<DeleteHistory> deleteQuestion(Long questionId, User loginUser) throws CannotDeleteException {
+
+        isPossibleDelete(loginUser);
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        setDeleted(true);
+        deleteHistories.add(DeleteHistory.forQuestionOf(questionId, loginUser));
+        for (Answer answer : answers) {
+            answer.setDeleted(true);
+            deleteHistories.add(DeleteHistory.forAnswerOf(answer.getId(), loginUser));
+        }
+        return deleteHistories;
+    }
+
+    boolean isPossibleDelete(User loginUser) throws CannotDeleteException {
+        if (!Objects.equals(user, loginUser))
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+
+        for (Answer answer : answers) {
+            answer.checkPossibleDelete(loginUser);
+        }
+        return true;
+    }
+
     public Question writeBy(User writer) {
         this.user = writer;
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return Objects.equals(this.user, writer);
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public void addAnswer(Answer answer) {
         this.answers.add(answer);
+    }
+
+    public boolean isOwner(User writer) {
+        return Objects.equals(this.user, writer);
     }
 
     public Long getId() {
@@ -81,11 +109,6 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-
     @Override
     public String toString() {
         return "Question{" +
@@ -97,30 +120,7 @@ public class Question extends BaseEntity {
                 '}';
     }
 
-    public List<DeleteHistory> deleteQuestion(Long questionId, User loginUser) throws CannotDeleteException {
 
-        isPossibleDelete(loginUser);
-
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        setDeleted(true);
-        deleteHistories.add(DeleteHistory.forQuestionOf(questionId, loginUser));
-        for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(DeleteHistory.forAnswerOf(answer.getId(), loginUser));
-        }
-        return deleteHistories;
-    }
-
-    boolean isPossibleDelete(User loginUser) throws CannotDeleteException {
-        if (!Objects.equals(user, loginUser))
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-
-        for (Answer answer : answers) {
-            if (!Objects.equals(answer.getWriter(), loginUser))
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
-        return true;
-    }
 }
 
 

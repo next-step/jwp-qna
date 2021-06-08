@@ -25,8 +25,8 @@ class QuestionRepositoryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-        answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
+        question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        answer = new Answer(UserTest.JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
     }
 
@@ -57,7 +57,7 @@ class QuestionRepositoryTest {
     public void isPossibleDelete_작성자_아닌_유저가_삭제시도_오류확인() {
         User writer = new User("javajigi", "password", "name", "javajigi@slipp.net");
         users.save(writer);
-        Question question = new Question(1L, "title1", "contents1").writeBy(writer);
+        Question question = new Question("title1", "contents1").writeBy(writer);
         Question question_saved = questions.save(question);
 
         assertThatThrownBy(() -> question_saved.isPossibleDelete(UserTest.JUNSEONG))
@@ -71,7 +71,7 @@ class QuestionRepositoryTest {
         User answerUser = new User("chajs226", "password", "name", "chajs226@gmail.com");
         users.save(answerUser);
 
-        Question question = new Question(1L, "title1", "contents1").writeBy(writer);
+        Question question = new Question("title1", "contents1").writeBy(writer);
         Question questionSaved = questions.save(question);
 
         Answer answer = new Answer(answerUser, questionSaved, "contents");
@@ -86,7 +86,7 @@ class QuestionRepositoryTest {
         User writer = new User("javajigi", "password", "name", "javajigi@slipp.net");
         users.save(writer);
 
-        Question question = new Question(1L, "title1", "contents1").writeBy(writer);
+        Question question = new Question("title1", "contents1").writeBy(writer);
         Question questionSaved = questions.save(question);
 
         Answer answer = new Answer(writer, questionSaved, "contents");

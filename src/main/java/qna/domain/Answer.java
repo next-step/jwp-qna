@@ -5,9 +5,9 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
+@Embeddable
 @Table(name = "answer")
 @Entity
 public class Answer extends BaseEntity {
@@ -48,25 +48,30 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.user.equals(writer);
-    }
-
-    public void toQuestion(Question question) {
-        this.question = question;
-        question.getAnswers().add(this);
-    }
-
-    public Long getId() {
-        return id;
+    public void checkPossibleDelete(User loginUser) throws CannotDeleteException {
+        if(!Objects.equals(this.user, loginUser))
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return user.getId();
+    public void toQuestion(Question question) {
+        this.question = question;
+        question.addAnswer(this);
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public boolean isOwner(User writer) {
+        return this.user.equals(writer);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getContents() {
@@ -75,10 +80,6 @@ public class Answer extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public User getWriter() {
