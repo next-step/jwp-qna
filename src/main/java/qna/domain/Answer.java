@@ -31,7 +31,9 @@ public class Answer {
     private LocalDateTime createdAt = LocalDateTime.now();
     @Column(nullable = false)
     private Boolean deleted = false;
-    private Long questionId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
     private LocalDateTime updatedAt;
     private Long writerId;
 
@@ -51,7 +53,7 @@ public class Answer {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -64,7 +66,7 @@ public class Answer {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -84,11 +86,11 @@ public class Answer {
     }
 
     public Long getQuestionId() {
-        return questionId;
+        return question.getId();
     }
 
     public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+        this.question.setId(questionId);
     }
 
     public String getContents() {
@@ -112,7 +114,7 @@ public class Answer {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", questionId=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
