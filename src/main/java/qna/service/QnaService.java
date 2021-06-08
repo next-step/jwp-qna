@@ -40,7 +40,6 @@ public class QnaService {
 
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(question);
-        deleteHistories.addAll(answers);
 
         deleteHistoryService.saveAll(deleteHistories);
     }
