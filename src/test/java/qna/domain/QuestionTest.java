@@ -4,6 +4,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class QuestionTest {
@@ -21,6 +26,23 @@ public class QuestionTest {
     void validateIsOwner_test() {
         assertThrows(CannotDeleteException.class,
                 () -> Q1.validateIsOwner(UserTest.SANJIGI)
+        );
+    }
+
+    @Test
+    @DisplayName("게시판이 삭제되고 히스토리에 저장된다..")
+    void deleteAndAddHistory_test() {
+        //given
+        Question question = new Question(Q1_TITLE, Q1_CONTENT).writeBy(UserTest.JAVAJIGI);
+        List<DeleteHistory> histories = new ArrayList<>();
+
+        //when
+        question.deleteAndAddHistory(histories);
+
+        //then
+        assertAll(
+                () -> assertThat(question.isDeleted()).isTrue(),
+                () -> assertThat(histories).hasSize(1)
         );
     }
 }
