@@ -8,6 +8,7 @@ import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Embeddable
 public class Answers {
@@ -20,11 +21,9 @@ public class Answers {
     }
 
     public DeleteHistories deleteAll(User loginUser) {
-        DeleteHistories deleteHistories = new DeleteHistories();
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.delete(loginUser));
-        }
-        return deleteHistories;
+        return answers.stream()
+                .map(answer -> answer.delete(loginUser))
+                .collect(Collectors.collectingAndThen(Collectors.toList(), DeleteHistories::new));
     }
 
     public void add(Answer answer) {
