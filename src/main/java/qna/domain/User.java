@@ -27,8 +27,8 @@ public class User extends BaseEntity {
     @Column(length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "writer")
-    private List<Question> questions = new ArrayList<>();
+    @Embedded
+    private Questions questions;
 
     @OneToMany(mappedBy = "writer")
     private List<Answer> answers = new ArrayList<>();
@@ -88,18 +88,6 @@ public class User extends BaseEntity {
 
     public String getUserId() {
         return userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     @Override

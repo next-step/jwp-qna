@@ -13,11 +13,11 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
@@ -66,18 +66,6 @@ public class Answer extends BaseEntity {
         return writer;
     }
 
-    public Question getQuestion() {
-        return question;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -91,5 +79,10 @@ public class Answer extends BaseEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public DeleteHistory delete(User loginUser) {
+        deleted = true;
+        return DeleteHistory.ofAnswerDeleteHistory(id, loginUser);
     }
 }
