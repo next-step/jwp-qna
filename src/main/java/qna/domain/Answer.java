@@ -35,7 +35,9 @@ public class Answer {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
     private LocalDateTime updatedAt;
-    private Long writerId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -52,7 +54,7 @@ public class Answer {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
+        this.writer = writer;
         this.question = question;
         this.contents = contents;
     }
@@ -62,7 +64,7 @@ public class Answer {
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
@@ -78,11 +80,11 @@ public class Answer {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return writer.getId();
     }
 
     public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+        this.writer.setId(writerId);
     }
 
     public Long getQuestionId() {
@@ -113,8 +115,8 @@ public class Answer {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + question +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
