@@ -1,11 +1,29 @@
 package qna.domain;
 
-public class Question {
+import qna.domain.support.BaseTimeEntity;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "question")
+public class Question extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Lob
     private String contents;
-    private Long writerId;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column(nullable = false, length = 100)
+    private String title;
+
+    private Long writerId;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);

@@ -1,19 +1,34 @@
 package qna.domain;
 
 import qna.UnAuthorizedException;
+import qna.domain.support.BaseTimeEntity;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class User {
-    public static final GuestUser GUEST_USER = new GuestUser();
-
+@Entity
+@Table(name = "user", uniqueConstraints = {
+        @UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = "userId")})
+public class User extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
+    @Column(length = 50)
     private String email;
 
-    private User() {
+    @Column(length = 20, nullable = false)
+    private String name;
+
+    @Column(length = 20, nullable = false)
+    private String password;
+
+    @Column(length = 20, nullable = false)
+    private String userId;
+
+    public static final GuestUser GUEST_USER = new GuestUser();
+
+    public User() {
     }
 
     public User(String userId, String password, String name, String email) {
