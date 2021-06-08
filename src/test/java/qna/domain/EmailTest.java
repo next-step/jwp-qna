@@ -36,6 +36,6 @@ class EmailTest {
         //when
         assertThatThrownBy(() -> new Email("testtesttesttesttesttesttesttesttesttesttesttesttesttesttest@test.com"))
                 .isInstanceOf(IllegalArgumentException.class) //then
-                .hasMessage(Email.INVALID_EMAIL_MESSAGE);
+                .hasMessage(Email.INVALID_EMAIL_LENGTH_MESSAGE);
     }
 }
