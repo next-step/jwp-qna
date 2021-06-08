@@ -8,11 +8,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class EmailTest {
 
-    @DisplayName("기본적인 이메일 형식을 가져야 하며 최대 50자리가 넘지 않아야 한다.")
+    @DisplayName("이메일은 영문과 숫자로된 아이디 + @ + 도메인주소의 형식을 가진다. 예를들어 test1234@neststep.camp")
     @Test
     void validateEmailType() {
         //given
-        String email = "test@nextstep.camp";
+        String email = "test1234@nextstep.camp";
 
         //when
         Email actual = new Email(email);
@@ -21,6 +21,7 @@ class EmailTest {
         assertThat(actual.getEmail()).isEqualTo(email);
     }
 
+    @DisplayName("영문과 숫자로된 아이디 + @ + 도메인주소의 형식을 갖지 않는다면 예외를 발생시킨다.")
     @Test
     void validateEmailTypeException() {
         //when
@@ -29,6 +30,7 @@ class EmailTest {
                 .hasMessage(Email.INVALID_EMAIL_MESSAGE);
     }
 
+    @DisplayName("이메일 길이가 50자리 이상일 때 예외를 발생시킨다.")
     @Test
     void validateEmailLengthException() {
         //when
