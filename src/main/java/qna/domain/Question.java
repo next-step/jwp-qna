@@ -16,9 +16,7 @@ public class Question extends BaseEntity {
 
     @Embedded
     private Contents contents;
-
-    @Embedded
-    private Deleted deleted;
+    private boolean deleted = false;
 
     @Embedded
     private Title title;
@@ -42,7 +40,6 @@ public class Question extends BaseEntity {
         this.title = new Title(title);
         this.contents = new Contents(contents);
         this.answers = new Answers();
-        this.deleted = new Deleted();
     }
 
     public Question writeBy(User writer) {
@@ -67,7 +64,7 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public Deleted isDeleted() {
+    public boolean isDeleted() {
         return deleted;
     }
 
@@ -91,7 +88,7 @@ public class Question extends BaseEntity {
     }
 
     private void delete() {
-        deleted.delete();
+        deleted = true;
     }
 
     public Answers getAnswers() {
