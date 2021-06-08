@@ -11,6 +11,7 @@ public class Name {
     private static final int MAXIMUM_NAME_LENGTH = 20;
     private static final Pattern NAME_PATTERN = PatternEnum.NAME.toPattern();
     public static final String INVALID_NAME_MESSAGE = "잘못된 이름 형식입니다.";
+    public static final String INVALID_NAME_LENGTH_MESSAGE = "이름은 최대 20자리만 가능합니다.";
 
     @Column(length = MAXIMUM_NAME_LENGTH, nullable = false)
     private String name;
@@ -24,8 +25,11 @@ public class Name {
     }
 
     private void validate(String name) {
-        if (Objects.isNull(name) || name.isEmpty() || name.length() > MAXIMUM_NAME_LENGTH) {
+        if (Objects.isNull(name) || name.isEmpty()) {
             throw new IllegalArgumentException(INVALID_NAME_MESSAGE);
+        }
+        if (name.length() > MAXIMUM_NAME_LENGTH){
+            throw new IllegalArgumentException(INVALID_NAME_LENGTH_MESSAGE);
         }
         Matcher matcher = NAME_PATTERN.matcher(name);
         if (!matcher.find()) {

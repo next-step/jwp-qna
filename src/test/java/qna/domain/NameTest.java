@@ -36,6 +36,6 @@ class NameTest {
         //when
         assertThatThrownBy(() -> new Name("testtesttesttesttesttesttesttesttesttesttesttesttest"))
                 .isInstanceOf(IllegalArgumentException.class) //then
-                .hasMessage(Name.INVALID_NAME_MESSAGE);
+                .hasMessage(Name.INVALID_NAME_LENGTH_MESSAGE);
     }
 }
