@@ -1,12 +1,16 @@
 package qna.domain;
 
 import java.util.Objects;
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import qna.UnAuthorizedException;
+import qna.domain.vo.Email;
+import qna.domain.vo.Name;
+import qna.domain.vo.Password;
+import qna.domain.vo.UserId;
 
 @Entity
 public class User extends BaseEntity {
@@ -15,17 +19,17 @@ public class User extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(length = 50)
-	private String email;
+	@Embedded
+	private Email email;
 
-	@Column(nullable = false, length = 20)
-	private String name;
+	@Embedded
+	private Name name;
 
-	@Column(nullable = false, length = 20)
-	private String password;
+	@Embedded
+	private Password password;
 
-	@Column(name = "user_id", nullable = false, length = 20, unique = true)
-	private String userId;
+	@Embedded
+	private UserId userId;
 
 	protected User() {
 	}
@@ -36,31 +40,29 @@ public class User extends BaseEntity {
 
 	public User(Long id, String userId, String password, String name, String email) {
 		this.id = id;
-		this.userId = userId;
-		this.password = password;
-		this.name = name;
-		this.email = email;
+		this.userId = UserId.generate(userId);
+		this.password = Password.generate(password);
+		this.name = Name.generate(name);
+		this.email = Email.generate(email);
 	}
 
 	public void update(User loginUser, User target) {
 		if (!matchUserId(loginUser.userId)) {
 			throw new UnAuthorizedException();
 		}
-
 		if (!matchPassword(target.password)) {
 			throw new UnAuthorizedException();
 		}
-
 		this.name = target.name;
 		this.email = target.email;
 		updatedAtNow();
 	}
 
-	private boolean matchUserId(String userId) {
+	private boolean matchUserId(UserId userId) {
 		return this.userId.equals(userId);
 	}
 
-	public boolean matchPassword(String targetPassword) {
+	public boolean matchPassword(Password targetPassword) {
 		return this.password.equals(targetPassword);
 	}
 
@@ -68,21 +70,21 @@ public class User extends BaseEntity {
 		return id;
 	}
 
-	public String userId() {
+	public UserId userId() {
 		return userId;
 	}
 
 	public String name() {
-		return name;
+		return name.value();
 	}
 
 	public void changeName(String name) {
-		this.name = name;
+		this.name.changeName(name);
 		updatedAtNow();
 	}
 
 	public void changeEmail(String email) {
-		this.email = email;
+		this.email.changeEmail(email);
 		updatedAtNow();
 	}
 

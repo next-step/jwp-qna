@@ -1,19 +1,20 @@
 package qna.domain;
 
 import java.util.Objects;
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.vo.Contents;
+import qna.domain.vo.Deleted;
 
 @Entity
 public class Answer extends BaseEntity {
@@ -22,12 +23,11 @@ public class Answer extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column
-	@Lob
-	private String contents;
+	@Embedded
+	private Contents contents;
 
-	@Column(nullable = false)
-	private Boolean deleted = Boolean.FALSE;
+	@Embedded
+	private Deleted deleted;
 
 	@ManyToOne
 	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -45,19 +45,25 @@ public class Answer extends BaseEntity {
 	}
 
 	public Answer(Long id, User writer, Question question, String contents) {
+		validateWriterIsNotNull(writer);
+		validateQuestionIsNotNull(question);
 		this.id = id;
+		this.writer = writer;
+		this.contents = Contents.generate(contents);
+		this.deleted = Deleted.generate();
+		changeQuestion(question);
+	}
 
-		if (Objects.isNull(writer)) {
-			throw new UnAuthorizedException();
-		}
-
+	private void validateQuestionIsNotNull(Question question) {
 		if (Objects.isNull(question)) {
 			throw new NotFoundException();
 		}
+	}
 
-		this.writer = writer;
-		changeQuestion(question);
-		this.contents = contents;
+	private void validateWriterIsNotNull(User writer) {
+		if (Objects.isNull(writer)) {
+			throw new UnAuthorizedException();
+		}
 	}
 
 	public void changeQuestion(Question question) {
@@ -68,6 +74,7 @@ public class Answer extends BaseEntity {
 		question.addAnswer(this);
 		updatedAtNow();
 	}
+
 
 	public Long id() {
 		return id;
@@ -102,11 +109,11 @@ public class Answer extends BaseEntity {
 	}
 
 	public boolean isDeleted() {
-		return deleted;
+		return deleted.value();
 	}
 
 	public void delete() {
-		this.deleted = true;
+		deleted.changeDeleted();
 		updatedAtNow();
 	}
 
@@ -121,17 +128,21 @@ public class Answer extends BaseEntity {
 	}
 
 	@Override
-	public boolean equals(Object obejct) {
-		if (this == obejct) {
+	public boolean equals(Object object) {
+		if (this == object) {
 			return true;
 		}
-		if (!(obejct instanceof Answer)) {
+		if (!(object instanceof Answer)) {
 			return false;
 		}
-		Answer answer = (Answer) obejct;
-		return deleted == answer.deleted
-			&& Objects.equals(id, answer.id)
+		Answer answer = (Answer) object;
+		return isAllEquals(answer);
+	}
+
+	private boolean isAllEquals(Answer answer) {
+		return Objects.equals(id, answer.id)
 			&& Objects.equals(contents, answer.contents)
+			&& Objects.equals(deleted, answer.deleted)
 			&& Objects.equals(question, answer.question)
 			&& Objects.equals(writer, answer.writer);
 	}

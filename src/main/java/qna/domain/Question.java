@@ -11,9 +11,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import qna.CannotDeleteException;
+import qna.domain.vo.Contents;
+import qna.domain.vo.Title;
 
 @Entity
 public class Question extends BaseEntity {
@@ -22,15 +23,14 @@ public class Question extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column
-	@Lob
-	private String contents;
+	@Embedded
+	private Contents contents;
 
 	@Column(nullable = false)
 	private Boolean deleted = Boolean.FALSE;
 
-	@Column(nullable = false, length = 100)
-	private String title;
+	@Embedded
+	private Title title;
 
 	@ManyToOne
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -48,8 +48,8 @@ public class Question extends BaseEntity {
 
 	public Question(Long id, String title, String contents) {
 		this.id = id;
-		this.title = title;
-		this.contents = contents;
+		this.title = Title.generate(title);
+		this.contents = Contents.generate(contents);
 	}
 
 	public Long id() {
@@ -144,12 +144,9 @@ public class Question extends BaseEntity {
 			return false;
 		}
 		Question question = (Question) object;
-		return deleted == question.deleted
-			&& Objects.equals(id, question.id)
-			&& Objects.equals(contents, question.contents)
-			&& Objects.equals(title, question.title)
-			&& writer.equals(question.writer)
-			&& answerGroup.containsAll(question.answerGroup)
+		return deleted == question.deleted && Objects.equals(id, question.id)
+			&& Objects.equals(contents, question.contents) && Objects.equals(title, question.title)
+			&& writer.equals(question.writer) && answerGroup.containsAll(question.answerGroup)
 			&& question.answerGroup.containsAll(answerGroup);
 	}
 

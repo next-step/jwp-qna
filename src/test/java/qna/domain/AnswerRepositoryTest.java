@@ -110,9 +110,9 @@ public class AnswerRepositoryTest {
 
 	@DisplayName("Answer Soft delete - 조회 : findByIdAndDeletedFalse(), 수정 : delete()")
 	@Test
-	void setAnswerId() {
+	void delete() {
 		//given
-		Answer expectedAnswerWrittenByJavajigi = answers.save(answerWrittenByJavajigi);
+		Answer expectedAnswerWrittenByJavajigi = answers.saveAndFlush(answerWrittenByJavajigi);
 
 		//when
 		Optional<Answer> answerBeforeSoftDelete = answers
@@ -130,7 +130,7 @@ public class AnswerRepositoryTest {
 
 	@DisplayName("Answer 작성자 변경 - 조회 : findById(), 수정 : writtenBy()")
 	@Test
-	void setWriter() {
+	void writtenBy() {
 		//given
 		Answer expectedAnswerWrittenByJavajigi = answers.save(answerWrittenByJavajigi);
 
@@ -148,7 +148,7 @@ public class AnswerRepositoryTest {
 
 	@DisplayName("Answer 질문 변경 - 조회 : findById(), 수정 : changeQuestion()")
 	@Test
-	void setQuestion() {
+	void changeQuestion() {
 		//given
 		Answer expectedAnswerWrittenByJavajigi = answers.save(answerWrittenByJavajigi);
 
@@ -168,7 +168,7 @@ public class AnswerRepositoryTest {
 
 	@DisplayName("Answer 삭제 : delete()")
 	@Test
-	void delete() {
+	void hardDelete() {
 		//given
 		Answer expectedAnswerWrittenByJavajigi = answers.save(answerWrittenByJavajigi);
 		Answer answerBeforeDelete = answers.findById(expectedAnswerWrittenByJavajigi.id()).get();

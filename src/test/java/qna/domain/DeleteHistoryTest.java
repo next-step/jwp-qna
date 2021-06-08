@@ -19,7 +19,7 @@ public class DeleteHistoryTest {
 	@BeforeEach
 	void initialize() {
 		questionWrittenByJavajigi = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
-		answerWrittenByJavajigi = new Answer(JAVAJIGI, questionWrittenByJavajigi,
+		answerWrittenByJavajigi = new Answer(1L, JAVAJIGI, questionWrittenByJavajigi,
 			"Answers Contents1");
 		deleteHistoryOfQuestionWrittenByJavajigi = new DeleteHistory(ContentType.QUESTION,
 			questionWrittenByJavajigi.id(), questionWrittenByJavajigi.writer(),

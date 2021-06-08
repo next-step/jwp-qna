@@ -29,7 +29,6 @@ public class QnaService {
 	public void deleteQuestion(User loginUser, Question question) throws CannotDeleteException {
 		question.delete(loginUser);
 		questionRepository.save(question);
-
 		DeleteHistoryGroup deleteHistoryGroup = DeleteHistoryGroup.generateByQuestion(question);
 		deleteHistoryService.saveAll(deleteHistoryGroup.deleteHistories());
 	}

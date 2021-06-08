@@ -32,4 +32,8 @@ public class DeleteHistoryGroup {
 	public void addAll(List<DeleteHistory> deleteHistories) {
 		this.deleteHistories.addAll(deleteHistories);
 	}
+
+	public int size() {
+		return deleteHistories.size();
+	}
 }
