@@ -6,6 +6,7 @@ import java.util.Objects;
 
 @Embeddable
 public class Contents {
+    public static final String INVALID_NULL_OR_EMPTY_CONTENTS_MESSAGE = "컨텐츠는 빈 문자열이 될 수 없습니다.";
 
     @Lob
     private String contents;
@@ -13,8 +14,15 @@ public class Contents {
     protected Contents() {
     }
 
-    public Contents(String contents) { //TODO: 컨텐츠의 역할이 흐릿함.. 비즈니스가 추가된 후에 검증로직 추가해야 할듯
+    public Contents(String contents) {
+        validate(contents);
         this.contents = contents;
+    }
+
+    private void validate(String contents) {
+        if (Objects.isNull(contents) || contents.isEmpty()) {
+            throw new IllegalArgumentException(INVALID_NULL_OR_EMPTY_CONTENTS_MESSAGE);
+        }
     }
 
     public String getContents() {
