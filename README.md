@@ -61,3 +61,46 @@ create table user
 alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
+
+## 연관관계
+
+다음의 fk 를 적용한다
+
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+```
+
+```sql
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+```
+
+```sql
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+```
+
+```sql
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
+```
+
+## 객체 
+
+1. `Question`
+    - `User`, `List<Answer>` 를 갖고 있다
+2. `Answer`
+    - `Question`, `User` 를 갖고 있다
+3. `DeleteHistory`
+    - `User` 만 가지고 있으며, `Question`, `Answer` 는 id 만 갖는다
+4. `User`
+    - 참조 형태로 다른곳에서 참조 된다
