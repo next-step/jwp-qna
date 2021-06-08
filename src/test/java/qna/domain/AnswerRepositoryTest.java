@@ -73,7 +73,7 @@ public class AnswerRepositoryTest {
         userRepository.save(alice);
         questionRepository.save(question);
 
-        answer.delete();
+        answer.delete(alice);
         answerRepository.flush();
         entityManager.clear();
 
@@ -94,7 +94,7 @@ public class AnswerRepositoryTest {
         userRepository.save(alice);
         questionRepository.save(question);
 
-        answer.delete();
+        answer.delete(alice);
         List<Answer> activeAnswers = answerRepository.findByQuestion(question);
 
         assertThat(activeAnswers).isEmpty();
@@ -126,7 +126,7 @@ public class AnswerRepositoryTest {
         userRepository.save(alice);
         questionRepository.save(question);
 
-        answer.delete();
+        answer.delete(alice);
         answerRepository.flush();
         entityManager.clear();
 

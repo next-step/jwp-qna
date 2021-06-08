@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.Where;
 
+import qna.exceptions.CannotDeleteException;
 import qna.exceptions.NotFoundException;
 import qna.exceptions.UnAuthorizedException;
 
@@ -76,8 +77,13 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public Answer delete(User writer) {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
         this.deleted = true;
+        return this;
     }
 
     @Override

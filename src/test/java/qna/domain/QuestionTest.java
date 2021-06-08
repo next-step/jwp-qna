@@ -2,6 +2,8 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -60,10 +62,9 @@ public class QuestionTest {
     void delete_EmtpyAnswers_success() {
         Question question = new Question(1L, "title", "contents").writeBy(alice);
 
-        DeleteHistories deleteHistories = question.delete(alice);
+        question.delete(alice);
 
-        assertThat(deleteHistories.size()).isEqualTo(1);
-        assertThat(deleteHistories.hasDeleteHistory(new DeleteHistory(question, alice))).isTrue();
+        assertThat(question.isDeleted()).isTrue();
     }
 
     @DisplayName("아직 삭제되지 않은 모든 질문 삭제")
@@ -75,19 +76,18 @@ public class QuestionTest {
         Answer aliceAnswer2 = new Answer(2L, alice, question, "Alice Answer 2");
         Answer othersDeletedAnswer = new Answer(3L, trudy, question, "Trudy Deleted Answer");
         Answer aliceDeletedAnswer = new Answer(4L, alice, question, "Alice Deleted Answer");
-        othersDeletedAnswer.delete();
-        aliceDeletedAnswer.delete();
+        othersDeletedAnswer.delete(trudy);
+        aliceDeletedAnswer.delete(alice);
         answers.add(aliceAnswer1);
         answers.add(aliceAnswer2);
         answers.add(othersDeletedAnswer);
         answers.add(aliceDeletedAnswer);
 
-        DeleteHistories deleteHistories = question.delete(alice);
+        List<Answer> deletedAnswers = question.delete(alice).deleteAnswers(alice);
 
-        assertThat(deleteHistories.size()).isEqualTo(3);
-        assertThat(deleteHistories.hasDeleteHistory(new DeleteHistory(aliceAnswer1, alice))).isTrue();
-        assertThat(deleteHistories.hasDeleteHistory(new DeleteHistory(aliceAnswer2, alice))).isTrue();
-        assertThat(deleteHistories.hasDeleteHistory(new DeleteHistory(question, alice))).isTrue();
+        assertThat(deletedAnswers.size()).isEqualTo(2);
+        assertThat(deletedAnswers).contains(aliceAnswer1, aliceAnswer2);
+        assertThat(question.isDeleted()).isTrue();
     }
 
     @DisplayName("다른 사람 답변이 있어 질문 삭제 실패")

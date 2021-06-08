@@ -1,7 +1,9 @@
 package qna.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -26,7 +28,7 @@ public class Answers {
         return answers;
     }
 
-    protected boolean isRemovable(User writer) {
+    public boolean isRemovable(User writer) {
         boolean removable = true;
 
         for (Answer answer : answers) {
@@ -36,19 +38,16 @@ public class Answers {
         return removable;
     }
 
-    public DeleteHistories delete(User writer) {
+    public List<Answer> delete(User writer) {
         if (!isRemovable(writer)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
 
-        DeleteHistories deleteHistories = new DeleteHistories();
-        answers.stream()
-            .filter(answer -> !answer.isDeleted())
-            .forEach(answer -> {
-                answer.delete();
-                deleteHistories.add(new DeleteHistory(answer, writer));
-            });
-        return deleteHistories;
+        return Collections.unmodifiableList(
+            answers.stream()
+                .filter(answer -> !answer.isDeleted())
+                .map(answer -> answer.delete(writer))
+                .collect(Collectors.toList()));
     }
 
 }

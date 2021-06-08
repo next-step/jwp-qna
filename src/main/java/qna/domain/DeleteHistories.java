@@ -16,7 +16,7 @@ public class DeleteHistories {
     }
 
     public void add(DeleteHistory deleteHistory) {
-        this.deleteHistories.add(0, deleteHistory);
+        this.deleteHistories.add(deleteHistory);
     }
 
     public boolean hasDeleteHistory(DeleteHistory deleteHistory) {

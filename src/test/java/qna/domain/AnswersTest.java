@@ -2,6 +2,8 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +52,7 @@ public class AnswersTest {
         answers.add(new Answer(alice, question, "Alice Answer 1"));
         answers.add(new Answer(alice, question, "Alice Answer 2"));
         Answer deletedAnswer = new Answer(trudy, question, "Trudy Deleted Answer");
-        deletedAnswer.delete();
+        deletedAnswer.delete(trudy);
         answers.add(deletedAnswer);
 
         assertThat(answers.isRemovable(alice)).isTrue();
@@ -63,16 +65,16 @@ public class AnswersTest {
         Answer aliceAnswer = new Answer(1L, alice, question, "Alice Answer");
         Answer othersDeletedAnswer = new Answer(2L, trudy, question, "Trudy Deleted Answer");
         Answer aliceDeletedAnswer = new Answer(3L, alice, question, "Alice Deleted Answer");
-        othersDeletedAnswer.delete();
-        aliceDeletedAnswer.delete();
+        othersDeletedAnswer.delete(trudy);
+        aliceDeletedAnswer.delete(alice);
         answers.add(aliceAnswer);
         answers.add(othersDeletedAnswer);
         answers.add(aliceDeletedAnswer);
 
-        DeleteHistories deleteHistories = answers.delete(alice);
+        List<Answer> deletedAnswers = answers.delete(alice);
 
-        assertThat(deleteHistories.size()).isEqualTo(1);
-        assertThat(deleteHistories.hasDeleteHistory(new DeleteHistory(aliceAnswer, alice))).isTrue();
+        assertThat(deletedAnswers.size()).isEqualTo(1);
+        assertThat(deletedAnswers.get(0)).isSameAs(aliceAnswer);
     }
 
     @DisplayName("다른 사람 답변 때문에 삭제 실패 후 에러 반환")
