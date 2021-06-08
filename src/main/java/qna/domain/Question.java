@@ -56,14 +56,6 @@ public class Question extends BaseEntity {
 		return id;
 	}
 
-	public String title() {
-		return title;
-	}
-
-	public String contents() {
-		return contents;
-	}
-
 	public User writer() {
 		return writer;
 	}

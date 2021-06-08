@@ -335,7 +335,7 @@ A. Domain Model 영역에서 하는 것이 옳다.
 - [x] 3.분석 및 설계
     - [x] 3-1.step03.md 초안 작성
     - [x] 3-2.ATDD 초안 작성
-- [ ] 4.구현
+- [x] 4.구현
     - [x] 4-1.TDD
         - [x] 4-1-1.일급컬렉션 적용
             - [x] 4-1-1-1.`AnswerGroup`
@@ -357,8 +357,8 @@ A. Domain Model 영역에서 하는 것이 옳다.
             - [x] 4-1-4-2.`Answer` : 답변 삭제
             - [x] 4-1-4-3.`AnswerGroup` : 답변 그룹 삭제
         - [x] 4-1-5.`DeleteHistory` : 삭제 완료 후 로깅 처리
-    - [ ] 4-2.추가 리팩터링
-        - [ ] 4-2-1.
+    - [x] 4-2.추가 리팩터링
+        - [x] 4-2-1.불필요한 메서드 제거
 - [ ] 5.테스트
     - [ ] 5-1.Gradle build Success 확인
     - [ ] 5-2.Google Java Style 적용 (indent : 2 -> 4 spaces)
