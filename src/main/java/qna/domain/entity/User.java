@@ -6,11 +6,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import qna.exception.UnAuthorizedException;
 import qna.domain.vo.Email;
 import qna.domain.vo.Name;
 import qna.domain.vo.Password;
 import qna.domain.vo.UserId;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 public class User extends BaseEntity {
@@ -42,11 +42,12 @@ public class User extends BaseEntity {
 		this.email = Email.generate(email);
 	}
 
-    public static User generate(Long id, String userId, String password, String name, String email) {
+	public static User generate(Long id, String userId, String password, String name,
+		String email) {
 		return new User(id, userId, password, name, email);
-    }
+	}
 
-    public void update(User loginUser, User target) {
+	public void update(User loginUser, User target) {
 		if (!matchUserId(loginUser.userId)) {
 			throw new UnAuthorizedException();
 		}

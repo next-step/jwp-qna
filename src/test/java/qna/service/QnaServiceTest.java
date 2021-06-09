@@ -10,13 +10,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import qna.exception.CannotDeleteException;
 import qna.domain.aggregate.DeleteHistoryGroup;
 import qna.domain.entity.Answer;
 import qna.domain.entity.Question;
 import qna.domain.entity.User;
 import qna.domain.repository.AnswerRepository;
 import qna.domain.repository.QuestionRepository;
+import qna.exception.CannotDeleteException;
 
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {

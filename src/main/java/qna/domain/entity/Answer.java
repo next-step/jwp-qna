@@ -11,10 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import qna.domain.vo.Contents;
 import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
-import qna.domain.vo.Contents;
 
 @Entity
 public class Answer extends BaseEntity {

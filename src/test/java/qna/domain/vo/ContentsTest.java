@@ -9,7 +9,8 @@ public class ContentsTest {
 
 	@DisplayName("generate() : 모두 허용")
 	@ParameterizedTest(name = "{index} - contents:[{0}], exceptedNotThrownException:{1}")
-	@CsvSource(value = {";true", "' ';true", "0;true", "100;true", "가갸거겨고교구규그기;true"}, delimiter = ';')
+	@CsvSource(value = {";true", "' ';true", "0;true", "100;true",
+		"가갸거겨고교구규그기;true"}, delimiter = ';')
 	void generate(String contents, boolean exceptedNotThrownException) {
 		//given
 

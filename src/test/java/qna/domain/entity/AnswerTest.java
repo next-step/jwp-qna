@@ -27,8 +27,9 @@ public class AnswerTest {
 	@Test
 	void equals() {
 		//given
-		Answer clonedAnswerWrittenByJavajigi = Answer.generate(1L, JAVAJIGI, questionWrittenByJavajigi,
-			"Answers Contents1");
+		Answer clonedAnswerWrittenByJavajigi = Answer
+			.generate(1L, JAVAJIGI, questionWrittenByJavajigi,
+				"Answers Contents1");
 		Answer answerWrittenBySanjigi = Answer.generate(2L, SANJIGI, questionWrittenByJavajigi,
 			"Answers Contents2");
 

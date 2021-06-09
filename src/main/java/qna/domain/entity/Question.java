@@ -11,11 +11,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import qna.exception.CannotDeleteException;
 import qna.domain.aggregate.AnswerGroup;
 import qna.domain.aggregate.DeleteHistoryGroup;
 import qna.domain.vo.Contents;
 import qna.domain.vo.Title;
+import qna.exception.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {

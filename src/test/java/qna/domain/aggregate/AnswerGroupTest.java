@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.ArrayList;
 import java.util.Objects;
 import org.junit.jupiter.api.Test;
-import qna.domain.aggregate.AnswerGroup;
 
 public class AnswerGroupTest {
 
