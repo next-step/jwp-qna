@@ -8,7 +8,7 @@ import static java.lang.String.format;
 public class UserId {
     public static final int MAXIMUM_LENGTH = 20;
 
-    @Column(length = 20, nullable = false, unique = true)
+    @Column(length = MAXIMUM_LENGTH, nullable = false, unique = true)
     private String userId;
 
     protected UserId() {
