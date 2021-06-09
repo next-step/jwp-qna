@@ -13,9 +13,9 @@ import qna.CannotDeleteException;
 @DataJpaTest
 public class QuestionRepositoryTest {
 
-	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1",
+	public static final User JAVAJIGI = User.generate(1L, "javajigi", "password1", "name1",
 		"javajigi@slipp.net");
-	public static final User SANJIGI = new User(2L, "sanjigi", "password2", "name2",
+	public static final User SANJIGI = User.generate(2L, "sanjigi", "password2", "name2",
 		"sanjigi@slipp.net");
 
 	@Autowired
@@ -44,9 +44,9 @@ public class QuestionRepositoryTest {
 	}
 
 	private void 질문_인스턴스_생성() {
-		instanceOfQuestionWrittenByJavajigi = new Question("title1", "contents1")
+		instanceOfQuestionWrittenByJavajigi = Question.generate("title1", "contents1")
 			.writeBy(savedJavajigi);
-		instanceOfQuestionWrittenBySanjigi = new Question("title2", "contents2")
+		instanceOfQuestionWrittenBySanjigi = Question.generate("title2", "contents2")
 			.writeBy(savedSangiji);
 	}
 
@@ -94,7 +94,7 @@ public class QuestionRepositoryTest {
 
 	@DisplayName("Question Soft delete - 조회 : findByIdAndDeletedFalse(), 수정 : delete()")
 	@Test
-	void softDelete() throws CannotDeleteException {
+	void softDelete() {
 		//given
 		Question expectedQuestionWrittenByJavajigi = questions
 			.save(instanceOfQuestionWrittenByJavajigi);

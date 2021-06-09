@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 
 public class AnswerTest {
 
-	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1",
+	public static final User JAVAJIGI = User.generate(1L, "javajigi", "password1", "name1",
 		"javajigi@slipp.net");
-	public static final User SANJIGI = new User(2L, "sanjigi", "password2", "name2",
+	public static final User SANJIGI = User.generate(2L, "sanjigi", "password2", "name2",
 		"sanjigi@slipp.net");
 
 	private Answer answerWrittenByJavajigi;
@@ -18,8 +18,8 @@ public class AnswerTest {
 
 	@BeforeEach
 	void initialize() {
-		questionWrittenByJavajigi = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
-		answerWrittenByJavajigi = new Answer(JAVAJIGI, questionWrittenByJavajigi,
+		questionWrittenByJavajigi = Question.generate(1L, "title1", "contents1").writeBy(JAVAJIGI);
+		answerWrittenByJavajigi = Answer.generate(1L, JAVAJIGI, questionWrittenByJavajigi,
 			"Answers Contents1");
 	}
 
@@ -27,9 +27,9 @@ public class AnswerTest {
 	@Test
 	void equals() {
 		//given
-		Answer clonedAnswerWrittenByJavajigi = new Answer(JAVAJIGI, questionWrittenByJavajigi,
+		Answer clonedAnswerWrittenByJavajigi = Answer.generate(1L, JAVAJIGI, questionWrittenByJavajigi,
 			"Answers Contents1");
-		Answer answerWrittenBySanjigi = new Answer(SANJIGI, questionWrittenByJavajigi,
+		Answer answerWrittenBySanjigi = Answer.generate(2L, SANJIGI, questionWrittenByJavajigi,
 			"Answers Contents2");
 
 		//when
@@ -47,7 +47,7 @@ public class AnswerTest {
 	@Test
 	void changeQuestion() {
 		//given
-		Question anotherQuestionWrittenBySanjigi = new Question(2L, "title2", "contents2")
+		Question anotherQuestionWrittenBySanjigi = Question.generate(2L, "title2", "contents2")
 			.writeBy(SANJIGI);
 
 		//when

@@ -14,13 +14,6 @@ public class DeleteHistoryGroup {
 		return new DeleteHistoryGroup();
 	}
 
-	public static DeleteHistoryGroup generateByQuestion(Question question) {
-		DeleteHistoryGroup deleteHistoryGroup = generate();
-		deleteHistoryGroup.add(question.generateDeleteHistoryOfQuestion());
-		deleteHistoryGroup.addAll(question.generateDeleteHistoryAllOfAnswers());
-		return deleteHistoryGroup;
-	}
-
 	public List<DeleteHistory> deleteHistories() {
 		return deleteHistories;
 	}

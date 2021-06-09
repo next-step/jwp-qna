@@ -9,25 +9,25 @@ import qna.CannotDeleteException;
 
 public class QuestionTest {
 
-	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1",
+	public static final User JAVAJIGI = User.generate(1L, "javajigi", "password1", "name1",
 		"javajigi@slipp.net");
-	public static final User SANJIGI = new User(2L, "sanjigi", "password2", "name2",
+	public static final User SANJIGI = User.generate(2L, "sanjigi", "password2", "name2",
 		"sanjigi@slipp.net");
 
 	private Question questionWrittenByJavajigi;
 
 	@BeforeEach
 	void initialize() {
-		questionWrittenByJavajigi = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
+		questionWrittenByJavajigi = Question.generate(1L, "title1", "contents1").writeBy(JAVAJIGI);
 	}
 
 	@DisplayName("Question : equals()")
 	@Test
 	void equals() {
 		//given
-		Question clonedQuestionWrittenByJavajigi = new Question(1L, "title1", "contents1")
+		Question clonedQuestionWrittenByJavajigi = Question.generate(1L, "title1", "contents1")
 			.writeBy(JAVAJIGI);
-		Question questionWrittenBySanjigi = new Question(2L, "title2", "contents2")
+		Question questionWrittenBySanjigi = Question.generate(2L, "title2", "contents2")
 			.writeBy(SANJIGI);
 
 		//when
@@ -44,7 +44,7 @@ public class QuestionTest {
 	@Test
 	void addAnswer() {
 		//given
-		Answer answerWrittenByJavajigi = new Answer(JAVAJIGI, questionWrittenByJavajigi,
+		Answer answerWrittenByJavajigi = Answer.generate(JAVAJIGI, questionWrittenByJavajigi,
 			"Answers Contents1");
 
 		//when
@@ -63,7 +63,7 @@ public class QuestionTest {
 
 	@DisplayName("Question Soft delete : delete()")
 	@Test
-	void delete() throws CannotDeleteException {
+	void delete() {
 		//given
 
 		//when

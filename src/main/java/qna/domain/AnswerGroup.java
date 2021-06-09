@@ -8,7 +8,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import qna.CannotDeleteException;
 
 @Embeddable
 public class AnswerGroup {
@@ -39,23 +38,13 @@ public class AnswerGroup {
 		return answers.isEmpty();
 	}
 
-	public void validateIsSameWithUserAndWriter(User loginUser) throws CannotDeleteException {
-		for (Answer answer : answers) {
-			answer.validateIsOwner(loginUser);
-		}
+	public void checkAnswersAreSameWithUserAndWriter(User loginUser) {
+		answers.forEach(answer -> answer.checkIsOwner(loginUser));
 	}
 
-	public void deleteAll() {
-		answers.forEach(Answer::delete);
-	}
-
-	public List<DeleteHistory> generateDeleteHistoryAllOfAnswers() {
+	public List<DeleteHistory> deleteAll() {
 		return answers.stream()
-			.map(answer -> new DeleteHistory(
-				ContentType.ANSWER,
-				answer.id(),
-				answer.writer(),
-				LocalDateTime.now()))
+			.map(Answer::delete)
 			.collect(Collectors.toList());
 	}
 

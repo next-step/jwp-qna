@@ -1,6 +1,8 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -14,10 +16,12 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.vo.Contents;
-import qna.domain.vo.Deleted;
 
 @Entity
 public class Answer extends BaseEntity {
+
+	private static final boolean NOT_DELETED = false;
+	private static final boolean DELETED = true;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +30,8 @@ public class Answer extends BaseEntity {
 	@Embedded
 	private Contents contents;
 
-	@Embedded
-	private Deleted deleted;
+	@Column(nullable = false)
+	private boolean deleted = NOT_DELETED;
 
 	@ManyToOne
 	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -40,27 +44,30 @@ public class Answer extends BaseEntity {
 	protected Answer() {
 	}
 
-	public Answer(User writer, Question question, String contents) {
-		this(null, writer, question, contents);
-	}
-
-	public Answer(Long id, User writer, Question question, String contents) {
-		validateWriterIsNotNull(writer);
-		validateQuestionIsNotNull(question);
+	private Answer(Long id, User writer, Question question, String contents) {
 		this.id = id;
 		this.writer = writer;
 		this.contents = Contents.generate(contents);
-		this.deleted = Deleted.generate();
 		changeQuestion(question);
 	}
 
-	private void validateQuestionIsNotNull(Question question) {
+	public static Answer generate(User writer, Question question, String contents) {
+		return Answer.generate(null, writer, question, contents);
+	}
+
+	public static Answer generate(Long id, User writer, Question question, String contents) {
+		validateWriterIsNotNull(writer);
+		validateQuestionIsNotNull(question);
+		return new Answer(id, writer, question, contents);
+	}
+
+	private static void validateQuestionIsNotNull(Question question) {
 		if (Objects.isNull(question)) {
 			throw new NotFoundException();
 		}
 	}
 
-	private void validateWriterIsNotNull(User writer) {
+	private static void validateWriterIsNotNull(User writer) {
 		if (Objects.isNull(writer)) {
 			throw new UnAuthorizedException();
 		}
@@ -72,7 +79,6 @@ public class Answer extends BaseEntity {
 		}
 		question(question);
 		question.addAnswer(this);
-		updatedAtNow();
 	}
 
 
@@ -102,19 +108,20 @@ public class Answer extends BaseEntity {
 		return this.writer.equals(writer);
 	}
 
-	public void validateIsOwner(User loginUser) throws CannotDeleteException {
+	public void checkIsOwner(User loginUser) {
 		if (!isOwner(loginUser)) {
 			throw new CannotDeleteException("사용자와 답변의 작성자가 일치하지 않습니다.");
 		}
 	}
 
 	public boolean isDeleted() {
-		return deleted.value();
+		return deleted;
 	}
 
-	public void delete() {
-		deleted.changeDeleted();
+	public DeleteHistory delete() {
+		deleted = DELETED;
 		updatedAtNow();
+		return DeleteHistory.ofAnswer(id, writer);
 	}
 
 	@Override

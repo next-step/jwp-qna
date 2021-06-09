@@ -19,9 +19,9 @@ public class UserRepositoryTest {
 
 	@BeforeEach
 	void initialize() {
-		instanceJavajigi = new User(1L, "javajigi", "password1", "name1",
+		instanceJavajigi = User.generate(1L, "javajigi", "password1", "name1",
 			"javajigi@slipp.net");
-		instanceSanjigi = new User(2L, "sanjigi", "password2", "name2",
+		instanceSanjigi = User.generate(2L, "sanjigi", "password2", "name2",
 			"sanjigi@slipp.net");
 	}
 

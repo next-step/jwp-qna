@@ -24,7 +24,7 @@ QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 
 
 ```java
 @Transactional
-public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
+public void deleteQuestion(User loginUser, Long questionId) {
     Question question = findQuestionById(questionId);
     if (!question.isOwner(loginUser)) {
         throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
@@ -369,24 +369,24 @@ A. Domain Model 영역에서 하는 것이 옳다.
     - [x] 4-2.추가 리팩터링
         - [x] 4-2-1.불필요한 메서드 제거
     - [ ] 4-3.리뷰어님 코멘트 반영
-        - [ ] 4-3-1.불필요한 원시값 포장 해제하기 : `Deleted`
-        - [ ] 4-3-2.2중 적용된 소스 코드 수정 : `Answer.changeQuestion()`
-        - [ ] 4-3-3.Checked Exception -> Unchecked Exception 적용
-            - [ ] 4-3-3-1.`CannotDeleteException`
-            - [ ] 4-3-3-2.`Answer.validateIsOwner()`
-            - [ ] 4-3-3-3.`Question.validateCouldDelete()`
-        - [ ] 4-3-4.생성자 -> 정적 팩토리 메서드
-            - [ ] 4-3-4-1.`AnswerGroup.generateDeleteHIstoryAllOfAnswers()` 내 `new DeleteHistory`
-        - [ ] 4-3-5.기능수정
-            - [ ] 4-3-5-1.`Answer.delete()` : 상태 값 변경 -> 상태 값 변경 + 삭제한 이력을 리턴
-        - [ ] 4-3-6.래핑클래스 -> 원시값으로 변경
-            - [ ] 4-3-6-1.`Question.deleted`
-        - [ ] 4-3-7.필드의 기본값 설정과 초기화를 혼동하지 말자.
-            - [ ] 4-3-7-1.`Question.answers` : AnswerGroup.generate() -> 제거
-        - [ ] 4-3-8.접근제어자 제대로 사용하기
-            - [ ] 4-3-8-1.`Question.validateCouldDelete()`
-            - [ ] 4-3-8-2.`Answer.validateIsOwner()`
-            - [ ] 4-3-8-3.그 외에도 찾아보기
+        - [x] 4-3-1.불필요한 원시값 포장 해제하기 : `Deleted`
+        - [x] 4-3-2.2중 적용된 소스 코드 수정 : `Answer.changeQuestion()`
+        - [x] 4-3-3.Checked Exception -> Unchecked Exception 적용
+            - [x] 4-3-3-1.`CannotDeleteException`
+            - [x] 4-3-3-2.`Answer.validateIsOwner()`
+            - [x] 4-3-3-3.`Question.validateCouldDelete()`
+        - [x] 4-3-4.생성자 -> 정적 팩토리 메서드
+            - [x] 4-3-4-1.`AnswerGroup.generateDeleteHIstoryAllOfAnswers()` 내 `new DeleteHistory`
+        - [x] 4-3-5.기능수정
+            - [x] 4-3-5-1.`Answer.delete()` : 상태 값 변경 -> 상태 값 변경 + 삭제한 이력을 리턴
+        - [x] 4-3-6.래핑클래스 -> 원시값으로 변경
+            - [x] 4-3-6-1.`Question.deleted`
+        - [x] 4-3-7.필드의 기본값 설정과 초기화를 혼동하지 말자.
+            - [x] 4-3-7-1.`Question.answers` : AnswerGroup.generate() -> 제거
+        - [x] 4-3-8.접근제어자 제대로 사용하기
+            - [x] 4-3-8-1.`Question.validateCouldDelete()`
+            - [x] 4-3-8-2.`Answer.validateIsOwner()`
+            - [x] 4-3-8-3.그 외에도 찾아보기
         - [ ] 4-3-9.Value Object Test 코드 작성
 - [x] 5.테스트
     - [x] 5-1.Gradle build Success 확인

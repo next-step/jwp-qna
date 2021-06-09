@@ -19,6 +19,9 @@ import qna.domain.vo.Title;
 @Entity
 public class Question extends BaseEntity {
 
+	private static final boolean NOT_DELETED = false;
+	private static final boolean DELETED = true;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -27,7 +30,7 @@ public class Question extends BaseEntity {
 	private Contents contents;
 
 	@Column(nullable = false)
-	private Boolean deleted = Boolean.FALSE;
+	private boolean deleted = NOT_DELETED;
 
 	@Embedded
 	private Title title;
@@ -37,19 +40,24 @@ public class Question extends BaseEntity {
 	private User writer;
 
 	@Embedded
-	private AnswerGroup answerGroup = AnswerGroup.generate();
+	private AnswerGroup answerGroup;
 
 	protected Question() {
 	}
 
-	public Question(String title, String contents) {
-		this(null, title, contents);
-	}
-
-	public Question(Long id, String title, String contents) {
+	private Question(Long id, String title, String contents) {
 		this.id = id;
 		this.title = Title.generate(title);
 		this.contents = Contents.generate(contents);
+		this.answerGroup = AnswerGroup.generate();
+	}
+
+	public static Question generate(String title, String contents) {
+		return generate(null, title, contents);
+	}
+
+	public static Question generate(Long id, String title, String contents) {
+		return new Question(id, title, contents);
 	}
 
 	public Long id() {
@@ -91,37 +99,36 @@ public class Question extends BaseEntity {
 		return deleted;
 	}
 
-	public void delete(User loginUser) throws CannotDeleteException {
-		validateCouldDelete(loginUser);
-		this.deleted = true;
-		answerGroup.deleteAll();
+	public DeleteHistoryGroup delete(User loginUser) {
+		checkDeletable(loginUser);
+		DeleteHistoryGroup deleteHistoryGroup = DeleteHistoryGroup.generate();
+		deleteHistoryGroup.add(deleteQuestion());
+		deleteHistoryGroup.addAll(answerGroup.deleteAll());
+		return deleteHistoryGroup;
+	}
+
+	private DeleteHistory deleteQuestion() {
+		this.deleted = DELETED;
 		updatedAtNow();
+		return DeleteHistory.ofQuestion(id, writer);
 	}
 
-	public void validateCouldDelete(User loginUser) throws CannotDeleteException {
-		validateIsSameWithUserAndWriter(loginUser);
-		validateAnswerGroup(loginUser);
+	private void checkDeletable(User loginUser) {
+		checkQuestionIsSameWithUserAndWriter(loginUser);
+		checkDeletableAnswerGroup(loginUser);
 	}
 
-	private void validateAnswerGroup(User loginUser) throws CannotDeleteException {
+	private void checkDeletableAnswerGroup(User loginUser) {
 		if (answerGroup.isEmpty()) {
 			return;
 		}
-		answerGroup.validateIsSameWithUserAndWriter(loginUser);
+		answerGroup.checkAnswersAreSameWithUserAndWriter(loginUser);
 	}
 
-	private void validateIsSameWithUserAndWriter(User loginUser) throws CannotDeleteException {
+	private void checkQuestionIsSameWithUserAndWriter(User loginUser) {
 		if (!isOwner(loginUser)) {
 			throw new CannotDeleteException("질문 삭제는 작성자만 가능합니다.");
 		}
-	}
-
-	public DeleteHistory generateDeleteHistoryOfQuestion() {
-		return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
-	}
-
-	public List<DeleteHistory> generateDeleteHistoryAllOfAnswers() {
-		return answerGroup.generateDeleteHistoryAllOfAnswers();
 	}
 
 	@Override

@@ -13,9 +13,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
 
-	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1",
+	public static final User JAVAJIGI = User.generate(1L, "javajigi", "password1", "name1",
 		"javajigi@slipp.net");
-	public static final User SANJIGI = new User(2L, "sanjigi", "password2", "name2",
+	public static final User SANJIGI = User.generate(2L, "sanjigi", "password2", "name2",
 		"sanjigi@slipp.net");
 
 	@Autowired
@@ -52,23 +52,21 @@ public class DeleteHistoryRepositoryTest {
 	}
 
 	private void 질문정보_저장() {
-		savedQuestionWrittenByJavajigi = questions.save(new Question(1L, "title1", "contents1")
+		savedQuestionWrittenByJavajigi = questions.save(Question.generate(1L, "title1", "contents1")
 			.writeBy(savedJavajigi));
 	}
 
 	private void 답변정보_저장() {
 		savedAnswerWrittenBySanjigi = answers
-			.save(new Answer(savedSangiji, savedQuestionWrittenByJavajigi,
+			.save(Answer.generate(savedSangiji, savedQuestionWrittenByJavajigi,
 				"Answers Contents1"));
 	}
 
 	private void 삭제_히스토리_객체_초기화() {
-		deleteHistoryOfQuestionWrittenByJavajigi = new DeleteHistory(ContentType.QUESTION,
-			savedQuestionWrittenByJavajigi.id(),
-			savedQuestionWrittenByJavajigi.writer(), LocalDateTime.now());
-		deleteHistoryOfAnswerWrittenBySanjigi = new DeleteHistory(ContentType.ANSWER,
-			savedAnswerWrittenBySanjigi.id(),
-			savedAnswerWrittenBySanjigi.writer(), LocalDateTime.now());
+		deleteHistoryOfQuestionWrittenByJavajigi = DeleteHistory.ofQuestion(
+			savedQuestionWrittenByJavajigi.id(), savedQuestionWrittenByJavajigi.writer());
+		deleteHistoryOfAnswerWrittenBySanjigi = DeleteHistory.ofAnswer(
+			savedAnswerWrittenBySanjigi.id(), savedAnswerWrittenBySanjigi.writer());
 	}
 
 	@DisplayName("DeleteHistory 저장 : save()")

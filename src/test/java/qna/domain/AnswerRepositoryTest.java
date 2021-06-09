@@ -12,9 +12,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class AnswerRepositoryTest {
 
-	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1",
+	public static final User JAVAJIGI = User.generate(1L, "javajigi", "password1", "name1",
 		"javajigi@slipp.net");
-	public static final User SANJIGI = new User(2L, "sanjigi", "password2", "name2",
+	public static final User SANJIGI = User.generate(2L, "sanjigi", "password2", "name2",
 		"sanjigi@slipp.net");
 
 	@Autowired
@@ -49,18 +49,18 @@ public class AnswerRepositoryTest {
 	}
 
 	private void 답변_인스턴스_생성() {
-		answerWrittenByJavajigi = new Answer(JAVAJIGI, savedQuestionWrittenByJavajigi,
+		answerWrittenByJavajigi = Answer.generate(JAVAJIGI, savedQuestionWrittenByJavajigi,
 			"Answers Contents1");
-		answerWrittenBySanjigi = new Answer(SANJIGI, savedQuestionWrittenBySanjigi,
+		answerWrittenBySanjigi = Answer.generate(SANJIGI, savedQuestionWrittenBySanjigi,
 			"Answers Contents2");
 	}
 
 	private void 각_답변별_질문정보_저장() {
-		Question tempQuestion1 = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
+		Question tempQuestion1 = Question.generate(1L, "title1", "contents1").writeBy(JAVAJIGI);
 		tempQuestion1.writeBy(savedJavajigi);
 		savedQuestionWrittenByJavajigi = questions.save(tempQuestion1);
 
-		Question tempQuestion2 = new Question(2L, "title2", "contents2").writeBy(SANJIGI);
+		Question tempQuestion2 = Question.generate(2L, "title2", "contents2").writeBy(SANJIGI);
 		tempQuestion2.writeBy(savedSangiji);
 		savedQuestionWrittenBySanjigi = questions.save(tempQuestion2);
 	}

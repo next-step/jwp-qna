@@ -41,12 +41,19 @@ public class DeleteHistory {
 	protected DeleteHistory() {
 	}
 
-	public DeleteHistory(ContentType contentType, Long contentId, User deleter,
-		LocalDateTime createDate) {
+	private DeleteHistory(ContentType contentType, Long contentId, User deleter) {
 		this.contentType = contentType;
 		this.contentId = ContentId.generate(contentId);
 		this.deleter = deleter;
-		this.createDate = createDate;
+		this.createDate = LocalDateTime.now();
+	}
+
+	public static DeleteHistory ofQuestion(Long contentId, User deleter) {
+		return new DeleteHistory(ContentType.QUESTION, contentId, deleter);
+	}
+
+	public static DeleteHistory ofAnswer(Long contentId, User deleter) {
+		return new DeleteHistory(ContentType.ANSWER, contentId, deleter);
 	}
 
 	public Long id() {

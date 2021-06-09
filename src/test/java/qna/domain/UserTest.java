@@ -14,9 +14,9 @@ public class UserTest {
 
 	@BeforeEach
 	void initialize() {
-		javajigi = new User(1L, "javajigi", "password1", "name1",
+		javajigi = User.generate(1L, "javajigi", "password1", "name1",
 			"javajigi@slipp.net");
-		clonedJavajigi = new User(1L, "javajigi", "password1", "name1",
+		clonedJavajigi = User.generate(1L, "javajigi", "password1", "name1",
 			"javajigi@slipp.net");
 	}
 
@@ -24,7 +24,7 @@ public class UserTest {
 	@Test
 	void equals() {
 		//given
-		User sanjigi = new User(2L, "sanjigi", "password2", "name2",
+		User sanjigi = User.generate(2L, "sanjigi", "password2", "name2",
 			"sanjigi@slipp.net");
 
 		//when

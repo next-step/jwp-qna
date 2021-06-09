@@ -19,9 +19,9 @@ import qna.domain.UserRepository;
 @SpringBootTest
 class QnaServiceWithoutMockitoTest {
 
-	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1",
+	public static final User JAVAJIGI = User.generate(1L, "javajigi", "password1", "name1",
 		"javajigi@slipp.net");
-	public static final User SANJIGI = new User(2L, "sanjigi", "password2", "name2",
+	public static final User SANJIGI = User.generate(2L, "sanjigi", "password2", "name2",
 		"sanjigi@slipp.net");
 
 	@Autowired
@@ -55,7 +55,7 @@ class QnaServiceWithoutMockitoTest {
 	void 사용자_작성자_동일하지않은_질문_삭제() {
 		//given
 		Question questionWithoutAnswers = questionRepository
-			.save(new Question(1L, "title1", "contents1").writeBy(savedJavajigi));
+			.save(Question.generate(1L, "title1", "contents1").writeBy(savedJavajigi));
 
 		//when
 
@@ -79,10 +79,10 @@ class QnaServiceWithoutMockitoTest {
 
 	@DisplayName("Scenario: 사용자와 작성자가 동일한 질문을 삭제 시도한다. 질문의 답변은 존재하지 않는다.")
 	@Test
-	void 사용자_작성자_동일한_질문_삭제() throws CannotDeleteException {
+	void 사용자_작성자_동일한_질문_삭제() {
 		//given
 		Question questionWithoutAnswers = questionRepository
-			.save(new Question(1L, "title1", "contents1").writeBy(savedJavajigi));
+			.save(Question.generate(1L, "title1", "contents1").writeBy(savedJavajigi));
 
 		//when
 		qnaService.deleteQuestion(savedJavajigi, questionWithoutAnswers);
@@ -93,12 +93,12 @@ class QnaServiceWithoutMockitoTest {
 
 	@DisplayName("Scenario: 사용자와 작성자가 동일한 질문을 삭제 시도한다. 질문의 답변은 존재하며 본인의 답변이다.")
 	@Test
-	void 사용자_작성자_동일한_질문_삭제_본인_답변만_존재() throws CannotDeleteException {
+	void 사용자_작성자_동일한_질문_삭제_본인_답변만_존재() {
 		//given
-		Question questionWithAnswersWrittenByUserA = questionRepository
-			.save(new Question(2L, "title2", "contents2").writeBy(savedJavajigi));
-		Answer answerWrittenByUserA = answerRepository
-			.save(new Answer(1L, savedJavajigi, questionWithAnswersWrittenByUserA,
+		questionWithAnswersWrittenByUserA = questionRepository
+			.save(Question.generate(2L, "title2", "contents2").writeBy(savedJavajigi));
+		answerWrittenByUserA = answerRepository
+			.save(Answer.generate(1L, savedJavajigi, questionWithAnswersWrittenByUserA,
 				"Answers Contents2"));
 
 		//when
@@ -119,12 +119,12 @@ class QnaServiceWithoutMockitoTest {
 
 	@DisplayName("사용자와 작성자가 동일한 질문을 삭제 시도한다. 질문의 답변은 존재하며 타인이 작성한 답변도 있다. ")
 	@Test
-	void 사용자_작성자_동일한_질문_삭제_본인_이외_답변_존재() throws CannotDeleteException {
+	void 사용자_작성자_동일한_질문_삭제_본인_이외_답변_존재() {
 		//given
-		Question questionWithAnswersWrittenByUserB = questionRepository
-			.save(new Question(3L, "title3", "contents3").writeBy(savedJavajigi));
-		Answer answerWrittenByUserB = answerRepository
-			.save(new Answer(2L, savedSanjigi, questionWithAnswersWrittenByUserB,
+		questionWithAnswersWrittenByUserB = questionRepository
+			.save(Question.generate(3L, "title3", "contents3").writeBy(savedJavajigi));
+		answerWrittenByUserB = answerRepository
+			.save(Answer.generate(2L, savedSanjigi, questionWithAnswersWrittenByUserB,
 				"Answers Contents3"));
 
 		//when

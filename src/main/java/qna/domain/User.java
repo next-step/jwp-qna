@@ -34,11 +34,7 @@ public class User extends BaseEntity {
 	protected User() {
 	}
 
-	public User(String userId, String password, String name, String email) {
-		this(null, userId, password, name, email);
-	}
-
-	public User(Long id, String userId, String password, String name, String email) {
+	private User(Long id, String userId, String password, String name, String email) {
 		this.id = id;
 		this.userId = UserId.generate(userId);
 		this.password = Password.generate(password);
@@ -46,7 +42,11 @@ public class User extends BaseEntity {
 		this.email = Email.generate(email);
 	}
 
-	public void update(User loginUser, User target) {
+    public static User generate(Long id, String userId, String password, String name, String email) {
+		return new User(id, userId, password, name, email);
+    }
+
+    public void update(User loginUser, User target) {
 		if (!matchUserId(loginUser.userId)) {
 			throw new UnAuthorizedException();
 		}

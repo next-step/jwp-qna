@@ -21,9 +21,9 @@ import qna.domain.User;
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
 
-	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1",
+	public static final User JAVAJIGI = User.generate(1L, "javajigi", "password1", "name1",
 		"javajigi@slipp.net");
-	public static final User SANJIGI = new User(2L, "sanjigi", "password2", "name2",
+	public static final User SANJIGI = User.generate(2L, "sanjigi", "password2", "name2",
 		"sanjigi@slipp.net");
 
 	@Mock
@@ -43,8 +43,8 @@ class QnaServiceTest {
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		questionWrittenByJavajigi = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
-		answerWrittenByJavajigi = new Answer(1L, JAVAJIGI, questionWrittenByJavajigi,
+		questionWrittenByJavajigi = Question.generate(1L, "title1", "contents1").writeBy(JAVAJIGI);
+		answerWrittenByJavajigi = Answer.generate(1L, JAVAJIGI, questionWrittenByJavajigi,
 			"Answers Contents1");
 		questionWrittenByJavajigi.addAnswer(answerWrittenByJavajigi);
 	}
@@ -56,11 +56,11 @@ class QnaServiceTest {
 
 		//when
 		assertThat(questionWrittenByJavajigi.isDeleted()).isFalse();
-		qnaService.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi);
+		DeleteHistoryGroup deleteHistoryGroup = qnaService.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi);
 
 		//then
 		assertThat(questionWrittenByJavajigi.isDeleted()).isTrue();
-		verifyDeleteHistories(questionWrittenByJavajigi);
+		verifyDeleteHistories(deleteHistoryGroup);
 	}
 
 	@DisplayName("delete_다른_사람이_쓴_글")
@@ -79,19 +79,19 @@ class QnaServiceTest {
 	@Test
 	public void deleteSamePostByQuestionerAndAnswerer() throws Exception {
 		//when
-		qnaService.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi);
+		DeleteHistoryGroup deleteHistoryGroup = qnaService.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi);
 
 		//then
 		assertThat(questionWrittenByJavajigi.isDeleted()).isTrue();
 		assertThat(answerWrittenByJavajigi.isDeleted()).isTrue();
-		verifyDeleteHistories(questionWrittenByJavajigi);
+		verifyDeleteHistories(deleteHistoryGroup);
 	}
 
 	@DisplayName("delete_답변_중_다른_사람이_쓴_글")
 	@Test
 	public void deletePostingWrittenByTheOthers() {
 		//given
-		Answer answer2 = new Answer(2L, SANJIGI, questionWrittenByJavajigi, "Answers Contents1");
+		Answer answer2 = Answer.generate(2L, SANJIGI, questionWrittenByJavajigi, "Answers Contents1");
 		questionWrittenByJavajigi.addAnswer(answer2);
 
 		//when
@@ -102,8 +102,7 @@ class QnaServiceTest {
 			.isInstanceOf(CannotDeleteException.class);
 	}
 
-	private void verifyDeleteHistories(Question question) {
-		DeleteHistoryGroup deleteHistoryGroup = DeleteHistoryGroup.generateByQuestion(question);
+	private void verifyDeleteHistories(DeleteHistoryGroup deleteHistoryGroup) {
 		verify(deleteHistoryService).saveAll(deleteHistoryGroup.deleteHistories());
 	}
 }
