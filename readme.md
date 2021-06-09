@@ -93,5 +93,5 @@ QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 
   - [x] 1.Question으로 삭제
   - [x] 2.반환 받은 DeleteHistory를 모두 리포지토리를 통해 저장
 
-- [ ] DeleteHistoryService에 대한 테스트 구현 `
+- [x] DeleteHistoryService에 대한 테스트 구현 `
 - [x] QnaServiceTest의 테스트 코드 수정 `
