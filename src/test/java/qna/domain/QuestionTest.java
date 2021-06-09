@@ -27,8 +27,8 @@ public class QuestionTest {
 
     @BeforeEach
     void setUp() {
-        javajigi = new User("javajigi", "password", "name", "javajigi@slipp.net");
-        sanjigi = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        javajigi = new User(new UserId("javajigi"), "password", "name", "javajigi@slipp.net");
+        sanjigi = new User(new UserId("sanjigi"), "password", "name", "sanjigi@slipp.net");
 
         question = question = new Question(new Title("title1"), new Contents("contents1")).writeBy(javajigi);
 
