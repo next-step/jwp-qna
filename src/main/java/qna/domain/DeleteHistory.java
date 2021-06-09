@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import javax.persistence.*;
 
-@Table
 @Entity
 public class DeleteHistory {
 
@@ -29,12 +28,12 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(Question question, User writer) {
-        this(ContentType.QUESTION, question.getId(), writer);
+    public static DeleteHistory ofQuestion(Long contentId, User deletedBy) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deletedBy);
     }
 
-    public DeleteHistory(Answer answer, User writer) {
-        this(ContentType.ANSWER, answer.getId(), writer);
+    public static DeleteHistory ofAnswer(Long contentId, User deletedBy) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deletedBy);
     }
 
     private DeleteHistory(ContentType contentType, Long contentId, User writer) {

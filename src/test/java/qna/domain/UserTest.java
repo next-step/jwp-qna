@@ -11,8 +11,6 @@ import qna.exceptions.StringTooLongException;
 import qna.exceptions.UnAuthorizedException;
 
 public class UserTest {
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
     private static final String TEXT_LENGTH_111 = "Length = 111. This value is too long for the column of this entity. Could not execute the insert SQL statement.";
 

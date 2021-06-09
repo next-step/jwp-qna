@@ -2,6 +2,52 @@
 
 ## 요구사항
 
+### 3단계: 질문 삭제하기 리팩터링
+
+결과: 질문, 답변 상태 → deleted
+
+#### 삭제 조건
+
+1. 질문자 == 로그인 사용자
+   - 실패: 질문을 삭제할 권한이 없습니다.
+2. 로그인 사용자 = 답변자 목록
+   - 실패: 다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.
+   - 성공: 질문, 답변 삭제 후 기록
+
+#### 결과 기록
+
+`DeleteHistory`에 질문, 답변 삭제 기록을 남긴다.
+
+#### 도메인 역할
+
+- 답변
+  - 로그인 사용자 비교
+  - 삭제 가능 여부 반환
+  - 답변 삭제
+  - 삭제 권한 에러: `CannotDeleteException`
+- `Answers`
+  - 삭제 가능 여부 반환
+  - 답변 삭제
+- 질문
+  - 로그인 사용자 비교
+  - 답변 목록 삭제 처리
+    - 삭제한 답변 목록 반환
+  - 질문 삭제 처리
+  - 삭제 권한 에러: `CannotDeleteException`
+- `QuestionRemover`
+  - 질문, 답변 삭제
+  - 삭제 기록 반환
+  - 삭제 권한 에러: `CannotDeleteException`
+
+#### 서비스 역할
+
+1. Login User, Question ID 입력
+2. 데이터베이스 Question ID 조회 → Question 반환
+3. `QuestionRemover`에게 삭제 요청
+   - 실패: `CannotDeleteException`
+   - 성공: `List<DeleteHistory>` 반환
+4. `List<DeleteHistory>` 저장
+
 ### 2단계: 연관 관계 매핑
 
 - 1단계: 테이블 FK 기준

@@ -20,6 +20,9 @@ import qna.exceptions.NotFoundException;
 public class QuestionRepositoryTest {
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private QuestionRepository questionRepository;
 
     @Autowired
@@ -42,9 +45,11 @@ public class QuestionRepositoryTest {
     @DisplayName("삭제한 질문으로 변경 후 진행 중인 질문 검색")
     @Test
     void findAll_AfterDeleteQuestion() {
-        Question question = new Question("title", "contents");
+        User alice = new User("alice", "password", "Alice", "alice@mail");
+        userRepository.save(alice);
+        Question question = new Question("title", "contents").writeBy(alice);
+        question.delete(alice);
         questionRepository.save(question);
-        question.delete();
 
         List<Question> activeQuestions = questionRepository.findAll();
 
@@ -67,8 +72,10 @@ public class QuestionRepositoryTest {
     @DisplayName("삭제한 질문으로 변경 후 진행 중인 질문을 ID로 검색")
     @Test
     void findById_AfterDeleteQuestion() {
-        Question question = new Question("title", "contents");
-        question.delete();
+        User alice = new User("alice", "password", "Alice", "alice@mail");
+        userRepository.save(alice);
+        Question question = new Question("title", "contents").writeBy(alice);
+        question.delete(alice);
         questionRepository.save(question);
 
         entityManager.clear();
@@ -89,7 +96,7 @@ public class QuestionRepositoryTest {
 
         List<Question> activeQuestions = questionRepository.findAll();
 
-        assertThat(activeQuestions.get(0).getTitle()).isEqualTo(expected);
+        assertThat(activeQuestions.get(0).getTitle().toString()).isEqualTo(expected);
     }
 
     @DisplayName("질문 제목을 수정한 시각을 기록하기")

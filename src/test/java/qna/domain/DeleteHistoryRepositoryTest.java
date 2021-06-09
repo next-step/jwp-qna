@@ -30,7 +30,7 @@ public class DeleteHistoryRepositoryTest {
         Question question = new Question("title", "contents").writeBy(alice);
         questionRepository.save(question);
 
-        DeleteHistory deleteHistory = new DeleteHistory(question, alice);
+        DeleteHistory deleteHistory = DeleteHistory.ofQuestion(question.getId(), alice);
         DeleteHistory actual = deleteHistoryRepository.save(deleteHistory);
 
         assertThat(actual.equals(deleteHistory)).isTrue();
@@ -47,7 +47,7 @@ public class DeleteHistoryRepositoryTest {
         Answer answer = new Answer(alice, question, "Answer Contents");
         answerRepository.save(answer);
 
-        DeleteHistory deleteHistory = new DeleteHistory(answer, alice);
+        DeleteHistory deleteHistory = DeleteHistory.ofAnswer(answer.getId(), alice);
         DeleteHistory actual = deleteHistoryRepository.save(deleteHistory);
 
         assertThat(actual.equals(deleteHistory)).isTrue();

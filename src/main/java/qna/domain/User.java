@@ -7,7 +7,6 @@ import javax.persistence.*;
 import qna.exceptions.UnAuthorizedException;
 import qna.validators.StringValidator;
 
-@Table
 @Entity
 public class User extends BaseEntity {
 

@@ -7,22 +7,19 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.Where;
 
+import qna.exceptions.CannotDeleteException;
 import qna.exceptions.UnAuthorizedException;
-import qna.validators.StringValidator;
 
-@Table
 @Entity
 @Where(clause = "deleted=false")
 public class Question extends BaseEntity {
-
-    private static final int TITLE_LENGTH = 100;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = TITLE_LENGTH, nullable = false)
-    private String title;
+    @Embedded
+    private Title title;
 
     @Lob
     private String contents;
@@ -45,10 +42,8 @@ public class Question extends BaseEntity {
     }
 
     public Question(Long id, String title, String contents) {
-        StringValidator.validate(title, TITLE_LENGTH);
-
         this.id = id;
-        this.title = title;
+        this.title = new Title(title);
         this.contents = contents;
     }
 
@@ -73,14 +68,12 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 
     public void editTitle(String title) {
-        StringValidator.validate(title, TITLE_LENGTH);
-
-        this.title = title;
+        this.title.edit(title);
     }
 
     public User getWriter() {
@@ -91,8 +84,17 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public DeleteHistories delete(User writer) {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(DeleteHistory.ofQuestion(this.id, writer));
+        deleteHistories.addAll(answers.delete(writer));
         this.deleted = true;
+
+        return deleteHistories;
     }
 
     public List<Answer> getAnswers() {

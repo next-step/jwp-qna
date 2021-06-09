@@ -6,10 +6,10 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.Where;
 
+import qna.exceptions.CannotDeleteException;
 import qna.exceptions.NotFoundException;
 import qna.exceptions.UnAuthorizedException;
 
-@Table
 @Entity
 @Where(clause = "deleted=false")
 public class Answer extends BaseEntity {
@@ -77,8 +77,13 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public DeleteHistory delete(User writer) {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
         this.deleted = true;
+        return DeleteHistory.ofAnswer(this.id, writer);
     }
 
     @Override
