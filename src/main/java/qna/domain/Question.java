@@ -29,8 +29,8 @@ public class Question extends BaseEntity {
     @OneToMany(mappedBy = "question") // (1)
     private List<Answer> answers = new ArrayList<>(); // (2)
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deletion deleted = new Deletion(false);
 
     protected Question() {
     }
@@ -71,17 +71,16 @@ public class Question extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
-    public List<DeleteHistory> delete(User writer) throws CannotDeleteException {
-        if (isDeleted()) {
-            throw new CannotDeleteException("이미 삭제된 데이터 입니다.");
-        } else if (!isOwner(writer)) {
+    public List<DeleteHistory> delete(User requester) throws CannotDeleteException {
+        if (!isOwner(requester)) {
             throw new UnAuthorizedException("답변을 삭제할 권한이 없습니다.");
         }
-        List<DeleteHistory> deleteHistories = deleteAnswers(writer);
-        this.deleted = true;
+        deleted.delete();
+
+        List<DeleteHistory> deleteHistories = deleteAnswers(requester);
         deleteHistories.add(new DeleteHistory(QUESTION, this.id, this.writer));
         return deleteHistories;
     }

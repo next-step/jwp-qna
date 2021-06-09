@@ -29,8 +29,8 @@ public class Answer extends BaseEntity {
     @Embedded
     private Contents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deletion deleted = new Deletion(false);
 
     protected Answer() {
     }
@@ -68,17 +68,15 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
-    public DeleteHistory delete(User writer) throws CannotDeleteException {
-        if (isDeleted()) {
-            throw new CannotDeleteException("이미 삭제된 데이터 입니다.");
-        } else if (!isOwner(writer)) {
+    public DeleteHistory delete(User requester) throws CannotDeleteException {
+        if (!isOwner(requester)) {
             throw new UnAuthorizedException("답변을 삭제할 권한이 없습니다.");
         }
 
-        this.deleted = true;
+        deleted.delete();
 
         return new DeleteHistory(ANSWER, this.id, this.writer);
     }
