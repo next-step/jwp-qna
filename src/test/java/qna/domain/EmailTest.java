@@ -33,7 +33,7 @@ class EmailTest {
         for (int i = 0; i < Email.MAXIMUM_LENGTH; i++)
             sourceBuilder.append("jordy");
         sourceBuilder.append("@kakao.com");
-        
+
         // When, Then
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> new Email(sourceBuilder.toString()));

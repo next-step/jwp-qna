@@ -1,7 +1,6 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
-import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
