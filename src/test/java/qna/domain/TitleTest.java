@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("Title Wrapping 클래스 테스트")
 class TitleTest {
@@ -40,5 +41,17 @@ class TitleTest {
         // When, Then
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> new Title(sourceBuilder.toString()));
+    }
+    
+    @DisplayName("equals_성공")
+    @ParameterizedTest
+    @ValueSource(strings = {"", " 1", "2234"})
+    void equals_성공(String source) {
+        // Given
+        Title title1 = new Title(source);
+        Title title2 = new Title(source);
+
+        // When, Then
+        assertEquals(title1, title2);
     }
 }
