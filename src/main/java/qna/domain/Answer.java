@@ -26,7 +26,7 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_question"))
     private Question question;
 
-    @Lob
+    @Embedded
     private Contents contents;
 
     @Column(nullable = false)

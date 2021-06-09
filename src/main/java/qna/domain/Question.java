@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.time.LocalDateTime.now;
 import static javax.persistence.FetchType.LAZY;
 import static qna.domain.ContentType.QUESTION;
 
@@ -20,7 +19,7 @@ public class Question extends BaseEntity {
     @Embedded
     private Title title;
 
-    @Lob
+    @Embedded
     private Contents contents;
 
     @ManyToOne(fetch = LAZY)
@@ -90,7 +89,7 @@ public class Question extends BaseEntity {
     private List<DeleteHistory> deleteAnswers(User writer) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-        for(Answer answer : answers) {
+        for (Answer answer : answers) {
             deleteHistories.add(answer.delete(writer));
         }
 
