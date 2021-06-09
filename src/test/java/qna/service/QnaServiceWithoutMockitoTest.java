@@ -117,7 +117,7 @@ class QnaServiceWithoutMockitoTest {
 		return false;
 	}
 
-	@DisplayName("사용자와 작성자가 동일한 질문을 삭제 시도한다. 질문의 답변은 존재하며 타인이 작성한 답변도 있다. ")
+	@DisplayName("Scenario: 사용자와 작성자가 동일한 질문을 삭제 시도한다. 질문의 답변은 존재하며 타인이 작성한 답변도 있다. ")
 	@Test
 	void 사용자_작성자_동일한_질문_삭제_본인_이외_답변_존재() {
 		//given

@@ -368,7 +368,7 @@ A. Domain Model 영역에서 하는 것이 옳다.
         - [x] 4-1-5.`DeleteHistory` : 삭제 완료 후 로깅 처리
     - [x] 4-2.추가 리팩터링
         - [x] 4-2-1.불필요한 메서드 제거
-    - [ ] 4-3.리뷰어님 코멘트 반영
+    - [x] 4-3.리뷰어님 코멘트 반영
         - [x] 4-3-1.불필요한 원시값 포장 해제하기 : `Deleted`
         - [x] 4-3-2.2중 적용된 소스 코드 수정 : `Answer.changeQuestion()`
         - [x] 4-3-3.Checked Exception -> Unchecked Exception 적용
@@ -387,29 +387,29 @@ A. Domain Model 영역에서 하는 것이 옳다.
             - [x] 4-3-8-1.`Question.validateCouldDelete()`
             - [x] 4-3-8-2.`Answer.validateIsOwner()`
             - [x] 4-3-8-3.그 외에도 찾아보기
-        - [ ] 4-3-9.Value Object Test 코드 작성
-- [x] 5.테스트
-    - [x] 5-1.Gradle build Success 확인
-    - [x] 5-2.Google Java Style 적용 (indent : 2 -> 4 spaces)
-    - [x] 5-3.요구사항 조건들 충족했는지 확인
-        - [x] 5-3-1.핵심 단위 로직 테스트
-        - [x] 5-3-2.< 2 Depth 규칙
-        - [x] 5-3-3.함수(또는 메서드) 10라인 이하
-        - [x] 5-3-4.else 예약어 금지
-        - [x] 5-3-5.Code값들은 `enum`을 활용한다.
-        - [x] 5-3-6.모든 원시값과 문자열을 포장한다.
-        - [x] 5-3-7.일급콜렉션 활용
-        - [x] 5-3-8.축약 금지
-        - [x] 5-3-9.예외 처리
-        - [x] 5-3-10.3항 연산자 금지
-- [x] 6.인수인계
-    - [x] 6-1.소감 및 피드백 정리
+        - [x] 4-3-9.Value Object Test 코드 작성
+- [ ] 5.테스트
+    - [ ] 5-1.Gradle build Success 확인
+    - [ ] 5-2.Google Java Style 적용 (indent : 2 -> 4 spaces)
+    - [ ] 5-3.요구사항 조건들 충족했는지 확인
+        - [ ] 5-3-1.핵심 단위 로직 테스트
+        - [ ] 5-3-2.< 2 Depth 규칙
+        - [ ] 5-3-3.함수(또는 메서드) 10라인 이하
+        - [ ] 5-3-4.else 예약어 금지
+        - [ ] 5-3-5.Code값들은 `enum`을 활용한다.
+        - [ ] 5-3-6.모든 원시값과 문자열을 포장한다.
+        - [ ] 5-3-7.일급콜렉션 활용
+        - [ ] 5-3-8.축약 금지
+        - [ ] 5-3-9.예외 처리
+        - [ ] 5-3-10.3항 연산자 금지
+- [ ] 6.인수인계
+    - [ ] 6-1.소감 및 피드백 정리
         - [x] 6-1-1.느낀점 & 배운점 작성
         - [x] 6-1-2.피드백 요청 정리
-    - [x] 6-2.코드리뷰 요청 및 피드백
-        - [x] 6-1-1.step3를 gregolee/jwp-qna로 push : `git push origin step3`
-        - [x] 6-1-2.pull request(PR) 작성
-    - [x] 6-3.Slack을 통해 merge가 되는지 확인한 후에 미션 종료
+    - [ ] 6-2.코드리뷰 요청 및 피드백
+        - [ ] 6-1-1.step3를 gregolee/jwp-qna로 push : `git push origin step3`
+        - [ ] 6-1-2.pull request(PR) 작성
+    - [ ] 6-3.Slack을 통해 merge가 되는지 확인한 후에 미션 종료
 
 ### 2.3. 인수 조건 (ATDD)
 

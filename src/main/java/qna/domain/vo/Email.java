@@ -25,6 +25,9 @@ public class Email {
 	}
 
 	private static void validateEmailNotOverFiftyCharacter(String email) {
+		if (Objects.isNull(email)) {
+			return;
+		}
 		if (MAX_LENGTH < email.getBytes().length) {
 			throw new IllegalArgumentException("이메일 길이는 " + MAX_LENGTH + "byte 이하여야 합니다.");
 		}
