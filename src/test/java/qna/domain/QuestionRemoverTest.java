@@ -20,7 +20,7 @@ public class QuestionRemoverTest {
         DeleteHistories deleteHistories = QuestionRemover.delete(question, alice);
 
         assertThat(deleteHistories.size()).isEqualTo(1);
-        assertThat(deleteHistories.hasDeleteHistory(new DeleteHistory(question, alice))).isTrue();
+        assertThat(deleteHistories.hasDeleteHistory(DeleteHistory.ofQuestion(question.getId(), alice))).isTrue();
     }
 
     @DisplayName("아직 삭제되지 않은 모든 질문 삭제 후 기록 반환")
@@ -42,11 +42,13 @@ public class QuestionRemoverTest {
         DeleteHistories deleteHistories = QuestionRemover.delete(question, alice);
 
         assertThat(deleteHistories.size()).isEqualTo(3);
-        assertThat(deleteHistories.hasDeleteHistory(new DeleteHistory(question, alice))).isTrue();
-        assertThat(deleteHistories.hasDeleteHistory(new DeleteHistory(aliceAnswer1, alice))).isTrue();
-        assertThat(deleteHistories.hasDeleteHistory(new DeleteHistory(aliceAnswer2, alice))).isTrue();
-        assertThat(deleteHistories.hasDeleteHistory(new DeleteHistory(othersDeletedAnswer, trudy))).isFalse();
-        assertThat(deleteHistories.hasDeleteHistory(new DeleteHistory(aliceDeletedAnswer, alice))).isFalse();
+        assertThat(deleteHistories.hasDeleteHistory(DeleteHistory.ofQuestion(question.getId(), alice))).isTrue();
+        assertThat(deleteHistories.hasDeleteHistory(DeleteHistory.ofAnswer(aliceAnswer1.getId(), alice))).isTrue();
+        assertThat(deleteHistories.hasDeleteHistory(DeleteHistory.ofAnswer(aliceAnswer2.getId(), alice))).isTrue();
+        assertThat(
+            deleteHistories.hasDeleteHistory(DeleteHistory.ofAnswer(othersDeletedAnswer.getId(), trudy))).isFalse();
+        assertThat(
+            deleteHistories.hasDeleteHistory(DeleteHistory.ofAnswer(aliceDeletedAnswer.getId(), alice))).isFalse();
     }
 
     @DisplayName("다른 사람 답변이 있어 질문 삭제 실패")

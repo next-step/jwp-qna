@@ -101,6 +101,8 @@ public class QuestionTest {
         assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() ->
             question.delete(alice)
         ).withMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+
+        assertThat(question.isDeleted()).isFalse();
     }
 
     @DisplayName("다른 사람 질문은 삭제 실패")
@@ -111,6 +113,8 @@ public class QuestionTest {
         assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() ->
             question.delete(trudy)
         ).withMessage("질문을 삭제할 권한이 없습니다.");
+
+        assertThat(question.isDeleted()).isFalse();
     }
 
 }
