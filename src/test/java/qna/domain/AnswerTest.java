@@ -4,68 +4,76 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AnswerTest {
 
-	private Answer answer1;
-	private Question question1;
+	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1",
+		"javajigi@slipp.net");
+	public static final User SANJIGI = new User(2L, "sanjigi", "password2", "name2",
+		"sanjigi@slipp.net");
+
+	private Answer answerWrittenByJavajigi;
+	private Question questionWrittenByJavajigi;
 
 	@BeforeEach
 	void initialize() {
-		question1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-		answer1 = new Answer(UserTest.JAVAJIGI, question1, "Answers Contents1");
+		questionWrittenByJavajigi = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
+		answerWrittenByJavajigi = new Answer(JAVAJIGI, questionWrittenByJavajigi,
+			"Answers Contents1");
 	}
 
 	@DisplayName("Answer : equals()")
 	@Test
-	@Order(1)
 	void equals() {
 		//given
-		Answer clonedAnswer1 = new Answer(UserTest.JAVAJIGI, question1, "Answers Contents1");
-		Answer answer2 = new Answer(UserTest.SANJIGI, question1, "Answers Contents2");
+		Answer clonedAnswerWrittenByJavajigi = new Answer(JAVAJIGI, questionWrittenByJavajigi,
+			"Answers Contents1");
+		Answer answerWrittenBySanjigi = new Answer(SANJIGI, questionWrittenByJavajigi,
+			"Answers Contents2");
 
 		//when
 
 		//then
 		assertAll(
-			() -> assertThat(answer1.equals(clonedAnswer1)).isTrue(),
-			() -> assertThat(answer1.equals(answer2)).isFalse()
+			() -> assertThat(answerWrittenByJavajigi.equals(clonedAnswerWrittenByJavajigi))
+				.isTrue(),
+			() -> assertThat(answerWrittenByJavajigi.equals(answerWrittenBySanjigi))
+				.isFalse()
 		);
 	}
 
-	@DisplayName("Answer : addQuestion()")
+	@DisplayName("Answer : changeQuestion()")
 	@Test
-	@Order(2)
-	void addQuestion() {
+	void changeQuestion() {
 		//given
-		Question question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+		Question anotherQuestionWrittenBySanjigi = new Question(2L, "title2", "contents2")
+			.writeBy(SANJIGI);
 
 		//when
-		answer1.addQuestion(question);
+		answerWrittenByJavajigi.changeQuestion(anotherQuestionWrittenBySanjigi);
 
 		//then
 		assertAll(
-			() -> assertThat(answer1.question().equals(question)).isTrue(),
-			() -> assertThat(question.answers().size()).isEqualTo(1),
-			() -> assertThat(question.answers().get(0).equals(answer1)).isTrue()
+			() -> assertThat(
+				answerWrittenByJavajigi.question().equals(anotherQuestionWrittenBySanjigi))
+				.isTrue(),
+			() -> assertThat(anotherQuestionWrittenBySanjigi.answers().size()).isEqualTo(1),
+			() -> assertThat(
+				anotherQuestionWrittenBySanjigi.answers().get(0).equals(answerWrittenByJavajigi))
+				.isTrue()
 		);
 	}
 
 	@DisplayName("Answer Soft delete : delete()")
 	@Test
-	@Order(3)
 	void delete() {
 		//given
 
 		//when
-		answer1.delete();
+		answerWrittenByJavajigi.delete();
 
 		//then
-		assertThat(answer1.isDeleted()).isTrue();
+		assertThat(answerWrittenByJavajigi.isDeleted()).isTrue();
 	}
 }

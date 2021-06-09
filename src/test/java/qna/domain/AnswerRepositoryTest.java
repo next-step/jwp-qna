@@ -12,18 +12,23 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class AnswerRepositoryTest {
 
+	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1",
+		"javajigi@slipp.net");
+	public static final User SANJIGI = new User(2L, "sanjigi", "password2", "name2",
+		"sanjigi@slipp.net");
+
 	@Autowired
 	private UserRepository users;
 	@Autowired
 	private AnswerRepository answers;
 	@Autowired
 	private QuestionRepository questions;
-	private Answer answer1;
-	private Answer answer2;
+	private Answer answerWrittenByJavajigi;
+	private Answer answerWrittenBySanjigi;
 	private User savedJavajigi;
 	private User savedSangiji;
-	private Question savedQuestion1;
-	private Question savedQuestion2;
+	private Question savedQuestionWrittenByJavajigi;
+	private Question savedQuestionWrittenBySanjigi;
 
 	@DisplayName("테스트 초기화")
 	@BeforeEach
@@ -39,30 +44,30 @@ public class AnswerRepositoryTest {
 	}
 
 	private void 연관_관계_매핑() {
-		answer1.addQuestion(savedQuestion1);
-		answer2.addQuestion(savedQuestion2);
-		answer1.writtenBy(savedJavajigi);
-		answer2.writtenBy(savedSangiji);
+		answerWrittenByJavajigi.writtenBy(savedJavajigi);
+		answerWrittenBySanjigi.writtenBy(savedSangiji);
 	}
 
 	private void 답변_인스턴스_생성() {
-		answer1 = new Answer(UserTest.JAVAJIGI, savedQuestion1, "Answers Contents1");
-		answer2 = new Answer(UserTest.SANJIGI, savedQuestion2, "Answers Contents2");
+		answerWrittenByJavajigi = new Answer(JAVAJIGI, savedQuestionWrittenByJavajigi,
+			"Answers Contents1");
+		answerWrittenBySanjigi = new Answer(SANJIGI, savedQuestionWrittenBySanjigi,
+			"Answers Contents2");
 	}
 
 	private void 각_답변별_질문정보_저장() {
-		Question tempQuestion1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+		Question tempQuestion1 = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
 		tempQuestion1.writeBy(savedJavajigi);
-		savedQuestion1 = questions.save(tempQuestion1);
+		savedQuestionWrittenByJavajigi = questions.save(tempQuestion1);
 
-		Question tempQuestion2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
+		Question tempQuestion2 = new Question(2L, "title2", "contents2").writeBy(SANJIGI);
 		tempQuestion2.writeBy(savedSangiji);
-		savedQuestion2 = questions.save(tempQuestion2);
+		savedQuestionWrittenBySanjigi = questions.save(tempQuestion2);
 	}
 
 	private void 각_답변별_작성자정보_저장() {
-		savedJavajigi = users.save(UserTest.JAVAJIGI);
-		savedSangiji = users.save(UserTest.SANJIGI);
+		savedJavajigi = users.save(JAVAJIGI);
+		savedSangiji = users.save(SANJIGI);
 	}
 
 	@DisplayName("Answer 저장 : save()")
@@ -71,13 +76,13 @@ public class AnswerRepositoryTest {
 		//given
 
 		//when
-		Answer actual = answers.save(answer1);
-		Answer actual2 = answers.save(answer2);
+		Answer actualAnswerWrittenByJavajigi = answers.save(answerWrittenByJavajigi);
+		Answer actualAnswerWrittenBySanjigi = answers.save(answerWrittenBySanjigi);
 
 		//then
 		assertAll(
-			() -> assertThat(actual).isNotNull(),
-			() -> assertThat(actual2).isNotNull()
+			() -> assertThat(actualAnswerWrittenByJavajigi).isNotNull(),
+			() -> assertThat(actualAnswerWrittenBySanjigi).isNotNull()
 		);
 	}
 
@@ -85,88 +90,98 @@ public class AnswerRepositoryTest {
 	@Test
 	void findById() {
 		//given
-		Answer expected = answers.save(answer1);
-		Answer expected2 = answers.save(answer2);
+		Answer expectedAnswerWrittenByJavajigi = answers.save(answerWrittenByJavajigi);
+		Answer expectedAnswerWrittenBySanjigi = answers.save(answerWrittenBySanjigi);
 
 		//when
-		Answer actual = answers.findById(expected.id()).get();
-		Answer actual2 = answers.findById(expected2.id()).get();
+		Answer actualAnswerWrittenByJavajigi = answers
+			.findById(expectedAnswerWrittenByJavajigi.id()).get();
+		Answer actualAnswerWrittenBySanjigi = answers
+			.findById(expectedAnswerWrittenBySanjigi.id()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(actual.equals(expected)).isTrue(),
-			() -> assertThat(actual2.equals(expected2)).isTrue()
+			() -> assertThat(actualAnswerWrittenByJavajigi.equals(expectedAnswerWrittenByJavajigi))
+				.isTrue(),
+			() -> assertThat(actualAnswerWrittenBySanjigi.equals(expectedAnswerWrittenBySanjigi))
+				.isTrue()
 		);
 	}
 
-	@DisplayName("Answer Soft delete - 조회 : findByIdAndDeletedFalse(), 수정 : setDeleted()")
+	@DisplayName("Answer Soft delete - 조회 : findByIdAndDeletedFalse(), 수정 : delete()")
 	@Test
-	void setAnswerId() {
+	void delete() {
 		//given
-		Answer expected = answers.save(answer1);
+		Answer expectedAnswerWrittenByJavajigi = answers.saveAndFlush(answerWrittenByJavajigi);
 
 		//when
-		Optional<Answer> beforeSoftDelete = answers.findByIdAndDeletedFalse(expected.id());
-		expected.delete();
-		Optional<Answer> afterSoftDelete = answers.findByIdAndDeletedFalse(expected.id());
+		Optional<Answer> answerBeforeSoftDelete = answers
+			.findByIdAndDeletedFalse(expectedAnswerWrittenByJavajigi.id());
+		expectedAnswerWrittenByJavajigi.delete();
+		Optional<Answer> answerAfterSoftDelete = answers
+			.findByIdAndDeletedFalse(expectedAnswerWrittenByJavajigi.id());
 
 		//then
 		assertAll(
-			() -> assertThat(beforeSoftDelete.isPresent()).isTrue(),
-			() -> assertThat(afterSoftDelete.isPresent()).isFalse()
+			() -> assertThat(answerBeforeSoftDelete.isPresent()).isTrue(),
+			() -> assertThat(answerAfterSoftDelete.isPresent()).isFalse()
 		);
 	}
 
-	@DisplayName("Answer 작성자 변경 - 조회 : findById(), 수정 : setWriter()")
+	@DisplayName("Answer 작성자 변경 - 조회 : findById(), 수정 : writtenBy()")
 	@Test
-	void setWriter() {
+	void writtenBy() {
 		//given
-		Answer expected = answers.save(answer1);
+		Answer expectedAnswerWrittenByJavajigi = answers.save(answerWrittenByJavajigi);
 
 		//when
-		expected.writtenBy(savedSangiji);
-		Optional<Answer> afterChangeWriter = answers.findById(expected.id());
+		expectedAnswerWrittenByJavajigi.writtenBy(savedSangiji);
+		Optional<Answer> answerAfterChangeWriter = answers
+			.findById(expectedAnswerWrittenByJavajigi.id());
 
 		//then
 		assertAll(
-			() -> assertThat(afterChangeWriter.get().writer().equals(savedSangiji)).isTrue(),
-			() -> assertThat(afterChangeWriter.get().writer().equals(savedJavajigi)).isFalse()
+			() -> assertThat(answerAfterChangeWriter.get().writer().equals(savedSangiji)).isTrue(),
+			() -> assertThat(answerAfterChangeWriter.get().writer().equals(savedJavajigi)).isFalse()
 		);
 	}
 
-	@DisplayName("Answer 질문 변경 - 조회 : findById(), 수정 : setQuestion()")
+	@DisplayName("Answer 질문 변경 - 조회 : findById(), 수정 : changeQuestion()")
 	@Test
-	void setQuestion() {
+	void changeQuestion() {
 		//given
-		Answer expected = answers.save(answer1);
+		Answer expectedAnswerWrittenByJavajigi = answers.save(answerWrittenByJavajigi);
 
 		//when
-		expected.addQuestion(savedQuestion2);
-		Optional<Answer> afterChangeQuestion = answers.findById(expected.id());
+		expectedAnswerWrittenByJavajigi.changeQuestion(savedQuestionWrittenBySanjigi);
+		Optional<Answer> answerAfterChangeQuestion = answers
+			.findById(expectedAnswerWrittenByJavajigi.id());
 
 		//then
 		assertAll(
-			() -> assertThat(afterChangeQuestion.get().question().equals(savedQuestion2)).isTrue(),
-			() -> assertThat(afterChangeQuestion.get().question().equals(savedQuestion1)).isFalse()
+			() -> assertThat(answerAfterChangeQuestion.get().question().equals(
+				savedQuestionWrittenBySanjigi)).isTrue(),
+			() -> assertThat(answerAfterChangeQuestion.get().question().equals(
+				savedQuestionWrittenByJavajigi)).isFalse()
 		);
 	}
 
 	@DisplayName("Answer 삭제 : delete()")
 	@Test
-	void delete() {
+	void hardDelete() {
 		//given
-		Answer expected = answers.save(answer1);
-		Answer beforeDeleteAnswer = answers.findById(expected.id()).get();
+		Answer expectedAnswerWrittenByJavajigi = answers.save(answerWrittenByJavajigi);
+		Answer answerBeforeDelete = answers.findById(expectedAnswerWrittenByJavajigi.id()).get();
 
 		//when
-		answers.delete(expected);
-		answers.flush();
-		Optional<Answer> afterDeleteAnswerOptional = answers.findById(expected.id());
+		answerBeforeDelete.delete();
+		Optional<Answer> afterDeleteAnswerOptional = answers
+			.findById(expectedAnswerWrittenByJavajigi.id());
 
 		//then
 		assertAll(
-			() -> assertThat(beforeDeleteAnswer).isNotNull(),
-			() -> assertThat(afterDeleteAnswerOptional.isPresent()).isFalse()
+			() -> assertThat(answerBeforeDelete).isNotNull(),
+			() -> assertThat(afterDeleteAnswerOptional.get().isDeleted()).isTrue()
 		);
 	}
 }

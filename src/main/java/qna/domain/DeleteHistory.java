@@ -3,6 +3,7 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -13,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.domain.vo.ContentId;
 
 @Entity
 @Table(name = "delete_history")
@@ -22,8 +24,8 @@ public class DeleteHistory {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "content_id")
-	private Long contentId;
+	@Embedded
+	private ContentId contentId;
 
 	@Column(name = "content_type")
 	@Enumerated(EnumType.STRING)
@@ -42,13 +44,13 @@ public class DeleteHistory {
 	public DeleteHistory(ContentType contentType, Long contentId, User deleter,
 		LocalDateTime createDate) {
 		this.contentType = contentType;
-		this.contentId = contentId;
+		this.contentId = ContentId.generate(contentId);
 		this.deleter = deleter;
 		this.createDate = createDate;
 	}
 
 	public Long id() {
-		return this.id;
+		return id;
 	}
 
 	@Override
@@ -56,19 +58,19 @@ public class DeleteHistory {
 		if (this == object) {
 			return true;
 		}
-		if (object == null || getClass() != object.getClass()) {
+		if (!(object instanceof DeleteHistory)) {
 			return false;
 		}
 		DeleteHistory that = (DeleteHistory) object;
 		return Objects.equals(id, that.id)
+			&& contentId.equals(that.contentId)
 			&& contentType == that.contentType
-			&& Objects.equals(contentId, that.contentId)
-			&& Objects.equals(deleter, that.deleter);
+			&& deleter.equals(that.deleter);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, contentType, contentId, deleter);
+		return Objects.hash(id, contentId, contentType, deleter);
 	}
 
 	@Override
