@@ -17,8 +17,8 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String title;
+    @Embedded
+    private Title title;
 
     @Lob
     private String contents;
@@ -83,14 +83,14 @@ public class Question extends BaseEntity {
         }
         List<DeleteHistory> deleteHistories = deleteAnswers(writer);
         this.deleted = true;
-        deleteHistories.add(new DeleteHistory(QUESTION, this.id, this.writer, now()));
+        deleteHistories.add(new DeleteHistory(QUESTION, this.id, this.writer));
         return deleteHistories;
     }
 
     private List<DeleteHistory> deleteAnswers(User writer) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-        for (Answer answer : answers) {
+        for(Answer answer : answers) {
             deleteHistories.add(answer.delete(writer));
         }
 

@@ -7,7 +7,6 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.util.Objects;
 
-import static java.time.LocalDateTime.now;
 import static javax.persistence.FetchType.LAZY;
 import static qna.domain.ContentType.ANSWER;
 
@@ -81,7 +80,7 @@ public class Answer extends BaseEntity {
 
         this.deleted = true;
 
-        return new DeleteHistory(ANSWER, this.id, this.writer, now());
+        return new DeleteHistory(ANSWER, this.id, this.writer);
     }
 
     @Override
