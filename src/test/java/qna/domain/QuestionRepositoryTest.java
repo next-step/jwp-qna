@@ -14,7 +14,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import qna.exceptions.CannotDeleteException;
 import qna.exceptions.NotFoundException;
 
 @DataJpaTest
@@ -97,7 +96,7 @@ public class QuestionRepositoryTest {
 
         List<Question> activeQuestions = questionRepository.findAll();
 
-        assertThat(activeQuestions.get(0).getTitle()).isEqualTo(expected);
+        assertThat(activeQuestions.get(0).getTitle().toString()).isEqualTo(expected);
     }
 
     @DisplayName("질문 제목을 수정한 시각을 기록하기")
