@@ -1,5 +1,8 @@
 package qna.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.lang.annotation.Target;
 import java.time.LocalDateTime;
@@ -8,6 +11,8 @@ import java.util.Objects;
 
 @Entity
 @Table
+@Getter
+@Setter
 public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
