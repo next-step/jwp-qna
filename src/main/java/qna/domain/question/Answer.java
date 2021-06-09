@@ -47,6 +47,7 @@ public class Answer extends UpdatableEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+        question.addAnswer(this);
     }
 
     public boolean isOwner(User writer) {
