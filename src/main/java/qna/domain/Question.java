@@ -4,6 +4,7 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -43,27 +44,44 @@ public class Question extends AbstractEntity {
         return this;
     }
 
-    public void deleteAllAnswersAndAddHistories(List<DeleteHistory> deleteHistories) {
-        answers.deleteAllAndAddHistories(deleteHistories);
+    public List<DeleteHistory> deleteAllAndAddHistories(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        validateOwner(loginUser);
+
+        deleteAndAddHistory(deleteHistories);
+
+        deleteAllAnswersAndAddHistories(deleteHistories);
+
+        return deleteHistories;
     }
 
-    public void validateOwner(User loginUser) throws CannotDeleteException {
+    private void validateOwner(User loginUser) throws CannotDeleteException {
         validateIsOwner(loginUser);
         validateAnswerOwner(loginUser);
     }
 
-    public void validateAnswerOwner(User loginUser) throws CannotDeleteException {
+    private void validateAnswerOwner(User loginUser) throws CannotDeleteException {
         answers.validateOwners(loginUser);
     }
 
-    public void validateIsOwner(User loginUser) throws CannotDeleteException {
+    private void validateIsOwner(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
+    }
+
+    private void deleteAndAddHistory(List<DeleteHistory> deleteHistories) {
+        delete();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+    }
+
+    private void deleteAllAnswersAndAddHistories(List<DeleteHistory> deleteHistories) {
+        answers.deleteAllAndAddHistories(deleteHistories);
     }
 
     public void addAnswer(Answer answer) {
@@ -71,10 +89,6 @@ public class Question extends AbstractEntity {
         answers.add(answer);
     }
 
-    public void deleteAndAddHistory(List<DeleteHistory> deleteHistories) {
-        delete();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
-    }
 
     public boolean isDeleted() {
         return deleted;

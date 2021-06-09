@@ -40,7 +40,7 @@ public class Answers {
         }
     }
 
-    public void add(Answer answer) {
+    void add(Answer answer) {
         answers.add(answer);
     }
 }
