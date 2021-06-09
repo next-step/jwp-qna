@@ -22,17 +22,17 @@ public class User extends BaseEntity {
     @Embedded
     private Name name;
 
-    @Column(length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
 
-    public User(UserId userId, Password password, Name name, String email) {
+    public User(UserId userId, Password password, Name name, Email email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, UserId userId, Password password, Name name, String email) {
+    public User(Long id, UserId userId, Password password, Name name, Email email) {
         this.id = id;
         this.userId = userId;
         this.password = password;

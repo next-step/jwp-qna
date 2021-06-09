@@ -38,7 +38,7 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = users.save(new User(new UserId("javajigi"), new Password("password"), new Name("name"), "javajigi@slipp.net"));
+        user = users.save(new User(new UserId("javajigi"), new Password("password"), new Name("name"), new Email("javajigi@slipp.net")));
 
         question = question = questions.save(new Question(new Title("title1"), new Contents("contents1")).writeBy(user));
 
