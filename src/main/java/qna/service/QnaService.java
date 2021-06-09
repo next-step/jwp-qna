@@ -30,7 +30,7 @@ public class QnaService {
     public void deleteQuestion(User loginUser, Long questionId) {
         Question question = findQuestionById(questionId);
 
-        DeleteHistories deleteHistories = QuestionRemover.delete(question, loginUser);
+        DeleteHistories deleteHistories = question.delete(loginUser);
 
         deleteHistoryService.saveAll(deleteHistories.toList());
     }

@@ -77,13 +77,13 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public Answer delete(User writer) {
+    public DeleteHistory delete(User writer) {
         if (!isOwner(writer)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
         this.deleted = true;
-        return this;
+        return DeleteHistory.ofAnswer(this.id, writer);
     }
 
     @Override

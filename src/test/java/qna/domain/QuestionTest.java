@@ -83,11 +83,15 @@ public class QuestionTest {
         answers.add(othersDeletedAnswer);
         answers.add(aliceDeletedAnswer);
 
-        List<Answer> deletedAnswers = question.delete(alice).deleteAnswers(alice);
+        DeleteHistories deleteHistories = question.delete(alice);
 
-        assertThat(deletedAnswers.size()).isEqualTo(2);
-        assertThat(deletedAnswers).contains(aliceAnswer1, aliceAnswer2);
+        assertThat(deleteHistories.size()).isEqualTo(3);
+        assertThat(deleteHistories.hasDeleteHistory(DeleteHistory.ofQuestion(question.getId(), alice))).isTrue();
+        assertThat(deleteHistories.hasDeleteHistory(DeleteHistory.ofAnswer(aliceAnswer1.getId(), alice))).isTrue();
+        assertThat(deleteHistories.hasDeleteHistory(DeleteHistory.ofAnswer(aliceAnswer2.getId(), alice))).isTrue();
         assertThat(question.isDeleted()).isTrue();
+        assertThat(aliceAnswer1.isDeleted()).isTrue();
+        assertThat(aliceAnswer2.isDeleted()).isTrue();
     }
 
     @DisplayName("다른 사람 답변이 있어 질문 삭제 실패")

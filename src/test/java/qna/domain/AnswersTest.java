@@ -71,21 +71,25 @@ public class AnswersTest {
         answers.add(othersDeletedAnswer);
         answers.add(aliceDeletedAnswer);
 
-        List<Answer> deletedAnswers = answers.delete(alice);
+        DeleteHistories deleteHistories = answers.delete(alice);
 
-        assertThat(deletedAnswers.size()).isEqualTo(1);
-        assertThat(deletedAnswers.get(0)).isSameAs(aliceAnswer);
+        assertThat(deleteHistories.size()).isEqualTo(1);
+        assertThat(deleteHistories.hasDeleteHistory(DeleteHistory.ofAnswer(aliceAnswer.getId(), alice))).isTrue();
+        assertThat(aliceAnswer.isDeleted()).isTrue();
     }
 
     @DisplayName("다른 사람 답변 때문에 삭제 실패 후 에러 반환")
     @Test
     void delete_HasOthersAnswer_ExceptionThrown() {
         Answers answers = new Answers();
-        answers.add(new Answer(1L, trudy, question, "Trudy Answer"));
+        Answer answer = new Answer(1L, trudy, question, "Trudy Answer");
+        answers.add(answer);
 
         assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() ->
             answers.delete(alice)
         );
+
+        assertThat(answer.isDeleted()).isFalse();
     }
 
 }

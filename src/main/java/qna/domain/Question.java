@@ -91,25 +91,21 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public Question delete(User writer) {
+    public DeleteHistories delete(User writer) {
         if (!isOwner(writer)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
-        if (!answers.isRemovable(writer)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
-
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(DeleteHistory.ofQuestion(this.id, writer));
+        deleteHistories.addAll(answers.delete(writer));
         this.deleted = true;
-        return this;
+
+        return deleteHistories;
     }
 
     public List<Answer> getAnswers() {
         return answers.getAnswers();
-    }
-
-    public List<Answer> deleteAnswers(User writer) {
-        return answers.delete(writer);
     }
 
     @Override

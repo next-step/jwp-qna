@@ -19,6 +19,10 @@ public class DeleteHistories {
         this.deleteHistories.add(deleteHistory);
     }
 
+    public void addAll(DeleteHistories deleteHistories) {
+        this.deleteHistories.addAll(deleteHistories.toList());
+    }
+
     public boolean hasDeleteHistory(DeleteHistory deleteHistory) {
         return deleteHistories.contains(deleteHistory);
     }

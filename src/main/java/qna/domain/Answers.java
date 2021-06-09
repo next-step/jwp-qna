@@ -38,16 +38,17 @@ public class Answers {
         return removable;
     }
 
-    public List<Answer> delete(User writer) {
+    public DeleteHistories delete(User writer) {
         if (!isRemovable(writer)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
 
-        return Collections.unmodifiableList(
-            answers.stream()
-                .filter(answer -> !answer.isDeleted())
-                .map(answer -> answer.delete(writer))
-                .collect(Collectors.toList()));
+        DeleteHistories deleteHistories = new DeleteHistories();
+        answers.stream()
+            .filter(answer -> !answer.isDeleted())
+            .map(answer -> answer.delete(writer))
+            .forEach(deleteHistories::add);
+        return deleteHistories;
     }
 
 }
