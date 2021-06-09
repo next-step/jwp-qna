@@ -36,7 +36,7 @@ class DeleteHistoryServiceTest {
 
     @BeforeEach
     void setUp() {
-        javajigi = new User(new UserId("javajigi"), new Password("password"), "name", "javajigi@slipp.net");
+        javajigi = new User(new UserId("javajigi"), new Password("password"), new Name("name"), "javajigi@slipp.net");
         users.save(javajigi);
 
         question1 = new Question(new Title("title1"), new Contents("contents1")).writeBy(javajigi);

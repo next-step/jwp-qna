@@ -26,7 +26,7 @@ public class AnswerTest {
 
     @BeforeEach
     void setUp() {
-        user = new User(new UserId("javajigi"), new Password("password"), "name", "javajigi@slipp.net");
+        user = new User(new UserId("javajigi"), new Password("password"), new Name("name"), "javajigi@slipp.net");
 
         question = question = new Question(new Title("title1"), new Contents("contents1")).writeBy(user);
 
