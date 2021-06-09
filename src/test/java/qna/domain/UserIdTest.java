@@ -5,16 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import javax.persistence.Embeddable;
-
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Embeddable
-public class UserIdTest {
 
-//    @Column(length = 20, nullable = false, unique = true)
+@DisplayName("UserId 테스트")
+class UserIdTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"wdq", "wq2", "1313"})
@@ -35,7 +32,7 @@ public class UserIdTest {
 
     @DisplayName("new_예외_empty")
     @Test
-    void new_예외_empty  () {
+    void new_예외_empty() {
         // Given
         String source = "";
 
