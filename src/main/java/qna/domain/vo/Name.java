@@ -15,7 +15,7 @@ public class Name {
 	protected Name() {
 	}
 
-	protected Name(String name) {
+	private Name(String name) {
 		this.name = name;
 	}
 

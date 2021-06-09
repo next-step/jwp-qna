@@ -15,7 +15,7 @@ public class Email {
 	protected Email() {
 	}
 
-	protected Email(String email) {
+	private Email(String email) {
 		this.email = email;
 	}
 

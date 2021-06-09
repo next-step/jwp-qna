@@ -1,7 +1,8 @@
-package qna.domain;
+package qna.domain.aggregate;
 
 import java.util.ArrayList;
 import java.util.List;
+import qna.domain.entity.DeleteHistory;
 
 public class DeleteHistoryGroup {
 

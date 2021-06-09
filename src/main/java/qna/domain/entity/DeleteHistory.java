@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.entity;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.domain.code.ContentType;
 import qna.domain.vo.ContentId;
 
 @Entity

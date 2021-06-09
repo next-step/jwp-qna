@@ -15,7 +15,7 @@ public class Title {
 	protected Title() {
 	}
 
-	protected Title(String title) {
+	private Title(String title) {
 		this.title = title;
 	}
 

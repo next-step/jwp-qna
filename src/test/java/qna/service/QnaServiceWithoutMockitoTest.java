@@ -8,13 +8,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import qna.CannotDeleteException;
-import qna.domain.Answer;
-import qna.domain.AnswerRepository;
-import qna.domain.Question;
-import qna.domain.QuestionRepository;
-import qna.domain.User;
-import qna.domain.UserRepository;
+import qna.exception.CannotDeleteException;
+import qna.domain.entity.Answer;
+import qna.domain.entity.Question;
+import qna.domain.entity.User;
+import qna.domain.repository.AnswerRepository;
+import qna.domain.repository.QuestionRepository;
+import qna.domain.repository.UserRepository;
 
 @SpringBootTest
 class QnaServiceWithoutMockitoTest {

@@ -1,4 +1,4 @@
-package qna;
+package qna.exception;
 
 public class UnAuthenticationException extends Exception {
 

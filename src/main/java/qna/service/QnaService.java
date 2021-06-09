@@ -4,10 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import qna.domain.DeleteHistoryGroup;
-import qna.domain.Question;
-import qna.domain.QuestionRepository;
-import qna.domain.User;
+import qna.domain.aggregate.DeleteHistoryGroup;
+import qna.domain.entity.Question;
+import qna.domain.entity.User;
+import qna.domain.repository.QuestionRepository;
 
 @Service
 public class QnaService {

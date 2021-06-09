@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.entity;
 
 import java.util.Objects;
 import javax.persistence.Embedded;
@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 import qna.domain.vo.Email;
 import qna.domain.vo.Name;
 import qna.domain.vo.Password;

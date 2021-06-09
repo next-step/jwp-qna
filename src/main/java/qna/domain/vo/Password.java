@@ -15,7 +15,7 @@ public class Password {
 	protected Password() {
 	}
 
-	protected Password(String password) {
+	private Password(String password) {
 		this.password = password;
 	}
 

@@ -10,13 +10,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import qna.CannotDeleteException;
-import qna.domain.Answer;
-import qna.domain.AnswerRepository;
-import qna.domain.DeleteHistoryGroup;
-import qna.domain.Question;
-import qna.domain.QuestionRepository;
-import qna.domain.User;
+import qna.exception.CannotDeleteException;
+import qna.domain.aggregate.DeleteHistoryGroup;
+import qna.domain.entity.Answer;
+import qna.domain.entity.Question;
+import qna.domain.entity.User;
+import qna.domain.repository.AnswerRepository;
+import qna.domain.repository.QuestionRepository;
 
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
@@ -56,7 +56,8 @@ class QnaServiceTest {
 
 		//when
 		assertThat(questionWrittenByJavajigi.isDeleted()).isFalse();
-		DeleteHistoryGroup deleteHistoryGroup = qnaService.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi);
+		DeleteHistoryGroup deleteHistoryGroup = qnaService
+			.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi);
 
 		//then
 		assertThat(questionWrittenByJavajigi.isDeleted()).isTrue();
@@ -79,7 +80,8 @@ class QnaServiceTest {
 	@Test
 	public void deleteSamePostByQuestionerAndAnswerer() throws Exception {
 		//when
-		DeleteHistoryGroup deleteHistoryGroup = qnaService.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi);
+		DeleteHistoryGroup deleteHistoryGroup = qnaService
+			.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi);
 
 		//then
 		assertThat(questionWrittenByJavajigi.isDeleted()).isTrue();
@@ -91,7 +93,8 @@ class QnaServiceTest {
 	@Test
 	public void deletePostingWrittenByTheOthers() {
 		//given
-		Answer answer2 = Answer.generate(2L, SANJIGI, questionWrittenByJavajigi, "Answers Contents1");
+		Answer answer2 = Answer
+			.generate(2L, SANJIGI, questionWrittenByJavajigi, "Answers Contents1");
 		questionWrittenByJavajigi.addAnswer(answer2);
 
 		//when

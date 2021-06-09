@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;

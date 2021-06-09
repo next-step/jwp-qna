@@ -15,7 +15,7 @@ public class Contents {
 	protected Contents() {
 	}
 
-	protected Contents(String contents) {
+	private Contents(String contents) {
 		this.contents = contents;
 	}
 

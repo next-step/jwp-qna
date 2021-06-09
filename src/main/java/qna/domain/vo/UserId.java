@@ -15,7 +15,7 @@ public class UserId {
 	protected UserId() {
 	}
 
-	protected UserId(String userId) {
+	private UserId(String userId) {
 		this.userId = userId;
 	}
 

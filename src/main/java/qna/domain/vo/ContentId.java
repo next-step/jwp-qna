@@ -13,7 +13,7 @@ public class ContentId {
 	protected ContentId() {
 	}
 
-	protected ContentId(Long contentId) {
+	private ContentId(Long contentId) {
 		this.contentId = contentId;
 	}
 
