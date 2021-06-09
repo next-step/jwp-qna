@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import qna.domain.UpdatableEntity;
 import qna.domain.User;
@@ -32,7 +33,10 @@ public class Question extends UpdatableEntity {
     private User writer;
 
     @OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<Answer> answers = new ArrayList<>();
+    private final List<Answer> answers = new ArrayList<>();
+
+    @Transient
+    private final AnswerList answerList = new AnswerList(answers);
 
     private boolean deleted = false;
 
@@ -56,17 +60,20 @@ public class Question extends UpdatableEntity {
         return deleted;
     }
 
-    public AnswerList deleteBy(User loginUser) throws QuestionOwnerNotMatchedException, AnswerOwnerNotMatchedException {
+    public AnswerList deleteBy(User loginUser) throws
+            QuestionOwnerNotMatchedException,
+            AnswerOwnerNotMatchedException {
         if (!this.isOwner(loginUser)) {
             throw new QuestionOwnerNotMatchedException();
         }
-        for (Answer answer : answers) {
-            answer.deleteBy(loginUser);
-        }
-        AnswerList deletedAnswers = new AnswerList(this.answers);
-        this.answers.clear();
         delete();
-        return deletedAnswers;
+        return answerList.deleteAllBy(loginUser);
+    }
+
+    public Answer addAnswer(User answerUser, String content) {
+        Answer answer = new Answer(answerUser, this, content);
+        this.answers.add(answer);
+        return answer;
     }
 
     private void delete() {
