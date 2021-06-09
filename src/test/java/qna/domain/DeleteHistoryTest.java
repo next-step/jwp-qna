@@ -9,20 +9,15 @@ import org.junit.jupiter.api.Test;
 
 public class DeleteHistoryTest {
 
-	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1",
-		"javajigi@slipp.net");
-
-	private Answer answerWrittenByJavajigi;
-	private Question questionWrittenByJavajigi;
-	private DeleteHistory deleteHistoryOfQuestionWrittenByJavajigi;
+	private Answer answer1;
+	private Question question1;
+	private DeleteHistory deleteHistory;
 
 	@BeforeEach
 	void initialize() {
-		questionWrittenByJavajigi = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
-		answerWrittenByJavajigi = new Answer(1L, JAVAJIGI, questionWrittenByJavajigi,
-			"Answers Contents1");
-		deleteHistoryOfQuestionWrittenByJavajigi = new DeleteHistory(ContentType.QUESTION,
-			questionWrittenByJavajigi.id(), questionWrittenByJavajigi.writer(),
+		question1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+		answer1 = new Answer(UserTest.JAVAJIGI, question1, "Answers Contents1");
+		deleteHistory = new DeleteHistory(ContentType.QUESTION, question1.id(), question1.writer(),
 			LocalDateTime.now());
 	}
 
@@ -30,22 +25,17 @@ public class DeleteHistoryTest {
 	@Test
 	void equals() {
 		//given
-		DeleteHistory clonedDeleteHistoryOfQuestionWrittenByJavajigi = new DeleteHistory(
-			ContentType.QUESTION, questionWrittenByJavajigi.id(),
-			questionWrittenByJavajigi.writer(), LocalDateTime.now());
-		DeleteHistory deleteHistoryOfAnswerWrittenByJavajigi = new DeleteHistory(ContentType.ANSWER,
-			answerWrittenByJavajigi.id(), answerWrittenByJavajigi.writer(), LocalDateTime.now());
+		DeleteHistory clonedDeleteHistory = new DeleteHistory(ContentType.QUESTION,
+			question1.id(), question1.writer(), LocalDateTime.now());
+		DeleteHistory deleteHistory2 = new DeleteHistory(ContentType.ANSWER,
+			answer1.id(), answer1.writer(), LocalDateTime.now());
 
 		//when
 
 		//then
 		assertAll(
-			() -> assertThat(deleteHistoryOfQuestionWrittenByJavajigi
-				.equals(clonedDeleteHistoryOfQuestionWrittenByJavajigi))
-				.isTrue(),
-			() -> assertThat(deleteHistoryOfQuestionWrittenByJavajigi
-				.equals(deleteHistoryOfAnswerWrittenByJavajigi))
-				.isFalse()
+			() -> assertThat(deleteHistory.equals(clonedDeleteHistory)).isTrue(),
+			() -> assertThat(deleteHistory.equals(deleteHistory2)).isFalse()
 		);
 	}
 }

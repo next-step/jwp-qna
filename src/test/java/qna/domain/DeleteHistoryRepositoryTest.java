@@ -13,11 +13,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
 
-	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1",
-		"javajigi@slipp.net");
-	public static final User SANJIGI = new User(2L, "sanjigi", "password2", "name2",
-		"sanjigi@slipp.net");
-
 	@Autowired
 	private DeleteHistoryRepository deleteHistories;
 	@Autowired
@@ -28,10 +23,10 @@ public class DeleteHistoryRepositoryTest {
 	private QuestionRepository questions;
 	private User savedJavajigi;
 	private User savedSangiji;
-	private Question savedQuestionWrittenByJavajigi;
-	private Answer savedAnswerWrittenBySanjigi;
-	private DeleteHistory deleteHistoryOfQuestionWrittenByJavajigi;
-	private DeleteHistory deleteHistoryOfAnswerWrittenBySanjigi;
+	private Question savedQuestion;
+	private Answer savedAnswer;
+	private DeleteHistory deleteHistory1;
+	private DeleteHistory deleteHistory2;
 
 	@DisplayName("테스트 초기화")
 	@BeforeEach
@@ -47,28 +42,27 @@ public class DeleteHistoryRepositoryTest {
 	}
 
 	private void 작성자정보_저장() {
-		savedJavajigi = users.save(JAVAJIGI);
-		savedSangiji = users.save(SANJIGI);
+		savedJavajigi = users.save(UserTest.JAVAJIGI);
+		savedSangiji = users.save(UserTest.SANJIGI);
 	}
 
 	private void 질문정보_저장() {
-		savedQuestionWrittenByJavajigi = questions.save(new Question(1L, "title1", "contents1")
-			.writeBy(savedJavajigi));
+		savedQuestion = questions.save(new Question(1L, "title1", "contents1")
+			.writeBy(UserTest.JAVAJIGI).writeBy(savedJavajigi));
 	}
 
 	private void 답변정보_저장() {
-		savedAnswerWrittenBySanjigi = answers
-			.save(new Answer(savedSangiji, savedQuestionWrittenByJavajigi,
-				"Answers Contents1"));
+		Answer tempAnswer = new Answer(UserTest.JAVAJIGI, savedQuestion, "Answers Contents1");
+		tempAnswer.addQuestion(savedQuestion);
+		tempAnswer.writtenBy(savedSangiji);
+		savedAnswer = answers.save(tempAnswer);
 	}
 
 	private void 삭제_히스토리_객체_초기화() {
-		deleteHistoryOfQuestionWrittenByJavajigi = new DeleteHistory(ContentType.QUESTION,
-			savedQuestionWrittenByJavajigi.id(),
-			savedQuestionWrittenByJavajigi.writer(), LocalDateTime.now());
-		deleteHistoryOfAnswerWrittenBySanjigi = new DeleteHistory(ContentType.ANSWER,
-			savedAnswerWrittenBySanjigi.id(),
-			savedAnswerWrittenBySanjigi.writer(), LocalDateTime.now());
+		deleteHistory1 = new DeleteHistory(ContentType.QUESTION, savedQuestion.id(),
+			savedQuestion.writer(), LocalDateTime.now());
+		deleteHistory2 = new DeleteHistory(ContentType.ANSWER, savedAnswer.id(),
+			savedAnswer.writer(), LocalDateTime.now());
 	}
 
 	@DisplayName("DeleteHistory 저장 : save()")
@@ -77,17 +71,13 @@ public class DeleteHistoryRepositoryTest {
 		//given
 
 		//when
-		DeleteHistory actualDeleteHistoryOfQuestionWrittenByJavajigi = deleteHistories
-			.save(deleteHistoryOfQuestionWrittenByJavajigi);
-		DeleteHistory actualDeleteHistoryOfAnswerWrittenBySanjigi = deleteHistories
-			.save(deleteHistoryOfAnswerWrittenBySanjigi);
+		DeleteHistory actual = deleteHistories.save(deleteHistory1);
+		DeleteHistory actual2 = deleteHistories.save(deleteHistory2);
 
 		//then
 		assertAll(
-			() -> assertThat(actualDeleteHistoryOfQuestionWrittenByJavajigi
-				.equals(deleteHistoryOfQuestionWrittenByJavajigi)).isTrue(),
-			() -> assertThat(actualDeleteHistoryOfAnswerWrittenBySanjigi
-				.equals(deleteHistoryOfAnswerWrittenBySanjigi)).isTrue()
+			() -> assertThat(actual.equals(deleteHistory1)).isTrue(),
+			() -> assertThat(actual2.equals(deleteHistory2)).isTrue()
 		);
 	}
 
@@ -95,23 +85,17 @@ public class DeleteHistoryRepositoryTest {
 	@Test
 	void findById() {
 		//given
-		DeleteHistory expectedDeleteHistoryOfQuestionWrittenByJavajigi = deleteHistories
-			.save(deleteHistoryOfQuestionWrittenByJavajigi);
-		DeleteHistory expectedDeleteHistoryOfAnswerWrittenBySanjigi = deleteHistories
-			.save(deleteHistoryOfAnswerWrittenBySanjigi);
+		DeleteHistory expected = deleteHistories.save(deleteHistory1);
+		DeleteHistory expected2 = deleteHistories.save(deleteHistory2);
 
 		//when
-		DeleteHistory actualDeleteHistoryOfQuestionWrittenByJavajigi = deleteHistories
-			.findById(expectedDeleteHistoryOfQuestionWrittenByJavajigi.id()).get();
-		DeleteHistory actualDeleteHistoryOfAnswerWrittenBySanjigi = deleteHistories
-			.findById(expectedDeleteHistoryOfAnswerWrittenBySanjigi.id()).get();
+		DeleteHistory actual = deleteHistories.findById(expected.id()).get();
+		DeleteHistory actual2 = deleteHistories.findById(expected2.id()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(actualDeleteHistoryOfQuestionWrittenByJavajigi
-				.equals(expectedDeleteHistoryOfQuestionWrittenByJavajigi)).isTrue(),
-			() -> assertThat(actualDeleteHistoryOfAnswerWrittenBySanjigi
-				.equals(expectedDeleteHistoryOfAnswerWrittenBySanjigi)).isTrue()
+			() -> assertThat(actual.equals(expected)).isTrue(),
+			() -> assertThat(actual2.equals(expected2)).isTrue()
 		);
 	}
 
@@ -119,21 +103,18 @@ public class DeleteHistoryRepositoryTest {
 	@Test
 	void delete() {
 		//given
-		DeleteHistory expectedDeleteHistoryOfQuestionWrittenByJavajigi = deleteHistories
-			.save(deleteHistoryOfQuestionWrittenByJavajigi);
-		DeleteHistory deleteHistoryOfQuestionWrittenByJavajigiBeforeDelete = deleteHistories
-			.findById(expectedDeleteHistoryOfQuestionWrittenByJavajigi.id()).get();
+		DeleteHistory expected = deleteHistories.save(deleteHistory1);
+		DeleteHistory beforeDeleteDeleteHistory = deleteHistories.findById(expected.id()).get();
 
 		//when
-		deleteHistories.delete(expectedDeleteHistoryOfQuestionWrittenByJavajigi);
-		Optional<DeleteHistory> deleteHistoryOfQuestionWrittenByJavajigiAfterDelete = deleteHistories
-			.findById(expectedDeleteHistoryOfQuestionWrittenByJavajigi.id());
+		deleteHistories.delete(expected);
+		Optional<DeleteHistory> afterDeleteDeleteHistoryOptional = deleteHistories
+			.findById(expected.id());
 
 		//then
 		assertAll(
-			() -> assertThat(deleteHistoryOfQuestionWrittenByJavajigiBeforeDelete).isNotNull(),
-			() -> assertThat(deleteHistoryOfQuestionWrittenByJavajigiAfterDelete.isPresent())
-				.isFalse()
+			() -> assertThat(beforeDeleteDeleteHistory).isNotNull(),
+			() -> assertThat(afterDeleteDeleteHistoryOptional.isPresent()).isFalse()
 		);
 	}
 }

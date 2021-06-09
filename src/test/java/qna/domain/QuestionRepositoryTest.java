@@ -5,18 +5,20 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.CannotDeleteException;
 
 @DataJpaTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class QuestionRepositoryTest {
 
-	public static final User JAVAJIGI = new User(1L, "javajigi", "password1", "name1",
-		"javajigi@slipp.net");
-	public static final User SANJIGI = new User(2L, "sanjigi", "password2", "name2",
-		"sanjigi@slipp.net");
+	public static final Question Q1 = new Question("title1", "contents1")
+		.writeBy(UserTest.JAVAJIGI);
+	public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
 	@Autowired
 	private UserRepository users;
@@ -24,113 +26,101 @@ public class QuestionRepositoryTest {
 	private QuestionRepository questions;
 	private User savedJavajigi;
 	private User savedSangiji;
-	private Question instanceOfQuestionWrittenByJavajigi;
-	private Question instanceOfQuestionWrittenBySanjigi;
 
 	@DisplayName("테스트 초기화")
 	@BeforeEach
 	void setup() {
+		모든_레포지토리_데이터_삭제();
 		초기_정보_저장();
 	}
 
 	private void 초기_정보_저장() {
-		사용자정보_저장();
-		질문_인스턴스_생성();
+		각_답변별_작성자정보_저장();
 	}
 
-	private void 사용자정보_저장() {
-		savedJavajigi = users.save(JAVAJIGI);
-		savedSangiji = users.save(SANJIGI);
+	private void 모든_레포지토리_데이터_삭제() {
+		users.deleteAll();
+		questions.deleteAll();
 	}
 
-	private void 질문_인스턴스_생성() {
-		instanceOfQuestionWrittenByJavajigi = new Question("title1", "contents1")
-			.writeBy(savedJavajigi);
-		instanceOfQuestionWrittenBySanjigi = new Question("title2", "contents2")
-			.writeBy(savedSangiji);
+	private void 각_답변별_작성자정보_저장() {
+		savedJavajigi = users.save(Q1.writer());
+		Q1.writeBy(savedJavajigi);
+		savedSangiji = users.save(Q2.writer());
+		Q2.writeBy(savedSangiji);
 	}
 
 	@DisplayName("Question 저장 : save()")
 	@Test
+	@Order(1)
 	void save() {
 		//given
 
 		//when
-		Question actualQuestionWrittenByJavajigi = questions
-			.save(instanceOfQuestionWrittenByJavajigi);
-		Question actualQuestionWrittenBySanjigi = questions
-			.save(instanceOfQuestionWrittenBySanjigi);
+		Question actual = questions.save(Q1);
+		Question actual2 = questions.save(Q2);
 
 		//then
 		assertAll(
-			() -> assertThat(actualQuestionWrittenByJavajigi).isNotNull(),
-			() -> assertThat(actualQuestionWrittenBySanjigi).isNotNull()
+			() -> assertThat(actual).isNotNull(),
+			() -> assertThat(actual2).isNotNull()
 		);
 	}
 
 	@DisplayName("Question 조회 : findById()")
 	@Test
+	@Order(2)
 	void findById() {
 		//given
-		Question expectedQuestionWrittenByJavajigi = questions
-			.save(instanceOfQuestionWrittenByJavajigi);
-		Question expectedQuestionWrittenBySanjigi = questions
-			.save(instanceOfQuestionWrittenBySanjigi);
+		Question expected = questions.save(Q1);
+		Question expected2 = questions.save(Q2);
 
 		//when
-		Question actualQuestionWrittenByJavajigi = questions
-			.findById(expectedQuestionWrittenByJavajigi.id()).get();
-		Question actualQuestionWrittenBySanjigi = questions
-			.findById(expectedQuestionWrittenBySanjigi.id()).get();
+		Question actual = questions.findById(expected.id()).get();
+		Question actual2 = questions.findById(expected2.id()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(
-				actualQuestionWrittenByJavajigi.equals(expectedQuestionWrittenByJavajigi)).isTrue(),
-			() -> assertThat(
-				actualQuestionWrittenBySanjigi.equals(expectedQuestionWrittenBySanjigi)).isTrue()
+			() -> assertThat(actual.equals(expected)).isTrue(),
+			() -> assertThat(actual2.equals(expected2)).isTrue()
 		);
 	}
 
-	@DisplayName("Question Soft delete - 조회 : findByIdAndDeletedFalse(), 수정 : delete()")
+	@DisplayName("Question Soft delete - 조회 : findByIdAndDeletedFalse(), 수정 : setDeleted()")
 	@Test
-	void softDelete() throws CannotDeleteException {
+	@Order(3)
+	void setQuestionId() {
 		//given
-		Question expectedQuestionWrittenByJavajigi = questions
-			.save(instanceOfQuestionWrittenByJavajigi);
+		Question expected = questions.save(Q1);
 
 		//when
-		Optional<Question> questionWrittenByJavajigiBeforeSoftDelete = questions
-			.findByIdAndDeletedFalse(expectedQuestionWrittenByJavajigi.id());
-		expectedQuestionWrittenByJavajigi.delete(savedJavajigi);
-		Optional<Question> questionWrittenByJavajigiAfterSoftDelete = questions
-			.findByIdAndDeletedFalse(expectedQuestionWrittenByJavajigi.id());
+		Optional<Question> beforeSoftDelete = questions.findByIdAndDeletedFalse(expected.id());
+		expected.delete();
+		Optional<Question> afterSoftDelete = questions.findByIdAndDeletedFalse(expected.id());
 
 		//then
 		assertAll(
-			() -> assertThat(questionWrittenByJavajigiBeforeSoftDelete.isPresent()).isTrue(),
-			() -> assertThat(questionWrittenByJavajigiAfterSoftDelete.isPresent()).isFalse()
+			() -> assertThat(beforeSoftDelete.isPresent()).isTrue(),
+			() -> assertThat(afterSoftDelete.isPresent()).isFalse()
 		);
 	}
 
 	@DisplayName("Question 삭제 : delete()")
 	@Test
+	@Order(4)
 	void delete() {
 		//given
-		Question expectedQuestionWrittenByJavajigi = questions
-			.save(instanceOfQuestionWrittenByJavajigi);
+		Question expected = questions.save(Q1);
+		Question beforeDeleteQuestion = questions.findById(expected.id()).get();
 
 		//when
-		Question questionWrittenByJavajigiBeforeDelete = questions
-			.findById(expectedQuestionWrittenByJavajigi.id()).get();
-		questions.delete(expectedQuestionWrittenByJavajigi);
-		Optional<Question> questionWrittenByJavajigiAfterDelete = questions
-			.findById(expectedQuestionWrittenByJavajigi.id());
+		questions.delete(expected);
+		Optional<Question> afterDeleteQuestionOptional = questions.findById(expected.id());
 
 		//then
 		assertAll(
-			() -> assertThat(questionWrittenByJavajigiBeforeDelete).isNotNull(),
-			() -> assertThat(questionWrittenByJavajigiAfterDelete.isPresent()).isFalse()
+			() -> assertThat(beforeDeleteQuestion).isNotNull(),
+			() -> assertThat(afterDeleteQuestionOptional.isPresent()).isFalse()
 		);
 	}
 }

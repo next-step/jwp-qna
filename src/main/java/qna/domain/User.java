@@ -1,16 +1,12 @@
 package qna.domain;
 
 import java.util.Objects;
-import javax.persistence.Embedded;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import qna.UnAuthorizedException;
-import qna.domain.vo.Email;
-import qna.domain.vo.Name;
-import qna.domain.vo.Password;
-import qna.domain.vo.UserId;
 
 @Entity
 public class User extends BaseEntity {
@@ -19,17 +15,17 @@ public class User extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Embedded
-	private Email email;
+	@Column(length = 50)
+	private String email;
 
-	@Embedded
-	private Name name;
+	@Column(nullable = false, length = 20)
+	private String name;
 
-	@Embedded
-	private Password password;
+	@Column(nullable = false, length = 20)
+	private String password;
 
-	@Embedded
-	private UserId userId;
+	@Column(name = "user_id", nullable = false, length = 20, unique = true)
+	private String userId;
 
 	protected User() {
 	}
@@ -40,52 +36,67 @@ public class User extends BaseEntity {
 
 	public User(Long id, String userId, String password, String name, String email) {
 		this.id = id;
-		this.userId = UserId.generate(userId);
-		this.password = Password.generate(password);
-		this.name = Name.generate(name);
-		this.email = Email.generate(email);
+		this.userId = userId;
+		this.password = password;
+		this.name = name;
+		this.email = email;
 	}
 
 	public void update(User loginUser, User target) {
 		if (!matchUserId(loginUser.userId)) {
 			throw new UnAuthorizedException();
 		}
+
 		if (!matchPassword(target.password)) {
 			throw new UnAuthorizedException();
 		}
+
 		this.name = target.name;
 		this.email = target.email;
-		updatedAtNow();
 	}
 
-	private boolean matchUserId(UserId userId) {
+	private boolean matchUserId(String userId) {
 		return this.userId.equals(userId);
 	}
 
-	public boolean matchPassword(Password targetPassword) {
+	public boolean matchPassword(String targetPassword) {
 		return this.password.equals(targetPassword);
+	}
+
+	public boolean equalsNameAndEmail(User target) {
+		if (Objects.isNull(target)) {
+			return false;
+		}
+
+		return name.equals(target.name) && email.equals(target.email);
 	}
 
 	public Long id() {
 		return id;
 	}
 
-	public UserId userId() {
+	public String userId() {
 		return userId;
 	}
 
+	public String password() {
+		return password;
+	}
+
 	public String name() {
-		return name.value();
+		return name;
 	}
 
 	public void changeName(String name) {
-		this.name.changeName(name);
-		updatedAtNow();
+		this.name = name;
+	}
+
+	public String email() {
+		return email;
 	}
 
 	public void changeEmail(String email) {
-		this.email.changeEmail(email);
-		updatedAtNow();
+		this.email = email;
 	}
 
 	@Override
