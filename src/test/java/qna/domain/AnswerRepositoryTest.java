@@ -40,7 +40,7 @@ class AnswerRepositoryTest {
     void setUp() {
         user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
 
-        question = question = questions.save(new Question("title1", "contents1").writeBy(user));
+        question = question = questions.save(new Question(new Title("title1"), "contents1").writeBy(user));
 
         answer1 = answers.save(new Answer(user, question, "Answers Contents1"));
         answer2 = answers.save(new Answer(user, question, "Answers Contents2"));

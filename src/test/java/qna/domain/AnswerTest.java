@@ -28,7 +28,7 @@ public class AnswerTest {
     void setUp() {
         user = new User("javajigi", "password", "name", "javajigi@slipp.net");
 
-        question = question = new Question("title1", "contents1").writeBy(user);
+        question = question = new Question(new Title("title1"), "contents1").writeBy(user);
 
         answer = new Answer(user, question, "Answers Contents1");
     }
