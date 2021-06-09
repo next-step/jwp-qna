@@ -9,14 +9,14 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisplayName("Title Wrapping 클래스 테스트")
-class TitleTest {
+@DisplayName("Contents Wrapping 클래스 테스트")
+class ContentsTest {
 
     @DisplayName("new_성공")
     @ParameterizedTest
     @ValueSource(strings = {"", " 1", "2234"})
     void new_성공(String source) {
-        assertDoesNotThrow(() -> new Title(source));
+        assertDoesNotThrow(() -> new Contents(source));
     }
 
     @DisplayName("new_예외_null")
@@ -27,7 +27,7 @@ class TitleTest {
 
         // When, Then
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new Title(source));
+                .isThrownBy(() -> new Contents(source));
     }
 
     @DisplayName("new_예외_길이_제한_초과")
@@ -35,12 +35,12 @@ class TitleTest {
     void new_예외_길이_제한_초과() {
         // Given
         StringBuilder sourceBuilder = new StringBuilder();
-        for (int i = 0; i < Title.MAXIMUM_LENGTH; i++)
+        for (int i = 0; i < Contents.MAXIMUM_LENGTH; i++)
             sourceBuilder.append("  ");
 
         // When, Then
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new Title(sourceBuilder.toString()));
+                .isThrownBy(() -> new Contents(sourceBuilder.toString()));
     }
 
     @DisplayName("equals_성공")
@@ -48,10 +48,12 @@ class TitleTest {
     @ValueSource(strings = {"", " 1", "2234"})
     void equals_성공(String source) {
         // Given
-        Title title1 = new Title(source);
-        Title title2 = new Title(source);
+        Contents contents1 = new Contents(source);
+        Contents contents2 = new Contents(source);
 
         // When, Then
-        assertEquals(title1, title2);
+        assertEquals(contents1, contents2);
     }
+
+
 }

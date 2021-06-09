@@ -40,12 +40,12 @@ class AnswerRepositoryTest {
     void setUp() {
         user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
 
-        question = question = questions.save(new Question(new Title("title1"), "contents1").writeBy(user));
+        question = question = questions.save(new Question(new Title("title1"), new Contents("contents1")).writeBy(user));
 
-        answer1 = answers.save(new Answer(user, question, "Answers Contents1"));
-        answer2 = answers.save(new Answer(user, question, "Answers Contents2"));
+        answer1 = answers.save(new Answer(user, question, new Contents("Answers Contents1")));
+        answer2 = answers.save(new Answer(user, question, new Contents("Answers Contents2")));
 
-        deletingAnswer1 = new Answer(user, question, "Deleted Content1");
+        deletingAnswer1 = new Answer(user, question, new Contents("Deleted Content1"));
         deletingAnswer1 = answers.save(deletingAnswer1);
     }
 

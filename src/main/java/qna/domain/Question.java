@@ -21,7 +21,7 @@ public class Question extends BaseEntity {
     private Title title;
 
     @Lob
-    private String contents;
+    private Contents contents;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -36,11 +36,11 @@ public class Question extends BaseEntity {
     protected Question() {
     }
 
-    public Question(Title title, String contents) {
+    public Question(Title title, Contents contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, Title title, String contents) {
+    public Question(Long id, Title title, Contents contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -59,7 +59,7 @@ public class Question extends BaseEntity {
         answers.add(answer);
     }
 
-    public void addAnswer(User writer, String contents) {
+    public void addAnswer(User writer, Contents contents) {
         answers.add(new Answer(writer, this, contents));
     }
 

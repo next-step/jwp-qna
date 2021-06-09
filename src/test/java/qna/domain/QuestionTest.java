@@ -14,11 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("Question 테스트")
 public class QuestionTest {
-    public static final Question Q1 = new Question(new Title("title1"), "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question(new Title("title2"), "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question(new Title("title1"), new Contents("contents1")).writeBy(UserTest.JAVAJIGI);
+    public static final Question Q2 = new Question(new Title("title2"), new Contents("contents2")).writeBy(UserTest.SANJIGI);
 
-    public static final Question DELETED_QUESTION1 = new Question(new Title("deleted question title1"), "deleted question content1").writeBy(UserTest.SANJIGI);
-    public static final Question DELETED_QUESTION2 = new Question(new Title("deleted question title2"), "deleted question content2").writeBy(UserTest.SANJIGI);
+    public static final Question DELETED_QUESTION1 = new Question(new Title("deleted question title1"), new Contents("deleted question content1")).writeBy(UserTest.SANJIGI);
+    public static final Question DELETED_QUESTION2 = new Question(new Title("deleted question title2"), new Contents("deleted question content2")).writeBy(UserTest.SANJIGI);
 
     private User javajigi;
     private User sanjigi;
@@ -30,9 +30,9 @@ public class QuestionTest {
         javajigi = new User("javajigi", "password", "name", "javajigi@slipp.net");
         sanjigi = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
 
-        question = question = new Question(new Title("title1"), "contents1").writeBy(javajigi);
+        question = question = new Question(new Title("title1"), new Contents("contents1")).writeBy(javajigi);
 
-        answer = new Answer(javajigi, question, "Answers Contents1");
+        answer = new Answer(javajigi, question, new Contents("Answers Contents1"));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class QuestionTest {
     void delete_성공_질문자_답변자_같음() throws CannotDeleteException {
         // Given
         Question target = question;
-        target.addAnswer(javajigi, "아 질문 올리자 마자 해결되서 삭제합니다;");
+        target.addAnswer(javajigi, new Contents("아 질문 올리자 마자 해결되서 삭제합니다;"));
 
         // When
         List<DeleteHistory> deleteHistories = target.delete(javajigi);
@@ -103,9 +103,9 @@ public class QuestionTest {
     void delete_예외_답변_중_다른_사람이_쓴_글() {
         // Given
         Question target = question;
-        target.addAnswer(sanjigi, "그건 말이죠 답변드립니다.");
-        target.addAnswer(javajigi, "아 질문 올리자 마자 해결되서 삭제합니다;");
-        target.addAnswer(javajigi, "아 조금 늦었네요.. 답변 감사합니다.");
+        target.addAnswer(sanjigi, new Contents("그건 말이죠 답변드립니다."));
+        target.addAnswer(javajigi, new Contents("아 질문 올리자 마자 해결되서 삭제합니다;"));
+        target.addAnswer(javajigi, new Contents("아 조금 늦었네요.. 답변 감사합니다."));
 
         // When, Then
         assertThatExceptionOfType(UnAuthorizedException.class)

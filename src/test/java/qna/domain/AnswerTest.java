@@ -13,12 +13,12 @@ import static qna.domain.UserTest.SANJIGI;
 
 @DisplayName("Answer 테스트")
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, new Contents("Answers Contents1"));
+    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, new Contents("Answers Contents2"));
 
-    public static final Answer DELETED_ANSWER1 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Deleted Content1");
-    public static final Answer DELETED_ANSWER2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Deleted Content2");
-    public static final Answer DELETED_ANSWER3 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Deleted Content3");
+    public static final Answer DELETED_ANSWER1 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, new Contents("Deleted Content1"));
+    public static final Answer DELETED_ANSWER2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, new Contents("Deleted Content2"));
+    public static final Answer DELETED_ANSWER3 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, new Contents("Deleted Content3"));
 
     private User user;
     private Question question;
@@ -28,9 +28,9 @@ public class AnswerTest {
     void setUp() {
         user = new User("javajigi", "password", "name", "javajigi@slipp.net");
 
-        question = question = new Question(new Title("title1"), "contents1").writeBy(user);
+        question = question = new Question(new Title("title1"), new Contents("contents1")).writeBy(user);
 
-        answer = new Answer(user, question, "Answers Contents1");
+        answer = new Answer(user, question, new Contents("Answers Contents1"));
     }
 
     @Test

@@ -39,9 +39,9 @@ class DeleteHistoryServiceTest {
         javajigi = new User("javajigi", "password", "name", "javajigi@slipp.net");
         users.save(javajigi);
 
-        question1 = new Question(new Title("title1"), "contents1").writeBy(javajigi);
-        question2 = new Question(new Title("title2"), "contents2").writeBy(javajigi);
-        question3 = new Question(new Title("title3"), "contents3").writeBy(javajigi);
+        question1 = new Question(new Title("title1"), new Contents("contents1")).writeBy(javajigi);
+        question2 = new Question(new Title("title2"), new Contents("contents2")).writeBy(javajigi);
+        question3 = new Question(new Title("title3"), new Contents("contents3")).writeBy(javajigi);
         questions.saveAll(asList(question1, question2, question3));
     }
 

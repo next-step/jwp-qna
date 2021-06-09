@@ -27,7 +27,7 @@ public class Answer extends BaseEntity {
     private Question question;
 
     @Lob
-    private String contents;
+    private Contents contents;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -35,11 +35,11 @@ public class Answer extends BaseEntity {
     protected Answer() {
     }
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer(User writer, Question question, Contents contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, Contents contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
