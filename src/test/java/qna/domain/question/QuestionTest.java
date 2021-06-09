@@ -36,7 +36,7 @@ public class QuestionTest {
         Question question = new Question(writer, "title", "content");
         assertThat(question).hasFieldOrPropertyWithValue("deleted", false);
         if (succeed) {
-            question.deleteBy(UserTest.SANJIGI);
+            question.deleteBy(loginUser);
             assertThat(question).hasFieldOrPropertyWithValue("deleted", true);
             return;
         }
@@ -49,5 +49,42 @@ public class QuestionTest {
             Arguments.of(UserTest.SANJIGI, UserTest.SANJIGI, true),
             Arguments.of(UserTest.SANJIGI, UserTest.JAVAJIGI, false)
         );
+    }
+
+    @Test
+    @DisplayName("답변이 없는 경우 삭제할 수 있다.")
+    void when_noAnswers_then_succeed() throws QuestionOwnerNotMatchedException, AnswerOwnerNotMatchedException {
+        Question question = new Question(UserTest.SANJIGI, "title", "content");
+        assertThat(question).hasFieldOrPropertyWithValue("deleted", false);
+        question.deleteBy(UserTest.SANJIGI);
+        assertThat(question).hasFieldOrPropertyWithValue("deleted", true);
+    }
+
+    @Test
+    @DisplayName("답변자가 자신만 있는 경우 있는 경우 삭제할 수 있다.")
+    void when_answersOnlyWriter_then_succeed() throws QuestionOwnerNotMatchedException, AnswerOwnerNotMatchedException {
+        User questionWriter = UserTest.SANJIGI;
+        Question question = new Question(questionWriter, "title", "content");
+        assertThat(question).hasFieldOrPropertyWithValue("deleted", false);
+
+        User answerUser = UserTest.SANJIGI;
+        question.addAnswer(answerUser, "answer");
+
+        question.deleteBy(questionWriter);
+        assertThat(question).hasFieldOrPropertyWithValue("deleted", true);
+    }
+
+    @Test
+    @DisplayName("답변자가 자신 이외에 다른 사용자가 있는 경우 있는 경우 삭제할 수 없다.")
+    void when_existAnotherUserAnswers_then_failed() {
+        User questionWriter = UserTest.SANJIGI;
+        Question question = new Question(questionWriter, "title", "content");
+        assertThat(question).hasFieldOrPropertyWithValue("deleted", false);
+
+        User answerUser = UserTest.JAVAJIGI;
+        question.addAnswer(answerUser, "answer");
+
+        assertThatThrownBy(() -> question.deleteBy(questionWriter))
+            .isInstanceOf(AnswerOwnerNotMatchedException.class);
     }
 }
