@@ -21,13 +21,15 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questions;
 
+    private User user1;
+    private User user2;
     private Question question1;
     private Question question2;
 
     @BeforeEach
     void setUp() {
-        User user1 = new User("userId1", "1234", "userName1", "userEmail1");
-        User user2 = new User("userId2", "1234", "userName2", "userEmail2");
+        user1 = new User("userId1", "pass@1234AB", "userName1", "user1@nextstep.camp");
+        user2 = new User("userId2", "pass@1234AB", "userName2", "user2@nextstep.camp");
         question1 = new Question("title1", "contents1").writeBy(user1);
         question2 = new Question("title2", "contents2").writeBy(user2);
         questions.saveAll(Arrays.asList(question1, question2));
@@ -37,7 +39,7 @@ class QuestionRepositoryTest {
     @Test
     void findByDeletedFalse() {
         //given
-        question1.delete();
+        question1.delete(user1);
 
         //when
         List<Question> actual = questions.findByDeletedFalse();
@@ -65,8 +67,8 @@ class QuestionRepositoryTest {
     @Test
     void findByIdAndDeletedFalseException() {
         //given
-        question1.delete();
-        question2.delete();
+        question1.delete(user1);
+        question2.delete(user2);
 
         //when
         assertThatThrownBy(() -> questions.findByIdAndDeletedFalse(question1.getId())

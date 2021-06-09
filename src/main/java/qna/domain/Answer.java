@@ -1,22 +1,24 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.base.BaseEntity;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 public class Answer extends BaseEntity {
+    public static final String DELETE_EXCEPTION_MESSAGE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
+
     private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -47,10 +49,10 @@ public class Answer extends BaseEntity {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
+        this.contents = new Contents(contents);
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
@@ -70,16 +72,27 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public DeleteHistory delete() {
-        this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    public DeleteHistory delete(User loginUser) {
+        validateOwner(loginUser);
+        delete();
+        return DeleteHistory.ofAnswer(id, writer);
+    }
+
+    private void delete() {
+        deleted = true;
+    }
+
+    private void validateOwner(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(DELETE_EXCEPTION_MESSAGE);
+        }
     }
 
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", contents='" + contents + '\'' +
+                ", contents=" + contents +
                 ", deleted=" + deleted +
                 ", question=" + question +
                 ", writer=" + writer +
