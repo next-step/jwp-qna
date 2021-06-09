@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class AnswerTest {
+  
     @Autowired
     private AnswerRepository answerRepository;
 
@@ -54,6 +55,7 @@ public class AnswerTest {
         assertThat(answer1.getWriter()).isEqualTo(answer1.getWriter());
         assertThat(answer1.getQuestion()).isEqualTo(answer1.getQuestion());
         assertThat(answer1.getContents()).isEqualTo(answer1.getContents());
+
     }
 
     @Test

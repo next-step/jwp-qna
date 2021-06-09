@@ -58,6 +58,7 @@ public class QuestionTest {
     @Test
     @DisplayName("deleted false 찾기 테스트")
     void findByIdAndDeletedFalseTest() {
+        Question question1 = questionRepository.save(Q1);
         Question result = questionRepository.findByIdAndDeletedFalse(question1.getId()).get();
 
         assertThat(result.isDeleted()).isFalse();

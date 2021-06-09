@@ -37,7 +37,7 @@ public class User {
 
     @OneToMany(mappedBy = "writer")
     private List<Answer> answers = new ArrayList<>();
-
+  
     protected User() {
     }
 

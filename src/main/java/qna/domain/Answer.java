@@ -12,7 +12,6 @@ import qna.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseEntity {
-
     @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
@@ -20,7 +19,7 @@ public class Answer extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
-
+  
     @Lob
     private String contents;
 
@@ -82,6 +81,7 @@ public class Answer extends BaseEntity {
     @Override
     public String toString() {
         return "Answer{" +
+
             "id=" + super.getId() +
             ", writerId=" + writer.getId() +
             ", question=" + question +
