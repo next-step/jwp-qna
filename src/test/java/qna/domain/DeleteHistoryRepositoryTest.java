@@ -14,18 +14,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
 
-  @Autowired
-  private DeleteHistoryRepository deleteHistoryRepository;
+    @Autowired
+    private DeleteHistoryRepository deleteHistoryRepository;
 
-  @Test
-  void save() {
-    DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+    @Test
+    void save() {
+        User writer = new User("jko", "1234", "jko", "junheee.ko@gmail.com");
+        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, writer, LocalDateTime.now());
 
-    DeleteHistory actual = deleteHistoryRepository.save(expected);
+        DeleteHistory actual = deleteHistoryRepository.save(expected);
 
-    assertAll(
-        () -> assertNotNull(actual.getId()),
-        () -> assertEquals(expected.getId(), actual.getId())
-    );
-  }
+        assertAll(
+            () -> assertNotNull(actual.getId()),
+            () -> assertEquals(expected.getId(), actual.getId())
+        );
+    }
 }
