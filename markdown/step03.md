@@ -402,14 +402,14 @@ A. Domain Model 영역에서 하는 것이 옳다.
         - [x] 5-3-8.축약 금지
         - [x] 5-3-9.예외 처리
         - [x] 5-3-10.3항 연산자 금지
-- [ ] 6.인수인계
-    - [ ] 6-1.소감 및 피드백 정리
+- [x] 6.인수인계
+    - [x] 6-1.소감 및 피드백 정리
         - [x] 6-1-1.느낀점 & 배운점 작성
         - [x] 6-1-2.피드백 요청 정리
-    - [ ] 6-2.코드리뷰 요청 및 피드백
-        - [ ] 6-1-1.step3를 gregolee/jwp-qna로 push : `git push origin step3`
-        - [ ] 6-1-2.pull request(PR) 작성
-    - [ ] 6-3.Slack을 통해 merge가 되는지 확인한 후에 미션 종료
+    - [x] 6-2.코드리뷰 요청 및 피드백
+        - [x] 6-1-1.step3를 gregolee/jwp-qna로 push : `git push origin step3`
+        - [x] 6-1-2.pull request(PR) 작성
+    - [x] 6-3.Slack을 통해 merge가 되는지 확인한 후에 미션 종료
 
 ### 2.3. 인수 조건 (ATDD)
 
