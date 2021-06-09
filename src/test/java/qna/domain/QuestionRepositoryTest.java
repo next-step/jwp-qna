@@ -33,8 +33,8 @@ class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() throws CannotDeleteException {
-        javajigi = users.save(new User(new UserId("javajigi"), "password", "name", "javajigi@slipp.net"));
-        sanjigi = users.save(new User(new UserId("sanjigi"), "password", "name", "sanjigi@slipp.net"));
+        javajigi = users.save(new User(new UserId("javajigi"), new Password("password"), "name", "javajigi@slipp.net"));
+        sanjigi = users.save(new User(new UserId("sanjigi"), new Password("password"), "name", "sanjigi@slipp.net"));
 
         question1 = questions.save(new Question(new Title("title1"), new Contents("contents1")).writeBy(javajigi));
         question2 = questions.save(new Question(new Title("title2"), new Contents("contents2")).writeBy(sanjigi));

@@ -16,8 +16,8 @@ public class User extends BaseEntity {
     @Embedded
     private UserId userId;
 
-    @Column(length = 20, nullable = false)
-    private String password;
+    @Embedded
+    private Password password;
 
     @Column(length = 20, nullable = false)
     private String name;
@@ -28,11 +28,11 @@ public class User extends BaseEntity {
     protected User() {
     }
 
-    public User(UserId userId, String password, String name, String email) {
+    public User(UserId userId, Password password, String name, String email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, UserId userId, String password, String name, String email) {
+    public User(Long id, UserId userId, Password password, String name, String email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -57,7 +57,7 @@ public class User extends BaseEntity {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
+    public boolean matchPassword(Password targetPassword) {
         return this.password.equals(targetPassword);
     }
 
