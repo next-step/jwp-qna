@@ -368,6 +368,26 @@ A. Domain Model 영역에서 하는 것이 옳다.
         - [x] 4-1-5.`DeleteHistory` : 삭제 완료 후 로깅 처리
     - [x] 4-2.추가 리팩터링
         - [x] 4-2-1.불필요한 메서드 제거
+    - [ ] 4-3.리뷰어님 코멘트 반영
+        - [ ] 4-3-1.불필요한 원시값 포장 해제하기 : `Deleted`
+        - [ ] 4-3-2.2중 적용된 소스 코드 수정 : `Answer.changeQuestion()`
+        - [ ] 4-3-3.Checked Exception -> Unchecked Exception 적용
+            - [ ] 4-3-3-1.`CannotDeleteException`
+            - [ ] 4-3-3-2.`Answer.validateIsOwner()`
+            - [ ] 4-3-3-3.`Question.validateCouldDelete()`
+        - [ ] 4-3-4.생성자 -> 정적 팩토리 메서드
+            - [ ] 4-3-4-1.`AnswerGroup.generateDeleteHIstoryAllOfAnswers()` 내 `new DeleteHistory`
+        - [ ] 4-3-5.기능수정
+            - [ ] 4-3-5-1.`Answer.delete()` : 상태 값 변경 -> 상태 값 변경 + 삭제한 이력을 리턴
+        - [ ] 4-3-6.래핑클래스 -> 원시값으로 변경
+            - [ ] 4-3-6-1.`Question.deleted`
+        - [ ] 4-3-7.필드의 기본값 설정과 초기화를 혼동하지 말자.
+            - [ ] 4-3-7-1.`Question.answers` : AnswerGroup.generate() -> 제거
+        - [ ] 4-3-8.접근제어자 제대로 사용하기
+            - [ ] 4-3-8-1.`Question.validateCouldDelete()`
+            - [ ] 4-3-8-2.`Answer.validateIsOwner()`
+            - [ ] 4-3-8-3.그 외에도 찾아보기
+        - [ ] 4-3-9.Value Object Test 코드 작성
 - [x] 5.테스트
     - [x] 5-1.Gradle build Success 확인
     - [x] 5-2.Google Java Style 적용 (indent : 2 -> 4 spaces)
@@ -462,3 +482,9 @@ A. Domain Model 영역에서 하는 것이 옳다.
   - 원시값을 포장하면서 validation을 검증하는 로직을 하는 것이 옳은 것인지 좋은 습관인지 여쭤봅니다.
   - spring-boot-starter-validation, hibernate-validator 등 을 활용한 어노테이션(@Size, @NotNull)을 활용하는 것이 나은 것인지 여쭤봅니다.
     (validation 코드 작성 간 빠른 코드를 작성할 수 있습니다만, 제가 알지 못하는 사이드 이펙트가 있을 것 같습니다..)  
+
+> `@Column`은 `persistence layer`에 포함됩니다. db와 관련된 조건을 작성하시면 됩니다.
+> `@Size`, `@NotNull`은 어느 구현체를 쓰느냐에 따라 달라지겠지만 `spring validation`을 쓴다면 `presentation layer`와 `application layer` 사이에서 데이터를 전달해주는 `dto`에 사용합니다. 주로 http request 요청값을 검증할 때 씁니다.
+> 원시값을 포장한 객체는 `domain layer`입니다.
+> `domain layer`는 순수 자바로 동작 가능해야 합니다.
+> 외부 라이브러리에 의존한 유효성 검증 대신 생성자에서 의도한 인자를 전달 받고 있는지 검사하도록 구현하시는 걸 추천합니다.
