@@ -32,7 +32,7 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "writer_id")
     private User writer;
 
