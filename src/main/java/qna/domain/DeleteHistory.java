@@ -1,13 +1,30 @@
 package qna.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+import java.lang.annotation.Target;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+
+@Entity
+@Table
+@Getter
+@Setter
 public class DeleteHistory {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column
+    @Enumerated(EnumType.STRING)
     private ContentType contentType;
+    @Column
     private Long contentId;
+    @Column
     private Long deletedById;
+    @Column
     private LocalDateTime createDate = LocalDateTime.now();
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {

@@ -1,11 +1,30 @@
 package qna.domain;
 
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table
+@NoArgsConstructor
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(length = 100, nullable = false)
     private String title;
+    @Column
+    @Lob
     private String contents;
+    @Column
     private Long writerId;
+    @Column(nullable = false)
     private boolean deleted = false;
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column
+    private LocalDateTime updatedAt= LocalDateTime.now();
 
     public Question(String title, String contents) {
         this(null, title, contents);
