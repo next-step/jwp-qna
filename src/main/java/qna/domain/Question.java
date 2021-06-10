@@ -2,6 +2,7 @@ package qna.domain;
 
 import static javax.persistence.FetchType.LAZY;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -107,8 +108,11 @@ public class Question extends BaseEntity {
 
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         checkWriter(loginUser);
-        this.setDeleted(true);
-        return Stream.of(new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now())).collect(Collectors.toList());
+        setDeleted(true);
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now()));
+        deleteHistories.addAll(getAnswers().delete(loginUser));
+        return deleteHistories;
     }
 
     private void checkWriter(User loginUser) throws CannotDeleteException {

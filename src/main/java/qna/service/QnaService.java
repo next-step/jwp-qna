@@ -17,12 +17,10 @@ public class QnaService {
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
     private QuestionRepository questionRepository;
-    private AnswerRepository answerRepository;
     private DeleteHistoryService deleteHistoryService;
 
-    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
+    public QnaService(QuestionRepository questionRepository, DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;
-        this.answerRepository = answerRepository;
         this.deleteHistoryService = deleteHistoryService;
     }
 
@@ -32,23 +30,9 @@ public class QnaService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public List<DeleteHistory> deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
-        Question question = findQuestionById(questionId);
-        return question.delete(loginUser);
-    }
-
-    public List<DeleteHistory> deleteAnswer(User loginUser, Long questionId) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : answerRepository.findByQuestionIdAndDeletedFalse(questionId)) {
-            deleteHistories.add(answer.delete(loginUser));
-        }
-        return deleteHistories;
-    }
-
     @Transactional
-    public void deleteQna(User loginUser, Long questionId) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = deleteQuestion(loginUser, questionId);
-        deleteHistories.addAll(deleteAnswer(loginUser, questionId));
+    public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = findQuestionById(questionId).delete(loginUser);
         deleteHistoryService.saveAll(deleteHistories);
     }
 }
