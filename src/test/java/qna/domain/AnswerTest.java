@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -70,7 +68,7 @@ public class AnswerTest {
     @DisplayName("findByIdAndDeletedFalse 확인")
     @Test
     void findByIdAndDeletedFalse() {
-        a1.setDeleted(true);
+        a1.delete(true);
         Optional<Answer> answer = answerRepository.findByIdAndDeletedFalse(a1.getId());
         assertThatThrownBy(() -> answer.orElseThrow(NoSuchElementException::new))
                 .isInstanceOf(NoSuchElementException.class);
@@ -82,7 +80,7 @@ public class AnswerTest {
         List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q2.getId());
         assertThat(answerList.size()).isEqualTo(1);
 
-        a2.setDeleted(true);
+        a2.delete(true);
 
         answerList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q2.getId());
         assertThat(answerList).hasSize(0);

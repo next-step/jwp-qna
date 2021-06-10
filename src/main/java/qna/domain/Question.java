@@ -3,8 +3,6 @@ package qna.domain;
 import qna.domain.support.BaseTimeEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -45,7 +43,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -72,7 +70,7 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void delete(boolean deleted) {
         this.deleted = deleted;
     }
 

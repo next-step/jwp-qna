@@ -37,7 +37,7 @@ public class QuestionTest {
         sanjigi = userRepository.save(UserTest.SANJIGI);
         Q1.writeBy(javajigi);
         Q2.writeBy(sanjigi);
-        Q2.setDeleted(true);
+        Q2.delete(true);
         q1 = questionRepository.save(Q1);
         q2 = questionRepository.save(Q2);
     }
