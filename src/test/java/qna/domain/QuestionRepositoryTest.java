@@ -46,15 +46,6 @@ public class QuestionRepositoryTest {
         assertThat(savedQuestion.getWriterId()).isEqualTo(savedUser.getId());
     }
 
-    @DisplayName("Id로 삭제되지 않은 Question 조회")
-    @Test
-    public void findByIdAndDeletedFalse(){
-        Question actual = questionRepository.findByIdAndDeletedFalse(1L).get();
-        assertThat(actual.getTitle()).isEqualTo("title1");
-        assertThat(actual.getContents()).isEqualTo("contents1");
-        assertThat(actual.getWriterId()).isEqualTo(savedUser.getId());
-    }
-
     @DisplayName("삭제되지 않은 Question 조회")
     @Test
     public void findByDeletedFalse(){

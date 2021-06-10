@@ -35,11 +35,13 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public void setWriter(User deleteUser) {
+    public void setDeleteUser(User deleteUser) {
         this.deleteUser = deleteUser;
     }
 
-
+    public User getDeleteUser() {
+        return deleteUser;
+    }
 
     @Override
     public boolean equals(Object o) {

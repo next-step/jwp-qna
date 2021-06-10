@@ -13,6 +13,10 @@ import java.util.Objects;
 public class User extends BaseEntity{
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "user_id", nullable = false, length = 20)
     private String userId;
 
@@ -36,7 +40,7 @@ public class User extends BaseEntity{
     }
 
     public User(Long id, String userId, String password, String name, String email) {
-        setId(id);
+        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -71,6 +75,10 @@ public class User extends BaseEntity{
 
         return name.equals(target.name) &&
                 email.equals(target.email);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public boolean isGuestUser() {
@@ -123,7 +131,7 @@ public class User extends BaseEntity{
     @Override
     public String toString() {
         return "User{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", userId='" + userId + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +

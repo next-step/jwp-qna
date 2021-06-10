@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,6 +10,10 @@ import java.util.List;
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "title", nullable = false, length = 100)
     private String title;
@@ -31,7 +37,7 @@ public class Question extends BaseEntity{
     }
 
     public Question(Long id, String title, String contents) {
-        setId(id);
+        this.id = id;
         this.title = title;
         this.contents = contents;
     }
@@ -54,6 +60,26 @@ public class Question extends BaseEntity{
         if (answer.getQuestion() != this) {
             answer.toQuestion(this);
         }
+    }
+
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        setDeleted(true);
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
+
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(loginUser));
+        }
+
+        return deleteHistories;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -100,11 +126,12 @@ public class Question extends BaseEntity{
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", writerId=" + writer.getUserId() +
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
