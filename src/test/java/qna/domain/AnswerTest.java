@@ -48,7 +48,7 @@ public class AnswerTest {
 	void updateAtHasChanged() {
 		Answer origin = insertAnswer();
 		LocalDateTime originUpdatedAt = origin.getUpdatedAt();
-	    origin.setContents("답변 추가 입니다");
+	    origin.writeContents("답변 추가 입니다");
 	    Answer updated = answerRepository.saveAndFlush(origin);
 	    assertThat(updated.getUpdatedAt()).isNotEqualTo(originUpdatedAt);
 	}

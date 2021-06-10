@@ -78,10 +78,6 @@ public class Answer extends DateEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return writer;
     }
@@ -94,7 +90,7 @@ public class Answer extends DateEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void writeContents(String contents) {
         this.contents = contents;
     }
 

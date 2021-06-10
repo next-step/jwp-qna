@@ -84,10 +84,6 @@ public class Question extends DateEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -100,7 +96,7 @@ public class Question extends DateEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void writeContents(String contents) {
         this.contents = contents;
     }
 
