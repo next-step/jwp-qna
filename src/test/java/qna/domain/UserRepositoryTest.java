@@ -54,8 +54,5 @@ class UserRepositoryTest {
         assertThat(sanjigi3).isSameAs(sanjigi2);
         assertThat(sanjigi3.getId()).isEqualTo(2L);
 
-
-
-
     }
 }

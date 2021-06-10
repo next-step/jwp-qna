@@ -1,5 +1,6 @@
 package qna.domain;
 
+import lombok.NoArgsConstructor;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -9,6 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table
+@NoArgsConstructor
 public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
