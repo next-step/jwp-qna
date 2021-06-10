@@ -16,23 +16,17 @@ class DeleteHistoryTest {
     @Autowired
     DeleteHistoryRepository deleteHistory;
 
-    private Question question1;
-    private User writer1;
-    private Answer answer1;
-
-    @BeforeEach
-    void setUp() {
-        writer1 = new User("user1", "user1Pass", "User1", "user1@gmail.com");
-
-        question1 = new Question("Question1 title", "Question1 contents").writeBy(writer1);
-
-        answer1 = new Answer(writer1, question1, "Answers Contents1");
-    }
-
     @Test
     void saveDeletedQuestion() {
-        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, question1.getId(), writer1, LocalDateTime.now());
+        // given
+        User questionUser = new User("user1", "user1Pass", "User1", "user1@gmail.com");
+        Question question = new Question("Question1 title", "Question1 contents").writeBy(questionUser);
+        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, question.getId(), questionUser, LocalDateTime.now());
+
+        // when
         DeleteHistory actual = deleteHistory.save(expected);
+
+        // then
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual).isSameAs(expected)
@@ -41,8 +35,17 @@ class DeleteHistoryTest {
 
     @Test
     void saveDeletedAnswer() {
-        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, answer1.getId(), writer1, LocalDateTime.now());
+        // given
+        User questionUser = new User("user1", "user1Pass", "User1", "user1@gmail.com");
+        Question question = new Question("Question1 title", "Question1 contents").writeBy(questionUser);
+        User answerUser = new User("user2", "user2Pass", "User2", "user2@gmail.com");
+        Answer answer = new Answer(answerUser, question, "Answers Contents1");
+        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, answer.getId(), answerUser, LocalDateTime.now());
+
+        // when
         DeleteHistory actual = deleteHistory.save(expected);
+
+        // then
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual).isSameAs(expected)

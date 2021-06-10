@@ -67,8 +67,10 @@ public class Answer {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
+    public Answer toQuestion(Question question) {
         this.question = question;
+        question.addAnswer(this);
+        return this;
     }
 
     public Long getId() {

@@ -17,34 +17,33 @@ public class UserTest {
     @Autowired
     UserRepository users;
 
-    private User user1;
-    private User user2;
-
-    @BeforeEach
-    void setUp() {
-        user1 = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-        user2 = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-
-        users.save(user1);
-        users.save(user2);
-    }
-
     @Test
     void save() {
-        assertAll(
-                () -> assertThat(user1).isNotNull(),
-                () -> assertThat(user1).isEqualTo(user1)
-        );
+        // given
+        User expected = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+
+        // when
+        User actual = users.save(expected);
+
+        // then
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void findByUserId() {
-        String expected = user2.userId();
+        // given
+        User user = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        users.save(user);
 
-        Optional<User> actual = users.findByUserId(expected);
+        // when
+        Optional<User> actual = users.findByUserId(user.userId());
+
+        // then
+
         assertAll(
                 () -> assertThat(actual.isPresent()).isTrue(),
-                () -> assertThat(actual.get().userId()).isEqualTo(user2.userId())
+                () -> assertThat(actual.get().userId()).isEqualTo(user.userId()),
+                () -> assertThat(actual.get()).isEqualTo(user)
         );
 
     }

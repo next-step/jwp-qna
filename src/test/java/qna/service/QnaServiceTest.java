@@ -33,34 +33,27 @@ class QnaServiceTest {
     @InjectMocks
     private QnaService qnaService;
 
-    private Question question;
-    private Answer answer;
-
-    private User writer1;
-    private User writer2;
+    User questionUser;
+    Question question;
+    User answerUser;
+    Answer answer;
 
     @BeforeEach
     public void setUp() throws Exception {
-        writer1 = new User(1L, "user1", "user1Pass", "User1", "user1@gmail.com");
-        writer2 = new User(2L, "user2", "user2Pass", "User2", "user2@gmail.com");
-
-        question = new Question(1L, "title1", "contents1").writeBy(writer1);
-        answer = new Answer(1L, writer1, question, "Answers Contents1");
-
-//        question1 = new Question("Question1 title", "Question1 contents").writeBy(writer1);
-//        question2 = new Question("Question2 title", "Question2 contents").writeBy(writer2);
-
-        question.addAnswer(answer);
-
+        questionUser = new User("user1", "user1Pass", "User1", "user1@gmail.com");
+        question = new Question("Question1 title", "Question1 contents").writeBy(questionUser);
+        answerUser = new User("user2", "user2Pass", "User2", "user2@gmail.com");
+        answer = new Answer(questionUser, question, "Answers Contents1");
     }
 
     @Test
     public void delete_성공() throws Exception {
+
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer));
 
         assertThat(question.isDeleted()).isFalse();
-        qnaService.deleteQuestion(writer1, question.getId());
+        qnaService.deleteQuestion(questionUser, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
         verifyDeleteHistories();
@@ -68,18 +61,20 @@ class QnaServiceTest {
 
     @Test
     public void delete_다른_사람이_쓴_글() throws Exception {
+
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(writer2, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(answerUser, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
     public void delete_성공_질문자_답변자_같음() throws Exception {
+
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer));
 
-        qnaService.deleteQuestion(writer1, question.getId());
+        qnaService.deleteQuestion(questionUser, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
@@ -88,20 +83,19 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Answer answer2 = new Answer(2L, writer2, question, "Answers Contents1");
-        question.addAnswer(answer2);
+        Answer anotherAnswer = new Answer(answerUser, question, "Answers Contents1");
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer, answer2));
+        when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer, anotherAnswer));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(writer1, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(questionUser, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), writer1, LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), writer1, LocalDateTime.now())
+                new DeleteHistory(ContentType.QUESTION, question.getId(), questionUser, LocalDateTime.now()),
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), questionUser, LocalDateTime.now())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

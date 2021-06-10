@@ -18,38 +18,37 @@ public class QuestionTest {
     @Autowired
     QuestionRepository questions;
 
-    private Question question1;
-    private Question question2;
-    private User writer1;
-    private User writer2;
-
-    @BeforeEach
-    void setUp() {
-        writer1 = new User("user1", "user1Pass", "User1", "user1@gmail.com");
-        writer2 = new User("user2", "user2Pass", "User2", "user2@gmail.com");
-
-        question1 = new Question("Question1 title", "Question1 contents").writeBy(writer1);
-        question2 = new Question("Question2 title", "Question2 contents").writeBy(writer2);
-
-        questions.save(question1);
-        questions.save(question2);
-    }
-
     @Test
     @DisplayName("Question save test")
     void save() {
-        assertThat(questions.save(question1)).isEqualTo(question1);
+        // given
+        User questionUser = new User("user1", "user1Pass", "User1", "user1@gmail.com");
+        Question expected = new Question("Question1 title", "Question1 contents").writeBy(questionUser);
+
+        // when
+        Question actual = questions.save(expected);
+
+        // then
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void findByDeletedFalse() {
+        // given
+        User questionUser = new User("user1", "user1Pass", "User1", "user1@gmail.com");
+        Question question = new Question("Question1 title", "Question1 contents").writeBy(questionUser);
 
+        questions.save(question);
+
+        // when
         List<Question> actual = questions.findByDeletedFalse();
+
+        // then
         assertAll(
-                () -> assertThat(actual.size()).isEqualTo(2),
-                () -> assertThat(actual.stream()
-                        .filter(question -> question.isDeleted())
-                        .count())
+                () -> assertThat(
+                        actual.stream()
+                                .filter(actualQuestion -> actualQuestion.isDeleted())
+                                .count())
                         .isEqualTo(0)
         );
 
@@ -57,8 +56,20 @@ public class QuestionTest {
 
     @Test
     void findByIdAndDeletedFalse() {
-        Optional<Question> actual = questions.findByIdAndDeletedFalse(question1.getId());
-        assertThat(actual.get()).isSameAs(question1);
-    }
+        // given
+        User questionUser = new User("user1", "user1Pass", "User1", "user1@gmail.com");
+        Question question = new Question("Question1 title", "Question1 contents").writeBy(questionUser);
 
+        questions.save(question);
+
+        // when
+        Optional<Question> actual = questions.findByIdAndDeletedFalse(question.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(actual.isPresent()).isTrue(),
+                () -> assertThat(actual.get()).isEqualTo(question),
+                () -> assertThat(actual.get().isDeleted()).isFalse()
+        );
+    }
 }

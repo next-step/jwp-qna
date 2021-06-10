@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,52 +17,69 @@ public class AnswerTest {
     @Autowired
     private AnswerRepository answers;
 
-    private Answer A1;
-    private Answer A2;
-    private Question question1;
-    private Question question2;
-    private User writer1;
-    private User writer2;
-
-    @BeforeEach
-    void setUp() {
-        question1 = new Question("Question1 title", "Question1 contents");
-        question2 = new Question("Question2 title", "Question2 contents");
-
-        writer1 = new User("user1", "user1Pass", "User1", "user1@gmail.com");
-        writer2 = new User("user2", "user2Pass", "User2", "user2@gmail.com");
-
-        A1 = new Answer(
-                writer1, question1, "Answers Contents1");
-        A2 = new Answer(
-                writer2, question2, "Answers Contents2");
-
-    }
-
     @Test
     @DisplayName("Answer save test")
     void save() {
-        assertThat(answers.save(A1)).isEqualTo(A1);
+        // given
+        User questionUser = new User("user1", "user1Pass", "User1", "user1@gmail.com");
+        Question question = new Question("Question1 title", "Question1 contents").writeBy(questionUser);
+        User answerUser = new User("user2", "user2Pass", "User2", "user2@gmail.com");
+        Answer expected = new Answer(answerUser, question, "Answers Contents1");
+
+        // when
+        Answer actual = answers.save(expected);
+
+        // then
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        answers.save(A1);
-        List<Answer> actual = answers.findByQuestionAndDeletedFalse(question1);
+        // given
+        User questionUser = new User("user1", "user1Pass", "User1", "user1@gmail.com");
+        Question question = new Question("Question1 title", "Question1 contents").writeBy(questionUser);
+        User answerUser = new User("user2", "user2Pass", "User2", "user2@gmail.com");
+        Answer answer = new Answer(answerUser, question, "Answers Contents1");
+
+        answers.save(answer);
+
+        // when
+        List<Answer> actual = answers.findByQuestionAndDeletedFalse(question);
+
+        // then
         assertAll(
-                () -> assertThat(actual.get(0).getQuestionId()).isEqualTo(question1.getId()),
-                () -> assertThat(actual.get(0).isDeleted()).isFalse()
+                () -> assertThat(
+                        actual.stream()
+                        .filter(actualAnswer -> !actualAnswer.getQuestionId().equals(question.getId()))
+                        .count())
+                        .isEqualTo(0),
+                () -> assertThat(
+                        actual.stream()
+                        .filter(actualAnswer -> actualAnswer.isDeleted())
+                        .count())
+                        .isEqualTo(0)
         );
 
     }
 
     @Test
     void findByIdAndDeletedFalse() {
-        answers.save(A2);
-        Optional<Answer> actual = answers.findByIdAndDeletedFalse(A2.getId());
+        // given
+        User questionUser = new User("user1", "user1Pass", "User1", "user1@gmail.com");
+        Question question = new Question("Question1 title", "Question1 contents").writeBy(questionUser);
+        User answerUser = new User("user2", "user2Pass", "User2", "user2@gmail.com");
+        Answer answer = new Answer(answerUser, question, "Answers Contents1");
+
+        answers.save(answer);
+
+        // when
+        Optional<Answer> actual = answers.findByIdAndDeletedFalse(answer.getId());
+
+        // then
         assertAll(
+                () -> assertThat(actual.isPresent()).isTrue(),
                 () -> assertThat(actual.get().getId()).isNotNull(),
-                () -> assertThat(actual.get().getId()).isEqualTo(A2.getId()),
+                () -> assertThat(actual.get().getId()).isEqualTo(answer.getId()),
                 () -> assertThat(actual.get().isDeleted()).isFalse()
         );
 
