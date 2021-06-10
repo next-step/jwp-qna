@@ -19,9 +19,6 @@ import qna.exception.UnAuthorizedException;
 @Entity
 public class Answer extends BaseEntity {
 
-	private static final boolean NOT_DELETED = false;
-	private static final boolean DELETED = true;
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -30,7 +27,7 @@ public class Answer extends BaseEntity {
 	private Contents contents;
 
 	@Column(nullable = false)
-	private boolean deleted = NOT_DELETED;
+	private boolean deleted = false;
 
 	@ManyToOne
 	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -80,7 +77,6 @@ public class Answer extends BaseEntity {
 		question.addAnswer(this);
 	}
 
-
 	public Long id() {
 		return id;
 	}
@@ -107,7 +103,7 @@ public class Answer extends BaseEntity {
 		return this.writer.equals(writer);
 	}
 
-	public void checkIsOwner(User loginUser) {
+	private void checkIsOwner(User loginUser) {
 		if (!isOwner(loginUser)) {
 			throw new CannotDeleteException("사용자와 답변의 작성자가 일치하지 않습니다.");
 		}
@@ -117,8 +113,9 @@ public class Answer extends BaseEntity {
 		return deleted;
 	}
 
-	public DeleteHistory delete() {
-		deleted = DELETED;
+	public DeleteHistory delete(User loginUser) {
+		checkIsOwner(loginUser);
+		deleted = true;
 		updatedAtNow();
 		return DeleteHistory.ofAnswer(id, writer);
 	}

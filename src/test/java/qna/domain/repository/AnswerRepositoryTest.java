@@ -29,7 +29,7 @@ public class AnswerRepositoryTest {
 	private Answer answerWrittenByJavajigi;
 	private Answer answerWrittenBySanjigi;
 	private User savedJavajigi;
-	private User savedSangiji;
+	private User savedSanjigi;
 	private Question savedQuestionWrittenByJavajigi;
 	private Question savedQuestionWrittenBySanjigi;
 
@@ -43,34 +43,28 @@ public class AnswerRepositoryTest {
 		각_답변별_작성자정보_저장();
 		각_답변별_질문정보_저장();
 		답변_인스턴스_생성();
-		연관_관계_매핑();
-	}
-
-	private void 연관_관계_매핑() {
-		answerWrittenByJavajigi.writtenBy(savedJavajigi);
-		answerWrittenBySanjigi.writtenBy(savedSangiji);
 	}
 
 	private void 답변_인스턴스_생성() {
-		answerWrittenByJavajigi = Answer.generate(JAVAJIGI, savedQuestionWrittenByJavajigi,
+		answerWrittenByJavajigi = Answer.generate(savedJavajigi, savedQuestionWrittenByJavajigi,
 			"Answers Contents1");
-		answerWrittenBySanjigi = Answer.generate(SANJIGI, savedQuestionWrittenBySanjigi,
+		answerWrittenBySanjigi = Answer.generate(savedSanjigi, savedQuestionWrittenBySanjigi,
 			"Answers Contents2");
 	}
 
 	private void 각_답변별_질문정보_저장() {
-		Question tempQuestion1 = Question.generate(1L, "title1", "contents1").writeBy(JAVAJIGI);
+		Question tempQuestion1 = Question.generate(1L, "title1", "contents1").writeBy(savedJavajigi);
 		tempQuestion1.writeBy(savedJavajigi);
 		savedQuestionWrittenByJavajigi = questions.save(tempQuestion1);
 
-		Question tempQuestion2 = Question.generate(2L, "title2", "contents2").writeBy(SANJIGI);
-		tempQuestion2.writeBy(savedSangiji);
+		Question tempQuestion2 = Question.generate(2L, "title2", "contents2").writeBy(savedSanjigi);
+		tempQuestion2.writeBy(savedSanjigi);
 		savedQuestionWrittenBySanjigi = questions.save(tempQuestion2);
 	}
 
 	private void 각_답변별_작성자정보_저장() {
 		savedJavajigi = users.save(JAVAJIGI);
-		savedSangiji = users.save(SANJIGI);
+		savedSanjigi = users.save(SANJIGI);
 	}
 
 	@DisplayName("Answer 저장 : save()")
@@ -120,7 +114,7 @@ public class AnswerRepositoryTest {
 		//when
 		Optional<Answer> answerBeforeSoftDelete = answers
 			.findByIdAndDeletedFalse(expectedAnswerWrittenByJavajigi.id());
-		expectedAnswerWrittenByJavajigi.delete();
+		expectedAnswerWrittenByJavajigi.delete(savedJavajigi);
 		Optional<Answer> answerAfterSoftDelete = answers
 			.findByIdAndDeletedFalse(expectedAnswerWrittenByJavajigi.id());
 
@@ -138,13 +132,13 @@ public class AnswerRepositoryTest {
 		Answer expectedAnswerWrittenByJavajigi = answers.save(answerWrittenByJavajigi);
 
 		//when
-		expectedAnswerWrittenByJavajigi.writtenBy(savedSangiji);
+		expectedAnswerWrittenByJavajigi.writtenBy(savedSanjigi);
 		Optional<Answer> answerAfterChangeWriter = answers
 			.findById(expectedAnswerWrittenByJavajigi.id());
 
 		//then
 		assertAll(
-			() -> assertThat(answerAfterChangeWriter.get().writer().equals(savedSangiji)).isTrue(),
+			() -> assertThat(answerAfterChangeWriter.get().writer().equals(savedSanjigi)).isTrue(),
 			() -> assertThat(answerAfterChangeWriter.get().writer().equals(savedJavajigi)).isFalse()
 		);
 	}
@@ -177,14 +171,14 @@ public class AnswerRepositoryTest {
 		Answer answerBeforeDelete = answers.findById(expectedAnswerWrittenByJavajigi.id()).get();
 
 		//when
-		answerBeforeDelete.delete();
+		answers.delete(expectedAnswerWrittenByJavajigi);
 		Optional<Answer> afterDeleteAnswerOptional = answers
 			.findById(expectedAnswerWrittenByJavajigi.id());
 
 		//then
 		assertAll(
 			() -> assertThat(answerBeforeDelete).isNotNull(),
-			() -> assertThat(afterDeleteAnswerOptional.get().isDeleted()).isTrue()
+			() -> assertThat(afterDeleteAnswerOptional.isPresent()).isFalse()
 		);
 	}
 }

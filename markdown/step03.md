@@ -389,10 +389,10 @@ A. Domain Model 영역에서 하는 것이 옳다.
             - [x] 4-3-8-3.그 외에도 찾아보기
         - [x] 4-3-9.Value Object Test 코드 작성
     - [ ] 4-4.리뷰어님 코멘트 반영 2차
-        - [ ] 4-4-1.답변 삭제 권한 체크는 AnswerGroup 내부 또는 Answer에서 하도록 변경
-            - [ ] 4-4-1-1.`AnswerGroup.deleteAll()` -> `public DeleteHistoryGroup deleteAll(User loginUser)`
-        - [ ] 4-4-2.불필요한 상수 적용 제거
-            - [ ] 4-4-2-1."DELETED", "NOT_DELETED" -> `true`, `false`
+        - [x] 4-4-1.답변 삭제 권한 체크는 AnswerGroup 내부 또는 Answer에서 하도록 변경
+            - [x] 4-4-1-1.`AnswerGroup.deleteAll()` -> `public DeleteHistoryGroup deleteAll(User loginUser)`
+        - [x] 4-4-2.불필요한 상수 적용 제거
+            - [x] 4-4-2-1."DELETED", "NOT_DELETED" -> `true`, `false`
         - [ ] 4-4-3.테스트 코드 리펙토링
             - [ ] 4-4-3-1.다양한 테스트 메서드 작성
                 - [ ] 4-4-3-1-1.정상 케이스 외에 의도한 예외마다 발생하는 테스트 코드 작성

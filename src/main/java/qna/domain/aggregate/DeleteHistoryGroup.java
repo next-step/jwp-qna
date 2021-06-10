@@ -23,8 +23,8 @@ public class DeleteHistoryGroup {
 		deleteHistories.add(deleteHistory);
 	}
 
-	public void addAll(List<DeleteHistory> deleteHistories) {
-		this.deleteHistories.addAll(deleteHistories);
+	public void addAll(DeleteHistoryGroup deleteHistoryGroup) {
+		this.deleteHistories.addAll(deleteHistoryGroup.deleteHistories);
 	}
 
 	public int size() {

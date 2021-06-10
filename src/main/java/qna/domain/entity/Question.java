@@ -20,9 +20,6 @@ import qna.exception.CannotDeleteException;
 @Entity
 public class Question extends BaseEntity {
 
-	private static final boolean NOT_DELETED = false;
-	private static final boolean DELETED = true;
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -31,7 +28,7 @@ public class Question extends BaseEntity {
 	private Contents contents;
 
 	@Column(nullable = false)
-	private boolean deleted = NOT_DELETED;
+	private boolean deleted = false;
 
 	@Embedded
 	private Title title;
@@ -101,29 +98,17 @@ public class Question extends BaseEntity {
 	}
 
 	public DeleteHistoryGroup delete(User loginUser) {
-		checkDeletable(loginUser);
 		DeleteHistoryGroup deleteHistoryGroup = DeleteHistoryGroup.generate();
-		deleteHistoryGroup.add(deleteQuestion());
-		deleteHistoryGroup.addAll(answerGroup.deleteAll());
+		deleteHistoryGroup.add(deleteQuestion(loginUser));
+		deleteHistoryGroup.addAll(answerGroup.deleteAll(loginUser));
 		return deleteHistoryGroup;
 	}
 
-	private DeleteHistory deleteQuestion() {
-		this.deleted = DELETED;
+	private DeleteHistory deleteQuestion(User loginUser) {
+		checkQuestionIsSameWithUserAndWriter(loginUser);
+		this.deleted = true;
 		updatedAtNow();
 		return DeleteHistory.ofQuestion(id, writer);
-	}
-
-	private void checkDeletable(User loginUser) {
-		checkQuestionIsSameWithUserAndWriter(loginUser);
-		checkDeletableAnswerGroup(loginUser);
-	}
-
-	private void checkDeletableAnswerGroup(User loginUser) {
-		if (answerGroup.isEmpty()) {
-			return;
-		}
-		answerGroup.checkAnswersAreSameWithUserAndWriter(loginUser);
 	}
 
 	private void checkQuestionIsSameWithUserAndWriter(User loginUser) {

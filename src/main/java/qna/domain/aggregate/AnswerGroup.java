@@ -40,14 +40,12 @@ public class AnswerGroup {
 		return answers.isEmpty();
 	}
 
-	public void checkAnswersAreSameWithUserAndWriter(User loginUser) {
-		answers.forEach(answer -> answer.checkIsOwner(loginUser));
-	}
-
-	public List<DeleteHistory> deleteAll() {
-		return answers.stream()
-			.map(Answer::delete)
-			.collect(Collectors.toList());
+	public DeleteHistoryGroup deleteAll(User loginUser) {
+		DeleteHistoryGroup deleteHistoryGroup = DeleteHistoryGroup.generate();
+		answers.stream()
+			.map(answer -> answer.delete(loginUser))
+			.forEach(deleteHistoryGroup::add);
+		return deleteHistoryGroup;
 	}
 
 	public List<Answer> answers() {
