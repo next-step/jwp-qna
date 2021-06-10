@@ -1,9 +1,11 @@
 package qna.domain;
 
-import qna.CannotDeleteException;
-import qna.message.ErrorMessage;
-
 import static javax.persistence.FetchType.LAZY;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -13,10 +15,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
+import qna.CannotDeleteException;
+import qna.message.ErrorMessage;
 
 @Entity
 @Table(name = "question")
@@ -107,9 +108,7 @@ public class Question extends BaseEntity {
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         checkWriter(loginUser);
         this.setDeleted(true);
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now()));
-        return deleteHistories;
+        return Stream.of(new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now())).collect(Collectors.toList());
     }
 
     private void checkWriter(User loginUser) throws CannotDeleteException {
