@@ -29,8 +29,8 @@ public class Question extends BaseEntity{
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -62,20 +62,26 @@ public class Question extends BaseEntity{
         }
     }
 
-
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        checkUser(loginUser);
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        setDeleted(true);
+
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
+        deleteHistories.addAll(answers.delete(loginUser));
+
+        return deleteHistories;
+    }
+
+    private void checkUser(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
+    }
 
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.delete(loginUser));
-        }
-
-        return deleteHistories;
+    public boolean containsAnswer(Answer answer) {
+        return answers.contains(answer);
     }
 
     public Long getId() {
@@ -114,7 +120,7 @@ public class Question extends BaseEntity{
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
