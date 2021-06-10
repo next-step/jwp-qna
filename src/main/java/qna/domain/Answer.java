@@ -72,6 +72,7 @@ public class Answer extends DateEntity {
         }
 
         this.question = question;
+        this.question.addAnswer(this);
     }
 
     public Long getId() {
