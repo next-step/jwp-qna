@@ -3,14 +3,17 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "question")
-public class Question extends BaseEntity{
+public class Question extends BaseEntity implements Serializable {
 
+    private static final long serialVersionUID = -8090430385344706191L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
