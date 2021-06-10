@@ -1,6 +1,7 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
+import qna.message.ErrorMessage;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -113,7 +114,7 @@ public class Question extends BaseEntity {
 
     private void checkWriter(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(ErrorMessage.QUESTION_DELETE_NO_AUTH);
         }
     }
 }

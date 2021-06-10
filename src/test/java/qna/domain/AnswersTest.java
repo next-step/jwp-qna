@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.CannotDeleteException;
+import qna.message.ErrorMessage;
 
 @DataJpaTest
 class AnswersTest {
@@ -59,6 +60,6 @@ class AnswersTest {
         //then
         assertThatExceptionOfType(CannotDeleteException.class)
                 .isThrownBy(() -> answer.delete(anotherUser))
-                .withMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+                .withMessageContaining(ErrorMessage.EXISTS_ANOTHER_USER_ANSWER);
     }
 }

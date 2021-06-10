@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.message.ErrorMessage;
 
 
 @Entity
@@ -58,16 +59,8 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public void addQuestion() {
-
-    }
-
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
-    }
-
-    public void toQuestion(Question question) {
-        this.question = question;
     }
 
     public Long getId() {
@@ -134,7 +127,7 @@ public class Answer extends BaseEntity {
 
     private void checkWriter(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(ErrorMessage.EXISTS_ANOTHER_USER_ANSWER);
         }
     }
 }
