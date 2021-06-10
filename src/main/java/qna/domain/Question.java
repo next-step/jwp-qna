@@ -1,6 +1,13 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+import qna.service.DeleteHistoryService;
+
 import javax.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -15,6 +22,10 @@ public class Question extends BaseEntity {
 
     @Column(nullable = false, length = 100)
     private String title;
+
+    @OneToMany(mappedBy = "question")
+    @Embedded
+    private List<Answer> answers = new ArrayList<>();
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "writer_id")
@@ -33,17 +44,45 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
+    public List<DeleteHistory> deleteQuestion(Long questionId, User loginUser) throws CannotDeleteException {
+
+        isPossibleDelete(loginUser);
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        setDeleted(true);
+        deleteHistories.add(DeleteHistory.forQuestionOf(questionId, loginUser));
+        for (Answer answer : answers) {
+            answer.setDeleted(true);
+            deleteHistories.add(DeleteHistory.forAnswerOf(answer.getId(), loginUser));
+        }
+        return deleteHistories;
+    }
+
+    boolean isPossibleDelete(User loginUser) throws CannotDeleteException {
+        if (!Objects.equals(user, loginUser))
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+
+        for (Answer answer : answers) {
+            answer.checkPossibleDelete(loginUser);
+        }
+        return true;
+    }
+
     public Question writeBy(User writer) {
         this.user = writer;
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.user.equals(writer);
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        this.answers.add(answer);
+    }
+
+    public boolean isOwner(User writer) {
+        return Objects.equals(this.user, writer);
     }
 
     public Long getId() {
@@ -62,12 +101,12 @@ public class Question extends BaseEntity {
         return user.getId();
     }
 
-    public boolean isDeleted() {
-        return deleted;
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public boolean isDeleted() {
+        return deleted;
     }
 
     @Override
@@ -80,4 +119,8 @@ public class Question extends BaseEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
+
 }
+
+

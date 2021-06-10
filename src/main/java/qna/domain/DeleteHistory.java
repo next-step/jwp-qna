@@ -22,11 +22,19 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id")
     private User user;
 
-    public DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.user = user;
         this.createDate = createDate;
+    }
+
+    public static DeleteHistory forAnswerOf(Long answerId, User user) {
+        return new DeleteHistory(ContentType.ANSWER, answerId, user, LocalDateTime.now());
+    }
+
+    public static DeleteHistory forQuestionOf(Long questionId, User user) {
+        return new DeleteHistory(ContentType.QUESTION, questionId, user, LocalDateTime.now());
     }
 
     @Override
@@ -37,7 +45,6 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                //Objects.equals(deletedById, that.deletedById);
                 Objects.equals(user, that.user);
     }
 
