@@ -103,3 +103,9 @@ alter table question
 * 리팩토링을 통해 도메인으로 로직을 이동시킨다.
 * 테스트가 통과되는지 체크한다.
 * 필요한 부분을 리팩토링한다.
+
+### 3단계 질문사항.
+
+Q. 이번 미션의 목표는 deleteQuestion 메서드를 리팩토링 하는 부분이었는데요.  처음 구현한 방법은 Question 객체에서 Answers 라는 일급 컬렉션을 가지고 있으니 Answers 일급 컬렉션 안에서 Answer를 순회하며 Answer를 delete 하도록 하였는데요.  구현을 하고 테스트를 해보니 Mock에서 사용하지 않는 stubbing이 있었다는 에러 메시지와 함께 테스트가 실패하였습니다.  확인을 해보니 answerRepository의 findByQuestionIdAndDeletedFalse 메서드가 실행되지 않아 테스트가 실패하였는데요. 차라리 테스트 케이스의 내용을 좀 수정하고 일급 컬렉션 안에서 answer를 순회하며 delete를 하는것이 더 좋은 설계 였을까요?
+
+현재 제출한 미션에서는 QnaService 내의 deleteQuestion 메서드를 deleteQna 메서드로 이름을 수정하고, question과 answer를 delete 해주는 로직을 분류 하였습니다. question과 answer 객체에서 각각 delete를 따로 구현하는 것을 생각하여 구현 하였는데요. 제가 개발한 방식도 괜찮은지 조금 의견을 들어보고 싶습니다! 
