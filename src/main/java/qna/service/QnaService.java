@@ -10,7 +10,6 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,33 +28,23 @@ public class QnaService {
 
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
-        Question question = findQuestionById(questionId);
-        if (!question.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+        Question question = findQuestionBy(questionId);
+        question.deleteBy(loginUser);
 
-        List<Answer> answers = question.getAnswers();
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
-        }
+        deleteHistoryService.saveAll(deleteHistoriesOf(question));
+    }
 
+    private List<DeleteHistory> deleteHistoriesOf(Question question) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.setDeleted(true);
-        deleteHistories
-            .add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter(), LocalDateTime.now()));
-        for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories
-                .add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
-        deleteHistoryService.saveAll(deleteHistories);
+
+        deleteHistories.add(new DeleteHistory(question));
+        question.getAnswers().stream().map(DeleteHistory::new).forEach(deleteHistories::add);
+
+        return deleteHistories;
     }
 
     @Transactional(readOnly = true)
-    public Question findQuestionById(Long id) {
-        return questionRepository.findByIdAndDeletedFalse(id)
-            .orElseThrow(NotFoundException::new);
+    public Question findQuestionBy(Long id) {
+        return questionRepository.findByIdAndDeletedFalse(id).orElseThrow(NotFoundException::new);
     }
 }
