@@ -27,6 +27,8 @@ class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questions;
 
+    private User user;
+
     private Answer answer1;
     private Answer answer2;
 
@@ -36,14 +38,14 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        User user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        user = users.save(new User(new UserId("javajigi"), new Password("password"), new Name("name"), new Email("javajigi@slipp.net")));
 
-        question = question = questions.save(new Question("title1", "contents1").writeBy(user));
+        question = question = questions.save(new Question(new Title("title1"), new Contents("contents1")).writeBy(user));
 
-        answer1 = answers.save(new Answer(user, question, "Answers Contents1"));
-        answer2 = answers.save(new Answer(user, question, "Answers Contents2"));
+        answer1 = answers.save(new Answer(user, question, new Contents("Answers Contents1")));
+        answer2 = answers.save(new Answer(user, question, new Contents("Answers Contents2")));
 
-        deletingAnswer1 = new Answer(user, question, "Deleted Content1");
+        deletingAnswer1 = new Answer(user, question, new Contents("Deleted Content1"));
         deletingAnswer1 = answers.save(deletingAnswer1);
     }
 
@@ -56,7 +58,6 @@ class AnswerRepositoryTest {
         // When
         Answer actualResult = answers.findById(expectedResult.getId())
                 .orElseThrow(EntityNotFoundException::new);
-        ;
 
         // Then
         assertThat(actualResult).isEqualTo(expectedResult);
@@ -67,7 +68,7 @@ class AnswerRepositoryTest {
     void findByQuestionIdAndDeletedFalse_정상_삭제_되지_않은_데이터만_조회() throws CannotDeleteException {
         // Given
         final int expectedResult = 2;
-        deletingAnswer1.delete();
+        deletingAnswer1.delete(user);
         answers.save(deletingAnswer1);
 
         // When
@@ -94,7 +95,7 @@ class AnswerRepositoryTest {
     @DisplayName("findByIdAndDeletedFalse_오류_데이터_없음")
     void findByIdAndDeletedFalse_오류_데이터_없음() throws CannotDeleteException {
         // Given
-        deletingAnswer1.delete();
+        deletingAnswer1.delete(user);
         answers.save(deletingAnswer1);
 
         // When

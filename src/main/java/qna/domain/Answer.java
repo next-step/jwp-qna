@@ -7,7 +7,6 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.util.Objects;
 
-import static java.time.LocalDateTime.now;
 import static javax.persistence.FetchType.LAZY;
 import static qna.domain.ContentType.ANSWER;
 
@@ -27,20 +26,20 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deletion deleted = new Deletion(false);
 
     protected Answer() {
     }
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer(User writer, Question question, Contents contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, Contents contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -69,16 +68,17 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
-    public DeleteHistory delete() throws CannotDeleteException {
-        if (isDeleted()) {
-            throw new CannotDeleteException("이미 삭제된 데이터 입니다.");
+    public DeleteHistory delete(User requester) throws CannotDeleteException {
+        if (!isOwner(requester)) {
+            throw new UnAuthorizedException("답변을 삭제할 권한이 없습니다.");
         }
-        this.deleted = true;
 
-        return new DeleteHistory(ANSWER, this.id, this.writer, now());
+        deleted.delete();
+
+        return new DeleteHistory(ANSWER, this.id, this.writer);
     }
 
     @Override

@@ -1,12 +1,12 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
+import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.time.LocalDateTime.now;
 import static javax.persistence.FetchType.LAZY;
 import static qna.domain.ContentType.QUESTION;
 
@@ -16,11 +16,11 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String title;
+    @Embedded
+    private Title title;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -29,17 +29,17 @@ public class Question extends BaseEntity {
     @OneToMany(mappedBy = "question") // (1)
     private List<Answer> answers = new ArrayList<>(); // (2)
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deletion deleted = new Deletion(false);
 
     protected Question() {
     }
 
-    public Question(String title, String contents) {
+    public Question(Title title, Contents contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, Title title, Contents contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -58,7 +58,7 @@ public class Question extends BaseEntity {
         answers.add(answer);
     }
 
-    public void addAnswer(User writer, String contents) {
+    public void addAnswer(User writer, Contents contents) {
         answers.add(new Answer(writer, this, contents));
     }
 
@@ -71,16 +71,28 @@ public class Question extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
-    public DeleteHistory delete() throws CannotDeleteException {
-        if (isDeleted()) {
-            throw new CannotDeleteException("이미 삭제된 데이터 입니다.");
+    public List<DeleteHistory> delete(User requester) throws CannotDeleteException {
+        if (!isOwner(requester)) {
+            throw new UnAuthorizedException("답변을 삭제할 권한이 없습니다.");
         }
-        this.deleted = true;
+        deleted.delete();
 
-        return new DeleteHistory(QUESTION, this.id, this.writer, now());
+        List<DeleteHistory> deleteHistories = deleteAnswers(requester);
+        deleteHistories.add(new DeleteHistory(QUESTION, this.id, this.writer));
+        return deleteHistories;
+    }
+
+    private List<DeleteHistory> deleteAnswers(User writer) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(writer));
+        }
+
+        return deleteHistories;
     }
 
     @Override
