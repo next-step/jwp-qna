@@ -24,12 +24,13 @@ class AnswersTest {
 
     private Question question;
     private User user;
+    private Answer answer;
 
     @BeforeEach
     void setup() {
         user = new User("lkimilhol", "1234", "김일호", "lkimilhol@gmail.com");
         question = new Question("질문", "내용");
-        Answer answer = new Answer(user, question, "답변");
+        answer = new Answer(user, question, "답변");
         question.writeBy(user);
 
         userRepository.save(user);
@@ -42,7 +43,7 @@ class AnswersTest {
     void checkLoginUserAuth() throws CannotDeleteException {
         //given
         //when
-        question.getAnswers().checkLoginUserAuth(user);
+        answer.delete(user);
         //then
         assertThat(question.getWriter().getUserId()).isEqualTo("lkimilhol");
     }
@@ -57,7 +58,7 @@ class AnswersTest {
         question.addAnswer(anotherAnswer);
         //then
         assertThatExceptionOfType(CannotDeleteException.class)
-                .isThrownBy(() -> question.getAnswers().checkLoginUserAuth(user))
+                .isThrownBy(() -> answer.delete(anotherUser))
                 .withMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }
