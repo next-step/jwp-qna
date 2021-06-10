@@ -32,19 +32,19 @@ public class UserTest {
     @Test
     void save() {
         assertAll(
-                () -> assertThat(user1.getId()).isNotNull(),
-                () -> assertThat(user1.getName()).isEqualTo(user1.getName())
+                () -> assertThat(user1).isNotNull(),
+                () -> assertThat(user1).isEqualTo(user1)
         );
     }
 
     @Test
     void findByUserId() {
-        String expected = user2.getUserId();
+        String expected = user2.userId();
 
         Optional<User> actual = users.findByUserId(expected);
         assertAll(
                 () -> assertThat(actual.isPresent()).isTrue(),
-                () -> assertThat(actual.get().getUserId()).isEqualTo(user2.getUserId())
+                () -> assertThat(actual.get().userId()).isEqualTo(user2.userId())
         );
 
     }

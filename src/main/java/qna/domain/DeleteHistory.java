@@ -50,12 +50,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deleter.getId(), that.deleter.getId());
+                Objects.equals(deleter, that.deleter);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deleter.getId());
+        return Objects.hash(id, contentType, contentId, deleter);
     }
 
     @Override

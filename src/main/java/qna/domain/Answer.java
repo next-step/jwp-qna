@@ -64,7 +64,7 @@ public class Answer {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -75,39 +75,15 @@ public class Answer {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writer.getId();
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writer.setId(writerId);
-    }
-
     public Long getQuestionId() {
         return question.getId();
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.question.setId(questionId);
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void delete(boolean deleted) {
         this.deleted = deleted;
     }
 
