@@ -95,7 +95,6 @@ alter table question
 * 연관관계 매핑을 하여 외래키가 제대로 걸리는지 테스트한다.
 * 테스트 케이스에서 데이터가 의도한 대로 CRUD 되었는지 확인한다.
 
-
 ## 3단계 요구사항
 
 * QnaService의 *deleteQuestion()*  메서드에서 단위 테스트가 쉬운 부분을 찾는다.

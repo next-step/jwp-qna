@@ -18,7 +18,6 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.message.ErrorMessage;
 
-
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseEntity {
