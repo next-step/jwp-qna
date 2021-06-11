@@ -1,19 +1,19 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 public class AnswerTest {
-  
+
     @Autowired
     private AnswerRepository answerRepository;
 
@@ -63,7 +63,8 @@ public class AnswerTest {
     @Test
     @DisplayName("Question id로 deleted false 찾기 테스트")
     void findByQuestionIdAndDeletedFalseTest() {
-        List<Answer> actualList = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
+        List<Answer> actualList = answerRepository
+            .findByQuestionIdAndDeletedFalse(question1.getId());
 
         assertThat(actualList).contains(answer1);
     }
@@ -77,5 +78,14 @@ public class AnswerTest {
         assertThat(result.getWriter()).isEqualTo(answer1.getWriter());
         assertThat(result.getQuestion()).isEqualTo(answer1.getQuestion());
         assertThat(result.getContents()).isEqualTo(answer1.getContents());
+    }
+
+    @DisplayName("작성자가 아닌 사용자는 답변을 삭제할 수 없다.")
+    @Test
+    void deleteFailTest() {
+        //when & then
+        assertThatThrownBy(() -> answer1.deletedByUser(user2))
+            .isInstanceOf(CannotDeleteException.class)
+            .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }
