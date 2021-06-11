@@ -75,12 +75,14 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void deleteBy(User loginUser) throws CannotDeleteException {
+    public DeleteHistory deleteBy(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
 
         this.deleted = true;
+
+        return new DeleteHistory(this);
     }
 
     private boolean isOwner(User writer) {
