@@ -25,15 +25,24 @@ public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Lob
     private String contents;
+
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
     @Column(nullable = false)
     private Boolean deleted = false;
-    private Long questionId;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Question question;
+
     private LocalDateTime updatedAt;
-    private Long writerId;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -50,9 +59,11 @@ public class Answer {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
+
+        this.question.addAnswer(this);
     }
 
     public Answer() {
@@ -60,50 +71,33 @@ public class Answer {
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
-    }
+//    public Answer toQuestion(Question question) {
+//        this.question = question;
+//        question.addAnswer(this);
+//        return this;
+//    }
+//    public void fromQuestion(Question question){
+//        if(Objects.isNull(this.question)) {
+//            this.question = question;
+//        }
+//    }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
     public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
+        return question.getId();
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void delete(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -111,8 +105,8 @@ public class Answer {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
