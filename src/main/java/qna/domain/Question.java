@@ -1,6 +1,10 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,6 +28,9 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
+    @Embedded
+    private Answers answers = new Answers();
+
     protected Question() {
 
     }
@@ -43,7 +50,13 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
+    }
+
+    public void addAnswers(Answers answers) {
+        this.answers.add(answers);
+        this.answers.toQuestion(this);
     }
 
     public Long getId() {
@@ -66,8 +79,16 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public void delete() {
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
         this.deleted = true;
+        this.answers.delete(loginUser);
+    }
+
+    public Answers getAnswers() {
+        return answers;
     }
 
     @Override
