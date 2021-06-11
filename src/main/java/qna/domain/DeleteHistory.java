@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.lang.annotation.Target;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -13,25 +12,22 @@ import java.util.Objects;
 @Table
 @Getter
 @Setter
-public class DeleteHistory {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class DeleteHistory extends BaseEntity {
+
     @Column
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
     @Column
     private Long contentId;
-    @Column
-    private Long deletedById;
-    @Column
-    private LocalDateTime createDate = LocalDateTime.now();
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    private User user;
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+
+    public DeleteHistory(ContentType contentType, Long contentId, User deleteUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
-        this.createDate = createDate;
+        this.user = deleteUser;
     }
 
     @Override
@@ -42,12 +38,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, user);
     }
 
     @Override
@@ -56,8 +52,13 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
-                ", createDate=" + createDate +
+                ", deletedById=" + user +
+                ", createDate=" + createdAt +
                 '}';
+    }
+
+    public void setUser(User deleteUser) {
+        this.user = deleteUser;
+        this.user.addDeleteHistory(this);
     }
 }

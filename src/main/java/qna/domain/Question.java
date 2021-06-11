@@ -1,5 +1,6 @@
 package qna.domain;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -8,21 +9,18 @@ import java.time.LocalDateTime;
 @Entity
 @Table
 @NoArgsConstructor
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Getter
+public class Question extends BaseEntity{
     @Column(length = 100, nullable = false)
     private String title;
     @Column
     @Lob
     private String contents;
-    @Column
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name="writer_id")
+    private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
     @Column
     private LocalDateTime updatedAt= LocalDateTime.now();
 
@@ -37,12 +35,12 @@ public class Question {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -73,14 +71,6 @@ public class Question {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -95,8 +85,13 @@ public class Question {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public void setWriter(User writer) {
+        this.writer = writer;
+        this.writer.addQuestion(this);
     }
 }
