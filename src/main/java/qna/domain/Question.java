@@ -64,11 +64,10 @@ public class Question extends BaseEntity {
     public List<DeleteHistory> deleted(User loginUser) {
         checkUser(loginUser);
 
-        deleted(true);
-
         List<DeleteHistory> deleteHistories = answers.delete(loginUser);
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
 
+        deleted(true);
         return deleteHistories;
     }
 
