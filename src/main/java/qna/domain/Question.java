@@ -1,17 +1,24 @@
 package qna.domain;
 
 import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import qna.CannotDeleteException;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Question extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(length = 100, nullable = false)
     private String title;
@@ -23,8 +30,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @Embedded
-    private Answers answers;
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -54,16 +61,10 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-
-        if (answers == null) {
-            this.answers = Answers.of(new ArrayList<>());
-        }
-
-        this.answers.addAnswer(answer);
     }
 
     public Long getId() {
-        return super.getId();
+        return id;
     }
 
     public String getTitle() {
@@ -86,22 +87,14 @@ public class Question extends BaseEntity {
         this.deleted = true;
     }
 
-    public void deletedByUser(User loginUser) throws CannotDeleteException {
-        if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-
-        delete();
-    }
-
-    public Answers getAnswers() {
-        return answers;
+    public List<Answer> getAnswers() {
+        return this.answers;
     }
 
     @Override
     public String toString() {
         return "Question{" +
-            "id=" + super.getId() +
+            "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
             ", writer=" + writer +

@@ -1,11 +1,14 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import qna.UnAuthorizedException;
 
 @Entity
@@ -29,6 +32,12 @@ public class User {
     @Column(length = 50, nullable = false)
     private String email;
 
+    @OneToMany(mappedBy = "writer")
+    private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
+  
     protected User() {
     }
 

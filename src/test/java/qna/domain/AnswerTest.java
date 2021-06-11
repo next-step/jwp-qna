@@ -2,9 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class AnswerTest {
+  
     @Autowired
     private AnswerRepository answerRepository;
 
@@ -56,12 +55,13 @@ public class AnswerTest {
         assertThat(answer1.getWriter()).isEqualTo(answer1.getWriter());
         assertThat(answer1.getQuestion()).isEqualTo(answer1.getQuestion());
         assertThat(answer1.getContents()).isEqualTo(answer1.getContents());
+
     }
 
     @Test
     @DisplayName("Question id로 deleted false 찾기 테스트")
     void findByQuestionIdAndDeletedFalseTest() {
-        List<Answer> actualList = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
+        List<Answer> actualList = answerRepository.findByQuestionAndDeletedFalse(question1);
 
         assertThat(actualList).contains(answer1);
     }

@@ -7,23 +7,19 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import org.hibernate.annotations.Where;
-import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseEntity {
-
     @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @Where(clause = "deleted = false")
     @ManyToOne
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
-
+  
     @Lob
     private String contents;
 
@@ -78,21 +74,14 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
-        this.deleted = true;
-    }
-
-    public void deletedByUser(User loginUser) throws CannotDeleteException {
-        if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
-
-        delete();
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override
     public String toString() {
         return "Answer{" +
+
             "id=" + super.getId() +
             ", writerId=" + writer.getId() +
             ", question=" + question +

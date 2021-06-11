@@ -29,7 +29,7 @@ public class DeleteHistory {
     @ManyToOne
     @JoinColumn(name = "delete_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedByUser;
-
+  
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createDate;
