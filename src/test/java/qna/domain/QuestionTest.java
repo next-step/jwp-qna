@@ -3,6 +3,11 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,7 +23,9 @@ public class QuestionTest {
 
     @Test
     void delete_by_writer() throws CannotDeleteException {
-        Q1.deleteBy(UserTest.JAVAJIGI);
+        List<DeleteHistory> actual = Q1.deleteBy(UserTest.JAVAJIGI);
+
         assertTrue(Q1.isDeleted());
+        assertEquals(Collections.singletonList(new DeleteHistory(Q1)), actual);
     }
 }
