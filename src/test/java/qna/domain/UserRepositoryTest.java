@@ -1,16 +1,12 @@
 package qna.domain;
 
-import lombok.Data;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class UserRepositoryTest {
@@ -24,6 +20,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("merge 동일성 테스트")
     public void merge() {
+
         User javajigi1 = UserTest.JAVAJIGI;
         User javajigi2 = userRepository.save(javajigi1);
 
@@ -39,10 +36,10 @@ class UserRepositoryTest {
         //merge 이므로 not same
         assertThat(sanjigi).isNotSameAs(sanjigi2);
         // merge일때 기존 객체가 존재하지않는경우 새로운 id채번을 통해서 리턴
-        assertThat(sanjigi2.getId()).isEqualTo(1L);
+        assertThat(sanjigi2.getId()).isNotNull();
 
         entityManager.detach(sanjigi2);
-        User sanjigi4 = userRepository.findById(1L).get();
+        User sanjigi4 = userRepository.findById(sanjigi2.getId()).get();
 
         // detach한다음에 find해오면 동일성 다름
         assertThat(sanjigi4).isNotSameAs(sanjigi2);
@@ -52,7 +49,7 @@ class UserRepositoryTest {
         User sanjigi3 = entityManager.persist(sanjigi2);
         // persist 동일성
         assertThat(sanjigi3).isSameAs(sanjigi2);
-        assertThat(sanjigi3.getId()).isEqualTo(2L);
+        assertThat(sanjigi3.getId()).isNotNull();
 
     }
 }
