@@ -29,8 +29,7 @@ public class Answer extends BaseEntity {
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+
     @Column
     private LocalDateTime updatedAt = LocalDateTime.now();
 
