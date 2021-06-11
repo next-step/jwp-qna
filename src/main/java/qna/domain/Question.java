@@ -45,9 +45,9 @@ public class Question extends AbstractEntity {
     }
 
     public List<DeleteHistory> deleteAllAndAddHistories(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-
         validateOwner(loginUser);
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
 
         deleteAndAddHistory(deleteHistories);
 
