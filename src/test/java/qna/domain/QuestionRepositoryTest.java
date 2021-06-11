@@ -33,14 +33,15 @@ public class QuestionRepositoryTest {
     void setUp() {
         savedUser = userRepository.save(new User( "javajigi", "password", "name", "javajigi@slipp.net"));
         savedQuestion = questionRepository.save(new Question("title1", "contents1").writeBy(savedUser));
-        savedAnswer = new Answer(savedUser, "Answers Contents1");
-        savedAnswer.toQuestion(savedQuestion);  //toQuestion을 통해 추가하지 않으면 question 조회시 answers size 0, DataJpaTest영향?
+        savedAnswer = new Answer(savedUser, savedQuestion, "Answers Contents1");
+        savedQuestion.addAnswer(savedAnswer);
         savedAnswer = answerRepository.save(savedAnswer);
     }
 
     @DisplayName("저장")
     @Test
     public void save(){
+        System.out.println(savedQuestion.getAnswers().toString());
         assertThat(savedQuestion.getTitle()).isEqualTo("title1");
         assertThat(savedQuestion.getContents()).isEqualTo("contents1");
         assertThat(savedQuestion.getWriterId()).isEqualTo(savedUser.getId());
@@ -61,7 +62,7 @@ public class QuestionRepositoryTest {
     public void delete(){
         List<Question> questionList = questionRepository.findByDeletedFalse();
         Question actual = questionList.get(0);
-        actual.setDeleted(true);
+        actual.deleted(true);
         List<Question> afterDeleteList = questionRepository.findByDeletedFalse();
         assertTrue(afterDeleteList.isEmpty());
     }

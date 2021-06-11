@@ -10,7 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends BaseEntity{
+public class Answer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,28 +54,16 @@ public class Answer extends BaseEntity{
         this.contents = contents;
     }
 
-    public Answer(User writer, String contents) {
-        this.writer = writer;
-        this.contents = contents;
-    }
-
     public boolean isOwner(User writer) {
         return this.writer.getId().equals(writer.getId());
     }
 
-    public void toQuestion(Question question) {
+    public void setQuestion(Question question) {
         this.question = question;
-        if (!question.containsAnswer(this)) {
-            question.addAnswer(this);
-        }
     }
 
     public Long getId() {
         return id;
-    }
-
-    public Long getWriterId() {
-        return writer.getId();
     }
 
     public User getWriter() {
@@ -84,16 +72,13 @@ public class Answer extends BaseEntity{
 
     public void setWriter(User writer) {
         this.writer = writer;
-        if (!writer.getAnswers().contains(this)) {
-            writer.getAnswers().add(this);
-        }
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
-        setDeleted(true);
+    public DeleteHistory delete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
+        deleted(true);
         return new DeleteHistory(ContentType.ANSWER, id, loginUser, LocalDateTime.now());
     }
 
@@ -105,15 +90,11 @@ public class Answer extends BaseEntity{
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void deleted(boolean deleted) {
         this.deleted = deleted;
     }
 

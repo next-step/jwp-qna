@@ -18,7 +18,7 @@ public class AnswerTest {
 
     @Test
     @DisplayName("삭제 테스트")
-    public void delete() throws CannotDeleteException {
+    public void delete() {
 
         //when
         DeleteHistory deleteHistory = A1.delete(UserTest.JAVAJIGI);

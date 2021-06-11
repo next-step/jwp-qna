@@ -36,10 +36,10 @@ public class QuestionTest {
 
     @DisplayName("삭제 테스트")
     @Test
-    public void delete() throws CannotDeleteException {
+    public void delete() {
         //when
-        questionWithSameAnswer.delete(UserTest.JAVAJIGI);
-        assertThatThrownBy(() -> questionWithSameAnswer.delete(UserTest.SANJIGI))
+        questionWithSameAnswer.deleted(UserTest.JAVAJIGI);
+        assertThatThrownBy(() -> questionWithSameAnswer.deleted(UserTest.SANJIGI))
                 .isInstanceOf(CannotDeleteException.class);
 
         //then
@@ -49,7 +49,7 @@ public class QuestionTest {
     @DisplayName("댓글 작성자가 다를때 에러 발생")
     @Test
     public void deleteOtherAnswerWriter() {
-        assertThatThrownBy(() -> questionWithDiffrentAnswer.delete(UserTest.JAVAJIGI))
+        assertThatThrownBy(() -> questionWithDiffrentAnswer.deleted(UserTest.JAVAJIGI))
                 .isInstanceOf(CannotDeleteException.class);
     }
 }

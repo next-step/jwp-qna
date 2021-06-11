@@ -3,14 +3,12 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 
 @Entity
 @Table(name = "user", uniqueConstraints = {@UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = {"user_id"})})
-public class User extends BaseEntity{
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -29,8 +27,8 @@ public class User extends BaseEntity{
     @Column(name = "email", length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
 
     protected User() {
     }
@@ -89,15 +87,11 @@ public class User extends BaseEntity{
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void changePassword(String password) {
         this.password = password;
     }
 
@@ -105,7 +99,7 @@ public class User extends BaseEntity{
         return name;
     }
 
-    public void setName(String name) {
+    public void changeName(String name) {
         this.name = name;
     }
 
@@ -113,19 +107,11 @@ public class User extends BaseEntity{
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public void addAnswer(Answer answer) {
-        answers.add(answer);
-        if (answer.getWriter() != this) {
-            answer.setWriter(this);
+        answer.setWriter(this);
+        if(!answers.contains(answer)){
+            answers.add(answer);
         }
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
     }
 
     @Override

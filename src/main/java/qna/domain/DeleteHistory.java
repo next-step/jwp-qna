@@ -35,10 +35,6 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public void setDeleteUser(User deleteUser) {
-        this.deleteUser = deleteUser;
-    }
-
     public User getDeleteUser() {
         return deleteUser;
     }

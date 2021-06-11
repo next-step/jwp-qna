@@ -4,12 +4,11 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "question")
-public class Question extends BaseEntity{
+public class Question extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,32 +55,27 @@ public class Question extends BaseEntity{
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
-        if (answer.getQuestion() != this) {
-            answer.toQuestion(this);
+        answer.setQuestion(this);
+        if(!answers.contains(answer)){
+            answers.add(answer);
         }
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleted(User loginUser) {
         checkUser(loginUser);
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        setDeleted(true);
+        deleted(true);
 
+        List<DeleteHistory> deleteHistories = answers.delete(loginUser);
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
-        deleteHistories.addAll(answers.delete(loginUser));
 
         return deleteHistories;
     }
 
-    private void checkUser(User loginUser) throws CannotDeleteException {
+    private void checkUser(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-    }
-
-    public boolean containsAnswer(Answer answer) {
-        return answers.contains(answer);
     }
 
     public Long getId() {
@@ -92,31 +86,19 @@ public class Question extends BaseEntity{
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public Long getWriterId() {
         return writer.getId();
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void deleted(boolean deleted) {
         this.deleted = deleted;
     }
 

@@ -64,7 +64,7 @@ public class AnswerRepositoryTest {
     public void delete(){
         Answer actual = answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId()).get(0);
         assertThat(actual).isEqualTo(savedAnswer);
-        actual.setDeleted(true);
+        actual.deleted(true);
         List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(savedQuestion.getId());
         assertTrue(answerList.isEmpty());
     }

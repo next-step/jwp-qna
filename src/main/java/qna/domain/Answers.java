@@ -10,6 +10,7 @@ import java.util.List;
 
 @Embeddable
 public class Answers {
+
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
 
@@ -20,7 +21,7 @@ public class Answers {
         answers.add(answer);
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
         for (Answer answer : answers) {
