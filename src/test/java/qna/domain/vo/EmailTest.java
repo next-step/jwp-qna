@@ -1,120 +1,118 @@
 package qna.domain.vo;
 
-import static org.assertj.core.api.Assertions.*;
-
-import org.junit.jupiter.api.DisplayName;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 public class EmailTest {
-
-	@DisplayName("generate() : 50byte 초과 제한")
-	@ParameterizedTest(name = "{index} - email:[{0}], exceptedNotThrownException:{1}")
-	@CsvSource(value = {";true", "' ';true", "0;true", "100;true"
-		, "가갸거겨고교구규그기나냐너녀노뇨누뉴느니다댜더뎌도됴두듀드디라랴러려로료루류르리마먀머며모묘무뮤므미;false"
-		, "가갸거겨고교구규그기나냐너녀노뇨누;false", "가갸거겨고교구규그기나냐너녀노뇨;true"
-		, "abcdefghijabcdefghijabcdefghijabcdefghijabcdefghija;false"
-		, "abcdefghijabcdefghijabcdefghijabcdefghijabcdefghij;true"}
-		, delimiter = ';')
-	void generate(String email, boolean exceptedNotThrownException) {
-		//given
-
-		//when
-		if (exceptedNotThrownException) {
-			//then - not throw any Exception
-			assertThatCode(() -> Email.generate(email)).doesNotThrowAnyException();
-			return;
-		}
-		//then - throw NumberFormatException
-		assertThatThrownBy(() -> Email.generate(email))
-			.isInstanceOfAny(IllegalArgumentException.class);
-	}
 
 	@Test
 	void 생성() {
 		//given
-		String text = "내용";
+		String text = "abc@naver.com";
 
 		//when
-		Contents 내용 = Contents.generate(text);
+		Email 이메일 = Email.generate(text);
 
 		//then
-		assertThat(내용).isNotNull();
+		assertThat(이메일).isNotNull();
 	}
 
 	@Test
 	void 생성_null() {
 		//given
-		String text = null;
+		String null값 = null;
 
 		//when
-		Contents 내용 = Contents.generate(text);
+		Email 이메일 = Email.generate(null값);
 
 		//then
-		assertThat(내용).isNotNull();
+		assertThat(이메일).isNotNull();
 	}
 
 	@Test
 	void 생성_빈문자열() {
 		//given
-		String text = "";
+		String 빈_문자열 = "";
 
 		//when
-		Contents 내용 = Contents.generate(text);
+		Email 이메일 = Email.generate(빈_문자열);
 
 		//then
-		assertThat(내용).isNotNull();
+		assertThat(이메일).isNotNull();
+	}
+
+	@Test
+	void 생성_50바이트_초과_예외발생() {
+		//given
+		String 이메일 = "abcdefghijabcdefghijabcdefghijabcdefghija@naver.com";
+
+		//when
+
+		//then
+		assertThatThrownBy(() -> Email.generate(이메일)).isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
 	void 변경() {
 		//given
-		Contents 내용 = Contents.generate("내용");
-		String 변경할_내용 = "변경된 내용";
+		Email 이메일 = Email.generate("abc@naver.com");
+		String 변경할_메일주소 = "invinciblefunc@gmail.com";
 
 		//when
-		내용.changeContents(변경할_내용);
+		이메일.changeEmail(변경할_메일주소);
 
 		//then
-		assertThat(내용).isNotNull();
+		assertThat(이메일.value()).isEqualTo(변경할_메일주소);
 	}
 
 	@Test
 	void 변경_null() {
 		//given
-		Contents 내용 = Contents.generate("내용");
-		String 변경할_내용 = null;
+		Email 이메일 = Email.generate("invinciblefunc@gmail.com");
+		String null값 = null;
 
 		//when
-		내용.changeContents(변경할_내용);
+		이메일.changeEmail(null값);
 
 		//then
-		assertThat(내용).isNotNull();
+		assertThat(이메일.value()).isEqualTo(null값);
 	}
 
 	@Test
 	void 변경_빈문자열() {
 		//given
-		Contents 내용 = Contents.generate("내용");
-		String 변경할_내용 = "";
+		Email 이메일 = Email.generate("invinciblefunc@gmail.com");
+		String 빈_문자열 = "";
 
 		//when
-		내용.changeContents(변경할_내용);
+		이메일.changeEmail(빈_문자열);
 
 		//then
-		assertThat(내용).isNotNull();
+		assertThat(이메일.value()).isEqualTo(빈_문자열);
+	}
+
+	@Test
+	void 변경_50바이트_초과_예외발생() {
+		//given
+		Email 이메일 = Email.generate("invinciblefunc@gmail.com");
+		String 변경할_메일주소_50바이트_초과 = "abcdefghijabcdefghijabcdefghijabcdefghija@naver.com";
+
+		//when
+
+		//then
+		assertThatThrownBy(() -> 이메일.changeEmail(변경할_메일주소_50바이트_초과))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
 	void 동일성() {
 		//given
-		Contents 내용 = Contents.generate("내용");
-		Contents 비교할내용 = Contents.generate("");
-		내용.changeContents(비교할내용.value());
+		Email 이메일 = Email.generate("invinciblefunc@gmail.com");
+		Email 비교할_이메일 = Email.generate("invinciblefunc@gmail.com");
 
 		//when
-		boolean 동일성여부 = 내용.equals(비교할내용);
+		boolean 동일성여부 = 이메일.equals(비교할_이메일);
 
 		//then
 		assertThat(동일성여부).isTrue();

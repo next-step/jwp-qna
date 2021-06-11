@@ -1,11 +1,7 @@
 package qna.domain.vo;
 
-import static org.assertj.core.api.Assertions.*;
-
-import org.junit.jupiter.api.DisplayName;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 public class ContentsTest {
 
@@ -24,10 +20,10 @@ public class ContentsTest {
 	@Test
 	void 생성_null() {
 		//given
-		String text = null;
+		String null값 = null;
 
 		//when
-		Contents 내용 = Contents.generate(text);
+		Contents 내용 = Contents.generate(null값);
 
 		//then
 		assertThat(내용).isNotNull();
@@ -36,10 +32,10 @@ public class ContentsTest {
 	@Test
 	void 생성_빈문자열() {
 		//given
-		String text = "";
+		String 빈_문자열 = "";
 
 		//when
-		Contents 내용 = Contents.generate(text);
+		Contents 내용 = Contents.generate(빈_문자열);
 
 		//then
 		assertThat(내용).isNotNull();
@@ -55,33 +51,33 @@ public class ContentsTest {
 		내용.changeContents(변경할_내용);
 
 		//then
-		assertThat(내용).isNotNull();
+		assertThat(내용.value()).isEqualTo(변경할_내용);
 	}
 
 	@Test
 	void 변경_null() {
 		//given
 		Contents 내용 = Contents.generate("내용");
-		String 변경할_내용 = null;
+		String null값 = null;
 
 		//when
-		내용.changeContents(변경할_내용);
+		내용.changeContents(null값);
 
 		//then
-		assertThat(내용).isNotNull();
+		assertThat(내용.value()).isEqualTo(null값);
 	}
 
 	@Test
 	void 변경_빈문자열() {
 		//given
 		Contents 내용 = Contents.generate("내용");
-		String 변경할_내용 = "";
+		String 빈_문자열 = "";
 
 		//when
-		내용.changeContents(변경할_내용);
+		내용.changeContents(빈_문자열);
 
 		//then
-		assertThat(내용).isNotNull();
+		assertThat(내용.value()).isEqualTo(빈_문자열);
 	}
 
 	@Test

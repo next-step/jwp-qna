@@ -1,12 +1,10 @@
 package qna.domain.entity;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import qna.exception.UnAuthorizedException;
 
 public class UserTest {
@@ -72,7 +70,8 @@ public class UserTest {
 		String 유저아이디_20바이트_초과 = "abcdefghijabcdefghija";
 
 		//then
-		assertThatThrownBy(() -> User.generate(2L, 유저아이디_20바이트_초과, "password2", "name2", "sanjigi@slipp.net"))
+		assertThatThrownBy(
+			() -> User.generate(2L, 유저아이디_20바이트_초과, "password2", "name2", "sanjigi@slipp.net"))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -106,7 +105,8 @@ public class UserTest {
 		String 비밀번호_20바이트_초과 = "password12password123";
 
 		//then
-		assertThatThrownBy(() -> User.generate(2L, "sanjigi", 비밀번호_20바이트_초과, "name2", "sanjigi@slipp.net"))
+		assertThatThrownBy(
+			() -> User.generate(2L, "sanjigi", 비밀번호_20바이트_초과, "name2", "sanjigi@slipp.net"))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -117,7 +117,8 @@ public class UserTest {
 		//when
 
 		//then
-		assertThatThrownBy(() -> User.generate(2L, "sanjigi", "password2", null, "sanjigi@slipp.net"))
+		assertThatThrownBy(
+			() -> User.generate(2L, "sanjigi", "password2", null, "sanjigi@slipp.net"))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -140,7 +141,8 @@ public class UserTest {
 		String 이름_20바이트_초과 = "이건이름맞아요";
 
 		//then
-		assertThatThrownBy(() -> User.generate(2L, "sanjigi", "password2", 이름_20바이트_초과, "sanjigi@slipp.net"))
+		assertThatThrownBy(
+			() -> User.generate(2L, "sanjigi", "password2", 이름_20바이트_초과, "sanjigi@slipp.net"))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -185,7 +187,8 @@ public class UserTest {
 		//when
 
 		//then
-		assertThatThrownBy(() -> 자바지기.changeName(null)).isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> 자바지기.changeName(null))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
@@ -206,7 +209,8 @@ public class UserTest {
 		String 이름_20바이트_초과 = "이건이름맞아요";
 
 		//then
-		assertThatThrownBy(() -> 자바지기.changeName(이름_20바이트_초과)).isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> 자바지기.changeName(이름_20바이트_초과))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
@@ -239,7 +243,8 @@ public class UserTest {
 		String 이메일_50바이트_초과 = "abcdefghijabcdefghijabcdefghijabcdefghija@naver.com";
 
 		//then
-		assertThatThrownBy(() -> 자바지기.changeEmail(이메일_50바이트_초과)).isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> 자바지기.changeEmail(이메일_50바이트_초과))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
@@ -283,7 +288,8 @@ public class UserTest {
 		변경된_자바지기.changeName("테스터");
 
 		//then
-		assertThatThrownBy(() -> 자바지기.update(로그인한_산지기, 변경된_자바지기)).isInstanceOf(UnAuthorizedException.class);
+		assertThatThrownBy(() -> 자바지기.update(로그인한_산지기, 변경된_자바지기))
+			.isInstanceOf(UnAuthorizedException.class);
 	}
 
 
@@ -298,7 +304,8 @@ public class UserTest {
 		변경된_산지기.changeName("테스터");
 
 		//then
-		assertThatThrownBy(() -> 자바지기.update(로그인한_자바지기, 변경된_산지기)).isInstanceOf(UnAuthorizedException.class);
+		assertThatThrownBy(() -> 자바지기.update(로그인한_자바지기, 변경된_산지기))
+			.isInstanceOf(UnAuthorizedException.class);
 	}
 
 }

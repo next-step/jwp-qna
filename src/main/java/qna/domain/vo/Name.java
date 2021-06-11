@@ -3,7 +3,6 @@ package qna.domain.vo;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
 import org.apache.logging.log4j.util.Strings;
 
 @Embeddable

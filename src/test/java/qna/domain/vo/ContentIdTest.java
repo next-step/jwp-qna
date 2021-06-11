@@ -1,11 +1,8 @@
 package qna.domain.vo;
 
-import static org.assertj.core.api.Assertions.*;
-
-import org.junit.jupiter.api.DisplayName;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 public class ContentIdTest {
 
@@ -48,12 +45,13 @@ public class ContentIdTest {
 	@Test
 	void 생성_null_예외발생() {
 		//given
-		Long 컨텐츠아이디 = null;
+		Long null값 = null;
 
 		//when
 
 		//then
-		assertThatThrownBy(() -> ContentId.generate(컨텐츠아이디)).isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> ContentId.generate(null값))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test

@@ -2,15 +2,12 @@ package qna.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import qna.domain.entity.Answer;
 import qna.domain.entity.Question;
 import qna.domain.entity.User;
@@ -99,7 +96,8 @@ class QnaServiceWithoutMockitoTest {
 	@Test
 	void 사용자_작성자_동일한_질문_삭제_본인_이외_답변_존재() {
 		//given
-		Answer 산지기_답변 = answerRepository.save(Answer.generate(2L, 산지기, 자바지기_질문, "Answers Contents3"));
+		Answer 산지기_답변 = answerRepository
+			.save(Answer.generate(2L, 산지기, 자바지기_질문, "Answers Contents3"));
 		Question 답변_존재_자바지기_질문 = 자바지기_질문;
 
 		//when

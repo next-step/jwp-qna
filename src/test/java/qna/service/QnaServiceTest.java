@@ -3,15 +3,12 @@ package qna.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
-
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import qna.domain.aggregate.DeleteHistoryGroup;
 import qna.domain.entity.Answer;
 import qna.domain.entity.Question;
@@ -96,7 +93,8 @@ class QnaServiceTest {
 
 		//then
 		assertThatThrownBy(
-			() -> qnaService.deleteQuestion(자바지기, 자바지기_질문)).isInstanceOf(CannotDeleteException.class);
+			() -> qnaService.deleteQuestion(자바지기, 자바지기_질문))
+			.isInstanceOf(CannotDeleteException.class);
 	}
 
 	private void verifyDeleteHistories(DeleteHistoryGroup 삭제이력그룹) {

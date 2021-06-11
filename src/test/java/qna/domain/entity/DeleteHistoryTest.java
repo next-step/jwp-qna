@@ -2,11 +2,9 @@ package qna.domain.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import qna.domain.code.ContentType;
 
 @DisplayName("삭제 이력 테스트")
