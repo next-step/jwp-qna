@@ -73,27 +73,32 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public List<Answer> getAnswers() {
-        return this.answers;
-    }
-
-    public void deleteBy(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleteBy(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
         this.deleted = true;
-        deleteAnswersBy(loginUser);
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(this));
+        deleteHistories.addAll(deleteAnswersBy(loginUser));
+
+        return deleteHistories;
     }
 
     private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
-    private void deleteAnswersBy(User loginUser) throws CannotDeleteException {
-        for (Answer answer : getAnswers()) {
-            answer.deleteBy(loginUser);
+    private List<DeleteHistory> deleteAnswersBy(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> answerDeleteHistories = new ArrayList<>();
+
+        for (Answer answer : this.answers) {
+            answerDeleteHistories.add(answer.deleteBy(loginUser));
         }
+
+        return answerDeleteHistories;
     }
 
     @Override
