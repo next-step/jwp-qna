@@ -2,7 +2,9 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,7 +61,7 @@ public class AnswerTest {
     @Test
     @DisplayName("Question id로 deleted false 찾기 테스트")
     void findByQuestionIdAndDeletedFalseTest() {
-        List<Answer> actualList = answerRepository.findByQuestionAndDeletedFalse(question1);
+        List<Answer> actualList = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
 
         assertThat(actualList).contains(answer1);
     }
