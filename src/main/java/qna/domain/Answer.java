@@ -33,9 +33,6 @@ public class Answer extends BaseEntity {
     @Column
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    @Column
-    private LocalDateTime updatedAt = LocalDateTime.now();
-
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
