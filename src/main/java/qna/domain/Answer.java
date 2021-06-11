@@ -25,16 +25,21 @@ public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Lob
     private String contents;
+
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
     @Column(nullable = false)
     private Boolean deleted = false;
+
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
+
     private LocalDateTime updatedAt;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
@@ -57,6 +62,8 @@ public class Answer {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+
+        this.question.addAnswer(this);
     }
 
     public Answer() {
@@ -67,11 +74,16 @@ public class Answer {
         return this.writer.equals(writer);
     }
 
-    public Answer toQuestion(Question question) {
-        this.question = question;
-        question.addAnswer(this);
-        return this;
-    }
+//    public Answer toQuestion(Question question) {
+//        this.question = question;
+//        question.addAnswer(this);
+//        return this;
+//    }
+//    public void fromQuestion(Question question){
+//        if(Objects.isNull(this.question)) {
+//            this.question = question;
+//        }
+//    }
 
     public Long getId() {
         return id;

@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.ForbiddenException;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,21 +25,28 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Lob
     private String contents;
+
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
     @Column(nullable = false)
     private Boolean deleted = false;
+
     @Column(length = 100, nullable = false)
     private String title;
+
     private LocalDateTime updatedAt;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question",cascade = CascadeType.ALL)
-    private List<Answer> answers = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private List<Answer> answers;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -47,6 +56,7 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new ArrayList<>();
     }
 
     public Question() {
@@ -63,6 +73,9 @@ public class Question {
     }
 
     public void addAnswer(Answer answer) {
+        if (answers.contains(answer)) {
+            throw new ForbiddenException("중복된 answer 값");
+        }
         answers.add(answer);
     }
 
