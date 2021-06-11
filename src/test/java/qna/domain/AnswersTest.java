@@ -35,10 +35,10 @@ class AnswersTest {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
         //when
-        answers.deleteAllAndAddHistories(deleteHistories);
+        List<DeleteHistory> newDeleteHistories = answers.deleteAllAndAddHistories(deleteHistories);
 
         //then
-        assertThat(deleteHistories).containsExactly(
+        assertThat(newDeleteHistories).containsExactly(
                 new DeleteHistory(ContentType.ANSWER, A1.getId(), A1.getWriter(), LocalDateTime.now()),
                 new DeleteHistory(ContentType.ANSWER, A2.getId(), A2.getWriter(), LocalDateTime.now())
         );
