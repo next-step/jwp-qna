@@ -2,31 +2,31 @@ package qna.domain.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+
 import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
 import qna.domain.entity.Question;
 import qna.domain.entity.User;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
 
-	public static final User JAVAJIGI = User.generate(1L, "javajigi", "password1", "name1",
-		"javajigi@slipp.net");
-	public static final User SANJIGI = User.generate(2L, "sanjigi", "password2", "name2",
-		"sanjigi@slipp.net");
-
 	@Autowired
 	private UserRepository users;
 	@Autowired
 	private QuestionRepository questions;
-	private User savedJavajigi;
-	private User savedSangiji;
-	private Question instanceOfQuestionWrittenByJavajigi;
-	private Question instanceOfQuestionWrittenBySanjigi;
+	private User 자바지기;
+	private User 산지기;
+	private User 영속화된_자바지기;
+	private User 영속화된_산지기;
+	private Question 자바지기_질문;
+	private Question 산지기_질문;
 
 	@DisplayName("테스트 초기화")
 	@BeforeEach
@@ -35,103 +35,97 @@ public class QuestionRepositoryTest {
 	}
 
 	private void 초기_정보_저장() {
-		사용자정보_저장();
+		사용자정보_영속화();
 		질문_인스턴스_생성();
 	}
 
-	private void 사용자정보_저장() {
-		savedJavajigi = users.save(JAVAJIGI);
-		savedSangiji = users.save(SANJIGI);
+	private void 사용자정보_영속화() {
+		자바지기 = User.generate(1L, "javajigi", "password1", "name1", "javajigi@slipp.net");
+		영속화된_자바지기 = users.save(자바지기);
+		산지기 = User.generate(2L, "sanjigi", "password2", "name2", "sanjigi@slipp.net");
+		영속화된_산지기 = users.save(산지기);
 	}
 
 	private void 질문_인스턴스_생성() {
-		instanceOfQuestionWrittenByJavajigi = Question.generate("title1", "contents1")
-			.writeBy(savedJavajigi);
-		instanceOfQuestionWrittenBySanjigi = Question.generate("title2", "contents2")
-			.writeBy(savedSangiji);
+		자바지기_질문 = Question.generate("title1", "contents1").writeBy(영속화된_자바지기);
+		산지기_질문 = Question.generate("title2", "contents2").writeBy(영속화된_산지기);
 	}
 
-	@DisplayName("Question 저장 : save()")
 	@Test
-	void save() {
+	void 저장() {
 		//given
 
 		//when
-		Question actualQuestionWrittenByJavajigi = questions
-			.save(instanceOfQuestionWrittenByJavajigi);
-		Question actualQuestionWrittenBySanjigi = questions
-			.save(instanceOfQuestionWrittenBySanjigi);
+		Question 영속화된_자바지기_질문 = questions.save(자바지기_질문);
+		Question 영속화된_산지기_질문 = questions.save(산지기_질문);
 
 		//then
 		assertAll(
-			() -> assertThat(actualQuestionWrittenByJavajigi).isNotNull(),
-			() -> assertThat(actualQuestionWrittenBySanjigi).isNotNull()
+			() -> assertThat(영속화된_자바지기_질문).isNotNull(),
+			() -> assertThat(영속화된_산지기_질문).isNotNull()
 		);
 	}
 
-	@DisplayName("Question 조회 : findById()")
 	@Test
-	void findById() {
+	void 아이디로_조회() {
 		//given
-		Question expectedQuestionWrittenByJavajigi = questions
-			.save(instanceOfQuestionWrittenByJavajigi);
-		Question expectedQuestionWrittenBySanjigi = questions
-			.save(instanceOfQuestionWrittenBySanjigi);
+		Question 영속화된_자바지기_질문 = questions.save(자바지기_질문);
+		Question 영속화된_산지기_질문 = questions.save(산지기_질문);
 
 		//when
-		Question actualQuestionWrittenByJavajigi = questions
-			.findById(expectedQuestionWrittenByJavajigi.id()).get();
-		Question actualQuestionWrittenBySanjigi = questions
-			.findById(expectedQuestionWrittenBySanjigi.id()).get();
+		Question 조회한_자바지기_질문 = questions.findById(영속화된_자바지기_질문.id()).get();
+		Question 조회한_산지기_질문 = questions.findById(영속화된_산지기_질문.id()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(
-				actualQuestionWrittenByJavajigi.equals(expectedQuestionWrittenByJavajigi)).isTrue(),
-			() -> assertThat(
-				actualQuestionWrittenBySanjigi.equals(expectedQuestionWrittenBySanjigi)).isTrue()
+			() -> assertThat(조회한_자바지기_질문.equals(영속화된_자바지기_질문)).isTrue(),
+			() -> assertThat(조회한_산지기_질문.equals(영속화된_산지기_질문)).isTrue()
 		);
 	}
 
-	@DisplayName("Question Soft delete - 조회 : findByIdAndDeletedFalse(), 수정 : delete()")
 	@Test
-	void softDelete() {
+	void 삭제되지않은_질문_아이디로_조회() {
 		//given
-		Question expectedQuestionWrittenByJavajigi = questions
-			.save(instanceOfQuestionWrittenByJavajigi);
+		Question 영속화된_자바지기_질문 = questions.save(자바지기_질문);
 
 		//when
-		Optional<Question> questionWrittenByJavajigiBeforeSoftDelete = questions
-			.findByIdAndDeletedFalse(expectedQuestionWrittenByJavajigi.id());
-		expectedQuestionWrittenByJavajigi.delete(savedJavajigi);
-		Optional<Question> questionWrittenByJavajigiAfterSoftDelete = questions
-			.findByIdAndDeletedFalse(expectedQuestionWrittenByJavajigi.id());
+		Optional<Question> 조회한_자바지기_질문 = questions.findByIdAndDeletedFalse(영속화된_자바지기_질문.id());
+
+		//then
+		assertThat(조회한_자바지기_질문.isPresent()).isTrue();
+	}
+
+	@Test
+	void 논리삭제() {
+		//given
+		Question 영속화된_자바지기_질문 = questions.save(자바지기_질문);
+		Optional<Question> 조회한_자바지기_질문 = questions.findByIdAndDeletedFalse(영속화된_자바지기_질문.id());
+
+		//when
+		영속화된_자바지기_질문.delete(영속화된_자바지기);
+		Optional<Question> 삭제후_조회한_자바지기_질문 = questions.findByIdAndDeletedFalse(영속화된_자바지기_질문.id());
 
 		//then
 		assertAll(
-			() -> assertThat(questionWrittenByJavajigiBeforeSoftDelete.isPresent()).isTrue(),
-			() -> assertThat(questionWrittenByJavajigiAfterSoftDelete.isPresent()).isFalse()
+			() -> assertThat(조회한_자바지기_질문.isPresent()).isTrue(),
+			() -> assertThat(삭제후_조회한_자바지기_질문.isPresent()).isFalse()
 		);
 	}
 
-	@DisplayName("Question 삭제 : delete()")
 	@Test
-	void delete() {
+	void 물리삭제() {
 		//given
-		Question expectedQuestionWrittenByJavajigi = questions
-			.save(instanceOfQuestionWrittenByJavajigi);
+		Question 영속화된_자바지기_질문 = questions.save(자바지기_질문);
+		Question 조회한_자바지기_질문 = questions.findById(영속화된_자바지기_질문.id()).get();
 
 		//when
-		Question questionWrittenByJavajigiBeforeDelete = questions
-			.findById(expectedQuestionWrittenByJavajigi.id()).get();
-		questions.delete(expectedQuestionWrittenByJavajigi);
-		Optional<Question> questionWrittenByJavajigiAfterDelete = questions
-			.findById(expectedQuestionWrittenByJavajigi.id());
+		questions.delete(영속화된_자바지기_질문);
+		Optional<Question> 삭제후_조회한_자바지기_질문 = questions.findById(영속화된_자바지기_질문.id());
 
 		//then
 		assertAll(
-			() -> assertThat(questionWrittenByJavajigiBeforeDelete).isNotNull(),
-			() -> assertThat(questionWrittenByJavajigiAfterDelete.isPresent()).isFalse()
+			() -> assertThat(조회한_자바지기_질문).isNotNull(),
+			() -> assertThat(삭제후_조회한_자바지기_질문.isPresent()).isFalse()
 		);
 	}
 }

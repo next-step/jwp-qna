@@ -4,6 +4,8 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import org.apache.logging.log4j.util.Strings;
+
 @Embeddable
 public class Name {
 
@@ -26,7 +28,14 @@ public class Name {
 
 	private static void validateName(String name) {
 		validateIsNotNull(name);
+		validateIsNotBlank(name);
 		validateMaxLength(name);
+	}
+
+	private static void validateIsNotBlank(String name) {
+		if (Strings.isBlank(name)) {
+			throw new IllegalArgumentException("이름은 빈 문자열이 아닙니다.");
+		}
 	}
 
 	private static void validateMaxLength(String name) {
@@ -46,6 +55,7 @@ public class Name {
 	}
 
 	public void changeName(String name) {
+		validateName(name);
 		this.name = name;
 	}
 

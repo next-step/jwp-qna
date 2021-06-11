@@ -1,11 +1,14 @@
 package qna.domain.aggregate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.ArrayList;
 import java.util.Objects;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import qna.domain.entity.Answer;
 import qna.domain.entity.Question;
 import qna.domain.entity.User;
@@ -19,8 +22,7 @@ public class AnswerGroupTest {
 
 	@BeforeEach
 	void 초기화() {
-		자바지기 = User.generate(1L, "javajigi", "password1", "name1",
-			"javajigi@slipp.net");
+		자바지기 = User.generate(1L, "javajigi", "password1", "name1", "javajigi@slipp.net");
 		자바지기의_질문 = Question.generate(1L, "질문 제목", "질문 내용").writeBy(자바지기);
 		자바지기의_답변 = Answer.generate(1L, 자바지기, 자바지기의_질문, "답변 내용");
 	}
@@ -112,6 +114,5 @@ public class AnswerGroupTest {
 		assertThat(비교할_답변그룹_포함여부).isTrue();
 		assertThat(답변그룹_포함여부).isTrue();
 	}
-
 
 }

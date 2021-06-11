@@ -4,6 +4,8 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import org.apache.logging.log4j.util.Strings;
+
 @Embeddable
 public class Password {
 
@@ -26,7 +28,14 @@ public class Password {
 
 	private static void validatePassword(String password) {
 		validateIsNotNull(password);
+		validateIsNotBlank(password);
 		validateMaxLength(password);
+	}
+
+	private static void validateIsNotBlank(String password) {
+		if (Strings.isBlank(password)) {
+			throw new IllegalArgumentException("비밀번호는 빈 문자열이 아닙니다.");
+		}
 	}
 
 	private static void validateMaxLength(String password) {

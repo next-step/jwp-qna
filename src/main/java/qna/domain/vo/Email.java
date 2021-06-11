@@ -20,11 +20,11 @@ public class Email {
 	}
 
 	public static Email generate(String email) {
-		validateEmailNotOverFiftyCharacter(email);
+		validateEmailNotOverFiftyByte(email);
 		return new Email(email);
 	}
 
-	private static void validateEmailNotOverFiftyCharacter(String email) {
+	private static void validateEmailNotOverFiftyByte(String email) {
 		if (Objects.isNull(email)) {
 			return;
 		}
@@ -33,8 +33,12 @@ public class Email {
 		}
 	}
 
+	public String value() {
+		return email;
+	}
+
 	public void changeEmail(String email) {
-		validateEmailNotOverFiftyCharacter(email);
+		validateEmailNotOverFiftyByte(email);
 		this.email = email;
 	}
 

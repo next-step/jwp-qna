@@ -20,6 +20,7 @@ public class Contents {
 	}
 
 	public static Contents generate(String contents) {
+
 		return new Contents(contents);
 	}
 

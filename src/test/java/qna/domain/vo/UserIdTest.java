@@ -11,7 +11,7 @@ public class UserIdTest {
 
 	@DisplayName("generate() : Null 금지, 20byte 초과 제한")
 	@ParameterizedTest(name = "{index} - userId:[{0}], exceptedNotThrownException:{1}")
-	@CsvSource(value = {";false", "' ';true", "0;true", "100;true"
+	@CsvSource(value = {";false", "' ';false", "0;true", "100;true"
 		, "가갸거겨고교구규그기나냐너녀노뇨누뉴느니;false", "가갸거겨고교구;false", "가갸거겨고교;true"
 		, "abcdefghijabcdefghija;false", "abcdefghijabcdefghij;true"}
 		, delimiter = ';')

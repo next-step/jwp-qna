@@ -15,106 +15,99 @@ public class UserRepositoryTest {
 
 	@Autowired
 	private UserRepository users;
-	private User instanceJavajigi;
-	private User instanceSanjigi;
+	private User 자바지기;
+	private User 산지기;
 
 	@BeforeEach
-	void initialize() {
-		instanceJavajigi = User.generate(1L, "javajigi", "password1", "name1",
-			"javajigi@slipp.net");
-		instanceSanjigi = User.generate(2L, "sanjigi", "password2", "name2",
-			"sanjigi@slipp.net");
+	void 초기화() {
+		자바지기 = User.generate(1L, "javajigi", "password1", "name1", "javajigi@slipp.net");
+		산지기 = User.generate(2L, "sanjigi", "password2", "name2", "sanjigi@slipp.net");
 	}
 
-	@DisplayName("User 저장 : save()")
 	@Test
-	void save() {
+	void 저장() {
 		//given
 
 		//when
-		User actualJavajigi = users.save(instanceJavajigi);
-		User actualSanjigi = users.save(instanceSanjigi);
+		User 영속화된_자바지기= users.save(자바지기);
+		User 영속화된_산지기 = users.save(산지기);
 
 		//then
 		assertAll(
-			() -> assertThat(actualJavajigi).isNotNull(),
-			() -> assertThat(actualSanjigi).isNotNull()
+			() -> assertThat(영속화된_자바지기).isNotNull(),
+			() -> assertThat(영속화된_산지기).isNotNull()
 		);
 	}
 
-	@DisplayName("User 조회 : findById()")
 	@Test
-	void findById() {
+	void 아이디로_조회() {
 		//given
-		User expectedJavajigi = users.save(instanceJavajigi);
-		User expectedSanjigi = users.save(instanceSanjigi);
+		User 영속화된_자바지기 = users.save(자바지기);
+		User 영속화된_산지기 = users.save(산지기);
 
 		//when
-		User actualJavajigi = users.findById(expectedJavajigi.id()).get();
-		User actualSanjigi = users.findById(expectedSanjigi.id()).get();
+		User 조회한_자바지기 = users.findById(영속화된_자바지기.id()).get();
+		User 조회한_산지기 = users.findById(영속화된_산지기.id()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(actualJavajigi.equals(expectedJavajigi)).isTrue(),
-			() -> assertThat(actualSanjigi.equals(expectedSanjigi)).isTrue()
+			() -> assertThat(조회한_자바지기.equals(영속화된_자바지기)).isTrue(),
+			() -> assertThat(조회한_산지기.equals(영속화된_산지기)).isTrue()
 		);
 	}
 
-	@DisplayName("User 조회 : findByUserId()")
 	@Test
-	void findByUserId() {
+	void 유저아이디로_조회() {
 		//given
-		User expectedJavajigi = users.save(instanceJavajigi);
-		User expectedSanjigi = users.save(instanceSanjigi);
+		User 영속화된_자바지기 = users.save(자바지기);
+		User 영속화된_산지기 = users.save(산지기);
 
 		//when
-		User actualJavajigi = users.findByUserId(expectedJavajigi.userId()).get();
-		User actualSanjigi = users.findByUserId(expectedSanjigi.userId()).get();
+		User 조회한_자바지기 = users.findByUserId(영속화된_자바지기.userId()).get();
+		User 조회한_산지기 = users.findByUserId(영속화된_산지기.userId()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(actualJavajigi.equals(expectedJavajigi)).isTrue(),
-			() -> assertThat(actualSanjigi.equals(expectedSanjigi)).isTrue()
+			() -> assertThat(조회한_자바지기.equals(영속화된_자바지기)).isTrue(),
+			() -> assertThat(조회한_산지기.equals(영속화된_산지기)).isTrue()
 		);
 	}
 
-	@DisplayName("User 수정 : update()")
 	@Test
-	void setUserId() {
+	void 이메일_및_이름_수정() {
 		//given
-		User expectedJavajigi = users.save(instanceJavajigi);
-		User modifiedJavajigi = 유저_이메일_및_이름_수정(expectedJavajigi);
+		User 영속화된_자바지기 = users.save(자바지기);
+		User 수정된_자바지기 = 유저_이메일_및_이름_수정(영속화된_자바지기);
 
 		//when
-		expectedJavajigi.update(expectedJavajigi, modifiedJavajigi);
-		User actual = users.findById(modifiedJavajigi.id()).get();
+		영속화된_자바지기.update(영속화된_자바지기, 수정된_자바지기);
+		User 수정후_조회한_자바지기 = users.findById(수정된_자바지기.id()).get();
 
 		//then
-		assertThat(actual.equals(modifiedJavajigi)).isTrue();
+		assertThat(수정후_조회한_자바지기.equals(수정된_자바지기)).isTrue();
 	}
 
 	private User 유저_이메일_및_이름_수정(User targetUser) {
-		User modifiedUser = targetUser;
-		modifiedUser.changeEmail("test@test.com");
-		modifiedUser.changeName("테스터");
-		return modifiedUser;
+		User 수정된유저 = targetUser;
+		수정된유저.changeEmail("test@test.com");
+		수정된유저.changeName("테스터");
+		return 수정된유저;
 	}
 
-	@DisplayName("User 삭제 : delete()")
 	@Test
-	void delete() {
+	void 물리삭제() {
 		//given
-		User actualJavajigi = users.save(instanceJavajigi);
+		User 영속화된_자바지기 = users.save(자바지기);
 
 		//when
-		User javajigiBeforeDelete = users.findByUserId(actualJavajigi.userId()).get();
-		users.delete(actualJavajigi);
-		Optional<User> javajigiAfterDelete = users.findByUserId(actualJavajigi.userId());
+		User 조회한_자바지기 = users.findByUserId(영속화된_자바지기.userId()).get();
+		users.delete(영속화된_자바지기);
+		Optional<User> 삭제후_조회한_자바지기 = users.findByUserId(영속화된_자바지기.userId());
 
 		//then
 		assertAll(
-			() -> assertThat(javajigiBeforeDelete).isNotNull(),
-			() -> assertThat(javajigiAfterDelete.isPresent()).isFalse()
+			() -> assertThat(조회한_자바지기).isNotNull(),
+			() -> assertThat(삭제후_조회한_자바지기.isPresent()).isFalse()
 		);
 	}
 }

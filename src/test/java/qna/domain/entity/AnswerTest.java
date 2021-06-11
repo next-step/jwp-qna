@@ -3,9 +3,12 @@ package qna.domain.entity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
@@ -19,13 +22,10 @@ public class AnswerTest {
 
 	@BeforeEach
 	void 초기화() {
-		자바지기 = User.generate(1L, "javajigi", "password1", "name1",
-			"javajigi@slipp.net");
-		산지기 = User.generate(2L, "sanjigi", "password2", "name2",
-			"sanjigi@slipp.net");
+		자바지기 = User.generate(1L, "javajigi", "password1", "name1", "javajigi@slipp.net");
+		산지기 = User.generate(2L, "sanjigi", "password2", "name2", "sanjigi@slipp.net");
 		자바지기의_질문 = Question.generate(1L, "title1", "contents1").writeBy(자바지기);
-		자바지기_첫번째_답변 = Answer.generate(1L, 자바지기, 자바지기의_질문,
-			"Answers Contents1");
+		자바지기_첫번째_답변 = Answer.generate(1L, 자바지기, 자바지기의_질문, "Answers Contents1");
 	}
 
 	@Test
@@ -128,15 +128,27 @@ public class AnswerTest {
 	}
 
 	@Test
+	void 답변_삭제_작성자_미일치_예외발생() {
+		//given
+
+		//when
+
+		//then
+		assertThatThrownBy(() -> 자바지기_첫번째_답변.delete(산지기)).isInstanceOf(CannotDeleteException.class);
+	}
+
+	@Test
 	void 답변_삭제_여부() {
 		//given
 		Answer 산지기_답변 = Answer.generate(2L, 산지기, 자바지기의_질문, "Answers Contents2");
 
 		//when
-		자바지기_첫번째_답변.delete(자바지기);
+		boolean 변경_전_삭제여부 = 산지기_답변.isDeleted();
+		산지기_답변.delete(산지기);
+		boolean 변경_후_삭제여부 = 산지기_답변.isDeleted();
 
 		//then
-		assertThat(자바지기_첫번째_답변.isDeleted()).isTrue();
-		assertThat(산지기_답변.isDeleted()).isFalse();
+		assertThat(변경_전_삭제여부).isFalse();
+		assertThat(변경_후_삭제여부).isTrue();
 	}
 }

@@ -4,6 +4,8 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import org.apache.logging.log4j.util.Strings;
+
 @Embeddable
 public class UserId {
 
@@ -26,7 +28,14 @@ public class UserId {
 
 	private static void validateUserId(String userId) {
 		validateIsNotNull(userId);
+		validateIsNotBlank(userId);
 		validateMaxLength(userId);
+	}
+
+	private static void validateIsNotBlank(String userId) {
+		if (Strings.isBlank(userId)) {
+			throw new IllegalArgumentException("유저 아이디는 비어있는 문자열이 아닙니다.");
+		}
 	}
 
 	private static void validateMaxLength(String userId) {

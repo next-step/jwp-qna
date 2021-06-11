@@ -10,7 +10,7 @@ public class TitleTest {
 
 	@DisplayName("generate() : Null 금지, 100byte 초과 제한")
 	@ParameterizedTest(name = "{index} - title:[{0}], exceptedNotThrownException:{1}")
-	@CsvSource(value = {";false", "' ';true", "0;true", "100;true"
+	@CsvSource(value = {";false", "' ';false", "0;true", "100;true"
 		, "가갸거겨고교구규그기나냐너녀노뇨누뉴느니다댜더뎌도됴두듀드디라랴러려로료루류르리마먀머며모묘무뮤므미"
 		+ "가갸거겨고교구규그기나냐너녀노뇨누뉴느니다댜더뎌도됴두듀드디라랴러려로료루류르리마먀머며모묘무뮤므미;false"
 		, "가갸거겨고교구규그기나냐너녀노뇨누뉴느니다댜더뎌도됴두듀드디라랴러려;false"

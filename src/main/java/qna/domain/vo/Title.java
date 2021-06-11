@@ -4,6 +4,8 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import org.apache.logging.log4j.util.Strings;
+
 @Embeddable
 public class Title {
 
@@ -21,8 +23,15 @@ public class Title {
 
 	public static Title generate(String title) {
 		validateTitleIsNotNull(title);
+		validateTitleIsNotBlank(title);
 		validateMaxLength(title);
 		return new Title(title);
+	}
+
+	private static void validateTitleIsNotBlank(String title) {
+		if (Strings.isBlank(title)) {
+			throw new IllegalArgumentException("제목은 공백이 아니어야 합니다.");
+		}
 	}
 
 	private static void validateTitleIsNotNull(String title) {

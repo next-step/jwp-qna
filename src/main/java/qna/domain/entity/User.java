@@ -63,7 +63,7 @@ public class User extends BaseEntity {
 		return this.userId.equals(userId);
 	}
 
-	public boolean matchPassword(Password targetPassword) {
+	private boolean matchPassword(Password targetPassword) {
 		return this.password.equals(targetPassword);
 	}
 
@@ -119,5 +119,9 @@ public class User extends BaseEntity {
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, email, name, password, userId);
+	}
+
+	public String email() {
+		return email.value();
 	}
 }

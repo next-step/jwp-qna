@@ -57,6 +57,10 @@ public class DeleteHistory {
 		return new DeleteHistory(ContentType.ANSWER, contentId, deleter);
 	}
 
+	public ContentType contentType() {
+		return contentType;
+	}
+
 	public Long id() {
 		return id;
 	}

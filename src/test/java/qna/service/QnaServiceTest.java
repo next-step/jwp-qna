@@ -3,6 +3,7 @@ package qna.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import qna.domain.aggregate.DeleteHistoryGroup;
 import qna.domain.entity.Answer;
 import qna.domain.entity.Question;
@@ -21,9 +23,9 @@ import qna.exception.CannotDeleteException;
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
 
-	public static final User JAVAJIGI = User.generate(1L, "javajigi", "password1", "name1",
+	public static final User 자바지기 = User.generate(1L, "javajigi", "password1", "name1",
 		"javajigi@slipp.net");
-	public static final User SANJIGI = User.generate(2L, "sanjigi", "password2", "name2",
+	public static final User 산지기 = User.generate(2L, "sanjigi", "password2", "name2",
 		"sanjigi@slipp.net");
 
 	@Mock
@@ -38,74 +40,66 @@ class QnaServiceTest {
 	@InjectMocks
 	private QnaService qnaService;
 
-	private Question questionWrittenByJavajigi;
-	private Answer answerWrittenByJavajigi;
+	private Question 자바지기_질문;
+	private Answer 자바지기_답변;
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		questionWrittenByJavajigi = Question.generate(1L, "title1", "contents1").writeBy(JAVAJIGI);
-		answerWrittenByJavajigi = Answer.generate(1L, JAVAJIGI, questionWrittenByJavajigi,
-			"Answers Contents1");
-		questionWrittenByJavajigi.addAnswer(answerWrittenByJavajigi);
+		자바지기_질문 = Question.generate(1L, "title1", "contents1").writeBy(자바지기);
+		자바지기_답변 = Answer.generate(1L, 자바지기, 자바지기_질문, "Answers Contents1");
 	}
 
-	@DisplayName("delete_성공")
 	@Test
-	public void deleteSuccess() throws Exception {
+	public void delete_성공() throws Exception {
 		//given
 
 		//when
-		assertThat(questionWrittenByJavajigi.isDeleted()).isFalse();
+		assertThat(자바지기_질문.isDeleted()).isFalse();
 		DeleteHistoryGroup deleteHistoryGroup = qnaService
-			.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi);
+			.deleteQuestion(자바지기, 자바지기_질문);
 
 		//then
-		assertThat(questionWrittenByJavajigi.isDeleted()).isTrue();
+		assertThat(자바지기_질문.isDeleted()).isTrue();
 		verifyDeleteHistories(deleteHistoryGroup);
 	}
 
-	@DisplayName("delete_다른_사람이_쓴_글")
 	@Test
-	public void deletePostWrittenByTheOthers() {
+	public void delete_다른_사람이_쓴_글() {
 		//given
 
 		//when
 
 		//then
-		assertThatThrownBy(() -> qnaService.deleteQuestion(SANJIGI, questionWrittenByJavajigi))
+		assertThatThrownBy(() -> qnaService.deleteQuestion(산지기, 자바지기_질문))
 			.isInstanceOf(CannotDeleteException.class);
 	}
 
-	@DisplayName("delete_성공_질문자_답변자_같음")
 	@Test
-	public void deleteSamePostByQuestionerAndAnswerer() throws Exception {
+	public void delete_성공_질문자_답변자_같음() throws Exception {
 		//when
 		DeleteHistoryGroup deleteHistoryGroup = qnaService
-			.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi);
+			.deleteQuestion(자바지기, 자바지기_질문);
 
 		//then
-		assertThat(questionWrittenByJavajigi.isDeleted()).isTrue();
-		assertThat(answerWrittenByJavajigi.isDeleted()).isTrue();
+		assertThat(자바지기_질문.isDeleted()).isTrue();
+		assertThat(자바지기_답변.isDeleted()).isTrue();
 		verifyDeleteHistories(deleteHistoryGroup);
 	}
 
-	@DisplayName("delete_답변_중_다른_사람이_쓴_글")
 	@Test
-	public void deletePostingWrittenByTheOthers() {
+	public void delete_답변_중_다른_사람이_쓴_글() {
 		//given
-		Answer answer2 = Answer
-			.generate(2L, SANJIGI, questionWrittenByJavajigi, "Answers Contents1");
-		questionWrittenByJavajigi.addAnswer(answer2);
+		Answer 산지기_답변 = Answer.generate(2L, 산지기, 자바지기_질문, "Answers Contents1");
+		자바지기_질문.addAnswer(산지기_답변);
 
 		//when
 
 		//then
 		assertThatThrownBy(
-			() -> qnaService.deleteQuestion(JAVAJIGI, questionWrittenByJavajigi))
-			.isInstanceOf(CannotDeleteException.class);
+			() -> qnaService.deleteQuestion(자바지기, 자바지기_질문)).isInstanceOf(CannotDeleteException.class);
 	}
 
-	private void verifyDeleteHistories(DeleteHistoryGroup deleteHistoryGroup) {
-		verify(deleteHistoryService).saveAll(deleteHistoryGroup.deleteHistories());
+	private void verifyDeleteHistories(DeleteHistoryGroup 삭제이력그룹) {
+		verify(deleteHistoryService).saveAll(삭제이력그룹.deleteHistories());
 	}
 }

@@ -2,12 +2,14 @@ package qna.domain.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+
 import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
 import qna.domain.entity.Answer;
 import qna.domain.entity.DeleteHistory;
 import qna.domain.entity.Question;
@@ -15,11 +17,6 @@ import qna.domain.entity.User;
 
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
-
-	public static final User JAVAJIGI = User.generate(1L, "javajigi", "password1", "name1",
-		"javajigi@slipp.net");
-	public static final User SANJIGI = User.generate(2L, "sanjigi", "password2", "name2",
-		"sanjigi@slipp.net");
 
 	@Autowired
 	private DeleteHistoryRepository deleteHistories;
@@ -29,112 +26,95 @@ public class DeleteHistoryRepositoryTest {
 	private AnswerRepository answers;
 	@Autowired
 	private QuestionRepository questions;
-	private User savedJavajigi;
-	private User savedSangiji;
-	private Question savedQuestionWrittenByJavajigi;
-	private Answer savedAnswerWrittenBySanjigi;
-	private DeleteHistory deleteHistoryOfQuestionWrittenByJavajigi;
-	private DeleteHistory deleteHistoryOfAnswerWrittenBySanjigi;
+	private User 자바지기;
+	private User 산지기;
+	private User 영속화된_자바지기;
+	private User 영속화된_산지기;
+	private Question 영속화된_자바지기_질문;
+	private Answer 영속화된_산지기_답변;
+	private DeleteHistory 자바지기_질문_이력;
+	private DeleteHistory 산지기_답변_이력;
 
-	@DisplayName("테스트 초기화")
 	@BeforeEach
-	void setup() {
+	void 초기화() {
 		초기_정보_저장();
 	}
 
 	private void 초기_정보_저장() {
-		작성자정보_저장();
-		질문정보_저장();
-		답변정보_저장();
-		삭제_히스토리_객체_초기화();
+		작성자정보_영속화();
+		질문정보_영속화();
+		답변정보_영속화();
+		삭제이력_객체_생성();
 	}
 
-	private void 작성자정보_저장() {
-		savedJavajigi = users.save(JAVAJIGI);
-		savedSangiji = users.save(SANJIGI);
+	private void 작성자정보_영속화() {
+		자바지기 = User.generate(1L, "javajigi", "password1", "name1", "javajigi@slipp.net");
+		영속화된_자바지기 = users.save(자바지기);
+		산지기 = User.generate(2L, "sanjigi", "password2", "name2", "sanjigi@slipp.net");
+		영속화된_산지기 = users.save(산지기);
 	}
 
-	private void 질문정보_저장() {
-		savedQuestionWrittenByJavajigi = questions.save(Question.generate(1L, "title1", "contents1")
-			.writeBy(savedJavajigi));
+	private void 질문정보_영속화() {
+		영속화된_자바지기_질문 = questions.save(Question.generate(1L, "title1", "contents1")
+			.writeBy(영속화된_자바지기));
 	}
 
-	private void 답변정보_저장() {
-		savedAnswerWrittenBySanjigi = answers
-			.save(Answer.generate(savedSangiji, savedQuestionWrittenByJavajigi,
-				"Answers Contents1"));
+	private void 답변정보_영속화() {
+		영속화된_산지기_답변 = answers
+			.save(Answer.generate(영속화된_산지기, 영속화된_자바지기_질문, "Answers Contents1"));
 	}
 
-	private void 삭제_히스토리_객체_초기화() {
-		deleteHistoryOfQuestionWrittenByJavajigi = DeleteHistory.ofQuestion(
-			savedQuestionWrittenByJavajigi.id(), savedQuestionWrittenByJavajigi.writer());
-		deleteHistoryOfAnswerWrittenBySanjigi = DeleteHistory.ofAnswer(
-			savedAnswerWrittenBySanjigi.id(), savedAnswerWrittenBySanjigi.writer());
+	private void 삭제이력_객체_생성() {
+		자바지기_질문_이력 = DeleteHistory.ofQuestion(영속화된_자바지기_질문.id(), 영속화된_자바지기_질문.writer());
+		산지기_답변_이력 = DeleteHistory.ofAnswer(영속화된_산지기_답변.id(), 영속화된_산지기_답변.writer());
 	}
 
-	@DisplayName("DeleteHistory 저장 : save()")
 	@Test
-	void save() {
+	void 저장() {
 		//given
 
 		//when
-		DeleteHistory actualDeleteHistoryOfQuestionWrittenByJavajigi = deleteHistories
-			.save(deleteHistoryOfQuestionWrittenByJavajigi);
-		DeleteHistory actualDeleteHistoryOfAnswerWrittenBySanjigi = deleteHistories
-			.save(deleteHistoryOfAnswerWrittenBySanjigi);
+		DeleteHistory 영속화된_자바지기_질문_이력 = deleteHistories.save(자바지기_질문_이력);
+		DeleteHistory 영속화된_산지기_답변_이력 = deleteHistories.save(산지기_답변_이력);
 
 		//then
 		assertAll(
-			() -> assertThat(actualDeleteHistoryOfQuestionWrittenByJavajigi
-				.equals(deleteHistoryOfQuestionWrittenByJavajigi)).isTrue(),
-			() -> assertThat(actualDeleteHistoryOfAnswerWrittenBySanjigi
-				.equals(deleteHistoryOfAnswerWrittenBySanjigi)).isTrue()
+			() -> assertThat(영속화된_자바지기_질문_이력.equals(자바지기_질문_이력)).isTrue(),
+			() -> assertThat(영속화된_산지기_답변_이력.equals(산지기_답변_이력)).isTrue()
 		);
 	}
 
-	@DisplayName("DeleteHistory 조회 : findById()")
 	@Test
-	void findById() {
+	void 아이디로_조회() {
 		//given
-		DeleteHistory expectedDeleteHistoryOfQuestionWrittenByJavajigi = deleteHistories
-			.save(deleteHistoryOfQuestionWrittenByJavajigi);
-		DeleteHistory expectedDeleteHistoryOfAnswerWrittenBySanjigi = deleteHistories
-			.save(deleteHistoryOfAnswerWrittenBySanjigi);
+		DeleteHistory 영속화된_자바지기_질문_이력 = deleteHistories.save(자바지기_질문_이력);
+		DeleteHistory 영속화된_산지기_답변_이력 = deleteHistories.save(산지기_답변_이력);
 
 		//when
-		DeleteHistory actualDeleteHistoryOfQuestionWrittenByJavajigi = deleteHistories
-			.findById(expectedDeleteHistoryOfQuestionWrittenByJavajigi.id()).get();
-		DeleteHistory actualDeleteHistoryOfAnswerWrittenBySanjigi = deleteHistories
-			.findById(expectedDeleteHistoryOfAnswerWrittenBySanjigi.id()).get();
+		DeleteHistory 조회한_자바지기_질문_이력 = deleteHistories.findById(영속화된_자바지기_질문_이력.id()).get();
+		DeleteHistory 조회한_산지기_답변_이력 = deleteHistories.findById(영속화된_산지기_답변_이력.id()).get();
 
 		//then
 		assertAll(
-			() -> assertThat(actualDeleteHistoryOfQuestionWrittenByJavajigi
-				.equals(expectedDeleteHistoryOfQuestionWrittenByJavajigi)).isTrue(),
-			() -> assertThat(actualDeleteHistoryOfAnswerWrittenBySanjigi
-				.equals(expectedDeleteHistoryOfAnswerWrittenBySanjigi)).isTrue()
+			() -> assertThat(조회한_자바지기_질문_이력.equals(영속화된_자바지기_질문_이력)).isTrue(),
+			() -> assertThat(조회한_산지기_답변_이력.equals(영속화된_산지기_답변_이력)).isTrue()
 		);
 	}
 
-	@DisplayName("DeleteHistory 삭제 : delete()")
 	@Test
-	void delete() {
+	void 물리삭제() {
 		//given
-		DeleteHistory expectedDeleteHistoryOfQuestionWrittenByJavajigi = deleteHistories
-			.save(deleteHistoryOfQuestionWrittenByJavajigi);
-		DeleteHistory deleteHistoryOfQuestionWrittenByJavajigiBeforeDelete = deleteHistories
-			.findById(expectedDeleteHistoryOfQuestionWrittenByJavajigi.id()).get();
+		DeleteHistory 영속화된_자바지기_질문_이력 = deleteHistories.save(자바지기_질문_이력);
+		DeleteHistory 삭제전_조회한_자바지기_질문_이력 = deleteHistories.findById(영속화된_자바지기_질문_이력.id()).get();
 
 		//when
-		deleteHistories.delete(expectedDeleteHistoryOfQuestionWrittenByJavajigi);
-		Optional<DeleteHistory> deleteHistoryOfQuestionWrittenByJavajigiAfterDelete = deleteHistories
-			.findById(expectedDeleteHistoryOfQuestionWrittenByJavajigi.id());
+		deleteHistories.delete(영속화된_자바지기_질문_이력);
+		Optional<DeleteHistory> 삭제후_조회한_자바지기_질문_이력 = deleteHistories.findById(영속화된_자바지기_질문_이력.id());
 
 		//then
 		assertAll(
-			() -> assertThat(deleteHistoryOfQuestionWrittenByJavajigiBeforeDelete).isNotNull(),
-			() -> assertThat(deleteHistoryOfQuestionWrittenByJavajigiAfterDelete.isPresent())
-				.isFalse()
+			() -> assertThat(삭제전_조회한_자바지기_질문_이력).isNotNull(),
+			() -> assertThat(삭제후_조회한_자바지기_질문_이력.isPresent()).isFalse()
 		);
 	}
 }
