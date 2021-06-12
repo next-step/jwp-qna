@@ -4,15 +4,24 @@ import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table
-public class User {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.PERSIST)
+    private List<Answer> answers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.PERSIST)
+    private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user" ,cascade = CascadeType.PERSIST)
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
+
     @Column(length=20 ,nullable = false,unique = true)
     private String userId;
     @Column(length=20, nullable = false)
@@ -21,8 +30,6 @@ public class User {
     private String name;
     @Column(length=50)
     private String email;
-    @Column(nullable = false)
-    private LocalDateTime createdAt= LocalDateTime.now();
     @Column
     private LocalDateTime updatedAt= LocalDateTime.now();
 
@@ -69,6 +76,19 @@ public class User {
 
         return name.equals(target.name) &&
                 email.equals(target.email);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(userId,user.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId);
     }
 
     public boolean isGuestUser() {
@@ -131,5 +151,21 @@ public class User {
         public boolean isGuestUser() {
             return true;
         }
+    }
+
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
+    }
+
+    public void removeAnswer(Answer answer) {
+        this.answers.remove(answer);
+    }
+
+    public void addQuestion( Question  question) {
+        this.questions.add(question);
+    }
+
+    public void addDeleteHistory(DeleteHistory history) {
+        this.deleteHistories.add(history);
     }
 }

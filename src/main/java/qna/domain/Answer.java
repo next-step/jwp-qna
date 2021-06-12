@@ -1,5 +1,8 @@
 package qna.domain;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -9,21 +12,24 @@ import java.util.Objects;
 
 @Entity
 @Table
-public class Answer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column
-    private Long writerId;
-    @Column
-    private Long questionId;
+@NoArgsConstructor
+@Getter
+@Setter
+public class Answer extends BaseEntity {
+
+    @ManyToOne
+    @JoinColumn(name="writer_id")
+    private User writer;
+
+    @ManyToOne
+    @JoinColumn(name ="question_id")
+    private Question question;
     @Lob
     @Column
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+
     @Column
     private LocalDateTime updatedAt = LocalDateTime.now();
 
@@ -42,41 +48,17 @@ public class Answer {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        setWriter(writer);
         this.contents = contents;
+        this.question = question;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equalsNameAndEmail(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+        this.question = question;
     }
 
     public String getContents() {
@@ -95,14 +77,38 @@ public class Answer {
         this.deleted = deleted;
     }
 
+    public void setWriter(User writer) {
+        this.writer = writer;
+        this.writer.addAnswer(this);
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+        this.question.addAnswer(this);
+    }
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                "writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
+                ", updatedAt=" + updatedAt +
+                ", id=" + id +
+                ", createdAt=" + createdAt +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answer answer = (Answer) o;
+        return Objects.equals(id, answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
