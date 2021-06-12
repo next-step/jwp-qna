@@ -83,24 +83,8 @@ public class Question {
 		return id;
 	}
 
-	public String getTitle() {
-		return title;
-	}
-
-	public String getContents() {
-		return contents;
-	}
-
-	public Long getWriterId() {
-		return user.getId();
-	}
-
 	public User getWriter() {
 		return this.user;
-	}
-
-	public void setWriter(final User user) {
-		this.user = user;
 	}
 
 	public boolean isDeleted() {
@@ -111,7 +95,7 @@ public class Question {
 		this.deleted = deleted;
 	}
 
-	public boolean isContaioned(Answer answer) {
+	public boolean isContained(Answer answer) {
 		return answers.contains(answer);
 	}
 
@@ -123,7 +107,11 @@ public class Question {
 			return false;
 		Question question = (Question)o;
 		return deleted == question.deleted &&
-			Objects.equals(id, question.id);
+			Objects.equals(id, question.id) &&
+			Objects.equals(contents, question.contents) &&
+			Objects.equals(title, question.title) &&
+			Objects.equals(user, question.user) &&
+			Objects.equals(answers, question.answers);
 	}
 
 	@Override

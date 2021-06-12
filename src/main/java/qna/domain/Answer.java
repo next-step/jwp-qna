@@ -95,8 +95,8 @@ public class Answer {
 		return deleted;
 	}
 
-	public void delete(boolean deleted) {
-		this.deleted = deleted;
+	public void delete() {
+		this.deleted = true;
 	}
 
 	@Override
@@ -108,15 +108,24 @@ public class Answer {
 		Answer answer = (Answer)o;
 		return deleted == answer.deleted &&
 			Objects.equals(id, answer.id) &&
-			Objects.equals(contents, answer.contents) &&
-			Objects.equals(createAt, answer.createAt) &&
-			Objects.equals(question, answer.question) &&
-			Objects.equals(updatedAt, answer.updatedAt) &&
-			Objects.equals(user, answer.user);
+			Objects.equals(contents, answer.contents);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, contents, createAt, deleted, question, updatedAt, user);
+	}
+
+	@Override
+	public String toString() {
+		return "Answer{" +
+			"id=" + id +
+			", contents='" + contents + '\'' +
+			", createAt=" + createAt +
+			", deleted=" + deleted +
+			", question=" + question +
+			", updatedAt=" + updatedAt +
+			", user=" + user +
+			'}';
 	}
 }
