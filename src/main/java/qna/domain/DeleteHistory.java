@@ -13,6 +13,9 @@ import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static qna.domain.ContentType.ANSWER;
+import static qna.domain.ContentType.QUESTION;
+
 @Entity
 public class DeleteHistory {
 
@@ -42,6 +45,14 @@ public class DeleteHistory {
         this.contentId = contentId;
         this.deleteBy = deleteBy;
         this.createDate = createDate;
+    }
+
+    public DeleteHistory(Question question) {
+        this(QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+    }
+
+    public DeleteHistory(Answer answer) {
+        this(ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
     }
 
     public Long getId() {

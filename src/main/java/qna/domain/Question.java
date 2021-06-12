@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import qna.CannotDeleteException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class Question extends BaseEntity {
     private User writer;
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    private final List<Answer> answers = new ArrayList<>();
 
     public Question() {
     }
@@ -55,10 +56,6 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
         answers.add(answer);
         answer.toQuestion(this);
@@ -76,8 +73,32 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public List<DeleteHistory> deleteBy(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        this.deleted = true;
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(this));
+        deleteHistories.addAll(deleteAnswersBy(loginUser));
+
+        return deleteHistories;
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    private List<DeleteHistory> deleteAnswersBy(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> answerDeleteHistories = new ArrayList<>();
+
+        for (Answer answer : this.answers) {
+            answerDeleteHistories.add(answer.deleteBy(loginUser));
+        }
+
+        return answerDeleteHistories;
     }
 
     @Override
@@ -89,9 +110,5 @@ public class Question extends BaseEntity {
             ", writerId=" + writer.getId() +
             ", deleted=" + deleted +
             '}';
-    }
-
-    public List<Answer> getAnswers() {
-        return this.answers;
     }
 }
