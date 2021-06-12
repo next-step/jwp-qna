@@ -34,21 +34,8 @@ public class QnaService {
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
 
-        validateOwner(loginUser, question);
+        List<DeleteHistory> deleteHistories = question.deleteAllAndAddHistories(loginUser);
 
-        saveHistories(questionId, question);
-    }
-
-    private void validateOwner(User loginUser, Question question) throws CannotDeleteException {
-        question.validateIsOwner(loginUser);
-        question.validateAnswerOwner(loginUser);
-    }
-
-    private void saveHistories(Long questionId, Question question) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter(), LocalDateTime.now()));
-        question.deleteAllAnswersAndAddHistories(deleteHistories);
         deleteHistoryService.saveAll(deleteHistories);
     }
 }

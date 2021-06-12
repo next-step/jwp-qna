@@ -3,6 +3,7 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -42,27 +43,46 @@ public class Question extends AbstractEntity {
         return this;
     }
 
-    public void deleteAllAnswersAndAddHistories(List<DeleteHistory> deleteHistories) {
-        answers.deleteAllAndAddHistories(deleteHistories);
+    public List<DeleteHistory> deleteAllAndAddHistories(User loginUser) throws CannotDeleteException {
+        validateOwner(loginUser);
+
+        List<DeleteHistory> deleteHistories = deleteAndAddHistory();
+
+        return answers.deleteAllAndAddHistories(deleteHistories);
     }
 
-    public void validateAnswerOwner(User loginUser) throws CannotDeleteException {
+    private void validateOwner(User loginUser) throws CannotDeleteException {
+        validateIsOwner(loginUser);
+        validateAnswerOwner(loginUser);
+    }
+
+    private void validateAnswerOwner(User loginUser) throws CannotDeleteException {
         answers.validateOwners(loginUser);
     }
 
-    public void validateIsOwner(User loginUser) throws CannotDeleteException {
+    private void validateIsOwner(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
+    }
+
+    private List<DeleteHistory> deleteAndAddHistory() {
+        delete();
+        return List.of(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
         answers.add(answer);
+    }
+
+
+    public boolean isDeleted() {
+        return deleted;
     }
 
     public Long getId() {
@@ -73,12 +93,8 @@ public class Question extends AbstractEntity {
         return writer;
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
     }
 
     @Override

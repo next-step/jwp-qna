@@ -33,14 +33,17 @@ public class Answers {
         }
     }
 
-    void deleteAllAndAddHistories(List<DeleteHistory> deleteHistories) {
+    List<DeleteHistory> deleteAllAndAddHistories(List<DeleteHistory> deleteHistories) {
+        List<DeleteHistory> newDeleteHistories = new ArrayList<>(deleteHistories);
         for (Answer answer : answers) {
             answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+            newDeleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
         }
+
+        return List.copyOf(newDeleteHistories);
     }
 
-    public void add(Answer answer) {
+    void add(Answer answer) {
         answers.add(answer);
     }
 }
