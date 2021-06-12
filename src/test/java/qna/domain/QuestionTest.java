@@ -6,14 +6,34 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
 public class QuestionTest {
+	@Autowired
+	private AnswerRepository answers;
+
 	@Autowired
 	QuestionRepository questions;
 
 	@Autowired
 	UserRepository users;
+
+	@Autowired
+	private TestEntityManager testEntityManager;
+
+	@Test
+	@DisplayName("양방향 연관관계 확인")
+	void convenience_method_test() {
+		User saveJavajigi = saveJavajigi();
+		Question saveQ1 = saveQ1(saveJavajigi());
+		Answer answer = answers.save(new Answer(saveJavajigi, saveQ1, "Answers Contents1"));
+
+		testEntityManager.clear();
+
+		assertThat(questions.findAll().size()).isEqualTo(1);
+		assertThat(questions.findAll().get(0).isContaioned(answer)).isTrue();
+	}
 
 	@Test
 	@DisplayName("연관관계 제거")
@@ -71,11 +91,11 @@ public class QuestionTest {
 	void use_written_method_findByDeletedFalse() {
 		User saveJavajigi = saveJavajigi();
 		Question Q1 = new Question("title1", "contents1").writtenBy(saveJavajigi);
-		Q1.setDeleted(true);
+		Q1.delete(true);
 		questions.save(Q1);
 		assertThat(questions.findByDeletedFalse().size()).isEqualTo(0);
 
-		Q1.setDeleted(false);
+		Q1.delete(false);
 		assertThat(questions.findByDeletedFalse().size()).isEqualTo(1);
 	}
 
@@ -86,7 +106,7 @@ public class QuestionTest {
 
 		assertThat(questions.findByIdAndDeletedFalse(saveQ1.getId())).isEqualTo(questions.findById(saveQ1.getId()));
 
-		saveQ1.setDeleted(true);
+		saveQ1.delete(true);
 		assertThat(questions.findByIdAndDeletedFalse(saveQ1.getId()).isPresent()).isFalse();
 	}
 
@@ -108,5 +128,13 @@ public class QuestionTest {
 	private Question saveQ2(User user) {
 		Question Q2 = new Question("title2", "contents2").writtenBy(user);
 		return questions.save(Q2);
+	}
+
+	private Answer saveAnswer1(User user, Question question) {
+		return answers.save(new Answer(user, question, "Answers Contents1"));
+	}
+
+	private Answer saveAnswer2(User user, Question question) {
+		return answers.save(new Answer(user, question, "Answers Contents2"));
 	}
 }

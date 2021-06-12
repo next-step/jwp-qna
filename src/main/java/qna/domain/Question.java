@@ -1,8 +1,12 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -43,6 +48,9 @@ public class Question {
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User user;
 
+	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Answer> answers = new ArrayList<>();
+
 	protected Question() {
 	}
 
@@ -57,7 +65,7 @@ public class Question {
 	}
 
 	public Question writtenBy(User writer) {
-		setWriter(writer);
+		this.user = writer;
 
 		return this;
 	}
@@ -68,6 +76,7 @@ public class Question {
 
 	public void addAnswer(Answer answer) {
 		answer.toQuestion(this);
+		answers.add(answer);
 	}
 
 	public Long getId() {
@@ -98,8 +107,28 @@ public class Question {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
+	public void delete(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public boolean isContaioned(Answer answer) {
+		return answers.contains(answer);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Question question = (Question)o;
+		return deleted == question.deleted &&
+			Objects.equals(id, question.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, contents, createAt, deleted, title, updatedAt, user, answers);
 	}
 
 	@Override
