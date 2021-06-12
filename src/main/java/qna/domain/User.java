@@ -12,16 +12,12 @@ import java.util.Objects;
 @Table(name = "user", uniqueConstraints = {
         @UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = {"user_id"})})
 
-public class User {
+public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime created_at;
 
     @Column(name="email", length = 50)
     private String email;
@@ -32,13 +28,8 @@ public class User {
     @Column(nullable = false, length = 20)
     private String password;
 
-    @LastModifiedDate
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
-    private LocalDateTime updated_at;
-
     @Column(name= "user_id", length = 20, nullable = false, unique = true)
     private String userId;
-
 
     //default empty constructor
     protected User() {

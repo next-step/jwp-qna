@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table
 
-public class Question {
+public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,19 +17,12 @@ public class Question {
     @Lob
     private String contents;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime created_at;
-
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    @LastModifiedDate
-    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime updated_at;
 
     @Column(name="writer_id")
     private Long writerId;

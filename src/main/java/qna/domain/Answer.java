@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Table
-public class Answer {
+public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,14 +26,6 @@ public class Answer {
 
     @Lob
     private String contents;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedAt;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
@@ -110,13 +102,6 @@ public class Answer {
         this.deleted = deleted;
     }
 
-    public LocalDateTime getCreatedAt(){
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt(){
-        return updatedAt;
-    }
 
     @Override
     public String toString() {
