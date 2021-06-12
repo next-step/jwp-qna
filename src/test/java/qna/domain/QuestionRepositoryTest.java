@@ -36,8 +36,13 @@ public class QuestionRepositoryTest {
     @Test
     void findByIdAndDeletedFalse() {
         questionRepository.save(Q1);
-        Optional<Question> question = questionRepository.findByIdAndDeletedFalse(Q1.getId());
+        questionRepository.save(Q2);
 
-        assertThat(question.isPresent()).isTrue();
+        questionRepository.delete(Q2);
+        Optional<Question> existQuestion = questionRepository.findByIdAndDeletedFalse(Q1.getId());
+        Optional<Question> deletedQuestion = questionRepository.findByIdAndDeletedFalse(Q2.getId());
+
+        assertThat(existQuestion.isPresent()).isTrue();
+        assertThat(deletedQuestion.isPresent()).isFalse();
     }
 }

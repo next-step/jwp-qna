@@ -31,9 +31,15 @@ public class AnswerRepositoryTest {
 
     @Test
     void findByIdAndDeletedFalse() {
-        Answer answer = answerRepository.save(A1);
-        Optional<Answer> expected = answerRepository.findByIdAndDeletedFalse(answer.getId());
-        assertThat(expected.isPresent()).isTrue();
+        answerRepository.save(A1);
+        answerRepository.save(A2);
+
+        answerRepository.delete(A1);
+        Optional<Answer> deletedAnswer = answerRepository.findByIdAndDeletedFalse(A1.getId());
+        Optional<Answer> existAnswer = answerRepository.findByIdAndDeletedFalse(A2.getId());
+
+        assertThat(deletedAnswer.isPresent()).isFalse();
+        assertThat(existAnswer.isPresent()).isTrue();
     }
 
     @Test
