@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -9,6 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -29,6 +33,13 @@ public class Answer {
 
 	@Column(nullable = false)
 	private boolean deleted = false;
+
+	@CreatedDate
+	@Column(nullable = false)
+	private LocalDateTime createdAt;
+
+	@LastModifiedBy
+	private LocalDateTime updatedAt;
 
 	public Answer() {}
 

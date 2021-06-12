@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 
 @Entity
 @Table(name = "question")
@@ -25,6 +30,13 @@ public class Question {
 
 	@Column(nullable = false)
 	private boolean deleted = false;
+
+	@CreatedDate
+	@Column(nullable = false)
+	private LocalDateTime createdAt;
+
+	@LastModifiedBy
+	private LocalDateTime updatedAt;
 
 	public Question() {
 	}
