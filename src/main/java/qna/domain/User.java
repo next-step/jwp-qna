@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table
+@Table(name = "user", uniqueConstraints = {
+        @UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = {"user_id"})})
 
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
