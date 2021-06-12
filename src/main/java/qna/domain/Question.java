@@ -91,8 +91,8 @@ public class Question {
 		return deleted;
 	}
 
-	public void delete(boolean deleted) {
-		this.deleted = deleted;
+	public void delete() {
+		this.deleted = true;
 	}
 
 	public boolean isContained(Answer answer) {

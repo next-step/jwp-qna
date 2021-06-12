@@ -32,7 +32,7 @@ public class QuestionTest {
 		testEntityManager.clear();
 
 		assertThat(questions.findAll().size()).isEqualTo(1);
-		assertThat(questions.findAll().get(0).isContaioned(answer)).isTrue();
+		assertThat(questions.findAll().get(0).isContained(answer)).isTrue();
 	}
 
 	@Test
@@ -41,7 +41,7 @@ public class QuestionTest {
 		Question saveQ1 = saveQ1(saveJavajigi());
 
 		Question expected = questions.findById(saveQ1.getId()).get();
-		expected.setWriter(null);
+		expected.writtenBy(null);
 
 		assertThat(expected.getWriter()).isNull();
 	}
@@ -49,12 +49,13 @@ public class QuestionTest {
 	@Test
 	@DisplayName("작성자 업데이트 확인")
 	void update_writer() {
-		Question saveQ1 = saveQ1(saveJavajigi());
-		saveQ1.setWriter(saveSanjigi());
+		User sanjigi = saveJavajigi();
+		Question saveQ1 = saveQ1(sanjigi);
+		saveQ1.writtenBy(sanjigi);
 
 		Question expected = questions.findById(saveQ1.getId()).get();
 
-		assertThat(expected.getWriter().getUserId()).isEqualTo("sanjigi");
+		assertThat(expected.getWriter()).isEqualTo(sanjigi);
 	}
 
 	@Test
@@ -91,12 +92,9 @@ public class QuestionTest {
 	void use_written_method_findByDeletedFalse() {
 		User saveJavajigi = saveJavajigi();
 		Question Q1 = new Question("title1", "contents1").writtenBy(saveJavajigi);
-		Q1.delete(true);
+		Q1.delete();
 		questions.save(Q1);
 		assertThat(questions.findByDeletedFalse().size()).isEqualTo(0);
-
-		Q1.delete(false);
-		assertThat(questions.findByDeletedFalse().size()).isEqualTo(1);
 	}
 
 	@Test
@@ -106,7 +104,7 @@ public class QuestionTest {
 
 		assertThat(questions.findByIdAndDeletedFalse(saveQ1.getId())).isEqualTo(questions.findById(saveQ1.getId()));
 
-		saveQ1.delete(true);
+		saveQ1.delete();
 		assertThat(questions.findByIdAndDeletedFalse(saveQ1.getId()).isPresent()).isFalse();
 	}
 
