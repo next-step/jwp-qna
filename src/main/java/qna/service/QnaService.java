@@ -48,25 +48,6 @@ public class QnaService {
         Question question = findQuestionById(questionId);
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
-        deleteHistoryService.saveAll(deleteHistoriesCreate(question, Answers.of(answers), loginUser));
-    }
-
-    public DeleteHistories deleteHistoriesCreate(Question question, Answers answers, User loginUser){
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.deletedByUser(loginUser);
-        deleteHistoryCreate(question, loginUser);
-
-        answers.deleteAnswers(loginUser);
-        new DeleteHistory(ContentType.ANSWER, loginUser.getId(), question.getWriter(), LocalDateTime.now());
-
-        return new DeleteHistories(deleteHistories);
-    }
-
-    private void deleteHistoryCreate(Question question, User loginUser) {
-
-        DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.addDeleteHistory(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
-
-        question.getAnswers().deleteAnswers(loginUser);
+        deleteHistoryService.saveAll(DeleteHistories.deleteHistoriesCreate(question, Answers.of(answers), loginUser));
     }
 }

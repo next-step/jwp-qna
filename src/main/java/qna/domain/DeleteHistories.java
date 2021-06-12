@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,5 +42,25 @@ public class DeleteHistories {
     @Override
     public int hashCode() {
         return Objects.hash(histories);
+    }
+
+    public static DeleteHistories deleteHistoriesCreate(Question question, Answers answers, User loginUser){
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        question.deletedByUser(loginUser);
+        deleteHistoryCreate(question, loginUser);
+
+        answers.deleteAnswers(loginUser);
+        new DeleteHistory(ContentType.ANSWER, loginUser.getId(), question.getWriter(), LocalDateTime
+            .now());
+
+        return new DeleteHistories(deleteHistories);
+    }
+
+    private static void deleteHistoryCreate(Question question, User loginUser) {
+
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.addDeleteHistory(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
+
+        question.getAnswers().deleteAnswers(loginUser);
     }
 }
