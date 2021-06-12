@@ -50,28 +50,8 @@ public class DeleteHistory {
 		return id;
 	}
 
-	public Long getContentId() {
-		return contentId;
-	}
-
-	public ContentType getContentType() {
-		return contentType;
-	}
-
-	public LocalDateTime getCreateDate() {
-		return createDate;
-	}
-
-	public Long getDeletedById() {
-		return user.getId();
-	}
-
-	public User getDeleter() {
-		return user;
-	}
-
-	public void setDeletedByUser(User deletedByUser) {
-		this.user = deletedByUser;
+	public boolean isDeletedBy(User user) {
+		return this.user == user;
 	}
 
 	@Override

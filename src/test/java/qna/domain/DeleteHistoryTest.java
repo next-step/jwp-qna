@@ -20,9 +20,10 @@ public class DeleteHistoryTest {
 	@Test
 	@DisplayName("삭제를 조회하고 삭제한 사람을 조회한다.")
 	void select_not_deleted_question_with_writer() {
-		DeleteHistory saveDH1 = saveDeleteHistory1(saveJavajigi());
+		User sanjigi = saveJavajigi();
+		DeleteHistory saveDH1 = saveDeleteHistory1(sanjigi);
 
-		assertThat(saveDH1.getDeleter().getUserId()).isEqualTo("javajigi");
+		assertThat(saveDH1.isDeletedBy(sanjigi)).isTrue();
 	}
 
 	@Test
