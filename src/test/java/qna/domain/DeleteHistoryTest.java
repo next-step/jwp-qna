@@ -16,6 +16,9 @@ class DeleteHistoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     @DisplayName(value = "저장된 row 를 select 해온다")
     void select() {
@@ -24,24 +27,12 @@ class DeleteHistoryTest {
         assertThat(selectAll.size()).isEqualTo(1);
     }
 
-    @Test
-    @DisplayName(value = "DB에 저장한 객체와 저장전 객체는 동일하다")
-    void insert() {
-        DeleteHistory actual = new DeleteHistory(
-            ContentType.QUESTION,
-            1L,
-            1L,
-            LocalDateTime.of(2021, 6, 1, 0, 0, 0)
-        );
-        DeleteHistory saved = deleteHistoryRepository.save(actual);
-        assertThat(saved).isEqualTo(actual);
-    }
-
     private DeleteHistory insertHistory() {
+        User user = userRepository.saveAndFlush(UserTest.JAVAJIGI);
         DeleteHistory deleteHistory = new DeleteHistory(
             ContentType.QUESTION,
             1L,
-            1L,
+            user,
             LocalDateTime.of(2021, 6, 1, 0, 0, 0)
         );
         return deleteHistoryRepository.saveAndFlush(deleteHistory);

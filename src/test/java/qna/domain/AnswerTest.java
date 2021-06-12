@@ -18,10 +18,16 @@ public class AnswerTest {
 	@Autowired
 	private AnswerRepository answerRepository;
 
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private QuestionRepository questionRepository;
+
 	@Test
 	@DisplayName(value = "answer entity 가 DB에 저장되면 id 값, 저장 날짜가 할당된다")
 	void save() {
-		Answer persist = answerRepository.save(new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "답변입니다"));
+		Answer persist = insertAnswer();
 		assertAll(
 			() -> assertThat(persist.getId()).isNotNull(),
 			() -> assertThat(persist.getCreatedAt()).isNotNull(),
@@ -42,13 +48,16 @@ public class AnswerTest {
 	void updateAtHasChanged() {
 		Answer origin = insertAnswer();
 		LocalDateTime originUpdatedAt = origin.getUpdatedAt();
-	    origin.setContents("답변 추가 입니다");
+	    origin.writeContents("답변 추가 입니다");
 	    Answer updated = answerRepository.saveAndFlush(origin);
 	    assertThat(updated.getUpdatedAt()).isNotEqualTo(originUpdatedAt);
 	}
 
 	private Answer insertAnswer() {
-		Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "답변입니다!!");
+		User user = userRepository.saveAndFlush(UserTest.JAVAJIGI);
+		Question question = questionRepository.saveAndFlush(QuestionTest.Q1.writeBy(user));
+
+		Answer answer = new Answer(user, question, "답변입니다!!");
 		return answerRepository.saveAndFlush(answer);
 	}
 
