@@ -24,7 +24,7 @@ public class Question extends BaseEntity {
     private User writer;
 
     @Embedded
-    private Answers answers;
+    private Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -54,10 +54,6 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-
-        if (answers == null) {
-            this.answers = Answers.of(new ArrayList<>());
-        }
 
         this.answers.addAnswer(answer);
     }
