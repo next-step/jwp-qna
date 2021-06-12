@@ -17,7 +17,7 @@ import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends BaseEntity{
 	public static final GuestUser GUEST_USER = new GuestUser();
 
 	@Id
@@ -35,13 +35,6 @@ public class User {
 
 	@Column(length = 50)
 	private String email;
-
-	@CreatedDate
-	@Column(nullable = false)
-	private LocalDateTime createdAt;
-
-	@LastModifiedBy
-	private LocalDateTime updatedAt;
 
 	public User() {
 	}
