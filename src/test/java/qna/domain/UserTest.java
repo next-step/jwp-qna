@@ -23,18 +23,6 @@ public class UserTest {
 		assertThat((String)users.findByEmail("javajigi").get(0)[0]).isEqualTo("javajigi");
 	}
 
-	@Test
-	@DisplayName("jpa 작성 메소드 사용(findByUserId)")
-	void use_written_method_findByUserId() {
-		User saveA1 = saveJavajigi();
-		User saveA2 = saveSanjigi();
-
-		assertThat(users.findByUserId(saveA1.getUserId()).get()).isEqualTo(
-			users.findById(saveA1.getId()).get());
-		assertThat(users.findByUserId(saveA2.getUserId()).get()).isEqualTo(
-			users.findById(saveA2.getId()).get());
-	}
-
 	private User saveJavajigi() {
 		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
 		return users.save(JAVAJIGI);

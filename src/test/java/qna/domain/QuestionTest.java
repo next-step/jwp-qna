@@ -70,11 +70,12 @@ public class QuestionTest {
 	@Test
 	@DisplayName("질문을 조회하고 해당 질문의 작성자를 조회함")
 	void select_not_deleted_question_with_writer() {
-		Question saveQ1 = saveQ1(saveJavajigi());
+		User javajigi = saveJavajigi();
+		Question saveQ1 = saveQ1(javajigi);
 
 		Question question = questions.findByIdAndDeletedFalse(saveQ1.getId()).get();
 
-		assertThat(question.getWriter().getUserId()).isEqualTo("javajigi");
+		assertThat(question.isOwner(javajigi)).isTrue();
 	}
 
 	@Test

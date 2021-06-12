@@ -88,26 +88,6 @@ public class User {
 		return false;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -115,7 +95,11 @@ public class User {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		User user = (User)o;
-		return Objects.equals(id, user.id);
+		return Objects.equals(id, user.id) &&
+			Objects.equals(email, user.email) &&
+			Objects.equals(name, user.name) &&
+			Objects.equals(password, user.password) &&
+			Objects.equals(userId, user.userId);
 	}
 
 	@Override
