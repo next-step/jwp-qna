@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.domain.support.BaseTimeEntity;
 
 import javax.persistence.*;
@@ -42,7 +43,7 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
@@ -70,8 +71,11 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void delete(boolean deleted) {
-        this.deleted = deleted;
+    public void delete(User writer) {
+        if(!isOwner(writer)){
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.deleted = true;
     }
 
     @Override
