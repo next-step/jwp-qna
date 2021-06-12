@@ -1,11 +1,43 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table
+
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Lob
     private String contents;
-    private Long writerId;
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
+    private LocalDateTime created_at;
+
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    @Column(name = "title", length = 100, nullable = false)
+    private String title;
+
+    @LastModifiedDate
+    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
+    private LocalDateTime updated_at;
+
+    @Column(name="writer_id")
+    private Long writerId;
+
+    //default empty constructor
+    protected Question(){
+
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);

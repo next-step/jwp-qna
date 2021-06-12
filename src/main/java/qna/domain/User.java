@@ -1,19 +1,46 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
+
+@Entity
+@Table
 
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
+    private LocalDateTime created_at;
+
+    @Column(name="email", length = 50)
     private String email;
 
-    private User() {
+    @Column(nullable = false, length = 20)
+    private String name;
+
+    @Column(nullable = false, length = 20)
+    private String password;
+
+    @LastModifiedDate
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
+    private LocalDateTime updated_at;
+
+    @Column(name= "user_id", length = 20, nullable = false, unique = true)
+    private String userId;
+
+
+    //default empty constructor
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
