@@ -25,8 +25,8 @@ public class AnswerTest {
 		Question saveQ1 = saveQuestion1(saveJavajigi);
 		Answer saveA1 = saveAnswer1(saveJavajigi, saveQ1);
 
-		assertThat(saveA1.getWriter().getUserId()).isEqualTo("javajigi");
-		assertThat(saveA1.getQuestion().getTitle()).isEqualTo("title1");
+		assertThat(saveA1.getWriter()).isEqualTo(saveJavajigi);
+		assertThat(saveA1.isAnsweredQuestion(saveQ1)).isTrue();
 	}
 
 	@Test
@@ -58,7 +58,7 @@ public class AnswerTest {
 		Answer saveA1 = saveAnswer1(saveJavajigi, saveQ1);
 		User saveSanjigi = saveSanjigi();
 		Answer A2 = new Answer(saveSanjigi, saveQ1, "Answers Contents2");
-		A2.setDeleted(true);
+		A2.delete(true);
 		Answer saveA2 = answers.save(A2);
 
 		assertThat(saveA1).isEqualTo(answers.findByIdAndDeletedFalse(saveA1.getId()).get());
@@ -73,7 +73,7 @@ public class AnswerTest {
 		Question saveQ1 = saveQuestion1(saveJavajigi);
 		Answer saveA1 = saveAnswer1(saveJavajigi, saveQ1);
 		Answer A2 = new Answer(saveSanjigi, saveQ1, "Answers Contents2");
-		A2.setDeleted(true);
+		A2.delete(true);
 		Answer saveA2 = answers.save(A2);
 
 		assertThat(answers.findByQuestionIdAndDeletedFalse(saveQ1.getId()).size()).isEqualTo(1);

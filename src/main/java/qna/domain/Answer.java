@@ -71,10 +71,6 @@ public class Answer {
 		this.contents = contents;
 	}
 
-	public boolean isOwner(User writer) {
-		return this.user.equals(writer);
-	}
-
 	public void toQuestion(Question question) {
 		this.question = question;
 	}
@@ -87,19 +83,19 @@ public class Answer {
 		return this.user;
 	}
 
-	public Question getQuestion() {
-		return question;
+	public boolean isOwner(User writer) {
+		return this.user.equals(writer);
 	}
 
-	public String getContents() {
-		return contents;
+	public boolean isAnsweredQuestion(Question question) {
+		return this.question.equals(question);
 	}
 
 	public boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
+	public void delete(boolean deleted) {
 		this.deleted = deleted;
 	}
 
@@ -111,7 +107,12 @@ public class Answer {
 			return false;
 		Answer answer = (Answer)o;
 		return deleted == answer.deleted &&
-			Objects.equals(id, answer.id);
+			Objects.equals(id, answer.id) &&
+			Objects.equals(contents, answer.contents) &&
+			Objects.equals(createAt, answer.createAt) &&
+			Objects.equals(question, answer.question) &&
+			Objects.equals(updatedAt, answer.updatedAt) &&
+			Objects.equals(user, answer.user);
 	}
 
 	@Override
