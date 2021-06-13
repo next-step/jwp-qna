@@ -3,9 +3,12 @@ package qna.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
@@ -24,6 +27,9 @@ public class Question extends BaseEntity{
     private boolean deleted = false;
     @Column
     private LocalDateTime updatedAt= LocalDateTime.now();
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -52,33 +58,18 @@ public class Question extends BaseEntity{
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
 
     @Override
     public String toString() {
@@ -94,5 +85,31 @@ public class Question extends BaseEntity{
     public void setWriter(User writer) {
         this.writer = writer;
         this.writer.addQuestion(this);
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        List<Answer> answers = filterDeleteFalse();
+        deleted = true;
+    }
+
+    private List<Answer> filterDeleteFalse() {
+        List<Answer> filteredAnswer = new ArrayList<>();
+        for ( Answer answer: getAnswers()) {
+            addAnswerIfNotDeleted(filteredAnswer, answer);
+        }
+        return filteredAnswer;
+    }
+
+    private void addAnswerIfNotDeleted(List<Answer> filteredAnswer, Answer answer) {
+        if( !answer.isDeleted()) {
+            filteredAnswer.add(answer);
+        }
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

@@ -109,7 +109,7 @@ QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 
 ```
 
 ### 기능목록
-1. [ ] question 삭제
+1. [x] question 삭제
 2. [ ] answer 삭제
 3. [ ] deletehistory 추가
 4. [ ] question 삭제검증
