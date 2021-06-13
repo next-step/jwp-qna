@@ -4,6 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -17,6 +19,8 @@ public class QuestionTest {
     public void delete() throws CannotDeleteException {
         Q1.delete(UserTest.JAVAJIGI);
         assertThat(Q1.isDeleted()).isTrue();
+        assertThat(UserTest.JAVAJIGI.getDeleteHistories())
+                .contains(new DeleteHistory(ContentType.QUESTION,Q1.getId(),UserTest.JAVAJIGI, LocalDateTime.now()));
     }
 
     @Test
@@ -25,5 +29,6 @@ public class QuestionTest {
         assertThatThrownBy(()->Q1.delete(UserTest.SANJIGI))
                 .isInstanceOf(CannotDeleteException.class);
     }
+
 
 }

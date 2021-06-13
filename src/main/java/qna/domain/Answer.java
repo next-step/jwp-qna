@@ -1,6 +1,7 @@
 package qna.domain;
 
 import lombok.*;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -109,12 +110,19 @@ public class Answer extends BaseEntity {
         return Objects.hash(id);
     }
 
-    public void delete(User loginUser) {
-        addHistory(loginUser);
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        verifyDeletable(loginUser);
         deleted = true;
+        return createHistory(loginUser);
     }
 
-    private void addHistory(User loginUser) {
-        DeleteHistory.addHistory(ContentType.ANSWER,id,loginUser);
+    private void verifyDeletable(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
+    private DeleteHistory createHistory(User loginUser) {
+        return DeleteHistory.addHistory(ContentType.ANSWER,id,loginUser);
     }
 }

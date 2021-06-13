@@ -52,7 +52,7 @@ class QnaServiceTest {
         qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
-        verifyDeleteHistories();
+        verifyDeleteHistories(UserTest.JAVAJIGI);
     }
 
     @Test
@@ -72,7 +72,7 @@ class QnaServiceTest {
 
         assertThat(question.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
-        verifyDeleteHistories();
+        verifyDeleteHistories(UserTest.JAVAJIGI);
     }
 
     @Test
@@ -87,11 +87,11 @@ class QnaServiceTest {
                 .isInstanceOf(CannotDeleteException.class);
     }
 
-    private void verifyDeleteHistories() {
-        List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
-        );
-        verify(deleteHistoryService).saveAll(deleteHistories);
+    private void verifyDeleteHistories(User user) {
+
+        assertThat(user.getDeleteHistories())
+                .contains(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
+                        new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+
     }
 }

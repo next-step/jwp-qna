@@ -87,21 +87,23 @@ public class Question extends BaseEntity{
         this.writer.addQuestion(this);
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        verifyDeletable(loginUser);
+        deleted = true;
+        return createHistory(loginUser);
+    }
+
+    private void verifyDeletable(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        addHistory(loginUser);
-        List<Answer> answers = filterDeleteFalse();
-        deleteAnswers(answers,loginUser);
-        deleted = true;
     }
 
-    private void addHistory(User loginUser) {
-        DeleteHistory.addHistory(ContentType.QUESTION,id,loginUser);
+    private DeleteHistory createHistory(User loginUser) {
+        return DeleteHistory.addHistory(ContentType.QUESTION,id,loginUser);
     }
 
-    private void deleteAnswers(List<Answer> answers, User loginUser) {
+    private void deleteAnswers(List<Answer> answers, User loginUser) throws CannotDeleteException {
         for( Answer answer : answers) {
             answer.delete(loginUser);
         }

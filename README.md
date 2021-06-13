@@ -112,5 +112,5 @@ QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 
 1. [x] question 삭제
 2. [x] answer 삭제
 3. [x] deletehistory 추가
-4. [ ] question 삭제검증
-5. [ ] answer 삭제검증
+4. [x] question 삭제검증
+5. [x] answer 삭제검증

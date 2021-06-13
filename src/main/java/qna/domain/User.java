@@ -1,6 +1,7 @@
 package qna.domain;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import qna.UnAuthorizedException;
 
@@ -13,6 +14,7 @@ import java.util.Objects;
 @Entity
 @Table
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
