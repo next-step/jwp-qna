@@ -6,8 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import qna.CannotDeleteException;
+
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -37,6 +41,9 @@ class QuestionRepositoryTest {
         q2.setWriter(u1);
         a1.setWriter(u1);
         a2.setWriter(u1);
+
+        q1.addAnswer(a1);
+        q1.addAnswer(a2);
 
         // cascade persist로 question과 answer 생성
         userRepository.save(u1);
@@ -100,5 +107,26 @@ class QuestionRepositoryTest {
         assertThat(q1).isSameAs(q2);
     }
 
+    @Test
+    @DisplayName("answers 조회 테스트")
+    public void answer() {
+        assertThat(q1.getAnswers()).hasSize(2).contains(a1,a2);
+    }
 
+    @Test
+    @DisplayName("question 삭제시 deletehistory추가")
+    public void delete() throws CannotDeleteException {
+        q1.delete(u1);
+        assertThat(u1.getDeleteHistories()).contains(new DeleteHistory(ContentType.QUESTION,q1.getId(),u1, LocalDateTime.now()));
+        assertThat(u1.getQuestions()).contains(q1);
+    }
+
+    @Test
+    @DisplayName("question 다른사람이 삭제시 에러")
+    public void deleteByOther() {
+        User u2 = new User("userid2","password","name","email2");
+        userRepository.save(u2);
+        assertThatThrownBy(()->q1.delete(u2))
+                .isInstanceOf(CannotDeleteException.class);
+    }
 }
