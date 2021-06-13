@@ -3,15 +3,17 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 
 @Entity
 @Table(name = "user", uniqueConstraints = {@UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = {"user_id"})})
-public class User extends BaseEntity{
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "user_id", nullable = false, length = 20)
     private String userId;
@@ -25,9 +27,6 @@ public class User extends BaseEntity{
     @Column(name = "email", length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
-    private List<Answer> answers = new ArrayList<>();
-
     protected User() {
     }
 
@@ -36,7 +35,7 @@ public class User extends BaseEntity{
     }
 
     public User(Long id, String userId, String password, String name, String email) {
-        setId(id);
+        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -64,13 +63,8 @@ public class User extends BaseEntity{
         return this.password.equals(targetPassword);
     }
 
-    public boolean equalsNameAndEmail(User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
-
-        return name.equals(target.name) &&
-                email.equals(target.email);
+    public Long getId() {
+        return id;
     }
 
     public boolean isGuestUser() {
@@ -81,23 +75,15 @@ public class User extends BaseEntity{
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void changeName(String name) {
         this.name = name;
     }
 
@@ -105,25 +91,10 @@ public class User extends BaseEntity{
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void addAnswer(Answer answer) {
-        answers.add(answer);
-        if (answer.getWriter() != this) {
-            answer.setWriter(this);
-        }
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
     @Override
     public String toString() {
         return "User{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", userId='" + userId + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +

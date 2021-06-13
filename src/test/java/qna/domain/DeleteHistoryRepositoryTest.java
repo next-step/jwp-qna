@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-public class DeleteHistoryTest {
+public class DeleteHistoryRepositoryTest {
 
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;

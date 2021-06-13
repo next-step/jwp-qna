@@ -1,13 +1,18 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "question")
-public class Question extends BaseEntity{
+public class Question extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "title", nullable = false, length = 100)
     private String title;
@@ -23,15 +28,15 @@ public class Question extends BaseEntity{
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
     }
 
     public Question(Long id, String title, String contents) {
-        setId(id);
+        this.id = id;
         this.title = title;
         this.contents = contents;
     }
@@ -50,45 +55,53 @@ public class Question extends BaseEntity{
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
-        if (answer.getQuestion() != this) {
-            answer.toQuestion(this);
+        answer.setQuestion(this);
+        if(!answers.contains(answer)){
+            answers.add(answer);
         }
+    }
+
+    public List<DeleteHistory> deleted(User loginUser) {
+        checkUser(loginUser);
+
+        List<DeleteHistory> deleteHistories = answers.delete(loginUser);
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
+
+        deleted(true);
+        return deleteHistories;
+    }
+
+    private void checkUser(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public Long getWriterId() {
         return writer.getId();
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    private void deleted(boolean deleted) {
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -100,11 +113,12 @@ public class Question extends BaseEntity{
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", writerId=" + writer.getUserId() +
                 ", deleted=" + deleted +
                 '}';
     }
+
 }

@@ -45,7 +45,7 @@ public class UserRepositoryTest {
     public void updateUserName() {
 
         //when
-        savedUser.setName("springjigi");
+        savedUser.changeName("springjigi");
 
         //then
         User actual = userRepository.findByUserId("javajigi").get();

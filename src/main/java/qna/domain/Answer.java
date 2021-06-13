@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -9,7 +10,11 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends BaseEntity{
+public class Answer extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Lob
     private String contents;
@@ -34,7 +39,7 @@ public class Answer extends BaseEntity{
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        setId(id);
+        this.id = id;
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -49,36 +54,28 @@ public class Answer extends BaseEntity{
         this.contents = contents;
     }
 
-    public Answer(User writer, String contents) {
-        this.writer = writer;
-        this.contents = contents;
-    }
-
     public boolean isOwner(User writer) {
         return this.writer.getId().equals(writer.getId());
     }
 
-    public void toQuestion(Question question) {
+    public void setQuestion(Question question) {
         this.question = question;
-        if (!question.getAnswers().contains(this)) {
-            question.getAnswers().add(this);
-        }
     }
 
-
-    public Long getWriterId() {
-        return writer.getId();
+    public Long getId() {
+        return id;
     }
 
     public User getWriter() {
         return writer;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-        if (!writer.getAnswers().contains(this)) {
-            writer.getAnswers().add(this);
+    public DeleteHistory delete(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
+        deleted(true);
+        return new DeleteHistory(ContentType.ANSWER, id, loginUser, LocalDateTime.now());
     }
 
     public Question getQuestion() {
@@ -89,22 +86,18 @@ public class Answer extends BaseEntity{
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    private void deleted(boolean deleted) {
         this.deleted = deleted;
     }
 
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + getId() +
+                "id=" + id+
                 ", writerId=" + writer.getId() +
                 ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
