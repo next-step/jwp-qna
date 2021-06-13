@@ -27,9 +27,6 @@ public class User extends BaseEntity {
     @Column(name = "email", length = 50)
     private String email;
 
-    @Embedded
-    private Answers answers;
-
     protected User() {
     }
 
@@ -66,15 +63,6 @@ public class User extends BaseEntity {
         return this.password.equals(targetPassword);
     }
 
-    public boolean equalsNameAndEmail(User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
-
-        return name.equals(target.name) &&
-                email.equals(target.email);
-    }
-
     public Long getId() {
         return id;
     }
@@ -91,10 +79,6 @@ public class User extends BaseEntity {
         return password;
     }
 
-    public void changePassword(String password) {
-        this.password = password;
-    }
-
     public String getName() {
         return name;
     }
@@ -105,13 +89,6 @@ public class User extends BaseEntity {
 
     public String getEmail() {
         return email;
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.setWriter(this);
-        if(!answers.contains(answer)){
-            answers.add(answer);
-        }
     }
 
     @Override

@@ -62,7 +62,7 @@ public class QuestionRepositoryTest {
     public void delete(){
         List<Question> questionList = questionRepository.findByDeletedFalse();
         Question actual = questionList.get(0);
-        actual.deleted(true);
+        actual.deleted(savedUser);
         List<Question> afterDeleteList = questionRepository.findByDeletedFalse();
         assertTrue(afterDeleteList.isEmpty());
     }

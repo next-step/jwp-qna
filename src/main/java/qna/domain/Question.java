@@ -97,7 +97,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void deleted(boolean deleted) {
+    private void deleted(boolean deleted) {
         this.deleted = deleted;
     }
 
