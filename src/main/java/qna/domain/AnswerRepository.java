@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
-    List<Answer> findByQuestionAndDeletedFalse(Question question);
-
     Optional<Answer> findByIdAndDeletedFalse(Long id);
+
+    List<Answer> findByQuestionIdAndDeletedFalse(Long id);
 }

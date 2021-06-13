@@ -1,24 +1,17 @@
 package qna.domain;
 
 import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(length = 100, nullable = false)
     private String title;
@@ -30,8 +23,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -61,10 +54,12 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+
+        this.answers.addAnswer(answer);
     }
 
     public Long getId() {
-        return id;
+        return super.getId();
     }
 
     public String getTitle() {
@@ -87,14 +82,22 @@ public class Question extends BaseEntity {
         this.deleted = true;
     }
 
-    public List<Answer> getAnswers() {
-        return this.answers;
+    public void deletedByUser(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        delete();
+    }
+
+    public Answers getAnswers() {
+        return answers;
     }
 
     @Override
     public String toString() {
         return "Question{" +
-            "id=" + id +
+            "id=" + super.getId() +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
             ", writer=" + writer +
