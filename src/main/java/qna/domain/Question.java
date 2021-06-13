@@ -2,10 +2,6 @@ package qna.domain;
 
 import static javax.persistence.FetchType.LAZY;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -106,10 +102,10 @@ public class Question extends BaseEntity {
                 '}';
     }
 
-    public DeleteHistoryList delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         checkWriter(loginUser);
         setDeleted(true);
-        DeleteHistoryList deleteHistories = new DeleteHistoryList();
+        DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now()));
         deleteHistories.add(getAnswers().delete(loginUser));
         return deleteHistories;
