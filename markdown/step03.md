@@ -24,7 +24,7 @@ QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 
 
 ```java
 @Transactional
-public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
+public void deleteQuestion(User loginUser, Long questionId) {
     Question question = findQuestionById(questionId);
     if (!question.isOwner(loginUser)) {
         throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
@@ -368,6 +368,42 @@ A. Domain Model 영역에서 하는 것이 옳다.
         - [x] 4-1-5.`DeleteHistory` : 삭제 완료 후 로깅 처리
     - [x] 4-2.추가 리팩터링
         - [x] 4-2-1.불필요한 메서드 제거
+    - [x] 4-3.리뷰어님 코멘트 반영
+        - [x] 4-3-1.불필요한 원시값 포장 해제하기 : `Deleted`
+        - [x] 4-3-2.2중 적용된 소스 코드 수정 : `Answer.changeQuestion()`
+        - [x] 4-3-3.Checked Exception -> Unchecked Exception 적용
+            - [x] 4-3-3-1.`CannotDeleteException`
+            - [x] 4-3-3-2.`Answer.validateIsOwner()`
+            - [x] 4-3-3-3.`Question.validateCouldDelete()`
+        - [x] 4-3-4.생성자 -> 정적 팩토리 메서드
+            - [x] 4-3-4-1.`AnswerGroup.generateDeleteHIstoryAllOfAnswers()` 내 `new DeleteHistory`
+        - [x] 4-3-5.기능수정
+            - [x] 4-3-5-1.`Answer.delete()` : 상태 값 변경 -> 상태 값 변경 + 삭제한 이력을 리턴
+        - [x] 4-3-6.래핑클래스 -> 원시값으로 변경
+            - [x] 4-3-6-1.`Question.deleted`
+        - [x] 4-3-7.필드의 기본값 설정과 초기화를 혼동하지 말자.
+            - [x] 4-3-7-1.`Question.answers` : AnswerGroup.generate() -> 제거
+        - [x] 4-3-8.접근제어자 제대로 사용하기
+            - [x] 4-3-8-1.`Question.validateCouldDelete()`
+            - [x] 4-3-8-2.`Answer.validateIsOwner()`
+            - [x] 4-3-8-3.그 외에도 찾아보기
+        - [x] 4-3-9.Value Object Test 코드 작성
+    - [x] 4-4.리뷰어님 코멘트 반영 2차
+        - [x] 4-4-1.답변 삭제 권한 체크는 AnswerGroup 내부 또는 Answer에서 하도록 변경
+            - [x] 4-4-1-1.`AnswerGroup.deleteAll()` -> `public DeleteHistoryGroup deleteAll(User loginUser)`
+        - [x] 4-4-2.불필요한 상수 적용 제거
+            - [x] 4-4-2-1."DELETED", "NOT_DELETED" -> `true`, `false`
+        - [x] 4-4-3.테스트 코드 리펙토링
+            - [x] 4-4-3-1.다양한 테스트 메서드 작성
+                - [x] 4-4-3-1-1.정상 케이스 외에 의도한 예외마다 발생하는 테스트 코드 작성
+                - [x] 4-4-3-1-2.정상 케이스임에도 다른 의도가 담긴 테스트 메서드로 분리
+                - [x] 4-4-3-1-3.정상 수행임에도 여러가지 결과를 도출한다면 각 결과에 맞춰서 테스트 코드 작성
+                - [x] 4-4-3-1-4.if절은 활용하지 않을 것
+            - [x] 4-4-3-2.네이밍
+                - [x] 4-4-3-2-1.타입은 명시하지 않도록 한다.
+                - [x] 4-4-3-2-2.변수의 의미만 부여한다.
+                - [x] 4-4-3-2-3.한글 변수명을 사용해보자.
+            - [x] 4-4-3-3.`DeleteHistoryTest` : 팩터리 메서드가 의도한 컨텐츠 타입으로 생성되는지 테스트
 - [x] 5.테스트
     - [x] 5-1.Gradle build Success 확인
     - [x] 5-2.Google Java Style 적용 (indent : 2 -> 4 spaces)
@@ -461,4 +497,18 @@ A. Domain Model 영역에서 하는 것이 옳다.
   - @Column 내 작성한 조건들은 validation을 하는 것이 아닌 DDL의 조건을 작성을 위한 것임을 알았습니다.     
   - 원시값을 포장하면서 validation을 검증하는 로직을 하는 것이 옳은 것인지 좋은 습관인지 여쭤봅니다.
   - spring-boot-starter-validation, hibernate-validator 등 을 활용한 어노테이션(@Size, @NotNull)을 활용하는 것이 나은 것인지 여쭤봅니다.
-    (validation 코드 작성 간 빠른 코드를 작성할 수 있습니다만, 제가 알지 못하는 사이드 이펙트가 있을 것 같습니다..)  
+    (validation 코드 작성 간 빠른 코드를 작성할 수 있습니다만, 제가 알지 못하는 사이드 이펙트가 있을 것 같습니다..)
+
+> `@Column`은 `persistence layer`에 포함됩니다. db와 관련된 조건을 작성하시면 됩니다.
+> `@Size`, `@NotNull`은 어느 구현체를 쓰느냐에 따라 달라지겠지만 `spring validation`을 쓴다면 `presentation layer`와 `application layer` 사이에서 데이터를 전달해주는 `dto`에 사용합니다. 주로 http request 요청값을 검증할 때 씁니다.
+> 원시값을 포장한 객체는 `domain layer`입니다.
+> `domain layer`는 순수 자바로 동작 가능해야 합니다.
+> 외부 라이브러리에 의존한 유효성 검증 대신 생성자에서 의도한 인자를 전달 받고 있는지 검사하도록 구현하시는 걸 추천합니다.
+
+- 객체지향 패러다임
+
+> Q. public 으로 유효성 검증 가능하도록 열어두는 것은 옳지 않은가요?
+> A. 필요하다면 public으로 둬야겠죠. 하지만 지금 구현하신 내용을 보면 delete 메서드에서만 필요한 상태죠. 그리고 삭제할 때 본인만 삭제 가능하도록 강제해야 의도한 기능이 맞지 않을까요? 삭제 정책이 본인만 가능하다면 기능도 제한을 줘야하는데 지금처럼 해당 기능 밖에서 처리하도록 만들면 유효성 검증을 놓쳐서 다른 사람이 삭제할 가능성이 생기겠죠
+> A. 객체 내부에서 관리하는 인스턴스 변수에 대한 처리는 클래스 안에서만 처리하도록 강제해야 캡슐화를 달성할 수 있습니다 
+
+

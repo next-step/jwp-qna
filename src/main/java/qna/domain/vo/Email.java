@@ -15,23 +15,30 @@ public class Email {
 	protected Email() {
 	}
 
-	protected Email(String email) {
+	private Email(String email) {
 		this.email = email;
 	}
 
 	public static Email generate(String email) {
-		validateEmailNotOverFiftyCharacter(email);
+		validateEmailNotOverFiftyByte(email);
 		return new Email(email);
 	}
 
-	private static void validateEmailNotOverFiftyCharacter(String email) {
+	private static void validateEmailNotOverFiftyByte(String email) {
+		if (Objects.isNull(email)) {
+			return;
+		}
 		if (MAX_LENGTH < email.getBytes().length) {
 			throw new IllegalArgumentException("이메일 길이는 " + MAX_LENGTH + "byte 이하여야 합니다.");
 		}
 	}
 
+	public String value() {
+		return email;
+	}
+
 	public void changeEmail(String email) {
-		validateEmailNotOverFiftyCharacter(email);
+		validateEmailNotOverFiftyByte(email);
 		this.email = email;
 	}
 

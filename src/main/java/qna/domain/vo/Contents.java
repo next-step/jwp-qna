@@ -15,11 +15,12 @@ public class Contents {
 	protected Contents() {
 	}
 
-	protected Contents(String contents) {
+	private Contents(String contents) {
 		this.contents = contents;
 	}
 
 	public static Contents generate(String contents) {
+
 		return new Contents(contents);
 	}
 
