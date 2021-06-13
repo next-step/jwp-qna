@@ -1,8 +1,6 @@
 package qna.domain;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -12,9 +10,8 @@ import java.util.Objects;
 
 @Entity
 @Table
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Setter
 public class Answer extends BaseEntity {
 
     @ManyToOne

@@ -1,6 +1,8 @@
 package qna.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,7 +13,7 @@ import java.util.Objects;
 @Entity
 @Table
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DeleteHistory extends BaseEntity {
 
     @Column

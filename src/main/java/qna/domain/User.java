@@ -1,5 +1,7 @@
 package qna.domain;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
@@ -10,6 +12,7 @@ import java.util.Objects;
 
 @Entity
 @Table
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -32,9 +35,6 @@ public class User extends BaseEntity {
     private String email;
     @Column
     private LocalDateTime updatedAt= LocalDateTime.now();
-
-    private User() {
-    }
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
