@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
+
 @DataJpaTest
 public class AnswerTest {
 	public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
@@ -59,6 +61,17 @@ public class AnswerTest {
 
 		Answer answer = new Answer(user, question, "답변입니다!!");
 		return answerRepository.saveAndFlush(answer);
+	}
+
+	@Test
+	@DisplayName(value = "answer 의 작성자와 삭제를 요청한 로그인 유저가 다를 경우 CannotDeleteException을 일으킨다")
+	void cannotDeleteException() {
+		User answerWriter = new User(100L, "question writer", "password", "dodo", "dodo@mail.com");
+		User loginUser = new User(101L, "login user", "password", "navi", "navi@mail.com");
+		Question question = new Question("title", "questions contents");
+
+		Answer answer = new Answer(answerWriter, question, "answer contents");
+		assertThrows(CannotDeleteException.class, ()-> answer.isOwnerOrThrows(loginUser));
 	}
 
 }
