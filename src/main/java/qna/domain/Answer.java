@@ -8,6 +8,7 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 @Entity
 @Table
@@ -110,16 +111,16 @@ public class Answer extends BaseEntity {
         return Objects.hash(id);
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+    public void delete(User loginUser) throws CannotDeleteException {
         verifyDeletable(loginUser);
-        deleted = true;
-        return createHistory(loginUser);
+        createHistory(loginUser);
     }
 
     private void verifyDeletable(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
+        deleted = true;
     }
 
     private DeleteHistory createHistory(User loginUser) {

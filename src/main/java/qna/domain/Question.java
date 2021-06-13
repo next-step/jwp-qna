@@ -52,6 +52,7 @@ public class Question extends BaseEntity{
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public Long getId() {
@@ -87,16 +88,17 @@ public class Question extends BaseEntity{
         this.writer.addQuestion(this);
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+    public void delete(User loginUser) throws CannotDeleteException {
         verifyDeletable(loginUser);
-        deleted = true;
-        return createHistory(loginUser);
+        deleteAnswers(filterDeleteFalse(),loginUser);
+        createHistory(loginUser);
     }
 
     private void verifyDeletable(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
+        deleted = true;
     }
 
     private DeleteHistory createHistory(User loginUser) {
