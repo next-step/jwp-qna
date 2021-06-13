@@ -109,7 +109,12 @@ public class Answer extends BaseEntity {
         return Objects.hash(id);
     }
 
-    public void delete() {
+    public void delete(User loginUser) {
+        addHistory(loginUser);
         deleted = true;
+    }
+
+    private void addHistory(User loginUser) {
+        DeleteHistory.addHistory(ContentType.ANSWER,id,loginUser);
     }
 }

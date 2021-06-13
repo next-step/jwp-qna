@@ -10,7 +10,7 @@ public class AnswerTest {
 
     @Test
     public void delete() {
-        A1.delete();
+        A1.delete(UserTest.SANJIGI);
         assertThat(A1.isDeleted()).isTrue();
     }
 }

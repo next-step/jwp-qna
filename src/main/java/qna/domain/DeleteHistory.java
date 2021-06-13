@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.sql.Delete;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -29,7 +30,12 @@ public class DeleteHistory extends BaseEntity {
     public DeleteHistory(ContentType contentType, Long contentId, User deleteUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.user = deleteUser;
+        setUser(deleteUser);
+        this.createdAt = createDate;
+    }
+
+    public static DeleteHistory addHistory(ContentType type, Long contentId, User loginUser) {
+        return new DeleteHistory(type,contentId,loginUser,LocalDateTime.now());
     }
 
     @Override
@@ -63,4 +69,5 @@ public class DeleteHistory extends BaseEntity {
         this.user = deleteUser;
         this.user.addDeleteHistory(this);
     }
+
 }
