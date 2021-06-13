@@ -108,4 +108,8 @@ public class Answer extends BaseEntity {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public void delete() {
+        deleted = true;
+    }
 }
