@@ -107,7 +107,7 @@ public class Question extends BaseEntity {
         setDeleted(true);
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now()));
-        deleteHistories.add(getAnswers().delete(loginUser));
+        deleteHistories.add(answers.delete(loginUser));
         return deleteHistories;
     }
 
