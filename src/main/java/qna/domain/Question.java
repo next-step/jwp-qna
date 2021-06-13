@@ -17,6 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
+
 /**
  * create table question
  * (
@@ -74,8 +76,10 @@ public class Question extends DateEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public void isOwnerOrThrow(User writer) {
+        if (!this.writer.equals(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public void addAnswer(Answer answer) {
