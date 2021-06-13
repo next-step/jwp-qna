@@ -3,12 +3,32 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "delete_history")
 public class DeleteHistory {
+    @Id
+    @GeneratedValue
     private Long id;
+
+    @Enumerated(value = EnumType.STRING)
     private ContentType contentType;
+
     private Long contentId;
+
     private Long deletedById;
+
     private LocalDateTime createDate = LocalDateTime.now();
+
+    public DeleteHistory() {
+
+    }
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
