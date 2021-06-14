@@ -65,7 +65,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
-        if (Objects.isNull(question) || Objects.isNull(question.getId())
+        if (Objects.isNull(question)
                 || question.equals(this.question)) {
             return;
         }
@@ -126,5 +126,10 @@ public class Answer extends BaseTimeEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public DeleteHistory delete(User writer) {
+        // TODO
+        return null;
     }
 }

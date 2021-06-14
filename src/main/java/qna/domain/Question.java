@@ -126,4 +126,9 @@ public class Question extends BaseTimeEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
+    public DeleteHistory delete(User writer) {
+        // TODO
+        return null;
+    }
 }
