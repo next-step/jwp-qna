@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import qna.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
@@ -127,8 +130,21 @@ public class Question extends BaseTimeEntity {
                 '}';
     }
 
-    public DeleteHistory delete(User writer) {
-        // TODO
-        return null;
+    public List<DeleteHistory> delete(User writer) {
+        validateWriter(writer);
+
+        List<DeleteHistory> histories = this.answers.stream()
+            .map(answer -> answer.delete(writer))
+            .collect(Collectors.toList());
+
+        this.deleted = true;
+        histories.add(new DeleteHistory(ContentType.QUESTION, id, writer));
+        return histories;
+    }
+
+    private void validateWriter(User writer) {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 }

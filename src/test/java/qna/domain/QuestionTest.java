@@ -3,6 +3,9 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -47,12 +50,24 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("삭제 이력을 반환")
-    void returnDeleteHistory() {
-        DeleteHistory history = Q2.delete(UserTest.SANJIGI);
+    @DisplayName("질문과 답변 삭제 이력들을 반환")
+    void returnDeleteHistories() {
+        List<DeleteHistory> histories = Q2.delete(UserTest.SANJIGI);
 
-        assertNotNull(history);
-        assertEquals(ContentType.QUESTION, history.getContentType());
-        assertEquals(UserTest.SANJIGI, history.getDeletedBy());
+        assertThat(histories).isNotNull();
+        assertThat(histories).hasSizeGreaterThan(2);
+
+        List<DeleteHistory> questionDeleteHistories = histories.stream()
+            .filter(h -> h.getContentType().equals(ContentType.QUESTION))
+            .collect(Collectors.toList());
+        List<DeleteHistory> answerDeleteHistories = histories.stream()
+            .filter(h -> h.getContentType().equals(ContentType.ANSWER))
+            .collect(Collectors.toList());
+
+        assertThat(questionDeleteHistories).hasSize(1);
+        assertThat(answerDeleteHistories).hasSizeGreaterThan(1);
+        histories.forEach(deleteHistory -> {
+            assertThat(deleteHistory.getDeletedBy()).isEqualTo(UserTest.SANJIGI);
+        });
     }
 }
