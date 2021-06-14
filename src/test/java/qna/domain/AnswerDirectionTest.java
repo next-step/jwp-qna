@@ -24,15 +24,12 @@ public class AnswerDirectionTest {
     void biDirectionSelect() {
         System.out.println("start !!!");
         Question question = questionRepository.findById(5L).get();
-        for (Answer answer : question.getAnswers()) {
-            System.out.println(answer);
-        }
-
         User writer = userRepository.findById(8L).get();
 
         question.addAnswer(new Answer(writer, question, "new answer"));
         questionRepository.save(question);
         assertThat(answerRepository.findByQuestionIdAndDeletedFalse(5L).size()).isEqualTo(9);
+        System.out.println("end !!!");
     }
 
     @Test
