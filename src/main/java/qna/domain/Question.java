@@ -133,12 +133,15 @@ public class Question extends BaseTimeEntity {
     public List<DeleteHistory> delete(User writer) {
         validateWriter(writer);
 
-        List<DeleteHistory> histories = this.answers.stream()
-            .map(answer -> answer.delete(writer))
-            .collect(Collectors.toList());
-
         this.deleted = true;
+
+        List<DeleteHistory> histories = new ArrayList<>();
         histories.add(new DeleteHistory(ContentType.QUESTION, id, writer));
+        histories.addAll(
+            this.answers.stream()
+                .map(answer -> answer.delete(writer))
+                .collect(Collectors.toList()));
+
         return histories;
     }
 
