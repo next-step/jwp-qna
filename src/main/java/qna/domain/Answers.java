@@ -1,7 +1,12 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+import qna.message.ErrorMessage;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -20,5 +25,12 @@ public class Answers {
 
     public void add(Answer answer) {
         answers.add(answer);
+    }
+
+    public List<DeleteHistory> delete(User loginUser){
+        return answers.stream()
+                .filter(answer -> !answer.isDeleted())
+                .map(answer -> answer.delete(loginUser))
+                .collect(Collectors.toList());
     }
 }

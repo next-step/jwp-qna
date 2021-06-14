@@ -9,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.CannotDeleteException;
+import qna.message.ErrorMessage;
 
 @DataJpaTest
-class QuestionTest {
+class AnswersTest {
 
     @Autowired
     QuestionRepository questionRepository;
@@ -24,12 +25,13 @@ class QuestionTest {
 
     private Question question;
     private User user;
+    private Answer answer;
 
     @BeforeEach
     void setup() {
         user = new User("lkimilhol", "1234", "김일호", "lkimilhol@gmail.com");
         question = new Question("질문", "내용");
-        Answer answer = new Answer(user, question, "답변");
+        answer = new Answer(user, question, "답변");
         question.writeBy(user);
 
         userRepository.save(user);
@@ -38,22 +40,26 @@ class QuestionTest {
     }
 
     @Test
-    @DisplayName("삭제 실패 - 글을 작성한 유저가 아님")
-    void deleteFailed() {
+    @DisplayName("삭제 권한이 있는지 체크 - 성공")
+    void checkLoginUserAuth() throws CannotDeleteException {
         //given
         //when
+        answer.delete(user);
         //then
-        assertThatExceptionOfType(CannotDeleteException.class)
-                .isThrownBy(() -> question.delete(new User("test", "1234", "테스트", "test@gmail.com")));
+        assertThat(question.getWriter().getUserId()).isEqualTo("lkimilhol");
     }
 
     @Test
-    @DisplayName("삭제 성공")
-    void delete() throws CannotDeleteException {
+    @DisplayName("삭제 권한이 있는지 체크 - 실패")
+    void checkLoginUserAuthFailed() {
         //given
+        User anotherUser = new User("kimmayer", "1234", "김메이어", "kimmayer@gamil.com");
+        Answer anotherAnswer = new Answer(anotherUser, question, "다른 답변");
         //when
-        question.delete(user);
+        question.addAnswer(anotherAnswer);
         //then
-        assertThat(question.isDeleted()).isTrue();
+        assertThatExceptionOfType(CannotDeleteException.class)
+                .isThrownBy(() -> answer.delete(anotherUser))
+                .withMessageContaining(ErrorMessage.EXISTS_ANOTHER_USER_ANSWER);
     }
 }

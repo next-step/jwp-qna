@@ -2,6 +2,7 @@ package qna.domain;
 
 import static javax.persistence.FetchType.LAZY;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -12,9 +13,10 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-
+import qna.message.ErrorMessage;
 
 @Entity
 @Table(name = "answer")
@@ -56,16 +58,8 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public void addQuestion() {
-
-    }
-
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
-    }
-
-    public void toQuestion(Question question) {
-        this.question = question;
+        return this.writer.equals(writer);
     }
 
     public Long getId() {
@@ -101,6 +95,19 @@ public class Answer extends BaseEntity {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answer answer = (Answer) o;
+        return deleted == answer.deleted && Objects.equals(writer, answer.writer) && Objects.equals(question, answer.question) && Objects.equals(contents, answer.contents);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(writer, question, contents, deleted);
+    }
+
+    @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
@@ -109,5 +116,17 @@ public class Answer extends BaseEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        checkWriter(loginUser);
+        setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, getId(), getWriter(), LocalDateTime.now());
+    }
+
+    private void checkWriter(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(ErrorMessage.EXISTS_ANOTHER_USER_ANSWER);
+        }
     }
 }

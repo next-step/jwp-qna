@@ -2,6 +2,8 @@ package qna.domain;
 
 import static javax.persistence.FetchType.LAZY;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -11,10 +13,13 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
+import qna.message.ErrorMessage;
 
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity {
+
     @Column(length = 100, nullable = false)
     private String title;
 
@@ -62,10 +67,6 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -74,20 +75,8 @@ public class Question extends BaseEntity {
         this.title = title;
     }
 
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -111,5 +100,20 @@ public class Question extends BaseEntity {
                 ", writerId=" + writer +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        checkWriter(loginUser);
+        setDeleted(true);
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now()));
+        deleteHistories.add(answers.delete(loginUser));
+        return deleteHistories;
+    }
+
+    private void checkWriter(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(ErrorMessage.QUESTION_DELETE_NO_AUTH);
+        }
     }
 }
