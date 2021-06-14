@@ -1,44 +1,40 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Arrays;
-import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
-@DataJpaTest
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1");
-    public static final Question Q2 = new Question("title2", "contents2");
 
-    @Autowired
-    private QuestionRepository questionRepository;
+	private Question question;
+	private User user;
 
-    @Autowired
-    private UserRepository userRepository;
+	@BeforeEach
+	void setUp() {
+		this.user = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
 
-    @ParameterizedTest
-    @MethodSource("generateData")
-    void save(Question question) {
-        User user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
+		this.question = new Question("title1", "contents1");
+		this.question.writeBy(user);
+	}
 
-        Question actual = questionRepository.save(question.writeBy(user));
+	@Test
+	@DisplayName("질문의 주인이 아닌 경우, 삭제할 수 없다.")
+	void validateDeleteQuestion() {
+		User loginUser = new User(2L, "test", "password", "name", "test@slipp.net");
 
-        assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
-            () -> assertThat(actual.getWriter()).isEqualTo(question.getWriter()),
-            () -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
-            () -> assertThat(actual.getCreatedAt()).isNotNull()
-        );
-    }
+		assertThatThrownBy(() -> this.question.deleteQuestion(loginUser))
+			.isInstanceOf(CannotDeleteException.class);
+	}
 
-    static List<Question> generateData() {
-        return Arrays.asList(Q1,Q2);
-    }
+	@Test
+	@DisplayName("질문이 삭제 된다.")
+	void deleteQuestion() throws CannotDeleteException {
+		this.question.deleteQuestion(user);
+
+		assertThat(this.question.isDeleted()).isTrue();
+	}
 }
