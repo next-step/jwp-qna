@@ -91,8 +91,8 @@ public class Question extends BaseEntity{
     public void delete(User loginUser) throws CannotDeleteException {
         verifyDeletable(loginUser);
         delete();
-        deleteAnswers(filterDeleteFalse(),loginUser);
         addQuestionDeleteHistoryTo(loginUser);
+        answers.delete(loginUser);
     }
 
     private void delete() {
@@ -107,29 +107,5 @@ public class Question extends BaseEntity{
 
     private DeleteHistory addQuestionDeleteHistoryTo(User loginUser) {
         return DeleteHistory.question(id,loginUser);
-    }
-
-    private void deleteAnswers(List<Answer> answers, User loginUser) throws CannotDeleteException {
-        for( Answer answer : answers) {
-            answer.delete(loginUser);
-        }
-    }
-
-    private List<Answer> filterDeleteFalse() {
-        List<Answer> filteredAnswer = new ArrayList<>();
-        for ( Answer answer: getAnswers()) {
-            addAnswerIfNotDeleted(filteredAnswer, answer);
-        }
-        return filteredAnswer;
-    }
-
-    private void addAnswerIfNotDeleted(List<Answer> filteredAnswer, Answer answer) {
-        if( !answer.isDeleted()) {
-            filteredAnswer.add(answer);
-        }
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 }

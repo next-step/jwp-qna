@@ -7,6 +7,7 @@ import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Embeddable
 public class Answers implements Iterable<Answer> {
@@ -20,10 +21,16 @@ public class Answers implements Iterable<Answer> {
 
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         List<DeleteHistory> histories = new ArrayList<>();
-        for (Answer answer: answers) {
+        for (Answer answer: answersWithDeletedFalse()) {
             histories.add(answer.delete(loginUser));
         }
         return histories;
+    }
+
+    private List<Answer> answersWithDeletedFalse() {
+        return answers.stream()
+                .filter(answer->!answer.isDeleted())
+                .collect(Collectors.toList());
     }
 
     public void add(Answer answer) {
