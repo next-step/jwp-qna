@@ -58,7 +58,7 @@ public class QuestionTest {
     void selectWhereNotDelete() {
         insertQuestion();
         List<Question> notDeletedQuestions = questionRepository.findByDeletedFalse();
-        assertThat(notDeletedQuestions.size()).isEqualTo(1);
+        assertThat(notDeletedQuestions.size()).isEqualTo(6);
     }
 
     @Test
