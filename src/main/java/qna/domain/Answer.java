@@ -40,7 +40,7 @@ public class Answer extends DateEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    public Answer() {
+    protected Answer() {
     }
 
     public Answer(User writer, Question question, String contents) {
@@ -69,15 +69,6 @@ public class Answer extends DateEntity {
         }
     }
 
-    public void toQuestion(Question question) {
-        if (Objects.isNull(question) || Objects.isNull(question.getId()) || question.equals(this.question)) {
-            return;
-        }
-
-        this.question = question;
-        this.question.addAnswer(this);
-    }
-
     public Long getId() {
         return id;
     }
@@ -100,10 +91,6 @@ public class Answer extends DateEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void delete() {
-        this.deleted = true;
     }
 
     @Override
