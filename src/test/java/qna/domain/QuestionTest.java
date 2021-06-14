@@ -70,8 +70,8 @@ public class QuestionTest {
     }
 
     private Question insertQuestion() {
-        User user = userRepository.saveAndFlush(UserTest.JAVAJIGI);
-        Question actual = new Question("question test title", "question test content").writeBy(user);
+        User writer = userRepository.saveAndFlush(UserTest.JAVAJIGI);
+        Question actual = Question.writeQuestion("question test title", "question test content", writer);
         return questionRepository.saveAndFlush(actual);
     }
 
@@ -81,8 +81,7 @@ public class QuestionTest {
         User questionWriter = new User(100L, "question writer", "password", "dodo", "dodo@mail.com");
         User loginUser = new User(101L, "login user", "password", "navi", "navi@mail.com");
 
-        Question question = new Question("title", "questions contents");
-        question.writeBy(questionWriter);
+        Question question = Question.writeQuestion("title", "questions contents", questionWriter);
 
         assertThrows(CannotDeleteException.class, ()-> question.isOwnerOrThrow(loginUser));
     }

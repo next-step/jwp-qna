@@ -26,7 +26,7 @@ public class AnswerDirectionTest {
         Question question = questionRepository.findById(5L).get();
         User writer = userRepository.findById(8L).get();
 
-        question.addAnswer(new Answer(writer, question, "new answer"));
+        question.writeAnswer("new answer", writer);
         questionRepository.save(question);
         assertThat(answerRepository.findByQuestionIdAndDeletedFalse(5L).size()).isEqualTo(9);
         System.out.println("end !!!");

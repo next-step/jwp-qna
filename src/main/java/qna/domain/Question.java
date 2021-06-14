@@ -58,6 +58,10 @@ public class Question extends DateEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
+    public static Question writeQuestion(String title, String contents, User writer) {
+        return new Question(title, contents).writeBy(writer);
+    }
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }
@@ -83,8 +87,12 @@ public class Question extends DateEntity {
         }
     }
 
-    public void addAnswer(Answer answer) {
+    public void writeAnswer(Answer answer) {
         this.answers.add(answer);
+    }
+
+    public void writeAnswer(String contents, User answerWriter) {
+        this.answers.add(new Answer(answerWriter, this, contents));
     }
 
     public Long getId() {
@@ -101,10 +109,6 @@ public class Question extends DateEntity {
 
     public String getContents() {
         return contents;
-    }
-
-    public void writeContents(String contents) {
-        this.contents = contents;
     }
 
     public List<Answer> getAnswers() {
