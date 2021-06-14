@@ -35,8 +35,8 @@ public class QuestionTest {
         Q2.delete(UserTest.SANJIGI);
 
         assertThat(Q2.isDeleted()).isTrue();
-        assertThat(Q2.getAnswers()).hasSize(2);
-        Q2.getAnswers().forEach(answer -> {
+        assertThat(Q2.getAnswers().values()).hasSize(2);
+        Q2.getAnswers().values().forEach(answer -> {
             assertThat(answer.isDeleted()).isTrue();
             assertThat(answer.getWriter()).isEqualTo(UserTest.SANJIGI);
         });

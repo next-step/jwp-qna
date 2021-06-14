@@ -13,6 +13,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 class QuestionRepositoryTest {
 
 	@Autowired
+	UserRepository users;
+
+	@Autowired
 	QuestionRepository questions;
 
 	Question savedQuestion;
@@ -21,10 +24,13 @@ class QuestionRepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		savedQuestion = new Question("my title", "my contents");
-		deletedQuestion = new Question("deleted title", "deleted contents");
+		User user = new User("wrallee", "password", "우찬", "wrallee@gmail.com");
+		users.save(user);
 
-		deletedQuestion.setDeleted(true);
+		savedQuestion = new Question("my title", "my contents").writeBy(user);
+		deletedQuestion = new Question("deleted title", "deleted contents").writeBy(user);
+
+		deletedQuestion.delete(user);
 
 		questions.save(savedQuestion);
 		questions.save(deletedQuestion);

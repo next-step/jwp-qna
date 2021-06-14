@@ -3,9 +3,9 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -15,10 +15,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import qna.CannotDeleteException;
+import qna.InvalidRelationException;
 
 @Entity
 @Table(name = "question")
@@ -40,8 +40,8 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {}
 
@@ -96,12 +96,38 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void addAnswer(Answer answer) {
+        validateAnswer(answer);
+
+        this.answers.add(answer);
     }
 
-    public List<Answer> getAnswers() {
+    private void validateAnswer(Answer answer) {
+        if (!answer.isAnswerOf(this)) {
+            throw new InvalidRelationException("본 질문과 연관관계가 설정되어 있지 않습니다.");
+        }
+    }
+
+    public Answers getAnswers() {
         return answers;
+    }
+
+    public List<DeleteHistory> delete(User writer) {
+        validateWriter(writer);
+
+        this.deleted = true;
+
+        List<DeleteHistory> histories = new ArrayList<>();
+        histories.add(new DeleteHistory(ContentType.QUESTION, id, writer));
+        histories.addAll(this.answers.deleteAll(writer));
+
+        return histories;
+    }
+
+    private void validateWriter(User writer) {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     @Override
@@ -128,26 +154,5 @@ public class Question extends BaseTimeEntity {
                 ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
-    }
-
-    public List<DeleteHistory> delete(User writer) {
-        validateWriter(writer);
-
-        this.deleted = true;
-
-        List<DeleteHistory> histories = new ArrayList<>();
-        histories.add(new DeleteHistory(ContentType.QUESTION, id, writer));
-        histories.addAll(
-            this.answers.stream()
-                .map(answer -> answer.delete(writer))
-                .collect(Collectors.toList()));
-
-        return histories;
-    }
-
-    private void validateWriter(User writer) {
-        if (!isOwner(writer)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
     }
 }

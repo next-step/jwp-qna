@@ -1,9 +1,5 @@
 package qna.domain;
 
-import qna.CannotDeleteException;
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -17,6 +13,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import qna.CannotDeleteException;
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "answer")
@@ -57,8 +57,8 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.writer = writer;
-        toQuestion(question);
         this.contents = contents;
+        toQuestion(question);
     }
 
     public boolean isOwner(User writer) {
@@ -66,13 +66,29 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
-        if (Objects.isNull(question)
-                || question.equals(this.question)) {
-            return;
-        }
+        validateQuestion(question);
 
         this.question = question;
-        question.getAnswers().add(this);
+        question.addAnswer(this);
+    }
+
+    private void validateQuestion(Question question) {
+        if (Objects.isNull(question)) {
+            throw new IllegalArgumentException("null에 답변을 달 수 없습니다.");
+        }
+    }
+
+    public DeleteHistory delete(User writer) {
+        validateWriter(writer);
+
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer);
+    }
+
+    private void validateWriter(User writer) {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -99,8 +115,8 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public boolean isAnswerOf(Question question) {
+        return this.question.equals(question);
     }
 
     @Override
@@ -127,18 +143,5 @@ public class Answer extends BaseTimeEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
-    }
-
-    public DeleteHistory delete(User writer) {
-        validateWriter(writer);
-
-        this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, writer);
-    }
-
-    private void validateWriter(User writer) {
-        if (!isOwner(writer)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
     }
 }

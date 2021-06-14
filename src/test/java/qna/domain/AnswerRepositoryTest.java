@@ -44,7 +44,7 @@ class AnswerRepositoryTest {
 		savedAnswer = new Answer(savedUser, savedQuestion, "this is saved Answer");
 		deletedAnswer = new Answer(savedUser, savedQuestion, "this is deleted Answer");
 
-		deletedAnswer.setDeleted(true);
+		deletedAnswer.delete(user);
 
 		answers.save(savedAnswer);
 		answers.save(deletedAnswer);
@@ -68,7 +68,9 @@ class AnswerRepositoryTest {
 	@Test
 	void findAnswersFromQuestion() {
 		Question question = questions.findById(savedQuestion.getId()).orElse(null);
-		List<Answer> answers = question.getAnswers();
+
+		assertNotNull(question);
+		List<Answer> answers = question.getAnswers().values();
 		assertEquals(answers.size(), 2);
 		assertSame(savedAnswer, answers.get(0));
 		assertSame(deletedAnswer, answers.get(1));
