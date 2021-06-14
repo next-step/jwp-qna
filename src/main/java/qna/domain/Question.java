@@ -119,10 +119,6 @@ public class Question extends DateEntity {
         return deleted;
     }
 
-    public void delete() {
-        this.deleted = true;
-    }
-
     @Override
     public String toString() {
         return "Question{" +
@@ -145,5 +141,14 @@ public class Question extends DateEntity {
         return answers.stream()
             .map(Answer::convertDelete)
             .collect(Collectors.toList());
+    }
+
+    public List<DeleteHistory> convertDelete(User loginUser) {
+        isOwnerOrThrow(loginUser);
+        deleted = true;
+        List<DeleteHistory> deletedItem = new ArrayList<>();
+        deletedItem.add(new DeleteHistory(ContentType.QUESTION, id, writer));
+        deletedItem.addAll(deleteAnswers(loginUser));
+        return deletedItem;
     }
 }
