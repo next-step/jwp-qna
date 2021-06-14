@@ -55,7 +55,7 @@ public class Question extends BaseEntity{
 
     public List<DeleteHistory> deleteQuestion(User loginUser) throws CannotDeleteException {
         validateDeleteQuestion(loginUser);
-        setDeleted(true);
+        setDeleted();
         List<DeleteHistory> answerDeleteHistory = this.answers.deleteAnswer(loginUser);
         answerDeleteHistory.add(DeleteHistory.ofQuestion(this.getId(), this.getWriter()));
         return answerDeleteHistory;
@@ -94,8 +94,8 @@ public class Question extends BaseEntity{
         return deleted;
     }
 
-    private void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    private void setDeleted() {
+        this.deleted = true;
     }
 
     private void validateDeleteQuestion(User loginUser) throws CannotDeleteException {
