@@ -25,10 +25,9 @@ public class Answers {
 
 	public List<DeleteHistory> deleteAnswer(User loginUser) throws CannotDeleteException {
 		validateDeleteAnswer(loginUser);
-		return answers.stream().map(answer -> {
-			answer.deleted(true);
-			return DeleteHistory.ofAnswer(answer.getId(), answer.getWriter());
-		}).collect(Collectors.toList());
+		return answers.stream().peek(answer -> answer.deleted(true))
+			.map(answer -> DeleteHistory.ofAnswer(answer.getId(), answer.getWriter()))
+			.collect(Collectors.toList());
 	}
 
 	public void add(Answer answer) {
