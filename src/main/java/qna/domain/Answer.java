@@ -111,10 +111,10 @@ public class Answer extends BaseEntity {
         return Objects.hash(id);
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         verifyDeletable(loginUser);
         delete();
-        addAnswerDeleteHistoryTo(loginUser);
+        return addAnswerDeleteHistoryTo(loginUser);
     }
 
     private void delete() {

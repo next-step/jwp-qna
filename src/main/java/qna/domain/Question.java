@@ -28,8 +28,8 @@ public class Question extends BaseEntity{
     @Column
     private LocalDateTime updatedAt= LocalDateTime.now();
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers  = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
