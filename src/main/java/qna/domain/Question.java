@@ -90,15 +90,19 @@ public class Question extends BaseEntity{
 
     public void delete(User loginUser) throws CannotDeleteException {
         verifyDeletable(loginUser);
+        delete();
         deleteAnswers(filterDeleteFalse(),loginUser);
         createHistory(loginUser);
+    }
+
+    private void delete() {
+        deleted = true;
     }
 
     private void verifyDeletable(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        deleted = true;
     }
 
     private DeleteHistory createHistory(User loginUser) {
