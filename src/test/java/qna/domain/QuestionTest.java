@@ -9,6 +9,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -68,7 +69,7 @@ public class QuestionTest {
     @Test
     @DisplayName("질문 삭제 - 작성자가 다른 경우")
     public void deleteDiffUser() {
-        assertThatThrownBy(() -> q1.delete(sanjigi))
+        assertThatThrownBy(() -> q1.delete(sanjigi, new ArrayList<>()))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("질문을 삭제할 권한이 없습니다.");
     }
@@ -77,10 +78,10 @@ public class QuestionTest {
     @DisplayName("질문 삭제 - 작성자 + 삭제된 질문은 가져올 수 없다. ")
     @Transactional
     public void deleteSameUser() {
-        q1.delete(javajigi);
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        q1.delete(javajigi, deleteHistories);
         Optional<Question> question = questionRepository.findByIdAndDeletedFalse(q1.getId());
         assertThatThrownBy(() -> question.orElseThrow(NoSuchElementException::new))
                 .isInstanceOf(NoSuchElementException.class);
-
     }
 }
