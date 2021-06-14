@@ -32,6 +32,19 @@ public class AnswerDirectionTest {
 
         question.addAnswer(new Answer(writer, question, "new answer"));
         questionRepository.save(question);
-        assertThat(answerRepository.count()).isEqualTo(9);
+        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(5L).size()).isEqualTo(9);
+    }
+
+    @Test
+    @DisplayName(value = "question 에서 answer 의 value 를 갱신하면 answer 도 변경된다")
+    void updateAnswerInQuestion() {
+        User loginUser = userRepository.findById(5L).get();
+        Question question = questionRepository.findById(8L).get();
+        question.deleteAnswers(loginUser);
+
+        questionRepository.save(question);
+
+        question.getAnswers().stream()
+            .forEach(answer -> assertThat(answer.isDeleted()).isTrue());
     }
 }
