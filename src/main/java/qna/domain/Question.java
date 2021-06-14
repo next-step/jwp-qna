@@ -125,7 +125,6 @@ public class Question extends DateEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }

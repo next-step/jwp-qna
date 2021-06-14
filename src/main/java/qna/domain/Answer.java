@@ -110,7 +110,6 @@ public class Answer extends DateEntity {
     public String toString() {
         return "Answer{" +
             "id=" + id +
-            ", writer=" + writer +
             ", question=" + question +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
