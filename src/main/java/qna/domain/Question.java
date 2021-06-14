@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -131,5 +132,18 @@ public class Question extends DateEntity {
                 ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    private void isAllAnswersBy(User loginUser) {
+        for (Answer answer : answers) {
+            answer.isOwnerOrThrows(loginUser);
+        }
+    }
+
+    public List<DeleteHistory> deleteAnswers(User loginUser) {
+        isAllAnswersBy(loginUser);
+        return answers.stream()
+            .map(Answer::convertDelete)
+            .collect(Collectors.toList());
     }
 }
