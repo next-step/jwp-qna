@@ -34,8 +34,12 @@ public class DeleteHistory extends BaseEntity {
         this.createdAt = createDate;
     }
 
-    public static DeleteHistory addHistory(ContentType type, Long contentId, User loginUser) {
-        return new DeleteHistory(type,contentId,loginUser,LocalDateTime.now());
+    public static DeleteHistory answer(Long contentId, User loginUser) {
+        return new DeleteHistory(ContentType.ANSWER,contentId,loginUser,LocalDateTime.now());
+    }
+
+    public static DeleteHistory question(Long contentId, User loginUser) {
+        return new DeleteHistory(ContentType.QUESTION,contentId,loginUser,LocalDateTime.now());
     }
 
     @Override

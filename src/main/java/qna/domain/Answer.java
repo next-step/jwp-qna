@@ -114,7 +114,7 @@ public class Answer extends BaseEntity {
     public void delete(User loginUser) throws CannotDeleteException {
         verifyDeletable(loginUser);
         delete();
-        createHistory(loginUser);
+        addAnswerDeleteHistoryTo(loginUser);
     }
 
     private void delete() {
@@ -127,7 +127,7 @@ public class Answer extends BaseEntity {
         }
     }
 
-    private DeleteHistory createHistory(User loginUser) {
-        return DeleteHistory.addHistory(ContentType.ANSWER,id,loginUser);
+    private DeleteHistory addAnswerDeleteHistoryTo(User loginUser) {
+        return DeleteHistory.answer(id,loginUser);
     }
 }
