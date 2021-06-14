@@ -72,7 +72,7 @@ public class Question extends DateEntity {
         this.contents = contents;
     }
 
-    public Question() {
+    protected Question() {
 
     }
 
@@ -87,8 +87,8 @@ public class Question extends DateEntity {
         }
     }
 
-    public void writeAnswer(Answer answer) {
-        this.answers.add(answer);
+    public void writeAnswer(Long id, String contents, User answerWriter) {
+        this.answers.add(new Answer(id, answerWriter, this, contents));
     }
 
     public void writeAnswer(String contents, User answerWriter) {
