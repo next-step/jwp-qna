@@ -48,13 +48,17 @@ public class DeleteHistory {
     private LocalDateTime createDate = LocalDateTime.now();
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
-        this.contentType = contentType;
-        this.contentId = contentId;
-        this.deletedBy = deletedBy;
+        this(contentType, contentId, deletedBy);
         this.createDate = createDate;
     }
 
-    public DeleteHistory() {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+        this.deletedBy = deletedBy;
+    }
+
+    protected DeleteHistory() {
 
     }
 
