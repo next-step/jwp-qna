@@ -1,8 +1,6 @@
 package qna.domain;
 
-import jdk.nashorn.internal.runtime.logging.Logger;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
