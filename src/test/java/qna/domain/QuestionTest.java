@@ -52,7 +52,7 @@ public class QuestionTest {
     @Test
     @DisplayName("질문과 답변 삭제 이력들을 반환")
     void returnDeleteHistories() {
-        List<DeleteHistory> histories = Q2.delete(UserTest.SANJIGI);
+        List<DeleteHistory> histories = Q2.delete(UserTest.SANJIGI).values();
 
         assertThat(histories).isNotNull();
         assertThat(histories).hasSizeGreaterThan(2);

@@ -5,7 +5,6 @@ import static java.util.Collections.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -16,10 +15,10 @@ public class Answers {
     @OneToMany(mappedBy = "question")
     private List<Answer> values = new ArrayList<>();
 
-    public List<DeleteHistory> deleteAll(User writer) {
-        return this.values.stream()
-            .map(answer -> answer.delete(writer))
-            .collect(Collectors.toList());
+    public void deleteAll(User writer) {
+        this.values.forEach(answer -> {
+            answer.delete(writer);
+        });
     }
 
     public void add(Answer answer) {

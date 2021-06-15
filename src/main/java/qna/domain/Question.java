@@ -112,16 +112,13 @@ public class Question extends BaseTimeEntity {
         return answers;
     }
 
-    public List<DeleteHistory> delete(User writer) {
+    public DeleteHistories delete(User writer) {
         validateWriter(writer);
 
         this.deleted = true;
+        this.answers.deleteAll(writer);
 
-        List<DeleteHistory> histories = new ArrayList<>();
-        histories.add(new DeleteHistory(ContentType.QUESTION, id, writer));
-        histories.addAll(this.answers.deleteAll(writer));
-
-        return histories;
+        return DeleteHistories.of(this, this.answers);
     }
 
     private void validateWriter(User writer) {
