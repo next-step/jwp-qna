@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,18 @@ public class QuestionTest {
 
 	@Autowired
 	private TestEntityManager testEntityManager;
+
+	@BeforeEach
+	void setUp() {
+		answers.deleteAll();
+		answers.flush();
+		questions.deleteAll();
+		questions.flush();
+		users.deleteAll();
+		users.flush();
+
+		testEntityManager.flush();
+	}
 
 	@Test
 	@DisplayName("양방향 연관관계 확인")
