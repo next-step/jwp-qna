@@ -5,7 +5,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Transactional;
+import qna.CannotDeleteException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -15,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
@@ -31,15 +36,14 @@ public class QuestionTest {
     @Autowired
     private UserRepository userRepository;
 
+
     @BeforeEach
     public void setUp() {
         javajigi = userRepository.save(UserTest.JAVAJIGI);
         sanjigi = userRepository.save(UserTest.SANJIGI);
-        Q1.writeBy(javajigi);
-        Q2.writeBy(sanjigi);
-        Q2.delete(true);
-        q1 = questionRepository.save(Q1);
-        q2 = questionRepository.save(Q2);
+
+        q1 = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi));
+        q2 = questionRepository.save(new Question("title2", "contents2").writeBy(sanjigi));
     }
 
     @Test
@@ -56,17 +60,27 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("삭제된 질문을 가져올수 없는지 확인")
-    public void findByIdAndDeletedFalse() {
-        Optional<Question> question = questionRepository.findByIdAndDeletedFalse(q2.getId());
-        assertThatThrownBy(() -> question.orElseThrow(NoSuchElementException::new))
-                .isInstanceOf(NoSuchElementException.class);
-    }
-
-    @Test
     @DisplayName("삭제되지 않은 질문들 확인")
     public void findByDeletedFalse() {
         List<Question> question = questionRepository.findByDeletedFalse();
-        assertThat(question.size()).isEqualTo(1);
+        assertThat(question.size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("질문 삭제 - 작성자가 다른 경우")
+    public void deleteDiffUser() {
+        assertThatThrownBy(() -> q1.delete(sanjigi, new ArrayList<>()))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("질문을 삭제할 권한이 없습니다.");
+    }
+
+    @Test
+    @DisplayName("질문 삭제 - 작성자 + 삭제된 질문은 가져올 수 없다. ")
+    @Transactional
+    public void deleteSameUser() {
+        q1.delete(javajigi, new ArrayList<>());
+        Optional<Question> question = questionRepository.findByIdAndDeletedFalse(q1.getId());
+        assertThatThrownBy(() -> question.orElseThrow(NoSuchElementException::new))
+                .isInstanceOf(NoSuchElementException.class);
     }
 }
