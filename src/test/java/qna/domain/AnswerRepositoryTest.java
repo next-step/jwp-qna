@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import qna.CannotDeleteException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -147,6 +149,23 @@ public class AnswerRepositoryTest {
 //        Answer a3 = answerRepository.findByIdAndDeletedFalse(a1.getId()).get();
 //        assertThat(a3).isSameAs(a1);
 
+    }
+
+    @Test
+    @DisplayName("answer 삭제시 history 추가")
+    public void historyTest() throws CannotDeleteException {
+        a1.delete(u1);
+        assertThat(u1.getDeleteHistories()).contains(new DeleteHistory(ContentType.ANSWER,a1.getId(),u1, LocalDateTime.now()));
+        assertThat(a1.isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("answer 다른사람이 삭제시 exception")
+    public void deleteByOther() {
+        User u2 = new User("userid2","password","name","email1");
+        assertThatThrownBy(()->a1.delete(u2))
+                .isInstanceOf(CannotDeleteException.class);
+        assertThat(a1.isDeleted()).isFalse();
     }
 
 }

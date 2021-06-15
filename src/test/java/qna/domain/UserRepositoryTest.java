@@ -21,7 +21,7 @@ class UserRepositoryTest {
     @DisplayName("merge 동일성 테스트")
     public void merge() {
 
-        User javajigi1 = UserTest.JAVAJIGI;
+        User javajigi1 = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
         User javajigi2 = userRepository.save(javajigi1);
 
         //merge 이므로 not same
@@ -31,7 +31,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("detach 후 find 및 persist 테스트")
     public void detach() {
-        User sanjigi = UserTest.SANJIGI;
+        User sanjigi = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
         User sanjigi2 = userRepository.save(sanjigi);
         //merge 이므로 not same
         assertThat(sanjigi).isNotSameAs(sanjigi2);

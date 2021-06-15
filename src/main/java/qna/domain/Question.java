@@ -1,14 +1,18 @@
 package qna.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Question extends BaseEntity{
     @Column(length = 100, nullable = false)
@@ -23,6 +27,9 @@ public class Question extends BaseEntity{
     private boolean deleted = false;
     @Column
     private LocalDateTime updatedAt= LocalDateTime.now();
+
+    @Embedded
+    private Answers answers  = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -45,39 +52,25 @@ public class Question extends BaseEntity{
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
 
     @Override
     public String toString() {
@@ -93,5 +86,26 @@ public class Question extends BaseEntity{
     public void setWriter(User writer) {
         this.writer = writer;
         this.writer.addQuestion(this);
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        verifyDeletable(loginUser);
+        delete();
+        addQuestionDeleteHistoryTo(loginUser);
+        answers.delete(loginUser);
+    }
+
+    private void delete() {
+        deleted = true;
+    }
+
+    private void verifyDeletable(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private DeleteHistory addQuestionDeleteHistoryTo(User loginUser) {
+        return DeleteHistory.question(id,loginUser);
     }
 }

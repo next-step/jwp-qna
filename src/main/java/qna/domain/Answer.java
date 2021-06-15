@@ -1,20 +1,19 @@
 package qna.domain;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 @Entity
 @Table
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Setter
 public class Answer extends BaseEntity {
 
     @ManyToOne
@@ -110,5 +109,25 @@ public class Answer extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        verifyDeletable(loginUser);
+        delete();
+        return addAnswerDeleteHistoryTo(loginUser);
+    }
+
+    private void delete() {
+        deleted = true;
+    }
+
+    private void verifyDeletable(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
+    private DeleteHistory addAnswerDeleteHistoryTo(User loginUser) {
+        return DeleteHistory.answer(id,loginUser);
     }
 }

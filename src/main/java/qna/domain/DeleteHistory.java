@@ -1,7 +1,10 @@
 package qna.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.sql.Delete;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,7 +14,7 @@ import java.util.Objects;
 @Entity
 @Table
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DeleteHistory extends BaseEntity {
 
     @Column
@@ -27,7 +30,16 @@ public class DeleteHistory extends BaseEntity {
     public DeleteHistory(ContentType contentType, Long contentId, User deleteUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.user = deleteUser;
+        setUser(deleteUser);
+        this.createdAt = createDate;
+    }
+
+    public static DeleteHistory answer(Long contentId, User loginUser) {
+        return new DeleteHistory(ContentType.ANSWER,contentId,loginUser,LocalDateTime.now());
+    }
+
+    public static DeleteHistory question(Long contentId, User loginUser) {
+        return new DeleteHistory(ContentType.QUESTION,contentId,loginUser,LocalDateTime.now());
     }
 
     @Override
@@ -35,15 +47,13 @@ public class DeleteHistory extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(user, that.user);
+        return contentType == that.contentType &&
+                Objects.equals(contentId, that.contentId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, user);
+        return Objects.hash(contentType, contentId);
     }
 
     @Override
@@ -61,4 +71,5 @@ public class DeleteHistory extends BaseEntity {
         this.user = deleteUser;
         this.user.addDeleteHistory(this);
     }
+
 }
