@@ -102,11 +102,24 @@ public class Question {
 	}
 
 	public boolean canBeDeletedBy(User loginUser) throws CannotDeleteException {
+		validateQuestionWriter(loginUser);
+		validateAnswersWriter(loginUser);
+
+		return true;
+	}
+
+	private void validateAnswersWriter(User loginUser) throws CannotDeleteException {
+		for (Answer answer : answers) {
+			if (!answer.isOwner(loginUser)) {
+				throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+			}
+		}
+	}
+
+	private void validateQuestionWriter(User loginUser) throws CannotDeleteException {
 		if (!this.user.equals(loginUser)) {
 			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 		}
-
-		return true;
 	}
 
 	@Override
