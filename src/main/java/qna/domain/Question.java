@@ -101,11 +101,26 @@ public class Question {
 		return answers.contains(answer);
 	}
 
-	public boolean canBeDeletedBy(User loginUser) throws CannotDeleteException {
+	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
 		validateQuestionWriter(loginUser);
 		validateAnswersWriter(loginUser);
 
-		return true;
+		delete();
+		return addDeleteHistory();
+	}
+
+	private List<DeleteHistory> addDeleteHistory() {
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		deleteHistories.add(
+			new DeleteHistory(ContentType.QUESTION, id, user, LocalDateTime.now()));
+
+		for (Answer answer : answers) {
+			answer.delete();
+			deleteHistories.add(
+				new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+		}
+
+		return deleteHistories;
 	}
 
 	private void validateAnswersWriter(User loginUser) throws CannotDeleteException {

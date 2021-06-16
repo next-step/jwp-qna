@@ -44,8 +44,9 @@ class QnaServiceTest {
 		Answer answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
 		question.addAnswer(answer);
 
-		when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-		when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
+		lenient().when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+		lenient().when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId()))
+			.thenReturn(Arrays.asList(answer));
 
 		assertThat(question.isDeleted()).isFalse();
 		qnaService.deleteQuestion(JAVAJIGI, question.getId());
@@ -75,8 +76,9 @@ class QnaServiceTest {
 		Answer answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
 		question.addAnswer(answer);
 
-		when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-		when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
+		lenient().when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+		lenient().when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId()))
+			.thenReturn(Arrays.asList(answer));
 
 		qnaService.deleteQuestion(JAVAJIGI, question.getId());
 
