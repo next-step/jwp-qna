@@ -1,16 +1,36 @@
 package qna.domain;
 
+
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+@Table
+public class Answer extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "question_id")
     private Long questionId;
+
+    @Lob
     private String contents;
+
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    //empty constructor
+    protected Answer(){
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -79,6 +99,7 @@ public class Answer {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+
 
     @Override
     public String toString() {

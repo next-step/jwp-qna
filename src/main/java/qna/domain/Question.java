@@ -1,11 +1,36 @@
 package qna.domain;
 
-public class Question {
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table
+
+public class Question extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Lob
     private String contents;
-    private Long writerId;
+
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    @Column(name = "title", length = 100, nullable = false)
+    private String title;
+
+
+    @Column(name="writer_id")
+    private Long writerId;
+
+    //default empty constructor
+    protected Question(){
+
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
