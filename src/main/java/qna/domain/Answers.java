@@ -1,27 +1,26 @@
 package qna.domain;
 
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Embeddable
 public class Answers {
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "question")
     private final List<Answer> answers = new ArrayList<>();
 
-    public void add(Answer answer) {
+    public void addAnswer(Answer answer) {
         answers.add(answer);
     }
 
-    public void forEach(Consumer<? super Answer> action) {
-        Objects.requireNonNull(action);
-        for (Answer answer : answers) {
-            action.accept(answer);
-        }
+    public DeleteHistories delete(User writer) {
+        return new DeleteHistories(answers.stream()
+                .peek(answer -> answer.delete(writer))
+                .map(answer -> new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()))
+                .collect(Collectors.toList())
+        );
     }
 }

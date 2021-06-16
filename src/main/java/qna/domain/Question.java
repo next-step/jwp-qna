@@ -4,7 +4,6 @@ import qna.CannotDeleteException;
 import qna.domain.support.BaseTimeEntity;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -27,7 +26,7 @@ public class Question extends BaseTimeEntity {
     private User writer;
 
     @Embedded
-    private Answers answers = new Answers();
+    private final Answers answers = new Answers();
 
     protected Question() {
     }
@@ -56,7 +55,7 @@ public class Question extends BaseTimeEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-        answers.add(answer);
+        answers.addAnswer(answer);
     }
 
     public Long getId() {
@@ -75,15 +74,13 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void delete(User writer, List<DeleteHistory> deleteHistories) {
+    public DeleteHistories delete(User writer) {
         this.deleted = validateOwner(writer);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(), getWriter()));
-        answers.forEach(answer -> {
-            answer.delete(writer);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()));
-        });
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.addDeleteHistory(new DeleteHistory(ContentType.QUESTION, getId(), getWriter()));
+        deleteHistories.addDeleteHistories(answers.delete(writer));
+        return deleteHistories;
     }
-
 
     @Override
     public String toString() {
