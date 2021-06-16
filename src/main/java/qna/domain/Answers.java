@@ -1,8 +1,8 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -24,18 +24,12 @@ public class Answers {
 	}
 
 	public void addDeleteHistories(List<DeleteHistory> deleteHistories) {
-		for (Answer answer : answers) {
-			answer.delete();
-			deleteHistories.add(
-				new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-		}
+		deleteHistories.addAll(answers.stream().map(answer -> answer.delete()).collect(Collectors.toList()));
 	}
 
 	public void validateAnswersWriter(User loginUser) throws CannotDeleteException {
-		for (Answer answer : answers) {
-			if (!answer.isOwner(loginUser)) {
-				throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-			}
+		if (answers.stream().anyMatch(answer -> !answer.isOwner(loginUser))) {
+			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 		}
 	}
 }

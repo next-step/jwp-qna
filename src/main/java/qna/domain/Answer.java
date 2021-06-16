@@ -95,8 +95,9 @@ public class Answer {
 		return deleted;
 	}
 
-	public void delete() {
+	public DeleteHistory delete() {
 		this.deleted = true;
+		return new DeleteHistory(ContentType.ANSWER, id, user, LocalDateTime.now());
 	}
 
 	@Override
