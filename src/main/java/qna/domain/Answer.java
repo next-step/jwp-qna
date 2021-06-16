@@ -70,8 +70,12 @@ public class Answer extends BaseTimeEntity {
             throw new IllegalArgumentException("존재하지 않는 질문입니다.");
         }
 
+        if (!Objects.isNull(this.question)) {
+            throw new InvalidRelationException("이미 등록 된 답변은 옮길 수 없습니다.");
+        }
+
         if (!question.contains(this)) {
-            throw new InvalidRelationException("질문의 답변목록에 본 답변이 존재하지 않습니다.");
+            throw new InvalidRelationException("해당 질문과 연결되어 있지 않습니다.");
         }
     }
 
