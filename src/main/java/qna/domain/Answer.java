@@ -1,8 +1,5 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -16,6 +13,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import qna.CannotDeleteException;
+import qna.InvalidRelationException;
+import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "answer")
@@ -40,23 +41,18 @@ public class Answer extends BaseTimeEntity {
 
     protected Answer() {}
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+    public Answer(User writer, String contents) {
+        this(null, writer, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, String contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
 
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
-
         this.writer = writer;
-        toQuestion(question);
         this.contents = contents;
     }
 
@@ -65,13 +61,35 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
-        if (Objects.isNull(question) || Objects.isNull(question.getId())
-                || question.equals(this.question)) {
-            return;
+        validateQuestion(question);
+        this.question = question;
+    }
+
+    private void validateQuestion(Question question) {
+        if (Objects.isNull(question)) {
+            throw new IllegalArgumentException("존재하지 않는 질문입니다.");
         }
 
-        this.question = question;
-        question.getAnswers().add(this);
+        if (!Objects.isNull(this.question)) {
+            throw new InvalidRelationException("이미 등록 된 답변은 옮길 수 없습니다.");
+        }
+
+        if (!question.contains(this)) {
+            throw new InvalidRelationException("해당 질문과 연결되어 있지 않습니다.");
+        }
+    }
+
+    public DeleteHistory delete(User writer) {
+        validateWriter(writer);
+
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer);
+    }
+
+    private void validateWriter(User writer) {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -98,8 +116,8 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public boolean isAnswerOf(Question question) {
+        return this.question.equals(question);
     }
 
     @Override
