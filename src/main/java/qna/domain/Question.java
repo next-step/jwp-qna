@@ -75,11 +75,15 @@ public class Question extends BaseTimeEntity {
     }
 
     public DeleteHistories delete(User writer) {
-        this.deleted = validateOwner(writer);
+        deleted(writer);
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.addDeleteHistory(new DeleteHistory(ContentType.QUESTION, getId(), getWriter()));
         deleteHistories.addDeleteHistories(answers.delete(writer));
         return deleteHistories;
+    }
+
+    private void deleted(User writer) {
+        this.deleted = validateOwner(writer);
     }
 
     @Override
