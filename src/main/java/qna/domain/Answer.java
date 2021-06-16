@@ -15,7 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import qna.CannotDeleteException;
-import qna.NotFoundException;
+import qna.InvalidRelationException;
 import qna.UnAuthorizedException;
 
 @Entity
@@ -41,24 +41,19 @@ public class Answer extends BaseTimeEntity {
 
     protected Answer() {}
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+    public Answer(User writer, String contents) {
+        this(null, writer, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, String contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
 
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
-
         this.writer = writer;
         this.contents = contents;
-        toQuestion(question);
     }
 
     public boolean isOwner(User writer) {
@@ -67,14 +62,16 @@ public class Answer extends BaseTimeEntity {
 
     public void toQuestion(Question question) {
         validateQuestion(question);
-
         this.question = question;
-        question.addAnswer(this);
     }
 
     private void validateQuestion(Question question) {
         if (Objects.isNull(question)) {
             throw new IllegalArgumentException("존재하지 않는 질문입니다.");
+        }
+
+        if (!question.contains(this)) {
+            throw new InvalidRelationException("질문의 답변목록에 본 답변이 존재하지 않습니다.");
         }
     }
 

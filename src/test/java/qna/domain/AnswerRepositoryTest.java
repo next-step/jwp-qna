@@ -41,9 +41,11 @@ class AnswerRepositoryTest {
 		savedUser = users.save(user);
 		savedQuestion = questions.save(question);
 
-		savedAnswer = new Answer(savedUser, savedQuestion, "this is saved Answer");
-		deletedAnswer = new Answer(savedUser, savedQuestion, "this is deleted Answer");
+		savedAnswer = new Answer(savedUser, "this is saved Answer");
+		deletedAnswer = new Answer(savedUser, "this is deleted Answer");
 
+		savedQuestion.addAnswer(savedAnswer);
+		savedQuestion.addAnswer(deletedAnswer);
 		deletedAnswer.delete(user);
 
 		answers.save(savedAnswer);

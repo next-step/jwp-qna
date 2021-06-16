@@ -15,6 +15,10 @@ public class Answers {
     @OneToMany(mappedBy = "question")
     private List<Answer> values = new ArrayList<>();
 
+    public boolean contains(Answer answer) {
+        return values.contains(answer);
+    }
+
     public void deleteAll(User writer) {
         this.values.forEach(answer -> {
             answer.delete(writer);

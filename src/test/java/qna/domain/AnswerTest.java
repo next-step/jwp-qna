@@ -8,10 +8,17 @@ import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-    public static final Answer A3 = new Answer(UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents3");
-    public static final Answer A4 = new Answer(UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents4");
+    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, "Answers Contents1");
+    public static final Answer A2 = new Answer(UserTest.SANJIGI, "Answers Contents2");
+    public static final Answer A3 = new Answer(UserTest.SANJIGI, "Answers Contents3");
+    public static final Answer A4 = new Answer(UserTest.SANJIGI, "Answers Contents4");
+
+    static {
+        QuestionTest.Q1.addAnswer(A1);
+        QuestionTest.Q1.addAnswer(A2);
+        QuestionTest.Q2.addAnswer(A3);
+        QuestionTest.Q2.addAnswer(A4);
+    }
 
     @Test
     @DisplayName("질문자와 답변자가 동일한 경우 삭제 가능")

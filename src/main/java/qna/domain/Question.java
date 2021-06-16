@@ -96,16 +96,13 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void addAnswer(Answer answer) {
-        validateAnswer(answer);
-
-        this.answers.add(answer);
+    public boolean contains(Answer answer) {
+        return answers.contains(answer);
     }
 
-    private void validateAnswer(Answer answer) {
-        if (!answer.isAnswerOf(this)) {
-            throw new InvalidRelationException("본 질문과 연관관계가 설정되어 있지 않습니다.");
-        }
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+        answer.toQuestion(this);
     }
 
     public Answers getAnswers() {
