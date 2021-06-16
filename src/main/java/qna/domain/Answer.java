@@ -74,7 +74,7 @@ public class Answer extends BaseTimeEntity {
 
     private void validateQuestion(Question question) {
         if (Objects.isNull(question)) {
-            throw new IllegalArgumentException("null에 답변을 달 수 없습니다.");
+            throw new IllegalArgumentException("존재하지 않는 질문입니다.");
         }
     }
 

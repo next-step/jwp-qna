@@ -32,7 +32,7 @@ public class Answers {
 
     private void validateAnswer(Answer answer) {
         if (Objects.isNull(answer)) {
-            throw new IllegalArgumentException("null은 답변으로 추가할 수 없습니다.");
+            throw new IllegalArgumentException("등록 할 답변이 존재하지 않습니다.");
         }
     }
 }
