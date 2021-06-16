@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -17,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import qna.CannotDeleteException;
@@ -50,8 +49,8 @@ public class Question {
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User user;
 
-	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Answer> answers = new ArrayList<>();
+	@Embedded
+	private Answers answers = new Answers();
 
 	protected Question() {
 	}
@@ -111,24 +110,14 @@ public class Question {
 
 	private List<DeleteHistory> addDeleteHistory() {
 		List<DeleteHistory> deleteHistories = new ArrayList<>();
-		deleteHistories.add(
-			new DeleteHistory(ContentType.QUESTION, id, user, LocalDateTime.now()));
-
-		for (Answer answer : answers) {
-			answer.delete();
-			deleteHistories.add(
-				new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-		}
+		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, user, LocalDateTime.now()));
+		answers.addDeleteHistories(deleteHistories);
 
 		return deleteHistories;
 	}
 
 	private void validateAnswersWriter(User loginUser) throws CannotDeleteException {
-		for (Answer answer : answers) {
-			if (!answer.isOwner(loginUser)) {
-				throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-			}
-		}
+		answers.validateAnswersWriter(loginUser);
 	}
 
 	private void validateQuestionWriter(User loginUser) throws CannotDeleteException {
