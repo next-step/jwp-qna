@@ -1,7 +1,6 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -9,8 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import qna.CannotDeleteException;
 
 @DataJpaTest
 public class QuestionTest {
@@ -73,17 +70,6 @@ public class QuestionTest {
         User writer = userRepository.saveAndFlush(UserTest.JAVAJIGI);
         Question actual = Question.writeQuestion("question test title", "question test content", writer);
         return questionRepository.saveAndFlush(actual);
-    }
-
-    @Test
-    @DisplayName(value = "로그인 유저가 작성자가 아닌경우 CannotDeleteException 을 일으킨다")
-    void cannotDeleteExceptionWhenNotMatchWriter() {
-        User questionWriter = new User(100L, "question writer", "password", "dodo", "dodo@mail.com");
-        User loginUser = new User(101L, "login user", "password", "navi", "navi@mail.com");
-
-        Question question = Question.writeQuestion("title", "questions contents", questionWriter);
-
-        assertThrows(CannotDeleteException.class, ()-> question.convertDelete(loginUser));
     }
 
 }

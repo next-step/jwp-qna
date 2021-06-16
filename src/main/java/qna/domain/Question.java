@@ -2,7 +2,6 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -131,31 +130,26 @@ public class Question extends DateEntity {
                 '}';
     }
 
-    private boolean isAllAnswersBy(User loginUser) {
-        boolean result = true;
+    public boolean isAllAnswerOwner(User loginUser) {
         for (Answer answer : answers) {
-            result = answer.isOwner(loginUser) && result;
+            if (!answer.isOwner(loginUser)) {
+                return false;
+            }
         }
-        return result;
+        return true;
     }
 
-    public List<DeleteHistory> deleteAnswers(User loginUser) {
-        if (!isAllAnswersBy(loginUser)) {
-            throw new CannotDeleteException();
-        }
-        return answers.stream()
-            .map(Answer::convertDelete)
-            .collect(Collectors.toList());
+    private void deleteAnswers() {
+        answers.stream()
+            .forEach(Answer::delete);
     }
 
-    public List<DeleteHistory> convertDelete(User loginUser) {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException();
-        }
+    public void deleteRelated() {
         deleted = true;
-        List<DeleteHistory> deletedItem = new ArrayList<>();
-        deletedItem.add(new DeleteHistory(ContentType.QUESTION, id, writer));
-        deletedItem.addAll(deleteAnswers(loginUser));
-        return deletedItem;
+        deleteAnswers();
+    }
+
+    public boolean canDelete(User loginUser) {
+        return isOwner(loginUser) && isAllAnswerOwner(loginUser);
     }
 }

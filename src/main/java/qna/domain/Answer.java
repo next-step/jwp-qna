@@ -101,9 +101,8 @@ public class Answer extends DateEntity {
             '}';
     }
 
-    public DeleteHistory convertDelete() {
+    public void delete() {
         this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, writer);
     }
 
 }

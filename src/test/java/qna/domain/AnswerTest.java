@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import qna.CannotDeleteException;
-
 @DataJpaTest
 public class AnswerTest {
 	public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
@@ -72,16 +70,6 @@ public class AnswerTest {
 
 		Answer answer = new Answer(answerWriter, question, "answer contents");
 		assertThat(answer.isOwner(loginUser)).isFalse();
-	}
-
-	@Test
-	@DisplayName(value = "answer 를 삭제하면 delete history 를 produce 한다")
-	void produceDeleteHistory() {
-		User answerWriter = new User(100L, "answer writer", "password", "dodo", "dodo@mail.com");
-		Question question = new Question("title", "questions contents");
-		Answer answer = new Answer(100L, answerWriter, question, "answer contents");
-
-		assertThat(answer.convertDelete()).isEqualTo(new DeleteHistory(ContentType.ANSWER, 100L, answerWriter));
 	}
 
 }
