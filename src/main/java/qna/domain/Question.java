@@ -81,10 +81,8 @@ public class Question extends DateEntity {
         return this;
     }
 
-    public void isOwnerOrThrow(User writer) {
-        if (!this.writer.equals(writer)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     public void writeAnswer(Long id, String contents, User answerWriter) {
@@ -133,21 +131,27 @@ public class Question extends DateEntity {
                 '}';
     }
 
-    private void isAllAnswersBy(User loginUser) {
+    private boolean isAllAnswersBy(User loginUser) {
+        boolean result = true;
         for (Answer answer : answers) {
-            answer.isOwnerOrThrows(loginUser);
+            result = answer.isOwner(loginUser) && result;
         }
+        return result;
     }
 
     public List<DeleteHistory> deleteAnswers(User loginUser) {
-        isAllAnswersBy(loginUser);
+        if (!isAllAnswersBy(loginUser)) {
+            throw new CannotDeleteException();
+        }
         return answers.stream()
             .map(Answer::convertDelete)
             .collect(Collectors.toList());
     }
 
     public List<DeleteHistory> convertDelete(User loginUser) {
-        isOwnerOrThrow(loginUser);
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException();
+        }
         deleted = true;
         List<DeleteHistory> deletedItem = new ArrayList<>();
         deletedItem.add(new DeleteHistory(ContentType.QUESTION, id, writer));

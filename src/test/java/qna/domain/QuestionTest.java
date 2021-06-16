@@ -83,7 +83,7 @@ public class QuestionTest {
 
         Question question = Question.writeQuestion("title", "questions contents", questionWriter);
 
-        assertThrows(CannotDeleteException.class, ()-> question.isOwnerOrThrow(loginUser));
+        assertThrows(CannotDeleteException.class, ()-> question.convertDelete(loginUser));
     }
 
 }
