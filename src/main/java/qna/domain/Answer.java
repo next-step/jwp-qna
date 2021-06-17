@@ -51,9 +51,6 @@ public class Answer {
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
 	private User user;
 
-	// @OneToMany(cascade = CascadeType.PERSIST)
-	// @JoinColumn(name = "delete_history_id")
-	// private List<DeleteHistory> deleteHistories = new ArrayList<>();
 	@Embedded
 	private DeleteHistories deleteHistories = new DeleteHistories();
 

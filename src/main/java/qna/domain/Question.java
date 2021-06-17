@@ -52,9 +52,6 @@ public class Question {
 	@Embedded
 	private Answers answers = new Answers();
 
-	// @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
-	// @JoinColumn(name = "delete_history_id")
-	// private List<DeleteHistory> deleteHistories = new ArrayList<>();
 	@Embedded
 	private DeleteHistories deleteHistories = new DeleteHistories();
 
