@@ -2,14 +2,18 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.transaction.annotation.Transactional;
 
 @DataJpaTest
 public class QuestionTest {
@@ -22,35 +26,41 @@ public class QuestionTest {
 	@Autowired
 	UserRepository users;
 
-	@Autowired
-	private TestEntityManager testEntityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	@Transactional
+	public void execute() {
+
+	}
 
 	@BeforeEach
 	void setUp() {
-		answers.deleteAll();
-		answers.flush();
-		questions.deleteAll();
-		questions.flush();
-		users.deleteAll();
-		users.flush();
+		List<String> tableNames = Arrays.asList("answer", "delete_history", "question", "user");
 
-		testEntityManager.flush();
-		testEntityManager.clear();
+		entityManager.flush();
+		entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
+
+		for (String tableName : tableNames) {
+			entityManager.createNativeQuery("TRUNCATE TABLE " + tableName).executeUpdate();
+			entityManager.createNativeQuery("ALTER TABLE " + tableName + " ALTER COLUMN ID RESTART WITH 1")
+				.executeUpdate();
+		}
+
+		entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY TRUE").executeUpdate();
 	}
 
 	@Test
 	@DisplayName("질문 삭제 시 답변도 같이 삭제")
 	void question_deleted_then_answer_deleted() throws Exception {
 		User saveJavajigi = saveJavajigi();
-		Question saveQ1 = saveQ1(saveJavajigi());
+		Question saveQ1 = saveQ1(saveJavajigi);
 		Answer saveAnswer1 = saveAnswer1(saveJavajigi, saveQ1);
 		saveQ1.addAnswer(saveAnswer1);
 		questions.flush();
 
 		saveQ1.delete(saveJavajigi);
 		questions.flush();
-
-		Optional<Answer> answer = answers.findByIdAndDeletedFalse(saveAnswer1.getId());
 
 		assertThat(answers.findByIdAndDeletedFalse(saveAnswer1.getId()).isPresent()).isFalse();
 	}
@@ -59,12 +69,9 @@ public class QuestionTest {
 	@DisplayName("질문 삭제 시 답변이 없을 경우 삭제 가능")
 	void question_with_no_answer_can_be_deleted() throws Exception {
 		User saveJavajigi = saveJavajigi();
-		Question saveQ1 = saveQ1(saveJavajigi());
-
-		testEntityManager.flush();
-		testEntityManager.clear();
-
+		Question saveQ1 = saveQ1(saveJavajigi);
 		saveQ1.delete(saveJavajigi);
+		questions.flush();
 
 		assertThat(saveQ1.isDeleted());
 	}
@@ -73,13 +80,11 @@ public class QuestionTest {
 	@DisplayName("질문 삭제 시 답변 중에 작성자와 삭제하는 사람이 다른 답변 존재 경우 삭제 불가")
 	void answer_writer_and_deleter_must_be_same_person() {
 		User saveJavajigi = saveJavajigi();
-		User saveSanjiGi = saveSanjigi();
-		Question saveQ1 = saveQ1(saveJavajigi());
-		Answer answer = saveAnswer1(saveSanjiGi, saveQ1);
-		saveQ1.addAnswer(answer);
+		Question saveQ1 = saveQ1(saveJavajigi);
+		saveQ1.addAnswer(new Answer(saveJavajigi, saveQ1, "Answers Contents1"));
 
-		testEntityManager.flush();
-		testEntityManager.clear();
+		entityManager.flush();
+		entityManager.clear();
 
 		assertThatThrownBy(() -> saveQ1.delete(saveJavajigi));
 	}
@@ -89,12 +94,11 @@ public class QuestionTest {
 	void question_writer_and_deleter_must_be_same_person() {
 		User saveJavajigi = saveJavajigi();
 		User saveSanjiGi = saveSanjigi();
-		Question saveQ1 = saveQ1(saveJavajigi());
-		Answer answer = saveAnswer1(saveJavajigi, saveQ1);
-		saveQ1.addAnswer(answer);
+		Question saveQ1 = saveQ1(saveJavajigi);
+		saveQ1.addAnswer(new Answer(saveJavajigi, saveQ1, "Answers Contents1"));
 
-		testEntityManager.flush();
-		testEntityManager.clear();
+		entityManager.flush();
+		entityManager.clear();
 
 		assertThatThrownBy(() -> saveQ1.delete(saveSanjiGi));
 	}
@@ -103,14 +107,14 @@ public class QuestionTest {
 	@DisplayName("양방향 연관관계 확인")
 	void convenience_method_test() {
 		User saveJavajigi = saveJavajigi();
-		Question saveQ1 = saveQ1(saveJavajigi());
-		Answer answer = answers.save(new Answer(saveJavajigi, saveQ1, "Answers Contents1"));
+		Question saveQ1 = saveQ1(saveJavajigi);
+		Answer answer1 = new Answer(saveJavajigi, saveQ1, "Answers Contents1");
+		saveQ1.addAnswer(answer1);
 
-		testEntityManager.flush();
-		testEntityManager.clear();
+		questions.flush();
 
 		assertThat(questions.findAll().size()).isEqualTo(1);
-		assertThat(questions.findAll().get(0).isContained(answer)).isTrue();
+		assertThat(questions.findAll().get(0).isContained(answer1)).isTrue();
 	}
 
 	@Test
@@ -188,12 +192,12 @@ public class QuestionTest {
 	}
 
 	private User saveJavajigi() {
-		User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+		User JAVAJIGI = new User(null, "javajigi", "password", "name", "javajigi@slipp.net");
 		return users.save(JAVAJIGI);
 	}
 
 	private User saveSanjigi() {
-		User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+		User SANJIGI = new User(null, "sanjigi", "password", "name", "sanjigi@slipp.net");
 		return users.save(SANJIGI);
 	}
 
@@ -209,9 +213,5 @@ public class QuestionTest {
 
 	private Answer saveAnswer1(User user, Question question) {
 		return answers.save(new Answer(user, question, "Answers Contents1"));
-	}
-
-	private Answer saveAnswer2(User user, Question question) {
-		return answers.save(new Answer(user, question, "Answers Contents2"));
 	}
 }
