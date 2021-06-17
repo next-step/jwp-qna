@@ -45,6 +45,6 @@ public class AnswerRepositoryTest {
     @Test
     void findByQuestionId() {
         Answer answer = answerRepository.save(A1);
-        assertThat(answer.getQuestionId()).isEqualTo(A1.getQuestionId());
+        assertThat(answer.getQuestion()).isEqualTo(A1.getQuestion());
     }
 }
