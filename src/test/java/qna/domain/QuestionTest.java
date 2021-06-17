@@ -33,6 +33,22 @@ public class QuestionTest {
 		users.flush();
 
 		testEntityManager.flush();
+		testEntityManager.clear();
+	}
+
+	@Test
+	@DisplayName("질문 삭제 시 작성자와 삭제하는 사람이 다르면 삭제 불가")
+	void question_writer_and_deleter_must_be_same_person() {
+		User saveJavajigi = saveJavajigi();
+		User saveSanjiGi = saveSanjigi();
+		Question saveQ1 = saveQ1(saveJavajigi());
+		Answer answer = saveAnswer1(saveJavajigi, saveQ1);
+		saveQ1.addAnswer(answer);
+
+		testEntityManager.flush();
+		testEntityManager.clear();
+
+		assertThatThrownBy(() -> saveQ1.delete(saveSanjiGi));
 	}
 
 	@Test
@@ -42,6 +58,7 @@ public class QuestionTest {
 		Question saveQ1 = saveQ1(saveJavajigi());
 		Answer answer = answers.save(new Answer(saveJavajigi, saveQ1, "Answers Contents1"));
 
+		testEntityManager.flush();
 		testEntityManager.clear();
 
 		assertThat(questions.findAll().size()).isEqualTo(1);
