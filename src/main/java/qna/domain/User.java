@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -10,14 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-
 import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "user")
-public class User extends BaseEntity{
+public class User extends BaseTimeEntity {
 	public static final GuestUser GUEST_USER = new GuestUser();
 
 	@Id
