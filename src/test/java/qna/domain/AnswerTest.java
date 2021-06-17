@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import qna.CannotDeleteException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -50,8 +51,8 @@ public class AnswerTest {
         a2 = answerRepository.save(new Answer(sanjigi, q2, "Answers Contents2"));
     }
 
-    @DisplayName("save 확인")
     @Test
+    @DisplayName("save 확인")
     public void save() {
         assertAll(
                 () -> assertThat(a1.getId()).isNotNull(),
@@ -65,24 +66,32 @@ public class AnswerTest {
         );
     }
 
-    @DisplayName("findByIdAndDeletedFalse 확인")
     @Test
+    @DisplayName("findByIdAndDeletedFalse 확인")
     void findByIdAndDeletedFalse() {
-        a1.delete(true);
+        a1.delete(javajigi);
         Optional<Answer> answer = answerRepository.findByIdAndDeletedFalse(a1.getId());
         assertThatThrownBy(() -> answer.orElseThrow(NoSuchElementException::new))
                 .isInstanceOf(NoSuchElementException.class);
     }
 
-    @DisplayName("삭제되지 않은 답변 목록을 질문 아이디로 가져오는지 확인 + answerFindByQuestionId")
     @Test
+    @DisplayName("답변 삭제 - 작성자 동일, 삭제되지 않은 답변 목록을 질문 아이디로 가져오는지 확인")
     void findByQuestionIdAndDeletedFalse() {
         List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q2.getId());
-        assertThat(answerList.size()).isEqualTo(1);
+        assertThat(answerList).hasSize(1);
 
-        a2.delete(true);
+        a2.delete(sanjigi);
 
         answerList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q2.getId());
         assertThat(answerList).hasSize(0);
+    }
+
+    @Test
+    @DisplayName("답변 삭제 - 작성자가 다른 경우")
+    public void deleteDiffUser() {
+        assertThatThrownBy(() -> a2.delete(javajigi))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }

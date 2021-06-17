@@ -22,7 +22,7 @@ public class DeleteHistory {
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime createDate = LocalDateTime.now();
+    private final LocalDateTime createDate = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
@@ -31,11 +31,10 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deleter, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deleter) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deleter = deleter;
-        this.createDate = createDate;
     }
 
     @Override
