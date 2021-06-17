@@ -37,6 +37,20 @@ public class QuestionTest {
 	}
 
 	@Test
+	@DisplayName("질문 삭제 시 답변이 없을 경우 삭제 가능")
+	void question_with_no_answer_can_be_deleted() throws Exception {
+		User saveJavajigi = saveJavajigi();
+		Question saveQ1 = saveQ1(saveJavajigi());
+
+		testEntityManager.flush();
+		testEntityManager.clear();
+
+		saveQ1.delete(saveJavajigi);
+
+		assertThat(saveQ1.isDeleted());
+	}
+
+	@Test
 	@DisplayName("질문 삭제 시 답변 중에 작성자와 삭제하는 사람이 다른 답변 존재 경우 삭제 불가")
 	void answer_writer_and_deleter_must_be_same_person() {
 		User saveJavajigi = saveJavajigi();
