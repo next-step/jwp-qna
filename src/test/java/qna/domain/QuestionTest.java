@@ -37,6 +37,21 @@ public class QuestionTest {
 	}
 
 	@Test
+	@DisplayName("질문 삭제 시 답변 중에 작성자와 삭제하는 사람이 다른 답변 존재 경우 삭제 불가")
+	void answer_writer_and_deleter_must_be_same_person() {
+		User saveJavajigi = saveJavajigi();
+		User saveSanjiGi = saveSanjigi();
+		Question saveQ1 = saveQ1(saveJavajigi());
+		Answer answer = saveAnswer1(saveSanjiGi, saveQ1);
+		saveQ1.addAnswer(answer);
+
+		testEntityManager.flush();
+		testEntityManager.clear();
+
+		assertThatThrownBy(() -> saveQ1.delete(saveJavajigi));
+	}
+
+	@Test
 	@DisplayName("질문 삭제 시 작성자와 삭제하는 사람이 다르면 삭제 불가")
 	void question_writer_and_deleter_must_be_same_person() {
 		User saveJavajigi = saveJavajigi();
