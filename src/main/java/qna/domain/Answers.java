@@ -33,7 +33,7 @@ public class Answers {
 		answers.stream().forEach(answer -> answer.delete(loginUser));
 	}
 
-	public List<DeleteHistory> getDeleteHistorues() {
+	public List<DeleteHistory> getDeleteHistories() {
 		List<DeleteHistory> deleteHistories = answers.stream()
 			.flatMap(x -> x.getDeleteHistories().stream())
 			.collect(Collectors.toList());

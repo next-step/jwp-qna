@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -17,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import qna.NotFoundException;
@@ -52,9 +51,11 @@ public class Answer {
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
 	private User user;
 
-	@OneToMany(cascade = CascadeType.PERSIST)
-	@JoinColumn(name = "delete_history_id")
-	private List<DeleteHistory> deleteHistories = new ArrayList<>();
+	// @OneToMany(cascade = CascadeType.PERSIST)
+	// @JoinColumn(name = "delete_history_id")
+	// private List<DeleteHistory> deleteHistories = new ArrayList<>();
+	@Embedded
+	private DeleteHistories deleteHistories = new DeleteHistories();
 
 	protected Answer() {
 	}
@@ -109,9 +110,7 @@ public class Answer {
 	}
 
 	private void addDeleteHistory() {
-		List<DeleteHistory> deleteHistories = new ArrayList<>();
-		deleteHistories.add(new DeleteHistory(ContentType.ANSWER, id, user, LocalDateTime.now()));
-		this.deleteHistories.addAll(deleteHistories);
+		this.deleteHistories.add(new DeleteHistory(ContentType.ANSWER, id, user, LocalDateTime.now()));
 	}
 
 	public void delete() {
@@ -150,7 +149,7 @@ public class Answer {
 
 	public List<DeleteHistory> getDeleteHistories() {
 		List<DeleteHistory> deleteHistories = new ArrayList<>();
-		deleteHistories.addAll(this.deleteHistories);
+		deleteHistories.addAll(this.deleteHistories.getList());
 		return deleteHistories;
 	}
 }
