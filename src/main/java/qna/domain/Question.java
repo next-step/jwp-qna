@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -17,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import qna.CannotDeleteException;
@@ -51,6 +53,10 @@ public class Question {
 
 	@Embedded
 	private Answers answers = new Answers();
+
+	@OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
+	@JoinColumn(name = "delete_history_id")
+	private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
 	protected Question() {
 	}
@@ -100,21 +106,25 @@ public class Question {
 		return answers.contains(answer);
 	}
 
-	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+	public void delete(User loginUser) throws CannotDeleteException {
 		validateQuestionWriter(loginUser);
 		validateAnswersWriter(loginUser);
-
-		answers.delete();
 		delete();
-		return addDeleteHistory();
+		answers.delete(loginUser);
+		addDeleteHistory(loginUser);
 	}
 
-	private List<DeleteHistory> addDeleteHistory() {
+	public List<DeleteHistory> getDeleteHistories() {
 		List<DeleteHistory> deleteHistories = new ArrayList<>();
-		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, user, LocalDateTime.now()));
-		answers.addDeleteHistories(deleteHistories);
-
+		deleteHistories.addAll(this.deleteHistories);
+		deleteHistories.addAll(answers.getDeleteHistorues());
 		return deleteHistories;
+	}
+
+	private void addDeleteHistory(User loginUser) {
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
+		this.deleteHistories.addAll(deleteHistories);
 	}
 
 	private void validateAnswersWriter(User loginUser) throws CannotDeleteException {

@@ -81,7 +81,7 @@ public class QuestionTest {
 	void answer_writer_and_deleter_must_be_same_person() {
 		User saveJavajigi = saveJavajigi();
 		Question saveQ1 = saveQ1(saveJavajigi);
-		saveQ1.addAnswer(new Answer(saveJavajigi, saveQ1, "Answers Contents1"));
+		saveQ1.addAnswer(new Answer(saveSanjigi(), saveQ1, "Answers Contents1"));
 
 		entityManager.flush();
 		entityManager.clear();

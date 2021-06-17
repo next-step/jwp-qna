@@ -1,9 +1,12 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import qna.NotFoundException;
@@ -47,6 +51,10 @@ public class Answer {
 	@ManyToOne
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
 	private User user;
+
+	@OneToMany(cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "delete_history_id")
+	private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
 	protected Answer() {
 	}
@@ -95,9 +103,19 @@ public class Answer {
 		return deleted;
 	}
 
-	public DeleteHistory delete() {
+	public void delete(User loginUser) {
+		delete();
+		addDeleteHistory();
+	}
+
+	private void addDeleteHistory() {
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		deleteHistories.add(new DeleteHistory(ContentType.ANSWER, id, user, LocalDateTime.now()));
+		this.deleteHistories.addAll(deleteHistories);
+	}
+
+	public void delete() {
 		this.deleted = true;
-		return new DeleteHistory(ContentType.ANSWER, id, user, LocalDateTime.now());
 	}
 
 	@Override
@@ -128,5 +146,11 @@ public class Answer {
 			", updatedAt=" + updatedAt +
 			", user=" + user +
 			'}';
+	}
+
+	public List<DeleteHistory> getDeleteHistories() {
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		deleteHistories.addAll(this.deleteHistories);
+		return deleteHistories;
 	}
 }

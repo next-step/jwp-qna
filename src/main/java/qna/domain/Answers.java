@@ -2,7 +2,6 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -23,17 +22,22 @@ public class Answers {
 		return answers.contains(answer);
 	}
 
-	public void addDeleteHistories(List<DeleteHistory> deleteHistories) {
-		deleteHistories.addAll(answers.stream().map(answer -> answer.delete()).collect(Collectors.toList()));
-	}
-
 	public void validateAnswersWriter(User loginUser) throws CannotDeleteException {
 		if (answers.stream().anyMatch(answer -> !answer.isOwner(loginUser))) {
 			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 		}
 	}
 
-	public void delete() {
-		answers.stream().forEach(answer -> answer.delete());
+	public void delete(User loginUser) {
+		answers.stream().forEach(answer -> answer.delete(loginUser));
+	}
+
+	public List<DeleteHistory> getDeleteHistorues() {
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		for (Answer answer : answers) {
+			deleteHistories.addAll(answer.getDeleteHistories());
+		}
+
+		return deleteHistories;
 	}
 }
