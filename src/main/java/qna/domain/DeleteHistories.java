@@ -10,7 +10,7 @@ import javax.persistence.OneToMany;
 
 @Embeddable
 public class DeleteHistories {
-	@OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "delete_history_id")
 	private List<DeleteHistory> deleteHistories = new ArrayList<>();
 

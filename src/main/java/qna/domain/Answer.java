@@ -114,6 +114,12 @@ public class Answer {
 		this.deleted = true;
 	}
 
+	public List<DeleteHistory> getDeleteHistories() {
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		deleteHistories.addAll(this.deleteHistories.getList());
+		return deleteHistories;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -142,11 +148,5 @@ public class Answer {
 			", updatedAt=" + updatedAt +
 			", user=" + user +
 			'}';
-	}
-
-	public List<DeleteHistory> getDeleteHistories() {
-		List<DeleteHistory> deleteHistories = new ArrayList<>();
-		deleteHistories.addAll(this.deleteHistories.getList());
-		return deleteHistories;
 	}
 }
