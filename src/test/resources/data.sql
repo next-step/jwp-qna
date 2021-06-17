@@ -20,3 +20,7 @@ insert into `answer` (id, contents, question_id, writer_id, deleted, created_at,
 insert into `answer` (id, contents, question_id, writer_id, deleted, created_at, updated_at) values (6, 'contents6', 5, 6, 0, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
 insert into `answer` (id, contents, question_id, writer_id, deleted, created_at, updated_at) values (7, 'contents7', 5, 7, 0, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
 insert into `answer` (id, contents, question_id, writer_id, deleted, created_at, updated_at) values (8, 'contents8', 5, 8, 0, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+
+
+insert into `answer` (id, contents, question_id, writer_id, deleted, created_at, updated_at) values (9, 'answer 1', 9, 5, 0, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into `answer` (id, contents, question_id, writer_id, deleted, created_at, updated_at) values (10, 'answer 2', 9, 5, 0, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());

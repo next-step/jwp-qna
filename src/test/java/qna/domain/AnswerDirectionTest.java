@@ -22,16 +22,22 @@ public class AnswerDirectionTest {
     @Test
     @DisplayName(value = "bi direction select")
     void biDirectionSelect() {
-        System.out.println("start !!!");
         Question question = questionRepository.findById(5L).get();
-        for (Answer answer : question.getAnswers()) {
-            System.out.println(answer);
-        }
-
         User writer = userRepository.findById(8L).get();
 
-        question.addAnswer(new Answer(writer, question, "new answer"));
+        question.writeAnswer("new answer", writer);
         questionRepository.save(question);
-        assertThat(answerRepository.count()).isEqualTo(9);
+        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(5L).size()).isEqualTo(9);
+    }
+
+    @Test
+    @DisplayName(value = "question 에서 answer 의 value 를 갱신하면 answer 도 변경된다")
+    void updateAnswerInQuestion() {
+        Question question = questionRepository.findById(8L).get();
+        question.deleteRelated();
+
+        questionRepository.save(question);
+        question.getAnswers().stream()
+            .forEach(answer -> assertThat(answer.isDeleted()).isTrue());
     }
 }

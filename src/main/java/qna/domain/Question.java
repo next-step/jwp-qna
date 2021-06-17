@@ -17,6 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
+
 /**
  * create table question
  * (
@@ -55,6 +57,10 @@ public class Question extends DateEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
+    public static Question writeQuestion(String title, String contents, User writer) {
+        return new Question(title, contents).writeBy(writer);
+    }
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }
@@ -65,7 +71,7 @@ public class Question extends DateEntity {
         this.contents = contents;
     }
 
-    public Question() {
+    protected Question() {
 
     }
 
@@ -78,8 +84,12 @@ public class Question extends DateEntity {
         return this.writer.equals(writer);
     }
 
-    public void addAnswer(Answer answer) {
-        this.answers.add(answer);
+    public void writeAnswer(Long id, String contents, User answerWriter) {
+        this.answers.add(new Answer(id, answerWriter, this, contents));
+    }
+
+    public void writeAnswer(String contents, User answerWriter) {
+        this.answers.add(new Answer(answerWriter, this, contents));
     }
 
     public Long getId() {
@@ -98,10 +108,6 @@ public class Question extends DateEntity {
         return contents;
     }
 
-    public void writeContents(String contents) {
-        this.contents = contents;
-    }
-
     public List<Answer> getAnswers() {
         return answers;
     }
@@ -114,18 +120,36 @@ public class Question extends DateEntity {
         return deleted;
     }
 
-    public void delete() {
-        this.deleted = true;
-    }
-
     @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public boolean isAllAnswerOwner(User loginUser) {
+        for (Answer answer : answers) {
+            if (!answer.isOwner(loginUser)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void deleteAnswers() {
+        answers.stream()
+            .forEach(Answer::delete);
+    }
+
+    public void deleteRelated() {
+        deleted = true;
+        deleteAnswers();
+    }
+
+    public boolean canDelete(User loginUser) {
+        return isOwner(loginUser) && isAllAnswerOwner(loginUser);
     }
 }

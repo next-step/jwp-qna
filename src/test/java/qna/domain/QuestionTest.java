@@ -55,7 +55,7 @@ public class QuestionTest {
     void selectWhereNotDelete() {
         insertQuestion();
         List<Question> notDeletedQuestions = questionRepository.findByDeletedFalse();
-        assertThat(notDeletedQuestions.size()).isEqualTo(1);
+        assertThat(notDeletedQuestions.size()).isEqualTo(6);
     }
 
     @Test
@@ -67,8 +67,8 @@ public class QuestionTest {
     }
 
     private Question insertQuestion() {
-        User user = userRepository.saveAndFlush(UserTest.JAVAJIGI);
-        Question actual = new Question("question test title", "question test content").writeBy(user);
+        User writer = userRepository.saveAndFlush(UserTest.JAVAJIGI);
+        Question actual = Question.writeQuestion("question test title", "question test content", writer);
         return questionRepository.saveAndFlush(actual);
     }
 

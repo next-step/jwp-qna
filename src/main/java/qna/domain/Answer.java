@@ -14,6 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -39,7 +40,7 @@ public class Answer extends DateEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    public Answer() {
+    protected Answer() {
     }
 
     public Answer(User writer, Question question, String contents) {
@@ -66,15 +67,6 @@ public class Answer extends DateEntity {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
-        if (Objects.isNull(question) || Objects.isNull(question.getId()) || question.equals(this.question)) {
-            return;
-        }
-
-        this.question = question;
-        this.question.addAnswer(this);
-    }
-
     public Long getId() {
         return id;
     }
@@ -99,18 +91,18 @@ public class Answer extends DateEntity {
         return deleted;
     }
 
-    public void delete() {
-        this.deleted = true;
-    }
-
     @Override
     public String toString() {
         return "Answer{" +
             "id=" + id +
-            ", writer=" + writer +
             ", question=" + question +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';
     }
+
+    public void delete() {
+        this.deleted = true;
+    }
+
 }

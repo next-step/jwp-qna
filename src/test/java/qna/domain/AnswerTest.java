@@ -61,4 +61,15 @@ public class AnswerTest {
 		return answerRepository.saveAndFlush(answer);
 	}
 
+	@Test
+	@DisplayName(value = "answer 의 작성자와 삭제를 요청한 로그인 유저가 다를 경우 false 를 반환한다")
+	void cannotDeleteException() {
+		User answerWriter = new User(100L, "question writer", "password", "dodo", "dodo@mail.com");
+		User loginUser = new User(101L, "login user", "password", "navi", "navi@mail.com");
+		Question question = new Question("title", "questions contents");
+
+		Answer answer = new Answer(answerWriter, question, "answer contents");
+		assertThat(answer.isOwner(loginUser)).isFalse();
+	}
+
 }
