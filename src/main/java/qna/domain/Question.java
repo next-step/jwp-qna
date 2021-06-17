@@ -104,6 +104,7 @@ public class Question {
 		validateQuestionWriter(loginUser);
 		validateAnswersWriter(loginUser);
 
+		answers.delete();
 		delete();
 		return addDeleteHistory();
 	}

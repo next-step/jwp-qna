@@ -2,6 +2,8 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,23 @@ public class QuestionTest {
 
 		testEntityManager.flush();
 		testEntityManager.clear();
+	}
+
+	@Test
+	@DisplayName("질문 삭제 시 답변도 같이 삭제")
+	void question_deleted_then_answer_deleted() throws Exception {
+		User saveJavajigi = saveJavajigi();
+		Question saveQ1 = saveQ1(saveJavajigi());
+		Answer saveAnswer1 = saveAnswer1(saveJavajigi, saveQ1);
+		saveQ1.addAnswer(saveAnswer1);
+		questions.flush();
+
+		saveQ1.delete(saveJavajigi);
+		questions.flush();
+
+		Optional<Answer> answer = answers.findByIdAndDeletedFalse(saveAnswer1.getId());
+
+		assertThat(answers.findByIdAndDeletedFalse(saveAnswer1.getId()).isPresent()).isFalse();
 	}
 
 	@Test
