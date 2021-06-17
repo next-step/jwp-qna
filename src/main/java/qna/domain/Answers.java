@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -33,10 +34,9 @@ public class Answers {
 	}
 
 	public List<DeleteHistory> getDeleteHistorues() {
-		List<DeleteHistory> deleteHistories = new ArrayList<>();
-		for (Answer answer : answers) {
-			deleteHistories.addAll(answer.getDeleteHistories());
-		}
+		List<DeleteHistory> deleteHistories = answers.stream()
+			.flatMap(x -> x.getDeleteHistories().stream())
+			.collect(Collectors.toList());
 
 		return deleteHistories;
 	}
