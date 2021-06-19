@@ -66,10 +66,6 @@ public class Answer extends UpdatableEntity {
         if (!isOwner(loginUser)) {
             throw new AnswerOwnerNotMatchedException();
         }
-        delete();
-    }
-
-    private void delete() {
         this.deleted = true;
     }
 

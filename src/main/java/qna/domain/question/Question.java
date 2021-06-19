@@ -15,7 +15,7 @@ import javax.persistence.Transient;
 
 import qna.domain.UpdatableEntity;
 import qna.domain.User;
-import qna.domain.exception.QuestionNotDeletedException;
+import qna.domain.exception.question.QuestionNotDeletedException;
 import qna.domain.exception.question.AnswerOwnerNotMatchedException;
 import qna.domain.exception.question.QuestionOwnerNotMatchedException;
 import qna.domain.history.DeleteHistoryList;
@@ -34,7 +34,7 @@ public class Question extends UpdatableEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
     private final List<Answer> answers = new ArrayList<>();
 
     @Transient
@@ -68,14 +68,16 @@ public class Question extends UpdatableEntity {
         if (!this.isOwner(loginUser)) {
             throw new QuestionOwnerNotMatchedException();
         }
-        this.answerList.deleteAllBy(loginUser);
         this.deleted = true;
+        DeleteHistoryList deletedAnswers = this.answerList.deleteAllBy(loginUser);
+        DeleteHistoryList deletedQuestion;
         try {
-            return new DeleteHistoryList(this);
+            deletedQuestion = new DeleteHistoryList(this);
         } catch (QuestionNotDeletedException e) {
             // 발생하지 않으므로 RuntimeException 적용.
             throw new RuntimeException(e);
         }
+        return new DeleteHistoryList(deletedQuestion, deletedAnswers);
     }
 
     public Answer addAnswer(Answer answer) {
