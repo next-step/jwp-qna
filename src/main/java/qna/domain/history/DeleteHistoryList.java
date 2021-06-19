@@ -6,7 +6,6 @@ import java.util.List;
 
 import qna.domain.DeleteHistory;
 import qna.domain.question.Answer;
-import qna.domain.question.AnswerList;
 import qna.domain.question.Question;
 
 /**
@@ -17,9 +16,9 @@ public class DeleteHistoryList {
 
 	private final List<DeleteHistory> histories = new ArrayList<>();
 
-	public void addQuestionHistory(Question question, AnswerList deletedAnswers) {
+	public void addQuestionHistory(Question question) {
 		histories.add(new DeleteHistory(question));
-		histories.addAll(deletedAnswers.mapToDeleteHistoryList(this::answerToHistory));
+		histories.addAll(question.answers().mapToDeleteHistoryList(this::answerToHistory));
 	}
 
 	private DeleteHistory answerToHistory(Answer answer) {

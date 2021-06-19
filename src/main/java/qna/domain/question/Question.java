@@ -60,15 +60,14 @@ public class Question extends UpdatableEntity {
         return deleted;
     }
 
-    public AnswerList deleteBy(User loginUser) throws
+    public void deleteBy(User loginUser) throws
             QuestionOwnerNotMatchedException,
             AnswerOwnerNotMatchedException {
         if (!this.isOwner(loginUser)) {
             throw new QuestionOwnerNotMatchedException();
         }
-        AnswerList answerList = this.answerList.deleteAllBy(loginUser);
-        delete();
-        return answerList;
+        this.answerList.deleteAllBy(loginUser);
+        this.deleted = true;
     }
 
     public Answer addAnswer(Answer answer) {
@@ -81,8 +80,8 @@ public class Question extends UpdatableEntity {
         return addAnswer(answer);
     }
 
-    private void delete() {
-        this.deleted = true;
+    public AnswerList answers() {
+        return this.answerList;
     }
 
     @Override
