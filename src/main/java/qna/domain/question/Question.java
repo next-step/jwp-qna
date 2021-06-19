@@ -15,10 +15,10 @@ import javax.persistence.Transient;
 
 import qna.domain.UpdatableEntity;
 import qna.domain.User;
-import qna.domain.exception.question.QuestionNotDeletedException;
 import qna.domain.exception.question.AnswerOwnerNotMatchedException;
+import qna.domain.exception.question.QuestionNotDeletedException;
 import qna.domain.exception.question.QuestionOwnerNotMatchedException;
-import qna.domain.history.DeleteHistoryList;
+import qna.domain.history.DeleteHistories;
 
 @Entity
 @Table
@@ -38,7 +38,7 @@ public class Question extends UpdatableEntity {
     private final List<Answer> answers = new ArrayList<>();
 
     @Transient
-    private final AnswerList answerList = new AnswerList(answers);
+    private final Answers answersWrapped = new Answers(answers);
 
     private boolean deleted = false;
 
@@ -62,22 +62,22 @@ public class Question extends UpdatableEntity {
         return deleted;
     }
 
-    public DeleteHistoryList deleteBy(User loginUser) throws
+    public DeleteHistories deleteBy(User loginUser) throws
             QuestionOwnerNotMatchedException,
             AnswerOwnerNotMatchedException {
         if (!this.isOwner(loginUser)) {
             throw new QuestionOwnerNotMatchedException();
         }
         this.deleted = true;
-        DeleteHistoryList deletedAnswers = this.answerList.deleteAllBy(loginUser);
-        DeleteHistoryList deletedQuestion;
+        DeleteHistories deletedAnswers = answers().deleteAllBy(loginUser);
+        DeleteHistories deletedQuestion;
         try {
-            deletedQuestion = new DeleteHistoryList(this);
+            deletedQuestion = new DeleteHistories(this);
         } catch (QuestionNotDeletedException e) {
             // 발생하지 않으므로 RuntimeException 적용.
             throw new RuntimeException(e);
         }
-        return new DeleteHistoryList(deletedQuestion, deletedAnswers);
+        return new DeleteHistories(deletedQuestion, deletedAnswers);
     }
 
     public Answer addAnswer(Answer answer) {
@@ -90,8 +90,8 @@ public class Question extends UpdatableEntity {
         return addAnswer(answer);
     }
 
-    public AnswerList answers() {
-        return this.answerList;
+    public Answers answers() {
+        return this.answersWrapped;
     }
 
     @Override

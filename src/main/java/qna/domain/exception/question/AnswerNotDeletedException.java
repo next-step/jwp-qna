@@ -1,13 +1,13 @@
 package qna.domain.exception.question;
 
 import qna.domain.exception.DomainException;
-import qna.domain.question.AnswerList;
+import qna.domain.question.Answers;
 
 public class AnswerNotDeletedException extends DomainException {
 
-	private final AnswerList answerList;
+	private final Answers answers;
 
-	public AnswerNotDeletedException(AnswerList answerList) {
-		this.answerList = answerList;
+	public AnswerNotDeletedException(Answers answers) {
+		this.answers = answers;
 	}
 }

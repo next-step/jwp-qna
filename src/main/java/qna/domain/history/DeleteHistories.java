@@ -2,45 +2,45 @@ package qna.domain.history;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import qna.domain.DeleteHistory;
 import qna.domain.exception.question.AnswerNotDeletedException;
 import qna.domain.exception.question.QuestionNotDeletedException;
 import qna.domain.question.Answer;
-import qna.domain.question.AnswerList;
+import qna.domain.question.Answers;
 import qna.domain.question.Question;
 
 /**
  *
  * @author heetaek.kim
  */
-public class DeleteHistoryList {
+public class DeleteHistories {
 
-	private final List<DeleteHistory> histories = new ArrayList<>();
+	private final Collection<DeleteHistory> histories = new ArrayList<>();
 
-	public DeleteHistoryList(Question question) throws QuestionNotDeletedException {
+	public DeleteHistories(Question question) throws QuestionNotDeletedException {
 		if (!question.isDeleted()) {
 			throw new QuestionNotDeletedException(question);
 		}
 		histories.add(new DeleteHistory(question));
 	}
 
-	public DeleteHistoryList(AnswerList answerList) throws AnswerNotDeletedException {
-		if (answerList.hasUndeleted()) {
-			throw new AnswerNotDeletedException(answerList);
+	public DeleteHistories(Answers answers) throws AnswerNotDeletedException {
+		if (answers.hasUndeleted()) {
+			throw new AnswerNotDeletedException(answers);
 		}
-		histories.addAll(answerList.mapToDeleteHistoryList(this::answerToHistory));
+		histories.addAll(answers.mapToDeleteHistories(this::answerToHistory));
 	}
 
 	/**
 	 * merge list.
 	 */
-	public DeleteHistoryList(DeleteHistoryList... lists) {
+	public DeleteHistories(DeleteHistories... lists) {
 		Arrays.stream(lists)
 			.map(list -> list.histories)
-			.flatMap(List::stream)
+			.flatMap(Collection::stream)
 			.forEach(histories::add);
 	}
 
@@ -48,7 +48,7 @@ public class DeleteHistoryList {
 		return new DeleteHistory(answer);
 	}
 
-	public List<DeleteHistory> toList() {
-		return Collections.unmodifiableList(histories);
+	public Collection<DeleteHistory> toCollection() {
+		return Collections.unmodifiableCollection(histories);
 	}
 }

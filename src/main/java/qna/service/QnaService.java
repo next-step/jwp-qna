@@ -10,7 +10,7 @@ import qna.NotFoundException;
 import qna.domain.User;
 import qna.domain.exception.question.AnswerOwnerNotMatchedException;
 import qna.domain.exception.question.QuestionOwnerNotMatchedException;
-import qna.domain.history.DeleteHistoryList;
+import qna.domain.history.DeleteHistories;
 import qna.domain.question.Question;
 import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
@@ -38,7 +38,7 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-        DeleteHistoryList deleteHistories;
+        DeleteHistories deleteHistories;
         try {
             deleteHistories = question.deleteBy(loginUser);
         } catch (QuestionOwnerNotMatchedException e) {
@@ -48,6 +48,6 @@ public class QnaService {
         }
 
         questionRepository.delete(question);
-        deleteHistoryService.saveAll(deleteHistories.toList());
+        deleteHistoryService.saveAll(deleteHistories.toCollection());
     }
 }
