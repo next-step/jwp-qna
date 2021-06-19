@@ -62,17 +62,6 @@ public class Answer extends UpdatableEntity {
         return deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-            "id=" + id +
-            ", writerId=" + writer.getId() +
-            ", questionId=" + question.getId() +
-            ", contents='" + contents + '\'' +
-            ", deleted=" + deleted +
-            '}';
-    }
-
     public void deleteBy(User loginUser) throws AnswerOwnerNotMatchedException {
         if (!isOwner(loginUser)) {
             throw new AnswerOwnerNotMatchedException();
@@ -82,5 +71,16 @@ public class Answer extends UpdatableEntity {
 
     private void delete() {
         this.deleted = true;
+    }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+            "id=" + id +
+            ", writerId=" + writer.getId() +
+            ", questionId=" + question.getId() +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            '}';
     }
 }
