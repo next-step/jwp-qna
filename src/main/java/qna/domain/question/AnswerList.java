@@ -30,12 +30,13 @@ public final class AnswerList {
 	/**
 	 * @throws AnswerOwnerNotMatchedException 삭제하는 사용자가 권한이 없을 경우 발생.
 	 */
-	public void deleteAllBy(User deleteBy) throws AnswerOwnerNotMatchedException {
+	public List<Answer> deleteAllBy(User deleteBy) throws AnswerOwnerNotMatchedException {
 		List<Answer> deleted = new ArrayList<>();
 		for (Answer answer : answers) {
 			answer.deleteBy(deleteBy);
 			deleted.add(answer);
 		}
 		answers.removeAll(deleted);
+		return deleted;
 	}
 }

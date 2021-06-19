@@ -11,7 +11,6 @@ import qna.domain.User;
 import qna.domain.exception.question.AnswerOwnerNotMatchedException;
 import qna.domain.exception.question.QuestionOwnerNotMatchedException;
 import qna.domain.history.DeleteHistoryList;
-import qna.domain.question.AnswerList;
 import qna.domain.question.Question;
 import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
@@ -39,16 +38,14 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
+        DeleteHistoryList deleteHistories;
         try {
-            question.deleteBy(loginUser);
+            deleteHistories = question.deleteBy(loginUser);
         } catch (QuestionOwnerNotMatchedException e) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.", e);
         } catch (AnswerOwnerNotMatchedException e) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.", e);
         }
-
-        DeleteHistoryList deleteHistories = new DeleteHistoryList();
-        deleteHistories.addQuestionHistory(question);
 
         questionRepository.delete(question);
         deleteHistoryService.saveAll(deleteHistories.toList());

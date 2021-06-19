@@ -15,8 +15,10 @@ import javax.persistence.Transient;
 
 import qna.domain.UpdatableEntity;
 import qna.domain.User;
+import qna.domain.exception.QuestionNotDeletedException;
 import qna.domain.exception.question.AnswerOwnerNotMatchedException;
 import qna.domain.exception.question.QuestionOwnerNotMatchedException;
+import qna.domain.history.DeleteHistoryList;
 
 @Entity
 @Table
@@ -60,7 +62,7 @@ public class Question extends UpdatableEntity {
         return deleted;
     }
 
-    public void deleteBy(User loginUser) throws
+    public DeleteHistoryList deleteBy(User loginUser) throws
             QuestionOwnerNotMatchedException,
             AnswerOwnerNotMatchedException {
         if (!this.isOwner(loginUser)) {
@@ -68,6 +70,12 @@ public class Question extends UpdatableEntity {
         }
         this.answerList.deleteAllBy(loginUser);
         this.deleted = true;
+        try {
+            return new DeleteHistoryList(this);
+        } catch (QuestionNotDeletedException e) {
+            // 발생하지 않으므로 RuntimeException 적용.
+            throw new RuntimeException(e);
+        }
     }
 
     public Answer addAnswer(Answer answer) {

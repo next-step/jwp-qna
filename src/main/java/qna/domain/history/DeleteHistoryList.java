@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import qna.domain.DeleteHistory;
+import qna.domain.exception.QuestionNotDeletedException;
 import qna.domain.question.Answer;
 import qna.domain.question.Question;
 
@@ -16,7 +17,10 @@ public class DeleteHistoryList {
 
 	private final List<DeleteHistory> histories = new ArrayList<>();
 
-	public void addQuestionHistory(Question question) {
+	public DeleteHistoryList(Question question) throws QuestionNotDeletedException {
+		if (!question.isDeleted()) {
+			throw new QuestionNotDeletedException(question);
+		}
 		histories.add(new DeleteHistory(question));
 		histories.addAll(question.answers().mapToDeleteHistoryList(this::answerToHistory));
 	}
