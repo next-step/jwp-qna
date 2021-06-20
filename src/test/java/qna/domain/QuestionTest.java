@@ -5,7 +5,6 @@ public class QuestionTest {
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     static {
-        Q1.setDeleted(false);
-        Q2.setDeleted(true);
+        Q2.delete();
     }
 }

@@ -18,32 +18,40 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questions;
 
-//    private Question questionResult1;
-//    private Question questionResult2;
+    @Autowired
+    private UserRepository users;
+
+    private User user1;
+    private User user2;
+    private Question question1;
+    private Question question2;
 
     @BeforeEach
     void setUp() {
-//        questionResult1 = questions.save(QuestionTest.Q1);
-//        questionResult2 = questions.save(QuestionTest.Q2);
+        user1 = users.save(UserTest.SANJIGI);
+        user2 = users.save(UserTest.JAVAJIGI);
+        question1 = QuestionTest.Q1.writeBy(user1);
+        question2 = QuestionTest.Q2.writeBy(user2);
     }
 
     @AfterEach
     void tearDown() {
         questions.deleteAll();
+        users.deleteAll();
     }
 
     @DisplayName("삭제 기록이 잘 저장되는지 체크")
     @Test
     void saveTest(){
-        Question actual = questions.save(QuestionTest.Q1);
+        Question actual = questions.save(question1);
         assertThat(actual.getId()).isNotNull();
     }
 
     @DisplayName("삭제한 질문은 리스트에 포함되지않는지 체크")
     @Test
     void findByDeletedFalseTest(){
-        Question notDeletedQuestion = questions.save(QuestionTest.Q1);
-        Question deletedQuestion = questions.save(QuestionTest.Q2);
+        Question notDeletedQuestion = questions.save(question1);
+        Question deletedQuestion = questions.save(question2);
         List<Question> actual = questions.findByDeletedFalse();
         assertThat(actual).contains(notDeletedQuestion);
         assertThat(actual).doesNotContain(deletedQuestion);
@@ -52,8 +60,8 @@ class QuestionRepositoryTest {
     @DisplayName("삭제한 질문은 조회되지 않는지 체크")
     @Test
     void findByIdAndDeletedFalseTest(){
-        Question notDeletedQuestion = questions.save(QuestionTest.Q1);
-        Question deletedQuestion = questions.save(QuestionTest.Q2);
+        Question notDeletedQuestion = questions.save(question1);
+        Question deletedQuestion = questions.save(question2);
         Optional<Question> actual1 = questions.findByIdAndDeletedFalse(notDeletedQuestion.getId());
         assertThat(actual1).isPresent();
         Optional<Question> actual2 = questions.findByIdAndDeletedFalse(deletedQuestion.getId());

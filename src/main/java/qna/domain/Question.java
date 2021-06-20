@@ -5,6 +5,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
@@ -23,9 +25,12 @@ public class Question extends BaseTimeEntity {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
-    @Column(name="writer_id")
-    private Long writerId;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    private List<Answer> answers = new ArrayList<>();
 
     //default empty constructor
     protected Question(){
@@ -43,16 +48,16 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public Long getId() {
@@ -80,19 +85,27 @@ public class Question extends BaseTimeEntity {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return writer.getId();
     }
 
     public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+        writer.setId(writerId);
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
+    }
+
+    public List<Answer> getAnswers(){
+        return answers;
+    }
+
+    public User getWriter(){
+        return writer;
     }
 
     @Override
@@ -101,7 +114,7 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + this.writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
