@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -70,20 +71,11 @@ public class Answer {
 
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public void isOwner(User user) throws CannotDeleteException {
+        if (!this.writer.equals(user)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
-
-//    public Answer toQuestion(Question question) {
-//        this.question = question;
-//        question.addAnswer(this);
-//        return this;
-//    }
-//    public void fromQuestion(Question question){
-//        if(Objects.isNull(this.question)) {
-//            this.question = question;
-//        }
-//    }
 
     public Long getId() {
         return id;
@@ -97,8 +89,9 @@ public class Answer {
         return deleted;
     }
 
-    public void delete(boolean deleted) {
-        this.deleted = deleted;
+    public void delete(User user) throws CannotDeleteException {
+        isOwner(user);
+        this.deleted = true;
     }
 
     @Override
