@@ -104,6 +104,11 @@ public class Question {
 		validateQuestionWriterIsAuthorized(loginUser);
 		validateAnswersWriterIsAuthorized(loginUser);
 		delete();
+
+		return makeDeleteHistories(loginUser);
+	}
+
+	private List<DeleteHistory> makeDeleteHistories(User loginUser) {
 		List<DeleteHistory> deleteHistories = new ArrayList<>();
 		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
 		deleteHistories.addAll(answers.delete(loginUser));

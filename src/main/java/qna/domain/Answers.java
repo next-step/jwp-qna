@@ -30,6 +30,8 @@ public class Answers {
 	}
 
 	public List<DeleteHistory> delete(User loginUser) {
-		return answers.stream().map(answer -> answer.delete(loginUser)).collect(Collectors.toList());
+		return answers.stream()
+			.map(answer -> answer.delete(loginUser))
+			.collect(Collectors.toList());
 	}
 }
