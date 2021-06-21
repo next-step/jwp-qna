@@ -19,6 +19,7 @@ import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
+import qna.domain.DeleteHistoryRepository;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.User;
@@ -27,6 +28,9 @@ import qna.domain.User;
 class QnaServiceTest {
 	@Mock
 	private QuestionRepository questionRepository;
+
+	@Mock
+	private DeleteHistoryRepository deleteHistoryRepository;
 
 	@Mock
 	private AnswerRepository answerRepository;
@@ -117,6 +121,6 @@ class QnaServiceTest {
 			new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
 			new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
 		);
-		verify(deleteHistoryService).saveAll(deleteHistories);
+		verify(deleteHistoryRepository).saveAll(deleteHistories);
 	}
 }
