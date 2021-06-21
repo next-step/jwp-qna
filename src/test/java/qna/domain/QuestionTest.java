@@ -2,13 +2,9 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,22 +28,6 @@ public class QuestionTest {
 	@Transactional
 	public void execute() {
 
-	}
-
-	@BeforeEach
-	void setUp() {
-		List<String> tableNames = Arrays.asList("answer", "delete_history", "question", "user");
-
-		entityManager.flush();
-		entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
-
-		for (String tableName : tableNames) {
-			entityManager.createNativeQuery("TRUNCATE TABLE " + tableName).executeUpdate();
-			entityManager.createNativeQuery("ALTER TABLE " + tableName + " ALTER COLUMN ID RESTART WITH 1")
-				.executeUpdate();
-		}
-
-		entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY TRUE").executeUpdate();
 	}
 
 	@Test
