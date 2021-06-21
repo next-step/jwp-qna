@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.ForbiddenException;
 
 import javax.persistence.*;
@@ -68,8 +69,10 @@ public class Question {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public void isOwner(User user) throws CannotDeleteException {
+        if (!this.writer.equals(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public void addAnswer(Answer answer) {
@@ -87,8 +90,9 @@ public class Question {
         return deleted;
     }
 
-    public void delete(boolean deleted) {
-        this.deleted = deleted;
+    public void delete(User user) throws CannotDeleteException {
+        isOwner(user);
+        this.deleted = true;
     }
 
     @Override
