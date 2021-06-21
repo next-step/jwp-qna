@@ -28,7 +28,7 @@ public class DeleteHistories {
 
 	public DeleteHistories(Answers answers) throws AnswerNotDeletedException {
 		if (answers.hasUndeleted()) {
-			throw new AnswerNotDeletedException(answers);
+			throw new AnswerNotDeletedException();
 		}
 		histories.addAll(answers.mapToDeleteHistories(this::answerToHistory));
 	}
