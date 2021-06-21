@@ -3,7 +3,6 @@ package qna.domain.history;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import qna.domain.DeleteHistory;
 import qna.domain.exception.question.AnswerNotDeletedException;
@@ -48,7 +47,7 @@ public class DeleteHistories {
 		return new DeleteHistory(answer);
 	}
 
-	public Collection<DeleteHistory> toCollection() {
-		return Collections.unmodifiableCollection(histories);
+	public Collection<DeleteHistory> toList() {
+		return new ArrayList<>(histories);
 	}
 }

@@ -48,6 +48,6 @@ public class QnaService {
         }
 
         questionRepository.delete(question);
-        deleteHistoryService.saveAll(deleteHistories.toCollection());
+        deleteHistoryService.saveAll(deleteHistories.toList());
     }
 }
