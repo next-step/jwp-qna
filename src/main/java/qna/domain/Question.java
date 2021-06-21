@@ -92,7 +92,7 @@ public class Question {
 		return deleted;
 	}
 
-	public void delete() {
+	private void delete() {
 		this.deleted = true;
 	}
 

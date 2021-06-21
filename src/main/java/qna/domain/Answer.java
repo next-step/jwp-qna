@@ -102,7 +102,7 @@ public class Answer {
 		return new DeleteHistory(ContentType.ANSWER, id, user, LocalDateTime.now());
 	}
 
-	public void delete() {
+	private void delete() {
 		this.deleted = true;
 	}
 

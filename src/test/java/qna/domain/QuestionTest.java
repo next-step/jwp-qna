@@ -172,22 +172,23 @@ public class QuestionTest {
 
 	@Test
 	@DisplayName("jpa 작성 메소드 사용(findByDeletedFalse)")
-	void use_written_method_findByDeletedFalse() {
+	void use_written_method_findByDeletedFalse() throws Exception {
 		User saveJavajigi = saveJavajigi();
 		Question Q1 = new Question("title1", "contents1").writtenBy(saveJavajigi);
-		Q1.delete();
+		Q1.delete(saveJavajigi);
 		questions.save(Q1);
 		assertThat(questions.findByDeletedFalse().size()).isEqualTo(0);
 	}
 
 	@Test
 	@DisplayName("jpa 작성 메소드 사용(findByIdAndDeletedFalse)")
-	void use_written_method_findByIdAndDeletedFalse() {
-		Question saveQ1 = saveQ1(saveJavajigi());
+	void use_written_method_findByIdAndDeletedFalse() throws Exception {
+		User saveJavajigi = saveJavajigi();
+		Question saveQ1 = saveQ1(saveJavajigi);
 
 		assertThat(questions.findByIdAndDeletedFalse(saveQ1.getId())).isEqualTo(questions.findById(saveQ1.getId()));
 
-		saveQ1.delete();
+		saveQ1.delete(saveJavajigi);
 		assertThat(questions.findByIdAndDeletedFalse(saveQ1.getId()).isPresent()).isFalse();
 	}
 
