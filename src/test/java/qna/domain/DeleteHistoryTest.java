@@ -57,10 +57,7 @@ public class DeleteHistoryTest {
 		saveQ1.addAnswer(saveAnswer1);
 		questions.flush();
 
-		saveQ1.delete(saveJavajigi);
-		questions.flush();
-
-		assertThat(deleteHistories.findAll().size()).isEqualTo(2);
+		assertThat(saveQ1.delete(saveJavajigi).size()).isEqualTo(2);
 	}
 
 	@Test

@@ -52,9 +52,6 @@ public class Question {
 	@Embedded
 	private Answers answers = new Answers();
 
-	@Embedded
-	private DeleteHistories deleteHistories = new DeleteHistories();
-
 	protected Question() {
 	}
 
@@ -103,23 +100,15 @@ public class Question {
 		return answers.contains(answer);
 	}
 
-	public void delete(User loginUser) throws CannotDeleteException {
+	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
 		validateQuestionWriter(loginUser);
 		validateAnswersWriter(loginUser);
 		delete();
-		answers.delete(loginUser);
-		addDeleteHistory(loginUser);
-	}
-
-	public List<DeleteHistory> getDeleteHistories() {
 		List<DeleteHistory> deleteHistories = new ArrayList<>();
-		deleteHistories.addAll(this.deleteHistories.getList());
-		deleteHistories.addAll(answers.getDeleteHistories());
-		return deleteHistories;
-	}
+		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
+		deleteHistories.addAll(answers.delete(loginUser));
 
-	private void addDeleteHistory(User loginUser) {
-		this.deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
+		return deleteHistories;
 	}
 
 	private void validateAnswersWriter(User loginUser) throws CannotDeleteException {

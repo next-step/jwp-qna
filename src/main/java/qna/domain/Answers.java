@@ -29,15 +29,7 @@ public class Answers {
 		}
 	}
 
-	public void delete(User loginUser) {
-		answers.stream().forEach(answer -> answer.delete(loginUser));
-	}
-
-	public List<DeleteHistory> getDeleteHistories() {
-		List<DeleteHistory> deleteHistories = answers.stream()
-			.flatMap(x -> x.getDeleteHistories().stream())
-			.collect(Collectors.toList());
-
-		return deleteHistories;
+	public List<DeleteHistory> delete(User loginUser) {
+		return answers.stream().map(answer -> answer.delete(loginUser)).collect(Collectors.toList());
 	}
 }
