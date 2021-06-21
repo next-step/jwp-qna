@@ -89,9 +89,10 @@ public class Answer {
         return deleted;
     }
 
-    public void delete(User user) throws CannotDeleteException {
+    public DeleteHistory delete(User user) throws CannotDeleteException {
         isOwner(user);
         this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, this.getId(), user, LocalDateTime.now());
     }
 
     @Override
