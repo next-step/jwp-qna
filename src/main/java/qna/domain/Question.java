@@ -101,8 +101,8 @@ public class Question {
 	}
 
 	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
-		validateQuestionWriter(loginUser);
-		validateAnswersWriter(loginUser);
+		validateQuestionWriterIsAuthorized(loginUser);
+		validateAnswersWriterIsAuthorized(loginUser);
 		delete();
 		List<DeleteHistory> deleteHistories = new ArrayList<>();
 		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
@@ -111,11 +111,11 @@ public class Question {
 		return deleteHistories;
 	}
 
-	private void validateAnswersWriter(User loginUser) throws CannotDeleteException {
-		answers.validateAnswersWriter(loginUser);
+	private void validateAnswersWriterIsAuthorized(User loginUser) throws CannotDeleteException {
+		answers.validateAnswersWriterIsAuthorized(loginUser);
 	}
 
-	private void validateQuestionWriter(User loginUser) throws CannotDeleteException {
+	private void validateQuestionWriterIsAuthorized(User loginUser) throws CannotDeleteException {
 		if (!this.user.equals(loginUser)) {
 			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 		}
