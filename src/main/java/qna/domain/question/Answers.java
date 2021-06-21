@@ -4,8 +4,11 @@ import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Function;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 
 import qna.domain.User;
 import qna.domain.exception.question.AnswerNotDeletedException;
@@ -16,13 +19,13 @@ import qna.domain.history.DeleteHistories;
  *
  * @author heetaek.kim
  */
+@Embeddable
 public final class Answers {
 
-	private final Collection<Answer> answers;
+	@OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
+	private final Collection<Answer> answers = new ArrayList<>();
 
-	public Answers(Collection<Answer> answers) {
-		this.answers = answers;
-	}
+	protected Answers() {}
 
 	public <T> Collection<T> mapToDeleteHistories(Function<Answer, T> mapper) {
 		return answers.stream()
@@ -36,13 +39,11 @@ public final class Answers {
 	 */
 	public DeleteHistories deleteAllBy(User deleteBy) throws
 			AnswerOwnerNotMatchedException {
-		List<Answer> deleted = new ArrayList<>();
 		for (Answer answer : answers) {
 			answer.deleteBy(deleteBy);
-			deleted.add(answer);
 		}
 		try {
-			return new DeleteHistories(new Answers(deleted));
+			return new DeleteHistories(this);
 		} catch (AnswerNotDeletedException e) {
 			// 발생하지 않으므로 RuntimeException 적용.
 			throw new RuntimeException(e);
@@ -52,5 +53,9 @@ public final class Answers {
 	public boolean hasUndeleted() {
 		return this.answers.stream()
 			.anyMatch(answer -> !answer.isDeleted());
+	}
+
+	public void add(Answer answer) {
+		this.answers.add(answer);
 	}
 }

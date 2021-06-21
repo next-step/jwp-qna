@@ -1,17 +1,12 @@
 package qna.domain.question;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import qna.domain.UpdatableEntity;
 import qna.domain.User;
@@ -34,11 +29,8 @@ public class Question extends UpdatableEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
-    private final List<Answer> answers = new ArrayList<>();
-
-    @Transient
-    private final Answers answersWrapped = new Answers(answers);
+    @Embedded
+    private final Answers answers = new Answers();
 
     private boolean deleted = false;
 
@@ -69,7 +61,7 @@ public class Question extends UpdatableEntity {
             throw new QuestionOwnerNotMatchedException();
         }
         this.deleted = true;
-        DeleteHistories deletedAnswers = answers().deleteAllBy(loginUser);
+        DeleteHistories deletedAnswers = answers.deleteAllBy(loginUser);
         DeleteHistories deletedQuestion;
         try {
             deletedQuestion = new DeleteHistories(this);
@@ -87,11 +79,8 @@ public class Question extends UpdatableEntity {
 
     public Answer addAnswer(User answerUser, String content) {
         Answer answer = new Answer(answerUser, this, content);
-        return addAnswer(answer);
-    }
-
-    public Answers answers() {
-        return this.answersWrapped;
+        addAnswer(answer);
+        return answer;
     }
 
     @Override
