@@ -1,6 +1,8 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Basic;
@@ -95,8 +97,18 @@ public class Answer {
 		return deleted;
 	}
 
-	public void delete() {
+	public DeleteHistory delete(User loginUser) {
+		delete();
+		return new DeleteHistory(ContentType.ANSWER, id, user, LocalDateTime.now());
+	}
+
+	private void delete() {
 		this.deleted = true;
+	}
+
+	public List<DeleteHistory> getDeleteHistories() {
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		return deleteHistories;
 	}
 
 	@Override

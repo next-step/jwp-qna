@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -17,8 +17,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import qna.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
@@ -48,8 +49,8 @@ public class Question {
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User user;
 
-	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Answer> answers = new ArrayList<>();
+	@Embedded
+	private Answers answers = new Answers();
 
 	protected Question() {
 	}
@@ -91,12 +92,38 @@ public class Question {
 		return deleted;
 	}
 
-	public void delete() {
+	private void delete() {
 		this.deleted = true;
 	}
 
 	public boolean isContained(Answer answer) {
 		return answers.contains(answer);
+	}
+
+	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+		validateQuestionWriterIsAuthorized(loginUser);
+		validateAnswersWriterIsAuthorized(loginUser);
+		delete();
+
+		return makeDeleteHistories(loginUser);
+	}
+
+	private List<DeleteHistory> makeDeleteHistories(User loginUser) {
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
+		deleteHistories.addAll(answers.delete(loginUser));
+
+		return deleteHistories;
+	}
+
+	private void validateAnswersWriterIsAuthorized(User loginUser) throws CannotDeleteException {
+		answers.validateAnswersWriterIsAuthorized(loginUser);
+	}
+
+	private void validateQuestionWriterIsAuthorized(User loginUser) throws CannotDeleteException {
+		if (!this.user.equals(loginUser)) {
+			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+		}
 	}
 
 	@Override

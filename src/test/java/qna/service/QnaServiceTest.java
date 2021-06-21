@@ -19,6 +19,7 @@ import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
+import qna.domain.DeleteHistoryRepository;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.User;
@@ -27,6 +28,9 @@ import qna.domain.User;
 class QnaServiceTest {
 	@Mock
 	private QuestionRepository questionRepository;
+
+	@Mock
+	private DeleteHistoryRepository deleteHistoryRepository;
 
 	@Mock
 	private AnswerRepository answerRepository;
@@ -44,8 +48,9 @@ class QnaServiceTest {
 		Answer answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
 		question.addAnswer(answer);
 
-		when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-		when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
+		lenient().when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+		lenient().when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId()))
+			.thenReturn(Arrays.asList(answer));
 
 		assertThat(question.isDeleted()).isFalse();
 		qnaService.deleteQuestion(JAVAJIGI, question.getId());
@@ -75,8 +80,9 @@ class QnaServiceTest {
 		Answer answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
 		question.addAnswer(answer);
 
-		when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-		when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
+		lenient().when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+		lenient().when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId()))
+			.thenReturn(Arrays.asList(answer));
 
 		qnaService.deleteQuestion(JAVAJIGI, question.getId());
 
@@ -98,7 +104,7 @@ class QnaServiceTest {
 		question.addAnswer(answer2);
 
 		when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-		when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(
+		lenient().when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(
 			Arrays.asList(answer, answer2));
 
 		assertThatThrownBy(() -> qnaService.deleteQuestion(JAVAJIGI, question.getId()))
@@ -115,6 +121,6 @@ class QnaServiceTest {
 			new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
 			new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
 		);
-		verify(deleteHistoryService).saveAll(deleteHistories);
+		verify(deleteHistoryRepository).saveAll(deleteHistories);
 	}
 }
