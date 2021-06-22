@@ -26,11 +26,11 @@ public class Answers {
         this.answers.add(answer);
     }
 
-    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+    public DeleteHistories delete(User user) throws CannotDeleteException {
+        DeleteHistories deleteHistories = new DeleteHistories();
         for (Answer answer : answers) {
-            final DeleteHistory deleteHistory = answer.delete(user);
-            deleteHistories.add(deleteHistory);
+            DeleteHistory deleteHistory = answer.delete(user);
+            deleteHistories.addHistory(deleteHistory);
         }
         return deleteHistories;
     }

@@ -86,12 +86,12 @@ public class Question {
         return deleted;
     }
 
-    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+    public DeleteHistories delete(User user) throws CannotDeleteException {
         isOwner(user);
         this.deleted = true;
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.getId(), user, LocalDateTime.now()));
-        deleteHistories.addAll( answers.delete(user));
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.addHistory(new DeleteHistory(ContentType.QUESTION, this.getId(), user, LocalDateTime.now()));
+        deleteHistories.addHistories(answers.delete(user));
         return deleteHistories;
     }
 

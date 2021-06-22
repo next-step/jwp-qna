@@ -24,7 +24,7 @@ public class AnswersTest {
         // when
         List<DeleteHistory> deleteHistories = null;
         try {
-            deleteHistories = answers.delete(questionUser);
+            deleteHistories = answers.delete(questionUser).histories();
         } catch (CannotDeleteException e) {
             e.printStackTrace();
         }
