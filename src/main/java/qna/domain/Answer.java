@@ -56,7 +56,7 @@ public class Answer extends BaseTimeEntity {
 			throw new NotFoundException();
 		}
 
-		this.writer = writer;
+		setWriter(writer);
 		this.question = question;
 		this.contents = contents;
 	}
@@ -73,10 +73,6 @@ public class Answer extends BaseTimeEntity {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public User getWriter() {
 		return writer;
 	}
@@ -87,18 +83,6 @@ public class Answer extends BaseTimeEntity {
 
 	public Question getQuestion() {
 		return question;
-	}
-
-	public void setQuestionId(Question question) {
-		this.question = question;
-	}
-
-	public String getContents() {
-		return contents;
-	}
-
-	public void setContents(String contents) {
-		this.contents = contents;
 	}
 
 	public boolean isDeleted() {
