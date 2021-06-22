@@ -45,9 +45,8 @@ public class Question {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-    private List<Answer> answers;
+    @Embedded
+    private Answers answers;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -57,7 +56,7 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.answers = new ArrayList<>();
+        this.answers = new Answers();
     }
 
     public Question() {
@@ -76,9 +75,6 @@ public class Question {
     }
 
     public void addAnswer(Answer answer) {
-        if (answers.contains(answer)) {
-            throw new ForbiddenException("중복된 answer 값");
-        }
         answers.add(answer);
     }
 
@@ -90,11 +86,13 @@ public class Question {
         return deleted;
     }
 
-    public DeleteHistory delete(User user) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         isOwner(user);
         this.deleted = true;
-
-        return new DeleteHistory(ContentType.QUESTION, this.getId(), user, LocalDateTime.now());
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.getId(), user, LocalDateTime.now()));
+        deleteHistories.addAll( answers.delete(user));
+        return deleteHistories;
     }
 
     @Override
