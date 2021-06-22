@@ -3,13 +3,14 @@ package qna.domain;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.common.BaseEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class Answer {
+public class Answer extends BaseEntity {
     /**
      * create table answer
      * (
@@ -31,15 +32,10 @@ public class Answer {
     private String contents;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = false)
     private Boolean deleted = false;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Question question;
-
-    private LocalDateTime updatedAt;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
@@ -92,7 +88,7 @@ public class Answer {
     public DeleteHistory delete(User user) throws CannotDeleteException {
         isOwner(user);
         this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, this.getId(), user, LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER, this.getId(), user);
     }
 
     @Override

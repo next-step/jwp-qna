@@ -25,9 +25,6 @@ class QnaServiceTest {
     private QuestionRepository questionRepository;
 
     @Mock
-    private AnswerRepository answerRepository;
-
-    @Mock
     private DeleteHistoryService deleteHistoryService;
 
     @InjectMocks
@@ -39,7 +36,7 @@ class QnaServiceTest {
     Answer answer;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         questionUser = new User("user1", "user1Pass", "User1", "user1@gmail.com");
         question = new Question("Question1 title", "Question1 contents").writeBy(questionUser);
         answerUser = new User("user2", "user2Pass", "User2", "user2@gmail.com");
@@ -59,7 +56,7 @@ class QnaServiceTest {
     }
 
     @Test
-    public void delete_다른_사람이_쓴_글() throws Exception {
+    public void delete_다른_사람이_쓴_글() {
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
@@ -91,8 +88,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), questionUser, LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), questionUser, LocalDateTime.now())
+                new DeleteHistory(ContentType.QUESTION, question.getId(), questionUser),
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), questionUser)
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

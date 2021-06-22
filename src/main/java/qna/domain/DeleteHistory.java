@@ -23,20 +23,24 @@ public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long contentId;
+
     // @Convert(converter = ContentTypeConverter.class)
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
-    private LocalDateTime createDate = LocalDateTime.now();
+
+    private LocalDateTime createDate;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "deleter_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deleter;
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deleter, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deleter) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deleter = deleter;
-        this.createDate = createDate;
+        this.createDate = LocalDateTime.now();
     }
 
     public DeleteHistory() {

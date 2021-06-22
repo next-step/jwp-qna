@@ -1,6 +1,7 @@
 package qna.domain;
 
 import qna.UnAuthorizedException;
+import qna.domain.common.BaseEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -8,7 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     /**
@@ -30,15 +31,16 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+
     @Column(length = 50)
     private String email;
+
     @Column(nullable = false, length = 20)
     private String name;
+
     @Column(nullable = false, length = 20)
     private String password;
-    private LocalDateTime updateAt;
+
     @Column(nullable = false, length = 20, unique = true)
     private String userId;
 
@@ -101,7 +103,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, createdAt, email, name, password, updateAt, userId);
+        return Objects.hash(id,  email, name, password, userId);
     }
 
     @Override

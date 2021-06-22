@@ -1,15 +1,12 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
-import qna.ForbiddenException;
+import qna.domain.common.BaseEntity;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-public class Question {
+public class Question extends BaseEntity {
     /**
      * create table question
      * (
@@ -31,15 +28,10 @@ public class Question {
     private String contents;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = false)
     private Boolean deleted = false;
 
     @Column(length = 100, nullable = false)
     private String title;
-
-    private LocalDateTime updatedAt;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -90,7 +82,7 @@ public class Question {
         isOwner(user);
         this.deleted = true;
         DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.addHistory(new DeleteHistory(ContentType.QUESTION, this.getId(), user, LocalDateTime.now()));
+        deleteHistories.addHistory(new DeleteHistory(ContentType.QUESTION, this.getId(), user));
         deleteHistories.addHistories(answers.delete(user));
         return deleteHistories;
     }
