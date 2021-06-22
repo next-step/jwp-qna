@@ -4,14 +4,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import qna.CannotDeleteException;
 import qna.NotFoundException;
-import qna.domain.*;
+import qna.domain.User;
+import qna.domain.exception.question.AnswerOwnerNotMatchedException;
+import qna.domain.exception.question.QuestionOwnerNotMatchedException;
+import qna.domain.history.DeleteHistories;
+import qna.domain.question.Question;
 import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class QnaService {
@@ -36,24 +38,16 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-        if (!question.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        DeleteHistories deleteHistories;
+        try {
+            deleteHistories = question.deleteBy(loginUser);
+        } catch (QuestionOwnerNotMatchedException e) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.", e);
+        } catch (AnswerOwnerNotMatchedException e) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.", e);
         }
 
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
-        }
-
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.delete();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.writer()));
-        for (Answer answer : answers) {
-            answer.delete();
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.writer()));
-        }
-        deleteHistoryService.saveAll(deleteHistories);
+        questionRepository.delete(question);
+        deleteHistoryService.saveAll(deleteHistories.toList());
     }
 }

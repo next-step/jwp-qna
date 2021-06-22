@@ -10,10 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import qna.domain.Answer;
-import qna.domain.Question;
 import qna.domain.User;
 import qna.domain.UserTest;
+import qna.domain.exception.question.AnswerOwnerNotMatchedException;
+import qna.domain.question.Answer;
+import qna.domain.question.Question;
 
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -36,14 +37,14 @@ class AnswerRepositoryTest {
 	String notDeletedAnswerContents = "answer contents";
 
 	@BeforeEach
-	void before() {
+	void before() throws AnswerOwnerNotMatchedException {
 		User javaJigi = userRepository.save(UserTest.JAVAJIGI);
 		question = questionRepository.save(new Question(
-			"question title", "question contents"
+			javaJigi, "question title", "question contents"
 		));
 		answer = repository.save(new Answer(javaJigi, this.question, notDeletedAnswerContents));
 		deletedAnswer = new Answer(javaJigi, question, "deleted answer contents");
-		deletedAnswer.delete();
+		deletedAnswer.deleteBy(javaJigi);
 		deletedAnswer = repository.save(deletedAnswer);
 	}
 

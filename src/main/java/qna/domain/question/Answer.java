@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.question;
 
 import java.util.Objects;
 
@@ -11,6 +11,9 @@ import javax.persistence.Table;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.UpdatableEntity;
+import qna.domain.User;
+import qna.domain.exception.question.AnswerOwnerNotMatchedException;
 
 @Entity
 @Table
@@ -44,6 +47,7 @@ public class Answer extends UpdatableEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+        question.addAnswer(this);
     }
 
     public boolean isOwner(User writer) {
@@ -58,18 +62,21 @@ public class Answer extends UpdatableEntity {
         return deleted;
     }
 
-    public void delete() {
+    public void deleteBy(User loginUser) throws AnswerOwnerNotMatchedException {
+        if (!isOwner(loginUser)) {
+            throw new AnswerOwnerNotMatchedException();
+        }
         this.deleted = true;
     }
 
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writer.getId() +
-                ", questionId=" + question.getId() +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", writerId=" + writer.getId() +
+            ", questionId=" + question.getId() +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            '}';
     }
 }
