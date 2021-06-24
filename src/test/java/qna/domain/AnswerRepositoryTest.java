@@ -47,10 +47,8 @@ class AnswerRepositoryTest {
 
     @Test
     void saveTests(){
-        Answer expected = new Answer(1L, writer1, savedQuestion1, "content1");
+        Answer expected = new Answer(writer1, savedQuestion1, "content1");
         Answer actual = answers.save(expected);
-        Long t = actual.getId();
-        String t2 = actual.getContents();
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
@@ -61,18 +59,15 @@ class AnswerRepositoryTest {
     void findByIdAndDeletedFalseTest(){
 
         //Given
-        Answer answer1 = new Answer(1L, writer1, savedQuestion1, "content1");
-        Answer answer2 = new Answer(2L, writer2, savedQuestion2, "content2");
+        Answer answer1 = new Answer(writer1, savedQuestion1, "content1");
+        Answer answer2 = new Answer(writer2, savedQuestion2, "content2");
 
         //When
         answer2.delete();
         Answer expected = answers.save(answer1);
         Answer expectedDeleted = answers.save(answer2);
-
-        Long one = expected.getId();
-        Long two = expectedDeleted.getId();
-        Optional<Answer> actual = answers.findByIdAndDeletedFalse(one);
-        Optional<Answer> actualDeleted = answers.findByIdAndDeletedFalse(two);
+        Optional<Answer> actual = answers.findByIdAndDeletedFalse(expected.getId());
+        Optional<Answer> actualDeleted = answers.findByIdAndDeletedFalse(expectedDeleted.getId());
 
         //Then
         assertAll(

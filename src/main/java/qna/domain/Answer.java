@@ -52,7 +52,6 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
         this.writer = writer;
         this.question = question;
-        //this.question.addAnswer(this);
     }
 
     public boolean isOwner(User writer) {
