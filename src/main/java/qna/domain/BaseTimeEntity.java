@@ -28,8 +28,4 @@ public abstract class BaseTimeEntity {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
-
-    public BaseTimeEntity() {
-        this.createdAt = LocalDateTime.now();
-    }
 }

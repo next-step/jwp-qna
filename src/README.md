@@ -11,4 +11,4 @@
 - [x] ID 는 제어가 되지 않는 요소이니 ID를 주입하는 생성자는 전부 제거하는게 좋지 않을까요 ?
 - [x] repository.deleteAll();
 - [x] 사용하지 않는 getter는 지우고, setter 들은 도메인 언어로 표현하는게 좋을 것 같아요.  
-- [ ] @EnableJpaAuditing  
+- [x] @EnableJpaAuditing  
