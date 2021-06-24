@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -30,8 +29,10 @@ class QuestionRepositoryTest {
     void setUp() {
         user1 = users.save(UserTest.SANJIGI);
         user2 = users.save(UserTest.JAVAJIGI);
-        question1 = QuestionTest.Q1.writeBy(user1);
-        question2 = QuestionTest.Q2.writeBy(user2);
+        question1 = QuestionTest.Q1;
+        question1.writtenBy(user1);
+        question2 = QuestionTest.Q2;
+        question2.writtenBy(user2);
     }
 
     @AfterEach

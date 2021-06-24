@@ -29,12 +29,12 @@ class AnswerRepositoryTest {
     void setUp() {
         writer1 = users.save(UserTest.JAVAJIGI);
         Question question1 = QuestionTest.Q1;
-        question1.writeBy(writer1);
+        question1.writtenBy(writer1);
         savedQuestion1 = questions.save(question1);
 
         writer2 = users.save(UserTest.SANJIGI);
         Question question2 = QuestionTest.Q2;
-        question2.writeBy(writer2);
+        question2.writtenBy(writer2);
         savedQuestion2 = questions.save(question2);
     }
 

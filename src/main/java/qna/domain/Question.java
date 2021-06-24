@@ -43,9 +43,8 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public Question writeBy(User writer) {
+    public void writtenBy(User writer) {
         this.writer = writer;
-        return this;
     }
 
     public boolean isOwner(User writer) {
@@ -80,14 +79,6 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
-    }
-
-    public void setWriterId(Long writerId) {
-        writer.setId(writerId);
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -102,6 +93,10 @@ public class Question extends BaseTimeEntity {
 
     public User getWriter(){
         return writer;
+    }
+
+    public void setWriter(User writer){
+        this.writer = writer;
     }
 
     @Override
