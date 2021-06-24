@@ -58,7 +58,7 @@ public class QuestionRepositoryTest {
     @Test
     void update() {
         question1.setDeleted(true);
-        questionRepository.save(question1);
+
         assertThat(question1.isDeleted()).isTrue();
     }
 
