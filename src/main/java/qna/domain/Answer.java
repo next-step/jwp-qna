@@ -35,11 +35,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+        this.id = null;
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
