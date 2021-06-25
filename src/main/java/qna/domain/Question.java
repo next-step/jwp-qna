@@ -24,14 +24,13 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    private String contents;
+    private Contents contents;
 
-    @Column(nullable = false)
-    private Boolean deleted = false;
+    @Embedded
+    private Deletion deleted;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+    @Embedded
+    private Title title;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -46,9 +45,10 @@ public class Question extends BaseEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
-        this.contents = contents;
+        this.title = new Title(title);
+        this.contents = new Contents(contents);
         this.answers = new Answers();
+        this.deleted = new Deletion();
     }
 
     public Question() {
@@ -75,12 +75,12 @@ public class Question extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return this.deleted.isDeleted();
     }
 
     public DeleteHistories delete(User user) throws CannotDeleteException {
         isOwner(user);
-        this.deleted = true;
+        this.deleted.delete();
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.addHistory(new DeleteHistory(ContentType.QUESTION, this.getId(), user));
         deleteHistories.addHistories(answers.delete(user));

@@ -6,7 +6,6 @@ import qna.UnAuthorizedException;
 import qna.domain.common.BaseEntity;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -28,11 +27,11 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @Column(nullable = false)
-    private Boolean deleted = false;
+    @Embedded
+    private Deletion deleted;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Question question;
@@ -58,8 +57,8 @@ public class Answer extends BaseEntity {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
-
+        this.contents = new Contents(contents);
+        this.deleted = new Deletion();
         this.question.addAnswer(this);
     }
 
@@ -82,12 +81,12 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return this.deleted.isDeleted();
     }
 
     public DeleteHistory delete(User user) throws CannotDeleteException {
         isOwner(user);
-        this.deleted = true;
+        this.deleted.delete();
         return new DeleteHistory(ContentType.ANSWER, this.getId(), user);
     }
 

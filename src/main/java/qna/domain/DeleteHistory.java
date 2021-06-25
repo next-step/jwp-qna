@@ -1,7 +1,5 @@
 package qna.domain;
 
-import qna.domain.converter.ContentTypeConverter;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;

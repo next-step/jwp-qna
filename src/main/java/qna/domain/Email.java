@@ -3,7 +3,6 @@ package qna.domain;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Embeddable
