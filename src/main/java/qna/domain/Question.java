@@ -38,7 +38,11 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question(String title, String contents) {
-        this.id = null;
+        this(null, title, contents);
+    }
+
+    public Question(Long id, String title, String contents) {
+        this.id = id;
         this.title = title;
         this.contents = contents;
     }
@@ -48,6 +52,9 @@ public class Question extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
+        if (this.writer == null){
+            return false;
+        }
         return this.writer.equals(writer);
     }
 
