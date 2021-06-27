@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
 import qna.ForbiddenException;
 
 @Entity
@@ -87,6 +88,20 @@ public class Question extends BaseTimeEntity {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	// TODO : owner 인지 판단하는 로직
+	public boolean isAnswersByUser(User loginUser){
+		for (Answer answer : answers){
+			if (!answer.isOwner(loginUser)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean canDeleteQuestion(User loginUser){
+		return isOwner(loginUser) && isAnswersByUser(loginUser);
 	}
 
 	@Override
