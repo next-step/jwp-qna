@@ -86,8 +86,10 @@ public class Question extends BaseTimeEntity {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
+	public void delete(boolean deleted) {
 		this.deleted = deleted;
+		this.answers.stream()
+			.forEach(answer -> answer.setDeleted(true));
 	}
 
 	// TODO : owner 인지 판단하는 로직
@@ -102,6 +104,10 @@ public class Question extends BaseTimeEntity {
 
 	public boolean canDeleteQuestion(User loginUser){
 		return isOwner(loginUser) && isAnswersByUser(loginUser);
+	}
+
+	public List<Answer> getAnswers() {
+		return this.answers;
 	}
 
 	@Override
