@@ -1,10 +1,10 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.Optional;
 
@@ -15,37 +15,64 @@ import static org.junit.jupiter.api.Assertions.*;
 class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answers;
+    @Autowired
+    private UserRepository users;
+    @Autowired
+    private QuestionRepository questions;
 
-    private Answer answerDeleted;
-    private Answer answerNotDeleted;
-
-    private Answer answerDeletedResult;
-    private Answer answerNotDeletedResult;
+    private User writer1;
+    private User writer2;
+    private Question savedQuestion1;
+    private Question savedQuestion2;
 
     @BeforeEach
     void setUp() {
-        answerNotDeletedResult = answers.save(AnswerTest.A1);
-        answerDeletedResult = answers.save(AnswerTest.A2);
+        writer1 = users.save(UserTest.JAVAJIGI);
+        Question question1 = QuestionTest.Q1;
+        question1.writtenBy(writer1);
+        savedQuestion1 = questions.save(question1);
+
+        writer2 = users.save(UserTest.SANJIGI);
+        Question question2 = QuestionTest.Q2;
+        question2.writtenBy(writer2);
+        savedQuestion2 = questions.save(question2);
+    }
+
+    @AfterEach
+    void tearDown() {
+        answers.deleteAll();
+        users.deleteAll();
+        questions.deleteAll();
     }
 
     @Test
     void saveTests(){
+        Answer expected = new Answer(writer1, savedQuestion1, "content1");
+        Answer actual = answers.save(expected);
         assertAll(
-                () -> assertThat(answerNotDeletedResult.getId()).isNotNull(),
-                () -> assertThat(answerNotDeletedResult.getContents()).isEqualTo(AnswerTest.A1.getContents())
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
         );
     }
 
     @Test
     void findByIdAndDeletedFalseTest(){
 
+        //Given
+        Answer answer1 = new Answer(writer1, savedQuestion1, "content1");
+        Answer answer2 = new Answer(writer2, savedQuestion2, "content2");
 
-        Optional<Answer> answerNotDeletedActual = answers.findByIdAndDeletedFalse(answerNotDeletedResult.getId());
-        Optional<Answer> answerDeletedActual = answers.findByIdAndDeletedFalse(answerDeletedResult.getId());
+        //When
+        answer2.delete();
+        Answer expected = answers.save(answer1);
+        Answer expectedDeleted = answers.save(answer2);
+        Optional<Answer> actual = answers.findByIdAndDeletedFalse(expected.getId());
+        Optional<Answer> actualDeleted = answers.findByIdAndDeletedFalse(expectedDeleted.getId());
 
+        //Then
         assertAll(
-                () -> assertThat(answerDeletedActual).isEmpty(),
-                () -> assertThat(answerNotDeletedActual).isPresent()
+                () -> assertThat(actual).isPresent(),
+                () -> assertThat(actualDeleted).isEmpty()
         );
     }
 }

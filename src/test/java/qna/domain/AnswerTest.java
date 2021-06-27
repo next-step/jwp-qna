@@ -5,7 +5,6 @@ public class AnswerTest {
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     static {
-        A1.setDeleted(false);
-        A2.setDeleted(true);
+        A2.delete();
     }
 }
