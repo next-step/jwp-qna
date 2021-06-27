@@ -45,11 +45,11 @@ public class QnaService {
 			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 		}
 
-		question.delete(true);
-		makeDeleteHistory(question, loginUser);
+		question.delete();
+		addDeleteHistory(question, loginUser);
 	}
 
-	private void makeDeleteHistory(Question question, User loginUser) {
+	private void addDeleteHistory(Question question, User loginUser) {
 		List<DeleteHistory> deleteHistories = new ArrayList<>();
 		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, question.getId(), loginUser));
 

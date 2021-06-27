@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -57,7 +58,7 @@ public class QuestionRepositoryTest {
 
     @Test
     void update() {
-        question1.delete(true);
+        question1.delete();
 
         assertThat(question1.isDeleted()).isTrue();
     }
@@ -67,5 +68,15 @@ public class QuestionRepositoryTest {
         questionRepository.delete(question1);
         Optional<Question> expected = questionRepository.findById(question1.getId());
         assertThat(expected.isPresent()).isFalse();
+    }
+
+    @DisplayName("question을 삭제하면, answer도 전부 삭제되는지 확인")
+    @Test
+    void questionDelete() {
+        question1.addAnswer(new Answer(user1, question1, "answer"));
+        question1.addAnswer(new Answer(user2, question1, "answer"));
+
+        question1.delete();
+        assertThat(question1.getAnswers().stream().allMatch(answer -> answer.isDeleted())).isTrue();
     }
 }
