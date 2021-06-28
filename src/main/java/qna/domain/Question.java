@@ -1,12 +1,14 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
+import qna.UnAuthenticationException;
 import qna.domain.common.BaseEntity;
 
 import javax.persistence.*;
 
 @Entity
 public class Question extends BaseEntity {
+    private static final String CANNOT_DELETE_QUESTION = "질문을 삭제할 수 없습니다.";
     /**
      * create table question
      * (
@@ -60,10 +62,8 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public void isOwner(User user) throws CannotDeleteException {
-        if (!this.writer.equals(user)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+    public User writer() {
+        return this.writer;
     }
 
     public void addAnswer(Answer answer) {
@@ -79,10 +79,15 @@ public class Question extends BaseEntity {
     }
 
     public DeleteHistories delete(User user) throws CannotDeleteException {
-        isOwner(user);
-        this.deleted.delete();
+        try {
+            this.writer.isOwner(user);
+        } catch (UnAuthenticationException e) {
+            throw new CannotDeleteException(CANNOT_DELETE_QUESTION + e);
+        }
+
+        DeleteHistory deleteHistory = this.deleted.delete(this);
         DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.addHistory(new DeleteHistory(ContentType.QUESTION, this.getId(), user));
+        deleteHistories.addHistory(deleteHistory);
         deleteHistories.addHistories(answers.delete(user));
         return deleteHistories;
     }

@@ -44,6 +44,7 @@ public class DeleteHistory {
     public DeleteHistory() {
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -69,5 +70,25 @@ public class DeleteHistory {
                 ", deleter=" + deleter +
                 ", createDate=" + createDate +
                 '}';
+    }
+
+    public static DeleteHistory addHistory(Object content) {
+        if (content instanceof Answer) {
+            return deleteAnswer((Answer) content);
+        }
+        if (content instanceof Question) {
+            return deleteQuestion((Question) content);
+        }
+        return null;
+    }
+
+    public static DeleteHistory deleteAnswer(Answer answer) {
+
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.writer());
+    }
+
+    public static DeleteHistory deleteQuestion(Question question) {
+
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.writer());
     }
 }

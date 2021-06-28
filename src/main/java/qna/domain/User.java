@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.UnAuthenticationException;
 import qna.domain.common.BaseEntity;
 
 import javax.persistence.*;
@@ -9,7 +10,7 @@ import java.util.Objects;
 @Table(name = "user")
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
-
+    public static final String UNAUTHENTICATED_USER = "인증된 유저가 아닙니다.";
     /**
      * create table user
      * (
@@ -57,6 +58,11 @@ public class User extends BaseEntity {
     public User() {
     }
 
+    public void isOwner(User user) throws UnAuthenticationException {
+        if (!this.equals(user)) {
+            throw new UnAuthenticationException(UNAUTHENTICATED_USER);
+        }
+    }
     public void update(User loginUser, User target) {
         loginUser.userId.matchUserId(target.userId);
         loginUser.password.matchPassword(target.password);

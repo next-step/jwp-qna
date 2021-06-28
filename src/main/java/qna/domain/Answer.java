@@ -2,6 +2,7 @@ package qna.domain;
 
 import qna.CannotDeleteException;
 import qna.NotFoundException;
+import qna.UnAuthenticationException;
 import qna.UnAuthorizedException;
 import qna.domain.common.BaseEntity;
 
@@ -10,6 +11,7 @@ import java.util.Objects;
 
 @Entity
 public class Answer extends BaseEntity {
+    public static final String CANNOT_DELETE_ANSWER = "답변을 삭제할 수 없습니다 ,";
     /**
      * create table answer
      * (
@@ -66,12 +68,6 @@ public class Answer extends BaseEntity {
 
     }
 
-    public void isOwner(User user) throws CannotDeleteException {
-        if (!this.writer.equals(user)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
-    }
-
     public Long getId() {
         return id;
     }
@@ -80,14 +76,20 @@ public class Answer extends BaseEntity {
         return question.getId();
     }
 
+    public User writer(){
+        return this.writer;
+    }
     public boolean isDeleted() {
         return this.deleted.isDeleted();
     }
 
     public DeleteHistory delete(User user) throws CannotDeleteException {
-        isOwner(user);
-        this.deleted.delete();
-        return new DeleteHistory(ContentType.ANSWER, this.getId(), user);
+        try {
+            this.writer.isOwner(user);
+        }catch (UnAuthenticationException e){
+            throw new CannotDeleteException(CANNOT_DELETE_ANSWER +e);
+        }
+        return this.deleted.delete(this);
     }
 
     @Override
