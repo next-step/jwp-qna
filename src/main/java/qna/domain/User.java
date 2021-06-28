@@ -2,19 +2,32 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class User {
+@Table(name = "user")
+@Entity
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
+    @Column(length = 50)
     private String email;
 
-    private User() {
-    }
+    @Column(nullable = false, length = 20)
+    private String name;
+
+    @Column(nullable = false, length = 20)
+    private String password;
+
+    @Column(name = "user_id", nullable = false, length = 20, unique = true)
+    private String userId;
+
+
+    public User() {}
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
