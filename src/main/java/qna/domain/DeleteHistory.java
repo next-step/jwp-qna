@@ -19,7 +19,6 @@ public class DeleteHistory {
     @Column(name = "content_type")
     private ContentType contentType;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
