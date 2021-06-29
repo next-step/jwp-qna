@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
 import qna.ForbiddenException;
 
 @Entity
@@ -85,19 +86,24 @@ public class Question extends BaseTimeEntity {
 		return deleted;
 	}
 
-	public void delete() {
-		this.deleted = true;
-		this.answers.stream()
-			.forEach(answer -> answer.setDeleted(true));
+	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+		if (!this.canDeleteQuestion(loginUser)) {
+			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+		}
+		setDelete();
+
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.getId(), loginUser));
+
+		this.getAnswers().stream()
+			.map(answer -> new DeleteHistory(ContentType.ANSWER, answer.getId(), loginUser))
+			.forEach(deleteHistory -> deleteHistories.add(deleteHistory));
+		return deleteHistories;
 	}
 
 	public boolean isAnswersByUser(User loginUser){
-		for (Answer answer : answers){
-			if (!answer.isOwner(loginUser)) {
-				return false;
-			}
-		}
-		return true;
+		return this.answers.stream()
+			.allMatch(answer -> answer.isOwner(loginUser));
 	}
 
 	public boolean canDeleteQuestion(User loginUser){
@@ -117,5 +123,10 @@ public class Question extends BaseTimeEntity {
 			", writer=" + writer +
 			", deleted=" + deleted +
 			'}';
+	}
+
+	public void setDelete() {
+		this.deleted = true;
+		this.answers.forEach(answer -> answer.setDeleted(true));
 	}
 }

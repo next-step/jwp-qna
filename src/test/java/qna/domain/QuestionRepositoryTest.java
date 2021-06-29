@@ -58,7 +58,7 @@ public class QuestionRepositoryTest {
 
     @Test
     void update() {
-        question1.delete();
+        question1.setDelete();
 
         assertThat(question1.isDeleted()).isTrue();
     }
@@ -76,7 +76,7 @@ public class QuestionRepositoryTest {
         question1.addAnswer(new Answer(user1, question1, "answer"));
         question1.addAnswer(new Answer(user2, question1, "answer"));
 
-        question1.delete();
+        question1.setDelete();
         assertThat(question1.getAnswers().stream().allMatch(answer -> answer.isDeleted())).isTrue();
     }
 }
