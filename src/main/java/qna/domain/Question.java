@@ -92,6 +92,11 @@ public class Question extends BaseTimeEntity {
 		}
 		setDelete();
 
+		List<DeleteHistory> deleteHistories = addDeleteHistories(loginUser);
+		return deleteHistories;
+	}
+
+	private List<DeleteHistory> addDeleteHistories(User loginUser) {
 		List<DeleteHistory> deleteHistories = new ArrayList<>();
 		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.getId(), loginUser));
 
