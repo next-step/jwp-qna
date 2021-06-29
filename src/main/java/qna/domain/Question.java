@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -14,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import qna.CannotDeleteException;
@@ -37,9 +37,8 @@ public class Question extends BaseTimeEntity {
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-	private List<Answer> answers = new ArrayList<>();
+	@Embedded
+	private Answers answers = new Answers();
 
 	@Column(nullable = false)
 	private boolean deleted = false;
@@ -68,7 +67,7 @@ public class Question extends BaseTimeEntity {
 
 	public void addAnswer(Answer answer) {
 		answer.toQuestion(this);
-		if(answers.contains(answer)){
+		if (answers.getAnswers().contains(answer)) {
 			throw new ForbiddenException();
 		}
 		answers.add(answer);
@@ -106,17 +105,17 @@ public class Question extends BaseTimeEntity {
 		return deleteHistories;
 	}
 
-	public boolean isAnswersByUser(User loginUser){
-		return this.answers.stream()
+	public boolean isAnswersByUser(User loginUser) {
+		return this.answers.getAnswers().stream()
 			.allMatch(answer -> answer.isOwner(loginUser));
 	}
 
-	public boolean canDeleteQuestion(User loginUser){
+	public boolean canDeleteQuestion(User loginUser) {
 		return isOwner(loginUser) && isAnswersByUser(loginUser);
 	}
 
 	public List<Answer> getAnswers() {
-		return this.answers;
+		return this.answers.getAnswers();
 	}
 
 	@Override
@@ -132,6 +131,6 @@ public class Question extends BaseTimeEntity {
 
 	public void setDelete() {
 		this.deleted = true;
-		this.answers.forEach(answer -> answer.setDeleted(true));
+		this.answers.getAnswers().forEach(answer -> answer.setDeleted(true));
 	}
 }
