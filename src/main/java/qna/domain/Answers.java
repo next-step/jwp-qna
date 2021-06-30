@@ -25,12 +25,13 @@ public class Answers {
         this.answers.add(answer);
     }
 
-    public DeleteHistories delete(User user) throws CannotDeleteException {
-        DeleteHistories deleteHistories = new DeleteHistories();
+    public void delete(User user) throws CannotDeleteException {
         for (Answer answer : answers) {
-            DeleteHistory deleteHistory = answer.delete(user);
-            deleteHistories.addHistory(deleteHistory);
+            answer.delete(user);
         }
-        return deleteHistories;
+    }
+
+    public List<Answer> list(){
+        return answers;
     }
 }

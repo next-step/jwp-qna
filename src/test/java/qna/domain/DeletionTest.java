@@ -3,7 +3,6 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 
 class DeletionTest {
@@ -16,11 +15,9 @@ class DeletionTest {
 
         //when
         Deletion deletion = new Deletion();
+        deletion.delete();
 
-        assertAll(
-                () -> assertThat(deletion.delete(question)).extracting("contentId").isEqualTo(question.getId()),
-                () -> assertThat(deletion.delete(question)).extracting("deleter").isEqualTo(questionUser),
-                () -> assertThat(deletion.isDeleted()).isTrue()
-        );
+        //then
+        assertThat(deletion.isDeleted()).isTrue();
     }
 }

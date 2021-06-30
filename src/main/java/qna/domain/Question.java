@@ -1,7 +1,6 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
-import qna.UnAuthenticationException;
 import qna.domain.common.BaseEntity;
 
 import javax.persistence.*;
@@ -62,6 +61,9 @@ public class Question extends BaseEntity {
         return this;
     }
 
+    public Answers answers(){
+        return this.answers;
+    }
     public User writer() {
         return this.writer;
     }
@@ -78,18 +80,16 @@ public class Question extends BaseEntity {
         return this.deleted.isDeleted();
     }
 
-    public DeleteHistories delete(User user) throws CannotDeleteException {
-        try {
-            this.writer.isOwner(user);
-        } catch (UnAuthenticationException e) {
-            throw new CannotDeleteException(CANNOT_DELETE_QUESTION + e);
-        }
+    public Boolean isOwner(User user){
+        return this.writer.equals(user);
+    }
 
-        DeleteHistory deleteHistory = this.deleted.delete(this);
-        DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.addHistory(deleteHistory);
-        deleteHistories.addHistories(answers.delete(user));
-        return deleteHistories;
+    public void delete(User user) throws CannotDeleteException {
+        if(!isOwner(user)){
+            throw new CannotDeleteException(CANNOT_DELETE_QUESTION);
+        }
+        this.deleted.delete();
+        answers.delete(user);
     }
 
     @Override

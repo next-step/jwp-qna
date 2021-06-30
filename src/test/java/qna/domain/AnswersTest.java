@@ -3,6 +3,7 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,8 +12,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class AnswersTest {
 
     private Answers answers;
+
     @Test
-    void delete()  {
+    void delete() {
         // given
         User questionUser = new User("user1", "user1Pass", "User1", "user1@gmail.com");
         Question question = new Question("Question1 title", "Question1 contents").writeBy(questionUser);
@@ -22,9 +24,10 @@ public class AnswersTest {
         answers.add(answer1);
 
         // when
-        List<DeleteHistory> deleteHistories = null;
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         try {
-            deleteHistories = answers.delete(questionUser).histories();
+            answers.delete(questionUser);
+            deleteHistories = DeleteHistories.of(answers).histories();
         } catch (CannotDeleteException e) {
             e.printStackTrace();
         }
@@ -48,8 +51,6 @@ public class AnswersTest {
         //when
 
         //then
-        assertThatThrownBy(()-> {
-            answers.delete(questionUser);
-        }).isInstanceOf(CannotDeleteException.class);
+        assertThatThrownBy(() -> answers.delete(questionUser)).isInstanceOf(CannotDeleteException.class);
     }
 }

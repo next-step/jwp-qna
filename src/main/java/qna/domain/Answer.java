@@ -2,7 +2,6 @@ package qna.domain;
 
 import qna.CannotDeleteException;
 import qna.NotFoundException;
-import qna.UnAuthenticationException;
 import qna.UnAuthorizedException;
 import qna.domain.common.BaseEntity;
 
@@ -76,20 +75,23 @@ public class Answer extends BaseEntity {
         return question.getId();
     }
 
-    public User writer(){
+    public User writer() {
         return this.writer;
     }
+
+    public Boolean isOwner(User user) {
+        return this.writer.equals(user);
+    }
+
     public boolean isDeleted() {
         return this.deleted.isDeleted();
     }
 
-    public DeleteHistory delete(User user) throws CannotDeleteException {
-        try {
-            this.writer.isOwner(user);
-        }catch (UnAuthenticationException e){
-            throw new CannotDeleteException(CANNOT_DELETE_ANSWER +e);
+    public void delete(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException(CANNOT_DELETE_ANSWER);
         }
-        return this.deleted.delete(this);
+        this.deleted.delete();
     }
 
     @Override

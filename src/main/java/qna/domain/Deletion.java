@@ -13,9 +13,8 @@ public class Deletion {
         this.deleted = false;
     }
 
-    public DeleteHistory delete(Object content) {
+    public void delete() {
         this.deleted = true;
-        return DeleteHistory.addHistory(content);
     }
 
     public Boolean isDeleted(){

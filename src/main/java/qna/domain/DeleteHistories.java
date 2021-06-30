@@ -27,6 +27,20 @@ public class DeleteHistories {
     public List<DeleteHistory> histories(){
         return deleteHistories;
     }
+
+    public static DeleteHistories of(Question question){
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.addHistory(DeleteHistory.of(question));
+        deleteHistories.addHistories(DeleteHistories.of(question.answers()));
+        return deleteHistories;
+    }
+    public static DeleteHistories of(Answers answers){
+        DeleteHistories deleteHistories = new DeleteHistories();
+        for(Answer answer: answers.list()){
+            deleteHistories.addHistory(DeleteHistory.of(answer));
+        }
+        return deleteHistories;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
