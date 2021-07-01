@@ -13,70 +13,73 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
-    @Autowired
-    QuestionRepository questionRepository;
+	@Autowired
+	QuestionRepository questionRepository;
 
-    @Autowired
-    UserRepository userRepository;
+	@Autowired
+	UserRepository userRepository;
 
-    private Question question1;
-    private Question question2;
+	private Question question1;
+	private Question question2;
 
-    private User user1;
-    private User user2;
+	private User user1;
+	private User user2;
 
-    @BeforeEach
-    void setUp() {
-        user1 = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
-        user2 = userRepository.save(new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net"));
+	@BeforeEach
+	void setUp() {
+		user1 = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
+		user2 = userRepository.save(new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net"));
 
-        question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
-        question2 = questionRepository.save(new Question("title2", "contents2").writeBy(user2));
-    }
+		question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
+		question2 = questionRepository.save(new Question("title2", "contents2").writeBy(user2));
+	}
 
-    @Test
-    void save() {
-        assertThat(question1.getWriter()).isEqualTo(user1);
-    }
+	@Test
+	void save() {
+		assertThat(question1.getWriter()).isEqualTo(user1);
+	}
 
-    @Test
-    void findByDeletedFalse() {
-        List<Question> questions = questionRepository.findByDeletedFalse();
-        assertThat(questions.size()).isEqualTo(2);
-        assertThat(questions).contains(question1, question2);
-    }
+	@Test
+	void findByDeletedFalse() {
+		List<Question> questions = questionRepository.findByDeletedFalse();
+		assertThat(questions.size()).isEqualTo(2);
+		assertThat(questions).contains(question1, question2);
+	}
 
-    @Test
-    void findByIdAndDeletedFalse() {
-        questionRepository.delete(question2);
-        Optional<Question> existQuestion = questionRepository.findByIdAndDeletedFalse(question1.getId());
-        Optional<Question> deletedQuestion = questionRepository.findByIdAndDeletedFalse(question2.getId());
+	@Test
+	void findByIdAndDeletedFalse() {
+		questionRepository.delete(question2);
+		Optional<Question> existQuestion = questionRepository.findByIdAndDeletedFalse(question1.getId());
+		Optional<Question> deletedQuestion = questionRepository.findByIdAndDeletedFalse(question2.getId());
 
-        assertThat(existQuestion.isPresent()).isTrue();
-        assertThat(deletedQuestion.isPresent()).isFalse();
-    }
+		assertThat(existQuestion.isPresent()).isTrue();
+		assertThat(deletedQuestion.isPresent()).isFalse();
+	}
 
-    @Test
-    void update() {
-        question1.setDelete();
+	@Test
+	void update() {
+		question1.setDelete();
 
-        assertThat(question1.isDeleted()).isTrue();
-    }
+		assertThat(question1.isDeleted()).isTrue();
+	}
 
-    @Test
-    void delete() {
-        questionRepository.delete(question1);
-        Optional<Question> expected = questionRepository.findById(question1.getId());
-        assertThat(expected.isPresent()).isFalse();
-    }
+	@Test
+	void delete() {
+		questionRepository.delete(question1);
+		Optional<Question> expected = questionRepository.findById(question1.getId());
+		assertThat(expected.isPresent()).isFalse();
+	}
 
-    @DisplayName("question을 삭제하면, answer도 전부 삭제되는지 확인")
-    @Test
-    void questionDelete() {
-        question1.addAnswer(new Answer(user1, question1, "answer"));
-        question1.addAnswer(new Answer(user2, question1, "answer"));
+	@DisplayName("question을 삭제하면, answer도 전부 삭제되는지 확인")
+	@Test
+	void questionDelete() {
+		Answer answer1 = new Answer(user1, question1, "answer");
+		Answer answer2 = new Answer(user2, question1, "answer");
+		question1.addAnswer(answer1);
+		question1.addAnswer(answer2);
 
-        question1.setDelete();
-        assertThat(question1.getAnswers().stream().allMatch(answer -> answer.isDeleted())).isTrue();
-    }
+		question1.setDelete();
+		assertThat(answer1.isDeleted()).isTrue();
+		assertThat(answer2.isDeleted()).isTrue();
+	}
 }

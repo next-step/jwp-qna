@@ -67,7 +67,7 @@ public class Question extends BaseTimeEntity {
 
 	public void addAnswer(Answer answer) {
 		answer.toQuestion(this);
-		if (answers.getAnswers().contains(answer)) {
+		if (answers.contains(answer)) {
 			throw new ForbiddenException();
 		}
 		answers.add(answer);
@@ -91,31 +91,21 @@ public class Question extends BaseTimeEntity {
 		}
 		setDelete();
 
-		List<DeleteHistory> deleteHistories = addDeleteHistories(loginUser);
-		return deleteHistories;
+		return addDeleteHistories(loginUser);
 	}
 
 	private List<DeleteHistory> addDeleteHistories(User loginUser) {
 		List<DeleteHistory> deleteHistories = new ArrayList<>();
 		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.getId(), loginUser));
 
-		this.getAnswers().stream()
-			.map(answer -> new DeleteHistory(ContentType.ANSWER, answer.getId(), loginUser))
+		this.answers.makeDeleteHistories(loginUser)
+			.stream()
 			.forEach(deleteHistory -> deleteHistories.add(deleteHistory));
 		return deleteHistories;
 	}
 
-	public boolean isAnswersByUser(User loginUser) {
-		return this.answers.getAnswers().stream()
-			.allMatch(answer -> answer.isOwner(loginUser));
-	}
-
 	public boolean canDeleteQuestion(User loginUser) {
-		return isOwner(loginUser) && isAnswersByUser(loginUser);
-	}
-
-	public List<Answer> getAnswers() {
-		return this.answers.getAnswers();
+		return isOwner(loginUser) && this.answers.isAnswersByUser(loginUser);
 	}
 
 	@Override
@@ -131,6 +121,6 @@ public class Question extends BaseTimeEntity {
 
 	public void setDelete() {
 		this.deleted = true;
-		this.answers.getAnswers().forEach(answer -> answer.setDeleted(true));
+		this.answers.deleteAnswer();
 	}
 }

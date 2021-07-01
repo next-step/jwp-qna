@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -23,7 +24,23 @@ public class Answers {
 		this.answers.add(answer);
 	}
 
-	public List<Answer> getAnswers() {
-		return this.answers;
+	public boolean contains(Answer answer) {
+		return this.answers.contains(answer);
+	}
+
+	public void deleteAnswer(){
+		this.answers.stream()
+			.forEach(answer -> answer.setDeleted(true));
+	}
+
+	public boolean isAnswersByUser(User loginUser) {
+		return this.answers.stream()
+			.allMatch(answer -> answer.isOwner(loginUser));
+	}
+
+	public List<DeleteHistory> makeDeleteHistories(User loginUser) {
+		return this.answers.stream()
+			.map(answer -> new DeleteHistory(ContentType.ANSWER, answer.getId(), loginUser))
+			.collect(Collectors.toList());
 	}
 }
