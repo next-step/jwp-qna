@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -84,5 +85,17 @@ public class AnswerRepositoryTest {
         answerRepository.delete(answer1);
         Optional<Answer> expected = answerRepository.findById(answer1.getId());
         assertThat(expected.isPresent()).isFalse();
+    }
+
+    @DisplayName("작성자와 로그인 유저가 다르면 false 반환")
+    @Test
+    void canDelete() {
+        User writer = new User(1L, "writer", "password", "writer", "email@mail.com");
+        User loginUser = new User(2L, "loginUser", "password", "login", "email@mail.com");
+        Question question = new Question("title", "contents");
+
+        Answer answer = new Answer(writer, question, "answer");
+        assertThat(answer.isOwner(loginUser)).isFalse();
+
     }
 }

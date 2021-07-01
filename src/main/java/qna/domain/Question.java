@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -14,9 +15,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
 import qna.ForbiddenException;
 
 @Entity
@@ -36,9 +37,8 @@ public class Question extends BaseTimeEntity {
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-	private List<Answer> answers = new ArrayList<>();
+	@Embedded
+	private Answers answers = new Answers();
 
 	@Column(nullable = false)
 	private boolean deleted = false;
@@ -67,7 +67,7 @@ public class Question extends BaseTimeEntity {
 
 	public void addAnswer(Answer answer) {
 		answer.toQuestion(this);
-		if(answers.contains(answer)){
+		if (answers.contains(answer)) {
 			throw new ForbiddenException();
 		}
 		answers.add(answer);
@@ -85,8 +85,27 @@ public class Question extends BaseTimeEntity {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+		if (!this.canDeleteQuestion(loginUser)) {
+			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+		}
+		setDelete();
+
+		return addDeleteHistories(loginUser);
+	}
+
+	private List<DeleteHistory> addDeleteHistories(User loginUser) {
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.getId(), loginUser));
+
+		this.answers.makeDeleteHistories(loginUser)
+			.stream()
+			.forEach(deleteHistory -> deleteHistories.add(deleteHistory));
+		return deleteHistories;
+	}
+
+	public boolean canDeleteQuestion(User loginUser) {
+		return isOwner(loginUser) && this.answers.isAnswersByUser(loginUser);
 	}
 
 	@Override
@@ -98,5 +117,10 @@ public class Question extends BaseTimeEntity {
 			", writer=" + writer +
 			", deleted=" + deleted +
 			'}';
+	}
+
+	public void setDelete() {
+		this.deleted = true;
+		this.answers.deleteAnswer();
 	}
 }
