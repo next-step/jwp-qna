@@ -17,6 +17,9 @@ public class Answers {
     }
 
     public void deleteAll(User loginUser) throws CannotDeleteException {
+        if (answers == null) {
+            return;
+        }
         for (Answer answer : answers) {
             answer.delete(loginUser);
         }
