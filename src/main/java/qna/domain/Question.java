@@ -49,7 +49,7 @@ public class Question extends BaseEntity {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        this.deleted = true;
+        setDeleted(true);
     }
 
     public boolean isOwner(User writer) {
