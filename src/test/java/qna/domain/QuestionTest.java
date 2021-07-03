@@ -13,12 +13,15 @@ public class QuestionTest {
 
     @Autowired
     QuestionRepository questions;
+    @Autowired
+    UserRepository users;
 
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Test
     void save() {
+        users.save(UserTest.JAVAJIGI);
         Question actual = questions.save(Q1);
         assertThat(actual.getId()).isNotNull();
         assertThat(actual.getTitle()).isEqualTo("title1");

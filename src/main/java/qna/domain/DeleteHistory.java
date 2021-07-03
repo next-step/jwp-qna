@@ -29,18 +29,26 @@ public class DeleteHistory {
     )
     private User user;
 
-    public DeleteHistory(ContentType contentType, Question question, LocalDateTime createDate) {
-        this.contentType = contentType;
-        this.contentId = question.getId();
-        this.user = question.getWriter();
-        this.createDate = createDate;
+    public static DeleteHistory fromQuestion(Question question) {
+        return new DeleteHistory(question);
     }
 
-    public DeleteHistory(ContentType contentType, Answer answer, LocalDateTime createDate) {
-        this.contentType = contentType;
+    public static DeleteHistory fromAnswer(Answer answer) {
+        return new DeleteHistory(answer);
+    }
+
+    public DeleteHistory(Question question) {
+        this.contentType = ContentType.QUESTION;
+        this.contentId = question.getId();
+        this.user = question.getWriter();
+        this.createDate = LocalDateTime.now();
+    }
+
+    public DeleteHistory(Answer answer) {
+        this.contentType = ContentType.ANSWER;
         this.contentId = answer.getId();
         this.user = answer.getWriter();
-        this.createDate = createDate;
+        this.createDate = LocalDateTime.now();
     }
 
     public DeleteHistory() {}
