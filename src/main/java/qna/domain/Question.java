@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 
 @Table(name = "question")
@@ -41,6 +43,13 @@ public class Question extends BaseEntity {
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        setDeleted(true);
     }
 
     public boolean isOwner(User writer) {
@@ -97,4 +106,5 @@ public class Question extends BaseEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
