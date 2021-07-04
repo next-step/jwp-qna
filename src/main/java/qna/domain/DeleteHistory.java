@@ -38,40 +38,20 @@ public class DeleteHistory {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getContentId() {
         return contentId;
-    }
-
-    public void setContentId(Long contentId) {
-        this.contentId = contentId;
     }
 
     public ContentType getContentType() {
         return contentType;
     }
 
-    public void setContentType(ContentType contentType) {
-        this.contentType = contentType;
-    }
-
     public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
-    }
-
     public Long getDeletedById() {
         return deletedById;
-    }
-
-    public void setDeletedById(Long deletedById) {
-        this.deletedById = deletedById;
     }
 
     @Override
