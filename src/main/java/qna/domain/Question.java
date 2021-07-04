@@ -1,14 +1,13 @@
 package qna.domain;
 
-import qna.ForbiddenException;
+import qna.CannotDeleteException;
+import qna.domain.common.BaseEntity;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-public class Question {
+public class Question extends BaseEntity {
+    private static final String CANNOT_DELETE_QUESTION = "질문을 삭제할 수 없습니다.";
     /**
      * create table question
      * (
@@ -26,27 +25,20 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    private String contents;
+    private Contents contents;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Embedded
+    private Deletion deleted;
 
-    @Column(nullable = false)
-    private Boolean deleted = false;
-
-    @Column(length = 100, nullable = false)
-    private String title;
-
-    private LocalDateTime updatedAt;
+    @Embedded
+    private Title title;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-    private List<Answer> answers;
+    @Embedded
+    private Answers answers;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -54,9 +46,10 @@ public class Question {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
-        this.contents = contents;
-        this.answers = new ArrayList<>();
+        this.title = new Title(title);
+        this.contents = new Contents(contents);
+        this.answers = new Answers();
+        this.deleted = new Deletion();
     }
 
     public Question() {
@@ -68,14 +61,14 @@ public class Question {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public Answers answers(){
+        return this.answers;
+    }
+    public User writer() {
+        return this.writer;
     }
 
     public void addAnswer(Answer answer) {
-        if (answers.contains(answer)) {
-            throw new ForbiddenException("중복된 answer 값");
-        }
         answers.add(answer);
     }
 
@@ -84,11 +77,19 @@ public class Question {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return this.deleted.isDeleted();
     }
 
-    public void delete(boolean deleted) {
-        this.deleted = deleted;
+    public Boolean isOwner(User user){
+        return this.writer.equals(user);
+    }
+
+    public void delete(User user) throws CannotDeleteException {
+        if(!isOwner(user)){
+            throw new CannotDeleteException(CANNOT_DELETE_QUESTION);
+        }
+        this.deleted.delete();
+        answers.delete(user);
     }
 
     @Override

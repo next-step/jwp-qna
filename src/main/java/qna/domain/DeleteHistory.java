@@ -1,7 +1,5 @@
 package qna.domain;
 
-import qna.domain.converter.ContentTypeConverter;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -23,24 +21,37 @@ public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long contentId;
+
     // @Convert(converter = ContentTypeConverter.class)
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
-    private LocalDateTime createDate = LocalDateTime.now();
+
+    private LocalDateTime createDate;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "deleter_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deleter;
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deleter, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deleter) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deleter = deleter;
-        this.createDate = createDate;
+        this.createDate = LocalDateTime.now();
     }
 
     public DeleteHistory() {
     }
+
+    public static DeleteHistory of(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.writer());
+    }
+
+    public static DeleteHistory of(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.writer());
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -67,5 +78,25 @@ public class DeleteHistory {
                 ", deleter=" + deleter +
                 ", createDate=" + createDate +
                 '}';
+    }
+
+    public static DeleteHistory addHistory(Object content) {
+        if (content instanceof Answer) {
+            return deleteAnswer((Answer) content);
+        }
+        if (content instanceof Question) {
+            return deleteQuestion((Question) content);
+        }
+        return null;
+    }
+
+    public static DeleteHistory deleteAnswer(Answer answer) {
+
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.writer());
+    }
+
+    public static DeleteHistory deleteQuestion(Question question) {
+
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.writer());
     }
 }

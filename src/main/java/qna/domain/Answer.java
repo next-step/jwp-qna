@@ -1,14 +1,16 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.common.BaseEntity;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class Answer {
+public class Answer extends BaseEntity {
+    public static final String CANNOT_DELETE_ANSWER = "답변을 삭제할 수 없습니다 ,";
     /**
      * create table answer
      * (
@@ -26,19 +28,14 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = false)
-    private Boolean deleted = false;
+    @Embedded
+    private Deletion deleted;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Question question;
-
-    private LocalDateTime updatedAt;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
@@ -61,29 +58,14 @@ public class Answer {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
-
+        this.contents = new Contents(contents);
+        this.deleted = new Deletion();
         this.question.addAnswer(this);
     }
 
     public Answer() {
 
     }
-
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
-//    public Answer toQuestion(Question question) {
-//        this.question = question;
-//        question.addAnswer(this);
-//        return this;
-//    }
-//    public void fromQuestion(Question question){
-//        if(Objects.isNull(this.question)) {
-//            this.question = question;
-//        }
-//    }
 
     public Long getId() {
         return id;
@@ -93,12 +75,23 @@ public class Answer {
         return question.getId();
     }
 
-    public boolean isDeleted() {
-        return deleted;
+    public User writer() {
+        return this.writer;
     }
 
-    public void delete(boolean deleted) {
-        this.deleted = deleted;
+    public Boolean isOwner(User user) {
+        return this.writer.equals(user);
+    }
+
+    public boolean isDeleted() {
+        return this.deleted.isDeleted();
+    }
+
+    public void delete(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException(CANNOT_DELETE_ANSWER);
+        }
+        this.deleted.delete();
     }
 
     @Override
