@@ -17,14 +17,16 @@ public class DeleteHistoryRepositoryTest {
 
     @Test
     void save() {
-        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, 0L, 0L, LocalDateTime.now());
+        User writer = new User("id", "password", "name", "email");
+        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, 0L, writer, LocalDateTime.now());
         DeleteHistory actual = deleteHistories.save(expected);
         assertThat(actual.getId()).isNotNull();
     }
 
     @Test
     void findById() {
-        deleteHistories.save(new DeleteHistory(ContentType.ANSWER, 0L, 0L, LocalDateTime.now()));
+        User writer = new User("id", "password", "name", "email");
+        deleteHistories.save(new DeleteHistory(ContentType.ANSWER, 0L, writer, LocalDateTime.now()));
         Optional<DeleteHistory> actual = deleteHistories.findById(0L);
         assertThat(actual).isNotNull();
     }

@@ -4,6 +4,7 @@ import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -32,6 +33,9 @@ public class User {
 
     @Column(unique = true, length = 20, nullable = false)
     private String userId;
+
+    @OneToMany(mappedBy = "deletedBy")
+    private List<DeleteHistory> deleteHistories;
 
     public User() {
     }
@@ -121,6 +125,10 @@ public class User {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
+    }
+
+    public boolean isEqual(User that) {
+        return this.id.equals(that.id);
     }
 
     private static class GuestUser extends User {

@@ -25,14 +25,16 @@ public class Answer {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name="fk_answer_to_question"), name = "question_id")
+    private Question question;
 
     @Column
     private LocalDateTime updatedAt;
 
-    @Column
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name="fk_answer_writer"), name = "writer_id")
+    private User writer;
 
     public Answer() {
     }
@@ -52,17 +54,17 @@ public class Answer {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.isEqual(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -85,16 +87,16 @@ public class Answer {
         this.deleted = deleted;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     @Override
@@ -104,9 +106,9 @@ public class Answer {
                 ", contents='" + contents + '\'' +
                 ", createdAt=" + createdAt +
                 ", deleted=" + deleted +
-                ", questionId=" + questionId +
+                ", questionId=" + question +
                 ", updatedAt=" + updatedAt +
-                ", writerId=" + writerId +
+                ", writerId=" + writer +
                 '}';
     }
 }
