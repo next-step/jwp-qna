@@ -86,8 +86,9 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void delete() {
+    public DeleteHistory delete() {
         this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
     }
 
     @Override

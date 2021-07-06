@@ -1,7 +1,6 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -29,8 +28,8 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     //default empty constructor
     protected Question(){
@@ -90,11 +89,35 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void delete() {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+
+        if(isOwner(loginUser) == false){
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+
+        for (Answer answer : answers.getAnswers()) {
+            if (!answer.isOwner(loginUser)) {
+                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            }
+        }
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        //질문 스스로를 삭제
         this.deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
+        //연관 답변들 모두 삭제
+
+        deleteHistories.addAll(answers.delete());
+//        for (Answer answer : answers) {
+//            answer.delete();
+//            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+//        }
+        return deleteHistories;
     }
 
-    public List<Answer> getAnswers(){
+    public Answers getAnswers(){
         return answers;
     }
 
