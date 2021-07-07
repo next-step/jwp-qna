@@ -34,9 +34,6 @@ public class User {
     @Column(unique = true, length = 20, nullable = false)
     private String userId;
 
-    @OneToMany(mappedBy = "deletedBy")
-    private List<DeleteHistory> deleteHistories;
-
     public User() {
     }
 
