@@ -61,6 +61,14 @@ public class Question {
         answers.add(answer);
     }
 
+    public boolean possibleDelete() {
+        boolean onlyOwn = true;
+        for (Answer answer : answers) {
+            onlyOwn = onlyOwn && answer.isOwner(writer);
+        }
+        return onlyOwn;
+    }
+
     public Long getId() {
         return id;
     }
@@ -79,6 +87,16 @@ public class Question {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public List<DeleteHistory> delete() {
+        this.deleted = true;
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.ofQuestion(this.id, this.writer));
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete());
+        }
+        return deleteHistories;
     }
 
     public String getTitle() {

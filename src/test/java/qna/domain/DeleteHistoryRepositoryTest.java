@@ -18,7 +18,7 @@ public class DeleteHistoryRepositoryTest {
     @Test
     void save() {
         User writer = new User("id", "password", "name", "email");
-        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, 0L, writer, LocalDateTime.now());
+        DeleteHistory expected = DeleteHistory.ofAnswer(0L, writer);
         DeleteHistory actual = deleteHistories.save(expected);
         assertThat(actual.getId()).isNotNull();
     }
@@ -26,7 +26,7 @@ public class DeleteHistoryRepositoryTest {
     @Test
     void findById() {
         User writer = new User("id", "password", "name", "email");
-        deleteHistories.save(new DeleteHistory(ContentType.ANSWER, 0L, writer, LocalDateTime.now()));
+        deleteHistories.save(DeleteHistory.ofAnswer(0L, writer));
         Optional<DeleteHistory> actual = deleteHistories.findById(0L);
         assertThat(actual).isNotNull();
     }

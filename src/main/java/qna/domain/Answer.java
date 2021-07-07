@@ -56,7 +56,7 @@ public class Answer {
 
         this.writer = writer;
         this.contents = contents;
-        toQuestion(question);
+        this.question = question;
     }
 
     public boolean isOwner(User writer) {
@@ -64,7 +64,6 @@ public class Answer {
     }
 
     public void toQuestion(Question question) {
-        question.addAnswer(this);
         this.question = question;
     }
 
@@ -82,6 +81,11 @@ public class Answer {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public DeleteHistory delete() {
+        this.deleted = true;
+        return DeleteHistory.ofAnswer(id, writer);
     }
 
     public void setDeleted(boolean deleted) {
