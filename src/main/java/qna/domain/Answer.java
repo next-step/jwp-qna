@@ -56,7 +56,7 @@ public class Answer {
 
         this.writer = writer;
         this.contents = contents;
-        question.addAnswer(this);
+        toQuestion(question);
     }
 
     public boolean isOwner(User writer) {
@@ -64,6 +64,7 @@ public class Answer {
     }
 
     public void toQuestion(Question question) {
+        question.addAnswer(this);
         this.question = question;
     }
 
