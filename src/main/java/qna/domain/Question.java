@@ -2,6 +2,8 @@ package qna.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -26,8 +28,12 @@ public class Question {
     @Column
     private LocalDateTime updatedAt;
 
-    @Column
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name="fk_question_writer"), name = "writer_id")
+    private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<Answer>();
 
     public Question() {
     }
@@ -43,16 +49,24 @@ public class Question {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.isEqual(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.add(answer);
+    }
+
+    public boolean possibleDelete() {
+        boolean onlyOwn = true;
+        for (Answer answer : answers) {
+            onlyOwn = onlyOwn && answer.isOwner(writer);
+        }
+        return onlyOwn;
     }
 
     public Long getId() {
@@ -75,6 +89,16 @@ public class Question {
         this.deleted = deleted;
     }
 
+    public List<DeleteHistory> delete() {
+        this.deleted = true;
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.ofQuestion(this.id, this.writer));
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete());
+        }
+        return deleteHistories;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -83,8 +107,8 @@ public class Question {
         return updatedAt;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     @Override
@@ -93,7 +117,7 @@ public class Question {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", deleted=" + deleted +
