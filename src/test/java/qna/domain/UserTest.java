@@ -22,8 +22,8 @@ public class UserTest {
         User savedJavajigi = userRepository.save(JAVAJIGI);
         User savedSanjigi = userRepository.save(SANJIGI);
         assertAll(
-                () -> assertThat(savedJavajigi.getId()).isEqualTo(JAVAJIGI.getId()),
-                () -> assertThat(savedSanjigi.getId()).isEqualTo(SANJIGI.getId())
+                () -> assertThat(savedJavajigi.getId()).isNotNull(),
+                () -> assertThat(savedSanjigi.getName()).isEqualTo(SANJIGI.getName())
         );
     }
 

@@ -1,7 +1,6 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 public class Question extends BaseEntity {
@@ -11,7 +10,9 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"), name = "writer_id")
+    private User user;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -31,12 +32,12 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.user = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.user.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -59,12 +60,12 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getUser() {
+        return user;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public boolean isDeleted() {
@@ -81,7 +82,7 @@ public class Question extends BaseEntity {
                 "id=" + this.getId() +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + user.getId() +
                 ", deleted=" + deleted +
                 '}';
     }

@@ -23,14 +23,21 @@ public class AnswerTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private Answer savedAnswer1;
     private Answer savedAnswer2;
+    private User javajigi;
+    private User sanjigi;
 
     @BeforeEach
     void setUp() {
-        savedQ1 = questionRepository.save(QuestionTest.Q1);
-        A1 = new Answer(UserTest.JAVAJIGI, savedQ1, "Answers Contents1");
-        A2 = new Answer(UserTest.JAVAJIGI, savedQ1, "Answers Contents1");
+
+        javajigi = userRepository.save(UserTest.JAVAJIGI);
+        savedQ1 = questionRepository.save(QuestionTest.Q1.writeBy(javajigi));
+        A1 = new Answer(javajigi, savedQ1, "Answers Contents1");
+        A2 = new Answer(javajigi, savedQ1, "Answers Contents1");
         savedAnswer1 = answerRepository.save(A1);
         savedAnswer2 = answerRepository.save(A2);
     }
