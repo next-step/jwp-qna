@@ -7,12 +7,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class User {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
@@ -26,12 +22,6 @@ public class User {
     @Column(name = "email", length = 50)
     private String email;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedAt;
-
     protected User() {
     }
 
@@ -40,7 +30,7 @@ public class User {
     }
 
     public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
+        this.setId(id);
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -81,14 +71,6 @@ public class User {
         return false;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
     }
@@ -124,7 +106,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "id=" + this.getId() +
                 ", userId='" + userId + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +

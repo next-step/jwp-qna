@@ -25,19 +25,18 @@ public class QuestionTest {
         Question savedQ1 = questionRepository.save(Q1);
         Question savedQ2 = questionRepository.save(Q2);
         assertAll(
-                () -> assertThat(savedQ1.getId()).isEqualTo(Q1.getId()),
-                () -> assertThat(savedQ2.getId()).isEqualTo(Q2.getId())
+                () -> assertThat(savedQ1.getId()).isNotNull(),
+                () -> assertThat(savedQ2.getTitle()).isEqualTo(Q2.getTitle())
         );
     }
 
     @Test
     @DisplayName("질문 목록 찾기 테스트")
     void findByDeletedFalseTest() {
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
+        Question newQ1 = questionRepository.save(Q1);
+        Question newQ2 = questionRepository.save(Q2);
         List<Question> questions = questionRepository.findByDeletedFalse();
-        assertThat(questions).contains(Q1, Q2);
-
+        assertThat(questions).contains(newQ1, newQ2);
     }
 
     @Test

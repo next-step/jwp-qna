@@ -8,24 +8,12 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class Answer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Answer extends BaseEntity {
     @Lob
     private String contents;
-
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedAt;
-
     private Long writerId;
-
     private Long questionId;
     private boolean deleted = false;
-
 
     public Answer() {
 
@@ -36,7 +24,7 @@ public class Answer {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+        this.setId(id);
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -57,14 +45,6 @@ public class Answer {
 
     public void toQuestion(Question question) {
         this.questionId = question.getId();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getWriterId() {
@@ -102,7 +82,7 @@ public class Answer {
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
+                "id=" + this.getId() +
                 ", writerId=" + writerId +
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +

@@ -4,11 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Question extends BaseEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
@@ -20,13 +16,7 @@ public class Question {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedAt;
-
-    public Question(){
+    public Question() {
 
     }
 
@@ -35,7 +25,7 @@ public class Question {
     }
 
     public Question(Long id, String title, String contents) {
-        this.id = id;
+        this.setId(id);
         this.title = title;
         this.contents = contents;
     }
@@ -51,14 +41,6 @@ public class Question {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -96,7 +78,7 @@ public class Question {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
+                "id=" + this.getId() +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", writerId=" + writerId +
