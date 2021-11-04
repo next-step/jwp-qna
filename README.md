@@ -1,7 +1,7 @@
 # JPA
 # 1단계 - 엔티티 매핑
 ## TODO
-* [ ] DDL을 참고하여 엔티티 클래스를 구현한다.
+* [X] DDL을 참고하여 엔티티 클래스를 구현한다.
     * [X] User
     * [X] Answer
     * [X] Question
