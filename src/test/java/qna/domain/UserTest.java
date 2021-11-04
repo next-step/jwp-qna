@@ -3,10 +3,14 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.stream.Stream;
+
 import javax.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -18,29 +22,44 @@ public class UserTest {
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
     @Autowired
-    private UserRepository users;
+    private UserRepository userRepository;
 
-    @Test
+    static Stream<Arguments> example() {
+        return Stream.of(Arguments.of(JAVAJIGI), Arguments.of(SANJIGI));
+    }
+
+    @ParameterizedTest
     @DisplayName("저장")
-    void save() {
-        User actual = users.save(JAVAJIGI);
+    @MethodSource("example")
+    void save(User user) {
+        //given, when
+        User actual = userRepository.save(user);
+
+        //then
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getName()).isEqualTo(JAVAJIGI.getName())
+            () -> assertThat(actual.getCreatedAt()).isNotNull(),
+            () -> assertThat(actual.getName()).isEqualTo(user.getName()),
+            () -> assertThat(actual.getUserId()).isEqualTo(user.getUserId())
         );
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("아이디로 검색")
-    void findByUserId() {
-        String expected = "sanjigi";
-        users.save(SANJIGI);
-        String actual = userByUserId(expected).getUserId();
+    @MethodSource("example")
+    void findByUserId(User user) {
+        //given
+        User expected = userRepository.save(user);
+
+        //when
+        User actual = userByUserId(user.getUserId());
+
+        //then
         assertThat(actual).isEqualTo(expected);
     }
 
     private User userByUserId(String userId) {
-        return users.findByUserId(userId)
+        return userRepository.findByUserId(userId)
             .orElseThrow(() -> new EntityNotFoundException(String.format("%s is not found", userId)));
     }
 }
