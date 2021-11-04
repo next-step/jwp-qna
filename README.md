@@ -2,8 +2,8 @@
 # 1단계 - 엔티티 매핑
 ## TODO
 * [ ] DDL을 참고하여 엔티티 클래스를 구현한다.
-    * [ ] User
-    * [ ] Answer
+    * [X] User
+    * [X] Answer
     * [ ] Question
     * [ ] DeleteHistory
 * [ ] DDL을 참고하여 리포지토리 클래스를 구현한다.
