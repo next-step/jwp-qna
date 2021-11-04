@@ -1,32 +1,23 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Question extends BaseEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
     @Lob
     private String contents;
 
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"), name = "writer_id")
+    private User user;
 
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedAt;
-
-    public Question(){
+    public Question() {
 
     }
 
@@ -35,30 +26,22 @@ public class Question {
     }
 
     public Question(Long id, String title, String contents) {
-        this.id = id;
+        this.setId(id);
         this.title = title;
         this.contents = contents;
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.user = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.user.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -77,12 +60,12 @@ public class Question {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getUser() {
+        return user;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public boolean isDeleted() {
@@ -96,10 +79,10 @@ public class Question {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
+                "id=" + this.getId() +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + user.getId() +
                 ", deleted=" + deleted +
                 '}';
     }

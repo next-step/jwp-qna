@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class AnswerTest {
     public static Answer A1;
     public static Answer A2;
+    private Question savedQ1;
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -22,14 +23,21 @@ public class AnswerTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private Answer savedAnswer1;
     private Answer savedAnswer2;
+    private User javajigi;
+    private User sanjigi;
 
     @BeforeEach
     void setUp() {
-        Question savedQ1 = questionRepository.save(QuestionTest.Q1);
-        A1 = new Answer(UserTest.JAVAJIGI, savedQ1, "Answers Contents1");
-        A2 = new Answer(UserTest.JAVAJIGI, savedQ1, "Answers Contents1");
+
+        javajigi = userRepository.save(UserTest.JAVAJIGI);
+        savedQ1 = questionRepository.save(QuestionTest.Q1.writeBy(javajigi));
+        A1 = new Answer(javajigi, savedQ1, "Answers Contents1");
+        A2 = new Answer(javajigi, savedQ1, "Answers Contents1");
         savedAnswer1 = answerRepository.save(A1);
         savedAnswer2 = answerRepository.save(A2);
     }
@@ -46,8 +54,7 @@ public class AnswerTest {
     @Test
     @DisplayName("Question의 Answer을 찾는 테스트")
     void findByQuestionIdAndDeletedFalseTest() {
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(1L);
-        assertThat(answers).contains(A1);
-
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(savedQ1.getId());
+        assertThat(answers).contains(A1, A2);
     }
 }
