@@ -33,7 +33,7 @@ public class AnswerTest {
     @DisplayName("저장")
     @MethodSource("example")
     void save(Answer answer) {
-        //given, when
+        //when
         Answer actual = answerRepository.save(answer);
 
         //then

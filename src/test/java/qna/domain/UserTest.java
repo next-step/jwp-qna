@@ -32,7 +32,7 @@ public class UserTest {
     @DisplayName("저장")
     @MethodSource("example")
     void save(User user) {
-        //given, when
+        //when
         User actual = userRepository.save(user);
 
         //then
