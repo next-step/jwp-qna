@@ -19,6 +19,9 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    private Question() {
+    }
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }
