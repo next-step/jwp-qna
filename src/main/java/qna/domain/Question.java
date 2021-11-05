@@ -49,7 +49,10 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        if (!this.answers.contains(answer)) {
+            answer.toQuestion(this);
+            answers.add(answer);
+        }
     }
 
     public List<Answer> getAnswers() {
@@ -107,7 +110,7 @@ public class Question extends BaseEntity {
 
         for (Answer answer : answers) {
             answer.isOtherWrite(loginUser);
-            answer.delete(loginUser);
+            deleteHistories.add(answer.delete(loginUser));
         }
         return deleteHistories;
     }

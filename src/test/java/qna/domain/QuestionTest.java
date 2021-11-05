@@ -94,15 +94,12 @@ public class QuestionTest {
         Question savedQ1 = questionRepository.save(Q1.writeBy(javajigi));
 
         Answer newAnswer1 = new Answer(1L, javajigi, savedQ1, "Answers Contents1");
-        Answer newAnswer2 = new Answer(2L, sanjigi, savedQ1, "Answers Contents2");
+        Answer newAnswer2 = new Answer(2L, javajigi, savedQ1, "Answers Contents2");
 
-        answerRepository.save(newAnswer1);
-        answerRepository.save(newAnswer2);
+        savedQ1.addAnswer(newAnswer1);
+        savedQ1.addAnswer(newAnswer2);
 
         List<DeleteHistory> deletedHistory = savedQ1.delete(javajigi);
-
         assertThat(deletedHistory.size()).isEqualTo(3);
-
-
     }
 }
