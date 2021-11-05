@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +15,21 @@ public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
+    private Question saveQ1;
+    private Question saveQ2;
+
     @Autowired
     private QuestionRepository questionRepository;
+
+    @BeforeEach
+    void setup() {
+        saveQ1 = questionRepository.save(Q1);
+        saveQ2 = questionRepository.save(Q2);
+    }
 
     @DisplayName("질문을 저장한다.")
     @Test
     void save() {
-        Question saveQ1 = questionRepository.save(Q1);
-        Question saveQ2 = questionRepository.save(Q2);
-
         assertAll(
                 () -> assertThat(saveQ1.getId()).isNotNull(),
                 () -> assertThat(saveQ1.getTitle()).isEqualTo(saveQ1.getTitle()),
@@ -34,17 +41,12 @@ public class QuestionTest {
     @DisplayName("미삭제 질문들을 조회한다.")
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        Question saveQ1 = questionRepository.save(Q1);
-        Question saveQ2 = questionRepository.save(Q2);
-
         assertThat(questionRepository.findByDeletedFalse().size()).isEqualTo(2);
     }
 
     @DisplayName("ID로 미삭제 질문을 조회한다.")
     @Test
     void findByIdAndDeletedFalse() {
-        Question saveQ1 = questionRepository.save(Q1);
-
         assertThat(questionRepository.findByIdAndDeletedFalse(Q1.getId()).get()).isEqualTo(saveQ1);
     }
 
