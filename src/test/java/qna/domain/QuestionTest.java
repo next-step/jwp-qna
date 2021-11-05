@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
+import qna.CannotDeleteException;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,9 +27,12 @@ public class QuestionTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AnswerRepository answerRepository;
+
     @BeforeEach
-    void setUp(){
-        javajigi =  userRepository.save(UserTest.JAVAJIGI);
+    void setUp() {
+        javajigi = userRepository.save(UserTest.JAVAJIGI);
         sanjigi = userRepository.save(UserTest.SANJIGI);
     }
 
@@ -64,8 +68,41 @@ public class QuestionTest {
 
     @Test
     @DisplayName("질문ID가 없는 데이터로 찾는 테스트")
-    void notFindIdAndDeletedFalseTest(){
+    void notFindIdAndDeletedFalseTest() {
         Optional<Question> questionOptional = questionRepository.findByIdAndDeletedFalse(3L);
         assertThat(questionOptional.isPresent()).isFalse();
+    }
+
+    @Test
+    @DisplayName("질문에 있는 답변 찾기")
+    public void getAnswersTest() {
+        Question savedQ1 = questionRepository.save(Q1.writeBy(javajigi));
+
+        Answer newAnswer1 = new Answer(1L, javajigi, savedQ1, "Answers Contents1");
+        Answer newAnswer2 = new Answer(2L, sanjigi, savedQ1, "Answers Contents2");
+
+        answerRepository.save(newAnswer1);
+        answerRepository.save(newAnswer2);
+
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(savedQ1.getId());
+        assertThat(answers.size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("질문 삭제 테스트")
+    void deleteQuestionTest() throws CannotDeleteException {
+        Question savedQ1 = questionRepository.save(Q1.writeBy(javajigi));
+
+        Answer newAnswer1 = new Answer(1L, javajigi, savedQ1, "Answers Contents1");
+        Answer newAnswer2 = new Answer(2L, sanjigi, savedQ1, "Answers Contents2");
+
+        answerRepository.save(newAnswer1);
+        answerRepository.save(newAnswer2);
+
+        List<DeleteHistory> deletedHistory = savedQ1.delete(javajigi);
+
+        assertThat(deletedHistory.size()).isEqualTo(3);
+
+
     }
 }
