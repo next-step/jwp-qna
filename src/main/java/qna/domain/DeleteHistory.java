@@ -27,8 +27,34 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
+    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+        this.deletedById = deletedById;
+    }
+
     protected DeleteHistory() {
 
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public Long getDeletedById() {
+        return deletedById;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
     }
 
     @Override
