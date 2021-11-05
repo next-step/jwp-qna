@@ -8,6 +8,6 @@
     * [X] Question
     * [X] DeleteHistory
 * [ ] @DataJpaTest를 사용하여 학습 테스트를 구현한다.
-    * [ ] UserRepository
-    * [X] AnswerRepository
-    * [ ] QuestionRepository
+    * [X] User
+    * [X] Answer
+    * [ ] Question
