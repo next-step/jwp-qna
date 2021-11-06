@@ -5,7 +5,7 @@
 # 1단계 : 엔티티 매핑
 
 ### 1. DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성한다.
-- [ ] Answer 엔티티 클래스 작성
+- [X] Answer 엔티티 클래스 작성
 - [ ] DeleteHistory 엔티티 클래스 작성
 - [ ] Question 엔티티 클래스 작성
 - [ ] User 엔티티 클래스 작성
