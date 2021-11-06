@@ -41,7 +41,7 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedBy.getId(), that.deletedBy.getId());
+                Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override
