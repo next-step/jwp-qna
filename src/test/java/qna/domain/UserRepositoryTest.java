@@ -15,12 +15,16 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    private User saveUser(User user){
+        return userRepository.save(user);
+    }
+
     @DisplayName("USER가 잘 저장되는지 확인한다.")
     @Test
     void saveUserTest() {
 
-        User saveUser1 = userRepository.save(UserTest.JAVAJIGI);
-        User saveUser2 = userRepository.save(UserTest.SANJIGI);
+        User saveUser1 = saveUser(UserTest.JAVAJIGI);
+        User saveUser2 = saveUser(UserTest.SANJIGI);
         assertAll(
                 () -> assertThat(saveUser1.getId()).isNotNull(),
                 () -> assertThat(saveUser1.getName()).isEqualTo(UserTest.JAVAJIGI.getName()),
@@ -33,8 +37,8 @@ public class UserRepositoryTest {
     @Test
     void findByUserId() {
 
-        User saveUser = userRepository.save(UserTest.JAVAJIGI);
-        assertSame(userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get(), saveUser);
+        User saveUser = saveUser(UserTest.JAVAJIGI);
+        assertSame(userRepository.findByUserId(saveUser.getUserId()).get(), saveUser);
 
     }
 }

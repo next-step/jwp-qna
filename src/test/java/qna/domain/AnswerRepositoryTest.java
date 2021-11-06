@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,21 +14,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class AnswerRepositoryTest {
 
-    Answer saveAnswer1;
-    Answer saveAnswer2;
-
     @Autowired
     private AnswerRepository answerRepository;
 
-    @BeforeEach
-    void init() {
-        saveAnswer1 = answerRepository.save(AnswerTest.A1);
-        saveAnswer2 = answerRepository.save(AnswerTest.A2);
+    private Answer saveAnswer(Answer answer){
+        return answerRepository.save(answer);
     }
 
-    @DisplayName("USER가 잘 저장되는지 확인한다.")
+    @DisplayName("ANSWER이 잘 저장되는지 확인한다.")
     @Test
     void saveAnswerTest() {
+
+        Answer saveAnswer1 = saveAnswer(AnswerTest.A1);
+        Answer saveAnswer2 = saveAnswer(AnswerTest.A2);
 
         assertAll(
                 () -> assertThat(saveAnswer1.getId()).isNotNull(),
@@ -44,6 +41,9 @@ public class AnswerRepositoryTest {
     @Test
     void findByQuestionIdAndDeletedFalseTest() {
 
+        Answer saveAnswer1 = saveAnswer(AnswerTest.A1);
+        Answer saveAnswer2 = saveAnswer(AnswerTest.A2);
+
         assertEquals(2, answerRepository.findByQuestionIdAndDeletedFalse(AnswerTest.A1.getQuestionId()).size());
     }
 
@@ -51,6 +51,10 @@ public class AnswerRepositoryTest {
     @Test
     void findByIdAndDeletedFalseTest() {
 
-        assertSame(saveAnswer2, answerRepository.findByIdAndDeletedFalse(AnswerTest.A2.getId()).get());
+        Answer saveAnswer2 = saveAnswer(AnswerTest.A2);
+        assertSame(saveAnswer2, answerRepository.findByIdAndDeletedFalse(saveAnswer2.getId()).get());
+
+        Answer saveAnswer1 = saveAnswer(AnswerTest.A1);
+        assertSame(saveAnswer1, answerRepository.findByIdAndDeletedFalse(saveAnswer1.getId()).get());
     }
 }
