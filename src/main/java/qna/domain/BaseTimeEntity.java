@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public abstract class BaseTimeEntity {
 
 	@CreatedDate
+	@Column(nullable = false)
 	private LocalDateTime createdAt;
 
 	@LastModifiedDate
