@@ -3,7 +3,6 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import javax.persistence.EntityNotFoundException;
@@ -66,20 +65,6 @@ public class AnswerTest {
         //then
         assertThat(actual)
             .isEqualTo(expected);
-    }
-
-    @ParameterizedTest
-    @DisplayName("질문 아이디로 검색")
-    @MethodSource("example")
-    void findByQuestionIdAndDeletedFalse(Answer answer) {
-        //given
-        Answer expected = answerRepository.save(answer);
-
-        // when
-        List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestion().getId());
-
-        //then
-        assertThat(actual).contains(expected);
     }
 
     private Answer answerById(Long id) {
