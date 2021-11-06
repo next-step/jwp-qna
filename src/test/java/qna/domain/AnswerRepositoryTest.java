@@ -27,14 +27,12 @@ public class AnswerRepositoryTest {
     private Answer saveAnswer(Answer answer, User user, Question question){
 
         User saveUser = userRepository.save(user);
-        question.writeBy(saveUser);
-        Question saveQuestion = questionRepository.save(question);
-        Answer saveAnswer = answer;
-        saveAnswer.setWriter(saveUser);
-        saveAnswer.setQuestion(saveQuestion);
-        saveAnswer = answerRepository.save(saveAnswer);
 
-        return saveAnswer;
+        question.writeBy(saveUser);
+        answer.setWriter(saveUser);
+        question.addAnswer(answer);
+        questionRepository.save(question);
+        return answer;
     }
 
     @DisplayName("ANSWER이 잘 저장되는지 확인한다.")
@@ -60,8 +58,7 @@ public class AnswerRepositoryTest {
     void findByIdAndDeletedFalseTest() {
 
         Answer saveAnswer = saveAnswer(AnswerTest.A1, UserTest.JAVAJIGI, QuestionTest.Q1);
-
-        assertSame(saveAnswer, answerRepository.findByIdAndDeletedFalse(saveAnswer.getId()).get());
+        assertEquals(saveAnswer.getId(), answerRepository.findByIdAndDeletedFalse(saveAnswer.getId()).get().getId());
 
     }
 }
