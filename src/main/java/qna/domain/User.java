@@ -2,18 +2,39 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.util.Date;
 import java.util.Objects;
 
+@Entity
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt = new Date();
+
+    @Column(length = 50)
     private String email;
 
-    private User() {
+    @Column(nullable = false, length = 20)
+    private String name;
+
+    @Column(nullable = false, length = 20)
+    private String password;
+
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
+    @Column(nullable = false, length = 20, unique = true)
+    private String userId;
+
+    public User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -106,10 +127,12 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
+                ", createdAt=" + createdAt +
                 ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", updatedAt=" + updatedAt +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 

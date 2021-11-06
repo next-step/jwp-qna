@@ -1,11 +1,31 @@
 package qna.domain;
 
+import javax.persistence.*;
+import java.util.Date;
+
+@Entity
 public class Question {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, length = 100)
     private String title;
+
+    @Lob
     private String contents;
+
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt = new Date();
+
     private Long writerId;
+
     private boolean deleted = false;
+
+    public Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -76,8 +96,10 @@ public class Question {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
+                ", createdAt=" + createdAt +
                 ", writerId=" + writerId +
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
