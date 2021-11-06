@@ -1,11 +1,19 @@
 package qna.domain;
 
+import java.util.List;
+import java.util.Objects;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -21,8 +29,12 @@ public class Question extends BaseTimeEntity {
     @Column(updatable = false)
     private String contents;
 
-    @Column(updatable = false)
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "question")
+    private List<Answer> answers;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -42,12 +54,12 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -66,8 +78,8 @@ public class Question extends BaseTimeEntity {
         return contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -84,9 +96,26 @@ public class Question extends BaseTimeEntity {
             "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", writerId=" + writerId +
+            ", writer=" + writer +
             ", deleted=" + deleted +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Question question = (Question)o;
+        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
+            question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer,
+            question.writer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writer, deleted);
     }
 
     private void validateTitle(String title) {

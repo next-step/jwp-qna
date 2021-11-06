@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -25,6 +26,12 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @BeforeAll
+    static void setUp(@Autowired UserRepository userRepository) {
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
+    }
+
     static Stream<Arguments> example() {
         return Stream.of(Arguments.of(Q1), Arguments.of(Q2));
     }
@@ -39,10 +46,9 @@ public class QuestionTest {
         //then
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getCreatedAt()).isNotNull(),
             () -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
             () -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
-            () -> assertThat(actual.getWriterId()).isEqualTo(question.getWriterId())
+            () -> assertThat(actual.getWriter()).isEqualTo(question.getWriter())
         );
     }
 
