@@ -29,11 +29,9 @@ public class AnswerTest {
     private Answer savedAnswer1;
     private Answer savedAnswer2;
     private User javajigi;
-    private User sanjigi;
 
     @BeforeEach
     void setUp() {
-
         javajigi = userRepository.save(UserTest.JAVAJIGI);
         savedQ1 = questionRepository.save(QuestionTest.Q1.writeBy(javajigi));
         A1 = new Answer(javajigi, savedQ1, "Answers Contents1");
