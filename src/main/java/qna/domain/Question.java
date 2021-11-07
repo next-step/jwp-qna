@@ -1,6 +1,11 @@
 package qna.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class Question {
+    @Id
     private Long id;
     private String title;
     private String contents;
@@ -15,6 +20,9 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    protected Question() {
     }
 
     public Question writeBy(User writer) {
@@ -73,11 +81,11 @@ public class Question {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", contents='" + contents + '\'' +
+            ", writerId=" + writerId +
+            ", deleted=" + deleted +
+            '}';
     }
 }
