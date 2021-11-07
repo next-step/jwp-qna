@@ -7,7 +7,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 
 @DataJpaTest
@@ -17,44 +18,47 @@ public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
-    private Answer saveAnswer(Answer answer){
-        return answerRepository.save(answer);
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    private Answer saveAnswer(Answer answer, User user, Question question){
+
+        User saveUser = userRepository.save(user);
+
+        question.writeBy(saveUser);
+        answer.setWriter(saveUser);
+        question.addAnswer(answer);
+        questionRepository.save(question);
+        return answer;
     }
 
     @DisplayName("ANSWER이 잘 저장되는지 확인한다.")
     @Test
     void saveAnswerTest() {
 
-        Answer saveAnswer1 = saveAnswer(AnswerTest.A1);
-        Answer saveAnswer2 = saveAnswer(AnswerTest.A2);
+        Answer saveAnswer = saveAnswer(AnswerTest.A1, UserTest.JAVAJIGI, QuestionTest.Q1);
 
-        assertAll(
-                () -> assertThat(saveAnswer1.getId()).isNotNull(),
-                () -> assertThat(saveAnswer1.getContents()).isEqualTo(AnswerTest.A1.getContents()),
-                () -> assertThat(saveAnswer2.getId()).isNotNull(),
-                () -> assertThat(saveAnswer2.getWriterId()).isEqualTo(AnswerTest.A2.getWriterId())
-        );
-
+        assertThat(saveAnswer.getWriter()).isEqualTo(UserTest.JAVAJIGI);
     }
 
     @DisplayName("QUESTION ID로 삭제되지 않은 질문을 확인한다.")
     @Test
     void findByQuestionIdAndDeletedFalseTest() {
 
-        Answer saveAnswer1 = saveAnswer(AnswerTest.A1);
-        Answer saveAnswer2 = saveAnswer(AnswerTest.A2);
+        Answer saveAnswer = saveAnswer(AnswerTest.A1, UserTest.JAVAJIGI, QuestionTest.Q1);
 
-        assertEquals(2, answerRepository.findByQuestionIdAndDeletedFalse(AnswerTest.A1.getQuestionId()).size());
+        assertEquals(1, answerRepository.findByQuestionIdAndDeletedFalse(saveAnswer.getQuestion().getId()).size());
     }
 
     @DisplayName("ANSWER ID로 삭제되지 않은 질문을 확인한다.")
     @Test
     void findByIdAndDeletedFalseTest() {
 
-        Answer saveAnswer2 = saveAnswer(AnswerTest.A2);
-        assertSame(saveAnswer2, answerRepository.findByIdAndDeletedFalse(saveAnswer2.getId()).get());
+        Answer saveAnswer = saveAnswer(AnswerTest.A1, UserTest.JAVAJIGI, QuestionTest.Q1);
+        assertEquals(saveAnswer.getId(), answerRepository.findByIdAndDeletedFalse(saveAnswer.getId()).get().getId());
 
-        Answer saveAnswer1 = saveAnswer(AnswerTest.A1);
-        assertSame(saveAnswer1, answerRepository.findByIdAndDeletedFalse(saveAnswer1.getId()).get());
     }
 }
