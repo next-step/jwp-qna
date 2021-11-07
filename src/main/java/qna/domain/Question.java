@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -109,14 +108,16 @@ public class Question extends BaseTimeEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        Question question = (Question)o;
-        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
-            question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer,
-            question.writer);
+        }
+        Question question = (Question) o;
+        return deleted == question.deleted && Objects.equals(id, question.id)
+            && Objects.equals(title, question.title) && Objects.equals(contents, question.contents)
+            && Objects.equals(writer, question.writer);
     }
 
     @Override
@@ -128,5 +129,9 @@ public class Question extends BaseTimeEntity {
         if (title == null || title.trim().isEmpty()) {
             throw new IllegalArgumentException("'title' must not be empty");
         }
+    }
+
+    public List<DeleteHistory> delete(User loginUser) {
+        return null;
     }
 }

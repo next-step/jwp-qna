@@ -1,12 +1,10 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.stream.Stream;
-
 import javax.persistence.EntityNotFoundException;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,8 +17,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DisplayName("답변 데이터")
 public class AnswerTest {
 
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A1 =
+        new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+    public static final Answer A2 =
+        new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
     @Autowired
     private AnswerRepository answerRepository;
 
@@ -29,7 +29,8 @@ public class AnswerTest {
     }
 
     @BeforeAll
-    static void setUp(@Autowired UserRepository userRepository, @Autowired QuestionRepository questionRepository) {
+    static void setUp(@Autowired UserRepository userRepository,
+        @Autowired QuestionRepository questionRepository) {
         userRepository.save(UserTest.JAVAJIGI);
         userRepository.save(UserTest.SANJIGI);
         questionRepository.save(QuestionTest.Q1);
@@ -69,6 +70,7 @@ public class AnswerTest {
 
     private Answer answerById(Long id) {
         return answerRepository.findByIdAndDeletedFalse(id)
-            .orElseThrow(() -> new EntityNotFoundException(String.format("id(%s) is not found", id)));
+            .orElseThrow(
+                () -> new EntityNotFoundException(String.format("id(%s) is not found", id)));
     }
 }
