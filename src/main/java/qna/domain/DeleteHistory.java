@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "delete_history")
 public class DeleteHistory {
@@ -27,6 +32,7 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
+    @CreatedDate
     @Column(name = "created_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
@@ -41,7 +47,6 @@ public class DeleteHistory {
         this.id = null;
         this.contentId = contentId;
         this.contentType = contentType;
-        this.createDate = LocalDateTime.now();
         this.deletedById = deletedById;
     }
 

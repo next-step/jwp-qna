@@ -5,12 +5,18 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "question")
 public class Question {
@@ -23,6 +29,7 @@ public class Question {
     @Lob
     private String contents;
 
+    @CreatedDate
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -32,6 +39,7 @@ public class Question {
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -45,10 +53,8 @@ public class Question {
     public Question(String contents, String title, Long writerId) {
         this.id = null;
         this.contents = contents;
-        this.createdAt = LocalDateTime.now();
         this.deleted = false;
         this.title = title;
-        this.updatedAt = null;
         this.writerId = writerId;
     }
 

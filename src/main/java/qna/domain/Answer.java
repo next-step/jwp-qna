@@ -5,15 +5,21 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "answer")
 public class Answer {
@@ -26,6 +32,7 @@ public class Answer {
     @Lob
     private String contents;
 
+    @CreatedDate
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -35,6 +42,7 @@ public class Answer {
     @Column(name = "question_id")
     private Long questionId;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -48,10 +56,8 @@ public class Answer {
     public Answer(String contents, boolean deleted, Long questionId, Long writerId) {
         this.id = null;
         this.contents = contents;
-        this.createdAt = LocalDateTime.now();
         this.deleted = deleted;
         this.questionId = questionId;
-        this.updatedAt = null;
         this.writerId = writerId;
     }
 
