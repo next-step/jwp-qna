@@ -1,8 +1,5 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -13,6 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "answer")
@@ -43,6 +43,16 @@ public class Answer {
 
     protected Answer() {
 
+    }
+
+    public Answer(String contents, boolean deleted, Long questionId, Long writerId) {
+        this.id = null;
+        this.contents = contents;
+        this.createdAt = LocalDateTime.now();
+        this.deleted = deleted;
+        this.questionId = questionId;
+        this.updatedAt = null;
+        this.writerId = writerId;
     }
 
     public Answer(User writer, Question question, String contents) {
@@ -122,5 +132,24 @@ public class Answer {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Answer answer = (Answer)obj;
+        return id.equals(answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
