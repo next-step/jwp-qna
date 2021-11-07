@@ -9,7 +9,8 @@ import java.util.Objects;
 @Entity
 public class Answer extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long writerId;
     private Long questionId;
