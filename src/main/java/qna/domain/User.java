@@ -37,15 +37,21 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "user_id", nullable = false, length = 20)
+    @Column(name = "user_id", unique = true, nullable = false, length = 20)
     private String userId;
 
     protected User() {
 
     }
 
-    public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
+    public User(String email, String name, String password, String userId) {
+        this.id = null;
+        this.createdAt = LocalDateTime.now();
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.updatedAt = LocalDateTime.now();
+        this.userId = userId;
     }
 
     public User(Long id, String userId, String password, String name, String email) {
@@ -139,6 +145,25 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        User user = (User)obj;
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     private static class GuestUser extends User {
