@@ -17,15 +17,21 @@ class UserRepositoryTest {
 
     @Test
     void 사용자를_저장한다() {
-        User expected = userRepository.save(UserTest.JAVAJIGI);
+        // when
+        User expected = userRepository.save(user());
+
+        // then
         assertAll(
-                () -> assertThat(expected.getId()).isEqualTo(1L),
                 () -> assertThat(expected.getName()).isEqualTo("name"),
-                () -> assertThat(expected.getEmail()).isEqualTo("javajigi@slipp.net"),
-                () -> assertThat(expected.getUserId()).isEqualTo("javajigi"),
+                () -> assertThat(expected.getEmail()).isEqualTo("user1@slipp.net"),
+                () -> assertThat(expected.getUserId()).isEqualTo("user1"),
                 () -> assertThat(expected.getPassword()).isEqualTo("password"),
                 () -> assertThat(expected.getCreatedAt()).isBefore(LocalDateTime.now()),
                 () -> assertThat(expected.getUpdatedAt()).isBefore(LocalDateTime.now())
         );
+    }
+
+    public static User user() {
+        return new User("user1", "password", "name", "user1@slipp.net");
     }
 }
