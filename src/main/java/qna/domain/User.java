@@ -1,7 +1,6 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
-
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -10,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "user")
@@ -20,12 +21,27 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "email", length = 50)
     private String email;
 
-    private User() {
+    @Column(name = "name", nullable = false, length = 20)
+    private String name;
+
+    @Column(name = "password", nullable = false, length = 20)
+    private String password;
+    
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "user_id", nullable = false, length = 20)
+    private String userId;
+
+    protected User() {
+
     }
 
     public User(String userId, String password, String name, String email) {
