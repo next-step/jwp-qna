@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,26 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question("title1", "contents1");
+    public static final Question Q2 = new Question("title2", "contents2");
 
     @PersistenceContext
     private EntityManager em;
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @BeforeEach
+    void setUp() {
+        User user1 = userRepository.save(UserTest.JAVAJIGI);
+        User user2 = userRepository.save(UserTest.SANJIGI);
+
+        Q1.writeBy(user1);
+        Q2.writeBy(user2);
+    }
 
     @DisplayName("Question 을 생성하여 저장한다.")
     @Test
@@ -85,7 +98,8 @@ public class QuestionTest {
             () -> assertEquals(expect.getId(), actual.getId()),
             () -> assertEquals(expect.getTitle(), actual.getTitle()),
             () -> assertEquals(expect.getContents(), actual.getContents()),
-            () -> assertEquals(expect.getWriterId(), actual.getWriterId())
+            () -> assertEquals(expect.getWriter(), actual.getWriter()),
+            () -> assertEquals(expect.isDeleted(), actual.isDeleted())
         );
     }
 }
