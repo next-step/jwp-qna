@@ -15,7 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 @DisplayName("답변 데이터")
-public class AnswerTest {
+class AnswerTest {
 
     public static final Answer A1 =
         new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");

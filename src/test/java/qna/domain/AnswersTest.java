@@ -17,11 +17,11 @@ class AnswersTest {
 
     @Test
     @DisplayName("답변 삭제")
-    void delete() {
+    void delete() throws CannotDeleteException {
         //given
         Answer javajigisAnswer1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "contents1");
-        Answer javajigisAnswer2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "contents2");
-        Answers answers = Answers.from(Arrays.asList(javajigisAnswer1, javajigisAnswer1));
+        Answer javajigisAnswer2 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "contents2");
+        Answers answers = Answers.from(Arrays.asList(javajigisAnswer1, javajigisAnswer2));
 
         //when
         List<DeleteHistory> delete = answers.delete(UserTest.JAVAJIGI);
@@ -52,8 +52,12 @@ class AnswersTest {
         ThrowingCallable deleteCall = () -> answers.delete(UserTest.JAVAJIGI);
 
         //then
-        assertThatExceptionOfType(CannotDeleteException.class)
-            .isThrownBy(deleteCall)
-            .withMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        assertAll(
+            () -> assertThat(javajigisAnswer.isDeleted()).isFalse(),
+            () -> assertThat(sanjigisAnswer.isDeleted()).isFalse(),
+            () -> assertThatExceptionOfType(CannotDeleteException.class)
+                .isThrownBy(deleteCall)
+                .withMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.")
+        );
     }
 }

@@ -1,7 +1,7 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -60,8 +59,8 @@ public class Answer extends BaseTimeEntity {
     protected Answer() {
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    boolean isNotOwner(User writer) {
+        return !this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -94,11 +93,13 @@ public class Answer extends BaseTimeEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        Answer answer = (Answer)o;
+        }
+        Answer answer = (Answer) o;
         return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writer,
             answer.writer) && Objects.equals(question, answer.question) && Objects.equals(contents,
             answer.contents);
@@ -118,5 +119,10 @@ public class Answer extends BaseTimeEntity {
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';
+    }
+
+    public DeleteHistory delete() {
+        deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 }

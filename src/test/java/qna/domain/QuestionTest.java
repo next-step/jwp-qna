@@ -88,7 +88,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("삭제")
-    void delete() {
+    void delete() throws CannotDeleteException {
         //given
         Question question = new Question("title", "contents")
             .writeBy(UserTest.JAVAJIGI);
@@ -114,7 +114,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("본인의 질문이 아닌 경우 삭제하면 CannotDeleteException")
-    void delete_NotOwn_thrownCannotDeleteException() {
+    void delete_notOwn_thrownCannotDeleteException() {
         //given
         Question question = new Question("title", "contents")
             .writeBy(UserTest.JAVAJIGI);
@@ -125,9 +125,13 @@ public class QuestionTest {
         ThrowingCallable deleteCall = () -> question.delete(UserTest.SANJIGI);
 
         //then
-        assertThatExceptionOfType(CannotDeleteException.class)
-            .isThrownBy(deleteCall)
-            .withMessageContaining("질문을 삭제할 권한이 없습니다.");
+        assertAll(
+            () -> assertThat(question.isDeleted()).isFalse(),
+            () -> assertThat(answer.isDeleted()).isFalse(),
+            () -> assertThatExceptionOfType(CannotDeleteException.class)
+                .isThrownBy(deleteCall)
+                .withMessageContaining("질문을 삭제할 권한이 없습니다.")
+        );
     }
 
     @Test
@@ -143,9 +147,13 @@ public class QuestionTest {
         ThrowingCallable deleteCall = () -> question.delete(UserTest.JAVAJIGI);
 
         //then
-        assertThatExceptionOfType(CannotDeleteException.class)
-            .isThrownBy(deleteCall)
-            .withMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        assertAll(
+            () -> assertThat(question.isDeleted()).isFalse(),
+            () -> assertThat(answer.isDeleted()).isFalse(),
+            () -> assertThatExceptionOfType(CannotDeleteException.class)
+                .isThrownBy(deleteCall)
+                .withMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.")
+        );
     }
 
 

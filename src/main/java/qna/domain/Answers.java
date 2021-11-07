@@ -5,34 +5,56 @@ import java.util.List;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import org.springframework.util.Assert;
+import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    private List<Answer> list = new ArrayList<>();
 
     protected Answers() {
     }
 
-    private Answers(List<Answer> answers) {
-        this.answers = answers;
+    private Answers(List<Answer> list) {
+        this.list = list;
     }
 
-    public static Answers from(List<Answer> answers) {
+    static Answers from(List<Answer> answers) {
         return new Answers(answers);
     }
 
-    public static Answers create() {
-        return new Answers();
+    static Answers create() {
+        return from(new ArrayList<>());
     }
 
-    public void add(Answer answer) {
+    void add(Answer answer) {
         Assert.notNull(answer, "'answer' must not be null");
-        this.answers.add(answer);
+        this.list.add(answer);
     }
 
-    public List<DeleteHistory> delete(User user) {
-        return null;
+    List<DeleteHistory> delete(User user) throws CannotDeleteException {
+        validateListOwner(user);
+        return deleteList();
+    }
+
+    private List<DeleteHistory> deleteList() {
+        ArrayList<DeleteHistory> histories = new ArrayList<>();
+        for (Answer answer : list) {
+            histories.add(answer.delete());
+        }
+        return histories;
+    }
+
+    private void validateListOwner(User user) throws CannotDeleteException {
+        for (Answer answer : list) {
+            validateOwner(answer, user);
+        }
+    }
+
+    private void validateOwner(Answer answer, User user) throws CannotDeleteException {
+        if (answer.isNotOwner(user)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 }
