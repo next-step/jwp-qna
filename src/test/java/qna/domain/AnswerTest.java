@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,30 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class AnswerTest {
-	public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-	public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+	public static Answer A1;
+	public static Answer A2;
 
 	@PersistenceContext
 	private EntityManager em;
 
 	@Autowired
 	private AnswerRepository answerRepository;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private QuestionRepository questionRepository;
+
+	@BeforeEach
+	void setUp() {
+		User user1 = userRepository.save(UserTest.JAVAJIGI);
+		User user2 = userRepository.save(UserTest.SANJIGI);
+		Question question = questionRepository.save(QuestionTest.Q1.writeBy(user1));
+
+		A1 = new Answer(user1, question, "Answers Contents1");
+		A2 = new Answer(user2, question, "Answers Contents2");
+	}
 
 	@DisplayName("Answer 을 생성하여 저장한다.")
 	@Test
@@ -57,7 +74,7 @@ public class AnswerTest {
         em.clear();
 
         // when
-        List<Answer> notDeletedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(a1.getQuestionId());
+        List<Answer> notDeletedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(a1.getQuestion().getId());
 
         // then
         assertThat(notDeletedAnswers.size()).isEqualTo(2);
@@ -83,9 +100,9 @@ public class AnswerTest {
     private void assertEqualsAnswer(Answer expect, Answer actual) {
 		assertAll(
 			() -> assertEquals(expect.getId(), actual.getId()),
-			() -> assertEquals(expect.getWriterId(), actual.getWriterId()),
+			() -> assertEquals(expect.getWriter(), actual.getWriter()),
 			() -> assertEquals(expect.getContents(), actual.getContents()),
-			() -> assertEquals(expect.getQuestionId(), actual.getQuestionId()),
+			() -> assertEquals(expect.getQuestion(), actual.getQuestion()),
 			() -> assertEquals(expect.isDeleted(), actual.isDeleted())
 		);
 	}
