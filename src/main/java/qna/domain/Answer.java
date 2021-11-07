@@ -18,8 +18,7 @@ public class Answer extends BaseTimeEntity {
   @Column(nullable = false)
   private boolean deleted = false;
 
-  public Answer() {
-  }
+  protected Answer() {}
 
   public Answer(User writer, Question question, String contents) {
     this(null, writer, question, contents);

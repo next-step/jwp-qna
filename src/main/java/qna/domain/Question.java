@@ -1,7 +1,14 @@
 package qna.domain;
 
+import javax.persistence.*;
+
+@Entity
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false)
     private Long id;
+    @Column(nullable = false)
     private String title;
     private String contents;
     private Long writerId;
@@ -16,6 +23,8 @@ public class Question {
         this.title = title;
         this.contents = contents;
     }
+
+    public Question() {}
 
     public Question writeBy(User writer) {
         this.writerId = writer.getId();
