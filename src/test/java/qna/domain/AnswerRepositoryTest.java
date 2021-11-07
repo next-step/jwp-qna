@@ -50,14 +50,14 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("questionId와 deleted로 Answer 리스트를 조회한다.")
-    void findByQuestionIdAndDeletedFalse() {
+    @DisplayName("question과 deleted로 Answer 리스트를 조회한다.")
+    void findByQuestionAndDeletedFalse() {
         // given
         answerRepository.save(answer);
         answerRepository.save(deletedAnswer);
 
         // when
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+        List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(question);
 
         // then
         assertThat(answers).containsExactly(answer);
@@ -67,7 +67,7 @@ class AnswerRepositoryTest {
     @DisplayName("id와 deleted로 Answer를 조회한다.")
     void findByIdAndDeletedFalse() {
         // given
-        Answer savedAnswer = answerRepository.save(this.answer);
+        Answer savedAnswer = answerRepository.save(answer);
 
         // when
         Optional<Answer> answerOptional = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
