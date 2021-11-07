@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(indexes = @Index(columnList = "userId"))
 public class User {
   public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -13,7 +14,7 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false, updatable = false)
   private Long id;
-  @Column(nullable = false, length = 20)
+  @Column(nullable = false, length = 20, unique = true)
   private String userId;
   @Column(nullable = false, length = 20)
   private String password;
@@ -119,6 +120,19 @@ public class User {
       ", name='" + name + '\'' +
       ", email='" + email + '\'' +
       '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    User user = (User) o;
+    return Objects.equals(id, user.id) && Objects.equals(userId, user.userId);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, userId, password, name, email);
   }
 
   private static class GuestUser extends User {

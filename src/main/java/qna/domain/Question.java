@@ -24,7 +24,7 @@ public class Question {
         this.contents = contents;
     }
 
-    public Question() {}
+    protected Question() {}
 
     public Question writeBy(User writer) {
         this.writerId = writer.getId();
