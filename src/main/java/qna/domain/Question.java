@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +40,16 @@ public class Question {
 
     protected Question() {
 
+    }
+
+    public Question(String contents, String title, Long writerId) {
+        this.id = null;
+        this.contents = contents;
+        this.createdAt = LocalDateTime.now();
+        this.deleted = false;
+        this.title = title;
+        this.updatedAt = null;
+        this.writerId = writerId;
     }
 
     public Question(String title, String contents) {
@@ -113,5 +124,24 @@ public class Question {
                 ", writerId=" + writerId +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Question question = (Question)obj;
+        return id.equals(question.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

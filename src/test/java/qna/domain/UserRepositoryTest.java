@@ -3,7 +3,9 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -14,6 +16,7 @@ class UserRepositoryTest {
 	@Autowired
 	private UserRepository users;
 
+	@DisplayName("사용자를 저장할 수 있다.")
 	@Test
 	void save() {
 		// given
@@ -32,6 +35,7 @@ class UserRepositoryTest {
 		);
 	}
 
+	@DisplayName("사용자 ID로 사용자를 찾을 수 있다.")
 	@Test
 	void findByUserId() {
 		// given
@@ -40,7 +44,7 @@ class UserRepositoryTest {
 
 		// when
 		User actual = users.findByUserId(expected.getUserId())
-			.orElseThrow(RuntimeException::new);
+			.orElseThrow(AssertionFailedError::new);
 
 		// then
 		assertThat(actual).isEqualTo(expected);
