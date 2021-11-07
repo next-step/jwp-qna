@@ -40,7 +40,7 @@ class AnswerRepositoryTest {
     void 정답을_저장한다() {
         assertAll(
                 () -> assertThat(answer.getContents()).isEqualTo("contents"),
-                () -> assertThat(answer.getQuestionId()).isEqualTo(question.getId()),
+                () -> assertThat(answer.getQuestion()).isEqualTo(question),
                 () -> assertThat(answer.getWriterId()).isEqualTo(user.getId()),
                 () -> assertThat(answer.getCreatedAt()).isBefore(LocalDateTime.now()),
                 () -> assertThat(answer.getUpdatedAt()).isBefore(LocalDateTime.now()),
