@@ -3,11 +3,11 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -21,12 +21,19 @@ public class AnswerTest {
 
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-
     @Autowired
     private AnswerRepository answerRepository;
 
     static Stream<Arguments> example() {
         return Stream.of(Arguments.of(A1), Arguments.of(A2));
+    }
+
+    @BeforeAll
+    static void setUp(@Autowired UserRepository userRepository, @Autowired QuestionRepository questionRepository) {
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
+        questionRepository.save(QuestionTest.Q1);
+        questionRepository.save(QuestionTest.Q2);
     }
 
     @ParameterizedTest
@@ -39,10 +46,9 @@ public class AnswerTest {
         //then
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getCreatedAt()).isNotNull(),
             () -> assertThat(actual.getContents()).isEqualTo(answer.getContents()),
-            () -> assertThat(actual.getQuestionId()).isEqualTo(answer.getQuestionId()),
-            () -> assertThat(actual.getWriterId()).isEqualTo(answer.getWriterId())
+            () -> assertThat(actual.getQuestion()).isEqualTo(answer.getQuestion()),
+            () -> assertThat(actual.getWriter()).isEqualTo(answer.getWriter())
         );
     }
 
@@ -59,21 +65,6 @@ public class AnswerTest {
         //then
         assertThat(actual)
             .isEqualTo(expected);
-    }
-
-    @ParameterizedTest
-    @DisplayName("질문 아이디로 검색")
-    @MethodSource("example")
-    void findByQuestionIdAndDeletedFalse(Answer answer) {
-        //given
-        Answer expected = answerRepository.save(answer);
-
-        // when
-        List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(
-            answer.getQuestionId());
-
-        //then
-        assertThat(actual).contains(expected);
     }
 
     private Answer answerById(Long id) {

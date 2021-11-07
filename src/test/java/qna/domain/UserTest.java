@@ -38,7 +38,6 @@ public class UserTest {
         //then
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getCreatedAt()).isNotNull(),
             () -> assertThat(actual.getName()).isEqualTo(user.getName()),
             () -> assertThat(actual.getUserId()).isEqualTo(user.getUserId())
         );
