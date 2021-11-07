@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,10 +19,19 @@ public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private ContentType contentType;
+
+    @Column(name = "content_id")
     private Long contentId;
-    private Long deletedById;
+
+    @Column(name = "content_type")
+    @Enumerated(EnumType.STRING)
+    private ContentType contentType;
+
+    @Column(name = "created_date")
     private LocalDateTime createDate = LocalDateTime.now();
+
+    @Column(name = "deleted_by_id")
+    private Long deletedById;
 
     protected DeleteHistory() {
 
