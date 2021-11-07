@@ -41,7 +41,7 @@ class AnswerRepositoryTest {
         assertAll(
                 () -> assertThat(answer.getContents()).isEqualTo("contents"),
                 () -> assertThat(answer.getQuestion()).isEqualTo(question),
-                () -> assertThat(answer.getWriterId()).isEqualTo(user.getId()),
+                () -> assertThat(answer.getWriter()).isEqualTo(user),
                 () -> assertThat(answer.getCreatedAt()).isBefore(LocalDateTime.now()),
                 () -> assertThat(answer.getUpdatedAt()).isBefore(LocalDateTime.now()),
                 () -> assertThat(answer.isDeleted()).isEqualTo(false)
