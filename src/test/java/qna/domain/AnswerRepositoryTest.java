@@ -23,15 +23,15 @@ class AnswerRepositoryTest {
 
     private Question question;
     private Answer answer;
-    private Answer answer2;
+    private Answer deletedAnswer;
 
     @BeforeEach
     void setUp() {
         User user = new User("test_id", "Passw0rd!", "홍길동", "test@email.com");
         question = new Question("질문", "질문 내용");
         answer = new Answer(user, question, "답변 내용");
-        answer2 = new Answer(user, question, "답변2 내용");
-        answer2.setDeleted(true);
+        deletedAnswer = new Answer(user, question, "답변2 내용");
+        deletedAnswer.delete();
     }
 
     @Test
@@ -54,7 +54,7 @@ class AnswerRepositoryTest {
     void findByQuestionIdAndDeletedFalse() {
         // given
         answerRepository.save(answer);
-        answerRepository.save(answer2);
+        answerRepository.save(deletedAnswer);
 
         // when
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());

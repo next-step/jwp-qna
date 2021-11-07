@@ -22,13 +22,13 @@ class QuestionRepositoryTest {
     private QuestionRepository questionRepository;
 
     private Question question;
-    private Question question2;
+    private Question deletedQuestion;
 
     @BeforeEach
     void setUp() {
         question = new Question("질문", "질문 내용");
-        question2 = new Question("질문2", "질문2 내용");
-        question2.setDeleted(true);
+        deletedQuestion = new Question("질문2", "질문2 내용");
+        deletedQuestion.delete();
     }
 
     @Test
@@ -51,7 +51,7 @@ class QuestionRepositoryTest {
     void findByDeletedFalse() {
         // given
         questionRepository.save(question);
-        questionRepository.save(question2);
+        questionRepository.save(deletedQuestion);
 
         // when
         List<Question> questions = questionRepository.findByDeletedFalse();
