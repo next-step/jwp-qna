@@ -62,14 +62,6 @@ public class Question extends BaseTimeEntity {
         return id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
     public User getWriter() {
         return this.writer;
     }

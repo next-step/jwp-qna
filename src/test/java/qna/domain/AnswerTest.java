@@ -57,10 +57,10 @@ public class AnswerTest {
 		Optional<Answer> findA2 = answerRepository.findById(a2.getId());
 
 		assertTrue(findA1.isPresent());
-        assertEqualsAnswer(a1, findA1.get());
+		assertEquals(a1, findA1.get());
 
 		assertTrue(findA2.isPresent());
-        assertEqualsAnswer(a2, findA2.get());
+		assertEquals(a2, findA2.get());
 	}
 
     @DisplayName("Question ID 로 삭제되지 않은 Answer 목록을 조회한다.")
@@ -94,16 +94,6 @@ public class AnswerTest {
 
         // then
         assertTrue(notDeletedAnswer.isPresent());
-        assertEqualsAnswer(a1, notDeletedAnswer.get());
+		assertEquals(a1, notDeletedAnswer.get());
     }
-
-    private void assertEqualsAnswer(Answer expect, Answer actual) {
-		assertAll(
-			() -> assertEquals(expect.getId(), actual.getId()),
-			() -> assertEquals(expect.getWriter(), actual.getWriter()),
-			() -> assertEquals(expect.getContents(), actual.getContents()),
-			() -> assertEquals(expect.getQuestion(), actual.getQuestion()),
-			() -> assertEquals(expect.isDeleted(), actual.isDeleted())
-		);
-	}
 }
