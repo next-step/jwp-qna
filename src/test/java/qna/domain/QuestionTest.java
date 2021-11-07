@@ -47,7 +47,7 @@ public class QuestionTest {
         List<Question> remainQuestions = repository.findByDeletedFalse();
 
         //then
-        assertThat(remainQuestions).hasSize(2);
+        assertThat(remainQuestions).hasSize(1);
     }
 
     @Test
