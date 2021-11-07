@@ -56,7 +56,7 @@ alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
 
-- [ ] 아래의 DDL을 보고 유추하여 연관 관계를 매핑한다.
+- [X] 아래의 DDL을 보고 유추하여 연관 관계를 매핑한다.
 
 ```sql
 alter table answer

@@ -34,6 +34,9 @@ public class User extends BaseEntity {
     private String email;
 
     @OneToMany(mappedBy = "writer")
+    private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
     private List<Answer> answers = new ArrayList<>();
 
     protected User() {
