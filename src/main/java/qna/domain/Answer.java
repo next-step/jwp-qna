@@ -4,11 +4,10 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.Objects;
 
 @Entity
-public class Answer {
+public class Answer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,17 +16,9 @@ public class Answer {
     @Lob
     private String contents;
 
-    @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
-
     private boolean deleted = false;
 
     private Long questionId;
-
-    @Column
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
 
     private Long writerId;
 
@@ -107,12 +98,9 @@ public class Answer {
         return "Answer{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
-                ", createdAt=" + createdAt +
                 ", deleted=" + deleted +
                 ", questionId=" + questionId +
-                ", updatedAt=" + updatedAt +
                 ", writerId=" + writerId +
-                '}';
+                "} " + super.toString();
     }
-
 }

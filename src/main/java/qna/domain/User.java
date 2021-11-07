@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-public class User {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -26,10 +26,6 @@ public class User {
 
     @Column(nullable = false, length = 20)
     private String password;
-
-    @Column
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
 
     @Column(nullable = false, length = 20, unique = true)
     private String userId;
@@ -131,7 +127,6 @@ public class User {
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
-                ", updatedAt=" + updatedAt +
                 ", userId='" + userId + '\'' +
                 '}';
     }
