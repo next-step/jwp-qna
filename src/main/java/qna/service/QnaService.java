@@ -41,7 +41,7 @@ public class QnaService {
         Answers answers = new Answers(answerList);
         answers.checkIsOwner(loginUser);
 
-        List<DeleteHistory> deleteHistories = question.delete(answerList);
+        List<DeleteHistory> deleteHistories = question.delete(answers);
         deleteHistoryService.saveAll(deleteHistories);
     }
 }
