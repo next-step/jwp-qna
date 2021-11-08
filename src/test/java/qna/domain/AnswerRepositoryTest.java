@@ -12,9 +12,13 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+
 
 @DataJpaTest
 @DisplayName("답변 저장소")
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 class AnswerRepositoryTest {
 
     @Autowired
@@ -30,7 +34,6 @@ class AnswerRepositoryTest {
         userRepository.save(UserTest.JAVAJIGI);
         userRepository.save(UserTest.SANJIGI);
         questionRepository.save(QuestionTest.Q1);
-        questionRepository.save(QuestionTest.Q2);
     }
 
     @ParameterizedTest(name = "{displayName}[{index}] {0} can be saved")

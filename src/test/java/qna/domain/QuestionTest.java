@@ -45,15 +45,14 @@ public class QuestionTest {
     void addAnswer() {
         //given
         Question question = Question.of("title", "contents");
+        Answer answer = Answer.of(UserTest.JAVAJIGI, question, "contents");
 
         //when
-        question.addAnswer(AnswerTest.A1);
+        question.addAnswer(answer);
 
         //then
-        assertAll(
-            () -> assertThat(question.containsAnswer(AnswerTest.A1)).isTrue(),
-            () -> assertThat(question.containsAnswer(AnswerTest.A2)).isFalse()
-        );
+        assertThat(question.containsAnswer(answer))
+            .isTrue();
     }
 
     @Test
