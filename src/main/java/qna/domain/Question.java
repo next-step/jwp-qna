@@ -61,10 +61,8 @@ public class Question extends BaseEntity{
 
         this.deleted = true;
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(DeleteHistory.question(id, writer));
-        answers.delete(deleteHistories);
-        return deleteHistories;
+        DeleteHistories deleteHistories = new DeleteHistories(answers);
+        return deleteHistories.delete(DeleteHistory.question(id, writer));
     }
 
     public void addAnswer(Answer answer) {
