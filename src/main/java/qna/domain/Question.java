@@ -1,11 +1,36 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
     private String contents;
-    private Long writerId;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
     private boolean deleted = false;
+    private String title;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+    private Long writerId;
+
+    public Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
