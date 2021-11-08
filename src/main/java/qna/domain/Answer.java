@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,7 +19,11 @@ public class Answer extends BaseTime {
     private Long id;
     private Long writerId;
     private Long questionId;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
 
     public Answer() {
