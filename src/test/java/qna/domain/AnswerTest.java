@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 public class AnswerTest {
@@ -28,7 +28,7 @@ public class AnswerTest {
                 () -> assertThat(A1.getWriterId()).isEqualTo(answer.getWriterId()),
                 () -> assertThat(A1.getQuestionId()).isEqualTo(answer.getQuestionId()),
                 () -> assertThat(A1.getContents()).isEqualTo(answer.getContents()),
-                () -> assertThat(A1.isDeleted()).isFalse()
+                () -> assertFalse(A1.isDeleted())
         );
     }
 
@@ -39,8 +39,10 @@ public class AnswerTest {
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
 
-        assertThat(savedAnswer).isEqualTo(answers.get(0));
-        assertThat(savedAnswer.isDeleted()).isFalse();
+        assertAll(
+                () -> assertFalse(savedAnswer.isDeleted()),
+                () -> assertEquals(savedAnswer, answers.get(0))
+        );
     }
 
     @Test
@@ -50,8 +52,10 @@ public class AnswerTest {
 
         Optional<Answer> oAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
 
-        assertThat(oAnswer.get()).isEqualTo(savedAnswer);
-        assertThat(oAnswer.get().isDeleted()).isFalse();
+        assertAll(
+                () -> assertEquals(oAnswer.get(), savedAnswer),
+                () -> assertFalse(oAnswer.get().isDeleted())
+        );
 
     }
 
