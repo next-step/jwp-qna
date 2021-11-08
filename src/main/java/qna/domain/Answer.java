@@ -1,13 +1,10 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +13,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
+
 @Entity
 public class Answer extends BaseTimeEntity {
 
@@ -23,11 +23,11 @@ public class Answer extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade= CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @ManyToOne(cascade= CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
@@ -96,12 +96,12 @@ public class Answer extends BaseTimeEntity {
         Answer answer = (Answer)o;
         return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writer,
                                                                                             answer.writer)
-            && Objects.equals(question, answer.question) && Objects.equals(contents, answer.contents);
+            && Objects.equals(question.getId(), answer.question.getId()) && Objects.equals(contents, answer.contents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, writer, question, contents, deleted);
+        return Objects.hash(id, writer, question.getId(), contents, deleted);
     }
 
     @Override
