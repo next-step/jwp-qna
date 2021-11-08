@@ -34,7 +34,7 @@ public class DeleteHistory {
 
     @CreatedDate
     @Column(name = "created_date")
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
 
     @Column(name = "deleted_by_id")
     private Long deletedById;

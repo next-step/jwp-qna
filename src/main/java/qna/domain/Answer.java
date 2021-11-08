@@ -53,10 +53,10 @@ public class Answer {
 
     }
 
-    public Answer(String contents, boolean deleted, Long questionId, Long writerId) {
+    public Answer(String contents, Long questionId, Long writerId) {
         this.id = null;
         this.contents = contents;
-        this.deleted = deleted;
+        this.deleted = false;
         this.questionId = questionId;
         this.writerId = writerId;
     }

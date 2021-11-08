@@ -34,7 +34,7 @@ public class Question {
     private LocalDateTime createdAt;
 
     @Column(name = "deleted", nullable = false)
-    private boolean deleted = false;
+    private boolean deleted;
 
     @Column(name = "title", nullable = false, length = 100)
     private String title;
