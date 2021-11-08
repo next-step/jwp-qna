@@ -35,10 +35,10 @@ public class AnswerGroup {
 
     List<DeleteHistory> delete(User user) throws CannotDeleteException {
         validateListOwner(user);
-        return deleteList();
+        return deleteAnswers();
     }
 
-    private List<DeleteHistory> deleteList() {
+    private List<DeleteHistory> deleteAnswers() {
         ArrayList<DeleteHistory> histories = new ArrayList<>();
         for (Answer answer : answers) {
             histories.add(answer.delete());
