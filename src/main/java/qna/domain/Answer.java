@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,21 +35,10 @@ public class Answer extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
-    public Answer(Long id, User writer, Question question, String contents) {
+    private Answer(Long id, User writer, Question question, String contents) {
+        validateNonNull(writer);
+        validateNonNull(question);
         this.id = id;
-
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
-
         this.writer = writer;
         this.question = question;
         this.contents = contents;
@@ -59,8 +47,21 @@ public class Answer extends BaseTimeEntity {
     protected Answer() {
     }
 
+    public static Answer of(Long id, User writer, Question question, String contents) {
+        return new Answer(id, writer, question, contents);
+    }
+
+    public static Answer of(User writer, Question question, String contents) {
+        return of(null, writer, question, contents);
+    }
+
     boolean isNotOwner(User writer) {
         return !this.writer.equals(writer);
+    }
+
+    DeleteHistory delete() {
+        deleted = true;
+        return DeleteHistory.ofAnswer(id, writer);
     }
 
     public void toQuestion(Question question) {
@@ -85,10 +86,6 @@ public class Answer extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -121,8 +118,15 @@ public class Answer extends BaseTimeEntity {
             '}';
     }
 
-    public DeleteHistory delete() {
-        deleted = true;
-        return DeleteHistory.ofAnswer(id, writer);
+    private void validateNonNull(Question question) {
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
+    }
+
+    private void validateNonNull(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
     }
 }

@@ -1,76 +1,85 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.stream.Stream;
-import javax.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
 
 @DataJpaTest
-@DisplayName("답변 데이터")
-class AnswerTest {
+@DisplayName("답변")
+public class AnswerTest {
 
     public static final Answer A1 =
-        new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        Answer.of(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+
     public static final Answer A2 =
-        new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-    @Autowired
-    private AnswerRepository answerRepository;
+        Answer.of(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
-    static Stream<Arguments> example() {
-        return Stream.of(Arguments.of(A1), Arguments.of(A2));
+    @Test
+    @DisplayName("객체화")
+    void instance() {
+        assertThatNoException()
+            .isThrownBy(() -> Answer.of(UserTest.SANJIGI, QuestionTest.Q1, "Contents"));
     }
 
-    @BeforeAll
-    static void setUp(@Autowired UserRepository userRepository,
-        @Autowired QuestionRepository questionRepository) {
-        userRepository.save(UserTest.JAVAJIGI);
-        userRepository.save(UserTest.SANJIGI);
-        questionRepository.save(QuestionTest.Q1);
-        questionRepository.save(QuestionTest.Q2);
+    @Test
+    @DisplayName("작성자 없이 객체화하면 UnAuthorizedException")
+    void instance_nullWriter_thrownUnAuthorizedException() {
+        assertThatExceptionOfType(UnAuthorizedException.class)
+            .isThrownBy(() -> Answer.of(null, QuestionTest.Q1, "Contents"));
     }
 
-    @ParameterizedTest
-    @DisplayName("저장")
-    @MethodSource("example")
-    void save(Answer answer) {
-        //when
-        Answer actual = answerRepository.save(answer);
-
-        //then
-        assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getContents()).isEqualTo(answer.getContents()),
-            () -> assertThat(actual.getQuestion()).isEqualTo(answer.getQuestion()),
-            () -> assertThat(actual.getWriter()).isEqualTo(answer.getWriter())
-        );
+    @Test
+    @DisplayName("질문 없이 객체화하면 NotFoundException")
+    void instance_nullQuestion_thrownNotFoundException() {
+        assertThatExceptionOfType(NotFoundException.class)
+            .isThrownBy(() -> Answer.of(UserTest.JAVAJIGI, null, "Contents"));
     }
 
-    @ParameterizedTest
-    @DisplayName("아이디로 검색")
-    @MethodSource("example")
-    void findByIdAndDeletedFalse(Answer answer) {
+    private static Stream<Arguments> isNotOwner() {
+        return Stream.of(Arguments.of(UserTest.SANJIGI, true),
+            Arguments.of(UserTest.JAVAJIGI, false));
+    }
+
+    @ParameterizedTest(name = "{displayName}[{index}] it is {1} that answerWrittenJavajigi is not Owner by {0}")
+    @MethodSource
+    @DisplayName("본인의 답변이 아닌지 판단")
+    void isNotOwner(User writer, boolean expected) {
         //given
-        Answer expected = answerRepository.save(answer);
+        Answer answerWrittenJavajigi = Answer.of(UserTest.JAVAJIGI, QuestionTest.Q1, "Contents");
 
         //when
-        Answer actual = answerById(expected.getId());
+        boolean isNotOwner = answerWrittenJavajigi.isNotOwner(writer);
 
         //then
-        assertThat(actual)
+        assertThat(isNotOwner)
             .isEqualTo(expected);
     }
 
-    private Answer answerById(Long id) {
-        return answerRepository.findByIdAndDeletedFalse(id)
-            .orElseThrow(
-                () -> new EntityNotFoundException(String.format("id(%s) is not found", id)));
+    @Test
+    @DisplayName("삭제")
+    void delete() {
+        //given
+        User expectedWriter = UserTest.SANJIGI;
+        Answer answer = Answer.of(expectedWriter, QuestionTest.Q1, "Contents");
+
+        //when
+        DeleteHistory history = answer.delete();
+
+        //then
+        assertAll(
+            () -> assertThat(answer.isDeleted()).isTrue(),
+            () -> assertThat(history).isNotNull()
+        );
     }
 }
