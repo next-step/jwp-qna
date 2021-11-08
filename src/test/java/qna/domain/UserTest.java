@@ -9,9 +9,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 @DisplayName("사용자")
 public class UserTest {
-	public static final User JAVAJIGI = User.of(1L, "javajigi@slipp.net", "name", "password", "javajigi");
-	public static final User SANJIGI = User.of(2L, "sanjigi@slipp.net", "name", "password", "sanjigi");
-
 	@DisplayName("사용자를 생성할 수 있다.")
 	@ParameterizedTest
 	@CsvSource(value = {"y2o2u2n@gmail.com,youn,password,y2o2u2n"})
