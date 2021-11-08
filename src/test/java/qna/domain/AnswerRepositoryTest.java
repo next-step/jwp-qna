@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-@DisplayName("답변 데이터")
+@DisplayName("답변 저장소")
 class AnswerRepositoryTest {
 
     @Autowired

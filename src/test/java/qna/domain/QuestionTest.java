@@ -2,97 +2,82 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import java.util.stream.Stream;
-import javax.persistence.EntityNotFoundException;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import qna.CannotDeleteException;
 
-@DataJpaTest
-@DisplayName("질문 데이터")
+@DisplayName("질문")
 public class QuestionTest {
 
-    public static final Question Q1 = new Question("title1", "contents1")
-        .writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2")
-        .writeBy(UserTest.SANJIGI);
+    public static final Question Q1 =
+        Question.of("title1", "contents1").writeBy(UserTest.JAVAJIGI);
 
-    @Autowired
-    private QuestionRepository questionRepository;
+    public static final Question Q2 =
+        Question.of("title2", "contents2").writeBy(UserTest.SANJIGI);
 
-    @BeforeAll
-    static void setUp(@Autowired UserRepository userRepository) {
-        userRepository.save(UserTest.JAVAJIGI);
-        userRepository.save(UserTest.SANJIGI);
+    @Test
+    @DisplayName("객체화")
+    void instance() {
+        assertThatNoException()
+            .isThrownBy(() -> Question.of("title", "Contents"));
     }
 
-    static Stream<Arguments> example() {
-        return Stream.of(Arguments.of(Q1), Arguments.of(Q2));
+    @ParameterizedTest(name = "{displayName}[{index}] if title is {0}, can not be instanced")
+    @DisplayName("제목이 비어있는 상태로 객체화하면 IllegalArgumentException")
+    @NullAndEmptySource
+    void instance_emptyTitle_thrownIllegalArgumentException(String title) {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> Question.of(title, "contents"))
+            .withMessage("'title' must not be empty");
     }
 
-    @ParameterizedTest
-    @DisplayName("저장")
-    @MethodSource("example")
-    void save(Question question) {
+    @Test
+    @DisplayName("답변 추가")
+    void addAnswer() {
+        //given
+        Question question = Question.of("title", "contents");
+
         //when
-        Question actual = questionRepository.save(question);
+        question.addAnswer(AnswerTest.A1);
 
         //then
         assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
-            () -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
-            () -> assertThat(actual.getWriter()).isEqualTo(question.getWriter())
+            () -> assertThat(question.containsAnswer(AnswerTest.A1)).isTrue(),
+            () -> assertThat(question.containsAnswer(AnswerTest.A2)).isFalse()
         );
     }
 
-    @ParameterizedTest
-    @DisplayName("아이디로 검색")
-    @MethodSource("example")
-    void findByIdAndDeletedFalse(Question question) {
+    @Test
+    @DisplayName("null 답변 추가하면 IllegalArgumentException")
+    void addAnswer_nullAnswer_thrownIllegalArgumentException() {
         //given
-        Question expected = questionRepository.save(question);
+        Question question = Question.of("title", "contents");
 
         //when
-        Question actual = questionById(expected.getId());
+        ThrowingCallable addAnswerCall = () -> question.addAnswer(null);
 
         //then
-        assertThat(actual)
-            .isEqualTo(expected);
-    }
-
-    @ParameterizedTest
-    @DisplayName("삭제되지 않은 질문들 검색")
-    @MethodSource("example")
-    void findByQuestionIdAndDeletedFalse(Question question) {
-        //given
-        Question expected = questionRepository.save(question);
-
-        // when
-        List<Question> actual = questionRepository.findByDeletedFalse();
-
-        //then
-        assertThat(actual).contains(expected);
+        assertThatIllegalArgumentException()
+            .isThrownBy(addAnswerCall)
+            .withMessage("added 'answer' must not be null");
     }
 
     @Test
     @DisplayName("삭제")
     void delete() throws CannotDeleteException {
         //given
-        Question question = new Question("title", "contents")
+        Question question = Question.of("title", "contents")
             .writeBy(UserTest.JAVAJIGI);
-        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        Answer answer = Answer.of(UserTest.JAVAJIGI, question, "contents");
         question.addAnswer(answer);
 
         //when
@@ -116,9 +101,9 @@ public class QuestionTest {
     @DisplayName("본인의 질문이 아닌 경우 삭제하면 CannotDeleteException")
     void delete_notOwn_thrownCannotDeleteException() {
         //given
-        Question question = new Question("title", "contents")
+        Question question = Question.of("title", "contents")
             .writeBy(UserTest.JAVAJIGI);
-        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        Answer answer = Answer.of(UserTest.JAVAJIGI, question, "contents");
         question.addAnswer(answer);
 
         //when
@@ -138,9 +123,9 @@ public class QuestionTest {
     @DisplayName("다른 사람의 답변이 있는 경우 삭제하면 CannotDeleteException")
     void delete_containsOtherUsersAnswer_thrownCannotDeleteException() {
         //given
-        Question question = new Question("title", "contents")
+        Question question = Question.of("title", "contents")
             .writeBy(UserTest.JAVAJIGI);
-        Answer answer = new Answer(UserTest.SANJIGI, question, "contents");
+        Answer answer = Answer.of(UserTest.SANJIGI, question, "contents");
         question.addAnswer(answer);
 
         //when
@@ -154,12 +139,5 @@ public class QuestionTest {
                 .isThrownBy(deleteCall)
                 .withMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.")
         );
-    }
-
-
-    private Question questionById(Long id) {
-        return questionRepository.findByIdAndDeletedFalse(id)
-            .orElseThrow(
-                () -> new EntityNotFoundException(String.format("id(%s) is not found", id)));
     }
 }

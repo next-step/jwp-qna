@@ -15,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-@DataJpaTest
 @DisplayName("답변")
 public class AnswerTest {
 

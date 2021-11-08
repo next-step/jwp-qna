@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import org.springframework.util.Assert;
 import qna.CannotDeleteException;
 
 @Entity
@@ -34,17 +35,13 @@ public class Question extends BaseTimeEntity {
     private User writer;
 
     @Embedded
-    private AnswerGroup answerGroup = AnswerGroup.create();
+    private Answers answers = Answers.create();
 
     @Column(nullable = false)
     private boolean deleted = false;
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
-        validateTitle(title);
+    private Question(Long id, String title, String contents) {
+        Assert.hasText(title, "'title' must not be empty");
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -53,14 +50,26 @@ public class Question extends BaseTimeEntity {
     protected Question() {
     }
 
+    public static Question of(Long id, String title, String contents) {
+        return new Question(id, title, contents);
+    }
+
+    public static Question of(String title, String contents) {
+        return new Question(null, title, contents);
+    }
+
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
-        answerGroup.add(answer);
+    }
+
+    public boolean containsAnswer(Answer answer) {
+        return answers.contains(answer);
     }
 
     public Long getId() {
@@ -86,7 +95,7 @@ public class Question extends BaseTimeEntity {
     public List<DeleteHistory> delete(User user) throws CannotDeleteException {
         validateOwner(user);
         List<DeleteHistory> deleteHistories = createDeleteHistories(user);
-        deleteHistories.addAll(answerGroup.delete(user));
+        deleteHistories.addAll(answers.delete(user));
         deleted = true;
         return deleteHistories;
     }
@@ -123,12 +132,6 @@ public class Question extends BaseTimeEntity {
 
     private boolean isNotOwner(User writer) {
         return !this.writer.equals(writer);
-    }
-
-    private void validateTitle(String title) {
-        if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("'title' must not be empty");
-        }
     }
 
     private List<DeleteHistory> createDeleteHistories(User user) {

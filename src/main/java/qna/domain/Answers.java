@@ -8,29 +8,32 @@ import org.springframework.util.Assert;
 import qna.CannotDeleteException;
 
 @Embeddable
-public class AnswerGroup {
+public class Answers {
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    private List<Answer> list = new ArrayList<>();
 
-    protected AnswerGroup() {
+    protected Answers() {
     }
 
-    private AnswerGroup(List<Answer> answers) {
-        this.answers = answers;
+    private Answers(List<Answer> list) {
+        this.list = list;
     }
 
-    static AnswerGroup from(List<Answer> answers) {
-        return new AnswerGroup(answers);
+    static Answers from(List<Answer> list) {
+        if (list == null) {
+            return create();
+        }
+        return new Answers(list);
     }
 
-    static AnswerGroup create() {
+    static Answers create() {
         return from(new ArrayList<>());
     }
 
     void add(Answer answer) {
-        Assert.notNull(answer, "'answer' must not be null");
-        this.answers.add(answer);
+        Assert.notNull(answer, "added 'answer' must not be null");
+        this.list.add(answer);
     }
 
     List<DeleteHistory> delete(User user) throws CannotDeleteException {
@@ -38,16 +41,20 @@ public class AnswerGroup {
         return deleteAnswers();
     }
 
+    public boolean contains(Answer answer) {
+        return list.contains(answer);
+    }
+
     private List<DeleteHistory> deleteAnswers() {
-        ArrayList<DeleteHistory> histories = new ArrayList<>();
-        for (Answer answer : answers) {
+        List<DeleteHistory> histories = new ArrayList<>();
+        for (Answer answer : list) {
             histories.add(answer.delete());
         }
         return histories;
     }
 
     private void validateListOwner(User user) throws CannotDeleteException {
-        for (Answer answer : answers) {
+        for (Answer answer : list) {
             validateOwner(answer, user);
         }
     }

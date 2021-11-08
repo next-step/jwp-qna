@@ -13,15 +13,15 @@ import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
 @DisplayName("답변들")
-class AnswerGroupTest {
+class AnswersTest {
 
     @Test
     @DisplayName("답변 삭제")
     void delete() throws CannotDeleteException {
         //given
-        Answer javajigisAnswer1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "contents1");
-        Answer javajigisAnswer2 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "contents2");
-        AnswerGroup answerGroup = AnswerGroup.from(Arrays.asList(javajigisAnswer1, javajigisAnswer2));
+        Answer javajigisAnswer1 = Answer.of(UserTest.JAVAJIGI, QuestionTest.Q1, "contents1");
+        Answer javajigisAnswer2 = Answer.of(UserTest.JAVAJIGI, QuestionTest.Q1, "contents2");
+        Answers answerGroup = Answers.from(Arrays.asList(javajigisAnswer1, javajigisAnswer2));
 
         //when
         List<DeleteHistory> delete = answerGroup.delete(UserTest.JAVAJIGI);
@@ -44,9 +44,9 @@ class AnswerGroupTest {
     @DisplayName("다른 사람의 답변이 있는 경우 삭제하면 CannotDeleteException")
     void delete_containsOtherUsers_thrownCannotDeleteException() {
         //given
-        Answer javajigisAnswer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "contents1");
-        Answer sanjigisAnswer = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "contents2");
-        AnswerGroup answerGroup = AnswerGroup.from(Arrays.asList(javajigisAnswer, sanjigisAnswer));
+        Answer javajigisAnswer = Answer.of(UserTest.JAVAJIGI, QuestionTest.Q1, "contents1");
+        Answer sanjigisAnswer = Answer.of(UserTest.SANJIGI, QuestionTest.Q1, "contents2");
+        Answers answerGroup = Answers.from(Arrays.asList(javajigisAnswer, sanjigisAnswer));
 
         //when
         ThrowingCallable deleteCall = () -> answerGroup.delete(UserTest.JAVAJIGI);
