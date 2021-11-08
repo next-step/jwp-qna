@@ -3,12 +3,15 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.domain.AnswerTest.A1;
 import static qna.domain.AnswersTest.ANSWERS;
+import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
 public class QuestionTest {
@@ -22,10 +25,10 @@ public class QuestionTest {
     }
 
     @Test
-    void delete_질문을_삭제한다() {
-        List<DeleteHistory> histories = Q1.delete(ANSWERS);
+    void delete_질문을_삭제한다() throws CannotDeleteException {
+        List<DeleteHistory> histories = Q1.delete(new Answers(Arrays.asList(A1)), JAVAJIGI);
         assertAll(
-            () -> assertThat(histories.size()).isEqualTo(3),
+            () -> assertThat(histories.size()).isEqualTo(2),
             () -> assertThat(Q1.isDeleted()).isTrue()
         );
     }

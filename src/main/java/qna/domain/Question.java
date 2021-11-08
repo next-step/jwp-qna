@@ -55,9 +55,13 @@ public class Question extends BaseEntity{
         }
     }
 
-    public List<DeleteHistory> delete(Answers answers) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+    public List<DeleteHistory> delete(Answers answers, User writer) throws CannotDeleteException {
+        checkOwner(writer);
+        answers.checkIsOwner(writer);
+
         this.deleted = true;
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(DeleteHistory.question(id, writer));
         answers.delete(deleteHistories);
         return deleteHistories;
