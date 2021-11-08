@@ -35,8 +35,8 @@ public class AnswerTest {
             assertThat(savedAnswer.getQuestionId(), is(answer.getQuestionId()));
             assertThat(savedAnswer.getContents(), is(answer.getContents()));
             assertThat(savedAnswer.isDeleted(), is(answer.isDeleted()));
-            assertTrue(savedAnswer.getCreatedAt().isEqual(now) || savedAnswer.getCreatedAt().isAfter(now));
-            assertTrue(savedAnswer.getCreatedAt().isEqual(now) || savedAnswer.getUpdatedAt().isAfter(now));
+            assertTrue(savedAnswer.getCreatedDate().isAfter(now));
+            assertTrue(savedAnswer.getModifiedDate().isAfter(now));
         });
     }
 }

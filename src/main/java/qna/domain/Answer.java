@@ -3,17 +3,19 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class Answer {
+@AttributeOverride(name = "createdDate", column = @Column(name = "created_at"))
+@AttributeOverride(name = "modifiedDate", column = @Column(name = "updated_at"))
+public class Answer extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,12 +33,6 @@ public class Answer {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
 
     protected Answer() {
     }
@@ -114,18 +110,6 @@ public class Answer {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     @Override

@@ -35,8 +35,8 @@ public class QuestionTest {
             assertThat(savedQuestion.getContents(), is(question.getContents()));
             assertThat(savedQuestion.getWriterId(), is(question.getWriterId()));
             assertThat(savedQuestion.isDeleted(), is(question.isDeleted()));
-            assertTrue(savedQuestion.getCreatedAt().isEqual(now) || savedQuestion.getCreatedAt().isAfter(now));
-            assertTrue(savedQuestion.getUpdatedAt().isEqual(now) || savedQuestion.getUpdatedAt().isAfter(now));
+            assertTrue(savedQuestion.getCreatedDate().isAfter(now));
+            assertTrue(savedQuestion.getModifiedDate().isAfter(now));
         });
     }
 
