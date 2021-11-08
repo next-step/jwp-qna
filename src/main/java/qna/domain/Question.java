@@ -1,11 +1,33 @@
 package qna.domain;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "question")
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "title", nullable = false)
     private String title;
-    private String contents;
-    private Long writerId;
+
+    @Column(name = "delete", nullable = false)
     private boolean deleted = false;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updateAt;
+
+    @Lob
+    @Column(name = "contests")
+    private String contents;
+
+    @Column(name = "writer_id")
+    private Long writerId;
 
     public Question(String title, String contents) {
         this(null, title, contents);
