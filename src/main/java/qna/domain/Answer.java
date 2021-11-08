@@ -43,8 +43,6 @@ public class Answer extends BaseEntity {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
-
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -53,9 +51,10 @@ public class Answer extends BaseEntity {
             throw new NotFoundException();
         }
 
-        this.writer = writer;
-        this.question = question;
+        this.id = id;
         this.contents = contents;
+        this.writer = writer;
+        question.addAnswer(this);
     }
 
     public boolean isOwner(User writer) {

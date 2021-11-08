@@ -7,9 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -32,12 +29,6 @@ public class User extends BaseEntity {
 
     @Column(length = 50)
     private String email;
-
-    @OneToMany(mappedBy = "writer")
-    private List<Question> questions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "writer")
-    private List<Answer> answers = new ArrayList<>();
 
     protected User() {
     }
