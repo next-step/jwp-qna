@@ -18,15 +18,15 @@ import qna.fixture.UserFixture;
 @DataJpaTest
 public class QuestionRepositoryTest {
 	@Autowired
-	private UserRepository users;
+	private UserRepository userRepository;
 	@Autowired
-	private QuestionRepository questions;
+	private QuestionRepository questionRepository;
 
 	private User user;
 
 	@BeforeEach
 	void setUp() {
-		user = users.save(UserFixture.Y2O2U2N());
+		user = userRepository.save(UserFixture.Y2O2U2N());
 	}
 
 	@DisplayName("질문을 저장할 수 있다.")
@@ -36,7 +36,7 @@ public class QuestionRepositoryTest {
 		Question expected = QuestionFixture.Q1(user.getId());
 
 		// when
-		Question actual = questions.save(expected);
+		Question actual = questionRepository.save(expected);
 
 		// then
 		assertAll(
@@ -52,10 +52,10 @@ public class QuestionRepositoryTest {
 	@Test
 	void findByDeletedFalse() {
 		// given
-		questions.save(QuestionFixture.Q1(user.getId()));
+		questionRepository.save(QuestionFixture.Q1(user.getId()));
 
 		// when
-		List<Question> actual = questions.findByDeletedFalse();
+		List<Question> actual = questionRepository.findByDeletedFalse();
 
 		// then
 		assertThat(actual).isNotEmpty();
@@ -65,10 +65,10 @@ public class QuestionRepositoryTest {
 	@Test
 	void findByIdAndDeletedFalse() {
 		// given
-		Question expected = questions.save(QuestionFixture.Q1(user.getId()));
+		Question expected = questionRepository.save(QuestionFixture.Q1(user.getId()));
 
 		// when
-		Question actual = questions.findByIdAndDeletedFalse(expected.getId())
+		Question actual = questionRepository.findByIdAndDeletedFalse(expected.getId())
 			.orElseThrow(AssertionFailedError::new);
 
 		// then

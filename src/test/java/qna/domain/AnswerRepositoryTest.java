@@ -19,19 +19,19 @@ import qna.fixture.UserFixture;
 @DataJpaTest
 public class AnswerRepositoryTest {
 	@Autowired
-	private UserRepository users;
+	private UserRepository userRepository;
 	@Autowired
-	private QuestionRepository questions;
+	private QuestionRepository questionRepository;
 	@Autowired
-	private AnswerRepository answers;
+	private AnswerRepository answerRepository;
 
 	private User user;
 	private Question question;
 
 	@BeforeEach
 	void setUp() {
-		user = users.save(UserFixture.Y2O2U2N());
-		question = questions.save(QuestionFixture.Q1(user.getId()));
+		user = userRepository.save(UserFixture.Y2O2U2N());
+		question = questionRepository.save(QuestionFixture.Q1(user.getId()));
 	}
 
 	@DisplayName("답변을 저장할 수 있다.")
@@ -41,7 +41,7 @@ public class AnswerRepositoryTest {
 		Answer expected = AnswerFixture.A1(question.getId(), user.getId());
 
 		// when
-		Answer actual = answers.save(expected);
+		Answer actual = answerRepository.save(expected);
 
 		// then
 		assertAll(
@@ -57,10 +57,10 @@ public class AnswerRepositoryTest {
 	@Test
 	void findByQuestionIdAndDeletedFalse() {
 		// given
-		answers.save(AnswerFixture.A1(question.getId(), user.getId()));
+		answerRepository.save(AnswerFixture.A1(question.getId(), user.getId()));
 
 		// when
-		List<Answer> actual = answers.findByQuestionIdAndDeletedFalse(question.getId());
+		List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
 		// then
 		assertThat(actual).isNotEmpty();
@@ -70,10 +70,10 @@ public class AnswerRepositoryTest {
 	@Test
 	void findByIdAndDeletedFalse() {
 		// given
-		Answer expected = answers.save(AnswerFixture.A1(question.getId(), user.getId()));
+		Answer expected = answerRepository.save(AnswerFixture.A1(question.getId(), user.getId()));
 
 		// when
-		Answer actual = answers.findByIdAndDeletedFalse(expected.getId())
+		Answer actual = answerRepository.findByIdAndDeletedFalse(expected.getId())
 			.orElseThrow(AssertionFailedError::new);
 
 		// then

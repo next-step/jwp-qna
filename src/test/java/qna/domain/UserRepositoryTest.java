@@ -14,7 +14,7 @@ import qna.fixture.UserFixture;
 @DataJpaTest
 class UserRepositoryTest {
 	@Autowired
-	private UserRepository users;
+	private UserRepository userRepository;
 
 	@DisplayName("사용자를 저장할 수 있다.")
 	@Test
@@ -23,7 +23,7 @@ class UserRepositoryTest {
 		User expected = UserFixture.Y2O2U2N();
 
 		// when
-		User actual = users.save(expected);
+		User actual = userRepository.save(expected);
 
 		// then
 		assertAll(
@@ -40,10 +40,10 @@ class UserRepositoryTest {
 	void findByUserId() {
 		// given
 		User expected = UserFixture.SEMISTONE222();
-		users.save(expected);
+		userRepository.save(expected);
 
 		// when
-		User actual = users.findByUserId(expected.getUserId())
+		User actual = userRepository.findByUserId(expected.getUserId())
 			.orElseThrow(AssertionFailedError::new);
 
 		// then

@@ -17,13 +17,13 @@ import qna.fixture.UserFixture;
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
 	@Autowired
-	private UserRepository users;
+	private UserRepository userRepository;
 	@Autowired
-	private QuestionRepository questions;
+	private QuestionRepository questionRepository;
 	@Autowired
-	private AnswerRepository answers;
+	private AnswerRepository answerRepository;
 	@Autowired
-	private DeleteHistoryRepository deleteHistories;
+	private DeleteHistoryRepository deleteHistoryRepository;
 
 	private User user;
 	private Question question;
@@ -31,9 +31,9 @@ public class DeleteHistoryRepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		user = users.save(UserFixture.Y2O2U2N());
-		question = questions.save(QuestionFixture.Q1(user.getId()));
-		answer = answers.save(AnswerFixture.A1(question.getId(), user.getId()));
+		user = userRepository.save(UserFixture.Y2O2U2N());
+		question = questionRepository.save(QuestionFixture.Q1(user.getId()));
+		answer = answerRepository.save(AnswerFixture.A1(question.getId(), user.getId()));
 	}
 
 	@DisplayName("질문 삭제 기록을 저장할 수 있다.")
@@ -43,7 +43,7 @@ public class DeleteHistoryRepositoryTest {
 		DeleteHistory expected = DeleteHistoryFixture.Q(question.getId(), user.getId());
 
 		// when
-		DeleteHistory actual = deleteHistories.save(expected);
+		DeleteHistory actual = deleteHistoryRepository.save(expected);
 
 		// then
 		assertAll(
@@ -61,7 +61,7 @@ public class DeleteHistoryRepositoryTest {
 		DeleteHistory expected = DeleteHistoryFixture.A(answer.getId(), user.getId());
 
 		// when
-		DeleteHistory actual = deleteHistories.save(expected);
+		DeleteHistory actual = deleteHistoryRepository.save(expected);
 
 		// then
 		assertAll(
