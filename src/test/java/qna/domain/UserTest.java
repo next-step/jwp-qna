@@ -1,20 +1,35 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.persistence.EntityManager;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.*;
 
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = Replace.NONE)
 public class UserTest {
   public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
   public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
   @Autowired
   UserRepository userRepository;
+  @Autowired
+  EntityManager entityManager;
+
+  @AfterEach
+  void tearDown() {
+    userRepository.deleteAll();
+    entityManager
+      .createNativeQuery("alter table user alter column `id` restart with 1")
+      .executeUpdate();
+  }
 
   @Test
   void save() {

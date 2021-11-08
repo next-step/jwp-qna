@@ -1,16 +1,21 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.*;
 
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = Replace.NONE)
 public class AnswerTest {
   public static final User JAVAJIGI = UserTest.JAVAJIGI;
   public static final Answer A1 = new Answer(JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
@@ -19,18 +24,28 @@ public class AnswerTest {
 
   @Autowired
   private AnswerRepository answerRepository;
+  @Autowired
+  private EntityManager entityManager;
+
+  @AfterEach
+  void tearDown() {
+    answerRepository.deleteAll();
+    entityManager
+      .createNativeQuery("alter table answer alter column `id` restart with 1")
+      .executeUpdate();
+  }
 
   @Test
   void save() {
     Answer savedAnswer = answerRepository.save(A1);
-    assertThat(savedAnswer).isEqualTo(A1);
+    assertThat(savedAnswer.getId()).isEqualTo(A1.getId());
   }
 
   @Test
   void deleteById() {
     answerRepository.save(A1);
 
-    answerRepository.deleteById(1L);
+    answerRepository.delete(A1);
 
     assertThat(answerRepository.findById(1L).isPresent()).isFalse();
   }
