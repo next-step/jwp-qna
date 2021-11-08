@@ -16,6 +16,7 @@ class UserRepositoryTest {
 
 	@Autowired
 	private UserRepository userRepository;
+
 	@AfterEach
 	public void tearDown() {
 		userRepository.deleteAll();
