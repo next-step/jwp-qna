@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import java.util.Objects;
 
 @Entity
@@ -26,7 +25,7 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "writer_id")
     private User writer;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "question_id")
     private Question question;
 

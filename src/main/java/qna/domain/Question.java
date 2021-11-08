@@ -9,7 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -31,8 +32,8 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToOne(mappedBy = "question")
-    private Answer answer;
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers;
 
     protected Question() {
     }
