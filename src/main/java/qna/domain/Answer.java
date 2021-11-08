@@ -3,14 +3,36 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "answer")
 public class Answer {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "question_id")
     private Long questionId;
+
+    @Lob
+    @Column(name = "contents")
     private String contents;
+
+    @Column(name = "delete", nullable = false)
     private boolean deleted = false;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "update_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -32,6 +54,8 @@ public class Answer {
         this.contents = contents;
     }
 
+    protected Answer() { }
+
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
     }
@@ -44,32 +68,16 @@ public class Answer {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public Long getQuestionId() {
         return questionId;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
