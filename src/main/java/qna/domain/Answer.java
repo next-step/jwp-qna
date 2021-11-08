@@ -5,89 +5,101 @@ import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
-public class Answer {
-    private Long id;
-    private Long writerId;
-    private Long questionId;
-    private String contents;
-    private boolean deleted = false;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
+@Entity
+public class Answer extends BaseTimeEntity {
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
+	private String contents;
+	private boolean deleted;
+	private Long questionId;
+	private Long writerId;
 
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
+	protected Answer() {
+	}
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
-        this.contents = contents;
-    }
+	public Answer(User writer, Question question, String contents) {
+		this(null, writer, question, contents);
+	}
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
+	public Answer(Long id, User writer, Question question, String contents) {
+		if (Objects.isNull(writer)) {
+			throw new UnAuthorizedException();
+		}
 
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
-    }
+		if (Objects.isNull(question)) {
+			throw new NotFoundException();
+		}
 
-    public Long getId() {
-        return id;
-    }
+		this.id = id;
+		this.contents = contents;
+		this.deleted = false;
+		this.writerId = writer.getId();
+		this.questionId = question.getId();
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public boolean isOwner(User writer) {
+		return this.writerId.equals(writer.getId());
+	}
 
-    public Long getWriterId() {
-        return writerId;
-    }
+	public void toQuestion(Question question) {
+		this.questionId = question.getId();
+	}
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public Long getQuestionId() {
-        return questionId;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
+	public Long getWriterId() {
+		return writerId;
+	}
 
-    public String getContents() {
-        return contents;
-    }
+	public void setWriterId(Long writerId) {
+		this.writerId = writerId;
+	}
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
+	public Long getQuestionId() {
+		return questionId;
+	}
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+	public void setQuestionId(Long questionId) {
+		this.questionId = questionId;
+	}
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+	public String getContents() {
+		return contents;
+	}
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
-    }
+	public void setContents(String contents) {
+		this.contents = contents;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	@Override
+	public String toString() {
+		return "Answer{" +
+			"id=" + id +
+			", contents='" + contents + '\'' +
+			", deleted=" + deleted +
+			", questionId=" + questionId +
+			", writerId=" + writerId +
+			'}';
+	}
 }
