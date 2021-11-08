@@ -1,10 +1,9 @@
 package qna.domain;
 
-import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -36,6 +35,9 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    @Embedded
+    private Answers answers = Answers.createEmpty();
+
     protected Question() {}
 
     public Question(String title, String contents) {
@@ -59,19 +61,14 @@ public class Question extends BaseTimeEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.add(answer);
     }
 
-    public void delete(User loginUser, List<Answer> answers) throws CannotDeleteException {
-        validateDeleteAuthority(loginUser);
-        validateDeleteAllAnswerAuthority(loginUser, answers);
+    public void delete(User owner) throws CannotDeleteException {
+        validateDeleteAuthority(owner);
+        answers.deleteAll(owner);
 
-        setDeleted(true);
-    }
-
-    private void validateDeleteAllAnswerAuthority(User loginUser, List<Answer> answers) throws CannotDeleteException {
-        for (Answer answer : answers) {
-            validateDeleteAnswerAuthority(loginUser, answer);
-        }
+        this.deleted = true;
     }
 
     public Long getId() {
@@ -82,23 +79,17 @@ public class Question extends BaseTimeEntity {
         return this.writer;
     }
 
-    public boolean isDeleted() {
-        return deleted;
+    public Answers getAnswers() {
+        return this.answers;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public boolean isDeleted() {
+        return deleted;
     }
 
     private void validateDeleteAuthority(User owner) throws CannotDeleteException {
         if (!isOwner(owner)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-    }
-
-    private void validateDeleteAnswerAuthority(User owner, Answer answer) throws CannotDeleteException {
-        if (!answer.isOwner(owner)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
     }
 

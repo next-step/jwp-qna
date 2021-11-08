@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -83,8 +84,15 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete(User owner) throws CannotDeleteException {
+        validateDeleteAnswerAuthority(owner);
+        this.deleted = true;
+    }
+
+    private void validateDeleteAnswerAuthority(User owner) throws CannotDeleteException {
+        if (!isOwner(owner)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     @Override
