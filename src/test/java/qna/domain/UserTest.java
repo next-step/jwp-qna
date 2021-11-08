@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,15 +48,12 @@ public class UserTest {
         Optional<User> findUser = repository.findByUserId(saved.getUserId());
 
         //then
-        assertThat(findUser.isPresent()).isTrue();
-        User user = findUser.get();
-        assertAll(
+        AssertionsForClassTypes.assertThat(findUser).hasValueSatisfying(user -> assertAll(
                 () -> assertThat(user.getId()).isNotNull(),
                 () -> assertThat(user.getUserId()).isEqualTo(SANJIGI.getUserId()),
                 () -> assertThat(user.getPassword()).isEqualTo(SANJIGI.getPassword()),
                 () -> assertThat(user.getName()).isEqualTo(SANJIGI.getName()),
                 () -> assertThat(user.getEmail()).isEqualTo(SANJIGI.getEmail())
-        );
-
+        ));
     }
 }

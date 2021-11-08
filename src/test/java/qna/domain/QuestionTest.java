@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,13 +64,11 @@ public class QuestionTest {
         Optional<Question> findQuestion = repository.findByIdAndDeletedFalse(saved.getId());
 
         //then
-        assertThat(findQuestion.isPresent()).isTrue();
-        Question question = findQuestion.get();
-        assertAll(
+        AssertionsForClassTypes.assertThat(findQuestion).hasValueSatisfying(question -> assertAll(
                 () -> assertThat(question.getId()).isNotNull(),
                 () -> assertThat(question.getTitle()).isEqualTo(Q2.getTitle()),
                 () -> assertThat(question.getContents()).isEqualTo(Q2.getContents()),
                 () -> assertThat(question.getWriterId()).isEqualTo(Q2.getWriterId())
-        );
+        ));
     }
 }

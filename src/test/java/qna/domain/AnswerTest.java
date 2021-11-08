@@ -12,7 +12,7 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.*;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = NONE)
@@ -63,12 +63,10 @@ public class AnswerTest {
         Optional<Answer> findAnswer = repository.findByIdAndDeletedFalse(A2.getId());
 
         //then
-        assertThat(findAnswer.isPresent()).isTrue();
-        Answer answer = findAnswer.get();
-        assertAll(
+        assertThat(findAnswer).hasValueSatisfying(answer -> assertAll(
                 () -> assertThat(answer.getWriterId()).isEqualTo(UserTest.SANJIGI.getId()),
                 () -> assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
                 () -> assertThat(answer.getContents()).isEqualTo(A2.getContents())
-        );
+        ));
     }
 }

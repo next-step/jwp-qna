@@ -23,6 +23,7 @@ public class Answer extends BaseTimeEntity {
     @Lob
     private String contents;
 
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Answer() {
