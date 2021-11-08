@@ -75,6 +75,8 @@ alter table user
     - [ ] 질문과 사용자
     - [x] 답변과 사용자
     - [ ] 삭제 기록과 사용자
+- 궁금한 점
+    - [ ] Repository 테스트에서는 생성시 ID 값을 주입받지 않고 테스트해야 하고, Entity 테스트에서는 ID 값을 주입해야 하는데 테스트 픽스처를 각각 만드는게 BP 일까?
 
 ```sql
 alter table answer

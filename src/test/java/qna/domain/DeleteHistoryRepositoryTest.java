@@ -32,7 +32,7 @@ public class DeleteHistoryRepositoryTest {
 	@BeforeEach
 	void setUp() {
 		user = userRepository.save(UserFixture.Y2O2U2N());
-		question = questionRepository.save(QuestionFixture.Q1(user.getId()));
+		question = questionRepository.save(QuestionFixture.Q1(user));
 		answer = answerRepository.save(AnswerFixture.A1(user, question));
 	}
 

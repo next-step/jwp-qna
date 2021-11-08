@@ -83,8 +83,8 @@ public class Answer extends BaseEntity {
         this.deleted = true;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public boolean isOwner(User user) {
+        return this.writer.equals(user);
     }
 
     public Long getId() {

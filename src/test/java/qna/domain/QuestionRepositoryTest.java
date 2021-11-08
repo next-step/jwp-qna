@@ -33,7 +33,7 @@ public class QuestionRepositoryTest {
 	@Test
 	void save() {
 		// given
-		Question expected = QuestionFixture.Q1(user.getId());
+		Question expected = QuestionFixture.Q1(user);
 
 		// when
 		Question actual = questionRepository.save(expected);
@@ -52,7 +52,7 @@ public class QuestionRepositoryTest {
 	@Test
 	void findByDeletedFalse() {
 		// given
-		questionRepository.save(QuestionFixture.Q1(user.getId()));
+		questionRepository.save(QuestionFixture.Q1(user));
 
 		// when
 		List<Question> actual = questionRepository.findByDeletedFalse();
@@ -65,7 +65,7 @@ public class QuestionRepositoryTest {
 	@Test
 	void findByIdAndDeletedFalse() {
 		// given
-		Question expected = questionRepository.save(QuestionFixture.Q1(user.getId()));
+		Question expected = questionRepository.save(QuestionFixture.Q1(user));
 
 		// when
 		Question actual = questionRepository.findByIdAndDeletedFalse(expected.getId())

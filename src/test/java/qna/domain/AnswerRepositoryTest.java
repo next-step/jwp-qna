@@ -31,7 +31,7 @@ public class AnswerRepositoryTest {
 	@BeforeEach
 	void setUp() {
 		user = userRepository.save(UserFixture.Y2O2U2N());
-		question = questionRepository.save(QuestionFixture.Q1(user.getId()));
+		question = questionRepository.save(QuestionFixture.Q1(user));
 	}
 
 	@DisplayName("답변을 저장할 수 있다.")
