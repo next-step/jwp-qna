@@ -34,7 +34,7 @@ public class Question extends BaseTimeEntity {
     private User writer;
 
     @Embedded
-    private Answers answers = Answers.create();
+    private AnswerGroup answerGroup = AnswerGroup.create();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -60,7 +60,7 @@ public class Question extends BaseTimeEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-        answers.add(answer);
+        answerGroup.add(answer);
     }
 
     public Long getId() {
@@ -86,7 +86,7 @@ public class Question extends BaseTimeEntity {
     public List<DeleteHistory> delete(User user) throws CannotDeleteException {
         validateOwner(user);
         List<DeleteHistory> deleteHistories = createDeleteHistories(user);
-        deleteHistories.addAll(answers.delete(user));
+        deleteHistories.addAll(answerGroup.delete(user));
         deleted = true;
         return deleteHistories;
     }

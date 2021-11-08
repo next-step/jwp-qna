@@ -8,29 +8,29 @@ import org.springframework.util.Assert;
 import qna.CannotDeleteException;
 
 @Embeddable
-public class Answers {
+public class AnswerGroup {
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> list = new ArrayList<>();
+    private List<Answer> answers = new ArrayList<>();
 
-    protected Answers() {
+    protected AnswerGroup() {
     }
 
-    private Answers(List<Answer> list) {
-        this.list = list;
+    private AnswerGroup(List<Answer> answers) {
+        this.answers = answers;
     }
 
-    static Answers from(List<Answer> answers) {
-        return new Answers(answers);
+    static AnswerGroup from(List<Answer> answers) {
+        return new AnswerGroup(answers);
     }
 
-    static Answers create() {
+    static AnswerGroup create() {
         return from(new ArrayList<>());
     }
 
     void add(Answer answer) {
         Assert.notNull(answer, "'answer' must not be null");
-        this.list.add(answer);
+        this.answers.add(answer);
     }
 
     List<DeleteHistory> delete(User user) throws CannotDeleteException {
@@ -40,14 +40,14 @@ public class Answers {
 
     private List<DeleteHistory> deleteList() {
         ArrayList<DeleteHistory> histories = new ArrayList<>();
-        for (Answer answer : list) {
+        for (Answer answer : answers) {
             histories.add(answer.delete());
         }
         return histories;
     }
 
     private void validateListOwner(User user) throws CannotDeleteException {
-        for (Answer answer : list) {
+        for (Answer answer : answers) {
             validateOwner(answer, user);
         }
     }

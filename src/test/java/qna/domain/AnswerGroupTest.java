@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
 @DisplayName("답변들")
-class AnswersTest {
+class AnswerGroupTest {
 
     @Test
     @DisplayName("답변 삭제")
@@ -21,10 +21,10 @@ class AnswersTest {
         //given
         Answer javajigisAnswer1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "contents1");
         Answer javajigisAnswer2 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "contents2");
-        Answers answers = Answers.from(Arrays.asList(javajigisAnswer1, javajigisAnswer2));
+        AnswerGroup answerGroup = AnswerGroup.from(Arrays.asList(javajigisAnswer1, javajigisAnswer2));
 
         //when
-        List<DeleteHistory> delete = answers.delete(UserTest.JAVAJIGI);
+        List<DeleteHistory> delete = answerGroup.delete(UserTest.JAVAJIGI);
 
         //then
         assertAll(
@@ -46,10 +46,10 @@ class AnswersTest {
         //given
         Answer javajigisAnswer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "contents1");
         Answer sanjigisAnswer = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "contents2");
-        Answers answers = Answers.from(Arrays.asList(javajigisAnswer, sanjigisAnswer));
+        AnswerGroup answerGroup = AnswerGroup.from(Arrays.asList(javajigisAnswer, sanjigisAnswer));
 
         //when
-        ThrowingCallable deleteCall = () -> answers.delete(UserTest.JAVAJIGI);
+        ThrowingCallable deleteCall = () -> answerGroup.delete(UserTest.JAVAJIGI);
 
         //then
         assertAll(
