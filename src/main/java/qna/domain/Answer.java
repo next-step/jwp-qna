@@ -123,6 +123,6 @@ public class Answer extends BaseTimeEntity {
 
     public DeleteHistory delete() {
         deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+        return DeleteHistory.ofAnswer(id, writer);
     }
 }

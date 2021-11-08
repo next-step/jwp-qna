@@ -34,17 +34,23 @@ public class DeleteHistory {
     private User deletedByUser;
 
     @Column(updatable = false)
-    private LocalDateTime createDate;
+    private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser,
-        LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
-        this.createDate = createDate;
     }
 
     protected DeleteHistory() {
+    }
+
+    public static DeleteHistory ofQuestion(Long contentId, User deletedByUser) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deletedByUser);
+    }
+
+    public static DeleteHistory ofAnswer(Long contentId, User deletedByUser) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deletedByUser);
     }
 
     @Override

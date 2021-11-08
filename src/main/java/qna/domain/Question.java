@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -59,10 +58,6 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isNotOwner(User writer) {
-        return !this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
         answers.add(answer);
@@ -86,6 +81,14 @@ public class Question extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+        validateOwner(user);
+        List<DeleteHistory> deleteHistories = createDeleteHistories(user);
+        deleteHistories.addAll(answers.delete(user));
+        deleted = true;
+        return deleteHistories;
     }
 
     @Override
@@ -118,23 +121,19 @@ public class Question extends BaseTimeEntity {
         return Objects.hash(id, title, contents, writer, deleted);
     }
 
+    private boolean isNotOwner(User writer) {
+        return !this.writer.equals(writer);
+    }
+
     private void validateTitle(String title) {
         if (title == null || title.trim().isEmpty()) {
             throw new IllegalArgumentException("'title' must not be empty");
         }
     }
 
-    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
-        validateOwner(user);
-        List<DeleteHistory> deleteHistories = createDeleteHistories(user);
-        deleteHistories.addAll(answers.delete(user));
-        deleted = true;
-        return deleteHistories;
-    }
-
     private List<DeleteHistory> createDeleteHistories(User user) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, user, LocalDateTime.now()));
+        deleteHistories.add(DeleteHistory.ofQuestion(id, user));
         return deleteHistories;
     }
 
