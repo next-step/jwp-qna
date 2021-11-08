@@ -2,7 +2,7 @@
 
 ## 1단계
 
-- 아래의 DDL 을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성하고 `@DataJpaTest`를 사용하여 학습 테스트를 작성해본다.
+- 아래의 DDL을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성하고 `@DataJpaTest`를 사용하여 학습 테스트를 작성해본다.
     - [x] 답변
         - [x] 엔티티 매핑
         - [x] 학습 테스트 작성
@@ -66,4 +66,34 @@ create table user
 
 alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id);
+```
+
+## 2단계
+
+- 아래의 DDL을 보고 유추하여 연관 관계를 매핑해본다.
+    - [ ] 질문과 답변
+    - [ ] 질문과 사용자
+    - [ ] 답변과 사용자
+    - [ ] 삭제 기록과 사용자
+
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
 ```
