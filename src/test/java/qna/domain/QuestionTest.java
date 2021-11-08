@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,12 @@ public class QuestionTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @BeforeAll
+    static void setUp(@Autowired UserRepository userRepository) {
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
+    }
 
     @DisplayName("질문정보 단일 저장을 테스트합니다.")
     @Test
