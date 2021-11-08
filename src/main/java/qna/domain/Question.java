@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -12,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -58,6 +61,19 @@ public class Question extends BaseTimeEntity {
         answer.toQuestion(this);
     }
 
+    public void delete(User loginUser, List<Answer> answers) throws CannotDeleteException {
+        validateDeleteAuthority(loginUser);
+        validateDeleteAllAnswerAuthority(loginUser, answers);
+
+        setDeleted(true);
+    }
+
+    private void validateDeleteAllAnswerAuthority(User loginUser, List<Answer> answers) throws CannotDeleteException {
+        for (Answer answer : answers) {
+            validateDeleteAnswerAuthority(loginUser, answer);
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -72,6 +88,18 @@ public class Question extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    private void validateDeleteAuthority(User owner) throws CannotDeleteException {
+        if (!isOwner(owner)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private void validateDeleteAnswerAuthority(User owner, Answer answer) throws CannotDeleteException {
+        if (!answer.isOwner(owner)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     @Override
