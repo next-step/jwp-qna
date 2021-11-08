@@ -4,6 +4,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -57,6 +58,11 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
+    }
+
+    public void delete(List<DeleteHistory> deleteHistories) {
+        deleted = true;
+        deleteHistories.add(DeleteHistory.answer(id, writer));
     }
 
     public Long getId() {

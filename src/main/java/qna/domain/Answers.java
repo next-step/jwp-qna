@@ -27,8 +27,7 @@ public class Answers {
 
     public void delete(List<DeleteHistory> deleteHistories) {
         for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(DeleteHistory.answer(answer.getId(), answer.getWriter()));
+            answer.delete(deleteHistories);
         }
     }
 }
