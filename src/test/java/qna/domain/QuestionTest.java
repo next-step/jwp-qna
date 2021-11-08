@@ -1,5 +1,6 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
+
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 public class QuestionTest {
@@ -29,12 +32,18 @@ public class QuestionTest {
     private QuestionRepository questionRepository;
 
     @Autowired
+    private AnswerRepository answerRepository;
+
+    @Autowired
     private UserRepository userRepository;
+
+    private User user1;
+    private User user2;
 
     @BeforeEach
     void setUp() {
-        User user1 = userRepository.save(UserTest.JAVAJIGI);
-        User user2 = userRepository.save(UserTest.SANJIGI);
+        user1 = userRepository.save(UserTest.JAVAJIGI);
+        user2 = userRepository.save(UserTest.SANJIGI);
 
         Q1.writeBy(user1);
         Q2.writeBy(user2);
@@ -65,8 +74,8 @@ public class QuestionTest {
     @Test
     void find1() {
         // given
-        Question q1 = questionRepository.save(Q1);
-        Question q2 = questionRepository.save(Q2);
+        questionRepository.save(Q1);
+        questionRepository.save(Q2);
 
         em.flush();
         em.clear();
@@ -93,5 +102,55 @@ public class QuestionTest {
         // then
         assertTrue(notDeleteQuestion.isPresent());
         assertEquals(q1, notDeleteQuestion.get());
+    }
+
+    @DisplayName("로그인한 유저가 Question 작성자가 아니면 Question 을 삭제할 수 없다.")
+    @Test
+    void delete1() {
+        // when & then
+        assertThatThrownBy(() -> Q1.delete(user2)).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @DisplayName("로그인한 유저가 Question 작성자이면서 Answer 가 없으면 삭제할 수 있다.")
+    @Test
+    void delete2() throws CannotDeleteException {
+        // when
+        Q1.delete(user1);
+
+        // then
+        assertTrue(Q1.isDeleted());
+    }
+
+    @DisplayName("로그인한 유저가 Question 작성자이면서 모든 Answer 의 작성자인 경우 삭제할 수 있다.")
+    @Test
+    void delete3() throws CannotDeleteException {
+        // given
+        Question question = questionRepository.save(Q1);
+        Answer answer1 = answerRepository.save(new Answer(user1, question, "Answers Contents1"));
+        Answer answer2 = answerRepository.save(new Answer(user1, question, "Answers Contents2"));
+
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+
+        // when
+        Q1.delete(user1);
+
+        // then
+        assertTrue(Q1.isDeleted());
+    }
+
+    @DisplayName("로그인한 유저가 Question 의 모든 Answer 의 작성자가 아니면 Question 을 삭제할 수 없다.")
+    @Test
+    void delete4() throws CannotDeleteException {
+        // given
+        Question question = questionRepository.save(Q1);
+        Answer answer1 = answerRepository.save(new Answer(user1, question, "Answers Contents1"));
+        Answer answer2 = answerRepository.save(new Answer(user2, question, "Answers Contents2"));
+
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+
+        // when
+        assertThatThrownBy(() -> Q1.delete(user2)).isInstanceOf(CannotDeleteException.class);
     }
 }

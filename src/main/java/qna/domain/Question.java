@@ -38,7 +38,7 @@ public class Question extends BaseTimeEntity {
     private boolean deleted = false;
 
     @Embedded
-    private Answers answers = Answers.createEmpty();
+    private final Answers answers = Answers.createEmpty();
 
     protected Question() {}
 
