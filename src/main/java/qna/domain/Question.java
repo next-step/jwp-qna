@@ -1,11 +1,38 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+
+@Entity
+@AttributeOverride(name = "createdDate", column = @Column(name = "created_at"))
+@AttributeOverride(name = "modifiedDate", column = @Column(name = "updated_at"))
+public class Question extends BaseTimeEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
+
+    @Lob
+    @Column(name = "contents")
     private String contents;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    protected Question() {
+
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -15,6 +42,13 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    public Question(String title, String contents, Long writerId, boolean deleted) {
+        this.title = title;
+        this.contents = contents;
+        this.writerId = writerId;
+        this.deleted = deleted;
     }
 
     public Question writeBy(User writer) {

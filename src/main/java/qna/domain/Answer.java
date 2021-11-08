@@ -3,14 +3,39 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+@AttributeOverride(name = "createdDate", column = @Column(name = "created_at"))
+@AttributeOverride(name = "modifiedDate", column = @Column(name = "updated_at"))
+public class Answer extends BaseTimeEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "question_id")
     private Long questionId;
+
+    @Lob
+    @Column(name = "contents")
     private String contents;
+
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -30,6 +55,13 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
+    }
+
+    public Answer(Long writerId, Long questionId, String contents, boolean deleted) {
+        this.writerId = writerId;
+        this.questionId = questionId;
+        this.contents = contents;
+        this.deleted = deleted;
     }
 
     public boolean isOwner(User writer) {
