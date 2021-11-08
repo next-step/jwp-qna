@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.4.5'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'checkstyle'
 }
 
 group = 'edu.nextstep'
@@ -21,4 +22,11 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+checkstyle {
+	maxWarnings = 0
+	configFile = file("${rootDir}/checkstyle-rules.xml")
+	configProperties = ["suppressionFile" : "${rootDir}/checkstyle-suppressions.xml"]
+	toolVersion ="8.24"
 }
