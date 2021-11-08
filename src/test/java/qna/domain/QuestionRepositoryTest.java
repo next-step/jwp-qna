@@ -37,13 +37,13 @@ class QuestionRepositoryTest {
 	@Test
 	@DisplayName("질문 찾기 성공")
 	public void findQuestionByIdSuccess() {
-		questionRepository.save(QuestionTest.Q1);
-		Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(QuestionTest.Q1.getId());
+		questionRepository.save(QuestionTest.Q2);
+		Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(QuestionTest.Q2.getId());
 
 		assertAll(() -> {
 			assertThat(optionalQuestion.isPresent()).isTrue();
 			Question question = optionalQuestion.get();
-			assertThat(question.getTitle()).isEqualTo(QuestionTest.Q1.getTitle());
+			assertThat(question.getTitle()).isEqualTo(QuestionTest.Q2.getTitle());
 		});
 
 	}

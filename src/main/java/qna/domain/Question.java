@@ -25,7 +25,7 @@ public class Question extends BaseTime {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    public Question() {
+    protected Question() {
     }
 
     public Question(String title, String contents) {
