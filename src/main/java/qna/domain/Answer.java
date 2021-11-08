@@ -10,12 +10,16 @@ import java.util.Objects;
 public class Answer extends BaseTimeEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(nullable = false, updatable = false)
   private Long id;
+
   private Long writerId;
+
   private Long questionId;
+
+  @Column(columnDefinition = "longtext")
   private String contents;
-  @Column(nullable = false)
+
+  @Column(columnDefinition = "bit", nullable = false)
   private boolean deleted = false;
 
   protected Answer() {}

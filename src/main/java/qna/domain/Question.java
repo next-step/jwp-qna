@@ -3,15 +3,20 @@ package qna.domain;
 import javax.persistence.*;
 
 @Entity
-public class Question {
+public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false)
     private Long id;
-    @Column(nullable = false)
+
+    @Column(length = 100, nullable = false)
     private String title;
+
+    @Column(columnDefinition = "longtext")
     private String contents;
+
     private Long writerId;
+
+    @Column(columnDefinition = "bit", nullable = false)
     private boolean deleted = false;
 
     public Question(String title, String contents) {

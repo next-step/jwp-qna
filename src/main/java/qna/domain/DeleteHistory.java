@@ -5,14 +5,19 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class DeleteHistory extends BaseTimeEntity {
+public class DeleteHistory {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(nullable = false, updatable = false)
   private Long id;
+
+  @Enumerated(EnumType.STRING)
   private ContentType contentType;
+
   private Long contentId;
+
   private Long deletedById;
+
+  @Column(columnDefinition = "datetime(6)")
   private LocalDateTime createDate = LocalDateTime.now();
 
   protected DeleteHistory() {}
