@@ -22,25 +22,20 @@ public class Answers {
 		this.answers = answers;
 	}
 
-	public static Answers of(List<Answer> answers) {
-		return new Answers(answers);
-	}
-
 	public static Answers createEmpty() {
 		return new Answers(new ArrayList<>());
 	}
 
-	public void deleteAll(User owner) throws CannotDeleteException {
+	public List<DeleteHistory> deleteAll(User owner) throws CannotDeleteException {
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
 		for (Answer answer : answers) {
-			answer.delete(owner);
+			deleteHistories.add(answer.delete(owner));
 		}
+
+		return deleteHistories;
 	}
 
 	public void add(Answer answer) {
 		this.answers.add(answer);
-	}
-
-	public List<Answer> getValues() {
-		return this.answers;
 	}
 }

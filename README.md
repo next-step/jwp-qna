@@ -41,5 +41,5 @@
     - [X] Question 의 Writer 와 Answer 의 Writer 가 다른 경우 Answer 삭제 불가능
 
 ### 3. Question 과 Answer 삭제 이력에 대한 정보를 DeleteHistory 를 활용해 남긴다.
-- [ ] Question 삭제 시, DeleteHistory 에 추가
-- [ ] Answer 삭제 시, DeleteHistory 에 추가
+- [X] Question 삭제 시, DeleteHistory 에 추가
+- [X] Answer 삭제 시, DeleteHistory 에 추가

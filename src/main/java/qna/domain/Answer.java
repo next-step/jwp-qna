@@ -84,9 +84,11 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void delete(User owner) throws CannotDeleteException {
+    public DeleteHistory delete(User owner) throws CannotDeleteException {
         validateDeleteAnswerAuthority(owner);
         this.deleted = true;
+
+        return DeleteHistory.ofAnswer(id, owner);
     }
 
     private void validateDeleteAnswerAuthority(User owner) throws CannotDeleteException {
