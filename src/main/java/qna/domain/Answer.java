@@ -15,7 +15,6 @@ public class Answer extends BaseTimeEntity {
 	@Id
 	@GeneratedValue
 	private Long id;
-
 	private String contents;
 	private boolean deleted;
 	private Long questionId;
@@ -90,6 +89,23 @@ public class Answer extends BaseTimeEntity {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Answer answer = (Answer)o;
+		return isDeleted() == answer.isDeleted() && Objects.equals(getId(), answer.getId())
+			&& Objects.equals(getContents(), answer.getContents()) && Objects.equals(getQuestionId(),
+			answer.getQuestionId()) && Objects.equals(getWriterId(), answer.getWriterId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId(), getContents(), isDeleted(), getQuestionId(), getWriterId());
 	}
 
 	@Override

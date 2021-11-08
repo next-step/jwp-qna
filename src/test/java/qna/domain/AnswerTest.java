@@ -27,15 +27,10 @@ public class AnswerTest {
     public void 엔티티_생성(){
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answer entity unit test");
         em.persist(answer);
-        em.flush();
         Answer findAnswer = em.createQuery("select a from Answer a where a.id=:id",Answer.class)
             .setParameter("id",answer.getId())
             .getSingleResult();
-
-        assertThat(findAnswer.getId()).isEqualTo(answer.getId());
-        assertThat(findAnswer.getContents()).isEqualTo(answer.getContents());
-        assertThat(findAnswer.getWriterId()).isEqualTo(answer.getWriterId());
-        assertThat(findAnswer.getQuestionId()).isEqualTo(answer.getQuestionId());
+        assertThat(findAnswer).isEqualTo(answer);
     }
 
     @Test
