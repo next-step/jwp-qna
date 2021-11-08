@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
+@DisplayName("질문 저장소")
 @DataJpaTest
 public class QuestionRepositoryTest {
 	@Autowired

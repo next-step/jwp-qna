@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,6 +24,7 @@ import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.fixture.UserFixture;
 
+@DisplayName("질문 답변 서비스")
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
     @Mock

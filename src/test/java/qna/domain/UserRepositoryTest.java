@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.fixture.UserFixture;
 
+@DisplayName("사용자 저장소")
 @DataJpaTest
 class UserRepositoryTest {
 	@Autowired

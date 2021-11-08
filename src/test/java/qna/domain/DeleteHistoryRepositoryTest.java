@@ -14,6 +14,7 @@ import qna.fixture.DeleteHistoryFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
+@DisplayName("삭제 기록 저장소")
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
 	@Autowired

@@ -16,6 +16,7 @@ import qna.fixture.AnswerFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
+@DisplayName("답변 저장소")
 @DataJpaTest
 public class AnswerRepositoryTest {
 	@Autowired
