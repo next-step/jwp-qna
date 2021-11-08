@@ -12,8 +12,8 @@
     - [x] not null 과 같은 column definition 확인
 - [x] Repository 클래스 작성
     - [x] 이미 작성되어 있음
-- [ ] DataJpaTest 활용한 테스트 케이스 작성
-    - [ ] CRUD 케이스에 대해 모두 작성
+- [x] DataJpaTest 활용한 테스트 케이스 작성
+    - [x] CRUD 케이스에 대해 모두 작성
 
 
 

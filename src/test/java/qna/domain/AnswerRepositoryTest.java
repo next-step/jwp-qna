@@ -25,7 +25,7 @@ class AnswerRepositoryTest {
 
 	@Test
 	@DisplayName("자바지기 사용자가 a1 등록 성공")
-	public void saveAnswerByJavajigiSuccess() throws Exception {
+	public void saveAnswerByJavajigiSuccess() {
 		Answer answer1 = AnswerTest.A1;
 		Answer save = answerRepository.save(answer1);
 
