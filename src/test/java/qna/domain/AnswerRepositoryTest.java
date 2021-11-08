@@ -3,13 +3,11 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.stream.Stream;
 import javax.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -17,26 +15,26 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DisplayName("답변 저장소")
 class AnswerRepositoryTest {
 
+    private static User javajigi;
+    private static Question questionWrittenByJavajigi;
+
     @Autowired
     private AnswerRepository answerRepository;
-
-    private static Stream<Arguments> example() {
-        return Stream.of(Arguments.of(AnswerTest.A1), Arguments.of(AnswerTest.A2));
-    }
 
     @BeforeAll
     static void setUp(@Autowired UserRepository userRepository,
         @Autowired QuestionRepository questionRepository) {
-        userRepository.save(UserTest.JAVAJIGI);
-        userRepository.save(UserTest.SANJIGI);
-        questionRepository.save(QuestionTest.Q1);
-        questionRepository.save(QuestionTest.Q2);
+        javajigi = userRepository.save(UserTest.JAVAJIGI);
+        questionWrittenByJavajigi = questionRepository.save(
+            Question.of("title", "contents").writeBy(javajigi));
     }
 
-    @ParameterizedTest(name = "{displayName}[{index}] {0} can be saved")
+    @Test
     @DisplayName("저장")
-    @MethodSource("example")
-    void save(Answer answer) {
+    void save() {
+        //given
+        Answer answer = Answer.of(javajigi, questionWrittenByJavajigi, "contents");
+
         //when
         Answer actual = answerRepository.save(answer);
 
@@ -49,24 +47,36 @@ class AnswerRepositoryTest {
         );
     }
 
-    @ParameterizedTest(name = "{displayName}[{index}] {0} can be found by id")
+    @Test
     @DisplayName("아이디로 검색")
-    @MethodSource("example")
-    void findByIdAndDeletedFalse(Answer answer) {
+    void findByIdAndDeletedFalse() {
         //given
-        Answer expected = answerRepository.save(answer);
+        Answer answer = givenAnswer();
 
         //when
-        Answer actual = answerById(expected.getId());
+        Answer actual = answerById(answer.getId());
 
         //then
         assertThat(actual)
-            .isEqualTo(expected);
+            .isEqualTo(answer);
+    }
+
+    private Answer givenAnswer() {
+        return answerRepository.save(Answer.of(javajigi, questionWrittenByJavajigi, "contents"));
     }
 
     private Answer answerById(Long id) {
         return answerRepository.findByIdAndDeletedFalse(id)
             .orElseThrow(
                 () -> new EntityNotFoundException(String.format("id(%s) is not found", id)));
+    }
+
+    @AfterAll
+    static void tearDown(@Autowired UserRepository userRepository,
+        @Autowired QuestionRepository questionRepository,
+        @Autowired AnswerRepository answerRepository) {
+        answerRepository.deleteAll();
+        questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 }
