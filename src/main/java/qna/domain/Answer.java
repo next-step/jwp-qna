@@ -48,10 +48,6 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public Answer() {
-
-    }
-
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
     }
