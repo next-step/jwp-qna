@@ -1,20 +1,14 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "question")
@@ -69,7 +63,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answer.setQuestion(this);
     }
 
     public Long getId() {

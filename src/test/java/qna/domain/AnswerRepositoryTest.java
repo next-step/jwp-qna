@@ -38,7 +38,7 @@ public class AnswerRepositoryTest {
 	@Test
 	void save() {
 		// given
-		Answer expected = AnswerFixture.A1(question.getId(), user.getId());
+		Answer expected = AnswerFixture.A1(user, question);
 
 		// when
 		Answer actual = answerRepository.save(expected);
@@ -49,7 +49,7 @@ public class AnswerRepositoryTest {
 			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
 			() -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted()),
 			() -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId()),
-			() -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId())
+			() -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter())
 		);
 	}
 
@@ -57,7 +57,7 @@ public class AnswerRepositoryTest {
 	@Test
 	void findByQuestionIdAndDeletedFalse() {
 		// given
-		answerRepository.save(AnswerFixture.A1(question.getId(), user.getId()));
+		answerRepository.save(AnswerFixture.A1(user, question));
 
 		// when
 		List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
@@ -70,7 +70,7 @@ public class AnswerRepositoryTest {
 	@Test
 	void findByIdAndDeletedFalse() {
 		// given
-		Answer expected = answerRepository.save(AnswerFixture.A1(question.getId(), user.getId()));
+		Answer expected = answerRepository.save(AnswerFixture.A1(user, question));
 
 		// when
 		Answer actual = answerRepository.findByIdAndDeletedFalse(expected.getId())

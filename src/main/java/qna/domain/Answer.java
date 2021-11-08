@@ -4,10 +4,13 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import qna.NotFoundException;
@@ -31,87 +34,77 @@ public class Answer extends BaseEntity {
     @Column(name = "question_id")
     private Long questionId;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
+
+    public void setQuestion(Question question) {
+        this.questionId = question.getId();
+    }
+
+    public void setWriter(User writer) {
+        this.writer = writer;
+    }
 
     protected Answer() {
 
     }
 
-    public Answer(String contents, Long questionId, Long writerId) {
-        this.id = null;
-        this.contents = contents;
-        this.deleted = false;
-        this.questionId = questionId;
-        this.writerId = writerId;
+    public static Answer of(User writer, Question question, String contents) {
+        return of(null, writer, question, contents);
     }
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+    public static Answer of(Long id, User writer, Question question, String contents) {
+        throwOnUnAuthorizedWriter(writer);
+        throwOnNotFoundQuestion(question);
+
+        Answer answer = new Answer();
+        answer.id = id;
+        answer.contents = contents;
+        answer.deleted = false;
+        answer.questionId = question.getId();
+        answer.writer = writer;
+        return answer;
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
-
+    private static void throwOnUnAuthorizedWriter(User writer) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
+    }
 
+    private static void throwOnNotFoundQuestion(Question question) {
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
+    }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
-        this.contents = contents;
+    public void delete() {
+        this.deleted = true;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        return this.writer.equals(writer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public Long getQuestionId() {
+        return questionId;
+    }
+
+    public User getWriter() {
+        return writer;
     }
 
     @Override
@@ -131,16 +124,5 @@ public class Answer extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Answer{" +
-            "id=" + id +
-            ", contents='" + contents + '\'' +
-            ", deleted=" + deleted +
-            ", questionId=" + questionId +
-            ", writerId=" + writerId +
-            '}';
     }
 }

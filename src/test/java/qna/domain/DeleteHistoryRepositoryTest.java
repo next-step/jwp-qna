@@ -33,7 +33,7 @@ public class DeleteHistoryRepositoryTest {
 	void setUp() {
 		user = userRepository.save(UserFixture.Y2O2U2N());
 		question = questionRepository.save(QuestionFixture.Q1(user.getId()));
-		answer = answerRepository.save(AnswerFixture.A1(question.getId(), user.getId()));
+		answer = answerRepository.save(AnswerFixture.A1(user, question));
 	}
 
 	@DisplayName("질문 삭제 기록을 저장할 수 있다.")
