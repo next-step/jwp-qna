@@ -4,11 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import java.util.stream.Stream;
 import javax.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -16,22 +18,23 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DisplayName("질문 저장소")
 class QuestionRepositoryTest {
 
-    private static User javajigi;
-
     @Autowired
     private QuestionRepository questionRepository;
 
     @BeforeAll
     static void setUp(@Autowired UserRepository userRepository) {
-        javajigi = userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
     }
 
-    @Test
-    @DisplayName("저장")
-    void save() {
-        //given
-        Question question = questionWrittenByJavajigi();
+    static Stream<Arguments> example() {
+        return Stream.of(Arguments.of(QuestionTest.Q1), Arguments.of(QuestionTest.Q2));
+    }
 
+    @ParameterizedTest(name = "{displayName}[{index}] {0} can be saved")
+    @DisplayName("저장")
+    @MethodSource("example")
+    void save(Question question) {
         //when
         Question actual = questionRepository.save(question);
 
@@ -44,53 +47,38 @@ class QuestionRepositoryTest {
         );
     }
 
-    @Test
+    @ParameterizedTest(name = "{displayName}[{index}] {0} can be found by id")
     @DisplayName("아이디로 검색")
-    void findByIdAndDeletedFalse() {
+    @MethodSource("example")
+    void findByIdAndDeletedFalse(Question question) {
         //given
-        Question question = givenQuestion();
+        Question expected = questionRepository.save(question);
 
         //when
-        Question actual = questionById(question.getId());
+        Question actual = questionById(expected.getId());
 
         //then
         assertThat(actual)
-            .isEqualTo(question);
+            .isEqualTo(expected);
     }
 
-    @Test
+    @ParameterizedTest(name = "{displayName}[{index}] {0} is contained in list")
     @DisplayName("삭제되지 않은 질문들 검색")
-    void findByQuestionIdAndDeletedFalse() {
+    @MethodSource("example")
+    void findByQuestionIdAndDeletedFalse(Question question) {
         //given
-        Question question = givenQuestion();
+        Question expected = questionRepository.save(question);
 
         // when
         List<Question> actual = questionRepository.findByDeletedFalse();
 
         //then
-        assertThat(actual)
-            .contains(question);
-    }
-
-    private Question givenQuestion() {
-        return questionRepository.save(questionWrittenByJavajigi());
-    }
-
-    private Question questionWrittenByJavajigi() {
-        return Question.of("title", "contents")
-            .writeBy(javajigi);
+        assertThat(actual).contains(expected);
     }
 
     private Question questionById(Long id) {
         return questionRepository.findByIdAndDeletedFalse(id)
             .orElseThrow(
                 () -> new EntityNotFoundException(String.format("id(%s) is not found", id)));
-    }
-
-    @AfterAll
-    static void tearDown(@Autowired UserRepository userRepository,
-        @Autowired QuestionRepository questionRepository) {
-        questionRepository.deleteAll();
-        userRepository.deleteAll();
     }
 }

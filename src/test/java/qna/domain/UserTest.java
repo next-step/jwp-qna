@@ -17,10 +17,10 @@ import qna.UnAuthorizedException;
 public class UserTest {
 
     public static final User JAVAJIGI =
-        User.of("javajigi", "password", "name", "javajigi@slipp.net");
+        User.of(1L, "javajigi", "password", "name", "javajigi@slipp.net");
 
     public static final User SANJIGI =
-        User.of("sanjigi", "password", "name", "sanjigi@slipp.net");
+        User.of(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
     @Test
     @DisplayName("객체화")

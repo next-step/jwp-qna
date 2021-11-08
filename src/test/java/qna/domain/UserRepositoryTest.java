@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.stream.Stream;
 import javax.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -57,10 +56,5 @@ class UserRepositoryTest {
         return userRepository.findByUserId(userId)
             .orElseThrow(
                 () -> new EntityNotFoundException(String.format("%s is not found", userId)));
-    }
-
-    @AfterAll
-    static void tearDown(@Autowired UserRepository userRepository) {
-        userRepository.deleteAll();
     }
 }
