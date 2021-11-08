@@ -35,7 +35,7 @@ public class Question extends BaseTimeEntity {
     private User writer;
 
     @Embedded
-    private Answers answers = Answers.create();
+    private AnswerGroup answerGroup = AnswerGroup.empty();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -58,18 +58,26 @@ public class Question extends BaseTimeEntity {
         return new Question(null, title, contents);
     }
 
+    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+        validateOwner(user);
+        List<DeleteHistory> deleteHistories = createDeleteHistories(user);
+        deleteHistories.addAll(answerGroup.delete(user));
+        deleted = true;
+        return deleteHistories;
+    }
+
+    boolean containsAnswer(Answer answer) {
+        return answerGroup.contains(answer);
+    }
+
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
+        answerGroup.add(answer);
         answer.toQuestion(this);
-    }
-
-    public boolean containsAnswer(Answer answer) {
-        return answers.contains(answer);
     }
 
     public Long getId() {
@@ -90,14 +98,6 @@ public class Question extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
-        validateOwner(user);
-        List<DeleteHistory> deleteHistories = createDeleteHistories(user);
-        deleteHistories.addAll(answers.delete(user));
-        deleted = true;
-        return deleteHistories;
     }
 
     @Override
