@@ -1,28 +1,21 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "answer")
-public class Answer {
+public class Answer extends BaseEntity {
     @Column(name = "id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,19 +25,11 @@ public class Answer {
     @Lob
     private String contents;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
     @Column(name = "question_id")
     private Long questionId;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     @Column(name = "writer_id")
     private Long writerId;
@@ -130,17 +115,6 @@ public class Answer {
     }
 
     @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -157,5 +131,16 @@ public class Answer {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+            "id=" + id +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            ", questionId=" + questionId +
+            ", writerId=" + writerId +
+            '}';
     }
 }

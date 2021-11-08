@@ -16,10 +16,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "question")
-public class Question {
+public class Question extends BaseEntity {
     @Column(name = "id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,19 +28,11 @@ public class Question {
     @Lob
     private String contents;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
     @Column(name = "title", nullable = false, length = 100)
     private String title;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     @Column(name = "writer_id")
     private Long writerId;
@@ -122,17 +113,6 @@ public class Question {
     }
 
     @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -149,5 +129,16 @@ public class Question {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+            "id=" + id +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            ", title='" + title + '\'' +
+            ", writerId=" + writerId +
+            '}';
     }
 }
