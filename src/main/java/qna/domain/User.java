@@ -2,18 +2,35 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Objects;
 
-public class User {
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
+public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @Column(length = 20, nullable = false, updatable = false, unique = true)
     private String userId;
+
+    @Column(length = 20, nullable = false)
     private String password;
+
+    @Column(length = 20, nullable = false)
     private String name;
+
+    @Column(length = 50)
     private String email;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
