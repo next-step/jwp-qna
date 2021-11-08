@@ -2,16 +2,27 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
 
-public class User {
+@Entity
+@Table(name = "user")
+public class User extends CommonEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    private Long id;
-    private String userId;
-    private String password;
-    private String name;
+    @Column(length = 50)
     private String email;
+
+    @Column(length = 20, nullable = false)
+    private String name;
+
+    @Column(length = 20, nullable = false)
+    private String password;
+
+    @Column(length = 20, nullable = false)
+    private String userId;
 
     private User() {
     }
@@ -55,7 +66,7 @@ public class User {
         }
 
         return name.equals(target.name) &&
-                email.equals(target.email);
+            email.equals(target.email);
     }
 
     public boolean isGuestUser() {
@@ -105,12 +116,28 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+            "id=" + id +
+            ", userId='" + userId + '\'' +
+            ", password='" + password + '\'' +
+            ", name='" + name + '\'' +
+            ", email='" + email + '\'' +
+            '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof User))
+            return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(email, user.email) && Objects.equals(name, user.name)
+            && Objects.equals(password, user.password) && Objects.equals(userId, user.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, name, password, userId);
     }
 
     private static class GuestUser extends User {
