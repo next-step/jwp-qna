@@ -32,9 +32,7 @@ public class DeleteHistoryTest {
     public void 삭제_이력_생성(DeleteHistory excepted) {
         DeleteHistory actual = deleteHistoryRepository.save(excepted);
 
-        assertAll(
-                () -> assertThat(actual).isEqualTo(excepted)
-        );
+        assertThat(actual).isEqualTo(excepted);
     }
 
 }
