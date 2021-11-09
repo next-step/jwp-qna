@@ -32,15 +32,17 @@ public class Answer extends BaseEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
     public void setQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
+        question.getAnswers().add(this);
     }
 
     protected Answer() {
@@ -59,7 +61,7 @@ public class Answer extends BaseEntity {
         answer.id = id;
         answer.contents = contents;
         answer.deleted = false;
-        answer.questionId = question.getId();
+        answer.question = question;
         answer.writer = writer;
         return answer;
     }
@@ -96,8 +98,8 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public User getWriter() {

@@ -68,7 +68,7 @@ public class AnswerTest {
 			() -> assertThat(answer).isNotNull(),
 			() -> assertThat(answer.getContents()).isEqualTo(contents),
 			() -> assertThat(answer.isDeleted()).isFalse(),
-			() -> assertThat(answer.getQuestionId()).isEqualTo(question.getId()),
+			() -> assertThat(answer.getQuestion()).isEqualTo(question),
 			() -> assertThat(answer.getWriter()).isEqualTo(answerWriter)
 		);
 	}

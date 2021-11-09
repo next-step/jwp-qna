@@ -49,7 +49,7 @@ public class AnswerRepositoryTest {
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
 			() -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted()),
-			() -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId()),
+			() -> assertThat(actual.getQuestion()).isEqualTo(expected.getQuestion()),
 			() -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter())
 		);
 	}

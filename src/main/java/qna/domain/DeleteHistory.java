@@ -31,7 +31,7 @@ public class DeleteHistory extends BaseEntity {
     private ContentType contentType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "delete_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deleter;
 
     protected DeleteHistory() {
