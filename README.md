@@ -5,7 +5,7 @@
 - [X] JPA Auditing
 
 ## 2단계 - 연관 관계 매핑 요구사항 정리
-- [ ] Answer -> Question
+- [X] Answer -> Question
 - [ ] Answer -> User
 - [ ] DeleteHistory -> User
 - [ ] Question -> User

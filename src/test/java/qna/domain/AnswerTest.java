@@ -21,22 +21,45 @@ public class AnswerTest {
     @Autowired
     AnswerRepository answerRepository;
 
+    @Autowired
+    QuestionRepository questionRepository;
+
     @DisplayName("answer 저장 테스트")
     @Test
     void answerSaveTest() {
+        //given
         LocalDateTime now = LocalDateTime.now();
-        Answer answer = new Answer(1L, 1L, "content");
+        Answer answer = new Answer(1L, new User(), new Question(), "content");
 
+        //when
         Answer savedAnswer = answerRepository.save(answer);
 
+        //then
         assertAll(() -> {
             assertThat(savedAnswer.getId(), is(notNullValue()));
             assertThat(savedAnswer.getWriterId(), is(answer.getWriterId()));
-            assertThat(savedAnswer.getQuestionId(), is(answer.getQuestionId()));
+            assertThat(savedAnswer.getQuestion(), is(answer.getQuestion()));
             assertThat(savedAnswer.getContents(), is(answer.getContents()));
             assertThat(savedAnswer.isDeleted(), is(answer.isDeleted()));
             assertTrue(savedAnswer.getCreatedDate().isAfter(now));
             assertTrue(savedAnswer.getModifiedDate().isAfter(now));
         });
     }
+
+    @DisplayName("question 연관관계 테스트")
+    @Test
+    void answerManyToOneQuestionRelationTest() {
+        //given
+        Question question = new Question();
+        question.setTitle("title");
+        questionRepository.save(question);
+        Answer answer = new Answer(new User(), question, "content");
+
+        //when
+        Answer savedAnswer = answerRepository.save(answer);
+
+        //then
+        assertThat(savedAnswer.getQuestion().getId(), is(notNullValue()));
+    }
+
 }

@@ -9,7 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
@@ -24,8 +26,9 @@ public class Answer extends BaseTimeEntity {
     @Column(name = "writer_id")
     private Long writerId;
 
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     @Lob
     @Column(name = "contents")
@@ -53,13 +56,7 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
-        this.contents = contents;
-    }
-
-    public Answer(Long writerId, Long questionId, String contents) {
-        this.writerId = writerId;
-        this.questionId = questionId;
+        this.question = question;
         this.contents = contents;
     }
 
@@ -68,39 +65,23 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getWriterId() {
         return writerId;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
@@ -116,7 +97,6 @@ public class Answer extends BaseTimeEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writerId +
-                ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
