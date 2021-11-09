@@ -1,10 +1,12 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.persistence.EntityManager;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,8 +19,18 @@ public class UserTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     public User saveUser(){
         return userRepository.save(JAVAJIGI);
+    }
+
+    @AfterEach
+    private void afterEach(){
+        entityManager
+                .createNativeQuery("ALTER TABLE user ALTER COLUMN `id` RESTART WITH 1")
+                .executeUpdate();
     }
 
     @Test

@@ -24,13 +24,18 @@ public class DeleteHistory {
     @Column(name = "created_date")
     private LocalDateTime createdDate = LocalDateTime.now();
 
+    private DeleteHistory() {
+    }
+
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
+        this(null, contentType, contentId, deletedById);
+    }
+
+    public DeleteHistory(Long id, ContentType contentType, Long contentId, Long deletedById){
+        this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
-    }
-
-    private DeleteHistory() {
     }
 
     @Override
