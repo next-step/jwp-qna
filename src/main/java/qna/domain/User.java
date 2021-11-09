@@ -2,15 +2,17 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "user")
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(length = 50)
     private String email;

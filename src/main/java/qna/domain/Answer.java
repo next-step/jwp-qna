@@ -3,15 +3,16 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Lob
     private String contents;
 
