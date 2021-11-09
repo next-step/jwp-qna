@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -23,10 +24,30 @@ public class AnswerTest {
 
     @Autowired
     private AnswerRepository answerRepository;
-    @Autowired
-    private QuestionRepository questionRepository;
-    @Autowired
-    private UserRepository userRepository;
+
+    public static final User US = new User("최웅석", "A", "최웅석", "최웅석_email");
+    public static final User JH = new User("지호님", "A", "지호님", "지호님_email");
+    public static final Question QUESTION = new Question(US, "JPA 질문있습니다.", "질문 내용", false);
+    public static final Answer ANSWER = new Answer(JH, QUESTION, "JPA 답변 내용입니다.");
+
+    @BeforeEach
+    void setup() {
+        answerRepository.save(ANSWER);
+    }
+
+    @Test
+    @DisplayName("Answer Entity 연관관계 정상 확인")
+    public void 연관관계_확인() {
+        Optional<Answer> findOneAnswer = answerRepository.findById(ANSWER.getId());
+
+        Answer actual = findOneAnswer.orElse(null);
+
+        assertAll(
+                () -> assertThat(actual.getWriter()).isEqualTo(JH),
+                () -> assertThat(actual.getQuestion()).isEqualTo(QUESTION),
+                () -> assertThat(actual.getQuestion().getWriter()).isEqualTo(US)
+        );
+    }
 
     private static Stream<Arguments> providerAnswers() {
         return Stream.of(
@@ -42,37 +63,9 @@ public class AnswerTest {
         Answer actual = answerRepository.save(excepted);
 
         assertAll(
-                () -> assertThat(actual.getId()).isEqualTo(excepted.getId()),
                 () -> assertThat(actual.getWriter()).isEqualTo(excepted.getWriter()),
                 () -> assertThat(actual.getContents()).isEqualTo(excepted.getContents()),
                 () -> assertThat(actual.getQuestion()).isEqualTo(excepted.getQuestion())
-        );
-    }
-
-    public static final User US = new User("최웅석", "A", "최웅석", "최웅석_email");
-    public static final User JH = new User("지호님", "A", "지호님", "지호님_email");
-    public static final Question QUESTION = new Question(US, "JPA 질문있습니다.", "질문 내용", false);
-    public static final Answer ANSWER = new Answer(JH, QUESTION, "JPA 답변 내용입니다.");
-
-    @BeforeEach
-    void setup() {
-        userRepository.save(US);
-        userRepository.save(JH);
-        questionRepository.save(QUESTION);
-        answerRepository.save(ANSWER);
-    }
-
-    @Test
-    @DisplayName("Answer Entity 연관관계 정상 확인")
-    public void 연관관계_확인() {
-        Optional<Answer> findOneAnswer = answerRepository.findById(ANSWER.getId());
-
-        Answer actual = findOneAnswer.orElse(null);
-
-        assertAll(
-                () -> assertThat(actual.getWriter()).isEqualTo(JH),
-                () -> assertThat(actual.getQuestion()).isEqualTo(QUESTION),
-                () -> assertThat(actual.getQuestion().getWriter()).isEqualTo(US)
         );
     }
 

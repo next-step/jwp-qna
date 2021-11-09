@@ -23,10 +23,11 @@ public class QuestionTest {
 
     @Autowired
     private QuestionRepository questionRepository;
-    @Autowired
-    private AnswerRepository answerRepository;
-    @Autowired
-    private UserRepository userRepository;
+
+    @BeforeEach
+    void setup() {
+        questionRepository.save(QUESTION);
+    }
 
     private static Stream<Arguments> providerQuestions() {
         return Stream.of(
@@ -47,14 +48,6 @@ public class QuestionTest {
                 () -> assertThat(actual.getContents()).isEqualTo(excepted.getContents()),
                 () -> assertThat(actual.getTitle()).isEqualTo(excepted.getTitle())
         );
-    }
-
-    @BeforeEach
-    void setup() {
-        userRepository.save(US);
-        userRepository.save(JH);
-        questionRepository.save(QUESTION);
-        answerRepository.save(ANSWER);
     }
 
     @Test
