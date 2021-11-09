@@ -54,5 +54,4 @@ create table user
 
 alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
-
 ```
