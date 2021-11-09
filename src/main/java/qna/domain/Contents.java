@@ -8,19 +8,19 @@ import javax.persistence.Lob;
 import org.springframework.util.StringUtils;
 
 @Embeddable
-public class AnswerContents {
+public class Contents {
 
 	@Lob
 	private String contents;
 
-	protected AnswerContents() {}
+	protected Contents() {}
 
-	private AnswerContents(String contents) {
+	private Contents(String contents) {
 		this.contents = contents;
 	}
 
-	public static AnswerContents of(String contents) {
-		return new AnswerContents(contents);
+	public static Contents of(String contents) {
+		return new Contents(contents);
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class AnswerContents {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		AnswerContents that = (AnswerContents)o;
+		Contents that = (Contents)o;
 		return Objects.equals(contents, that.contents);
 	}
 
