@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -52,10 +53,6 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
         answers.add(answer);
         answer.toQuestion(this);
@@ -86,17 +83,12 @@ public class Question extends BaseEntity {
     }
 
     public void delete(User loginUser) {
-        validateQuestion(loginUser);
-        answers.validateAnswers(writer);
-
-        this.deleted = true;
-        answers.deleteAnswers();
+        validation(loginUser);
+        delete();
     }
 
-    private void validateQuestion(User loginUser) {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+    public List<DeleteHistory> getDeleteHistoriesOfAnswers() {
+        return answers.getDeleteHistories();
     }
 
     @Override
@@ -108,5 +100,25 @@ public class Question extends BaseEntity {
                 ", writerId=" + writer +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    private void validation(User loginUser) {
+        validateQuestion(loginUser);
+        answers.validateAnswers(writer);
+    }
+
+    private void validateQuestion(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    private void delete() {
+        this.deleted = true;
+        answers.deleteAnswers();
     }
 }
