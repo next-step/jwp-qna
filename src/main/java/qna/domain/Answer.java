@@ -22,7 +22,7 @@ public class Answer extends BaseEntity {
 
     private Long questionId;
 
-    public Answer() {
+    protected Answer() {
 
     }
 

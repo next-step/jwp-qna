@@ -19,7 +19,7 @@ public class Question extends BaseEntity {
 
     private Long writerId;
 
-    public Question() {
+    protected Question() {
     }
 
     public Question(String title, String contents) {

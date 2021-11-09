@@ -24,7 +24,7 @@ public class User extends BaseEntity {
     @Column(length = 20, nullable = false)
     private String userId;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
