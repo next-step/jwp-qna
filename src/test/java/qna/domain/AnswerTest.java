@@ -63,7 +63,6 @@ public class AnswerTest {
     }
 
     @Test
-    @Rollback(false)
     @DisplayName("Answer Entity 연관관계 정상 확인")
     public void 답변_생성2() {
         Optional<Answer> findOneAnswer = answerRepository.findById(ANSWER.getId());
