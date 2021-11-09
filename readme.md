@@ -14,7 +14,7 @@ QnA 서비스를 만들어 가면서 JPA로 실제 도메인 모델을 어떻게
   - [x] question
   - [x] user
 - 리포지토리 테스트
-  - [ ] answer
+  - [x] answer
   - [ ] delete_history
   - [ ] question
   - [ ] user

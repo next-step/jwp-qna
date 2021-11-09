@@ -28,7 +28,6 @@ public class Answer {
     private LocalDateTime updatedAt;
 
     protected Answer() {
-
     }
 
     public Answer(User writer, Question question, String contents) {
@@ -99,6 +98,10 @@ public class Answer {
         this.deleted = deleted;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
     @Override
     public String toString() {
         return "Answer{" +
