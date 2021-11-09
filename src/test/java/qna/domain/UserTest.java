@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.time.LocalDateTime;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,22 +22,32 @@ public class UserTest {
     @Autowired
     UserRepository userRepository;
 
+    @AfterEach
+    void cleanUp() {
+        userRepository.deleteAll();
+    }
+
     @DisplayName("user 저장 테스트")
     @Test
     void userSaveTest() {
+        //given
         LocalDateTime now = LocalDateTime.now();
-        User user = new User(1L, "id", "password", "name", "email");
+        User savedUser = userRepository.save(new User("id", "password", "name", "email"));
 
-        User savedUser = userRepository.save(user);
+        //when
+        User findByUser = userRepository.findByUserId(savedUser.getUserId())
+                .get();
 
+        //then
         assertAll(() -> {
-            assertThat(savedUser.getId(), is(user.getId()));
-            assertThat(savedUser.getUserId(), is(user.getUserId()));
-            assertThat(savedUser.getPassword(), is(user.getPassword()));
-            assertThat(savedUser.getName(), is(user.getName()));
-            assertThat(savedUser.getEmail(), is(user.getEmail()));
-            assertTrue(savedUser.getCreatedDate().isAfter(now));
-            assertTrue(savedUser.getModifiedDate().isAfter(now));
+            assertThat(findByUser.getId(), is(notNullValue()));
+            assertThat(findByUser.getId(), is(savedUser.getId()));
+            assertThat(findByUser.getUserId(), is(savedUser.getUserId()));
+            assertThat(findByUser.getPassword(), is(savedUser.getPassword()));
+            assertThat(findByUser.getName(), is(savedUser.getName()));
+            assertThat(findByUser.getEmail(), is(savedUser.getEmail()));
+            assertTrue(findByUser.getCreatedDate().isAfter(now));
+            assertTrue(findByUser.getModifiedDate().isAfter(now));
         });
     }
 }
