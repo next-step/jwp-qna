@@ -11,9 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -35,8 +32,7 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -85,16 +81,18 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
     public void delete(User loginUser) {
-        validate(loginUser);
+        validateQuestion(loginUser);
+        answers.validateAnswers(writer);
+
         this.deleted = true;
     }
 
-    private void validate(User loginUser) {
+    private void validateQuestion(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }

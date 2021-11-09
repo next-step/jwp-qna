@@ -16,10 +16,10 @@ public class QuestionTest {
     @DisplayName("질문을 삭제한다.")
     void delete() {
         // when
-        Q1.delete(UserTest.JAVAJIGI);
+        Q2.delete(UserTest.SANJIGI);
 
         // then
-        assertThat(Q1.isDeleted()).isTrue();
+        assertThat(Q2.isDeleted()).isTrue();
     }
 
     @Test
