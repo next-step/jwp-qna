@@ -39,7 +39,8 @@ public class Question {
         this.contents = contents;
     }
 
-    protected Question() {}
+    private Question() {
+    }
 
     public Question writeBy(User writer) {
         this.writerId = writer.getId();

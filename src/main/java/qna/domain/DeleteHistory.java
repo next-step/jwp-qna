@@ -30,6 +30,9 @@ public class DeleteHistory {
         this.deletedById = deletedById;
     }
 
+    private DeleteHistory() {
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

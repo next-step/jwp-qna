@@ -54,7 +54,8 @@ public class Answer {
         this.contents = contents;
     }
 
-    protected Answer() { }
+    private Answer() {
+    }
 
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());

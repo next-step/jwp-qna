@@ -23,35 +23,34 @@ public class AnswerTest {
     private Answer savedAnswer;
 
     @BeforeEach
-    private void beforeEach(){
+    private void beforeEach() {
         savedAnswer = answerRepository.save(A1);
     }
 
     @Test
     @DisplayName("answer 등록")
-    public void saveAnswerTest(){
+    public void saveAnswerTest() {
         assertAll(
-                () -> assertThat(savedAnswer.getId()).isNotNull(),
-                () -> assertThat(savedAnswer.getWriterId()).isEqualTo(A1.getWriterId()),
-                () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(A1.getQuestionId()),
-                () -> assertThat(savedAnswer.getContents()).isEqualTo(A1.getContents()),
+                () -> assertNotNull(savedAnswer.getId()),
+                () -> assertEquals(savedAnswer.getWriterId(), A1.getWriterId()),
+                () -> assertEquals(savedAnswer.getQuestionId(), A1.getQuestionId()),
+                () -> assertEquals(savedAnswer.getContents(), A1.getContents()),
                 () -> assertFalse(savedAnswer.isDeleted())
         );
     }
 
     @Test
     @DisplayName("question id로 deleted가 false인 answer 검색")
-    public void findByQuestionIdAndDeletedFalseTest(){
+    public void findByQuestionIdAndDeletedFalseTest() {
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
 
-        assertAll(
-                () -> assertThat(answers).contains(savedAnswer)
-        );
+        assertThat(answers).containsExactly(savedAnswer);
+
     }
 
     @Test
     @DisplayName("answer id로 deleted가 false인 answer 단일검색")
-    public void findByIdAndDeletedFalseTest(){
+    public void findByIdAndDeletedFalseTest() {
         Optional<Answer> oAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
 
         assertAnswerDeleted(oAnswer, false);
@@ -60,7 +59,7 @@ public class AnswerTest {
 
     @Test
     @DisplayName("answer에 delete를 true로 수정")
-    public void updateAnswerDeletedTrue(){
+    public void updateAnswerDeletedTrue() {
         savedAnswer.setDeleted(true);
 
         Optional<Answer> oAnswer = answerRepository.findById(savedAnswer.getId());
@@ -70,8 +69,9 @@ public class AnswerTest {
 
     private void assertAnswerDeleted(Optional<Answer> oAnswer, boolean isDeleted) {
         assertAll(
+                () -> assertNotNull(oAnswer),
                 () -> assertEquals(oAnswer.get(), savedAnswer),
-                () -> assertThat(oAnswer.get().isDeleted()).isEqualTo(isDeleted)
+                () -> assertEquals(oAnswer.get().isDeleted(), isDeleted)
         );
     }
 
