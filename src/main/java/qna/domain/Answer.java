@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.springframework.context.annotation.Primary;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -13,6 +14,7 @@ public class Answer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "writer_id")
