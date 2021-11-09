@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +17,19 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
+    private User writer;
+
+    @BeforeEach
+    void setUp() {
+        writer = new User("writer", "123", "writer", "writer@email.com");
+    }
 
     @DisplayName("Question 을 저장한다")
     @Test
     void save() {
         // given
-        Question question = createQuestion("question", "contents");
+        Question question = createQuestion("question", "contents")
+            .writeBy(writer);
 
         // when
         Question savedQuestion = questionRepository.save(question);
@@ -34,7 +42,8 @@ class QuestionRepositoryTest {
     @Test
     void findById() {
         // given
-        Question savedQuestion = questionRepository.save(createQuestion("question", "contents"));
+        Question savedQuestion = questionRepository.save(createQuestion("question", "contents")
+            .writeBy(writer));
 
         // when
         Question findQuestion = questionRepository.findById(savedQuestion.getId()).orElse(null);
@@ -52,8 +61,8 @@ class QuestionRepositoryTest {
         String secondTitle = "question2";
         String firstContents = "contents1";
         String secondContents = "contents2";
-        questionRepository.save(createQuestion(firstTitle, firstContents));
-        questionRepository.save(createQuestion(secondTitle, secondContents));
+        questionRepository.save(createQuestion(firstTitle, firstContents).writeBy(writer));
+        questionRepository.save(createQuestion(secondTitle, secondContents).writeBy(writer));
 
         // when
         List<Question> questions = questionRepository.findByDeletedFalse();
@@ -70,7 +79,8 @@ class QuestionRepositoryTest {
     @Test
     void findByIdAndDeletedFalse() {
         // given
-        Question savedQuestion = questionRepository.save(createQuestion("question", "contents"));
+        Question savedQuestion = questionRepository.save(createQuestion("question", "contents")
+            .writeBy(writer));
 
         // when
         Question findQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId()).orElse(null);
@@ -84,7 +94,8 @@ class QuestionRepositoryTest {
     @Test
     void findByIdAndDeletedFalseNull() {
         // given
-        Question savedQuestion = questionRepository.save(createQuestion("question", "contents"));
+        Question savedQuestion = questionRepository.save(createQuestion("question", "contents")
+            .writeBy(writer));
         savedQuestion.setDeleted(true);
 
         // when
