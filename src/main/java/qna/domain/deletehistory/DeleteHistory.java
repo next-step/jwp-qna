@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.deletehistory;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

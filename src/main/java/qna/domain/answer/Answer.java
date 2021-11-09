@@ -1,7 +1,10 @@
-package qna.domain;
+package qna.domain.answer;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.BaseTimeEntity;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

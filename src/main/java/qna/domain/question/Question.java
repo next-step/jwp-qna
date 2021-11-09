@@ -1,4 +1,8 @@
-package qna.domain;
+package qna.domain.question;
+
+import qna.domain.BaseTimeEntity;
+import qna.domain.user.User;
+import qna.domain.answer.Answer;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
