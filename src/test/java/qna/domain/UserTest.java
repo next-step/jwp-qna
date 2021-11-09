@@ -38,7 +38,9 @@ public class UserTest {
     public void saveUserTest(){
         User savedUser = saveUser();
 
-        assertEquals(savedUser, JAVAJIGI);
+        Optional<User> user = userRepository.findById(1L);
+
+        assertEquals(savedUser, user.get());
     }
 
     @Test
