@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,25 +17,46 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = NONE)
-public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+class AnswerTest {
+    @Autowired
+    private AnswerRepository answerRepository;
 
     @Autowired
-    private AnswerRepository repository;
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private Answer answer1;
+    private Answer answer2;
+
+    private User user1;
+    private User user2;
+
+    private Question question1;
+    private Question question2;
+
+    @BeforeEach
+    void setUp() {
+        user1 = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
+        user2 = userRepository.save(new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net"));
+
+        question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
+        question2 = questionRepository.save(new Question("title2", "contents2").writeBy(user2));
+
+        answer1 = answerRepository.save(new Answer(user1, question1, "Answers Contents1"));
+        answer2 = answerRepository.save(new Answer(user2, question2, "Answers Contents2"));
+    }
 
     @Test
     @DisplayName("답변을 저장한다.")
     void save() {
-        //given //when
-        Answer saved = repository.save(A1);
-
-        //then
+        //given //when //then
         assertAll(
-                () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
-                () -> assertThat(saved.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
-                () -> assertThat(saved.getContents()).isEqualTo(A1.getContents())
+                () -> assertThat(answer1.getId()).isNotNull(),
+                () -> assertThat(answer1.getWriter()).isEqualTo(user1),
+                () -> assertThat(answer1.getQuestion()).isEqualTo(question1),
+                () -> assertThat(answer1.getContents()).isEqualTo("Answers Contents1")
         );
     }
 
@@ -42,31 +64,30 @@ public class AnswerTest {
     @DisplayName("질문에 달린 답변 중 삭제되지 않은 답변 목록을 조회한다.")
     void findByQuestionIdAndDeletedFalse() {
         //given
-        repository.save(A1);
-        repository.save(A2);
-        Long questionId = QuestionTest.Q1.getId();
+        answer2.setDeleted(true);
+        Long questionId = question2.getId();
 
         //when
-        List<Answer> answers = repository.findByQuestionIdAndDeletedFalse(questionId);
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
 
         //then
-        assertThat(answers).hasSize(2);
+        assertThat(answers).hasSize(0);
     }
 
     @Test
     @DisplayName("삭제되지 않은 답변 한 건을 조회한다.")
     void findByIdAndDeletedFalse() {
         //given
-        repository.save(A2);
+        Long answerId = answer2.getId();
 
         //when
-        Optional<Answer> findAnswer = repository.findByIdAndDeletedFalse(A2.getId());
+        Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(answerId);
 
         //then
         assertThat(findAnswer).hasValueSatisfying(answer -> assertAll(
-                () -> assertThat(answer.getWriterId()).isEqualTo(UserTest.SANJIGI.getId()),
-                () -> assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
-                () -> assertThat(answer.getContents()).isEqualTo(A2.getContents())
+                () -> assertThat(answer.getWriter()).isEqualTo(user2),
+                () -> assertThat(answer.getQuestion()).isEqualTo(question2),
+                () -> assertThat(answer.getContents()).isEqualTo("Answers Contents2")
         ));
     }
 }

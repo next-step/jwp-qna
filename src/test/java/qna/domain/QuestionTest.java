@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.assertj.core.api.AssertionsForClassTypes;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,25 +17,37 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = NONE)
-public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+class QuestionTest {
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Autowired
-    private QuestionRepository repository;
+    private UserRepository userRepository;
+
+    private Question question1;
+    private Question question2;
+
+    private User user1;
+    private User user2;
+
+    @BeforeEach
+    void setUp() {
+        user1 = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
+        user2 = userRepository.save(new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net"));
+
+        question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
+        question2 = questionRepository.save(new Question("title2", "contents2").writeBy(user2));
+    }
 
     @Test
     @DisplayName("질문 글을 저장한다.")
     void save() {
-        //given //when
-        Question saved = repository.save(Q1);
-
-        //then
+        //given //when //then
         assertAll(
-                () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.getTitle()).isEqualTo(Q1.getTitle()),
-                () -> assertThat(saved.getContents()).isEqualTo(Q1.getContents()),
-                () -> assertThat(saved.getWriterId()).isEqualTo(Q1.getWriterId())
+                () -> assertThat(question1.getId()).isNotNull(),
+                () -> assertThat(question1.getTitle()).isEqualTo("title1"),
+                () -> assertThat(question1.getContents()).isEqualTo("contents1"),
+                () -> assertThat(question1.getWriter()).isEqualTo(user1)
         );
     }
 
@@ -42,13 +55,10 @@ public class QuestionTest {
     @DisplayName("삭제 되지 않은 질문 목록을 조회한다.")
     void findByDeletedFalse() {
         //given
-        repository.save(Q1);
-        Question saved = repository.save(Q2);
-
-        saved.setDeleted(true);
+        question2.setDeleted(true);
 
         //when
-        List<Question> remainQuestions = repository.findByDeletedFalse();
+        List<Question> remainQuestions = questionRepository.findByDeletedFalse();
 
         //then
         assertThat(remainQuestions).hasSize(1);
@@ -57,18 +67,15 @@ public class QuestionTest {
     @Test
     @DisplayName("삭제 되지 않은 질문 한 건을 조회한다.")
     void findByIdAndDeletedFalse() {
-        //given
-        Question saved = repository.save(Q2);
-
-        //when
-        Optional<Question> findQuestion = repository.findByIdAndDeletedFalse(saved.getId());
+        //given //when
+        Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(question2.getId());
 
         //then
         AssertionsForClassTypes.assertThat(findQuestion).hasValueSatisfying(question -> assertAll(
                 () -> assertThat(question.getId()).isNotNull(),
-                () -> assertThat(question.getTitle()).isEqualTo(Q2.getTitle()),
-                () -> assertThat(question.getContents()).isEqualTo(Q2.getContents()),
-                () -> assertThat(question.getWriterId()).isEqualTo(Q2.getWriterId())
+                () -> assertThat(question.getTitle()).isEqualTo("title2"),
+                () -> assertThat(question.getContents()).isEqualTo("contents2"),
+                () -> assertThat(question.getWriter()).isEqualTo(user2)
         ));
     }
 }

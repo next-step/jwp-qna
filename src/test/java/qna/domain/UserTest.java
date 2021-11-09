@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.assertj.core.api.AssertionsForClassTypes;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,45 +16,39 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = NONE)
-public class UserTest {
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-
+class UserTest {
     @Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
+
+    private User user1;
+    private User user2;
+
+    @BeforeEach
+    void setUp() {
+        user1 = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
+        user2 = userRepository.save(new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net"));
+    }
 
     @Test
     @DisplayName("사용자를 저장한다.")
     void save() {
-        //given //when
-        User saved = repository.save(JAVAJIGI);
-
-        //then
+        //given //when //then
         assertAll(
-                () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.getUserId()).isEqualTo(JAVAJIGI.getUserId()),
-                () -> assertThat(saved.getPassword()).isEqualTo(JAVAJIGI.getPassword()),
-                () -> assertThat(saved.getName()).isEqualTo(JAVAJIGI.getName()),
-                () -> assertThat(saved.getEmail()).isEqualTo(JAVAJIGI.getEmail())
+                () -> assertThat(user1.getId()).isNotNull(),
+                () -> assertThat(user1.getUserId()).isEqualTo("javajigi")
         );
     }
 
     @Test
     @DisplayName("사용자 한 건을 조회한다.")
     void findByUserId() {
-        //given
-        User saved = repository.save(SANJIGI);
-
-        //when
-        Optional<User> findUser = repository.findByUserId(saved.getUserId());
+        //given //when
+        Optional<User> findUser = userRepository.findByUserId(user2.getUserId());
 
         //then
         AssertionsForClassTypes.assertThat(findUser).hasValueSatisfying(user -> assertAll(
                 () -> assertThat(user.getId()).isNotNull(),
-                () -> assertThat(user.getUserId()).isEqualTo(SANJIGI.getUserId()),
-                () -> assertThat(user.getPassword()).isEqualTo(SANJIGI.getPassword()),
-                () -> assertThat(user.getName()).isEqualTo(SANJIGI.getName()),
-                () -> assertThat(user.getEmail()).isEqualTo(SANJIGI.getEmail())
+                () -> assertThat(user.getUserId()).isEqualTo("sanjigi")
         ));
     }
 }
