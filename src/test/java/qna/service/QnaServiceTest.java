@@ -22,6 +22,7 @@ import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
+import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
 @DisplayName("질문 답변 서비스")
@@ -44,7 +45,7 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = new Question(1L, "title1", "contents1").writeBy(UserFixture.Y2O2U2N(1L));
+        question = Question.of(1L, UserFixture.Y2O2U2N(1L), "title1", "contents1");
         answer = Answer.of(1L, UserFixture.Y2O2U2N(1L), question, "Answers Contents1");
         question.addAnswer(answer);
     }
@@ -86,7 +87,7 @@ class QnaServiceTest {
         Answer answer2 = Answer.of(
             2L,
             UserFixture.SEMISTONE222(2L),
-            new Question("title1", "contents1").writeBy(UserFixture.Y2O2U2N(1L)),
+            QuestionFixture.Q1(UserFixture.Y2O2U2N(1L)),
             "Answers Contents1");
         question.addAnswer(answer2);
 
@@ -99,7 +100,7 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(question.getId(), ContentType.QUESTION, question.getWriterId()),
+                new DeleteHistory(question.getId(), ContentType.QUESTION, question.getWriter().getId()),
                 new DeleteHistory(answer.getId(), ContentType.ANSWER, answer.getWriter().getId())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);

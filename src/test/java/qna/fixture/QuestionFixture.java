@@ -5,10 +5,10 @@ import qna.domain.User;
 
 public class QuestionFixture {
 	public static Question Q1(User writer) {
-		return new Question("title1", "contents1", writer.getId());
+		return Question.of(writer, "title1", "contents1");
 	}
 
 	public static Question Q1(long id, User writer) {
-		return new Question(id, "title1", "contents1").writeBy(writer);
+		return Question.of(id, writer, "title1", "contents1");
 	}
 }
