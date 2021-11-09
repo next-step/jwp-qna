@@ -41,7 +41,7 @@ public class DeleteHistoryRepositoryTest {
 	@Test
 	void save_question_delete_history() {
 		// given
-		DeleteHistory expected = DeleteHistoryFixture.Q(question.getId(), user.getId());
+		DeleteHistory expected = DeleteHistoryFixture.Q(question, user);
 
 		// when
 		DeleteHistory actual = deleteHistoryRepository.save(expected);
@@ -51,7 +51,7 @@ public class DeleteHistoryRepositoryTest {
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getContentId()).isEqualTo(expected.getContentId()),
 			() -> assertThat(actual.getContentType()).isEqualTo(expected.getContentType()),
-			() -> assertThat(actual.getDeletedById()).isEqualTo(expected.getDeletedById())
+			() -> assertThat(actual.getDeleter()).isEqualTo(expected.getDeleter())
 		);
 	}
 
@@ -59,7 +59,7 @@ public class DeleteHistoryRepositoryTest {
 	@Test
 	void save_answer_delete_history() {
 		// given
-		DeleteHistory expected = DeleteHistoryFixture.A(answer.getId(), user.getId());
+		DeleteHistory expected = DeleteHistoryFixture.A(answer, user);
 
 		// when
 		DeleteHistory actual = deleteHistoryRepository.save(expected);
@@ -69,7 +69,7 @@ public class DeleteHistoryRepositoryTest {
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getContentId()).isEqualTo(expected.getContentId()),
 			() -> assertThat(actual.getContentType()).isEqualTo(expected.getContentType()),
-			() -> assertThat(actual.getDeletedById()).isEqualTo(expected.getDeletedById())
+			() -> assertThat(actual.getDeleter()).isEqualTo(expected.getDeleter())
 		);
 	}
 }

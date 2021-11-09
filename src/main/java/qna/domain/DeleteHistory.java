@@ -6,9 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -26,18 +29,29 @@ public class DeleteHistory extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
-    @Column(name = "deleted_by_id")
-    private Long deletedById;
+    @ManyToOne
+    @JoinColumn(name = "delete_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deleter;
 
     protected DeleteHistory() {
 
     }
 
-    public DeleteHistory(Long contentId, ContentType contentType, Long deletedById) {
-        this.id = null;
-        this.contentId = contentId;
-        this.contentType = contentType;
-        this.deletedById = deletedById;
+    public static DeleteHistory question(User deleter, Question question) {
+        return of(null, deleter, ContentType.QUESTION, question.getId());
+    }
+
+    public static DeleteHistory answer(User deleter, Answer answer) {
+        return of(null, deleter, ContentType.ANSWER, answer.getId());
+    }
+
+    private static DeleteHistory of(Long id, User deleter, ContentType contentType, Long contentId) {
+        DeleteHistory deleteHistory = new DeleteHistory();
+        deleteHistory.id = id;
+        deleteHistory.contentId = contentId;
+        deleteHistory.contentType = contentType;
+        deleteHistory.deleter = deleter;
+        return deleteHistory;
     }
 
     public Long getId() {
@@ -52,33 +66,26 @@ public class DeleteHistory extends BaseEntity {
         return contentType;
     }
 
-    public Long getDeletedById() {
-        return deletedById;
+    public User getDeleter() {
+        return deleter;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        DeleteHistory that = (DeleteHistory)obj;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
-    }
-
-    @Override
-    public String toString() {
-        return "DeleteHistory{" +
-            "id=" + id +
-            ", contentId=" + contentId +
-            ", contentType=" + contentType +
-            ", deletedById=" + deletedById +
-            '}';
+        return Objects.hash(id);
     }
 }

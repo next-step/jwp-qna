@@ -18,4 +18,12 @@ public class UserFixture {
 	public static User SEMISTONE222(long id) {
 		return User.of(id, "semistone222@gmail.com", "junseok", "password", "semistone222");
 	}
+
+	public static User JUN222() {
+		return User.of("jun222@gmail.com", "jun", "password", "jun222");
+	}
+
+	public static User JUN222(long id) {
+		return User.of(id, "jun222@gmail.com", "jun", "password", "jun222");
+	}
 }

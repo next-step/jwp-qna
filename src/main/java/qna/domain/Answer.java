@@ -42,10 +42,6 @@ public class Answer extends BaseEntity {
         this.questionId = question.getId();
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     protected Answer() {
 
     }
