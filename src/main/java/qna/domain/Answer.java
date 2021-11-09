@@ -1,16 +1,36 @@
 package qna.domain;
 
+import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
+@Entity
+public class Answer extends AuditEntity {
 
-public class Answer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+
+    @Lob
+    @Column
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column
+    private Long questionId;
+
+    @Column
+    private Long writerId;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
