@@ -26,9 +26,10 @@ class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        User user = new User("test_id", "Passw0rd!", "홍길동", "test@email.com");
         question = new Question("질문", "질문 내용");
-        deletedQuestion = new Question("질문2", "질문2 내용");
-        deletedQuestion.delete();
+        deletedQuestion = new Question("질문2", "질문2 내용").writeBy(user);
+        deletedQuestion.delete(user);
     }
 
     @Test
