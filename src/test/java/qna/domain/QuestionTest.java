@@ -1,11 +1,13 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -21,22 +23,37 @@ public class QuestionTest {
     @Autowired
     QuestionRepository questionRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
+    @AfterEach
+    void cleanUp() {
+        questionRepository.deleteAll();
+        userRepository.deleteAll();
+    }
+
     @DisplayName("question 저장 테스트")
     @Test
     void questionSaveTest() {
+        //given
         LocalDateTime now = LocalDateTime.now();
-        Question question = new Question("title", "contents", 1L, false);
+        User writer = new User("id", "password", " name", "email");
+        userRepository.save(writer);
+        Question savedQuestion = questionRepository.save(new Question("title", "contents", writer, false));
 
-        Question savedQuestion = questionRepository.save(question);
+        //when
+        List<Question> questions = questionRepository.findAll();
 
+        //then
+        Question question = questions.get(0);
         assertAll(() -> {
-            assertThat(savedQuestion.getId(), is(notNullValue()));
-            assertThat(savedQuestion.getTitle(), is(question.getTitle()));
-            assertThat(savedQuestion.getContents(), is(question.getContents()));
-            assertThat(savedQuestion.getWriterId(), is(question.getWriterId()));
-            assertThat(savedQuestion.isDeleted(), is(question.isDeleted()));
-            assertTrue(savedQuestion.getCreatedDate().isAfter(now));
-            assertTrue(savedQuestion.getModifiedDate().isAfter(now));
+            assertThat(question.getId(), is(notNullValue()));
+            assertThat(question.getTitle(), is(savedQuestion.getTitle()));
+            assertThat(question.getContents(), is(savedQuestion.getContents()));
+            assertThat(question.getWriter(), is(savedQuestion.getWriter()));
+            assertThat(question.isDeleted(), is(savedQuestion.isDeleted()));
+            assertTrue(question.getCreatedDate().isAfter(now));
+            assertTrue(question.getModifiedDate().isAfter(now));
         });
     }
 

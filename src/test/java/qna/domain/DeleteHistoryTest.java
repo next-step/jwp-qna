@@ -1,11 +1,13 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -14,25 +16,40 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
-public class DeleteHistoryTest {
+class DeleteHistoryTest {
 
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
+    @AfterEach
+    void cleanUp() {
+        deleteHistoryRepository.deleteAll();
+        userRepository.deleteAll();
+    }
+
     @DisplayName("deleteHistory 저장 테스트")
     @Test
     void deleteHistorySaveTest() {
+        //given
         LocalDateTime now =  LocalDateTime.now();
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+        User deletedByUser = new User("id", "password", " name", "email");
+        userRepository.save(deletedByUser);
+        DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.QUESTION, 1L, deletedByUser, LocalDateTime.now()));
 
-        DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
+        //when
+        List<DeleteHistory> deleteHistorys = deleteHistoryRepository.findAll();
 
+        //then
+        DeleteHistory deleteHistory = deleteHistorys.get(0);
         assertAll(() -> {
-            assertThat(savedDeleteHistory.getId(), is(notNullValue()));
-            assertThat(savedDeleteHistory.getContentType(), is(ContentType.QUESTION));
-            assertThat(savedDeleteHistory.getContentId(), is(deleteHistory.getContentId()));
-            assertThat(savedDeleteHistory.getDeletedById(), is(deleteHistory.getDeletedById()));
-            assertTrue(savedDeleteHistory.getCreateDate().isEqual(now) || savedDeleteHistory.getCreateDate().isAfter(now));
+            assertThat(deleteHistory.getId(), is(notNullValue()));
+            assertThat(deleteHistory.getContentType(), is(ContentType.QUESTION));
+            assertThat(deleteHistory.getContentId(), is(savedDeleteHistory.getContentId()));
+            assertThat(deleteHistory.getDeletedByUser(), is(savedDeleteHistory.getDeletedByUser()));
+            assertTrue(deleteHistory.getCreateDate().isAfter(now));
         });
     }
 }
