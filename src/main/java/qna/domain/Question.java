@@ -1,11 +1,24 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Question extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+    @Column(columnDefinition = "longtext")
     private String contents;
     private Long writerId;
     private boolean deleted = false;
+
+    public Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -79,5 +92,23 @@ public class Question {
                 ", writerId=" + writerId +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Question question = (Question) o;
+
+        if (id != null ? !id.equals(question.id) : question.id != null) return false;
+        return writerId != null ? writerId.equals(question.writerId) : question.writerId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (writerId != null ? writerId.hashCode() : 0);
+        return result;
     }
 }
