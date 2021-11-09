@@ -16,11 +16,11 @@ import qna.UnAuthorizedException;
 @DataJpaTest
 public class AnswerTest {
 
-    @Autowired
-    EntityManager em;
-
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+
+    @Autowired
+    EntityManager em;
 
     @Test
     public void 엔티티_생성(){
