@@ -71,5 +71,4 @@ class UserRepositoryTest extends CommonRepositoryTest {
     private User createUser(String userId, String password, String name, String email) {
         return new User(userId, password, name, email);
     }
-
 }
