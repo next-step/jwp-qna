@@ -25,8 +25,8 @@ class UserTest {
 
     @BeforeEach
     void setUp() {
-        user1 = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
-        user2 = userRepository.save(new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net"));
+        user1 = userRepository.save(User.builder().userId("javajigi").password("password").name("name").email("javajigi@slipp.net").build());
+        user2 = userRepository.save(User.builder().userId("sanjigi").password("password").name("name").email("sanjigi@slipp.net").build());
     }
 
     @Test

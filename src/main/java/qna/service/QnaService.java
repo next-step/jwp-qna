@@ -1,5 +1,6 @@
 package qna.service;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -8,23 +9,17 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class QnaService {
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
-    private QuestionRepository questionRepository;
-    private AnswerRepository answerRepository;
-    private DeleteHistoryService deleteHistoryService;
-
-    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
-        this.questionRepository = questionRepository;
-        this.answerRepository = answerRepository;
-        this.deleteHistoryService = deleteHistoryService;
-    }
+    private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
+    private final DeleteHistoryService deleteHistoryService;
 
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {
@@ -48,10 +43,10 @@ public class QnaService {
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         question.setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter()));
+        deleteHistories.add(DeleteHistory.builder().contentType(ContentType.QUESTION).contentId(questionId).deletedByUser(question.getWriter()).build());
         for (Answer answer : answers) {
             answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()));
+            deleteHistories.add(DeleteHistory.builder().contentType(ContentType.ANSWER).contentId(answer.getId()).deletedByUser(answer.getWriter()).build());
         }
         deleteHistoryService.saveAll(deleteHistories);
     }

@@ -1,16 +1,19 @@
 package qna.domain;
 
-import org.hibernate.mapping.Join;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
+@Getter
+@NoArgsConstructor(access = PROTECTED)
 @Entity
 public class Question extends BaseTimeEntity {
     @Id
@@ -33,15 +36,8 @@ public class Question extends BaseTimeEntity {
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
-    protected Question() {
-    }
-
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
-        this.id = id;
+    @Builder
+    private Question(String title, String contents) {
         this.title = title;
         this.contents = contents;
     }
@@ -58,26 +54,6 @@ public class Question extends BaseTimeEntity {
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
         this.answers.add(answer);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public User getWriter() {
-        return writer;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
     }
 
     public void setDeleted(boolean deleted) {

@@ -38,14 +38,14 @@ class AnswerTest {
 
     @BeforeEach
     void setUp() {
-        user1 = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
-        user2 = userRepository.save(new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net"));
+        user1 = userRepository.save(User.builder().userId("javajigi").password("password").name("name").email("javajigi@slipp.net").build());
+        user2 = userRepository.save(User.builder().userId("sanjigi").password("password").name("name").email("sanjigi@slipp.net").build());
 
-        question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
-        question2 = questionRepository.save(new Question("title2", "contents2").writeBy(user2));
+        question1 = questionRepository.save(Question.builder().title("title1").contents("contents1").build().writeBy(user1));
+        question2 = questionRepository.save(Question.builder().title("title2").contents("contents2").build().writeBy(user2));
 
-        answer1 = answerRepository.save(new Answer(user1, question1, "Answers Contents1"));
-        answer2 = answerRepository.save(new Answer(user2, question2, "Answers Contents2"));
+        answer1 = answerRepository.save(Answer.builder().writer(user1).question(question1).contents("Answers Contents1").build());
+        answer2 = answerRepository.save(Answer.builder().writer(user2).question(question2).contents("Answers Contents2").build());
     }
 
     @Test
@@ -71,7 +71,7 @@ class AnswerTest {
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
 
         //then
-        assertThat(answers).hasSize(0);
+        assertThat(answers).isEmpty();
     }
 
     @Test

@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.domain.*;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -40,11 +39,11 @@ class QnaServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        user1 = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-        user2 = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+        user1 = User.builder().userId("javajigi").password("password").name("name").email("javajigi@slipp.net").build();
+        user2 = User.builder().userId("sanjigi").password("password").name("name").email("sanjigi@slipp.net").build();
 
-        question = new Question(1L, "title1", "contents1").writeBy(user1);
-        answer = new Answer(1L, user1, question, "Answers Contents1");
+        question = Question.builder().title("title1").contents("contents1").build().writeBy(user1);
+        answer = Answer.builder().question(question).writer(user1).contents("Answers Contents1").build();
         question.addAnswer(answer);
     }
 
@@ -82,7 +81,7 @@ class QnaServiceTest {
 
     @Test
     void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Answer answer2 = new Answer(2L, user2, question, "Answers Contents1");
+        Answer answer2 = Answer.builder().question(question).writer(user2).contents("Answers Contents2").build();
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
@@ -94,8 +93,8 @@ class QnaServiceTest {
 
     void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter())
+                DeleteHistory.builder().contentType(ContentType.QUESTION).contentId(question.getId()).deletedByUser(question.getWriter()).build(),
+                DeleteHistory.builder().contentType(ContentType.ANSWER).contentId(answer.getId()).deletedByUser(answer.getWriter()).build()
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

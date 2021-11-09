@@ -1,5 +1,7 @@
 package qna.domain;
 
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
@@ -9,7 +11,9 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
+@NoArgsConstructor(access = PROTECTED)
 @Entity
 public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
@@ -30,19 +34,12 @@ public class User extends BaseTimeEntity {
     @Column(length = 50)
     private String email;
 
-    protected User() {
-    }
-
-    public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
+    @Builder
+    private User(String userId, String password, String name, String email) {
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
-    }
-
-    public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
     }
 
     public void update(User loginUser, User target) {
