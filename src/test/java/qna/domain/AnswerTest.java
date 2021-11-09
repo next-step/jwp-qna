@@ -7,11 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -25,19 +23,19 @@ public class AnswerTest {
     private Answer savedAnswer;
 
     @BeforeEach
-    private void beforeAll(){
+    private void beforeEach(){
         savedAnswer = answerRepository.save(A1);
     }
 
     @Test
     @DisplayName("answer 등록")
-    public void saveTest(){
+    public void saveAnswerTest(){
         assertAll(
-                () -> assertThat(A1.getId()).isNotNull(),
-                () -> assertThat(A1.getWriterId()).isEqualTo(savedAnswer.getWriterId()),
-                () -> assertThat(A1.getQuestionId()).isEqualTo(savedAnswer.getQuestionId()),
-                () -> assertThat(A1.getContents()).isEqualTo(savedAnswer.getContents()),
-                () -> assertFalse(A1.isDeleted())
+                () -> assertThat(savedAnswer.getId()).isNotNull(),
+                () -> assertThat(savedAnswer.getWriterId()).isEqualTo(A1.getWriterId()),
+                () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(A1.getQuestionId()),
+                () -> assertThat(savedAnswer.getContents()).isEqualTo(A1.getContents()),
+                () -> assertFalse(savedAnswer.isDeleted())
         );
     }
 
@@ -47,8 +45,7 @@ public class AnswerTest {
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
 
         assertAll(
-                () -> assertFalse(savedAnswer.isDeleted()),
-                () -> assertEquals(savedAnswer, answers.get(0))
+                () -> assertThat(answers).contains(savedAnswer)
         );
     }
 
