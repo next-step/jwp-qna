@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends CommonEntity {
+public class Answer extends BaseEntity {
     @Lob
     private String contents;
 

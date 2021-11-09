@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "question")
-public class Question extends CommonEntity {
+public class Question extends BaseEntity {
     @Lob
     private String contents;
 

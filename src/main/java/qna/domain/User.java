@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User extends CommonEntity {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Column(length = 50)
