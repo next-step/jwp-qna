@@ -9,12 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest
-class AnswerRepositoryTest {
+import qna.common.CommonRepositoryTest;
+
+class AnswerRepositoryTest extends CommonRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
     private User writer;
