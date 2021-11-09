@@ -1,83 +1,114 @@
 package qna.domain;
 
-public class Question {
-    private Long id;
-    private String title;
-    private String contents;
-    private Long writerId;
-    private boolean deleted = false;
+import java.util.Objects;
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
-    public Question(Long id, String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
-    }
+@Entity
+public class Question extends BaseTimeEntity {
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
-    }
+	@Id
+	@GeneratedValue
+	private Long id;
+	private String contents;
+	private String title;
+	private boolean deleted;
+	private Long writerId;
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
+	protected Question() {
+	}
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
+	public Question(String title, String contents) {
+		this(null, title, contents);
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Question(Long id, String title, String contents) {
+		this.id = id;
+		this.contents = contents;
+		this.title = title;
+		this.deleted = false;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Question writeBy(User writer) {
+		this.writerId = writer.getId();
+		return this;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public boolean isOwner(User writer) {
+		return this.writerId.equals(writer.getId());
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void addAnswer(Answer answer) {
+		answer.toQuestion(this);
+	}
 
-    public String getContents() {
-        return contents;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Long getWriterId() {
-        return writerId;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+	public String getContents() {
+		return contents;
+	}
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+	public void setContents(String contents) {
+		this.contents = contents;
+	}
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
-    }
+	public Long getWriterId() {
+		return writerId;
+	}
+
+	public void setWriterId(Long writerId) {
+		this.writerId = writerId;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Question question = (Question)o;
+		return isDeleted() == question.isDeleted() && Objects.equals(getId(), question.getId())
+			&& Objects.equals(getContents(), question.getContents()) && Objects.equals(getTitle(),
+			question.getTitle()) && Objects.equals(getWriterId(), question.getWriterId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId(), getContents(), getTitle(), isDeleted(), getWriterId());
+	}
+
+	@Override
+	public String toString() {
+		return "Question{" +
+			"id=" + id +
+			", title='" + title + '\'' +
+			", contents='" + contents + '\'' +
+			", writerId=" + writerId +
+			", deleted=" + deleted +
+			'}';
+	}
 }
