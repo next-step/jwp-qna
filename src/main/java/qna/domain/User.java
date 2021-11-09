@@ -7,15 +7,24 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "user_id", length = 20, unique = true, nullable = false)
     private String userId;
+
+    @Column(name = "password", length = 20, nullable = false)
     private String password;
+
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
+
+    @Column(name = "email", length = 50)
     private String email;
 
     protected User() {
