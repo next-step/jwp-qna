@@ -32,6 +32,8 @@ public class Answer extends AuditEntity {
     @Column
     private Long writerId;
 
+    private Answer(){}
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }

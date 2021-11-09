@@ -28,6 +28,7 @@ public class DeleteHistory extends AuditEntity{
     @Column
     private Long deletedById;
 
+    private DeleteHistory(){}
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
