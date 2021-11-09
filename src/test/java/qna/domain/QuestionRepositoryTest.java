@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @EnableJpaAuditing
@@ -22,13 +22,13 @@ class QuestionRepositoryTest {
     private QuestionRepository questionRepository;
 
     private Question question;
-    private Question question2;
+    private Question deletedQuestion;
 
     @BeforeEach
     void setUp() {
         question = new Question("질문", "질문 내용");
-        question2 = new Question("질문2", "질문2 내용");
-        question2.setDeleted(true);
+        deletedQuestion = new Question("질문2", "질문2 내용");
+        deletedQuestion.delete();
     }
 
     @Test
@@ -47,11 +47,11 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("deleted가 false인 Question 리스트를 조회한다.")
+    @DisplayName("삭제되지 않은 Question 리스트를 조회한다.")
     void findByDeletedFalse() {
         // given
         questionRepository.save(question);
-        questionRepository.save(question2);
+        questionRepository.save(deletedQuestion);
 
         // when
         List<Question> questions = questionRepository.findByDeletedFalse();
@@ -61,7 +61,7 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("id와 deleted로 Question을 조회한다.")
+    @DisplayName("id로 삭제되지 않은 Question을 조회한다.")
     void findByIdAndDeletedFalse() {
         // given
         Question savedQuestion = questionRepository.save(question);

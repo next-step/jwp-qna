@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @EnableJpaAuditing
@@ -23,15 +23,15 @@ class AnswerRepositoryTest {
 
     private Question question;
     private Answer answer;
-    private Answer answer2;
+    private Answer deletedAnswer;
 
     @BeforeEach
     void setUp() {
         User user = new User("test_id", "Passw0rd!", "홍길동", "test@email.com");
         question = new Question("질문", "질문 내용");
         answer = new Answer(user, question, "답변 내용");
-        answer2 = new Answer(user, question, "답변2 내용");
-        answer2.setDeleted(true);
+        deletedAnswer = new Answer(user, question, "답변2 내용");
+        deletedAnswer.delete();
     }
 
     @Test
@@ -50,24 +50,24 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("questionId와 deleted로 Answer 리스트를 조회한다.")
-    void findByQuestionIdAndDeletedFalse() {
+    @DisplayName("question으로 삭제되지 않은 Answer 리스트를 조회한다.")
+    void findByQuestionAndDeletedFalse() {
         // given
         answerRepository.save(answer);
-        answerRepository.save(answer2);
+        answerRepository.save(deletedAnswer);
 
         // when
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+        List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(question);
 
         // then
         assertThat(answers).containsExactly(answer);
     }
 
     @Test
-    @DisplayName("id와 deleted로 Answer를 조회한다.")
+    @DisplayName("id로 삭제되지 않은 Answer를 조회한다.")
     void findByIdAndDeletedFalse() {
         // given
-        Answer savedAnswer = answerRepository.save(this.answer);
+        Answer savedAnswer = answerRepository.save(answer);
 
         // when
         Optional<Answer> answerOptional = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
