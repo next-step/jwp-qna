@@ -67,12 +67,12 @@ public class AnswerTest {
     public void 연관관계_확인() {
         Optional<Answer> findOneAnswer = answerRepository.findById(ANSWER.getId());
 
-        Answer excepted = findOneAnswer.orElse(null);
+        Answer actual = findOneAnswer.orElse(null);
 
         assertAll(
-                () -> assertThat(excepted.getWriter()).isEqualTo(JH),
-                () -> assertThat(excepted.getQuestion()).isEqualTo(QUESTION),
-                () -> assertThat(excepted.getQuestion().getWriter()).isEqualTo(US)
+                () -> assertThat(actual.getWriter()).isEqualTo(JH),
+                () -> assertThat(actual.getQuestion()).isEqualTo(QUESTION),
+                () -> assertThat(actual.getQuestion().getWriter()).isEqualTo(US)
         );
     }
 

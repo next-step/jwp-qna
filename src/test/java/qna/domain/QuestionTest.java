@@ -62,12 +62,12 @@ public class QuestionTest {
     public void 연관관계_확인() {
         Optional<Question> findOneQuestion = questionRepository.findById(QUESTION.getId());
 
-        Question excepted = findOneQuestion.orElse(null);
+        Question actual = findOneQuestion.orElse(null);
 
         assertAll(
-                () -> assertThat(excepted.getWriter()).isEqualTo(US),
-                () -> assertThat(excepted.getContents()).isEqualTo(QUESTION.getContents()),
-                () -> assertThat(excepted.getTitle()).isEqualTo(QUESTION.getTitle())
+                () -> assertThat(actual.getWriter()).isEqualTo(US),
+                () -> assertThat(actual.getContents()).isEqualTo(QUESTION.getContents()),
+                () -> assertThat(actual.getTitle()).isEqualTo(QUESTION.getTitle())
         );
     }
 }
