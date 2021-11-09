@@ -90,6 +90,7 @@ public class Question extends BaseEntity {
         answers.validateAnswers(writer);
 
         this.deleted = true;
+        answers.deleteAnswers();
     }
 
     private void validateQuestion(User loginUser) {
