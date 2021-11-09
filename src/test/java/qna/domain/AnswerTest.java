@@ -64,7 +64,7 @@ public class AnswerTest {
 
     @Test
     @DisplayName("Answer Entity 연관관계 정상 확인")
-    public void 답변_생성2() {
+    public void 연관관계_확인() {
         Optional<Answer> findOneAnswer = answerRepository.findById(ANSWER.getId());
 
         Answer excepted = findOneAnswer.orElse(null);
