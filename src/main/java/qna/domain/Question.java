@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import java.util.Objects;
 
 @Entity
 @AttributeOverride(name = "createdDate", column = @Column(name = "created_at"))
@@ -102,6 +103,19 @@ public class Question extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents) && Objects.equals(writerId, question.writerId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writerId, deleted);
     }
 
     @Override
