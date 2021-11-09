@@ -23,8 +23,9 @@ public class Answer extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User writer;
 
     @ManyToOne
     @JoinColumn(name = "question_id")
@@ -55,13 +56,13 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
+        this.writer = writer;
         this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -72,8 +73,8 @@ public class Answer extends BaseTimeEntity {
         return id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public Question getQuestion() {
@@ -96,7 +97,6 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
