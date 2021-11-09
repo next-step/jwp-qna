@@ -27,11 +27,11 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "created_date", nullable = false)
+    private LocalDateTime createdDate = LocalDateTime.now();
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    @Column(name = "updated_date")
+    private LocalDateTime updatedDate = LocalDateTime.now();
 
     private User() {
     }
@@ -96,13 +96,13 @@ public class User {
                 && Objects.equals(password, user.password)
                 && Objects.equals(name, user.name)
                 && Objects.equals(email, user.email)
-                && Objects.equals(createdAt, user.createdAt)
-                && Objects.equals(updatedAt, user.updatedAt);
+                && Objects.equals(createdDate, user.createdDate)
+                && Objects.equals(updatedDate, user.updatedDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email, createdAt, updatedAt);
+        return Objects.hash(id, userId, password, name, email, createdDate, updatedDate);
     }
 
     @Override

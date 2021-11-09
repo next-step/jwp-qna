@@ -28,11 +28,11 @@ public class Answer {
     @Column(name = "delete", nullable = false)
     private boolean deleted = false;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "created_date", nullable = false)
+    private LocalDateTime createdDate = LocalDateTime.now();
 
-    @Column(name = "update_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    @Column(name = "update_date")
+    private LocalDateTime updatedDate = LocalDateTime.now();
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);

@@ -16,11 +16,11 @@ public class Question {
     @Column(name = "delete", nullable = false)
     private boolean deleted = false;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "created_date", nullable = false)
+    private LocalDateTime createdDate = LocalDateTime.now();
 
-    @Column(name = "updated_at")
-    private LocalDateTime updateAt = LocalDateTime.now();
+    @Column(name = "updated_date")
+    private LocalDateTime updateDate = LocalDateTime.now();
 
     @Lob
     @Column(name = "contests")
