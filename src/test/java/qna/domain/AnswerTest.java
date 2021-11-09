@@ -22,7 +22,6 @@ public class AnswerTest {
         Answer savedAnswer = answerRepository.save(A1);
 
         assertAll(
-            () -> assertThat(savedAnswer.getId()).isEqualTo(savedAnswer.getId()),
             () -> assertThat(savedAnswer.getWriterId()).isEqualTo(A1.getWriterId()),
             () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(A1.getQuestionId()),
             () -> assertThat(savedAnswer.getContents()).isEqualTo(A1.getContents()),

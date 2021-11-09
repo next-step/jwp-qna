@@ -22,7 +22,6 @@ public class QuestionTest {
         Question savedQuestion = questionRepository.save(Q1);
 
         assertAll(
-            () -> assertThat(savedQuestion.getId()).isEqualTo(savedQuestion.getId()),
             () -> assertThat(savedQuestion.getTitle()).isEqualTo(Q1.getTitle()),
             () -> assertThat(savedQuestion.getContents()).isEqualTo(Q1.getContents()),
             () -> assertThat(savedQuestion.getWriterId()).isEqualTo(Q1.getWriterId()),
