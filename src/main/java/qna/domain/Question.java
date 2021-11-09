@@ -1,11 +1,10 @@
 package qna.domain;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -14,7 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import org.springframework.util.Assert;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -34,18 +34,14 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private AnswerGroup answerGroup = AnswerGroup.empty();
 
     @Column(nullable = false)
     private boolean deleted = false;
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
-        validateTitle(title);
+    private Question(Long id, String title, String contents) {
+        Assert.hasText(title, "'title' must not be empty");
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -54,18 +50,34 @@ public class Question extends BaseTimeEntity {
     protected Question() {
     }
 
+    public static Question of(Long id, String title, String contents) {
+        return new Question(id, title, contents);
+    }
+
+    public static Question of(String title, String contents) {
+        return new Question(null, title, contents);
+    }
+
+    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+        validateOwner(user);
+        List<DeleteHistory> deleteHistories = createDeleteHistories(user);
+        deleteHistories.addAll(answerGroup.delete(user));
+        deleted = true;
+        return deleteHistories;
+    }
+
+    boolean containsAnswer(Answer answer) {
+        return answerGroup.contains(answer);
+    }
+
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
+        answerGroup.add(answer);
         answer.toQuestion(this);
-        answers.add(answer);
     }
 
     public Long getId() {
@@ -88,14 +100,6 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public List<Answer> answers() {
-        return Collections.unmodifiableList(answers);
-    }
-
     @Override
     public String toString() {
         return "Question{" +
@@ -109,14 +113,16 @@ public class Question extends BaseTimeEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        Question question = (Question)o;
-        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
-            question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer,
-            question.writer);
+        }
+        Question question = (Question) o;
+        return deleted == question.deleted && Objects.equals(id, question.id)
+            && Objects.equals(title, question.title) && Objects.equals(contents, question.contents)
+            && Objects.equals(writer, question.writer);
     }
 
     @Override
@@ -124,9 +130,19 @@ public class Question extends BaseTimeEntity {
         return Objects.hash(id, title, contents, writer, deleted);
     }
 
-    private void validateTitle(String title) {
-        if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("'title' must not be empty");
+    private boolean isNotOwner(User writer) {
+        return !this.writer.equals(writer);
+    }
+
+    private List<DeleteHistory> createDeleteHistories(User user) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.ofQuestion(id, user));
+        return deleteHistories;
+    }
+
+    private void validateOwner(User user) throws CannotDeleteException {
+        if (isNotOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
     }
 }

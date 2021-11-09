@@ -1,7 +1,6 @@
 package qna.domain;
 
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -11,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -37,21 +35,10 @@ public class Answer extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
-    public Answer(Long id, User writer, Question question, String contents) {
+    private Answer(Long id, User writer, Question question, String contents) {
+        validateNonNull(writer);
+        validateNonNull(question);
         this.id = id;
-
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
-
         this.writer = writer;
         this.question = question;
         this.contents = contents;
@@ -60,8 +47,21 @@ public class Answer extends BaseTimeEntity {
     protected Answer() {
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public static Answer of(Long id, User writer, Question question, String contents) {
+        return new Answer(id, writer, question, contents);
+    }
+
+    public static Answer of(User writer, Question question, String contents) {
+        return of(null, writer, question, contents);
+    }
+
+    boolean isNotOwner(User writer) {
+        return !this.writer.equals(writer);
+    }
+
+    DeleteHistory delete() {
+        deleted = true;
+        return DeleteHistory.ofAnswer(id, writer);
     }
 
     public void toQuestion(Question question) {
@@ -88,17 +88,15 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        Answer answer = (Answer)o;
+        }
+        Answer answer = (Answer) o;
         return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writer,
             answer.writer) && Objects.equals(question, answer.question) && Objects.equals(contents,
             answer.contents);
@@ -118,5 +116,17 @@ public class Answer extends BaseTimeEntity {
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';
+    }
+
+    private void validateNonNull(Question question) {
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
+    }
+
+    private void validateNonNull(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
     }
 }

@@ -1,13 +1,12 @@
 package qna.domain;
 
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
+import org.springframework.util.Assert;
 import qna.UnAuthorizedException;
 
 @Entity
@@ -34,19 +33,23 @@ public class User extends BaseTimeEntity {
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
-    }
-
-    public User(Long id, String userId, String password, String name, String email) {
-        validateEmpty(userId, "'userId' must not be empty");
-        validateEmpty(password, "'password' must not be empty");
-        validateEmpty(name, "'name' must not be empty");
+    private User(Long id, String userId, String password, String name, String email) {
+        Assert.hasText(userId, "'userId' must not be empty");
+        Assert.hasText(password, "'password' must not be empty");
+        Assert.hasText(name, "'name' must not be empty");
         this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public static User of(String userId, String password, String name, String email) {
+        return new User(null, userId, password, name, email);
+    }
+
+    public static User of(Long id, String userId, String password, String name, String email) {
+        return new User(id, userId, password, name, email);
     }
 
     public void update(User loginUser, User target) {
@@ -104,11 +107,13 @@ public class User extends BaseTimeEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        User user = (User)o;
+        }
+        User user = (User) o;
         return Objects.equals(id, user.id) && Objects.equals(userId, user.userId);
     }
 
@@ -117,17 +122,12 @@ public class User extends BaseTimeEntity {
         return Objects.hash(id, userId);
     }
 
-    private void validateEmpty(String target, String message) {
-        if (target == null || target.trim().isEmpty()) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-
     private boolean matchUserId(String userId) {
         return this.userId.equals(userId);
     }
 
     private static class GuestUser extends User {
+
         @Override
         public boolean isGuestUser() {
             return true;
