@@ -3,6 +3,8 @@ package qna.domain;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -32,8 +34,8 @@ public class Answer extends BaseTimeEntity {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private AnswerContents contents;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -57,7 +59,7 @@ public class Answer extends BaseTimeEntity {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
+        this.contents = AnswerContents.of(contents);
     }
 
     public boolean isOwner(User writer) {
