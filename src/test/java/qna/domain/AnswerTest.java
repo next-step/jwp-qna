@@ -25,6 +25,11 @@ public class AnswerTest {
 
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A3 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents3");
+
+    static {
+        A3.setDeleted(true);
+    }
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -62,6 +67,7 @@ public class AnswerTest {
         assertAll(() -> {
             assertTrue(foundAnswers.contains(A1));
             assertTrue(foundAnswers.contains(A2));
+            assertFalse(foundAnswers.contains(A3));
             assertThat(foundAnswers).containsAll(Arrays.asList(A1, A2));
         });
     }
