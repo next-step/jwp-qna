@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @EnableJpaAuditing
@@ -50,7 +50,7 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("question과 deleted로 Answer 리스트를 조회한다.")
+    @DisplayName("question으로 삭제되지 않은 Answer 리스트를 조회한다.")
     void findByQuestionAndDeletedFalse() {
         // given
         answerRepository.save(answer);
@@ -64,7 +64,7 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("id와 deleted로 Answer를 조회한다.")
+    @DisplayName("id로 삭제되지 않은 Answer를 조회한다.")
     void findByIdAndDeletedFalse() {
         // given
         Answer savedAnswer = answerRepository.save(answer);
