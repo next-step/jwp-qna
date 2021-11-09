@@ -1,4 +1,7 @@
-package qna.domain;
+package qna.domain.deletehistory;
+
+import qna.domain.ContentType;
+import qna.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,7 +17,8 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
-    private Long contentId;
+    @Embedded
+    private ContentId contentId;
 
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
@@ -24,7 +28,7 @@ public class DeleteHistory {
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
-        this.contentId = contentId;
+        this.contentId = new ContentId(contentId);
         this.deletedBy = deletedBy;
         this.createDate = createDate;
     }
@@ -59,4 +63,13 @@ public class DeleteHistory {
                 ", createDate=" + createDate +
                 '}';
     }
+
+    public static DeleteHistory ofAnswer(Long contentId, User deletedBy, LocalDateTime createDate) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deletedBy, createDate);
+    }
+
+    public static DeleteHistory ofQuestion(Long contentId, User deletedBy, LocalDateTime createDate) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deletedBy, createDate);
+    }
+
 }
