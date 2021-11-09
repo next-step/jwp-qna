@@ -1,7 +1,6 @@
 package qna.repository;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.AnswerTest;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
-import qna.domain.DeleteHistoryRepository;
 import qna.domain.QuestionTest;
 import qna.domain.UserTest;
 
