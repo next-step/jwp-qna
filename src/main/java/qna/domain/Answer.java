@@ -92,7 +92,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     private void validateDeleteAnswerAuthority(User owner) throws CannotDeleteException {
-        if (isOwner(owner) && question.isSameWriter(writer)) {
+        if (isOwner(owner)) {
             return;
         }
 

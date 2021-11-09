@@ -74,10 +74,6 @@ public class Question extends BaseTimeEntity {
         return deleteHistories;
     }
 
-    public boolean isSameWriter(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public Long getId() {
         return id;
     }

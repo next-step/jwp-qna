@@ -123,20 +123,9 @@ public class AnswerTest {
 		assertTrue(answer1.isDeleted());
 	}
 
-	@DisplayName("Question 의 작성자와 Answer 의 작성자가 다르면 Answer 를 삭제할 수 없다.")
-	@Test
-	void delete2() {
-		// given
-		Answer answer1 = answerRepository.save(new Answer(user2, question, "Answers Contents1"));
-		question.addAnswer(answer1);
-
-		// when & then
-		assertThatThrownBy(() -> answer1.delete(user2)).isInstanceOf(CannotDeleteException.class);
-	}
-
 	@DisplayName("로그인한 유저와 Answer 의 작성자가 다르면 Answer 를 삭제할 수 없다.")
 	@Test
-	void delete3() {
+	void delete2() {
 		// given
 		Answer answer1 = answerRepository.save(new Answer(user1, question, "Answers Contents1"));
 		question.addAnswer(answer1);
