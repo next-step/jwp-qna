@@ -26,4 +26,22 @@ public class UserTest {
 
         assertThat(findUser).isEqualTo(user);
     }
+
+    @Test
+    public void 사용자_패스워드_매칭(){
+        String password = "12345678";
+        User user = new User("jerry92k", password,"jerrykim","jerry@gmail.com");
+
+        assertThat(user.matchPassword(password)).isTrue();
+    }
+
+    @Test
+    public void 사용자_계정_비교(){
+
+        User user = new User("jerry92k", "12345678","jerrykim","jerry@gmail.com");
+        User comparingUser = new User("jerry92k", "12345678","jerrykim","jerry@gmail.com");
+
+        assertThat(user.equalsNameAndEmail(null)).isFalse();
+        assertThat(user.equalsNameAndEmail(comparingUser)).isTrue();
+    }
 }
