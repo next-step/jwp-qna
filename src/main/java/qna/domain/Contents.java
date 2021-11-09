@@ -23,6 +23,10 @@ public class Contents {
 		return new Contents(contents);
 	}
 
+	public boolean isEmpty() {
+		return !StringUtils.hasLength(this.contents);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -36,9 +40,5 @@ public class Contents {
 	@Override
 	public int hashCode() {
 		return Objects.hash(contents);
-	}
-
-	public boolean isEmpty() {
-		return !StringUtils.hasLength(this.contents);
 	}
 }
