@@ -1,9 +1,15 @@
-package qna.domain;
+package qna.domain.answer;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.*;
+import qna.domain.deletehistory.DeleteHistory;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -21,17 +27,21 @@ public class Answer extends DateTimeBaseEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted;
 
     public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+        this(null, writer, question, new Contents(contents));
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
+        this(id, writer, question, new Contents(contents));
+    }
+
+    public Answer(Long id, User writer, Question question, Contents contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -76,11 +86,11 @@ public class Answer extends DateTimeBaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        this.deleted = new Deleted(deleted);
     }
 
     @Override
@@ -105,5 +115,13 @@ public class Answer extends DateTimeBaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, writer, question, contents, deleted);
+    }
+
+    public DeleteHistory deletedBy(User user) {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.setDeleted(true);
+        return DeleteHistory.ofAnswer(id, user, LocalDateTime.now());
     }
 }
