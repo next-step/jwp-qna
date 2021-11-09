@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "question")
-public class Question {
+public class Question extends DateTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -16,12 +16,6 @@ public class Question {
 
     @Column(name = "delete", nullable = false)
     private boolean deleted = false;
-
-    @Column(name = "created_date", nullable = false)
-    private LocalDateTime createdDate = LocalDateTime.now();
-
-    @Column(name = "updated_date")
-    private LocalDateTime updateDate = LocalDateTime.now();
 
     @Lob
     @Column(name = "contests")
@@ -40,7 +34,7 @@ public class Question {
         this.contents = contents;
     }
 
-    private Question() {
+    protected Question() {
     }
 
     public Question writeBy(User writer) {

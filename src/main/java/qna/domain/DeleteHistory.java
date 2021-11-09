@@ -25,7 +25,7 @@ public class DeleteHistory {
     @Column(name = "created_date")
     private LocalDateTime createdDate = LocalDateTime.now();
 
-    private DeleteHistory() {
+    protected DeleteHistory() {
     }
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {

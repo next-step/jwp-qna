@@ -3,12 +3,11 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends DateTimeEntity{
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -28,13 +27,7 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "created_date", nullable = false)
-    private LocalDateTime createdDate = LocalDateTime.now();
-
-    @Column(name = "updated_date")
-    private LocalDateTime updatedDate = LocalDateTime.now();
-
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -97,13 +90,13 @@ public class User {
                 && Objects.equals(password, user.password)
                 && Objects.equals(name, user.name)
                 && Objects.equals(email, user.email)
-                && Objects.equals(createdDate, user.createdDate)
-                && Objects.equals(updatedDate, user.updatedDate);
+                && Objects.equals(getCreatedDate(), user.getCreatedDate())
+                && Objects.equals(getUpdatedDate(), user.getUpdatedDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email, createdDate, updatedDate);
+        return Objects.hash(id, userId, password, name, email, getCreatedDate(), getUpdatedDate());
     }
 
     @Override

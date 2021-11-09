@@ -1,6 +1,9 @@
 package qna.domain;
 
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -10,7 +13,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer {
+@EntityListeners(AuditingEntityListener.class)
+public class Answer extends DateTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,12 +33,6 @@ public class Answer {
 
     @Column(name = "delete", nullable = false)
     private boolean deleted = false;
-
-    @Column(name = "created_date", nullable = false)
-    private LocalDateTime createdDate = LocalDateTime.now();
-
-    @Column(name = "update_date")
-    private LocalDateTime updatedDate = LocalDateTime.now();
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -56,7 +54,7 @@ public class Answer {
         this.contents = contents;
     }
 
-    private Answer() {
+    protected Answer() {
     }
 
     public boolean isOwner(User writer) {

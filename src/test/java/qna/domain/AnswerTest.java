@@ -59,7 +59,7 @@ public class AnswerTest {
 
     @Test
     @DisplayName("answer에 delete를 true로 수정")
-    public void updateAnswerDeletedTrue() {
+    public void updateAnswerDeletedTrue() throws InterruptedException {
         savedAnswer.setDeleted(true);
 
         Optional<Answer> oAnswer = answerRepository.findById(savedAnswer.getId());
