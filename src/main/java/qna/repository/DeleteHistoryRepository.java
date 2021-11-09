@@ -9,8 +9,6 @@ import qna.domain.DeleteHistory;
 
 public interface DeleteHistoryRepository extends JpaRepository<DeleteHistory, Long> {
 
-	Optional<DeleteHistory> findById(Long id);
-	List<DeleteHistory> findAll();
 	List<DeleteHistory> findByDeletedById(Long id);
 
 }
