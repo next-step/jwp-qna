@@ -3,14 +3,34 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "answer")
 public class Answer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long writerId;
     private Long questionId;
+    @Column(columnDefinition = "longtext")
     private String contents;
+    @Column(nullable = false)
     private boolean deleted = false;
+    private LocalDateTime updatedAt;
+    @Column(nullable = false, updatable = false)
+    private final LocalDateTime createdAt = LocalDateTime.now();
+
+
+    public Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -78,6 +98,26 @@ public class Answer {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Answer answer = (Answer) o;
+
+        if (id != null ? !id.equals(answer.id) : answer.id != null) return false;
+        if (writerId != null ? !writerId.equals(answer.writerId) : answer.writerId != null) return false;
+        return questionId != null ? questionId.equals(answer.questionId) : answer.questionId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (writerId != null ? writerId.hashCode() : 0);
+        result = 31 * result + (questionId != null ? questionId.hashCode() : 0);
+        return result;
     }
 
     @Override
