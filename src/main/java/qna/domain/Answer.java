@@ -19,7 +19,7 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "writer_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name="fk_answer_writer"))
     private User writer;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name="fk_answer_to_question"))
     private Question question;
 
