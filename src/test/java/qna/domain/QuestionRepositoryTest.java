@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,7 @@ class QuestionRepositoryTest {
 
     @Test
     void save() {
+        LocalDateTime now = LocalDateTime.now();
         Question expected = new Question("title", "contents").writeBy(user);
 
         Question actual = questionRepository.save(expected);
@@ -35,7 +37,9 @@ class QuestionRepositoryTest {
             () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
             () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
-            () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId())
+            () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
+            () -> assertThat(actual.getCreatedAt()).isAfter(now),
+            () -> assertThat(actual.getUpdatedAt()).isAfter(now)
         );
     }
 
@@ -57,6 +61,7 @@ class QuestionRepositoryTest {
 
     @Test
     void findByIdAndDeletedFalse_exists() {
+        LocalDateTime now = LocalDateTime.now();
         Question expected = new Question("title", "contents").writeBy(user);
         questionRepository.save(expected);
 
@@ -66,7 +71,9 @@ class QuestionRepositoryTest {
             () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
             () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
-            () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId())
+            () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
+            () -> assertThat(actual.getCreatedAt()).isAfter(now),
+            () -> assertThat(actual.getUpdatedAt()).isAfter(now)
         );
     }
 

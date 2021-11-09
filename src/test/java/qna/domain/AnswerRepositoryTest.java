@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -33,14 +34,18 @@ class AnswerRepositoryTest {
 
     @Test
     void save() {
+        LocalDateTime now = LocalDateTime.now();
         Answer expected = new Answer(writer, question, "contents");
+
         Answer actual = answerRepository.save(expected);
 
         assertAll(
             () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
             () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
             () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
-            () -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId())
+            () -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId()),
+            () -> assertThat(actual.getCreatedAt()).isAfter(now),
+            () -> assertThat(actual.getUpdatedAt()).isAfter(now)
         );
     }
 
