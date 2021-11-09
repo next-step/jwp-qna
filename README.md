@@ -6,6 +6,6 @@
 
 ## 2단계 - 연관 관계 매핑 요구사항 정리
 - [X] Answer -> Question
-- [ ] Answer -> User
-- [ ] DeleteHistory -> User
-- [ ] Question -> User
+- [X] Answer -> User
+- [X] DeleteHistory -> User
+- [X] Question -> User
