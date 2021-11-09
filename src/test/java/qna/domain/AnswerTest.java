@@ -14,7 +14,6 @@ import qna.UnAuthorizedException;
 
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class AnswerTest {
 
     @Autowired
