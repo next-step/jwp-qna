@@ -22,7 +22,7 @@ public class QuestionTest {
         // then
         assertThat(ONE_ANSWERED_QUESTION.isDeleted()).isTrue();
     }
-    
+
     @Test
     @DisplayName("답변이 없는 질문을 삭제한다.")
     void delete2() {
@@ -38,7 +38,7 @@ public class QuestionTest {
     void deleteThrowException() {
         // when & then
         assertThatExceptionOfType(CannotDeleteException.class)
-                .isThrownBy(() ->  TWO_ANSWERED_QUESTION.delete(UserTest.SANJIGI))
-                .withMessageMatching("질문을 삭제할 권한이 없습니다.");
+                .isThrownBy(() -> TWO_ANSWERED_QUESTION.delete(UserTest.SANJIGI))
+                .withMessageMatching(ErrorMessage.DELETE_QUESTION_NOT_ALLOWED.getMessage());
     }
 }

@@ -19,6 +19,6 @@ class AnswersTest {
         // when &  then
         assertThatExceptionOfType(CannotDeleteException.class)
                 .isThrownBy(() -> answers.validateAnswers(UserTest.JAVAJIGI))
-                .withMessageMatching("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+                .withMessageMatching(ErrorMessage.EXISTS_ANSWER_OF_OTHER.getMessage());
     }
 }
