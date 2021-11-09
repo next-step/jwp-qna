@@ -57,11 +57,10 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public Answer(Long writerId, Long questionId, String contents, boolean deleted) {
+    public Answer(Long writerId, Long questionId, String contents) {
         this.writerId = writerId;
         this.questionId = questionId;
         this.contents = contents;
-        this.deleted = deleted;
     }
 
     public boolean isOwner(User writer) {

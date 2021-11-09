@@ -25,7 +25,7 @@ public class AnswerTest {
     @Test
     void answerSaveTest() {
         LocalDateTime now = LocalDateTime.now();
-        Answer answer = new Answer(1L, 1L, "content", false);
+        Answer answer = new Answer(1L, 1L, "content");
 
         Answer savedAnswer = answerRepository.save(answer);
 
