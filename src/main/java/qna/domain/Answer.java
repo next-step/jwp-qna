@@ -9,12 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer {
+public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,10 +23,6 @@ public class Answer {
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
-    private LocalDateTime updatedAt;
-    @Column(nullable = false, updatable = false)
-    private final LocalDateTime createdAt = LocalDateTime.now();
-
 
     public Answer() {
     }
