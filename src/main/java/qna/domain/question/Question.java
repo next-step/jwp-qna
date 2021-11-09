@@ -1,8 +1,16 @@
-package qna.domain;
+package qna.domain.question;
+
+import qna.CannotDeleteException;
+import qna.domain.Contents;
+import qna.domain.DateTimeBaseEntity;
+import qna.domain.Deleted;
+import qna.domain.deletehistory.DeleteHistory;
+import qna.domain.user.User;
+import qna.domain.answer.Answer;
+import qna.domain.answer.Answers;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -12,27 +20,31 @@ public class Question extends DateTimeBaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+    @Embedded
+    private Title title;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted = new Deleted();
 
     public Question(String title, String contents) {
-        this(null, title, contents);
+        this(null, new Title(title), new Contents(contents));
     }
 
     public Question(Long id, String title, String contents) {
+        this(id, new Title(title), new Contents(contents));
+    }
+
+    public Question(Long id, Title title, Contents contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -60,11 +72,11 @@ public class Question extends DateTimeBaseEntity {
         return id;
     }
 
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
@@ -73,11 +85,11 @@ public class Question extends DateTimeBaseEntity {
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        this.deleted = new Deleted(deleted);
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     @Override
@@ -103,4 +115,13 @@ public class Question extends DateTimeBaseEntity {
     public int hashCode() {
         return Objects.hash(id, title, contents, answers, writer, deleted);
     }
+
+    public DeleteHistory deletedBy(User user) {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("삭제 권한이 없습니다.");
+        }
+        this.setDeleted(true);
+        return DeleteHistory.ofQuestion(id, user, LocalDateTime.now());
+    }
+
 }
