@@ -21,47 +21,47 @@ class QuestionRepositoryTest {
     private QuestionRepository questionRepository;
 
     private User user;
+    private LocalDateTime startTime;
 
     @BeforeEach
     void setUp() {
+        startTime = LocalDateTime.now();
         user = new User(1L, "userId", "password", "name", "email");
     }
 
     @Test
     void save() {
-        LocalDateTime now = LocalDateTime.now();
         Question expected = new Question("title", "contents").writeBy(user);
 
         Question actual = questionRepository.save(expected);
+
         assertAll(
             () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
             () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
             () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
-            () -> assertThat(actual.getCreatedAt()).isAfter(now),
-            () -> assertThat(actual.getUpdatedAt()).isAfter(now)
+            () -> assertThat(actual.getCreatedAt()).isAfter(startTime),
+            () -> assertThat(actual.getUpdatedAt()).isAfter(startTime)
         );
     }
 
     @Test
     void findByDeletedFalse() {
-        Question question1 = new Question("title1", "contents1").writeBy(user);
-        Question question2 = new Question("title2", "contents2").writeBy(user);
-        Question question3 = new Question("title3", "contents3").writeBy(user);
-        question3.setDeleted(true);
-
-        questionRepository.save(question1);
-        questionRepository.save(question2);
-        questionRepository.save(question3);
+        Question expected1 = new Question("title1", "contents1").writeBy(user);
+        Question expected2 = new Question("title2", "contents2").writeBy(user);
+        Question deletedQuestion = new Question("title3", "contents3").writeBy(user);
+        deletedQuestion.setDeleted(true);
+        questionRepository.save(expected1);
+        questionRepository.save(expected2);
+        questionRepository.save(deletedQuestion);
 
         List<Question> notDeletedQuestions = questionRepository.findByDeletedFalse();
 
-        assertIterableEquals(notDeletedQuestions, Arrays.asList(question1, question2));
+        assertIterableEquals(notDeletedQuestions, Arrays.asList(expected1, expected2));
     }
 
     @Test
     void findByIdAndDeletedFalse_exists() {
-        LocalDateTime now = LocalDateTime.now();
         Question expected = new Question("title", "contents").writeBy(user);
         questionRepository.save(expected);
 
@@ -72,17 +72,17 @@ class QuestionRepositoryTest {
             () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
             () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
-            () -> assertThat(actual.getCreatedAt()).isAfter(now),
-            () -> assertThat(actual.getUpdatedAt()).isAfter(now)
+            () -> assertThat(actual.getCreatedAt()).isAfter(startTime),
+            () -> assertThat(actual.getUpdatedAt()).isAfter(startTime)
         );
     }
 
     @Test
     void findByIdAndDeletedFalse_notExists() {
-        Question expected = new Question("title", "contents").writeBy(user);
-        questionRepository.save(expected);
+        Question question = new Question("title", "contents").writeBy(user);
 
-        expected.setDeleted(true);
+        questionRepository.save(question);
+        question.setDeleted(true);
 
         Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(1L);
 

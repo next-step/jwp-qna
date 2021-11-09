@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -16,12 +17,18 @@ class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    private LocalDateTime startTime;
+
+    @BeforeEach
+    void setUp() {
+        startTime = LocalDateTime.now();
+    }
+
     @Test
     void save() {
-        LocalDateTime now = LocalDateTime.now();
         User expected = new User("userId", "password", "name", "email");
-        User actual = userRepository.save(expected);
 
+        User actual = userRepository.save(expected);
 
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
@@ -29,16 +36,16 @@ class UserRepositoryTest {
             () -> assertThat(actual.getPassword()).isEqualTo(expected.getPassword()),
             () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
             () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail()),
-            () -> assertThat(actual.getCreatedAt()).isAfter(now),
-            () -> assertThat(actual.getUpdatedAt()).isAfter(now)
+            () -> assertThat(actual.getCreatedAt()).isAfter(startTime),
+            () -> assertThat(actual.getUpdatedAt()).isAfter(startTime)
         );
     }
 
     @Test
     void findByUserId() {
-        LocalDateTime now = LocalDateTime.now();
         User expected = new User("userId", "password", "name", "email");
         userRepository.save(expected);
+
         User actual = userRepository.findByUserId("userId").get();
 
         assertAll(
@@ -47,8 +54,8 @@ class UserRepositoryTest {
             () -> assertThat(actual.getPassword()).isEqualTo(expected.getPassword()),
             () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
             () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail()),
-            () -> assertThat(actual.getCreatedAt()).isAfter(now),
-            () -> assertThat(actual.getUpdatedAt()).isAfter(now)
+            () -> assertThat(actual.getCreatedAt()).isAfter(startTime),
+            () -> assertThat(actual.getUpdatedAt()).isAfter(startTime)
         );
     }
 }

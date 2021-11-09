@@ -22,9 +22,12 @@ class AnswerRepositoryTest {
 
     private User writer;
     private Question question;
+    private LocalDateTime startTime;
 
     @BeforeEach
     void setUp() {
+        startTime = LocalDateTime.now();
+
         writer = new User();
         writer.setId(1L);
 
@@ -34,7 +37,6 @@ class AnswerRepositoryTest {
 
     @Test
     void save() {
-        LocalDateTime now = LocalDateTime.now();
         Answer expected = new Answer(writer, question, "contents");
 
         Answer actual = answerRepository.save(expected);
@@ -44,40 +46,40 @@ class AnswerRepositoryTest {
             () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
             () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
             () -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId()),
-            () -> assertThat(actual.getCreatedAt()).isAfter(now),
-            () -> assertThat(actual.getUpdatedAt()).isAfter(now)
+            () -> assertThat(actual.getCreatedAt()).isAfter(startTime),
+            () -> assertThat(actual.getUpdatedAt()).isAfter(startTime)
         );
     }
 
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        Answer answer1 = new Answer(writer, question, "contents");
-        Answer answer2 = new Answer(writer, question, "contents2");
+        Answer expected1 = new Answer(writer, question, "contents");
+        Answer expected2 = new Answer(writer, question, "contents2");
         Answer deletedAnswer = new Answer(writer, question, "contents3");
         deletedAnswer.setDeleted(true);
-        answerRepository.save(answer1);
-        answerRepository.save(answer2);
+        answerRepository.save(expected1);
+        answerRepository.save(expected2);
         answerRepository.save(deletedAnswer);
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(1L);
 
-        assertIterableEquals(answers, Arrays.asList(answer1, answer2));
+        assertIterableEquals(answers, Arrays.asList(expected1, expected2));
     }
 
     @Test
     void findByIdAndDeletedFalse() {
-        Answer answer1 = new Answer(writer, question, "contents");
+        Answer expected = new Answer(writer, question, "contents");
         Answer deletedAnswer = new Answer(writer, question, "contents3");
         deletedAnswer.setDeleted(true);
-        answerRepository.save(answer1);
+        answerRepository.save(expected);
         answerRepository.save(deletedAnswer);
 
-        Optional<Answer> actualAnswer1 = answerRepository.findByIdAndDeletedFalse(1L);
+        Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(1L);
         Optional<Answer> actualNull = answerRepository.findByIdAndDeletedFalse(2L);
 
         assertAll(
-            () -> assertThat(actualAnswer1.isPresent()),
-            () -> assertThat(actualAnswer1.get()).isEqualTo(answer1),
+            () -> assertThat(actual.isPresent()),
+            () -> assertThat(actual.get()).isEqualTo(expected),
             () -> assertThat(actualNull.isPresent()).isFalse()
         );
     }
