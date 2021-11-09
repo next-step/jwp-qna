@@ -9,10 +9,10 @@ QnA 서비스를 만들어 가면서 JPA로 실제 도메인 모델을 어떻게
 
 ### 구현할 기능 목록
 - 엔티티 매핑
-  - [ ] answer
-  - [ ] delete_history
-  - [ ] question
-  - [ ] user
+  - [x] answer
+  - [x] delete_history
+  - [x] question
+  - [x] user
 - 리포지토리 테스트
   - [ ] answer
   - [ ] delete_history
