@@ -56,14 +56,16 @@ public class Question extends BaseEntity{
         }
     }
 
-    public List<DeleteHistory> delete(Answers answers, User writer) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User writer) throws CannotDeleteException {
+        DeleteHistories histories = new DeleteHistories();
+        Answers answers = this.answers.getNotDeleted();
+
         checkOwner(writer);
         answers.checkIsOwner(writer);
 
         this.deleted = true;
 
-        DeleteHistories deleteHistories = new DeleteHistories(answers);
-        return deleteHistories.delete(DeleteHistory.question(id, writer));
+        return histories.delete(answers, DeleteHistory.question(id, writer));
     }
 
     public void addAnswer(Answer answer) {
@@ -93,10 +95,6 @@ public class Question extends BaseEntity{
 
     public List<Answer> getAnswers() {
         return answers.getAnswers();
-    }
-
-    public Answers getAnswersNotDeleted() {
-        return answers.getAnswersNotDeleted();
     }
 
     public void setDeleted(boolean deleted) {

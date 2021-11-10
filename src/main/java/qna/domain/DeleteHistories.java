@@ -6,14 +6,12 @@ import java.util.List;
 public class DeleteHistories {
 
     private final List<DeleteHistory> deleteHistories;
-    private final Answers answers;
 
-    public DeleteHistories(Answers answers) {
+    public DeleteHistories() {
         deleteHistories = new ArrayList<>();
-        this.answers = answers;
     }
 
-    public List<DeleteHistory> delete(DeleteHistory questionHistory) {
+    public List<DeleteHistory> delete(Answers answers, DeleteHistory questionHistory) {
         deleteHistories.add(questionHistory);
         answers.delete(deleteHistories);
         return deleteHistories;

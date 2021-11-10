@@ -48,7 +48,7 @@ public class Answers {
         return answers;
     }
 
-    public Answers getAnswersNotDeleted() {
+    public Answers getNotDeleted() {
         return new Answers(answers.stream()
                 .filter(answer -> !answer.isDeleted())
                 .collect(Collectors.toList()));
