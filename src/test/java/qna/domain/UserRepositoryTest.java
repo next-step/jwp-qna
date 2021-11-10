@@ -21,7 +21,8 @@ public class UserRepositoryTest {
             () -> assertThat(savedUser.getUserId()).isEqualTo(TestDummy.USER_JAVAJIGI.getUserId()),
             () -> assertThat(savedUser.getPassword()).isEqualTo(TestDummy.USER_JAVAJIGI.getPassword()),
             () -> assertThat(savedUser.getName()).isEqualTo(TestDummy.USER_JAVAJIGI.getName()),
-            () -> assertThat(savedUser.getEmail()).isEqualTo(TestDummy.USER_JAVAJIGI.getEmail())
+            () -> assertThat(savedUser.getEmail()).isEqualTo(TestDummy.USER_JAVAJIGI.getEmail()),
+            () -> assertThat(savedUser.getCreatedDateTime()).isNotNull()
         );
     }
 
@@ -35,7 +36,8 @@ public class UserRepositoryTest {
             () -> assertThat(savedUser.getUserId()).isEqualTo(TestDummy.USER_JAVAJIGI.getUserId()),
             () -> assertThat(savedUser.getPassword()).isEqualTo(TestDummy.USER_JAVAJIGI.getPassword()),
             () -> assertThat(savedUser.getName()).isEqualTo(TestDummy.USER_JAVAJIGI.getName()),
-            () -> assertThat(savedUser.getEmail()).isEqualTo(TestDummy.USER_JAVAJIGI.getEmail())
+            () -> assertThat(savedUser.getEmail()).isEqualTo(TestDummy.USER_JAVAJIGI.getEmail()),
+            () -> assertThat(savedUser.getCreatedDateTime()).isNotNull()
         );
     }
 }
