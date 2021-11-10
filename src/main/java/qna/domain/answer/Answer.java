@@ -25,7 +25,6 @@ public class Answer extends BaseTimeEntity {
     private Long questionId;
     @Lob
     private String contents;
-    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Answer() {
