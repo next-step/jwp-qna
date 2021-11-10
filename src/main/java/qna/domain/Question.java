@@ -95,6 +95,10 @@ public class Question extends BaseEntity{
         return answers.getAnswers();
     }
 
+    public Answers getAnswersNotDeleted() {
+        return answers.getAnswersNotDeleted();
+    }
+
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }

@@ -45,8 +45,12 @@ public class Answers {
     }
 
     public List<Answer> getAnswers() {
-        return answers.stream()
+        return answers;
+    }
+
+    public Answers getAnswersNotDeleted() {
+        return new Answers(answers.stream()
                 .filter(answer -> !answer.isDeleted())
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 }
