@@ -1,13 +1,13 @@
 package qna.domain;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class AnswerTest {
@@ -20,10 +20,15 @@ public class AnswerTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     void save() {
+        User savedWriter = userRepository.save(UserTest.JAVAJIGI);
         Question savedQuestion = questionRepository.save(QuestionTest.Q1);
         A1.setQuestion(savedQuestion);
+        A1.setWriter(savedWriter);
 
         Answer savedAnswer = answerRepository.save(A1);
 
@@ -40,8 +45,10 @@ public class AnswerTest {
 
     @Test
     void read() {
+        User savedWriter = userRepository.save(UserTest.JAVAJIGI);
         Question savedQuestion = questionRepository.save(QuestionTest.Q1);
         A1.setQuestion(savedQuestion);
+        A1.setWriter(savedWriter);
         Long savedId = answerRepository.save(A1).getId();
 
         Answer savedAnswer = answerRepository.findByIdAndDeletedFalse(savedId).get();
