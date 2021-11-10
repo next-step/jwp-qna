@@ -1,10 +1,22 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.*;
+
+@Entity
+public class Question extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 100, nullable = false)
     private String title;
+
+    @Column(columnDefinition = "longtext")
     private String contents;
+
     private Long writerId;
+
+    @Column(columnDefinition = "bit", nullable = false)
     private boolean deleted = false;
 
     public Question(String title, String contents) {
@@ -16,6 +28,8 @@ public class Question {
         this.title = title;
         this.contents = contents;
     }
+
+    protected Question() {}
 
     public Question writeBy(User writer) {
         this.writerId = writer.getId();
