@@ -1,25 +1,25 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "question")
-public class Question {
+public class Question extends BaseEntity {
     @Column(name = "id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,107 +29,97 @@ public class Question {
     @Lob
     private String contents;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
     @Column(name = "deleted", nullable = false)
-    private boolean deleted = false;
+    private boolean deleted;
 
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
+
+    public void addAnswer(Answer answer) {
+        throwOnEmptyAnswer(answer);
+        throwOnAlreadyRegisteredAnswer(answer);
+
+        answer.setQuestion(this);
+    }
+
+    private void throwOnEmptyAnswer(Answer answer) {
+        if (answer == null) {
+            throw new RuntimeException();
+        }
+    }
+
+    private void throwOnAlreadyRegisteredAnswer(Answer answer) {
+        if (answers.contains(answer)) {
+            throw new RuntimeException();
+        }
+    }
 
     protected Question() {
 
     }
 
-    public Question(String contents, String title, Long writerId) {
-        this.id = null;
-        this.contents = contents;
-        this.deleted = false;
-        this.title = title;
-        this.writerId = writerId;
-    }
-
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
+    private Question(Long id, String contents, boolean deleted, String title, User writer, List<Answer> answers) {
         this.id = id;
-        this.title = title;
         this.contents = contents;
+        this.deleted = deleted;
+        this.title = title;
+        this.writer = writer;
+        this.answers = answers;
     }
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
+    public static Question of(User writer, String title, String contents) {
+        return of(null, writer, title, contents);
     }
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+    public static Question of(Long id, User writer, String title, String contents) {
+        throwOnEmptyTitle(title);
+
+        return new Question(id, contents, false, title, writer, new ArrayList<>());
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+    private static void throwOnEmptyTitle(String title) {
+        if (title == null || title.isEmpty()) {
+            throw new IllegalArgumentException("제목은 빈 값일 수 없습니다.");
+        }
+    }
+
+    public void delete() {
+        this.deleted = true;
+    }
+
+    public boolean isOwner(User user) {
+        return this.writer.equals(user);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public String getTitle() {
+        return title;
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+    public User getWriter() {
+        return writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override

@@ -1,28 +1,25 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "answer")
-public class Answer {
+public class Answer extends BaseEntity {
     @Column(name = "id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,112 +29,84 @@ public class Answer {
     @Lob
     private String contents;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    public void setQuestion(Question question) {
+        throwOnNotFoundQuestion(question);
+
+        this.question = question;
+        question.getAnswers().add(this);
+    }
+
+    private void throwOnNotFoundQuestion(Question question) {
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
+    }
 
     protected Answer() {
 
     }
 
-    public Answer(String contents, boolean deleted, Long questionId, Long writerId) {
-        this.id = null;
+    private Answer(Long id, String contents, boolean deleted, Question question, User writer) {
+        this.id = id;
         this.contents = contents;
         this.deleted = deleted;
-        this.questionId = questionId;
-        this.writerId = writerId;
+        this.question = question;
+        this.writer = writer;
     }
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+    public static Answer of(User writer, String contents) {
+        return of(null, writer, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+    public static Answer of(Long id, User writer, String contents) {
+        throwOnUnAuthorizedWriter(writer);
 
+        return new Answer(id, contents, false, null, writer);
+    }
+
+    private static void throwOnUnAuthorizedWriter(User writer) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
-
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
-        this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+    public void delete() {
+        this.deleted = true;
     }
 
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
+    public boolean isOwner(User user) {
+        return this.writer.equals(user);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public Question getQuestion() {
+        return question;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+    public User getWriter() {
+        return writer;
     }
 
     @Override

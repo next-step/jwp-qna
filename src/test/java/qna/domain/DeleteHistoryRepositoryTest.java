@@ -14,16 +14,17 @@ import qna.fixture.DeleteHistoryFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
+@DisplayName("삭제 기록 저장소")
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
 	@Autowired
-	private UserRepository users;
+	private UserRepository userRepository;
 	@Autowired
-	private QuestionRepository questions;
+	private QuestionRepository questionRepository;
 	@Autowired
-	private AnswerRepository answers;
+	private AnswerRepository answerRepository;
 	@Autowired
-	private DeleteHistoryRepository deleteHistories;
+	private DeleteHistoryRepository deleteHistoryRepository;
 
 	private User user;
 	private Question question;
@@ -31,26 +32,26 @@ public class DeleteHistoryRepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		user = users.save(UserFixture.Y2O2U2N());
-		question = questions.save(QuestionFixture.Q1(user.getId()));
-		answer = answers.save(AnswerFixture.A1(question.getId(), user.getId()));
+		user = userRepository.save(UserFixture.Y2O2U2N());
+		question = questionRepository.save(QuestionFixture.Q1(user));
+		answer = answerRepository.save(AnswerFixture.A1(user));
 	}
 
 	@DisplayName("질문 삭제 기록을 저장할 수 있다.")
 	@Test
 	void save_question_delete_history() {
 		// given
-		DeleteHistory expected = DeleteHistoryFixture.Q(question.getId(), user.getId());
+		DeleteHistory expected = DeleteHistoryFixture.Q(question, user);
 
 		// when
-		DeleteHistory actual = deleteHistories.save(expected);
+		DeleteHistory actual = deleteHistoryRepository.save(expected);
 
 		// then
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getContentId()).isEqualTo(expected.getContentId()),
 			() -> assertThat(actual.getContentType()).isEqualTo(expected.getContentType()),
-			() -> assertThat(actual.getDeletedById()).isEqualTo(expected.getDeletedById())
+			() -> assertThat(actual.getDeleter()).isEqualTo(expected.getDeleter())
 		);
 	}
 
@@ -58,17 +59,17 @@ public class DeleteHistoryRepositoryTest {
 	@Test
 	void save_answer_delete_history() {
 		// given
-		DeleteHistory expected = DeleteHistoryFixture.A(answer.getId(), user.getId());
+		DeleteHistory expected = DeleteHistoryFixture.A(answer, user);
 
 		// when
-		DeleteHistory actual = deleteHistories.save(expected);
+		DeleteHistory actual = deleteHistoryRepository.save(expected);
 
 		// then
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getContentId()).isEqualTo(expected.getContentId()),
 			() -> assertThat(actual.getContentType()).isEqualTo(expected.getContentType()),
-			() -> assertThat(actual.getDeletedById()).isEqualTo(expected.getDeletedById())
+			() -> assertThat(actual.getDeleter()).isEqualTo(expected.getDeleter())
 		);
 	}
 }

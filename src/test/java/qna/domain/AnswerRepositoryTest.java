@@ -16,40 +16,42 @@ import qna.fixture.AnswerFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
+@DisplayName("답변 저장소")
 @DataJpaTest
 public class AnswerRepositoryTest {
 	@Autowired
-	private UserRepository users;
+	private UserRepository userRepository;
 	@Autowired
-	private QuestionRepository questions;
+	private QuestionRepository questionRepository;
 	@Autowired
-	private AnswerRepository answers;
+	private AnswerRepository answerRepository;
 
 	private User user;
 	private Question question;
 
 	@BeforeEach
 	void setUp() {
-		user = users.save(UserFixture.Y2O2U2N());
-		question = questions.save(QuestionFixture.Q1(user.getId()));
+		user = userRepository.save(UserFixture.Y2O2U2N());
+		question = questionRepository.save(QuestionFixture.Q1(user));
 	}
 
 	@DisplayName("답변을 저장할 수 있다.")
 	@Test
 	void save() {
 		// given
-		Answer expected = AnswerFixture.A1(question.getId(), user.getId());
+		Answer expected = AnswerFixture.A1(user);
+		question.addAnswer(expected);
 
 		// when
-		Answer actual = answers.save(expected);
+		Answer actual = answerRepository.save(expected);
 
 		// then
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
 			() -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted()),
-			() -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId()),
-			() -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId())
+			() -> assertThat(actual.getQuestion()).isEqualTo(question),
+			() -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter())
 		);
 	}
 
@@ -57,23 +59,25 @@ public class AnswerRepositoryTest {
 	@Test
 	void findByQuestionIdAndDeletedFalse() {
 		// given
-		answers.save(AnswerFixture.A1(question.getId(), user.getId()));
+		Answer answer = AnswerFixture.A1(user);
+		question.addAnswer(answer);
+		answerRepository.save(answer);
 
 		// when
-		List<Answer> actual = answers.findByQuestionIdAndDeletedFalse(question.getId());
+		List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
 		// then
-		assertThat(actual).isNotEmpty();
+		assertThat(actual).hasSizeGreaterThan(0);
 	}
 
 	@DisplayName("ID로 삭제되지 않은 답변을 찾을 수 있다.")
 	@Test
 	void findByIdAndDeletedFalse() {
 		// given
-		Answer expected = answers.save(AnswerFixture.A1(question.getId(), user.getId()));
+		Answer expected = answerRepository.save(AnswerFixture.A1(user));
 
 		// when
-		Answer actual = answers.findByIdAndDeletedFalse(expected.getId())
+		Answer actual = answerRepository.findByIdAndDeletedFalse(expected.getId())
 			.orElseThrow(AssertionFailedError::new);
 
 		// then

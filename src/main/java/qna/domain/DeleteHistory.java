@@ -1,25 +1,23 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "delete_history")
-public class DeleteHistory {
+public class DeleteHistory extends BaseEntity {
     @Column(name = "id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,29 +30,31 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
-    @CreatedDate
-    @Column(name = "created_date")
-    private LocalDateTime createDate = LocalDateTime.now();
-
-    @Column(name = "deleted_by_id")
-    private Long deletedById;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deleter;
 
     protected DeleteHistory() {
 
     }
 
-    public DeleteHistory(Long contentId, ContentType contentType, Long deletedById) {
-        this.id = null;
+    private DeleteHistory(Long id, Long contentId, ContentType contentType, User deleter) {
+        this.id = id;
         this.contentId = contentId;
         this.contentType = contentType;
-        this.deletedById = deletedById;
+        this.deleter = deleter;
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
-        this.contentType = contentType;
-        this.contentId = contentId;
-        this.deletedById = deletedById;
-        this.createDate = createDate;
+    public static DeleteHistory ofQuestion(User deleter, Question question) {
+        return of(null, deleter, ContentType.QUESTION, question.getId());
+    }
+
+    public static DeleteHistory ofAnswer(User deleter, Answer answer) {
+        return of(null, deleter, ContentType.ANSWER, answer.getId());
+    }
+
+    private static DeleteHistory of(Long id, User deleter, ContentType contentType, Long contentId) {
+        return new DeleteHistory(id, contentId, contentType, deleter);
     }
 
     public Long getId() {
@@ -69,34 +69,26 @@ public class DeleteHistory {
         return contentType;
     }
 
-    public Long getDeletedById() {
-        return deletedById;
+    public User getDeleter() {
+        return deleter;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        DeleteHistory that = (DeleteHistory)obj;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
-    }
-
-    @Override
-    public String toString() {
-        return "DeleteHistory{" +
-                "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
-                ", createDate=" + createDate +
-                '}';
+        return Objects.hash(id);
     }
 }
