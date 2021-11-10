@@ -15,7 +15,6 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    //연관관계 매핑 다대일 단방향
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
