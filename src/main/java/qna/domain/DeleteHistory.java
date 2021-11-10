@@ -4,75 +4,86 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class DeleteHistory {
 
-    @Id @GeneratedValue
-    private Long id;
-    private Long contentId;
-    private ContentType contentType;
-    private LocalDateTime createDate;
-    private Long deletedById;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-    protected DeleteHistory() {
-    }
+	private Long contentId;
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
-        this.contentType = contentType;
-        this.contentId = contentId;
-        this.deletedById = deletedById;
-        this.createDate = createDate;
-    }
+	@Enumerated(EnumType.STRING)
+	private ContentType contentType;
 
-    public Long getId() {
-        return id;
-    }
+	private LocalDateTime createDate;
 
-    public Long getContentId() {
-        return contentId;
-    }
+	private Long deletedById;
 
-    public ContentType getContentType() {
-        return contentType;
-    }
+	protected DeleteHistory() {
+	}
 
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
+	public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+		this.contentType = contentType;
+		this.contentId = contentId;
+		this.deletedById = deletedById;
+		this.createDate = createDate;
+	}
 
-    public Long getDeletedById() {
-        return deletedById;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-            contentType == that.contentType &&
-            Objects.equals(contentId, that.contentId) &&
-            Objects.equals(deletedById, that.deletedById);
-    }
+	public Long getContentId() {
+		return contentId;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
-    }
+	public ContentType getContentType() {
+		return contentType;
+	}
 
-    @Override
-    public String toString() {
-        return "DeleteHistory{" +
-                "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
-                ", createDate=" + createDate +
-                '}';
-    }
+	public LocalDateTime getCreateDate() {
+		return createDate;
+	}
 
+	public Long getDeletedById() {
+		return deletedById;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		DeleteHistory that = (DeleteHistory)o;
+		return Objects.equals(id, that.id) && contentType == that.contentType &&
+			Objects.equals(contentId, that.contentId) && Objects.equals(deletedById, that.deletedById);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, contentType, contentId, deletedById);
+	}
+
+	@Override
+	public String toString() {
+		return "DeleteHistory{" +
+			"id=" + id +
+			", contentType=" + contentType +
+			", contentId=" + contentId +
+			", deletedById=" + deletedById +
+			", createDate=" + createDate +
+			'}';
+	}
 
 }
