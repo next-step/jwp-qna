@@ -67,6 +67,7 @@ alter table user
 |@AutoConfigureTestDatabase|내장된 임베디드 데이터베이스|Replace.Any|
 |@AutoConfigureTestDatabase|@ActiveProfiles 설정한 환경값에따라 데이터소스가 결정됨|Replace.NONE|
 |@ActiveProfiles("...")|액티브 설정|"test","dev"|
+|@Size| 저장하기 전에 데이터의 검증 절차를 한번 더 갖기 때문에 더 안전하고 강력한 접근을 한다|
 
 ### 힌트 
 spring.jpa.properties.hibernate.format_sql=true
