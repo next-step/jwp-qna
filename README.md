@@ -18,4 +18,4 @@
     * [ ] User
     * [ ] Answer
     * [ ] Question
-    * [ ] DeleteHistory
+    * [X] DeleteHistory
