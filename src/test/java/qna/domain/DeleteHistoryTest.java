@@ -36,9 +36,8 @@ class DeleteHistoryTest {
 	@Test
 	void ofAnswer() {
 		// given
-		Question question = QuestionFixture.Q1(1L, UserFixture.Y2O2U2N(2L));
-		Answer answer = AnswerFixture.A1(3L, UserFixture.JUN222(4L), question);
-		User deleter = UserFixture.SEMISTONE222(5L);
+		Answer answer = AnswerFixture.A1(1L, UserFixture.JUN222(2L));
+		User deleter = UserFixture.SEMISTONE222(3L);
 
 		// when
 		DeleteHistory deleteHistory = DeleteHistory.ofAnswer(deleter, answer);

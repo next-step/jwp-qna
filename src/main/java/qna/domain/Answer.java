@@ -41,8 +41,15 @@ public class Answer extends BaseEntity {
     private User writer;
 
     public void setQuestion(Question question) {
+        throwOnNotFoundQuestion(question);
+
         this.question = question;
-        question.getAnswers().add(this);
+    }
+
+    private void throwOnNotFoundQuestion(Question question) {
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
     }
 
     protected Answer() {
@@ -57,26 +64,19 @@ public class Answer extends BaseEntity {
         this.writer = writer;
     }
 
-    public static Answer of(User writer, Question question, String contents) {
-        return of(null, writer, question, contents);
+    public static Answer of(User writer, String contents) {
+        return of(null, writer, contents);
     }
 
-    public static Answer of(Long id, User writer, Question question, String contents) {
+    public static Answer of(Long id, User writer, String contents) {
         throwOnUnAuthorizedWriter(writer);
-        throwOnNotFoundQuestion(question);
 
-        return new Answer(id, contents, false, question, writer);
+        return new Answer(id, contents, false, null, writer);
     }
 
     private static void throwOnUnAuthorizedWriter(User writer) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
-        }
-    }
-
-    private static void throwOnNotFoundQuestion(Question question) {
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
         }
     }
 

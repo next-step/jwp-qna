@@ -43,8 +43,23 @@ public class Question extends BaseEntity {
     private List<Answer> answers = new ArrayList<>();
 
     public void addAnswer(Answer answer) {
+        throwOnEmptyAnswer(answer);
+        throwOnAlreadyRegisteredAnswer(answer);
+
         answers.add(answer);
         answer.setQuestion(this);
+    }
+
+    private void throwOnEmptyAnswer(Answer answer) {
+        if (answer == null) {
+            throw new RuntimeException();
+        }
+    }
+
+    private void throwOnAlreadyRegisteredAnswer(Answer answer) {
+        if (answers.contains(answer)) {
+            throw new RuntimeException();
+        }
     }
 
     protected Question() {

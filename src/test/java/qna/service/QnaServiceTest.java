@@ -21,6 +21,7 @@ import qna.domain.AnswerRepository;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
+import qna.fixture.AnswerFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
@@ -44,8 +45,8 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = Question.of(1L, UserFixture.Y2O2U2N(1L), "title1", "contents1");
-        answer = Answer.of(1L, UserFixture.Y2O2U2N(1L), question, "Answers Contents1");
+        question = QuestionFixture.Q1(1L, UserFixture.Y2O2U2N(1L));
+        answer = AnswerFixture.A1(1L, UserFixture.Y2O2U2N(1L));
         question.addAnswer(answer);
     }
 
@@ -86,7 +87,6 @@ class QnaServiceTest {
         Answer answer2 = Answer.of(
             2L,
             UserFixture.SEMISTONE222(2L),
-            QuestionFixture.Q1(UserFixture.Y2O2U2N(1L)),
             "Answers Contents1");
         question.addAnswer(answer2);
 

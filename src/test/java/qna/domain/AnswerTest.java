@@ -23,15 +23,8 @@ public class AnswerTest {
 		return Stream.of(
 			Arguments.of(
 				null,
-				QuestionFixture.Q1(2, UserFixture.SEMISTONE222(1)),
 				"contents",
 				UnAuthorizedException.class
-			),
-			Arguments.of(
-				UserFixture.Y2O2U2N(3),
-				null,
-				"contents",
-				NotFoundException.class
 			)
 		);
 	}
@@ -39,13 +32,13 @@ public class AnswerTest {
 	public static Stream<Arguments> isOwnerArguments() {
 		return Stream.of(
 			Arguments.of(
-				AnswerFixture.A1(1L, UserFixture.Y2O2U2N(3), QuestionFixture.Q1(2, UserFixture.SEMISTONE222(1))),
-				UserFixture.Y2O2U2N(3),
+				AnswerFixture.A1(1L, UserFixture.Y2O2U2N(3L)),
+				UserFixture.Y2O2U2N(3L),
 				true
 			),
 			Arguments.of(
-				AnswerFixture.A1(1L, UserFixture.Y2O2U2N(3), QuestionFixture.Q1(2, UserFixture.SEMISTONE222(1))),
-				UserFixture.SEMISTONE222(1),
+				AnswerFixture.A1(1L, UserFixture.Y2O2U2N(2L)),
+				UserFixture.SEMISTONE222(3L),
 				false
 			)
 		);
@@ -55,38 +48,63 @@ public class AnswerTest {
 	@Test
 	void of() {
 		// given
-		User questionWriter = UserFixture.SEMISTONE222(1);
-		Question question = QuestionFixture.Q1(2, questionWriter);
-		User answerWriter = UserFixture.Y2O2U2N(3);
+		User writer = UserFixture.Y2O2U2N(1L);
 		String contents = "contents";
 
 		// when
-		Answer answer = Answer.of(answerWriter, question, contents);
+		Answer answer = Answer.of(writer, contents);
 
 		// then
 		assertAll(
 			() -> assertThat(answer).isNotNull(),
 			() -> assertThat(answer.getContents()).isEqualTo(contents),
 			() -> assertThat(answer.isDeleted()).isFalse(),
-			() -> assertThat(answer.getQuestion()).isEqualTo(question),
-			() -> assertThat(answer.getWriter()).isEqualTo(answerWriter)
+			() -> assertThat(answer.getWriter()).isEqualTo(writer)
 		);
 	}
 
 	@DisplayName("답변을 생성할 수 없다.")
 	@ParameterizedTest
 	@MethodSource(value = "ofFailArguments")
-	void of_fail(User writer, Question question, String contents, Class<?> expectedExceptionType) {
+	void of_fail(User writer, String contents, Class<?> expectedExceptionType) {
 		// given & when & then
-		assertThatThrownBy(() -> Answer.of(writer, question, contents))
+		assertThatThrownBy(() -> Answer.of(writer, contents))
 			.isInstanceOf(expectedExceptionType);
+	}
+
+	@DisplayName("답변에 질문을 등록할 수 있다.")
+	@Test
+	void setQuestion() {
+		// given
+		Question question = QuestionFixture.Q1(1L, UserFixture.SEMISTONE222(2L));
+		Answer answer = AnswerFixture.A1(3L, UserFixture.Y2O2U2N(4L));
+
+		// when
+		answer.setQuestion(question);
+
+		// then
+		assertAll(
+			() -> assertThat(answer).isNotNull(),
+			() -> assertThat(answer.getQuestion()).isEqualTo(question)
+		);
+	}
+
+	@DisplayName("답변에 질문을 등록할 수 없다.")
+	@Test
+	void setQuestion_fail() {
+		// given
+		Answer answer = AnswerFixture.A1(1L, UserFixture.Y2O2U2N(2L));
+
+		// when & then
+		assertThatThrownBy(() -> answer.setQuestion(null))
+			.isInstanceOf(NotFoundException.class);
 	}
 
 	@DisplayName("답변을 삭제할 수 있다.")
 	@Test
 	void delete() {
 		// given
-		Answer answer = AnswerFixture.A1(1L, UserFixture.Y2O2U2N(), QuestionFixture.Q1(UserFixture.SEMISTONE222()));
+		Answer answer = AnswerFixture.A1(1L, UserFixture.Y2O2U2N());
 
 		// when
 		answer.delete();

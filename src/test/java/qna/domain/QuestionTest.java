@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import qna.fixture.AnswerFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
@@ -74,6 +75,47 @@ public class QuestionTest {
 		// given & when & then
 		assertThatThrownBy(() -> Question.of(writer, title, "contents"))
 			.isInstanceOf(expectedExceptionType);
+	}
+
+	@DisplayName("질문에 답변을 등록할 수 있다.")
+	@Test
+	void addAnswer() {
+		// given
+		Question question = QuestionFixture.Q1(1L, UserFixture.Y2O2U2N(2L));
+		Answer answer = AnswerFixture.A1(3L, UserFixture.SEMISTONE222(4L));
+
+		// when
+		question.addAnswer(answer);
+
+		// then
+		assertAll(
+			() -> assertThat(question.getAnswers()).contains(answer),
+			() -> assertThat(answer.getQuestion()).isEqualTo(question)
+		);
+	}
+
+	@DisplayName("질문에 빈 답변을 등록할 수 없다.")
+	@Test
+	void addAnswer_fail_on_empty_answer() {
+		// given
+		Question question = QuestionFixture.Q1(1L, UserFixture.Y2O2U2N(2L));
+
+		// when & then
+		assertThatThrownBy(() -> question.addAnswer(null))
+			.isInstanceOf(RuntimeException.class);
+	}
+
+	@DisplayName("질문에 이미 등록된 답변을 등록할 수 없다.")
+	@Test
+	void addAnswer_fail_on_already_registered_answer() {
+		// given
+		Question question = QuestionFixture.Q1(1L, UserFixture.Y2O2U2N(2L));
+		Answer answer = AnswerFixture.A1(3L, UserFixture.SEMISTONE222(4L));
+		question.addAnswer(answer);
+
+		// when & then
+		assertThatThrownBy(() -> question.addAnswer(answer))
+			.isInstanceOf(RuntimeException.class);
 	}
 
 	@DisplayName("질문을 삭제할 수 있다.")

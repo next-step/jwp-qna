@@ -39,7 +39,8 @@ public class AnswerRepositoryTest {
 	@Test
 	void save() {
 		// given
-		Answer expected = AnswerFixture.A1(user, question);
+		Answer expected = AnswerFixture.A1(user);
+		question.addAnswer(expected);
 
 		// when
 		Answer actual = answerRepository.save(expected);
@@ -49,7 +50,7 @@ public class AnswerRepositoryTest {
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
 			() -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted()),
-			() -> assertThat(actual.getQuestion()).isEqualTo(expected.getQuestion()),
+			() -> assertThat(actual.getQuestion()).isEqualTo(question),
 			() -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter())
 		);
 	}
@@ -58,20 +59,22 @@ public class AnswerRepositoryTest {
 	@Test
 	void findByQuestionIdAndDeletedFalse() {
 		// given
-		answerRepository.save(AnswerFixture.A1(user, question));
+		Answer answer = AnswerFixture.A1(user);
+		question.addAnswer(answer);
+		answerRepository.save(answer);
 
 		// when
 		List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
 		// then
-		assertThat(actual).isNotEmpty();
+		assertThat(actual).hasSizeGreaterThan(0);
 	}
 
 	@DisplayName("ID로 삭제되지 않은 답변을 찾을 수 있다.")
 	@Test
 	void findByIdAndDeletedFalse() {
 		// given
-		Answer expected = answerRepository.save(AnswerFixture.A1(user, question));
+		Answer expected = answerRepository.save(AnswerFixture.A1(user));
 
 		// when
 		Answer actual = answerRepository.findByIdAndDeletedFalse(expected.getId())
