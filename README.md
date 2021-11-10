@@ -62,29 +62,29 @@ alter table user
 
 ## 2단계- 연관 관계 매핑
 ### 요구사항
-- [] 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
-- [] answer 엔티티는 question엔티티를 참조하고 question의 id값을 외래키로 사용한다.
+- [x] 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+- [x] answer 엔티티는 question엔티티를 참조하고 question의 id값을 외래키로 사용한다.
 ```sql
 alter table answer
     add constraint fk_answer_to_question
         foreign key (question_id)
             references question
 ```
-- [] answer 엔티티는 user엔티티를 참조하고 user의 id값을 외래키로 사용한다.
+- [x] answer 엔티티는 user엔티티를 참조하고 user의 id값을 외래키로 사용한다.
 ```sql
 alter table answer
     add constraint fk_answer_writer
         foreign key (writer_id)
             references user
 ```
-- [] delete_history 엔티티는 user엔티티를 참조하고 user의 id값을 외래키로 사용한다.
+- [x] delete_history 엔티티는 user엔티티를 참조하고 user의 id값을 외래키로 사용한다.
 ```sql
 alter table delete_history
     add constraint fk_delete_history_to_user
         foreign key (deleted_by_id)
             references user
 ```
-- [] question 엔티티는 user엔티티를 참조하고 user의 id값을 외래키로 사용한다.
+- [x] question 엔티티는 user엔티티를 참조하고 user의 id값을 외래키로 사용한다.
 ```sql
 alter table question
     add constraint fk_question_writer
