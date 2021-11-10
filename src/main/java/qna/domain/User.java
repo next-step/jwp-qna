@@ -15,23 +15,23 @@ public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     @Id
     private Long id;
 
-    @Column(nullable = false, length = 20, unique = true)
+    @Column(name = "user_id",nullable = false, length = 20, unique = true)
     private String userId;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "password", nullable = false, length = 20)
     private String password;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
 
-    @Column(length = 50)
+    @Column(name = "email", length = 50)
     private String email;
 
-
-    private User() {
+    public User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -136,5 +136,21 @@ public class User extends BaseEntity {
         public boolean isGuestUser() {
             return true;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof User)) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(userId, user.userId) && Objects.equals(password, user.password) && Objects.equals(name, user.name) && Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email);
     }
 }

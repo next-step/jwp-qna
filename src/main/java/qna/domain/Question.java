@@ -2,26 +2,41 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 
 @Entity
 public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     @Id
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "title", nullable = false, length = 100)
     private String title;
 
     @Lob
+    @Column(name = "contents")
     private String contents;
-    private Long writerId;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
+
+    @PrePersist
+    private void onCreateForQuestion() {
+        this.deleted = false;
+	}
 
     public Question() {
     }
@@ -37,12 +52,12 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -73,12 +88,12 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -95,7 +110,7 @@ public class Question extends BaseEntity {
             " id='" + getId() + "'" +
             ", title='" + getTitle() + "'" +
             ", contents='" + getContents() + "'" +
-            ", writerId='" + getWriterId() + "'" +
+            ", writer='" + getWriter() + "'" +
             ", deleted='" + isDeleted() + "'" +
             "}";
     }

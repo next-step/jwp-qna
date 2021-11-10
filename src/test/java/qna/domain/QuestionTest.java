@@ -22,8 +22,14 @@ public class QuestionTest {
     @Autowired
     QuestionRepository questionRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @BeforeAll
-    private void beforeEach() {
+    private void beforeAll() {
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
+        
         questionRepository.save(Q1);
         questionRepository.save(Q2);
     }
@@ -43,14 +49,14 @@ public class QuestionTest {
             () -> Assertions.assertThat(realQuestions.get(0).getId()).isEqualTo(Q1.getId()),
             () -> Assertions.assertThat(realQuestions.get(0).getTitle()).isEqualTo(Q1.getTitle()),
             () -> Assertions.assertThat(realQuestions.get(0).getContents()).isEqualTo(Q1.getContents()),
-            () -> Assertions.assertThat(realQuestions.get(0).getWriterId()).isEqualTo(Q1.getWriterId())
+            () -> Assertions.assertThat(realQuestions.get(0).getWriter()).isEqualTo(Q1.getWriter())
         );
 
         assertAll(
             () -> Assertions.assertThat(realQuestions.get(1).getId()).isEqualTo(Q2.getId()),
             () -> Assertions.assertThat(realQuestions.get(1).getTitle()).isEqualTo(Q2.getTitle()),
             () -> Assertions.assertThat(realQuestions.get(1).getContents()).isEqualTo(Q2.getContents()),
-            () -> Assertions.assertThat(realQuestions.get(1).getWriterId()).isEqualTo(Q2.getWriterId())
+            () -> Assertions.assertThat(realQuestions.get(1).getWriter()).isEqualTo(Q2.getWriter())
         );
     }
 
@@ -68,7 +74,7 @@ public class QuestionTest {
         assertAll(
             () -> Assertions.assertThat(realQuestions.get(0).getTitle()).isEqualTo(Q2.getTitle()),
             () -> Assertions.assertThat(realQuestions.get(0).getContents()).isEqualTo(Q2.getContents()),
-            () -> Assertions.assertThat(realQuestions.get(0).getWriterId()).isEqualTo(Q2.getWriterId())
+            () -> Assertions.assertThat(realQuestions.get(0).getWriter()).isEqualTo(Q2.getWriter())
         );
     }
 }
