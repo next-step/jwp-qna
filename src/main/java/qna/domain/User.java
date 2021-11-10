@@ -6,10 +6,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
 import qna.UnAuthorizedException;
 import qna.domain.common.BaseTime;
 
 @Entity
+@Table(indexes = @Index(name = "UK_userId", columnList = "userId", unique = true))
 public class User extends BaseTime {
 
     public static final GuestUser GUEST_USER = new GuestUser();
