@@ -85,7 +85,8 @@ public class AnswerTest {
 		// then
 		assertAll(
 			() -> assertThat(answer).isNotNull(),
-			() -> assertThat(answer.getQuestion()).isEqualTo(question)
+			() -> assertThat(answer.getQuestion()).isEqualTo(question),
+			() -> assertThat(question.getAnswers()).contains(answer)
 		);
 	}
 

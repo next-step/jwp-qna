@@ -46,7 +46,6 @@ public class Question extends BaseEntity {
         throwOnEmptyAnswer(answer);
         throwOnAlreadyRegisteredAnswer(answer);
 
-        answers.add(answer);
         answer.setQuestion(this);
     }
 
