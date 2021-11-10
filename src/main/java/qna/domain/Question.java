@@ -1,11 +1,28 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "question")
+public class Question extends DateTimeEntity{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "title", nullable = false)
     private String title;
-    private String contents;
-    private Long writerId;
+
+    @Column(name = "delete", nullable = false)
     private boolean deleted = false;
+
+    @Lob
+    @Column(name = "contests")
+    private String contents;
+
+    @Column(name = "writer_id")
+    private Long writerId;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -15,6 +32,9 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    protected Question() {
     }
 
     public Question writeBy(User writer) {
@@ -34,32 +54,12 @@ public class Question {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public boolean isDeleted() {
