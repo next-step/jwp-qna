@@ -31,18 +31,20 @@ public class User extends BaseEntity {
 
     }
 
+    private User(Long id, String email, String name, String password, String userId) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.userId = userId;
+    }
+
     public static User of(String email, String name, String password, String userId) {
         return of(null, email, name, password, userId);
     }
 
     public static User of(Long id, String email, String name, String password, String userId) {
-        User user = new User();
-        user.id = id;
-        user.email = email;
-        user.name = name;
-        user.password = password;
-        user.userId = userId;
-        return user;
+        return new User(id, email, name, password, userId);
     }
 
     public Long getId() {

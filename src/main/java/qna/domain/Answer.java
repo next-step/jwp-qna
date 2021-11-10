@@ -49,6 +49,14 @@ public class Answer extends BaseEntity {
 
     }
 
+    private Answer(Long id, String contents, boolean deleted, Question question, User writer) {
+        this.id = id;
+        this.contents = contents;
+        this.deleted = deleted;
+        this.question = question;
+        this.writer = writer;
+    }
+
     public static Answer of(User writer, Question question, String contents) {
         return of(null, writer, question, contents);
     }
@@ -57,13 +65,7 @@ public class Answer extends BaseEntity {
         throwOnUnAuthorizedWriter(writer);
         throwOnNotFoundQuestion(question);
 
-        Answer answer = new Answer();
-        answer.id = id;
-        answer.contents = contents;
-        answer.deleted = false;
-        answer.question = question;
-        answer.writer = writer;
-        return answer;
+        return new Answer(id, contents, false, question, writer);
     }
 
     private static void throwOnUnAuthorizedWriter(User writer) {

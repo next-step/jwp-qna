@@ -51,6 +51,15 @@ public class Question extends BaseEntity {
 
     }
 
+    private Question(Long id, String contents, boolean deleted, String title, User writer, List<Answer> answers) {
+        this.id = id;
+        this.contents = contents;
+        this.deleted = deleted;
+        this.title = title;
+        this.writer = writer;
+        this.answers = answers;
+    }
+
     public static Question of(User writer, String title, String contents) {
         return of(null, writer, title, contents);
     }
@@ -58,25 +67,13 @@ public class Question extends BaseEntity {
     public static Question of(Long id, User writer, String title, String contents) {
         throwOnEmptyTitle(title);
 
-        Question question = new Question();
-        question.id = id;
-        question.contents = contents;
-        question.deleted = false;
-        question.title = title;
-        question.writer = writer;
-        return question;
+        return new Question(id, contents, false, title, writer, new ArrayList<>());
     }
 
     private static void throwOnEmptyTitle(String title) {
         if (title == null || title.isEmpty()) {
             throw new IllegalArgumentException("제목은 빈 값일 수 없습니다.");
         }
-    }
-
-    public Question(Long id, String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
     }
 
     public void delete() {

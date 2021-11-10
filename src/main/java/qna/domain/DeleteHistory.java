@@ -38,6 +38,13 @@ public class DeleteHistory extends BaseEntity {
 
     }
 
+    private DeleteHistory(Long id, Long contentId, ContentType contentType, User deleter) {
+        this.id = id;
+        this.contentId = contentId;
+        this.contentType = contentType;
+        this.deleter = deleter;
+    }
+
     public static DeleteHistory question(User deleter, Question question) {
         return of(null, deleter, ContentType.QUESTION, question.getId());
     }
@@ -47,12 +54,7 @@ public class DeleteHistory extends BaseEntity {
     }
 
     private static DeleteHistory of(Long id, User deleter, ContentType contentType, Long contentId) {
-        DeleteHistory deleteHistory = new DeleteHistory();
-        deleteHistory.id = id;
-        deleteHistory.contentId = contentId;
-        deleteHistory.contentType = contentType;
-        deleteHistory.deleter = deleter;
-        return deleteHistory;
+        return new DeleteHistory(id, contentId, contentType, deleter);
     }
 
     public Long getId() {
