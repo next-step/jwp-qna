@@ -20,6 +20,10 @@ public class DeleteHistories {
         return this.histories.add(history);
     }
     
+    public Integer size() {
+        return this.histories.size();
+    }
+
     public List<DeleteHistory> toList() {
         return Collections.unmodifiableList(this.histories);
     }
