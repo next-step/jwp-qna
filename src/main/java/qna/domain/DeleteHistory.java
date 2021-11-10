@@ -45,11 +45,11 @@ public class DeleteHistory extends BaseEntity {
         this.deleter = deleter;
     }
 
-    public static DeleteHistory question(User deleter, Question question) {
+    public static DeleteHistory ofQuestion(User deleter, Question question) {
         return of(null, deleter, ContentType.QUESTION, question.getId());
     }
 
-    public static DeleteHistory answer(User deleter, Answer answer) {
+    public static DeleteHistory ofAnswer(User deleter, Answer answer) {
         return of(null, deleter, ContentType.ANSWER, answer.getId());
     }
 
