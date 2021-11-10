@@ -23,7 +23,7 @@ public class UserTest {
     UserRepository userRepository;
 
     @BeforeAll
-    private void beforeEach() {
+    private void beforeAll() {
         userRepository.save(JAVAJIGI);
         userRepository.save(SANJIGI);
     }

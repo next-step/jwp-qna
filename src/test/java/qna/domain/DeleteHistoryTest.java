@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,14 +16,19 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class DeleteHistoryTest {
-    public static final DeleteHistory deleteHistory1 = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
-    public static final DeleteHistory deleteHistory2 = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+    public static final DeleteHistory deleteHistory1 = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
+    public static final DeleteHistory deleteHistory2 = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
 
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
 
-    @BeforeEach
-    private void beforeEach() {
+    @Autowired
+    UserRepository userRepository;
+    
+    @BeforeAll
+    private void beforeAll() {
+        userRepository.save(UserTest.JAVAJIGI);
+
         deleteHistoryRepository.save(deleteHistory1);
         deleteHistoryRepository.save(deleteHistory2);
     }
