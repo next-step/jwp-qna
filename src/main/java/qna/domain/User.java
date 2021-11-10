@@ -11,23 +11,25 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class User extends BaseTime{
+public class User extends BaseTime {
     public static final GuestUser GUEST_USER = new GuestUser();
+    private static final String VARCHAR_20 = "varchar(20)";
+    private static final String VARCHAR_50 = "varchar(50)";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", columnDefinition = "varchar(20)", nullable = false)
+    @Column(name = "user_id", columnDefinition = VARCHAR_20, nullable = false)
     private String userId;
 
-    @Column(columnDefinition = "varchar(50)", nullable = false)
+    @Column(columnDefinition = VARCHAR_50, nullable = false)
     private String email;
 
-    @Column(columnDefinition = "varchar(20)", nullable = false)
+    @Column(columnDefinition = VARCHAR_20, nullable = false)
     private String name;
 
-    @Column(columnDefinition = "varchar(20)", nullable = false)
+    @Column(columnDefinition = VARCHAR_20, nullable = false)
     private String password;
 
     public User() {
@@ -72,7 +74,7 @@ public class User extends BaseTime{
         }
 
         return name.equals(target.name) &&
-                email.equals(target.email);
+            email.equals(target.email);
     }
 
     public boolean isGuestUser() {
@@ -122,12 +124,12 @@ public class User extends BaseTime{
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+            "id=" + id +
+            ", userId='" + userId + '\'' +
+            ", password='" + password + '\'' +
+            ", name='" + name + '\'' +
+            ", email='" + email + '\'' +
+            '}';
     }
 
     private static class GuestUser extends User {
