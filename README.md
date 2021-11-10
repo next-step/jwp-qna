@@ -7,6 +7,6 @@
 
 ## 구현 목록
 - [x] answer 구현
-- [ ] delete_history 구현
+- [x] delete_history 구현
 - [ ] question 구현
 - [ ] user 구현
