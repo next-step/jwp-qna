@@ -7,8 +7,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -44,6 +46,27 @@ public class QuestionTest {
         );
     }
 
+    private static Stream<Arguments> providerQuestionOtherWriter() {
+        User US = new User("최웅석", "A", "최웅석", "최웅석_email");
+        User JH = new User("지호님", "A", "지호님", "지호님_email");
+
+        Question QUESTION1 = new Question(US, "[1] JPA 질문있습니다.", "질문 내용");
+
+        Answer ANSWER1 = new Answer(JH, QUESTION1, "[1] JPA 답변 내용입니다.");
+
+        return Stream.of(Arguments.of(US, QUESTION1, ANSWER1));
+    }
+
+    private static Stream<Arguments> providerQuestionSameWriter() {
+        User US = new User("최웅석", "A", "최웅석", "최웅석_email");
+
+        Question QUESTION1 = new Question(US, "[1] JPA 질문있습니다.", "질문 내용");
+
+        Answer ANSWER1 = new Answer(US, QUESTION1, "[1] JPA 답변 내용입니다.");
+
+        return Stream.of(Arguments.of(US, QUESTION1, ANSWER1));
+    }
+
     @ParameterizedTest
     @MethodSource("providerQuestions")
     @DisplayName("저장을 시도하는 객체와 저장후 반환되는 객체가 동일한지 체크한다.")
@@ -76,4 +99,23 @@ public class QuestionTest {
             new Question(null, "제목", "내용");
         }).isInstanceOf(UnAuthorizedException.class);
     }
+
+    @ParameterizedTest
+    @MethodSource("providerQuestionOtherWriter")
+    @DisplayName("다른 작성자 삭제 방지 검증")
+    public void 다른_작성자_삭제_방지(User loginUser, Question exceptedQuestion, Answer exceptedAnswer) {
+        assertThatThrownBy(() -> {
+            exceptedQuestion.delete(loginUser);
+            exceptedQuestion.deleteQuestionByAnswers(loginUser, Arrays.asList(exceptedAnswer));
+        }).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @ParameterizedTest
+    @MethodSource("providerQuestionSameWriter")
+    @DisplayName("다른 작성자 삭제 방지 검증")
+    public void 같은_작성자_삭제(User loginUser, Question exceptedQuestion, Answer exceptedAnswer) {
+        exceptedQuestion.delete(loginUser);
+        exceptedQuestion.deleteQuestionByAnswers(loginUser, Arrays.asList(exceptedAnswer));
+    }
+
 }
