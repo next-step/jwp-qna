@@ -32,11 +32,15 @@ public class DeleteHistory {
         this(null, contentType, contentId, deletedById);
     }
 
-    public DeleteHistory(Long id, ContentType contentType, Long contentId, Long deletedById){
+    public DeleteHistory(Long id, ContentType contentType, Long contentId, Long deletedById) {
         this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
