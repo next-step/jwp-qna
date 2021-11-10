@@ -19,15 +19,15 @@
 ### 연관관계 매핑
 
 - [x] 연관관계 파악
-  - [x] Answer <-> question 다대일,일대다 양방향
-  - [x] Answer -> user 다대일 단방향
-  - [ ] DeleteHistory -> user 다대일 단방향
-  - [x] Question -> user 다대일 단방향
-- [ ] 연관 관계 테스트
-  - [ ] Question <-> answer
-  - [ ] Question <-> user
-  - [ ] Answer <-> user
-  - [ ] deleteHistory <-> user
+    - [x] Answer <-> question 다대일,일대다 양방향
+    - [x] Answer -> user 다대일 단방향
+    - [x] DeleteHistory -> user 다대일 단방향
+    - [x] Question -> user 다대일 단방향
+- [x] 연관 관계 테스트
+    - [x] Question <-> answer
+    - [x] Question <-> user
+    - [x] Answer <-> user
+    - [x] deleteHistory <-> user
 
 
 

@@ -55,8 +55,7 @@ public class Answer extends BaseTime {
     }
 
     /**
-     * 연관관계 설정
-     * Answer -> User
+     * 연관관계 설정 Answer -> User
      *
      * @param writer
      */
@@ -69,14 +68,13 @@ public class Answer extends BaseTime {
     }
 
     /**
-     * 연관관계 설정
-     * Answer -> Question
+     * 연관관계 설정 Answer -> Question
      *
      * @param question
      */
     public void toQuestion(Question question) {
-       this.question = question;
-       question.addAnswer(this);
+        this.question = question;
+        question.addAnswer(this);
     }
 
     public Long getId() {

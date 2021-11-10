@@ -13,10 +13,16 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     @DisplayName("delete history 저장 성공")
-    public void saveDeleteHistorySuccess() throws Exception {
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, 1L);
+    public void saveDeleteHistorySuccess() {
+        User javajigi = userRepository.save(UserTest.JAVAJIGI);
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L)
+            .deleteBy(javajigi);
+
         DeleteHistory save = deleteHistoryRepository.save(deleteHistory);
 
         assertThat(save.equals(deleteHistory)).isTrue();

@@ -53,8 +53,7 @@ public class Question extends BaseTime {
     }
 
     /**
-     * 연관관계 설정
-     * Question -> User
+     * 연관관계 설정 Question -> User
      *
      * @param writer
      * @return
@@ -69,8 +68,7 @@ public class Question extends BaseTime {
     }
 
     /**
-     * 연관관계 설정
-     * answer -> question
+     * 연관관계 설정 answer -> question
      *
      * @param answer
      */

@@ -29,6 +29,7 @@ class QuestionRepositoryTest {
     @AfterEach
     public void tearDown() {
         questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test

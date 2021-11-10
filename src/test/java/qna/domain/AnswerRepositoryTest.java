@@ -39,6 +39,7 @@ class AnswerRepositoryTest {
     public void tearDown() {
         answerRepository.deleteAll();
         userRepository.deleteAll();
+        questionRepository.deleteAll();
     }
 
     @Test
