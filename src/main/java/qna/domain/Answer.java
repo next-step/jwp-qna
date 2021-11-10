@@ -14,7 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 
 @Entity
-public class Answer {
+public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,11 +29,6 @@ public class Answer {
     @Column(nullable = false)
     private boolean deleted = false;
     
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-    
-    private LocalDateTime updatedAt;
-
     private Answer() {
     }
 
