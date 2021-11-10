@@ -50,7 +50,7 @@ class AnswerRepositoryTest {
 		Optional<Answer> findNoAnswer = answerRepository.findByIdAndDeletedTrue(savedAnswer.getId());
 		assertThat(findNoAnswer.isPresent()).isFalse();    /* 삭제되지 않았기 때문에 검색 안됨	*/
 
-		savedAnswer.setDeleted(true);
+		savedAnswer.delete();
 		answerRepository.save(savedAnswer);
 		Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedTrue(savedAnswer.getId());
 		assertThat(findAnswer.isPresent()).isTrue();
