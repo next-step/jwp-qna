@@ -29,7 +29,7 @@ public class Answer extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
     
-    private Answer() {
+    protected Answer() {
     }
 
     public Answer(User writer, Question question, String contents) {

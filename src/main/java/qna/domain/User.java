@@ -29,7 +29,7 @@ public class User extends BaseEntity {
     
     private String email;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
