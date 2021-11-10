@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.QuestionTest;
 import qna.domain.UserTest;
+import qna.domain.user.UserRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,9 +31,12 @@ public class AnswerTest {
 
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeAll
     private void setUp() {
+        userRepository.saveAll(Arrays.asList(UserTest.JAVAJIGI, UserTest.SANJIGI));
         answerRepository.saveAll(Arrays.asList(A1, A2, A3, A4));
     }
 
@@ -57,7 +61,7 @@ public class AnswerTest {
     @Test
     @DisplayName("삭제되지 않은 Answer 를 Question 의 아이디를 통해 찾을 수 있다")
     void findByQuestionIdAndDeletedFalse() {
-        final List<Answer> foundAnswers = answerRepository.findAllByQuestionIdAndDeletedFalse(A1.getQuestionId());
+        final List<Answer> foundAnswers = answerRepository.findByQuestion_IdAndDeletedFalse(A1.getQuestionId());
 
         assertAll(() -> {
             assertTrue(foundAnswers.contains(A1));

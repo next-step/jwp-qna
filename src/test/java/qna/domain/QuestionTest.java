@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.question.Question;
 import qna.domain.question.QuestionRepository;
 import qna.domain.user.User;
+import qna.domain.user.UserRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,14 +31,18 @@ public class QuestionTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeAll
     private void setUp() {
+        userRepository.saveAll(Arrays.asList(UserTest.JAVAJIGI, UserTest.SANJIGI));
         questionRepository.saveAll(Arrays.asList(Q1, Q2, Q3));
     }
 
     private Question createQuestion(String title, String content, User user) {
-        return new Question(title, content).writeBy(user);
+        final User savedUser = userRepository.save(user);
+        return new Question(title, content).writeBy(savedUser);
     }
 
     @Test
