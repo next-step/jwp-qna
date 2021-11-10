@@ -2,6 +2,7 @@ package qna.domain;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,8 @@ public class UserTest {
     }
 
     @Test
-    void User_를_저장_할_경우_저장된_객체와_저장_후_객체가_일치하다() {
+    @DisplayName("User 를 저장 할 경우 저장된 객체와 저장 후 객체가 일치하다")
+    void save() {
         final User user = create(3L, "doyoung", DUMMY_PASSWORD, DUMMY_NAME, "doyoung@qna.test");
         final User savedUser = userRepository.save(user);
         assertEquals(savedUser, user);
@@ -46,7 +48,8 @@ public class UserTest {
     }
 
     @Test
-    void 아이디를_통해서_User를_조회할_수_있다() {
+    @DisplayName("아이디를 통해서 User를 조회할 수 있다")
+    void findByUserId() {
         final Optional<User> userOptional = userRepository.findByUserId(JAVAJIGI.getUserId());
         assertAll(() -> {
             assertTrue(userOptional.isPresent());

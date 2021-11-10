@@ -2,6 +2,7 @@ package qna.domain;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +41,16 @@ public class QuestionTest {
     }
 
     @Test
-    void Question_을_저장_할_경우_저장된_객체와_저장_후_객체가_일치하다() {
+    @DisplayName("Question 을 저장 할 경우 저장된 객체와 저장 후 객체가 일치하다")
+    void save() {
         final Question question = createQuestion("title", "content", UserTest.JAVAJIGI);
         final Question savedQuestion = questionRepository.save(question);
         assertEquals(savedQuestion, question);
     }
 
     @Test
-    void 삭제되지_않은_Question을_아이디를_통해_찾을_수_있다() {
+    @DisplayName("삭제되지 않은 Question을 아이디를 통해 찾을 수 있다")
+    void findByIdAndDeletedFalse() {
         final Optional<Question> questionOptional = questionRepository.findByIdAndDeletedFalse(Q1.getId());
         assertAll(() -> {
             assertTrue(questionOptional.isPresent());
@@ -56,7 +59,8 @@ public class QuestionTest {
     }
 
     @Test
-    void 삭제되지_않은_Question를_Question의_아이디를_통해_찾을_수_있다() {
+    @DisplayName("삭제되지 않은 Question를 Question의 아이디를 통해 찾을 수 있다")
+    void findByDeletedFalse() {
         final List<Question> foundQuestions = questionRepository.findByDeletedFalse();
         assertAll(() -> {
             assertTrue(foundQuestions.contains(Q1));

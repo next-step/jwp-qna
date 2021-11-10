@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -20,7 +21,8 @@ class DeleteHistoryTest {
     private DeleteHistoryRepository deleteHistoryRepository;
 
     @Test
-    void DeleteHistory_를_저장_할_경우_저장된_객체와_저장_후_객체가_일치하다() {
+    @DisplayName("DeleteHistory 를 저장 할 경우 저장된 객체와 저장 후 객체가 일치하다")
+    void save() {
         // given
         final DeleteHistory deleteHistory = create(1L, 1L);
         // when

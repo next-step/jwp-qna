@@ -2,6 +2,7 @@ package qna.domain.answer;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +37,15 @@ public class AnswerTest {
     }
 
     @Test
-    void Answer_를_저장_할_경우_저장된_객체와_저장_후_객체가_일치하다() {
+    @DisplayName("Answer 를 저장 할 경우 저장된 객체와 저장 후 객체가 일치하다")
+    void save() {
         final Answer savedAnswer = answerRepository.save(A3);
         assertEquals(savedAnswer, A3);
     }
 
     @Test
-    void 삭제되지_않은_Answer를_아이디를_통해_찾을_수_있다() {
+    @DisplayName("삭제되지 않은 Answer 를 아이디를 통해 찾을 수 있다")
+    void findByIdAndDeletedFalse() {
         final Answer savedAnswer = answerRepository.save(A1);
         final Optional<Answer> answerOptional = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
         assertAll(() -> {
@@ -52,8 +55,8 @@ public class AnswerTest {
     }
 
     @Test
-    void 삭제되지_않은_Answer를_Question의_아이디를_통해_찾을_수_있다() {
-
+    @DisplayName("삭제되지 않은 Answer 를 Question 의 아이디를 통해 찾을 수 있다")
+    void findByQuestionIdAndDeletedFalse() {
         final List<Answer> foundAnswers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
 
         assertAll(() -> {
