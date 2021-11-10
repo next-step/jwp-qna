@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.util.Objects;
 
@@ -22,7 +23,7 @@ public class Answer extends BaseTimeEntity {
     private Long id;
     private Long writerId;
     private Long questionId;
-    @Column(columnDefinition = "longtext")
+    @Lob
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
