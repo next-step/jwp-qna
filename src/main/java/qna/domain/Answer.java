@@ -1,20 +1,21 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+
+import qna.CannotDeleteException;
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseTimeEntity {
@@ -23,16 +24,16 @@ public class Answer extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade= CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @ManyToOne(cascade= CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -56,7 +57,7 @@ public class Answer extends BaseTimeEntity {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
+        this.contents = Contents.of(contents);
     }
 
     public boolean isOwner(User writer) {
@@ -83,8 +84,19 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory delete(User owner) throws CannotDeleteException {
+        validateDeleteAnswerAuthority(owner);
+        this.deleted = true;
+
+        return DeleteHistory.ofAnswer(id, owner);
+    }
+
+    private void validateDeleteAnswerAuthority(User owner) throws CannotDeleteException {
+        if (isOwner(owner)) {
+            return;
+        }
+
+        throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 
     @Override
@@ -96,12 +108,12 @@ public class Answer extends BaseTimeEntity {
         Answer answer = (Answer)o;
         return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writer,
                                                                                             answer.writer)
-            && Objects.equals(question, answer.question) && Objects.equals(contents, answer.contents);
+            && Objects.equals(question.getId(), answer.question.getId()) && Objects.equals(contents, answer.contents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, writer, question, contents, deleted);
+        return Objects.hash(id, writer, question.getId(), contents, deleted);
     }
 
     @Override
