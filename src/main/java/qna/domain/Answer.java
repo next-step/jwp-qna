@@ -8,17 +8,14 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "answer")
 public class Answer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
     private Long writerId;
 
-    @Column
     private Long questionId;
 
     @Lob
