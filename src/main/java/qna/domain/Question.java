@@ -1,57 +1,58 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+import qna.UnAuthorizedException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static qna.utils.ValidationUtils.isEmpty;
 
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity {
 
+    @OneToMany(mappedBy = "question")
+    private final List<Answer> answers = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
     @Column(name = "title", length = 100, nullable = false)
     private String title;
-
     @Lob
     @Column(name = "contents")
     private String contents;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name="fk_question_writer"))
+    @JoinColumn(name = "writer_id", updatable = false, foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
-
-    public Question(String title, String contents) {
-        this(null ,title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
-    }
-
-    public Question(User writer, String title, String contents, boolean deleted) {
+    public Question(User writer, String title, String contents) {
+        validation(writer);
         this.writer = writer;
         this.title = title;
         this.contents = contents;
-        this.deleted = deleted;
     }
 
-    protected Question() {}
+    protected Question() {
+    }
 
-    public Question writeBy(User writer) {
-        this.writer = writer;
-        return this;
+    private void validation(User writer) {
+        if (isEmpty(writer)) {
+            throw new UnAuthorizedException("질문 작성자가 없습니다.");
+        }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isOwner(User writer) {
@@ -59,57 +60,53 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public User getWriter() {
-        return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
+        answers.add(answer);
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public DeleteHistory delete(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 질문입니다.");
+        }
+        changeDeletedStatus(true);
+        return new DeleteHistory(ContentType.QUESTION, id, writer);
+    }
+
+    public List<DeleteHistory> deleteQuestionByAnswers(User loginUser, List<Answer> deleteAnswers) {
+        List<DeleteHistory> result = new ArrayList<>();
+        for (Answer answer : deleteAnswers) {
+            if (!answer.isOwner(loginUser)) {
+                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            }
+            result.add(answer.delete(loginUser));
+        }
+        return result;
+    }
+
+    private void changeDeletedStatus(boolean deleted) {
         this.deleted = deleted;
     }
 
     @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writer +
-                ", deleted=" + deleted +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return deleted == question.deleted
+                && Objects.equals(id, question.id)
+                && Objects.equals(title, question.title)
+                && Objects.equals(contents, question.contents)
+                && Objects.equals(writer, question.writer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writer, deleted);
     }
 }
