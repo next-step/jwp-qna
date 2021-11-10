@@ -3,7 +3,6 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +25,9 @@ public class Question extends BaseEntity{
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -87,6 +89,10 @@ public class Question extends BaseEntity{
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public void setDeleted(boolean deleted) {
