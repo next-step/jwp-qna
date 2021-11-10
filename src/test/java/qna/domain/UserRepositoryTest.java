@@ -8,24 +8,22 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
-public class AnswerRepositoryTest {
-    
+public class UserRepositoryTest {
+
     @Autowired
-    private AnswerRepository answers;
+    private UserRepository userRepository;
 
     @Test
     void save() {
-        // given
-        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        User user = UserTest.JAVAJIGI;
 
-        // when
-        Answer result = answers.save(answer);
+        User result = userRepository.save(user);
+
         assertAll(
                 () -> assertThat(result.getId()).isNotNull(),
-                () -> assertThat(result.getContents()).isEqualTo(result.getContents())
+                () -> assertThat(result.getPassword()).isEqualTo(result.getPassword())
         );
 
     }

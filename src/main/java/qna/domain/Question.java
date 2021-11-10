@@ -1,10 +1,9 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
-public class Question {
+public class Question extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,17 +15,11 @@ public class Question {
     @Lob
     private String contents;
 
+    @Column
     private Long writerId;
 
     @Column(nullable = false)
     private boolean deleted = false;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
-    private Date createdAt;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
 
     public Question() {
 

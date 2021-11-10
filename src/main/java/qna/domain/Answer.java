@@ -4,34 +4,29 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.Objects;
 
 @Entity
-public class Answer {
+public class Answer extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long writerId;
-
-    private Long questionId;
-
     @Lob
+    @Column
     private String contents;
 
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
-    private Date createdAt;
+    @Column
+    private Long questionId;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    @Column
+    private Long writerId;
 
-    public Answer() {
+    protected Answer() {
 
     }
 
@@ -53,22 +48,6 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public boolean isOwner(User writer) {
