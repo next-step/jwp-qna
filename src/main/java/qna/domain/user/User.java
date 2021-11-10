@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Entity
 @Table(uniqueConstraints = {
-        @UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = {"userId"})
+        @UniqueConstraint(name = "uk_user_user_id", columnNames = {"userId"})
 })
 public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
