@@ -1,10 +1,16 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import qna.domain.common.BaseTime;
 
 @Entity
@@ -24,6 +30,9 @@ public class Question extends BaseTime {
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answerList = new ArrayList<>();
 
     protected Question() {
     }
@@ -47,40 +56,38 @@ public class Question extends BaseTime {
         return this.writerId.equals(writer.getId());
     }
 
+    /**
+     * 연관관계 설정
+     * answer -> question
+     *
+     * @param answer
+     */
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        this.answerList.add(answer);
+    }
+
+    public boolean equalsId(Question other) {
+        if (Objects.isNull(other)) {
+            return false;
+        }
+
+        return this.id == other.getId();
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public boolean isDeleted() {
