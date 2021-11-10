@@ -46,13 +46,9 @@ JPA 엔티티 매핑에 대해 학습하기
 - [ ] DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다
 - [ ] @DataJpaTest 를 사용하여 학습 테스트를 해 본다.
 - [ ] Spring Data JPA 사용 시 옵션으로 동작 쿼리를 로그를 확인해본다.
-- Station domain
-    - [X] Station 을 생성하기, 생성된 name 일치 테스트 하기
-    - [X] save 된 station 과 조회된 station 의 동등성 테스트
-- [ ] Answer 엔티티 작업
-- [ ] DeleteHistory 엔티티 작업
-- [ ] Question 엔티티 작업
-- [ ] User 엔티티 작업
-- [ ] AuditingEntityListener base 엔티티 구현하기
+- [X] Answer 엔티티 작업
+- [X] DeleteHistory 엔티티 작업
+- [X] Question 엔티티 작업
+- [X] User 엔티티 작업
+- [X] AuditingEntityListener base 엔티티 구현하기
 
-- [X] flush 테스트 (setName 으로 데이터를 변경하고), DB 조회시 선 반영되는지 테스트
