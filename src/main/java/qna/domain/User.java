@@ -4,16 +4,33 @@ import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
-public class User {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class User extends BaseTime{
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "user_id", columnDefinition = "varchar(20)", nullable = false)
     private String userId;
-    private String password;
-    private String name;
+
+    @Column(columnDefinition = "varchar(50)", nullable = false)
     private String email;
 
-    private User() {
+    @Column(columnDefinition = "varchar(20)", nullable = false)
+    private String name;
+
+    @Column(columnDefinition = "varchar(20)", nullable = false)
+    private String password;
+
+    public User() {
     }
 
     public User(String userId, String password, String name, String email) {

@@ -5,12 +5,35 @@ import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
-public class Answer {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+
+@Entity
+public class Answer extends BaseTime {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+
+    @Lob
+    @Column
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column(name = "question_id")
+    private Long questionId;
+
+    @Column(name = "writer_id")
+    private Long writerId;
+
+    public Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -31,6 +54,8 @@ public class Answer {
         this.questionId = question.getId();
         this.contents = contents;
     }
+
+
 
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
