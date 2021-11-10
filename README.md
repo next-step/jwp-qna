@@ -6,7 +6,7 @@
 - @DataJpaTest를 사용하여 학습 테스트를 해 본다.
 
 ## 구현 목록
-- [ ] answer 구현
+- [x] answer 구현
 - [ ] delete_history 구현
 - [ ] question 구현
 - [ ] user 구현
