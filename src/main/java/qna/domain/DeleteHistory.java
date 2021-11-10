@@ -6,16 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 @Entity
 public class DeleteHistory extends BaseTimeEntity {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "contentType")
@@ -60,14 +53,6 @@ public class DeleteHistory extends BaseTimeEntity {
 		this.deletedById = deletedById;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -75,7 +60,7 @@ public class DeleteHistory extends BaseTimeEntity {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		DeleteHistory that = (DeleteHistory)o;
-		return Objects.equals(id, that.id) &&
+		return Objects.equals(getId(), that.getId()) &&
 			contentType == that.contentType &&
 			Objects.equals(contentId, that.contentId) &&
 			Objects.equals(deletedById, that.deletedById);
@@ -83,13 +68,13 @@ public class DeleteHistory extends BaseTimeEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, contentType, contentId, deletedById);
+		return Objects.hash(getId(), contentType, contentId, deletedById);
 	}
 
 	@Override
 	public String toString() {
 		return "DeleteHistory{" +
-			"id=" + id +
+			"id=" + getId() +
 			", contentType=" + contentType +
 			", contentId=" + contentId +
 			", deletedById=" + deletedById +

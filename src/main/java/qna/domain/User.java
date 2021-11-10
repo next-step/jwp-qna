@@ -4,19 +4,12 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 import qna.UnAuthorizedException;
 
 @Entity
 public class User extends BaseTimeEntity {
 	public static final GuestUser GUEST_USER = new GuestUser();
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
 	@Column(name = "user_id", length = 20, nullable = false)
 	private String userId;
@@ -38,7 +31,7 @@ public class User extends BaseTimeEntity {
 	}
 
 	public User(Long id, String userId, String password, String name, String email) {
-		this.id = id;
+		this.setId(id);
 		this.userId = userId;
 		this.password = password;
 		this.name = name;
@@ -79,14 +72,6 @@ public class User extends BaseTimeEntity {
 		return false;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getUserId() {
 		return userId;
 	}
@@ -122,7 +107,7 @@ public class User extends BaseTimeEntity {
 	@Override
 	public String toString() {
 		return "User{" +
-			"id=" + id +
+			"id=" + getId() +
 			", userId='" + userId + '\'' +
 			", password='" + password + '\'' +
 			", name='" + name + '\'' +

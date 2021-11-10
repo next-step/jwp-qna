@@ -4,9 +4,6 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
 
 import qna.NotFoundException;
@@ -14,10 +11,6 @@ import qna.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseTimeEntity {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
 	@Column(name = "writer_id")
 	private Long writerId;
@@ -40,7 +33,7 @@ public class Answer extends BaseTimeEntity {
 	}
 
 	public Answer(Long id, User writer, Question question, String contents) {
-		this.id = id;
+		this.setId(id);
 
 		if (Objects.isNull(writer)) {
 			throw new UnAuthorizedException();
@@ -67,14 +60,6 @@ public class Answer extends BaseTimeEntity {
 
 	public void toQuestion(Question question) {
 		this.questionId = question.getId();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public Long getWriterId() {
@@ -112,7 +97,7 @@ public class Answer extends BaseTimeEntity {
 	@Override
 	public String toString() {
 		return "Answer{" +
-			"id=" + id +
+			"id=" + getId() +
 			", writerId=" + writerId +
 			", questionId=" + questionId +
 			", contents='" + contents + '\'' +
