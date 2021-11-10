@@ -2,15 +2,24 @@ package qna.domain;
 
 import qna.CannotDeleteException;
 
-import java.time.LocalDateTime;
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Embeddable
 public class Answers {
 
-    private final List<Answer> answers;
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     public Answers(List<Answer> answers) {
         this.answers = answers;
+    }
+
+    protected Answers() {
+
     }
 
     public void checkIsOwner(User writer) throws CannotDeleteException {
@@ -25,9 +34,19 @@ public class Answers {
         }
     }
 
+    public void add(Answer answer) {
+        answers.add(answer);
+    }
+
     public void delete(List<DeleteHistory> deleteHistories) {
         for (Answer answer : answers) {
             answer.delete(deleteHistories);
         }
+    }
+
+    public List<Answer> getAnswers() {
+        return answers.stream()
+                .filter(answer -> !answer.isDeleted())
+                .collect(Collectors.toList());
     }
 }
