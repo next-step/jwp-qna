@@ -11,12 +11,12 @@
     - [X] `Question`
     - [X] `User`
   - [ ] repository 클래스 작성
-    - [ ] `Answer`
+    - [X] `Answer`
     - [ ] `DeleteHistory`
     - [ ] `Question`
     - [ ] `User`
 - [ ] @DataJpaTest를 사용하여 학습 테스트를 해 본다.
-  - [ ] `Answer`
+  - [X] `Answer`
   - [ ] `DeleteHistory`
   - [ ] `Question`
   - [ ] `User`
