@@ -1,8 +1,8 @@
 package qna.domain.question;
 
 import qna.domain.BaseTimeEntity;
-import qna.domain.user.User;
 import qna.domain.answer.Answer;
+import qna.domain.user.User;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,6 +32,11 @@ public class Question extends BaseTimeEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    public Question(Long id, String title, String contents, boolean deleted) {
+        this(id, title, contents);
+        this.deleted = deleted;
     }
 
     public Question writeBy(User writer) {

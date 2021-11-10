@@ -1,12 +1,15 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.question.Question;
 import qna.domain.question.QuestionRepository;
+import qna.domain.user.User;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,34 +20,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QuestionTest {
 
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
-    public static final Question Q3 = new Question("title3", "contents3").writeBy(UserTest.SANJIGI);
-
-    static {
-        Q3.setDeleted(true);
-    }
+    public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+    public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q3 = new Question(3L, "title3", "contents3", true).writeBy(UserTest.SANJIGI);
 
     @Autowired
     private QuestionRepository questionRepository;
 
-    @BeforeEach
-    void setUp() {
-        saveAndIdUpdate(Q1);
-        saveAndIdUpdate(Q2);
-        saveAndIdUpdate(Q3);
+    @BeforeAll
+    private void setUp() {
+        questionRepository.saveAll(Arrays.asList(Q1, Q2, Q3));
     }
 
-    private void saveAndIdUpdate(final Question question) {
-        final Question savedQuestion = questionRepository.save(question);
-        question.setId(savedQuestion.getId());
+    private Question createQuestion(String title, String content, User user) {
+        return new Question(title, content).writeBy(user);
     }
 
     @Test
     void Question_을_저장_할_경우_저장된_객체와_저장_후_객체가_일치하다() {
-        final Question question = new Question("title", "content").writeBy(UserTest.JAVAJIGI);
+        final Question question = createQuestion("title", "content", UserTest.JAVAJIGI);
         final Question savedQuestion = questionRepository.save(question);
         assertEquals(savedQuestion, question);
     }
@@ -69,5 +66,9 @@ public class QuestionTest {
         });
     }
 
+    @AfterAll
+    void clear() {
+        questionRepository.deleteAllInBatch();
+    }
 
 }

@@ -6,7 +6,6 @@ import qna.domain.BaseTimeEntity;
 import qna.domain.question.Question;
 import qna.domain.user.User;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -48,6 +47,11 @@ public class Answer extends BaseTimeEntity {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
+    }
+
+    public Answer(Long id, User writer, Question question, String contents, boolean deleted) {
+        this(id, writer, question, contents);
+        this.deleted = deleted;
     }
 
     public boolean isOwner(User writer) {
@@ -93,17 +97,12 @@ public class Answer extends BaseTimeEntity {
 
         Answer answer = (Answer) o;
 
-        if (id != null ? !id.equals(answer.id) : answer.id != null) return false;
-        if (writerId != null ? !writerId.equals(answer.writerId) : answer.writerId != null) return false;
-        return questionId != null ? questionId.equals(answer.questionId) : answer.questionId == null;
+        return id != null ? id.equals(answer.id) : answer.id == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (writerId != null ? writerId.hashCode() : 0);
-        result = 31 * result + (questionId != null ? questionId.hashCode() : 0);
-        return result;
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override

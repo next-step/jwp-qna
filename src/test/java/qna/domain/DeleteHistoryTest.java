@@ -22,14 +22,14 @@ class DeleteHistoryTest {
     @Test
     void DeleteHistory_를_저장_할_경우_저장된_객체와_저장_후_객체가_일치하다() {
         // given
-        final ContentType contentType = ContentType.ANSWER;
-        final Long contentId = 1L;
-        final Long deletedById = 1L;
-        final LocalDateTime createDate = LocalDateTime.now();
-        final DeleteHistory deleteHistory = new DeleteHistory(contentType, contentId, deletedById, createDate);
+        final DeleteHistory deleteHistory = create(1L, 1L);
         // when
         final DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
         // then
         assertEquals(savedDeleteHistory, deleteHistory);
+    }
+
+    private DeleteHistory create(Long contentId, Long deletedById) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deletedById, LocalDateTime.now());
     }
 }
