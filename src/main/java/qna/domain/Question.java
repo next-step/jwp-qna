@@ -1,6 +1,8 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -18,14 +20,18 @@ public class Question extends BaseEntity {
     @Column(name = "contents")
     private String contents;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name="fk_question_writer"))
+    private User writer;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
+
     public Question(String title, String contents) {
-        this(null, title, contents);
+        this(null ,title, contents);
     }
 
     public Question(Long id, String title, String contents) {
@@ -34,13 +40,22 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
+    public Question(User writer, String title, String contents, boolean deleted) {
+        this.writer = writer;
+        this.title = title;
+        this.contents = contents;
+        this.deleted = deleted;
+    }
+
+    protected Question() {}
+
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -71,12 +86,12 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -93,7 +108,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }

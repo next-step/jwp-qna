@@ -41,6 +41,7 @@ public class UserTest {
 
     @ParameterizedTest
     @MethodSource("providerUsers")
+    @DisplayName("저장을 시도하는 객체와 저장후 반환되는 객체가 동일한지 체크한다.")
     public void 유저_생성(User excepted) {
         User actual = userRepository.save(excepted);
 

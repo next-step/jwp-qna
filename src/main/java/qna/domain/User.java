@@ -3,6 +3,7 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -16,17 +17,26 @@ public class User extends BaseEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "user_id", unique = true, nullable = false)
+    @Column(name = "user_id", length = 20, unique = true, nullable = false)
     private String userId;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", length = 20, nullable = false)
     private String password;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "email")
+    @Column(name = "email", length = 50)
     private String email;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers;
+
+    @OneToMany(mappedBy = "deletedByUser")
+    private List<DeleteHistory> deleteHistories;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Question> questions;
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
@@ -40,7 +50,7 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
-    public User() {}
+    protected User() {}
 
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.userId)) {

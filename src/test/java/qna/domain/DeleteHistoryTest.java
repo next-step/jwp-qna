@@ -14,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class DeleteHistoryTest {
-    public static final DeleteHistory D1 = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI.getId(), LocalDateTime.now());
-    public static final DeleteHistory D2 = new DeleteHistory(ContentType.QUESTION, 2L, UserTest.SANJIGI.getId(), LocalDateTime.now());
+    public static final DeleteHistory D1 = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
+    public static final DeleteHistory D2 = new DeleteHistory(ContentType.QUESTION, 2L, UserTest.SANJIGI, LocalDateTime.now());
 
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
