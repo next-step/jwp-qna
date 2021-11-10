@@ -30,7 +30,7 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "user_id", length = 20, nullable = false)
+    @Column(name = "user_id", length = 20, nullable = false, unique = true)
     private String userId;
 
     protected User() {
