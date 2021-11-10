@@ -5,89 +5,117 @@ import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
-public class Answer {
-    private Long id;
-    private Long writerId;
-    private Long questionId;
-    private String contents;
-    private boolean deleted = false;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
+@Entity
+public class Answer extends BaseTimeEntity {
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
+	@Lob
+	private String contents;
 
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
+	@Column(nullable = false)
+	private boolean deleted;
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
-        this.contents = contents;
-    }
+	private Long questionId;
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
+	private Long writerId;
 
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
-    }
+	protected Answer() {
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Answer(User writer, Question question, String contents) {
+		this(null, writer, question, contents);
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Answer(Long id, User writer, Question question, String contents) {
+		if (Objects.isNull(writer)) {
+			throw new UnAuthorizedException();
+		}
 
-    public Long getWriterId() {
-        return writerId;
-    }
+		if (Objects.isNull(question)) {
+			throw new NotFoundException();
+		}
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
+		this.id = id;
+		this.contents = contents;
+		this.deleted = false;
+		this.writerId = writer.getId();
+		this.questionId = question.getId();
+	}
 
-    public Long getQuestionId() {
-        return questionId;
-    }
+	public boolean isOwner(User writer) {
+		return this.writerId.equals(writer.getId());
+	}
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
+	public void toQuestion(Question question) {
+		this.questionId = question.getId();
+	}
 
-    public String getContents() {
-        return contents;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
+	public Long getWriterId() {
+		return writerId;
+	}
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+	public Long getQuestionId() {
+		return questionId;
+	}
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+	public String getContents() {
+		return contents;
+	}
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
-    }
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void delete() {
+		deleted = true;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		Answer answer = (Answer)o;
+		return isDeleted() == answer.isDeleted() && Objects.equals(getId(), answer.getId())
+			&& Objects.equals(getContents(), answer.getContents()) && Objects.equals(getQuestionId(),
+			answer.getQuestionId()) && Objects.equals(getWriterId(), answer.getWriterId())
+			&& Objects.equals(getCreatedAt(), answer.getCreatedAt()) && Objects.equals(getUpdatedAt(),
+			answer.getUpdatedAt());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId(), getContents(), isDeleted(), getQuestionId(), getWriterId());
+	}
+
+	@Override
+	public String toString() {
+		return "Answer{" +
+			"id=" + id +
+			", contents='" + contents + '\'' +
+			", deleted=" + deleted +
+			", questionId=" + questionId +
+			", writerId=" + writerId +
+			", createdAt=" + getCreatedAt() +
+			", updatedAt=" + getUpdatedAt() +
+			'}';
+	}
 }

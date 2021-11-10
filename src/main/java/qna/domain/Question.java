@@ -1,83 +1,116 @@
 package qna.domain;
 
-public class Question {
-    private Long id;
-    private String title;
-    private String contents;
-    private Long writerId;
-    private boolean deleted = false;
+import java.util.Objects;
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 
-    public Question(Long id, String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
-    }
+@Entity
+public class Question extends BaseTimeEntity {
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
-    }
+	@Id
+	@GeneratedValue
+	private Long id;
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
+	@Lob
+	private String contents;
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
+	@Column(length = 100, nullable = false)
+	private String title;
 
-    public Long getId() {
-        return id;
-    }
+	@Column(nullable = false)
+	private boolean deleted;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	private Long writerId;
 
-    public String getTitle() {
-        return title;
-    }
+	protected Question() {
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public Question(String title, String contents) {
+		this(null, title, contents);
+	}
 
-    public String getContents() {
-        return contents;
-    }
+	public Question(Long id, String title, String contents) {
+		this.id = id;
+		this.contents = contents;
+		this.title = title;
+		this.deleted = false;
+	}
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
+	public Question writeBy(User writer) {
+		this.writerId = writer.getId();
+		return this;
+	}
 
-    public Long getWriterId() {
-        return writerId;
-    }
+	public boolean isOwner(User writer) {
+		return this.writerId.equals(writer.getId());
+	}
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
+	public void addAnswer(Answer answer) {
+		answer.toQuestion(this);
+	}
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
-    }
+	public String getContents() {
+		return contents;
+	}
+
+	public Long getWriterId() {
+		return writerId;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void delete() {
+		deleted = true;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		Question question = (Question)o;
+		return isDeleted() == question.isDeleted() && Objects.equals(getId(), question.getId())
+			&& Objects.equals(getContents(), question.getContents()) && Objects.equals(getTitle(),
+			question.getTitle()) && Objects.equals(getWriterId(), question.getWriterId())
+			&& Objects.equals(getCreatedAt(), question.getCreatedAt()) && Objects.equals(getUpdatedAt(),
+			question.getUpdatedAt());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId(), getContents(), getTitle(), isDeleted(), getWriterId());
+	}
+
+	@Override
+	public String toString() {
+		return "Question{" +
+			"id=" + id +
+			", title='" + title + '\'' +
+			", contents='" + contents + '\'' +
+			", writerId=" + writerId +
+			", deleted=" + deleted +
+			", createdAt=" + getCreatedAt() +
+			", updatedAt=" + getUpdatedAt() +
+			'}';
+	}
+
 }
