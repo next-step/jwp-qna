@@ -22,19 +22,19 @@ public class QuestionTest {
 
     @Autowired
     private QuestionRepository questions;
-    private Question actual;
+    private Question question;
 
     @BeforeEach
     void setUp() {
-        actual = questions.save(Q1);
+        question = questions.save(Q1);
     }
 
     @DisplayName("question 생성")
     @Test
     void saveQuestionTest() {
         assertAll(
-                () -> assertThat(actual.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
-                () -> assertThat(actual.getContents()).isEqualTo("contents1")
+                () -> assertThat(question.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
+                () -> assertThat(question.getContents()).isEqualTo("contents1")
         );
     }
 
@@ -44,23 +44,23 @@ public class QuestionTest {
         List<Question> noneDeletedQuestions = questions.findByDeletedFalse();
         assertThat(noneDeletedQuestions.size()).isEqualTo(1);
         Question question = noneDeletedQuestions.get(0);
-        assertEquals(question, actual);
+        assertEquals(question, this.question);
     }
 
     @DisplayName("삭제되지 않은 question 하나 찾기")
     @Test
     void findByIdAndDeletedFalseTest() {
-            Question question = questions.findByIdAndDeletedFalse(actual.getId())
+            Question question = questions.findByIdAndDeletedFalse(this.question.getId())
                     .orElseThrow(NoSuchElementException::new);
-            assertEquals(question, actual);
+            assertEquals(question, this.question);
     }
 
     @DisplayName("삭제한 question 찾기")
     @Test
     void findByIdAndDeletedTrueTest() {
-        actual.setDeleted(true);
+        question.setDeleted(true);
         assertThatThrownBy(() -> {
-            questions.findByIdAndDeletedFalse(actual.getId())
+            questions.findByIdAndDeletedFalse(question.getId())
             .orElseThrow(NoSuchElementException::new);
         }).isInstanceOf(NoSuchElementException.class);
     }
@@ -68,8 +68,8 @@ public class QuestionTest {
     @DisplayName("question 수정")
     @Test
     void updateQuestionTest() {
-        actual.setContents("Changed Contents");
-        Question questionFromRepository = questions.findById(actual.getId())
+        question.setContents("Changed Contents");
+        Question questionFromRepository = questions.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertThat(questionFromRepository.getContents()).isEqualTo("Changed Contents");
     }
@@ -78,7 +78,7 @@ public class QuestionTest {
     @Test
     void removeQuestionTest() {
         assertThat(questions.findAll().size()).isEqualTo(1);
-        questions.delete(actual);
+        questions.delete(question);
         assertThat(questions.findAll().size()).isZero();
     }
 

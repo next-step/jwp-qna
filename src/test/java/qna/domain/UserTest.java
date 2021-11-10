@@ -20,19 +20,19 @@ public class UserTest {
 
     @Autowired
     private UserRepository users;
-    private User actual;
+    private User user;
 
     @BeforeEach
     void setup() {
-        actual = users.save(JAVAJIGI);
+        user = users.save(JAVAJIGI);
     }
 
     @DisplayName("user 생성")
     @Test
     void saveUserTest() {
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getEmail()).isEqualTo("javajigi@slipp.net")
+                () -> assertThat(user.getId()).isNotNull(),
+                () -> assertThat(user.getEmail()).isEqualTo("javajigi@slipp.net")
         );
     }
 
@@ -45,8 +45,8 @@ public class UserTest {
     @DisplayName("user 수정")
     @Test
     void userUpdateTest() {
-        actual.setEmail("change_mail@slipp.net");
-        User userFromRepository = users.findById(actual.getId())
+        user.setEmail("change_mail@slipp.net");
+        User userFromRepository = users.findById(user.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertThat(userFromRepository.getEmail()).isEqualTo("change_mail@slipp.net");
     }
@@ -55,7 +55,7 @@ public class UserTest {
     @Test
     void removeUserTest() {
         assertThat(users.findAll().size()).isEqualTo(1);
-        users.delete(actual);
+        users.delete(user);
         assertThat(users.findAll().size()).isZero();
     }
 

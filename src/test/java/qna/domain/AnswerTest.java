@@ -22,21 +22,21 @@ public class AnswerTest {
 
     @Autowired
     private AnswerRepository answers;
-    private Answer actual;
+    private Answer answer;
 
     @BeforeEach
     void setUp() {
-        actual = answers.save(A1);
+        answer = answers.save(A1);
     }
 
     @DisplayName("answer 생성")
     @Test
     void saveAnswerTest () {
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getContents()).isEqualTo("Answers Contents1"),
-                () -> assertThat(actual.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
-                () -> assertThat(actual.getQuestionId()).isEqualTo(QuestionTest.Q1.getId())
+                () -> assertThat(answer.getId()).isNotNull(),
+                () -> assertThat(answer.getContents()).isEqualTo("Answers Contents1"),
+                () -> assertThat(answer.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
+                () -> assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId())
         );
     }
 
@@ -45,14 +45,14 @@ public class AnswerTest {
     void findByQuestionIdAndDeletedFalseTest() {
         List<Answer> noneDeletedAnswers = answers.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
         assertThat(noneDeletedAnswers.size()).isEqualTo(1);
-        Answer answer = noneDeletedAnswers.get(0);
-        assertEquals(answer, actual);
+        Answer answerFromRepository = noneDeletedAnswers.get(0);
+        assertEquals(answerFromRepository, answer);
     }
 
     @DisplayName("question id 기준으로 삭제된 answer 목록 확인")
     @Test
     void findByQuestionIdAndDeletedTrueTest() {
-        actual.setDeleted(true);
+        answer.setDeleted(true);
         List<Answer> noneDeletedAnswers = answers.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
         assertThat(noneDeletedAnswers.size()).isZero();
     }
@@ -61,17 +61,17 @@ public class AnswerTest {
     @DisplayName("삭제되지않은 answer 찾기")
     @Test
     void findByIdAndDeletedFalseTest() {
-        Answer answer = answers.findByIdAndDeletedFalse(actual.getId())
+        Answer answerFromRepository = answers.findByIdAndDeletedFalse(answer.getId())
                 .orElseThrow(NoSuchElementException::new);
-        assertEquals(answer, actual);
+        assertEquals(answerFromRepository, answer);
     }
 
     @DisplayName("삭제한 answer 확인")
     @Test
     void findByIdAndDeletedTrueTest() {
-        actual.setDeleted(true);
+        answer.setDeleted(true);
         assertThatThrownBy(() -> {
-            answers.findByIdAndDeletedFalse(actual.getId())
+            answers.findByIdAndDeletedFalse(answer.getId())
                     .orElseThrow(NoSuchElementException::new);
         }).isInstanceOf(NoSuchElementException.class);
     }
@@ -79,17 +79,17 @@ public class AnswerTest {
     @DisplayName("answer 수정")
     @Test
     void updateAnswerTest() {
-        actual.setContents("Changed Contents1");
-        Answer questionFromRepository = answers.findById(actual.getId())
+        answer.setContents("Changed Contents1");
+        Answer answerFromRepository = answers.findById(answer.getId())
                 .orElseThrow(NoSuchElementException::new);
-        assertThat(questionFromRepository.getContents()).isEqualTo("Changed Contents1");
+        assertThat(answerFromRepository.getContents()).isEqualTo("Changed Contents1");
     }
 
     @DisplayName("answer 삭제")
     @Test
     void removeAnswerTest() {
         assertThat(answers.findAll().size()).isEqualTo(1);
-        answers.delete(actual);
+        answers.delete(answer);
         assertThat(answers.findAll().size()).isZero();
     }
 

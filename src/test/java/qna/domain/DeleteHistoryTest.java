@@ -17,11 +17,11 @@ public class DeleteHistoryTest {
 
     @Autowired
     private DeleteHistoryRepository histories;
-    private DeleteHistory actual;
+    private DeleteHistory deleteHistory;
 
     @BeforeEach
     void setUp() {
-        actual = histories.save(DH1);
+        deleteHistory = histories.save(DH1);
     }
 
     @DisplayName("deleteHistory 생성")
@@ -34,7 +34,7 @@ public class DeleteHistoryTest {
     @Test
     void removeDeleteHistoryTest() {
         assertThat(histories.findAll().size()).isEqualTo(1);
-        histories.delete(actual);
+        histories.delete(deleteHistory);
         assertThat(histories.findAll().size()).isZero();
     }
 }
