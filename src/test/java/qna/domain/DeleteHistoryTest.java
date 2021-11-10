@@ -17,8 +17,8 @@ class DeleteHistoryTest {
 	@Test
 	void ofQuestion() {
 		// given
-		Question question = QuestionFixture.Q1(1L, UserFixture.Y2O2U2N(2L));
-		User deleter = UserFixture.SEMISTONE222(3L);
+		Question question = QuestionFixture.Q1(UserFixture.Y2O2U2N());
+		User deleter = UserFixture.SEMISTONE222();
 
 		// when
 		DeleteHistory deleteHistory = DeleteHistory.ofQuestion(deleter, question);
@@ -36,8 +36,8 @@ class DeleteHistoryTest {
 	@Test
 	void ofAnswer() {
 		// given
-		Answer answer = AnswerFixture.A1(1L, UserFixture.JUN222(2L));
-		User deleter = UserFixture.SEMISTONE222(3L);
+		Answer answer = AnswerFixture.A1(UserFixture.JUN222());
+		User deleter = UserFixture.SEMISTONE222();
 
 		// when
 		DeleteHistory deleteHistory = DeleteHistory.ofAnswer(deleter, answer);

@@ -20,12 +20,12 @@ public class QuestionTest {
 	private static Stream<Arguments> ofFailArguments() {
 		return Stream.of(
 			Arguments.of(
-				UserFixture.SEMISTONE222(1),
+				UserFixture.SEMISTONE222(),
 				null,
 				IllegalArgumentException.class
 			),
 			Arguments.of(
-				UserFixture.Y2O2U2N(3),
+				UserFixture.Y2O2U2N(),
 				"",
 				IllegalArgumentException.class
 			)
@@ -35,13 +35,13 @@ public class QuestionTest {
 	public static Stream<Arguments> isOwnerArguments() {
 		return Stream.of(
 			Arguments.of(
-				QuestionFixture.Q1(1L, UserFixture.Y2O2U2N(3)),
-				UserFixture.Y2O2U2N(3),
+				QuestionFixture.Q1(UserFixture.Y2O2U2N()),
+				UserFixture.Y2O2U2N(),
 				true
 			),
 			Arguments.of(
-				QuestionFixture.Q1(1L, UserFixture.Y2O2U2N(3)),
-				UserFixture.SEMISTONE222(1),
+				QuestionFixture.Q1(UserFixture.Y2O2U2N()),
+				UserFixture.SEMISTONE222(),
 				false
 			)
 		);
@@ -51,7 +51,7 @@ public class QuestionTest {
 	@Test
 	void of() {
 		// given
-		User writer = UserFixture.SEMISTONE222(1);
+		User writer = UserFixture.SEMISTONE222();
 		String title = "title";
 		String contents = "contents";
 
@@ -81,8 +81,8 @@ public class QuestionTest {
 	@Test
 	void addAnswer() {
 		// given
-		Question question = QuestionFixture.Q1(1L, UserFixture.Y2O2U2N(2L));
-		Answer answer = AnswerFixture.A1(3L, UserFixture.SEMISTONE222(4L));
+		Question question = QuestionFixture.Q1(UserFixture.Y2O2U2N());
+		Answer answer = AnswerFixture.A1(UserFixture.SEMISTONE222());
 
 		// when
 		question.addAnswer(answer);
@@ -98,7 +98,7 @@ public class QuestionTest {
 	@Test
 	void addAnswer_fail_on_empty_answer() {
 		// given
-		Question question = QuestionFixture.Q1(1L, UserFixture.Y2O2U2N(2L));
+		Question question = QuestionFixture.Q1(UserFixture.Y2O2U2N());
 
 		// when & then
 		assertThatThrownBy(() -> question.addAnswer(null))
@@ -109,8 +109,8 @@ public class QuestionTest {
 	@Test
 	void addAnswer_fail_on_already_registered_answer() {
 		// given
-		Question question = QuestionFixture.Q1(1L, UserFixture.Y2O2U2N(2L));
-		Answer answer = AnswerFixture.A1(3L, UserFixture.SEMISTONE222(4L));
+		Question question = QuestionFixture.Q1(UserFixture.Y2O2U2N());
+		Answer answer = AnswerFixture.A1(UserFixture.SEMISTONE222());
 		question.addAnswer(answer);
 
 		// when & then
@@ -122,7 +122,7 @@ public class QuestionTest {
 	@Test
 	void delete() {
 		// given
-		Question question = QuestionFixture.Q1(1L, UserFixture.Y2O2U2N());
+		Question question = QuestionFixture.Q1(UserFixture.Y2O2U2N());
 
 		// when
 		question.delete();

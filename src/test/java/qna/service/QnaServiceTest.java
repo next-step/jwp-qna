@@ -45,8 +45,8 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = QuestionFixture.Q1(1L, UserFixture.Y2O2U2N(1L));
-        answer = AnswerFixture.A1(1L, UserFixture.Y2O2U2N(1L));
+        question = QuestionFixture.Q1(UserFixture.Y2O2U2N());
+        answer = AnswerFixture.A1(UserFixture.Y2O2U2N());
         question.addAnswer(answer);
     }
 
@@ -56,7 +56,7 @@ class QnaServiceTest {
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
         assertThat(question.isDeleted()).isFalse();
-        qnaService.deleteQuestion(UserFixture.Y2O2U2N(1L), question.getId());
+        qnaService.deleteQuestion(UserFixture.Y2O2U2N(), question.getId());
 
         assertThat(question.isDeleted()).isTrue();
         verifyDeleteHistories();
@@ -66,7 +66,7 @@ class QnaServiceTest {
     public void delete_다른_사람이_쓴_글() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(UserFixture.SEMISTONE222(2L), question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(UserFixture.SEMISTONE222(), question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
@@ -75,7 +75,7 @@ class QnaServiceTest {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
-        qnaService.deleteQuestion(UserFixture.Y2O2U2N(1L), question.getId());
+        qnaService.deleteQuestion(UserFixture.Y2O2U2N(), question.getId());
 
         assertThat(question.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
@@ -86,14 +86,14 @@ class QnaServiceTest {
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
         Answer answer2 = Answer.of(
             2L,
-            UserFixture.SEMISTONE222(2L),
+            UserFixture.SEMISTONE222(),
             "Answers Contents1");
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer, answer2));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(UserFixture.Y2O2U2N(1L), question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(UserFixture.Y2O2U2N(), question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 

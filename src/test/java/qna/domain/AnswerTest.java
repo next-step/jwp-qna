@@ -32,13 +32,13 @@ public class AnswerTest {
 	public static Stream<Arguments> isOwnerArguments() {
 		return Stream.of(
 			Arguments.of(
-				AnswerFixture.A1(1L, UserFixture.Y2O2U2N(3L)),
-				UserFixture.Y2O2U2N(3L),
+				AnswerFixture.A1(UserFixture.Y2O2U2N()),
+				UserFixture.Y2O2U2N(),
 				true
 			),
 			Arguments.of(
-				AnswerFixture.A1(1L, UserFixture.Y2O2U2N(2L)),
-				UserFixture.SEMISTONE222(3L),
+				AnswerFixture.A1(UserFixture.Y2O2U2N()),
+				UserFixture.SEMISTONE222(),
 				false
 			)
 		);
@@ -48,7 +48,7 @@ public class AnswerTest {
 	@Test
 	void of() {
 		// given
-		User writer = UserFixture.Y2O2U2N(1L);
+		User writer = UserFixture.Y2O2U2N();
 		String contents = "contents";
 
 		// when
@@ -76,8 +76,8 @@ public class AnswerTest {
 	@Test
 	void setQuestion() {
 		// given
-		Question question = QuestionFixture.Q1(1L, UserFixture.SEMISTONE222(2L));
-		Answer answer = AnswerFixture.A1(3L, UserFixture.Y2O2U2N(4L));
+		Question question = QuestionFixture.Q1(UserFixture.SEMISTONE222());
+		Answer answer = AnswerFixture.A1(UserFixture.Y2O2U2N());
 
 		// when
 		answer.setQuestion(question);
@@ -93,7 +93,7 @@ public class AnswerTest {
 	@Test
 	void setQuestion_fail() {
 		// given
-		Answer answer = AnswerFixture.A1(1L, UserFixture.Y2O2U2N(2L));
+		Answer answer = AnswerFixture.A1(UserFixture.Y2O2U2N());
 
 		// when & then
 		assertThatThrownBy(() -> answer.setQuestion(null))
@@ -104,7 +104,7 @@ public class AnswerTest {
 	@Test
 	void delete() {
 		// given
-		Answer answer = AnswerFixture.A1(1L, UserFixture.Y2O2U2N());
+		Answer answer = AnswerFixture.A1(UserFixture.Y2O2U2N());
 
 		// when
 		answer.delete();
