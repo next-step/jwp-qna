@@ -2,11 +2,12 @@ package qna.domain;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.AnswersTest.ANSWERS;
 import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 class DeleteHistoriesTest {
 
@@ -17,9 +18,13 @@ class DeleteHistoriesTest {
         DeleteHistory questionHistory = DeleteHistory.question(1L, JAVAJIGI);
 
         // when
-        List<DeleteHistory> expected = deleteHistories.delete(ANSWERS, questionHistory);
+        DeleteHistories expected = deleteHistories.delete(ANSWERS, questionHistory);
 
         // then
-        assertThat(expected.size()).isEqualTo(3);
+        assertThat(expected).isEqualTo(new DeleteHistories(Arrays.asList(
+                questionHistory,
+                DeleteHistory.answer(null, JAVAJIGI),
+                DeleteHistory.answer(null, SANJIGI)))
+        );
     }
 }

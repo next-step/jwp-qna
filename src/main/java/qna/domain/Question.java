@@ -56,7 +56,7 @@ public class Question extends BaseEntity{
         }
     }
 
-    public List<DeleteHistory> delete(User writer) throws CannotDeleteException {
+    public DeleteHistories delete(User writer) throws CannotDeleteException {
         DeleteHistories histories = new DeleteHistories();
         Answers answers = this.answers.getNotDeleted();
 

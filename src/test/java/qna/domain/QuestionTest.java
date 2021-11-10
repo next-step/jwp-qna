@@ -19,9 +19,9 @@ public class QuestionTest {
     @Test
     void delete_질문을_삭제한다() throws CannotDeleteException {
         Q1.addAnswer(A1);
-        List<DeleteHistory> histories = Q1.delete(JAVAJIGI);
+        DeleteHistories histories = Q1.delete(JAVAJIGI);
         assertAll(
-            () -> assertThat(histories.size()).isEqualTo(2),
+            () -> assertThat(histories.getDeleteHistories().size()).isEqualTo(2),
             () -> assertThat(Q1.isDeleted()).isTrue()
         );
     }
