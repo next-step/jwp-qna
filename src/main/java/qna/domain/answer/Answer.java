@@ -1,16 +1,34 @@
-package qna.domain;
+package qna.domain.answer;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.BaseTimeEntity;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+@Table(name = "answer")
+public class Answer extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long writerId;
     private Long questionId;
+    @Column(columnDefinition = "longtext")
     private String contents;
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    public Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -52,24 +70,12 @@ public class Answer {
         return writerId;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
     public Long getQuestionId() {
         return questionId;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
@@ -78,6 +84,26 @@ public class Answer {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Answer answer = (Answer) o;
+
+        if (id != null ? !id.equals(answer.id) : answer.id != null) return false;
+        if (writerId != null ? !writerId.equals(answer.writerId) : answer.writerId != null) return false;
+        return questionId != null ? questionId.equals(answer.questionId) : answer.questionId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (writerId != null ? writerId.hashCode() : 0);
+        result = 31 * result + (questionId != null ? questionId.hashCode() : 0);
+        return result;
     }
 
     @Override
