@@ -82,7 +82,7 @@ alter table user
 - [X] Answer 엔티티 클래스를 작성한다
 - [X] DeleteHistory 엔티티 테스트를 작성한다
 - [X] DeleteHistory 엔티티 클래스를 작성한다
-- [ ] Question 엔티티 테스트를 작성한다
-- [ ] Question 엔티티 클래스를 작성한다
+- [X] Question 엔티티 테스트를 작성한다
+- [X] Question 엔티티 클래스를 작성한다
 - [ ] User 엔티티 테스트를 작성한다
 - [ ] User 엔티티 클래스를 작성한다

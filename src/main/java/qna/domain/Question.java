@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "question")
@@ -8,10 +9,25 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Column(name = "contents", columnDefinition = "LONGTEXT")
     private String contents;
-    private Long writerId;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    @Column(name = "title", length = 100, nullable = false)
+    private String title;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "writer_id")
+    private Long writerId;
+
 
     protected Question() {
     }
@@ -21,9 +37,17 @@ public class Question {
     }
 
     public Question(Long id, String title, String contents) {
+        validateTitle(title);
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    private void validateTitle(String title) {
+        if (title == null || title.isEmpty()) {
+            throw new IllegalArgumentException("title을 입력하세요");
+        }
     }
 
     public Question writeBy(User writer) {
@@ -43,32 +67,16 @@ public class Question {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public boolean isDeleted() {
@@ -79,14 +87,24 @@ public class Question {
         this.deleted = deleted;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", createdAt=" + createdAt +
                 ", deleted=" + deleted +
+                ", title='" + title + '\'' +
+                ", updatedAt=" + updatedAt +
+                ", writerId=" + writerId +
                 '}';
     }
 }
