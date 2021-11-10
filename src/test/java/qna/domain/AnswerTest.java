@@ -25,10 +25,12 @@ public class AnswerTest {
 
     @Test
     void save() {
-        User savedWriter = userRepository.save(UserTest.JAVAJIGI);
+        User savedQuestionWriter = userRepository.save(UserTest.SANJIGI);
+        QuestionTest.Q1.setWriter(savedQuestionWriter);
         Question savedQuestion = questionRepository.save(QuestionTest.Q1);
+        User savedAnswerWriter = userRepository.save(UserTest.JAVAJIGI);
         A1.setQuestion(savedQuestion);
-        A1.setWriter(savedWriter);
+        A1.setWriter(savedAnswerWriter);
 
         Answer savedAnswer = answerRepository.save(A1);
 
@@ -36,7 +38,7 @@ public class AnswerTest {
             () -> assertThat(savedAnswer.getWriterId()).isEqualTo(A1.getWriterId()),
             () -> assertThat(savedAnswer.getQuestion().getTitle()).isEqualTo(QuestionTest.Q1.getTitle()),
             () -> assertThat(savedAnswer.getQuestion().getContents()).isEqualTo(QuestionTest.Q1.getContents()),
-            () -> assertThat(savedAnswer.getQuestion().getWriterId()).isEqualTo(QuestionTest.Q1.getWriterId()),
+            () -> assertThat(savedAnswer.getQuestion().getWriter()).isEqualTo(QuestionTest.Q1.getWriter()),
             () -> assertThat(savedAnswer.getContents()).isEqualTo(A1.getContents()),
             () -> assertThat(savedAnswer.isDeleted()).isEqualTo(A1.isDeleted()),
             () -> assertThat(savedAnswer.getCreatedDateTime()).isBefore(LocalDateTime.now())
@@ -45,20 +47,22 @@ public class AnswerTest {
 
     @Test
     void read() {
-        User savedWriter = userRepository.save(UserTest.JAVAJIGI);
+        User savedQuestionWriter = userRepository.save(UserTest.SANJIGI);
+        QuestionTest.Q1.setWriter(savedQuestionWriter);
         Question savedQuestion = questionRepository.save(QuestionTest.Q1);
+        User savedAnswerWriter = userRepository.save(UserTest.JAVAJIGI);
         A1.setQuestion(savedQuestion);
-        A1.setWriter(savedWriter);
-        Long savedId = answerRepository.save(A1).getId();
+        A1.setWriter(savedAnswerWriter);
+        Answer a = answerRepository.save(A1);
 
-        Answer savedAnswer = answerRepository.findByIdAndDeletedFalse(savedId).get();
+        Answer savedAnswer = answerRepository.findByIdAndDeletedFalse(a.getId()).get();
 
         assertAll(
             () -> assertThat(savedAnswer.getId()).isEqualTo(savedAnswer.getId()),
             () -> assertThat(savedAnswer.getWriterId()).isEqualTo(A1.getWriterId()),
             () -> assertThat(savedAnswer.getQuestion().getTitle()).isEqualTo(QuestionTest.Q1.getTitle()),
             () -> assertThat(savedAnswer.getQuestion().getContents()).isEqualTo(QuestionTest.Q1.getContents()),
-            () -> assertThat(savedAnswer.getQuestion().getWriterId()).isEqualTo(QuestionTest.Q1.getWriterId()),
+            () -> assertThat(savedAnswer.getQuestion().getWriter()).isEqualTo(QuestionTest.Q1.getWriter()),
             () -> assertThat(savedAnswer.getContents()).isEqualTo(A1.getContents()),
             () -> assertThat(savedAnswer.isDeleted()).isEqualTo(A1.isDeleted()),
             () -> assertThat(savedAnswer.getCreatedDateTime()).isBefore(LocalDateTime.now())

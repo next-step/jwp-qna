@@ -17,14 +17,19 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     void save() {
+        User savedUser = userRepository.save(UserTest.SANJIGI);
+        Q1.setWriter(savedUser);
         Question savedQuestion = questionRepository.save(Q1);
 
         assertAll(
             () -> assertThat(savedQuestion.getTitle()).isEqualTo(Q1.getTitle()),
             () -> assertThat(savedQuestion.getContents()).isEqualTo(Q1.getContents()),
-            () -> assertThat(savedQuestion.getWriterId()).isEqualTo(Q1.getWriterId()),
+            () -> assertThat(savedQuestion.getWriter()).isEqualTo(Q1.getWriter()),
             () -> assertThat(savedQuestion.isDeleted()).isEqualTo(Q1.isDeleted()),
             () -> assertThat(savedQuestion.getCreatedDateTime()).isBefore(LocalDateTime.now())
         );
@@ -32,6 +37,8 @@ public class QuestionTest {
 
     @Test
     void read() {
+        User savedUser = userRepository.save(UserTest.SANJIGI);
+        Q1.setWriter(savedUser);
         Long savedId = questionRepository.save(Q1).getId();
         Question savedQuestion = questionRepository.findByIdAndDeletedFalse(savedId).get();
 
@@ -39,7 +46,7 @@ public class QuestionTest {
             () -> assertThat(savedQuestion.getId()).isEqualTo(savedId),
             () -> assertThat(savedQuestion.getTitle()).isEqualTo(Q1.getTitle()),
             () -> assertThat(savedQuestion.getContents()).isEqualTo(Q1.getContents()),
-            () -> assertThat(savedQuestion.getWriterId()).isEqualTo(Q1.getWriterId()),
+            () -> assertThat(savedQuestion.getWriter()).isEqualTo(Q1.getWriter()),
             () -> assertThat(savedQuestion.isDeleted()).isEqualTo(Q1.isDeleted()),
             () -> assertThat(savedQuestion.getCreatedDateTime()).isBefore(LocalDateTime.now())
         );
