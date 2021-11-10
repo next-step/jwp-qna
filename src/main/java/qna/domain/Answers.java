@@ -1,7 +1,5 @@
 package qna.domain;
 
-import qna.CannotDeleteException;
-
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
@@ -23,15 +21,15 @@ public class Answers {
 
     }
 
-    public void checkIsOwner(User writer) throws CannotDeleteException {
+    public void checkIsOwner(User writer) {
         for (Answer answer : answers) {
             checkIsOwner(writer, answer);
         }
     }
 
-    private void checkIsOwner(User writer, Answer answer) throws CannotDeleteException {
+    private void checkIsOwner(User writer, Answer answer) {
         if (!answer.isOwner(writer)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new RuntimeException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
     }
 

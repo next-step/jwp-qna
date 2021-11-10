@@ -1,7 +1,6 @@
 package qna.domain;
 
 import org.junit.jupiter.api.Test;
-import qna.CannotDeleteException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +18,7 @@ class AnswersTest {
 
     @Test
     void checkIsOwner_다른_사람이_쓴_답변이_있는_경우_에러를_발생한다() {
-        assertThatExceptionOfType(CannotDeleteException.class)
+        assertThatExceptionOfType(RuntimeException.class)
                 .isThrownBy(() -> ANSWERS.checkIsOwner(JAVAJIGI));
     }
 

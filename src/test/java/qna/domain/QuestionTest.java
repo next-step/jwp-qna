@@ -1,10 +1,6 @@
 package qna.domain;
 
 import org.junit.jupiter.api.Test;
-import qna.CannotDeleteException;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -17,7 +13,7 @@ public class QuestionTest {
     public static final Question Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
 
     @Test
-    void delete_질문을_삭제한다() throws CannotDeleteException {
+    void delete_질문을_삭제한다() {
         Q1.addAnswer(A1);
         DeleteHistories histories = Q1.delete(JAVAJIGI);
         assertAll(
