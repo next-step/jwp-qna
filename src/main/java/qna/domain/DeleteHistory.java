@@ -54,6 +54,22 @@ public class DeleteHistory extends BaseEntity {
         this.createDate = createDate;
     }
 
+    public ContentType getContentType(){
+        return this.contentType;
+    }
+    
+    public Long getContentId(){
+        return this.contentId;
+    }
+    
+    public User getDeletedByUser(){
+        return this.deletedByUser;
+    }
+
+    public LocalDateTime getCreateDate(){
+        return this.createDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
