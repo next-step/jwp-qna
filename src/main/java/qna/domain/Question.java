@@ -15,7 +15,7 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", length = 100, nullable = true)
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
 
     @Lob
