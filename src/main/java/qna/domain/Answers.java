@@ -5,6 +5,7 @@ import qna.CannotDeleteException;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,7 @@ public class Answers {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return Collections.unmodifiableList(answers);
     }
 
     public Answers getNotDeleted() {
