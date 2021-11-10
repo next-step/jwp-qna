@@ -1,0 +1,26 @@
+package qna.domain;
+
+import static org.assertj.core.api.Assertions.*;
+
+import java.time.LocalDateTime;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class DeleteHistoryRepositoryTest {
+    @Autowired
+    private DeleteHistoryRepository deleteHistoryRepository;
+
+    @Test
+    void save() {
+        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, 1L, 2L, LocalDateTime.now());
+
+        DeleteHistory actual = deleteHistoryRepository.save(expected);
+
+        assertThat(actual).isEqualTo(expected);
+    }
+}
