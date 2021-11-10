@@ -24,15 +24,15 @@ class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
-    private User javajigi;
-//    private User sanjigi;
-    private Question question;
 
     @BeforeEach
     public void setUp() {
-        javajigi = userRepository.save(new User("javajigi", "password", "javajigi", "email"));
-//        sanjigi = userRepository.save(UserTest.SANJIGI);
-        question = questionRepository.save(QuestionTest.Q1);
+        User javajigi = userRepository.save(UserTest.JAVAJIGI);
+        User sanjigi = userRepository.save(UserTest.SANJIGI);
+        questionRepository.save(new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1
+            .getContents()).writeBy(javajigi));
+        questionRepository.save(new Question(QuestionTest.Q2.getTitle(), QuestionTest.Q2
+            .getContents()).writeBy(sanjigi));
     }
 
     @AfterEach
@@ -44,8 +44,10 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("자바지기 사용자가 질문에 대한 답변 등록 성공")
     public void saveAnswerByJavajigiSuccess() {
+        User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
+        Question question = questionRepository.findByDeletedFalse().get(0);
         Answer answer = new Answer(javajigi, question, "answer1");
-        answer.setWriter(javajigi);
+        answer.writerBy(javajigi);
         answer.toQuestion(question);
         Answer save = answerRepository.save(answer);
 
@@ -59,8 +61,10 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 찾기 by id 성공")
     public void findByIdSuccess() {
+        User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
+        Question question = questionRepository.findByDeletedFalse().get(0);
         Answer answer = new Answer(javajigi, question, "answer1");
-        answer.setWriter(javajigi);
+        answer.writerBy(javajigi);
         answer.toQuestion(question);
         answerRepository.save(answer);
         Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId());
@@ -76,11 +80,13 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 찾기 by question id 성공")
     public void findByQuestionIdSuccess() {
+        User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
+        Question question = questionRepository.findByDeletedFalse().get(0);
         Answer answer1 = AnswerTest.A1;
-        answer1.setWriter(javajigi);
+        answer1.writerBy(javajigi);
         answer1.toQuestion(question);
         Answer answer2 = AnswerTest.A2;
-        answer2.setWriter(javajigi);
+        answer2.writerBy(javajigi);
         answer2.toQuestion(question);
         answerRepository.save(answer1);
         answerRepository.save(answer2);
@@ -94,8 +100,10 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("답변이 해당 사용자의 답변인지 체크 성공")
     public void isOwnerSuccess() {
-        Answer answer = new Answer(javajigi, QuestionTest.Q1, "answer1");
-        answer.setWriter(javajigi);
+        User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
+        Question question = questionRepository.findByDeletedFalse().get(0);
+        Answer answer = new Answer(javajigi, question, "answer1");
+        answer.writerBy(javajigi);
         Answer save = answerRepository.save(answer);
         assertThat(save.isOwner(UserTest.JAVAJIGI)).isTrue();
     }
@@ -103,8 +111,10 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 삭제 플래그 true 변경 성공")
     public void updateDeletedSuccess() {
+        User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
+        Question question = questionRepository.findByDeletedFalse().get(0);
         Answer answer = new Answer(javajigi, question, "answer1");
-        answer.setWriter(javajigi);
+        answer.writerBy(javajigi);
         answer.toQuestion(question);
         Answer save = answerRepository.save(answer);
 

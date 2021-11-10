@@ -22,7 +22,7 @@
   - [x] Answer <-> question 다대일,일대다 양방향
   - [x] Answer -> user 다대일 단방향
   - [ ] DeleteHistory -> user 다대일 단방향
-  - [ ] Question -> user 다대일 단방향
+  - [x] Question -> user 다대일 단방향
 - [ ] 연관 관계 테스트
   - [ ] Question <-> answer
   - [ ] Question <-> user

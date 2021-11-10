@@ -60,7 +60,7 @@ public class Answer extends BaseTime {
      *
      * @param writer
      */
-    public void setWriter(User writer) {
+    public void writerBy(User writer) {
         this.writer = writer;
     }
 
