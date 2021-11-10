@@ -2,9 +2,11 @@ package qna.domain;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -12,9 +14,16 @@ public class Question extends BaseTimeEntity {
 	@Id
 	@GeneratedValue
 	private Long id;
+
+	@Lob
 	private String contents;
+
+	@Column(length = 100, nullable = false)
 	private String title;
+
+	@Column(nullable = false)
 	private boolean deleted;
+
 	private Long writerId;
 
 	protected Question() {
@@ -48,52 +57,42 @@ public class Question extends BaseTimeEntity {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getTitle() {
 		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
 	}
 
 	public String getContents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
 	public Long getWriterId() {
 		return writerId;
-	}
-
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
 	}
 
 	public boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+	public void delete() {
+		deleted = true;
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+
+		if (o == null || getClass() != o.getClass()) {
 			return false;
+		}
+
 		Question question = (Question)o;
 		return isDeleted() == question.isDeleted() && Objects.equals(getId(), question.getId())
 			&& Objects.equals(getContents(), question.getContents()) && Objects.equals(getTitle(),
-			question.getTitle()) && Objects.equals(getWriterId(), question.getWriterId());
+			question.getTitle()) && Objects.equals(getWriterId(), question.getWriterId())
+			&& Objects.equals(getCreatedAt(), question.getCreatedAt()) && Objects.equals(getUpdatedAt(),
+			question.getUpdatedAt());
 	}
 
 	@Override
@@ -109,6 +108,9 @@ public class Question extends BaseTimeEntity {
 			", contents='" + contents + '\'' +
 			", writerId=" + writerId +
 			", deleted=" + deleted +
+			", createdAt=" + getCreatedAt() +
+			", updatedAt=" + getUpdatedAt() +
 			'}';
 	}
+
 }

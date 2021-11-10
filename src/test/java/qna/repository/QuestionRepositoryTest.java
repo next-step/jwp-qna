@@ -31,7 +31,7 @@ class QuestionRepositoryTest {
 		List<Question> findQuestions = questionRepository.findByDeletedFalse();
 		assertThat(findQuestions.contains(savedQuestion)).isTrue();
 
-		savedQuestion.setDeleted(true);
+		savedQuestion.delete();
 		questionRepository.save(savedQuestion);
 		findQuestions = questionRepository.findByDeletedFalse();
 		assertThat(findQuestions.contains(savedQuestion)).isFalse();
@@ -43,7 +43,7 @@ class QuestionRepositoryTest {
 		Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
 		assertThat(findQuestion.isPresent()).isTrue();
 
-		savedQuestion.setDeleted(true);
+		savedQuestion.delete();
 		questionRepository.save(savedQuestion);
 		findQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
 		assertThat(findQuestion.isPresent()).isFalse();
