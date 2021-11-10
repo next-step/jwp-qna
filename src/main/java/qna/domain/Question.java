@@ -1,7 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 
 @Entity
-public class Question {
+public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,11 +23,6 @@ public class Question {
 
     @Column(nullable = false)
     private boolean deleted = false;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-    
-    private LocalDateTime updatedAt;
 
     private Question() {
     }
