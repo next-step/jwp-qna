@@ -3,6 +3,7 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -13,10 +14,24 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "email", length = 50)
     private String email;
+
+    @Column(name = "name", length = 20, nullable = false)
+    private String name;
+
+    @Column(name = "password", length = 20, nullable = false)
+    private String password;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "user_id", length = 20, nullable = false)
+    private String userId;
 
     protected User() {
     }
@@ -26,11 +41,25 @@ public class User {
     }
 
     public User(Long id, String userId, String password, String name, String email) {
+        validate(userId, password, name);
         this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    private void validate(String userId, String password, String name) {
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("userId를 입력하세요");
+        }
+        if (password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("password를 입력하세요");
+        }
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("name를 입력하세요");
+        }
     }
 
     public void update(User loginUser, User target) {
@@ -71,50 +100,40 @@ public class User {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
+                ", createdAt=" + createdAt +
                 ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", updatedAt=" + updatedAt +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 
