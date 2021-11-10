@@ -1,10 +1,13 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +50,17 @@ public class QuestionTest {
 
 		// then
 		assertEquals(byDeletedFalse.size(), 1);
+	}
+
+	@Test
+	void findByIdAndDeletedFalse() {
+		// given
+		questionRepository.saveAll(Arrays.asList(Q1, Q2));
+
+		// when
+		Question byIdAndDeletedFalse = questionRepository.findByIdAndDeletedFalse(Q1.getId()).get();
+
+		// then
+		assertThat(byIdAndDeletedFalse).isEqualTo(Q1);
 	}
 }
