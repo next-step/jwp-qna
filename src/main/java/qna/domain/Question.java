@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -90,6 +91,19 @@ public class Question extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return isDeleted() == question.isDeleted() && Objects.equals(getId(), question.getId()) && Objects.equals(getContents(), question.getContents()) && Objects.equals(getTitle(), question.getTitle()) && Objects.equals(getWriterId(), question.getWriterId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getContents(), isDeleted(), getTitle(), getWriterId());
     }
 
     @Override
