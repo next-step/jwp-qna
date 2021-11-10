@@ -4,7 +4,6 @@ import qna.domain.BaseTimeEntity;
 import qna.domain.answer.Answer;
 import qna.domain.user.User;
 
-import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +23,6 @@ public class Question extends BaseTimeEntity {
     private String title;
     @Column(columnDefinition = "longtext")
     private String contents;
-
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
