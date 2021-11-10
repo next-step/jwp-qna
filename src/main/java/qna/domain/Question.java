@@ -1,83 +1,106 @@
 package qna.domain;
 
-public class Question {
-    private Long id;
-    private String title;
-    private String contents;
-    private Long writerId;
-    private boolean deleted = false;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
+@Entity
+public class Question extends BaseTimeEntity {
 
-    public Question(Long id, String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
-    }
+	@Column(name = "title", length = 100, nullable = false)
+	private String title;
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
+	@Lob
+	@Column(name = "contents")
+	private String contents;
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
+	@Column(name = "writer_id")
+	private Long writerId;
 
-    public Long getId() {
-        return id;
-    }
+	@Column(name = "deleted", nullable = false)
+	private boolean deleted = false;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	protected Question() {
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public Question(String title, String contents) {
+		this(null, title, contents);
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public Question(Long id, String title, String contents) {
+		this.id = id;
+		this.title = title;
+		this.contents = contents;
+	}
 
-    public String getContents() {
-        return contents;
-    }
+	public Question writeBy(User writer) {
+		this.writerId = writer.getId();
+		return this;
+	}
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
+	public boolean isOwner(User writer) {
+		return this.writerId.equals(writer.getId());
+	}
 
-    public Long getWriterId() {
-        return writerId;
-    }
+	public void addAnswer(Answer answer) {
+		answer.toQuestion(this);
+	}
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getContents() {
+		return contents;
+	}
+
+	public void setContents(String contents) {
+		this.contents = contents;
+	}
+
+	public Long getWriterId() {
+		return writerId;
+	}
+
+	public void setWriterId(Long writerId) {
+		this.writerId = writerId;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	@Override
+	public String toString() {
+		return "Question{" +
+			"id=" + id +
+			", title='" + title + '\'' +
+			", contents='" + contents + '\'' +
+			", writerId=" + writerId +
+			", deleted=" + deleted +
+			'}';
+	}
 }
