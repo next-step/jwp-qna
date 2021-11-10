@@ -57,7 +57,7 @@ public class AnswerTest {
     @Test
     @DisplayName("삭제되지 않은 Answer 를 Question 의 아이디를 통해 찾을 수 있다")
     void findByQuestionIdAndDeletedFalse() {
-        final List<Answer> foundAnswers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
+        final List<Answer> foundAnswers = answerRepository.findAllByQuestionIdAndDeletedFalse(A1.getQuestionId());
 
         assertAll(() -> {
             assertTrue(foundAnswers.contains(A1));
