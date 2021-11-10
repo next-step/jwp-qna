@@ -1,10 +1,8 @@
 package qna.domain.common;
 
 import java.time.LocalDateTime;
-
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,19 +10,20 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
 public class BaseTime {
-	@CreatedDate
-	private LocalDateTime createdAt;
-	@LastModifiedDate
-	private LocalDateTime updatedAt;
 
-	public BaseTime() {
-	}
+    @CreatedDate
+    private LocalDateTime createdAt;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
+    public BaseTime() {
+    }
 
-	public LocalDateTime getUpdatedAt() {
-		return updatedAt;
-	}
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 }

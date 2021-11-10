@@ -1,110 +1,109 @@
 package qna.domain;
 
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.common.BaseTime;
 
 @Entity
 public class Answer extends BaseTime {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private Long writerId;
-	private Long questionId;
 
-	@Column(columnDefinition = "LONGTEXT")
-	private String contents;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Long writerId;
+    private Long questionId;
 
-	@Column(nullable = false)
-	private boolean deleted = false;
+    @Column(columnDefinition = "LONGTEXT")
+    private String contents;
 
-	protected Answer() {
-	}
+    @Column(nullable = false)
+    private boolean deleted = false;
 
-	public Answer(User writer, Question question, String contents) {
-		this(null, writer, question, contents);
-	}
+    protected Answer() {
+    }
 
-	public Answer(Long id, User writer, Question question, String contents) {
-		this.id = id;
+    public Answer(User writer, Question question, String contents) {
+        this(null, writer, question, contents);
+    }
 
-		if (Objects.isNull(writer)) {
-			throw new UnAuthorizedException();
-		}
+    public Answer(Long id, User writer, Question question, String contents) {
+        this.id = id;
 
-		if (Objects.isNull(question)) {
-			throw new NotFoundException();
-		}
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
 
-		this.writerId = writer.getId();
-		this.questionId = question.getId();
-		this.contents = contents;
-	}
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
 
-	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
-	}
+        this.writerId = writer.getId();
+        this.questionId = question.getId();
+        this.contents = contents;
+    }
 
-	public void toQuestion(Question question) {
-		this.questionId = question.getId();
-	}
+    public boolean isOwner(User writer) {
+        return this.writerId.equals(writer.getId());
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public void toQuestion(Question question) {
+        this.questionId = question.getId();
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public Long getWriterId() {
-		return writerId;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
-	}
+    public Long getWriterId() {
+        return writerId;
+    }
 
-	public Long getQuestionId() {
-		return questionId;
-	}
+    public void setWriterId(Long writerId) {
+        this.writerId = writerId;
+    }
 
-	public void setQuestionId(Long questionId) {
-		this.questionId = questionId;
-	}
+    public Long getQuestionId() {
+        return questionId;
+    }
 
-	public String getContents() {
-		return contents;
-	}
+    public void setQuestionId(Long questionId) {
+        this.questionId = questionId;
+    }
 
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
+    public String getContents() {
+        return contents;
+    }
 
-	public boolean isDeleted() {
-		return deleted;
-	}
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
+    public boolean isDeleted() {
+        return deleted;
+    }
 
-	@Override
-	public String toString() {
-		return "Answer{" +
-			"id=" + id +
-			", writerId=" + writerId +
-			", questionId=" + questionId +
-			", contents='" + contents + '\'' +
-			", deleted=" + deleted +
-			'}';
-	}
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+            "id=" + id +
+            ", writerId=" + writerId +
+            ", questionId=" + questionId +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            '}';
+    }
 }
