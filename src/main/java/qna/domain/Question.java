@@ -1,11 +1,34 @@
 package qna.domain;
 
-public class Question {
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import java.util.Objects;
+
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Question extends BaseTimeEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Lob
     private String contents;
-    private Long writerId;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column(nullable = false, length = 100)
+    private String title;
+
+    private Long writerId;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -68,6 +91,19 @@ public class Question {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return isDeleted() == question.isDeleted() && Objects.equals(getId(), question.getId()) && Objects.equals(getContents(), question.getContents()) && Objects.equals(getTitle(), question.getTitle()) && Objects.equals(getWriterId(), question.getWriterId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getContents(), isDeleted(), getTitle(), getWriterId());
     }
 
     @Override

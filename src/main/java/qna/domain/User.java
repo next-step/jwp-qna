@@ -1,20 +1,36 @@
 package qna.domain;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import qna.UnAuthorizedException;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Objects;
 
-public class User {
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
+    @Column(length = 50)
     private String email;
 
-    private User() {
-    }
+    @Column(length = 20, nullable = false)
+    private String name;
+
+    @Column(length = 20, nullable = false)
+    private String password;
+
+    @Column(unique = true, length = 20, nullable = false)
+    private String userId;
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
@@ -100,6 +116,19 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getName(), user.getName()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getUserId(), user.getUserId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getEmail(), getName(), getPassword(), getUserId());
     }
 
     @Override

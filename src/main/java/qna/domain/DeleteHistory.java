@@ -1,20 +1,43 @@
 package qna.domain;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DeleteHistory {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private ContentType contentType;
+
     private Long contentId;
-    private Long deletedById;
+
+    @Enumerated(EnumType.STRING)
+    private ContentType contentType;
+
     private LocalDateTime createDate = LocalDateTime.now();
+
+    private Long deletedById;
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
         this.createDate = createDate;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
