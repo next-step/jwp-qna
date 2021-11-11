@@ -8,9 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
-
 @DataJpaTest
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
@@ -21,7 +18,9 @@ public class QuestionTest {
 
     @Test
     public void 엔티티_생성(){
-        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        User user = new User("jerry92k", "12345678","jerrykim","jerry@gmail.com");
+        em.persist(user);
+        Question question = new Question("title1", "contents1").writeBy(user);
         em.persist(question);
         Question findQuestion = em.createQuery("select q from Question q where q.id=:id",Question.class)
             .setParameter("id",question.getId())

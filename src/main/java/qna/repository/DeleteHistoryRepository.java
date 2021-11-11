@@ -5,10 +5,9 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 
 public interface DeleteHistoryRepository extends JpaRepository<DeleteHistory, Long> {
-
-	List<DeleteHistory> findByDeletedById(Long id);
-
+	List<DeleteHistory> findByContentIdAndContentType(Long contentId, ContentType contentType);
 }

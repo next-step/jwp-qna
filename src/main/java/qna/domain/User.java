@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
@@ -14,7 +15,7 @@ public class User extends BaseTimeEntity {
 	public static final GuestUser GUEST_USER = new GuestUser();
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(length = 50)
@@ -104,21 +105,22 @@ public class User extends BaseTimeEntity {
 			return true;
 		}
 
-		if (o == null || getClass() != o.getClass()) {
+		if (o == null) {
+			return false;
+		}
+
+		if (o instanceof User) {
 			return false;
 		}
 
 		User user = (User)o;
 		return Objects.equals(getId(), user.getId()) && Objects.equals(getUserId(), user.getUserId())
-			&& Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getName(), user.getName())
-			&& Objects.equals(getEmail(), user.getEmail()) && Objects.equals(isGuestUser(), user.isGuestUser())
-			&& Objects.equals(getCreatedAt(), user.getCreatedAt()) && Objects.equals(getUpdatedAt(),
-			user.getUpdatedAt());
+			&& Objects.equals(getEmail(), user.getEmail());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getId(), getUserId(), getPassword(), getName(), getEmail());
+		return Objects.hash(getId(), getUserId(), getEmail());
 	}
 
 	@Override
