@@ -19,7 +19,9 @@ class DeleteHistoryTest {
 
 	@Test
 	public void 엔티티_생성(){
-		DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION,QuestionTest.Q1.getId(), UserTest.JAVAJIGI.getId(), LocalDateTime
+		User user = new User("jerry92k", "12345678","jerrykim","jerry@gmail.com");
+		em.persist(user);
+		DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION,QuestionTest.Q1.getId(), user, LocalDateTime
 			.now());
 		em.persist(deleteHistory);
 		DeleteHistory findDleteHistory = em.createQuery("select d from DeleteHistory d where d.id=:id",DeleteHistory.class)
