@@ -31,11 +31,7 @@ public class AnswerTest {
         Answer actual = answers.save(A1);
 
         // then
-        assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
-            () -> assertThat(actual.getQuestionId()).isEqualTo(QuestionTest.Q1.getId())
-        );
+        assertThat(actual.getId()).isNotNull();
     }
 
     @Test

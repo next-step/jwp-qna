@@ -33,7 +33,7 @@ public class Answer extends BaseEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    private Answer() {
+    protected Answer() {
     }
 
     public Answer(User writer, Question question, String contents) {
