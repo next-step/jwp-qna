@@ -2,64 +2,76 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import qna.domain.common.BaseTime;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class DeleteHistory {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
-	@Enumerated(EnumType.STRING)
-	private ContentType contentType;
-	private Long contentId;
-	private Long deletedById;
-	private LocalDateTime createDate = LocalDateTime.now();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	protected DeleteHistory() {
-	}
+    @Enumerated(EnumType.STRING)
+    private ContentType contentType;
 
-	public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
-		this.contentType = contentType;
-		this.contentId = contentId;
-		this.deletedById = deletedById;
-	}
+    private Long contentId;
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		DeleteHistory that = (DeleteHistory)o;
-		return Objects.equals(id, that.id) &&
-			contentType == that.contentType &&
-			Objects.equals(contentId, that.contentId) &&
-			Objects.equals(deletedById, that.deletedById);
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedBy;
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, contentType, contentId, deletedById);
-	}
+    private LocalDateTime createDate = LocalDateTime.now();
 
-	@Override
-	public String toString() {
-		return "DeleteHistory{" +
-			"id=" + id +
-			", contentType=" + contentType +
-			", contentId=" + contentId +
-			", deletedById=" + deletedById +
-			", createDate=" + createDate +
-			'}';
-	}
+    protected DeleteHistory() {
+    }
+
+    public DeleteHistory(ContentType contentType, Long contentId) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+    }
+
+    public DeleteHistory deleteBy(User deletedBy) {
+        this.deletedBy = deletedBy;
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DeleteHistory that = (DeleteHistory) o;
+        return Objects.equals(id, that.id) &&
+            contentType == that.contentType &&
+            Objects.equals(contentId, that.contentId) &&
+            deletedBy.equalsNameAndEmail(that.deletedBy);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contentType, contentId, deletedBy);
+    }
+
+    @Override
+    public String toString() {
+        return "DeleteHistory{" +
+            "id=" + id +
+            ", contentType=" + contentType +
+            ", contentId=" + contentId +
+            ", deletedById=" + deletedBy.getUserId() +
+            ", createDate=" + createDate +
+            '}';
+    }
 }
