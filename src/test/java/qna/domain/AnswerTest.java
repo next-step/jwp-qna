@@ -15,11 +15,12 @@ public class AnswerTest {
     @DisplayName("Answer를 객체 생성한다")
     @Test
     void testCreate() {
-        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        String contents = "Answers Contents1";
+        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, contents);
         assertAll(
-                () -> assertThat(answer.getWriterId()).isEqualTo(answer.getWriterId()),
-                () -> assertThat(answer.getQuestionId()).isEqualTo(answer.getQuestionId()),
-                () -> assertThat(answer.getContents()).isEqualTo(answer.getContents()),
+                () -> assertThat(answer.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
+                () -> assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
+                () -> assertThat(answer.getContents()).isEqualTo(contents),
                 () -> assertThat(answer.getCreatedAt()).isCloseTo(LocalDateTime.now(), within(1, ChronoUnit.SECONDS)),
                 () -> assertThat(answer.getUpdatedAt()).isNull()
         );
