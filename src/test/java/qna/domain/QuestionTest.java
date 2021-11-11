@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import qna.CannotDeleteException;
 import qna.fixture.AnswerFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
@@ -123,13 +124,26 @@ public class QuestionTest {
 	@Test
 	void delete() {
 		// given
-		Question question = QuestionFixture.Q1(UserFixture.Y2O2U2N());
+		User deleter = UserFixture.Y2O2U2N();
+		Question question = QuestionFixture.Q1(deleter);
 
 		// when
-		question.delete();
+		question.delete(deleter);
 
 		// then
 		assertThat(question.isDeleted()).isTrue();
+	}
+
+	@DisplayName("본인이 작성하지 않은 질문은 삭제할 수 없다.")
+	@Test
+	void delete_fail() {
+		// given
+		Question question = QuestionFixture.Q1(UserFixture.Y2O2U2N());
+		User deleter = UserFixture.SEMISTONE222();
+
+		// when
+		assertThatThrownBy(() -> question.delete(deleter))
+			.isInstanceOf(CannotDeleteException.class);
 	}
 
 	@DisplayName("사용자가 질문의 주인인지 알 수 있다.")
