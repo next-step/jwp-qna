@@ -5,66 +5,60 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import qna.NotFoundException;
 
 @DataJpaTest
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
-    @Autowired
-    QuestionRepository questions;
-
-    @Test
-    void save() {
-
-        // when
-        Question expected = questions.save(Q1);
-        Question actual = questions.findByTitle(Q1.getTitle()).get();
-
-        // then
-        assertAll(
-            () -> assertThat(actual).isEqualTo(expected),
-            () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
-            () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
-        );
-    }
-
     @Test
     void writerId_작성자_일치() {
 
+        // then
+        assertThat(Q1.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+    }
+
+    @Test
+    void deleted() {
+
         // when
-        Question question = questions.save(Q2);
+        Q1.setDeleted(true);
 
         // then
-        assertThat(question.getWriterId()).isEqualTo(UserTest.SANJIGI.getId());
+        assertThat(Q1.isDeleted()).isTrue();
+    }
+
+    @Test
+    void deleted_기본값_false() {
+
+        // then
+        assertThat(Q1.isDeleted()).isFalse();
     }
 
     @Test
     @DisplayName("Question 을 통해 Answer 에 question.getId() 등록")
     void addAnswer() {
         // given
-        Question actual = questions.save(Q2);
-        Answer expect = AnswerTest.A1;
+        Answer answer = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
 
         // when
-        actual.addAnswer(expect);
+        Q1.addAnswer(answer);
 
         // then
-        assertThat(expect.getQuestionId()).isEqualTo(actual.getId());
+        assertThat(Q1.getWriterId()).isEqualTo(answer.getId());
     }
 
     @Test
     @DisplayName("Question 의 작성 User 확인")
     void isOwner() {
-        // when
-        Question actual = questions.save(Q2);
 
         // then
         assertAll(
-            () -> assertThat(actual.isOwner(UserTest.SANJIGI)).isTrue(),
-            () -> assertThat(actual.isOwner(UserTest.JAVAJIGI)).isFalse()
+            () -> assertThat(Q1.isOwner(UserTest.JAVAJIGI)).isTrue(),
+            () -> assertThat(Q1.isOwner(UserTest.SANJIGI)).isFalse()
         );
     }
 }

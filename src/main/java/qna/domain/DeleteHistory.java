@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import qna.NotFoundException;
+
 @Entity
 @Table(name = "delete_history")
 public class DeleteHistory {
@@ -42,8 +44,12 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    public boolean isContentType(ContentType answer) {
-        return this.contentType == answer;
+    public boolean isContentType(ContentType contentType) {
+        return this.contentType == contentType;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override

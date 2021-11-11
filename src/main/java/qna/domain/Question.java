@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "question")
@@ -28,11 +33,11 @@ public class Question extends BaseEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    protected Question() {
     }
 
-    protected Question() {
+    public Question(String title, String contents) {
+        this(null, title, contents);
     }
 
     public Question(Long id, String title, String contents) {
