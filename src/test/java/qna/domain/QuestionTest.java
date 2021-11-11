@@ -90,7 +90,8 @@ public class QuestionTest {
 		// then
 		assertAll(
 			() -> assertThat(question.getAnswers()).contains(answer),
-			() -> assertThat(answer.getQuestion()).isEqualTo(question)
+			() -> assertThat(answer.getQuestion()).isEqualTo(question),
+			() -> assertThat(question.getAnswers()).hasSize(1)
 		);
 	}
 

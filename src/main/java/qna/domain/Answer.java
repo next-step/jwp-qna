@@ -44,7 +44,9 @@ public class Answer extends BaseEntity {
         throwOnNotFoundQuestion(question);
 
         this.question = question;
-        question.getAnswers().add(this);
+		if (!question.getAnswers().contains(this)) {
+			question.getAnswers().add(this);
+		}
     }
 
     private void throwOnNotFoundQuestion(Question question) {
