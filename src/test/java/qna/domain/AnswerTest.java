@@ -24,7 +24,12 @@ public class AnswerTest {
 
     @Test
     public void 엔티티_생성(){
-        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answer entity unit test");
+        User user = new User("jerry92k", "12345678","jerrykim","jerry@gmail.com");
+        em.persist(user);
+        Question question = new Question("title1", "contents1").writeBy(user);
+        em.persist(question);
+
+        Answer answer = new Answer(user,question, "Answer entity unit test");
         em.persist(answer);
         Answer findAnswer = em.createQuery("select a from Answer a where a.id=:id",Answer.class)
             .setParameter("id",answer.getId())
