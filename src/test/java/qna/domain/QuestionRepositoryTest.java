@@ -28,12 +28,11 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("question 등록")
     public void saveQuestionTest() {
+        Question question = questionRepository.findById(savedQuestion.getId()).get();
+
         assertAll(
-                () -> assertThat(savedQuestion.getId()).isNotNull(),
-                () -> assertThat(savedQuestion.getContents()).isEqualTo(Q1.getContents()),
-                () -> assertThat(savedQuestion.getWriterId()).isEqualTo(Q1.getWriterId()),
-                () -> assertThat(savedQuestion.getContents()).isEqualTo(Q1.getContents()),
-                () -> assertFalse(savedQuestion.isDeleted())
+                () -> assertNotNull(savedQuestion.getId()),
+                () -> assertEquals(question, savedQuestion)
         );
     }
 

@@ -20,25 +20,22 @@ public class DeleteHistoryRepositoryTest {
     private DeleteHistoryRepository deleteHistoryRepository;
 
     private DeleteHistory answerSavedDeleteHistory;
-    private DeleteHistory questionDeleteHistory;
+    private DeleteHistory questionSavedDeleteHistory;
 
     @BeforeEach
     private void beforeEach() {
         answerSavedDeleteHistory = deleteHistoryRepository.save(DH_ANSWER);
-        questionDeleteHistory = deleteHistoryRepository.save(DH_QUESTION);
+        questionSavedDeleteHistory = deleteHistoryRepository.save(DH_QUESTION);
     }
-
 
     @Test
     @DisplayName("delete history 등록")
     public void saveDeleteHistoryTest() {
         Long id = answerSavedDeleteHistory.getId();
-
-        Optional<DeleteHistory> oDeleteHistory = deleteHistoryRepository.findById(id);
-
+        DeleteHistory deleteHistory = deleteHistoryRepository.findById(id).get();
         assertAll(
-                () -> assertTrue(oDeleteHistory.isPresent()),
-                () -> assertEquals(oDeleteHistory.get(), answerSavedDeleteHistory)
+                () -> assertNotNull(answerSavedDeleteHistory.getId()),
+                () -> assertEquals(deleteHistory, answerSavedDeleteHistory)
         );
     }
 
@@ -46,13 +43,10 @@ public class DeleteHistoryRepositoryTest {
     @DisplayName("content type이 answer인 삭제 이력 조회")
     public void findByContentTypeIsAnswerTest() {
         Long answerId = answerSavedDeleteHistory.getId();
-        Long questionId = questionDeleteHistory.getId();
-
+        Long questionId = questionSavedDeleteHistory.getId();
         Optional<DeleteHistory> oAnswerHistory = deleteHistoryRepository.findById(answerId);
         Optional<DeleteHistory> oQuestionHistory = deleteHistoryRepository.findById(questionId);
-
         List<DeleteHistory> deleteHistories = deleteHistoryRepository.findByContentType(ContentType.ANSWER);
-
         assertAll(
                 () -> assertThat(deleteHistories).contains(oAnswerHistory.get()),
                 () -> assertThat(deleteHistories).doesNotContain(oQuestionHistory.get())
@@ -63,13 +57,10 @@ public class DeleteHistoryRepositoryTest {
     @DisplayName("content type이 question인 삭제 이력 조회")
     public void findByContentTypeIsQuestionTest() {
         Long answerId = answerSavedDeleteHistory.getId();
-        Long questionId = questionDeleteHistory.getId();
-
+        Long questionId = questionSavedDeleteHistory.getId();
         Optional<DeleteHistory> oAnswerHistory = deleteHistoryRepository.findById(answerId);
         Optional<DeleteHistory> oQuestionHistory = deleteHistoryRepository.findById(questionId);
-
         List<DeleteHistory> deleteHistories = deleteHistoryRepository.findByContentType(ContentType.QUESTION);
-
         assertAll(
                 () -> assertThat(deleteHistories).contains(oQuestionHistory.get()),
                 () -> assertThat(deleteHistories).doesNotContain(oAnswerHistory.get())

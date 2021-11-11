@@ -14,7 +14,6 @@ import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 public class UserRepositoryTest {
-
     @Autowired
     private UserRepository userRepository;
 
@@ -28,11 +27,10 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("user 등록")
     public void saveUserTest() {
-        Optional<User> oUser = userRepository.findById(savedUser.getId());
-
+        User user = userRepository.findById(savedUser.getId()).get();
         assertAll(
-                () -> assertTrue(oUser.isPresent()),
-                () -> assertEquals(savedUser, oUser.get())
+                () -> assertNotNull(savedUser.getId()),
+                () -> assertEquals(user, savedUser)
         );
     }
 
@@ -40,10 +38,9 @@ public class UserRepositoryTest {
     @DisplayName("user id로 검색")
     public void findByUserIdTest() {
         Optional<User> oUser = userRepository.findByUserId(JAVAJIGI.getUserId());
-
         assertAll(
                 () -> assertTrue(oUser.isPresent()),
-                () -> assertEquals(savedUser, oUser.get())
+                () -> assertEquals(oUser.get(), savedUser)
         );
     }
 

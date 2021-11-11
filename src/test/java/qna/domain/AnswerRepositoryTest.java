@@ -15,7 +15,6 @@ import static qna.domain.AnswerTest.A1;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
-
     @Autowired
     private AnswerRepository answerRepository;
 
@@ -26,16 +25,13 @@ public class AnswerRepositoryTest {
         savedAnswer = answerRepository.save(A1);
     }
 
-
     @Test
     @DisplayName("answer 등록")
     public void saveAnswerTest() {
+        Answer answer = answerRepository.findById(savedAnswer.getId()).get();
         assertAll(
                 () -> assertNotNull(savedAnswer.getId()),
-                () -> assertEquals(savedAnswer.getWriterId(), A1.getWriterId()),
-                () -> assertEquals(savedAnswer.getQuestionId(), A1.getQuestionId()),
-                () -> assertEquals(savedAnswer.getContents(), A1.getContents()),
-                () -> assertFalse(savedAnswer.isDeleted())
+                () -> assertEquals(answer, savedAnswer)
         );
     }
 
@@ -43,27 +39,21 @@ public class AnswerRepositoryTest {
     @DisplayName("question id로 deleted가 false인 answer 검색")
     public void findByQuestionIdAndDeletedFalseTest() {
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
-
         assertThat(answers).containsExactly(savedAnswer);
-
     }
 
     @Test
     @DisplayName("answer id로 deleted가 false인 answer 단일검색")
     public void findByIdAndDeletedFalseTest() {
         Optional<Answer> oAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
-
         assertAnswerDeleted(oAnswer, false);
-
     }
 
     @Test
     @DisplayName("answer에 delete를 true로 수정")
     public void updateAnswerDeletedTrue(){
         savedAnswer.setDeleted(true);
-
         Optional<Answer> oAnswer = answerRepository.findById(savedAnswer.getId());
-
         assertAnswerDeleted(oAnswer, true);
     }
 
