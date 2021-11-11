@@ -10,7 +10,7 @@ public class Question extends DateTimeEntity{
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, length = 100)
     private String title;
 
     @Column(name = "delete", nullable = false)

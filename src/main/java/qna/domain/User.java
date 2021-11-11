@@ -15,16 +15,16 @@ public class User extends DateTimeEntity{
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false, unique = true)
     private String userId;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false, length = 20)
     private String password;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
 
-    @Column(name = "email")
+    @Column(name = "email", length = 50)
     private String email;
 
     protected User() {
@@ -82,25 +82,6 @@ public class User extends DateTimeEntity{
 
     public String getUserId() {
         return userId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id)
-                && Objects.equals(userId, user.userId)
-                && Objects.equals(password, user.password)
-                && Objects.equals(name, user.name)
-                && Objects.equals(email, user.email)
-                && Objects.equals(getCreatedDate(), user.getCreatedDate())
-                && Objects.equals(getUpdatedDate(), user.getUpdatedDate());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, userId, password, name, email, getCreatedDate(), getUpdatedDate());
     }
 
     @Override
