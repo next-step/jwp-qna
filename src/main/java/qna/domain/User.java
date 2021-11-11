@@ -80,6 +80,10 @@ public class User extends DateTimeEntity{
         return id;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

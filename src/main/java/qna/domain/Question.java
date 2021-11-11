@@ -1,7 +1,6 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "question")
