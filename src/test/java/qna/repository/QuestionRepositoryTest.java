@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.domain.Question;
+import qna.domain.QuestionTest;
 import qna.domain.User;
 import qna.domain.UserTest;
 
@@ -32,7 +33,7 @@ class QuestionRepositoryTest {
 	public void setup(){
 		em.persist(user1);
 	}
-
+	
 	@Test
 	public void save(){
 		Question question = new Question("title1", "contents1").writeBy(user1);
