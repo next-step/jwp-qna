@@ -2,12 +2,9 @@ package qna.domain;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.test.annotation.DirtiesContext;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,18 +13,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  * packageName : qna.domain
  * fileName : DeleteHistoryRepositoryTest
  * author : haedoang
- * date : 2021-11-09
+ * date : 2021-11-09Ø
  * description :
  */
 @DataJpaTest
 @EnableJpaAuditing
 @TestMethodOrder(MethodOrderer.MethodName.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class DeleteHistoryRepositoryTest {
 
     private Question question;
-
     private User user;
 
     @Autowired
@@ -42,7 +37,7 @@ public class DeleteHistoryRepositoryTest {
     @BeforeEach
     void setUp() {
         this.user = userRepository.save(UserTest.JAVAJIGI);
-        this.question = questionRepository.save(QuestionTest.Q1);
+        this.question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
     }
 
     @Test
