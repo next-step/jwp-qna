@@ -55,10 +55,10 @@ public class Question extends BaseEntity{
     }
 
     public DeleteHistories delete(User writer) {
-        DeleteHistories histories = new DeleteHistories();
-
         checkOwner(writer);
         answers.checkIsOwner(writer);
+
+        DeleteHistories histories = new DeleteHistories();
 
         this.deleted = true;
 
