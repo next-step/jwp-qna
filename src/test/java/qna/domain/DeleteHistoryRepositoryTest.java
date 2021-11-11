@@ -12,18 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import qna.common.CommonRepositoryTest;
 
 class DeleteHistoryRepositoryTest extends CommonRepositoryTest {
-    @Autowired
-    private DeleteHistoryRepository deleteHistoryRepository;
     private User writer;
     private Question question;
     private Answer answer;
 
     @BeforeEach
     void setUp() {
-        writer = new User("questionWriter", "123", "questionWriter", "writer@email.com");
-        question = new Question("question", "questionContents");
+        writer = userRepository.save(
+            new User("questionWriter", "123", "questionWriter", "writer@email.com"));
+        question = questionRepository.save(new Question("question", "questionContents"));
         question.setWriter(writer);
-        answer = new Answer(writer, question, "answerContents");
+        answer = answerRepository.save(new Answer(writer, question, "answerContents"));
     }
 
     @DisplayName("qna 삭제 히스토리를 저장한다")

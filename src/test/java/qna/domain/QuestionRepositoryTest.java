@@ -19,7 +19,8 @@ class QuestionRepositoryTest extends CommonRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        writer = new User("writer", "123", "writer", "writer@email.com");
+        writer = userRepository.save(
+            new User("writer", "123", "writer", "writer@email.com"));
     }
 
     @DisplayName("Question 을 저장한다")
