@@ -38,8 +38,12 @@ public class DeleteHistory {
         this.deletedByUser = deletedByUser;
     }
 
-    public static DeleteHistory create(ContentType contentType, Long contentId, User deletedByUser) {
-        return new DeleteHistory(contentType, contentId, deletedByUser);
+    public static DeleteHistory createBy(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter());
+    }
+
+    public static DeleteHistory createBy(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter());
     }
 
     @Override

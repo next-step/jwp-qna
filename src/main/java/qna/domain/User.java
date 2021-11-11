@@ -33,15 +33,12 @@ public class User extends BaseTimeEntity {
     protected User() {
     }
 
-    private User(String userId, String password, String name, String email) {
+    public User(Long id, String userId, String password, String name, String email) {
+        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
-    }
-
-    public static User create(String userId, String password, String name, String email) {
-        return new User(userId, password, name, email);
     }
 
     public void update(User loginUser, User target) {
@@ -84,10 +81,6 @@ public class User extends BaseTimeEntity {
 
     public String getUserId() {
         return userId;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public String getName() {

@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,18 +34,30 @@ public class Question extends BaseTimeEntity {
     protected Question() {
     }
 
-    private Question(String title, String contents) {
+    public Question(Long id, String title, String contents) {
+        this.id = id;
         this.title = title;
         this.contents = contents;
-    }
-
-    public static Question create(String title, String contents) {
-        return new Question(title, contents);
     }
 
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
+    }
+
+    public void changeStateDelete(User loginUser) throws CannotDeleteException {
+        validateDeletable(loginUser);
+        this.deleted = true;
+
+        for (Answer answer : answers) {
+            answer.changeStateDelete(loginUser);
+        }
+    }
+
+    private void validateDeletable(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public boolean isOwner(User writer) {
@@ -53,10 +67,6 @@ public class Question extends BaseTimeEntity {
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
         this.answers.add(answer);
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public Long getId() {
@@ -77,5 +87,9 @@ public class Question extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 }
