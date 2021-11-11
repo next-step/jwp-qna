@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,14 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class UserRepositoryTest {
+class UserRepositoryTest {
 
 	@Autowired
 	UserRepository users;
 
 	@Test
 	@DisplayName("저장하면 ID가 생성되어야 한다")
-	public void saveTest(){
+	void saveTest() {
+
 		// given
 		User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
 
@@ -31,7 +33,7 @@ public class UserRepositoryTest {
 
 	@Test
 	@DisplayName("유저를 유저아이디로 조회할 수 있어야 한다")
-	public void findByUserIdTest(){
+	void findByUserIdTest() {
 		// given
 		User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
 		User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
@@ -42,15 +44,15 @@ public class UserRepositoryTest {
 		Optional<User> result = users.findByUserId(user1.getUserId());
 
 		// then
-		assertThat(result.isPresent()).isTrue();
-		assertThat(result.get().getUserId()).isEqualTo(user1.getUserId());
-		assertThat(result.get().getId()).isEqualTo(user1.getId());
-		assertThat(result.get() == user1).isTrue();
+		assertAll(
+			() -> assertThat(result).isPresent(),
+			() -> assertThat(result).containsSame(user1)
+		);
 	}
-	
+
 	@Test
 	@DisplayName("유저를 모두 조회할 수 있어야 한다")
-	public void findAllTest(){
+	void findAllTest() {
 		// given
 		User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
 		User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
@@ -61,7 +63,9 @@ public class UserRepositoryTest {
 		List<User> result = users.findAll();
 
 		// then
-		assertThat(result.size()).isEqualTo(2);
-		assertThat(result).contains(user1, user2);
+		assertAll(
+			() -> assertThat(result.size()).isEqualTo(2),
+			() -> assertThat(result).contains(user1, user2)
+		);
 	}
 }
