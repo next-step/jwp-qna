@@ -19,16 +19,6 @@ import qna.fixture.UserFixture;
 
 @DisplayName("답변")
 public class AnswerTest {
-	private static Stream<Arguments> ofFailArguments() {
-		return Stream.of(
-			Arguments.of(
-				null,
-				"contents",
-				UnAuthorizedException.class
-			)
-		);
-	}
-
 	public static Stream<Arguments> isOwnerArguments() {
 		return Stream.of(
 			Arguments.of(
@@ -63,13 +53,16 @@ public class AnswerTest {
 		);
 	}
 
-	@DisplayName("답변을 생성할 수 없다.")
-	@ParameterizedTest
-	@MethodSource(value = "ofFailArguments")
-	void of_fail(User writer, String contents, Class<?> expectedExceptionType) {
-		// given & when & then
+	@DisplayName("작성자가 없을 경우 답변을 생성할 수 없다.")
+	@Test
+	void of_fail() {
+		// given
+		User writer = null;
+		String contents = "contents";
+
+		// when & then
 		assertThatThrownBy(() -> Answer.of(writer, contents))
-			.isInstanceOf(expectedExceptionType);
+			.isInstanceOf(UnAuthorizedException.class);
 	}
 
 	@DisplayName("답변에 질문을 등록할 수 있다.")
