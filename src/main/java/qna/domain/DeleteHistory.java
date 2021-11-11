@@ -11,6 +11,7 @@ public class DeleteHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "content_type")
     private ContentType contentType;
 
@@ -30,7 +31,7 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    public DeleteHistory() {
+    protected DeleteHistory() {
 
     }
 

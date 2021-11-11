@@ -20,6 +20,7 @@ public class Answer extends BaseEntity {
     private Long questionId;
 
     @Column(name = "contents")
+    @Lob
     private String contents;
 
     @Column(name = "deleted", nullable = false)
@@ -45,7 +46,7 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public Answer() {
+    protected Answer() {
 
     }
 

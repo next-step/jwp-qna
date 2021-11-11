@@ -14,6 +14,7 @@ public class Question extends BaseEntity {
     private String title;
 
     @Column(name = "contents")
+    @Lob
     private String contents;
 
     @Column(name = "writer_id")
@@ -21,12 +22,6 @@ public class Question extends BaseEntity {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -38,7 +33,7 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Question() {
+    protected Question() {
 
     }
 
