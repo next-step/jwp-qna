@@ -82,9 +82,10 @@ public class Question extends BaseEntity {
         return answers;
     }
 
-    public void delete(User loginUser) {
+    public DeleteHistories delete(User loginUser) {
         validation(loginUser);
         delete();
+        return DeleteHistories.fromQuestion(this);
     }
 
     public List<DeleteHistory> getDeleteHistoriesOfAnswers() {

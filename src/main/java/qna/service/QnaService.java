@@ -35,7 +35,7 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) {
         Question question = findQuestionById(questionId);
-        question.delete(loginUser);
-        deleteHistoryService.saveAll(DeleteHistories.fromQuestion(question));
+        DeleteHistories deleteHistories = question.delete(loginUser);
+        deleteHistoryService.saveAll(deleteHistories);
     }
 }

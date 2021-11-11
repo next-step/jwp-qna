@@ -22,8 +22,8 @@ class DeleteHistoriesTest {
         // then
         assertThat(deleteHistories.getDeleteHistories()).containsExactly(
                 new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()),
-                new DeleteHistory(ContentType.ANSWER, firstAnswer.getId(), firstAnswer.getWriter()),
-                new DeleteHistory(ContentType.ANSWER, secondAnswer.getId(), secondAnswer.getWriter())
+                new DeleteHistory(ContentType.ANSWER, secondAnswer.getId(), secondAnswer.getWriter()),
+                new DeleteHistory(ContentType.ANSWER, firstAnswer.getId(), firstAnswer.getWriter())
         );
     }
 }
