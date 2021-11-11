@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,7 +29,7 @@ public class DeleteHistory {
 	private LocalDateTime createDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "deleted_by_id")
+	@JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
 	private User deleter;
 
 	protected DeleteHistory() {
