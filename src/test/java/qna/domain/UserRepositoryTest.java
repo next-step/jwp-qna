@@ -19,7 +19,8 @@ public class UserRepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));
+		/*userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));*/
+		userRepository.save(JAVAJIGI);
 	}
 
 	@Test
@@ -34,5 +35,14 @@ public class UserRepositoryTest {
 
 		// then
 		Assertions.assertThat(user.getEmail()).isEqualTo(updateEmail);
+	}
+
+	@Test
+	void findByName() {
+		// when
+		User user = userRepository.findByName("javajigi").get();
+
+		// then
+		Assertions.assertThat(user.getName()).isEqualTo(JAVAJIGI.getName());
 	}
 }
