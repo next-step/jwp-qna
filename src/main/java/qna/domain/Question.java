@@ -103,6 +103,7 @@ public class Question extends BaseEntity {
         }
 
         this.deleted = true;
+        answers.forEach(Answer::delete);
     }
 
     private boolean hasAnyAnswersNotOwner() {

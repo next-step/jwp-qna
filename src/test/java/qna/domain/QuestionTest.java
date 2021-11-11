@@ -145,7 +145,11 @@ public class QuestionTest {
 		question.delete(deleter);
 
 		// then
-		assertThat(question.isDeleted()).isTrue();
+		assertAll(
+			() -> assertThat(question.isDeleted()).isTrue(),
+			() -> question.getAnswers().forEach((answer) -> assertThat(answer.isDeleted()).isTrue())
+		);
+
 	}
 
 	@DisplayName("본인이 작성하지 않은 질문은 삭제할 수 없다.")
