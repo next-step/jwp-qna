@@ -10,14 +10,16 @@ import java.util.Random;
  * description :
  */
 public class StringUtils {
+    private static final int SMALL_A = 'a';
+    private static final int SMALL_Z = 'z';
     private StringUtils() {}
 
     /***
      * @source : https://www.baeldung.com/java-random-string
      */
     public static String getRandomString(int length) {
-        int leftLimit = 97; // letter 'a'
-        int rightLimit = 122; // letter 'z'
+        int leftLimit = SMALL_A;
+        int rightLimit = SMALL_Z;
         int targetStringLength = length;
         Random random = new Random();
 
