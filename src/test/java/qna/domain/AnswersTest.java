@@ -24,8 +24,8 @@ class AnswersTest {
 
     @Test
     void delete_답변을_삭제한다() {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        ANSWERS.delete(deleteHistories);
-        assertThat(deleteHistories.size()).isEqualTo(2);
+        ANSWERS.delete();
+        assertThat(ANSWERS.getAnswers().get(0).isDeleted()).isTrue();
+        assertThat(ANSWERS.getAnswers().get(1).isDeleted()).isTrue();
     }
 }

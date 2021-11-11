@@ -2,6 +2,7 @@ package qna.domain;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class Question extends BaseEntity{
@@ -56,13 +57,12 @@ public class Question extends BaseEntity{
 
     public DeleteHistories delete(User writer) {
         checkOwner(writer);
-        answers.checkIsOwner(writer);
+        deleted = true;
+        return new DeleteHistories(answers.delete(writer), getDeleteHistory(writer));
+    }
 
-        DeleteHistories histories = new DeleteHistories();
-
-        this.deleted = true;
-
-        return histories.delete(answers, DeleteHistory.question(id, writer));
+    private DeleteHistory getDeleteHistory(User writer) {
+        return DeleteHistory.question(id, writer);
     }
 
     public void addAnswer(Answer answer) {

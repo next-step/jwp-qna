@@ -10,6 +10,7 @@ import qna.domain.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,10 +81,10 @@ class QnaServiceTest {
     }
 
     private void verifyDeleteHistories() {
-        DeleteHistories deleteHistories = new DeleteHistories(Arrays.asList(
+        List<DeleteHistory> deleteHistories = Arrays.asList(
                 new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
                 new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
-        ));
+        );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }
 }

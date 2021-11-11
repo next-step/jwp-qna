@@ -7,20 +7,11 @@ import java.util.Objects;
 
 public class DeleteHistories {
 
-    private final List<DeleteHistory> deleteHistories;
+    private final List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-    public DeleteHistories() {
-        deleteHistories = new ArrayList<>();
-    }
-
-    public DeleteHistories(List<DeleteHistory> deleteHistories) {
-        this.deleteHistories = deleteHistories;
-    }
-
-    public DeleteHistories delete(Answers answers, DeleteHistory questionHistory) {
-        deleteHistories.add(questionHistory);
-        answers.delete(deleteHistories);
-        return new DeleteHistories(deleteHistories);
+    public DeleteHistories(List<DeleteHistory> questionDeleteHistories, DeleteHistory questionDeleteHistory) {
+        this.deleteHistories.add(questionDeleteHistory);
+        this.deleteHistories.addAll(questionDeleteHistories);
     }
 
     public List<DeleteHistory> getDeleteHistories() {

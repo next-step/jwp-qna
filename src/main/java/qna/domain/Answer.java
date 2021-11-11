@@ -60,9 +60,12 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
-    public void delete(List<DeleteHistory> deleteHistories) {
+    public void delete() {
         deleted = true;
-        deleteHistories.add(DeleteHistory.answer(id, writer));
+    }
+
+    public DeleteHistory getDeleteHistory() {
+        return DeleteHistory.answer(id, writer);
     }
 
     public Long getId() {
