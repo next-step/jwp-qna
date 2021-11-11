@@ -11,8 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.sun.istack.NotNull;
-
 @Entity
 @Table(name = "user")
 public class User extends BaseEntity {
@@ -51,11 +49,11 @@ public class User extends BaseEntity {
 
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException(UnAuthorizedException.UNAUTHORIZED_EXCEPTION_USER_ID_NULL_MESSAGE);
         }
 
         if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException(UnAuthorizedException.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_MESSAGE);
         }
 
         this.name = target.name;
