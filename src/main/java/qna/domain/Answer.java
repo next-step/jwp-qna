@@ -1,36 +1,29 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
-
-import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Answer {
+public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(columnDefinition = "clob")
     private String contents;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
     private boolean deleted = false;
+
     private Long questionId;
 
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
     private Long writerId;
 
     public Answer() {
@@ -107,11 +100,11 @@ public class Answer {
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", writerId=" + writerId +
+            ", questionId=" + questionId +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            '}';
     }
 }
