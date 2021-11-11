@@ -1,6 +1,16 @@
 package qna.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import qna.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
@@ -99,5 +109,14 @@ public class Question extends BaseTimeEntity {
             ", writerId=" + writer +
             ", deleted=" + deleted +
             '}';
+    }
+
+    public Question delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        setDeleted(true);
+
+        return this;
     }
 }
