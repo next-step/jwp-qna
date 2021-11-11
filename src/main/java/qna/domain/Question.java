@@ -56,7 +56,6 @@ public class Question extends BaseEntity{
 
     public DeleteHistories delete(User writer) {
         DeleteHistories histories = new DeleteHistories();
-        Answers answers = this.answers.getNotDeleted();
 
         checkOwner(writer);
         answers.checkIsOwner(writer);
