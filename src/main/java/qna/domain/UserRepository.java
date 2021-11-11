@@ -9,5 +9,5 @@ import javax.swing.text.html.Option;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserId(String userId);
 
-	Optional<User> findByName(String userId);
+	Optional<User> findByName(String name);
 }
