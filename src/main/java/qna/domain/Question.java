@@ -32,6 +32,9 @@ public class Question {
         this(null, title, contents);
     }
 
+    private Question() {
+    }
+
     public Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;

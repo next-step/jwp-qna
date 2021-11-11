@@ -32,6 +32,9 @@ public class DeleteHistory {
     @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
+    private DeleteHistory() {
+    }
+
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
