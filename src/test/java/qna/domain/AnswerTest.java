@@ -19,7 +19,7 @@ class AnswerTest {
     @Test
     void save_확인() {
         // given
-        User user = UserTestFactory.create(1L, "user");
+        User user = UserTestFactory.create("user");
         Question question = QuestionTestFactory.create("title", "contents", user);
         Answer answer = AnswerTestFactory.create(user, question, "Answers Contents");
 

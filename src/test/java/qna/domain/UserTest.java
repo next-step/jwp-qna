@@ -18,7 +18,7 @@ class UserTest {
     @Test
     void save_확인() {
         // given
-        User user = UserTestFactory.create(1L, "user");
+        User user = UserTestFactory.create("user");
 
         // when
         User actual = userRepository.save(user);

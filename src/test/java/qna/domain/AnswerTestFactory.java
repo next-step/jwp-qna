@@ -6,7 +6,7 @@ public class AnswerTestFactory {
     }
 
     public static Answer create(User user, Question question, String contents) {
-        return new Answer(user, question, contents);
+        return create(null, user, question, contents);
     }
 
     public static Answer create(Long id, User user, Question question, String contents) {
