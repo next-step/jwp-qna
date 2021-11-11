@@ -12,8 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import qna.NotFoundException;
-
 @Entity
 @Table(name = "delete_history")
 public class DeleteHistory {

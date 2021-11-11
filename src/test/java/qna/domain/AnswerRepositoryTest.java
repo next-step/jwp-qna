@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,10 +32,10 @@ public class AnswerRepositoryTest {
     void identity() {
         // when
         Answer actual = answers.save(AnswerTest.A1);
-        Answer DB조회 = answers.findById(actual.getId()).get();
+        Answer expect = answers.findById(actual.getId()).get();
 
         // then
-        assertThat(actual).isEqualTo(DB조회);
+        assertThat(actual).isEqualTo(expect);
     }
 
     @Test
