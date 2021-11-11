@@ -33,6 +33,9 @@ public class User extends BaseEntity {
     
     @OneToMany(mappedBy = "writer")
     private List<Answer> answers;
+    
+    @OneToMany(mappedBy = "writer")
+    private List<Question> questions;
 
     protected User() {
     }

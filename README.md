@@ -20,5 +20,5 @@
 ## 구현 목록
 - [x] answer 연관관계 매핑
 - [x] question 연관관계 매핑
-- [ ] user 연관관계 매핑
+- [x] user 연관관계 매핑
 - [ ] delete_history 연관관계 매핑
