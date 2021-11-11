@@ -6,11 +6,16 @@ import qna.domain.BaseTimeEntity;
 import qna.domain.question.Question;
 import qna.domain.user.User;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Objects;
 
@@ -20,14 +25,21 @@ public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
-    @Column(columnDefinition = "longtext")
+
+    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
+
+    @Lob
     private String contents;
-    @Column(nullable = false)
+
     private boolean deleted = false;
 
-    public Answer() {
+    protected Answer() {
     }
 
     public Answer(User writer, Question question, String contents) {
@@ -45,17 +57,22 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
+    public Answer(Long id, User writer, Question question, String contents, boolean deleted) {
+        this(id, writer, question, contents);
+        this.deleted = deleted;
+    }
+
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -66,12 +83,16 @@ public class Answer extends BaseTimeEntity {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public Long getQuestionId() {
-        return questionId;
+        return question.getId();
+    }
+
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
@@ -93,25 +114,20 @@ public class Answer extends BaseTimeEntity {
 
         Answer answer = (Answer) o;
 
-        if (id != null ? !id.equals(answer.id) : answer.id != null) return false;
-        if (writerId != null ? !writerId.equals(answer.writerId) : answer.writerId != null) return false;
-        return questionId != null ? questionId.equals(answer.questionId) : answer.questionId == null;
+        return id != null ? id.equals(answer.id) : answer.id == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (writerId != null ? writerId.hashCode() : 0);
-        result = 31 * result + (questionId != null ? questionId.hashCode() : 0);
-        return result;
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writerId=" + writer.getId() +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

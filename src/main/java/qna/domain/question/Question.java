@@ -1,14 +1,19 @@
 package qna.domain.question;
 
 import qna.domain.BaseTimeEntity;
-import qna.domain.user.User;
 import qna.domain.answer.Answer;
+import qna.domain.user.User;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -18,10 +23,12 @@ public class Question extends BaseTimeEntity {
     private String title;
     @Column(columnDefinition = "longtext")
     private String contents;
-    private Long writerId;
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
     private boolean deleted = false;
 
-    public Question() {
+    protected Question() {
     }
 
     public Question(String title, String contents) {
@@ -34,13 +41,18 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
+    public Question(Long id, String title, String contents, boolean deleted) {
+        this(id, title, contents);
+        this.deleted = deleted;
+    }
+
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -63,8 +75,8 @@ public class Question extends BaseTimeEntity {
         return contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -81,7 +93,7 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
@@ -93,14 +105,11 @@ public class Question extends BaseTimeEntity {
 
         Question question = (Question) o;
 
-        if (id != null ? !id.equals(question.id) : question.id != null) return false;
-        return writerId != null ? writerId.equals(question.writerId) : question.writerId == null;
+        return id != null ? id.equals(question.id) : question.id == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (writerId != null ? writerId.hashCode() : 0);
-        return result;
+        return id != null ? id.hashCode() : 0;
     }
 }
