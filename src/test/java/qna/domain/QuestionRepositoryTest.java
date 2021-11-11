@@ -65,12 +65,11 @@ class QuestionRepositoryTest {
         entityManager.clear();
 
         Optional<Question> optional = questionRepository.findById(question.getId());
-        if (optional.isPresent()) {
-            Question question = optional.get();
-            List<Answer> answers = question.getAnswers();
-            assertThat(answers.size()).isEqualTo(1);
-            assertThat(answers.get(0).isDeleted()).isFalse();
-        }
+        assertAll(
+                () -> assertThat(optional.isPresent()).isTrue(),
+                () -> assertThat(optional.get().getAnswers().size()).isEqualTo(1),
+                () -> assertThat(optional.get().isDeleted()).isFalse()
+        );
     }
 
     public static Question question(User user) {
