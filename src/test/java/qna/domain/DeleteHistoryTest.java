@@ -36,6 +36,7 @@ public class DeleteHistoryTest {
         DeleteHistory actual = deleteHistories.save(ANSWER_HISTORY);
         DeleteHistory DB조회 = deleteHistories.findById(actual.getId()).get();
 
+        // then
         assertThat(actual).isEqualTo(DB조회);
     }
 
@@ -43,8 +44,13 @@ public class DeleteHistoryTest {
     void contentType_ENUM_저장확인() {
 
         // when
-        DeleteHistory actual = deleteHistories.save(ANSWER_HISTORY);
+        DeleteHistory answerDeleteHistory = deleteHistories.save(ANSWER_HISTORY);
+        DeleteHistory questionDeleteHistory = deleteHistories.save(QUESTION_HISTORY);
 
-        assertThat(actual.getContentType()).isEqualTo(ContentType.ANSWER);
+        // then
+        assertAll(
+            () -> assertThat(answerDeleteHistory.getContentType()).isEqualTo(ContentType.ANSWER),
+            () -> assertThat(questionDeleteHistory.getContentType()).isEqualTo(ContentType.QUESTION)
+        );
     }
 }
