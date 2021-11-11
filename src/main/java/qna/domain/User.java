@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -7,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import qna.UnAuthorizedException;
 
@@ -28,6 +30,12 @@ public class User extends BaseEntity {
     private String name;
     
     private String email;
+    
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers;
+    
+    @OneToMany(mappedBy = "writer")
+    private List<Question> questions;
 
     protected User() {
     }
