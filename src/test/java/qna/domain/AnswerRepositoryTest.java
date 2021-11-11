@@ -38,7 +38,7 @@ class AnswerRepositoryTest extends CommonRepositoryTest {
         assertAll(
             () -> assertNotNull(savedAnswer.getId()),
             () -> assertTrue(savedAnswer.isOwner(writer)),
-            () -> assertEquals(question.getId(), savedAnswer.getQuestionId()),
+            () -> assertEquals(question, savedAnswer.getQuestion()),
             () -> assertEquals(answerContents, savedAnswer.getContents()),
             () -> assertFalse(savedAnswer.isDeleted()),
             () -> assertNotNull(savedAnswer.getCreatedAt())
