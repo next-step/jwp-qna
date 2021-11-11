@@ -16,18 +16,23 @@ public class Question extends BaseEntity {
 
     @OneToMany(mappedBy = "question")
     private final List<Answer> answers = new ArrayList<>();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
     @Column(name = "title", length = 100, nullable = false)
     private String title;
+
     @Lob
     @Column(name = "contents")
     private String contents;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", updatable = false, foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
@@ -55,19 +60,23 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public void addAnswer(Answer answer) {
         answers.add(answer);
     }
 
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
 
-    public DeleteHistory delete(User loginUser) {
+    public void delete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
@@ -75,18 +84,15 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException("이미 삭제된 질문입니다.");
         }
         changeDeletedTrue();
-        return new DeleteHistory(ContentType.QUESTION, id, writer);
     }
 
-    public List<DeleteHistory> deleteQuestionByAnswers(User loginUser, List<Answer> deleteAnswers) {
-        List<DeleteHistory> result = new ArrayList<>();
-        for (Answer answer : deleteAnswers) {
+    public void cascadeDeleteAnswers(User loginUser) {
+        for (Answer answer : answers) {
             if (!answer.isOwner(loginUser)) {
                 throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
             }
-            result.add(answer.delete(loginUser));
+            answer.delete(loginUser);
         }
-        return result;
     }
 
     private void changeDeletedTrue() {

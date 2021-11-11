@@ -61,7 +61,7 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public DeleteHistory delete(User loginUser) {
+    public void delete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
@@ -69,8 +69,6 @@ public class Answer extends BaseEntity {
             throw new CannotDeleteException("이미 삭제된 답변입니다.");
         }
         changeDeletedTrue();
-
-        return new DeleteHistory(ContentType.ANSWER, id, writer);
     }
 
     private void changeDeletedTrue() {
