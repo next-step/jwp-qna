@@ -62,24 +62,12 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
     public User getWriter() {
         return writer;
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public Answers getAnswers() {
-        return answers;
     }
 
     public DeleteHistories delete(User loginUser) {
@@ -92,10 +80,6 @@ public class Question extends BaseEntity {
         validateOwner(loginUser);
         this.deleted = true;
     }
-
-    private void deleteAnswers() {
-    }
-
 
     public List<DeleteHistory> getDeleteHistoriesOfAnswers() {
         return answers.getDeleteHistories();
