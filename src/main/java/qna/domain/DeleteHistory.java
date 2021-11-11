@@ -28,7 +28,7 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", updatable = false)
     private LocalDateTime createDate = LocalDateTime.now();
 
     @Column(name = "deleted_by_id")
