@@ -35,8 +35,9 @@ public class QnaService {
     }
 
     private void cascadeDeleteQuestion(User loginUser, Question question) {
-        findAnswersByQuestionId(question);
         question.delete(loginUser);
+
+        findAnswersByQuestionId(question);
         question.cascadeDeleteAnswers(loginUser);
     }
 
