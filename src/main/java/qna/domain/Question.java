@@ -18,7 +18,7 @@ public class Question extends BaseTime{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "varchar(100)")
+    @Column(length = 100)
     private String title;
 
     @Lob
@@ -30,7 +30,7 @@ public class Question extends BaseTime{
     @Column(nullable = false)
     private boolean deleted = false;
 
-    public Question() {
+    protected Question() {
     }
 
     public Question(String title, String contents) {

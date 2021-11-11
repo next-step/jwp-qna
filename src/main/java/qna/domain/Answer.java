@@ -1,8 +1,5 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -11,6 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseTime {
@@ -32,7 +32,7 @@ public class Answer extends BaseTime {
     @Column(name = "writer_id")
     private Long writerId;
 
-    public Answer() {
+    protected Answer() {
     }
 
     public Answer(User writer, Question question, String contents) {

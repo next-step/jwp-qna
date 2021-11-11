@@ -41,7 +41,7 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    public DeleteHistory() {
+    protected DeleteHistory() {
     }
 
     @Override

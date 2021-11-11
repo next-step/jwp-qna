@@ -13,26 +13,24 @@ import javax.persistence.Id;
 @Entity
 public class User extends BaseTime {
     public static final GuestUser GUEST_USER = new GuestUser();
-    private static final String VARCHAR_20 = "varchar(20)";
-    private static final String VARCHAR_50 = "varchar(50)";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", columnDefinition = VARCHAR_20, nullable = false)
+    @Column(name = "user_id", length = 20, nullable = false)
     private String userId;
 
-    @Column(columnDefinition = VARCHAR_50, nullable = false)
+    @Column(length= 50, nullable = false)
     private String email;
 
-    @Column(columnDefinition = VARCHAR_20, nullable = false)
+    @Column(length = 20, nullable = false)
     private String name;
 
-    @Column(columnDefinition = VARCHAR_20, nullable = false)
+    @Column(length = 20, nullable = false)
     private String password;
 
-    public User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
