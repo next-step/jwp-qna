@@ -43,12 +43,25 @@ JPA 엔티티 매핑에 대해 학습하기
 
 ## 기능 목록
 
-- [ ] DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다
-- [ ] @DataJpaTest 를 사용하여 학습 테스트를 해 본다.
-- [ ] Spring Data JPA 사용 시 옵션으로 동작 쿼리를 로그를 확인해본다.
+- [X] DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다
+- [X] @DataJpaTest 를 사용하여 학습 테스트를 해 본다.
+- [X] Spring Data JPA 사용 시 옵션으로 동작 쿼리를 로그를 확인해본다.
 - [X] Answer 엔티티 작업
 - [X] DeleteHistory 엔티티 작업
 - [X] Question 엔티티 작업
 - [X] User 엔티티 작업
 - [X] AuditingEntityListener base 엔티티 구현하기
-
+- [ ] User.update 테스트
+- [ ] User.update 예외 테스트 (userID null , password 불일치)
+- [ ] Answer create 예외 테스트 (작성자 null, 질문 null)
+- [ ] Answer 테스트
+    - toQuestion
+    - isOwner_질문_작성자_확인
+    - deleted_기본값_false
+    - deleted
+- [ ] DeleteHistory 테스트
+    - contentType_ENUM_저장확인
+- [ ] Question 테스트
+    - writerId_작성자_일치
+    - addAnswer
+    - isOwner
