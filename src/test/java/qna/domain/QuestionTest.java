@@ -21,7 +21,7 @@ public class QuestionTest {
     @Test
     @DisplayName("저장됐는지 확인")
     void 저장() {
-        Question expected = new Question("new title", "new contents").writeBy(UserTest.JAVAJIGI);
+        Question expected = new Question("new title", "new contents").writeBy(UserTest.JENNIE);
         Question saveQuestion = question.save(expected);
         assertAll(() -> assertThat(saveQuestion).isEqualTo(expected), 
                 () -> assertThat(saveQuestion.getId()).isNotNull(), 
@@ -31,7 +31,7 @@ public class QuestionTest {
     @Test
     @DisplayName("아이디로 조회")
     void 아이디로_조회() {
-        Question expected = new Question("new title", "new contents").writeBy(UserTest.JAVAJIGI);
+        Question expected = new Question("new title", "new contents").writeBy(UserTest.JENNIE);
         question.save(expected);
         Optional<Question> actual = question.findById(expected.getId());
         assertAll(() -> assertThat(actual.isPresent()).isTrue(), 
@@ -41,7 +41,7 @@ public class QuestionTest {
     @Test
     @DisplayName("삭제됐는지 확인")
     void 삭제() {
-        Question expected = new Question("new title", "new contents").writeBy(UserTest.JAVAJIGI);
+        Question expected = new Question("new title", "new contents").writeBy(UserTest.JENNIE);
         question.save(expected);
         question.delete(expected);
         assertThat(question.findById(expected.getId()).isPresent()).isFalse();
