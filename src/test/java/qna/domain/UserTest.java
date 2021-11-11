@@ -44,7 +44,7 @@ public class UserTest {
 
     @Test
     @DisplayName("유저정보 업데이트 후 equalsNameAndEmail 일치 확인")
-    void updateAndEqualsNameAndEmail() {
+    void update_EqualsNameAndEmail_검증() {
         // given
         String changeName = "changeName";
         String changeEmail = "changeEmail@email.co.kr";
