@@ -1,8 +1,8 @@
 package qna.service;
 
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
@@ -13,13 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class QnaService {
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
-    private final QuestionRepository questionRepository;
-    private final AnswerRepository answerRepository;
-    private final DeleteHistoryService deleteHistoryService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
+    @Autowired
+    private AnswerRepository answerRepository;
+    @Autowired
+    private DeleteHistoryService deleteHistoryService;
 
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {
@@ -43,10 +47,10 @@ public class QnaService {
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         question.setDeleted(true);
-        deleteHistories.add(DeleteHistory.builder().contentType(ContentType.QUESTION).contentId(questionId).deletedByUser(question.getWriter()).build());
+        deleteHistories.add(DeleteHistory.create(ContentType.QUESTION, questionId, question.getWriter()));
         for (Answer answer : answers) {
             answer.setDeleted(true);
-            deleteHistories.add(DeleteHistory.builder().contentType(ContentType.ANSWER).contentId(answer.getId()).deletedByUser(answer.getWriter()).build());
+            deleteHistories.add(DeleteHistory.create(ContentType.ANSWER, answer.getId(), answer.getWriter()));
         }
         deleteHistoryService.saveAll(deleteHistories);
     }

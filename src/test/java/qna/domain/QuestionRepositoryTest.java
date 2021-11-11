@@ -32,11 +32,11 @@ class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user1 = userRepository.save(User.builder().userId("javajigi").password("password").name("name").email("javajigi@slipp.net").build());
-        user2 = userRepository.save(User.builder().userId("sanjigi").password("password").name("name").email("sanjigi@slipp.net").build());
+        user1 = userRepository.save(User.create("javajigi", "password", "name", "javajigi@slipp.net"));
+        user2 = userRepository.save(User.create("sanjigi", "password", "name", "sanjigi@slipp.net"));
 
-        question1 = questionRepository.save(Question.builder().title("title1").contents("contents1").build().writeBy(user1));
-        question2 = questionRepository.save(Question.builder().title("title2").contents("contents2").build().writeBy(user2));
+        question1 = questionRepository.save(Question.create("title1", "contents1")).writeBy(user1);
+        question2 = questionRepository.save(Question.create("title2", "contents2")).writeBy(user2);
     }
 
     @Test

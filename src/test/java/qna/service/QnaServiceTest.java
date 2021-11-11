@@ -39,12 +39,11 @@ class QnaServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        user1 = User.builder().userId("javajigi").password("password").name("name").email("javajigi@slipp.net").build();
-        user2 = User.builder().userId("sanjigi").password("password").name("name").email("sanjigi@slipp.net").build();
+        user1 = User.create("javajigi", "password", "name", "javajigi@slipp.net");
+        user2 = User.create("sanjigi", "password", "name", "sanjigi@slipp.net");
 
-        question = Question.builder().title("title1").contents("contents1").build().writeBy(user1);
-        answer = Answer.builder().question(question).writer(user1).contents("Answers Contents1").build();
-        question.addAnswer(answer);
+        question = Question.create("title1", "contents1").writeBy(user1);
+        answer = Answer.create(question, user1, "Answers Contents1");
     }
 
     @Test
@@ -81,7 +80,7 @@ class QnaServiceTest {
 
     @Test
     void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Answer answer2 = Answer.builder().question(question).writer(user2).contents("Answers Contents2").build();
+        Answer answer2 = Answer.create(question, user2, "Answers Contents2");
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
@@ -93,8 +92,8 @@ class QnaServiceTest {
 
     void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                DeleteHistory.builder().contentType(ContentType.QUESTION).contentId(question.getId()).deletedByUser(question.getWriter()).build(),
-                DeleteHistory.builder().contentType(ContentType.ANSWER).contentId(answer.getId()).deletedByUser(answer.getWriter()).build()
+                DeleteHistory.create(ContentType.QUESTION, question.getId(), question.getWriter()),
+                DeleteHistory.create(ContentType.ANSWER, answer.getId(), answer.getWriter())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

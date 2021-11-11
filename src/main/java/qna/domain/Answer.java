@@ -1,8 +1,5 @@
 package qna.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -11,10 +8,7 @@ import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.PROTECTED;
 
-@Getter
-@NoArgsConstructor(access = PROTECTED)
 @Entity
 public class Answer extends BaseTimeEntity {
     @Id
@@ -35,8 +29,10 @@ public class Answer extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Builder
-    private Answer(User writer, Question question, String contents) {
+    protected Answer() {
+    }
+
+    private Answer(Question question, User writer, String contents) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -50,8 +46,16 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
+    public static Answer create(Question question, User writer, String contents) {
+        return new Answer(question, writer, contents);
+    }
+
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
+    }
+
+    public boolean isDeleted() {
+        return deleted;
     }
 
     public void toQuestion(Question question) {
@@ -60,5 +64,21 @@ public class Answer extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public User getWriter() {
+        return writer;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public String getContents() {
+        return contents;
     }
 }
