@@ -3,6 +3,8 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
@@ -44,6 +46,21 @@ public class QuestionTest {
 				QuestionFixture.Q1(UserFixture.Y2O2U2N()),
 				UserFixture.SEMISTONE222(),
 				false
+			)
+		);
+	}
+
+	public static Stream<Arguments> deleteArguments() {
+		return Stream.of(
+			// 답변이 없는 경우
+			Arguments.of(
+				QuestionFixture.Q1(UserFixture.Y2O2U2N()),
+				UserFixture.Y2O2U2N()
+			),
+			// 답변이 있지만 모든 답변을 질문자가 작성한 경우
+			Arguments.of(
+				QuestionFixture.SELF_ANSWERED_Q(UserFixture.Y2O2U2N()),
+				UserFixture.Y2O2U2N()
 			)
 		);
 	}
@@ -121,13 +138,10 @@ public class QuestionTest {
 	}
 
 	@DisplayName("질문을 삭제할 수 있다.")
-	@Test
-	void delete() {
-		// given
-		User deleter = UserFixture.Y2O2U2N();
-		Question question = QuestionFixture.Q1(deleter);
-
-		// when
+	@ParameterizedTest
+	@MethodSource(value = "deleteArguments")
+	void delete(Question question, User deleter) {
+		// given & when
 		question.delete(deleter);
 
 		// then
@@ -136,13 +150,31 @@ public class QuestionTest {
 
 	@DisplayName("본인이 작성하지 않은 질문은 삭제할 수 없다.")
 	@Test
-	void delete_fail() {
+	void delete_fail_on_not_question_owner() {
 		// given
 		Question question = QuestionFixture.Q1(UserFixture.Y2O2U2N());
 		User deleter = UserFixture.SEMISTONE222();
 
 		// when
 		assertThatThrownBy(() -> question.delete(deleter))
+			.isInstanceOf(CannotDeleteException.class);
+	}
+
+	@DisplayName("본인이 등록하지 않은 답변이 있을 경우, 질문을 삭제할 수 없다.")
+	@Test
+	void delete_fail_on_not_answer_owner() {
+		// given
+		User questionWriter = UserFixture.Y2O2U2N();
+		Question question = QuestionFixture.Q1(questionWriter);
+		List<Answer> answers = Arrays.asList(
+			AnswerFixture.A1(questionWriter),
+			AnswerFixture.A2(questionWriter),
+			AnswerFixture.A3(UserFixture.JUN222())
+		);
+		answers.forEach(question::addAnswer);
+
+		// when
+		assertThatThrownBy(() -> question.delete(questionWriter))
 			.isInstanceOf(CannotDeleteException.class);
 	}
 

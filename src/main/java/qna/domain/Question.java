@@ -98,7 +98,17 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
+        if (hasAnyAnswersNotOwner()) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+
         this.deleted = true;
+    }
+
+    private boolean hasAnyAnswersNotOwner() {
+        return answers.stream()
+            .filter(answer -> !answer.isDeleted())
+            .anyMatch(answer -> !answer.isOwner(writer));
     }
 
     boolean isOwner(User user) {
