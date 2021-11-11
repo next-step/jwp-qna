@@ -2,6 +2,8 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,6 +20,7 @@ public class DeleteHistory {
     private Long id;
 
     @Column(name = "content_type")
+    @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
     @Column(name = "content_id")
