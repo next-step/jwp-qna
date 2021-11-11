@@ -79,9 +79,9 @@ public class QuestionTest {
 		// then
 		assertAll(
 			() -> assertThat(question).isNotNull(),
-			() -> assertThat(question.getContents()).isEqualTo(contents),
+			() -> assertThat(question.getContents()).isEqualTo(QuestionContents.of(contents)),
 			() -> assertThat(question.isDeleted()).isFalse(),
-			() -> assertThat(question.getTitle()).isEqualTo(title),
+			() -> assertThat(question.getTitle()).isEqualTo(QuestionTitle.of(title)),
 			() -> assertThat(question.getWriter()).isEqualTo(writer)
 		);
 	}

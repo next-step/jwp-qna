@@ -19,10 +19,10 @@ public class UserTest {
 		// then
 		assertAll(
 			() -> assertThat(user).isNotNull(),
-			() -> assertThat(user.getEmail()).isEqualTo(email),
-			() -> assertThat(user.getName()).isEqualTo(name),
-			() -> assertThat(user.getPassword()).isEqualTo(password),
-			() -> assertThat(user.getUserId()).isEqualTo(userId)
+			() -> assertThat(user.getEmail()).isEqualTo(Email.of(email)),
+			() -> assertThat(user.getName()).isEqualTo(UserName.of(name)),
+			() -> assertThat(user.getPassword()).isEqualTo(UserPassword.of(password)),
+			() -> assertThat(user.getUserId()).isEqualTo(UserId.of(userId))
 		);
 	}
 }

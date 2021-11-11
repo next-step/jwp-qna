@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,23 +16,23 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email", length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
-    @Column(name = "name", nullable = false, length = 20)
-    private String name;
+    @Embedded
+    private UserName name;
 
-    @Column(name = "password", nullable = false, length = 20)
-    private String password;
+    @Embedded
+    private UserPassword password;
 
-    @Column(name = "user_id", unique = true, nullable = false, length = 20)
-    private String userId;
+    @Embedded
+    private UserId userId;
 
     protected User() {
 
     }
 
-    private User(Long id, String email, String name, String password, String userId) {
+    private User(Long id, Email email, UserName name, UserPassword password, UserId userId) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -44,26 +45,26 @@ public class User extends BaseEntity {
     }
 
     public static User of(Long id, String email, String name, String password, String userId) {
-        return new User(id, email, name, password, userId);
+        return new User(id, Email.of(email), UserName.of(name), UserPassword.of(password), UserId.of(userId));
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public String getName() {
+    public UserName getName() {
         return name;
     }
 
-    public String getPassword() {
+    public UserPassword getPassword() {
         return password;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 

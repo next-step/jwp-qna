@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -10,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -25,9 +25,8 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "contents")
-    @Lob
-    private String contents;
+    @Embedded
+    private AnswerContents contents;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
@@ -59,7 +58,7 @@ public class Answer extends BaseEntity {
 
     }
 
-    private Answer(Long id, String contents, boolean deleted, Question question, User writer) {
+    private Answer(Long id, AnswerContents contents, boolean deleted, Question question, User writer) {
         this.id = id;
         this.contents = contents;
         this.deleted = deleted;
@@ -74,7 +73,7 @@ public class Answer extends BaseEntity {
     public static Answer of(Long id, User writer, String contents) {
         throwOnUnAuthorizedWriter(writer);
 
-        return new Answer(id, contents, false, null, writer);
+        return new Answer(id, AnswerContents.of(contents), false, null, writer);
     }
 
     private static void throwOnUnAuthorizedWriter(User writer) {
@@ -97,7 +96,7 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public String getContents() {
+    public AnswerContents getContents() {
         return contents;
     }
 
