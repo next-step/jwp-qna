@@ -22,17 +22,6 @@ public class QnaService {
         this.deleteHistoryService = deleteHistoryService;
     }
 
-    @Transactional(readOnly = true)
-    public Question findQuestionById(Question question) {
-        return questionRepository.findByIdAndDeletedFalse(question.getId())
-                .orElseThrow(NotFoundException::new);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Answer> findAnswersByQuestionId(Question deleteQuestion) {
-        return answerRepository.findByQuestionIdAndDeletedFalse(deleteQuestion.getId());
-    }
-
     @Transactional
     public void deleteQuestion(User loginUser, Question deleteQuestion) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
@@ -44,6 +33,15 @@ public class QnaService {
         deleteHistories.addAll(question.deleteQuestionByAnswers(loginUser, deleteAnswers));
 
         deleteHistoryService.saveAll(deleteHistories);
+    }
+
+    private Question findQuestionById(Question question) {
+        return questionRepository.findByIdAndDeletedFalse(question.getId())
+                .orElseThrow(NotFoundException::new);
+    }
+
+    private List<Answer> findAnswersByQuestionId(Question deleteQuestion) {
+        return answerRepository.findByQuestionIdAndDeletedFalse(deleteQuestion.getId());
     }
 
 }
