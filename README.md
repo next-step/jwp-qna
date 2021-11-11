@@ -51,17 +51,17 @@ JPA 엔티티 매핑에 대해 학습하기
 - [X] Question 엔티티 작업
 - [X] User 엔티티 작업
 - [X] AuditingEntityListener base 엔티티 구현하기
-- [ ] User.update 테스트
-- [ ] User.update 예외 테스트 (userID null , password 불일치)
-- [ ] Answer create 예외 테스트 (작성자 null, 질문 null)
-- [ ] Answer 테스트
+- [X] User.update 정상 테스트
+- [X] User.update 예외 테스트 (userID null , password 불일치)
+- [X] Answer create 예외 테스트 (작성자 null, 질문 null)
+- [X] Answer 테스트
     - toQuestion
     - isOwner_질문_작성자_확인
     - deleted_기본값_false
     - deleted
-- [ ] DeleteHistory 테스트
+- [X] DeleteHistory 테스트
     - contentType_ENUM_저장확인
-- [ ] Question 테스트
+- [X] Question 테스트
     - writerId_작성자_일치
     - addAnswer
     - isOwner
