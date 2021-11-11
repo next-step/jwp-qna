@@ -1,9 +1,11 @@
 package qna.domain;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
 import qna.UnAuthorizedException;
 
@@ -22,6 +24,15 @@ public class User extends BaseTimeEntity {
 
 	@Column(name = "email", length = 50)
 	private String email;
+
+	@OneToMany(mappedBy = "writer")
+	private List<Question> questionList;
+
+	@OneToMany(mappedBy = "writer")
+	private List<Answer> answerList;
+
+	@OneToMany(mappedBy = "deletedByUser")
+	private List<DeleteHistory> deleteHistoryList;
 
 	protected User() {
 	}
@@ -102,6 +113,30 @@ public class User extends BaseTimeEntity {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public List<Answer> getAnswerList() {
+		return answerList;
+	}
+
+	public void setAnswerList(List<Answer> answerList) {
+		this.answerList = answerList;
+	}
+
+	public List<Question> getQuestionList() {
+		return questionList;
+	}
+
+	public void setQuestionList(List<Question> questionList) {
+		this.questionList = questionList;
+	}
+
+	public List<DeleteHistory> getDeleteHistoryList() {
+		return deleteHistoryList;
+	}
+
+	public void setDeleteHistoryList(List<DeleteHistory> deleteHistoryList) {
+		this.deleteHistoryList = deleteHistoryList;
 	}
 
 	@Override

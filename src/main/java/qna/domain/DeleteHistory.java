@@ -6,6 +6,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class DeleteHistory extends BaseTimeEntity {
@@ -17,16 +21,17 @@ public class DeleteHistory extends BaseTimeEntity {
 	@Column(name = "content_id")
 	private Long contentId;
 
-	@Column(name = "deleted_by_id")
-	private Long deletedById;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+	private User deletedByUser;
 
 	protected DeleteHistory() {
 	}
 
-	public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
+	public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
 		this.contentType = contentType;
 		this.contentId = contentId;
-		this.deletedById = deletedById;
+		this.deletedByUser = deletedByUser;
 	}
 
 	public ContentType getContentType() {
@@ -45,12 +50,12 @@ public class DeleteHistory extends BaseTimeEntity {
 		this.contentId = contentId;
 	}
 
-	public Long getDeletedById() {
-		return deletedById;
+	public User getDeletedByUser() {
+		return deletedByUser;
 	}
 
-	public void setDeletedById(Long deletedById) {
-		this.deletedById = deletedById;
+	public void setDeletedByUser(User deletedByUser) {
+		this.deletedByUser = deletedByUser;
 	}
 
 	@Override
@@ -63,12 +68,12 @@ public class DeleteHistory extends BaseTimeEntity {
 		return Objects.equals(getId(), that.getId()) &&
 			contentType == that.contentType &&
 			Objects.equals(contentId, that.contentId) &&
-			Objects.equals(deletedById, that.deletedById);
+			Objects.equals(deletedByUser, that.deletedByUser);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getId(), contentType, contentId, deletedById);
+		return Objects.hash(getId(), contentType, contentId, deletedByUser);
 	}
 
 	@Override
@@ -77,7 +82,7 @@ public class DeleteHistory extends BaseTimeEntity {
 			"id=" + getId() +
 			", contentType=" + contentType +
 			", contentId=" + contentId +
-			", deletedById=" + deletedById +
+			", deletedByUser=" + deletedByUser +
 			'}';
 	}
 }
