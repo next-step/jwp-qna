@@ -111,7 +111,7 @@ public class Answer extends BaseTimeEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getId(), getContents(), isDeleted(), getQuestion(), getWriter());
+		return Objects.hash(getId());
 	}
 
 	@Override

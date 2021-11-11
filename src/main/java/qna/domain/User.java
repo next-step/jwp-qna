@@ -120,7 +120,7 @@ public class User extends BaseTimeEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getId(), getUserId(), getPassword(), getName(), getEmail());
+		return Objects.hash(getId(), getUserId(), getEmail());
 	}
 
 	@Override

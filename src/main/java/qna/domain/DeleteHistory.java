@@ -84,7 +84,7 @@ public class DeleteHistory {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getId(), getContentId(), getContentType(), getCreateDate(), getDeleter());
+		return Objects.hash(getId(), getContentId(), getContentType());
 	}
 
 	@Override
