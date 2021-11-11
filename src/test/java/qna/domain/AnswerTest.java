@@ -16,7 +16,7 @@ public class AnswerTest {
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Test
-    void deleteddeleted_기본값_false() {
+    void deleted_기본값_false() {
         // then
         assertThat(A1.isDeleted()).isFalse();
     }
