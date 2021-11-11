@@ -45,4 +45,17 @@ public class QuestionTest {
                 .isThrownBy(() -> TWO_ANSWERED_QUESTION.delete(UserTest.SANJIGI))
                 .withMessageMatching(ErrorMessage.DELETE_QUESTION_NOT_ALLOWED.getMessage());
     }
+
+    @Test
+    @DisplayName("질문자에 다른 사람의 답변이 존재하면 예외가 발생한다.")
+    void deleteThrowException2() {
+        // given
+        TWO_ANSWERED_QUESTION.addAnswer(AnswerTest.A1);
+        TWO_ANSWERED_QUESTION.addAnswer(AnswerTest.A2);
+
+        // when & then
+        assertThatExceptionOfType(CannotDeleteException.class)
+                .isThrownBy(() -> TWO_ANSWERED_QUESTION.delete(UserTest.JAVAJIGI))
+                .withMessageMatching(ErrorMessage.EXISTS_ANSWER_OF_OTHER.getMessage());
+    }
 }
