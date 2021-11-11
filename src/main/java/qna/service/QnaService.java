@@ -26,17 +26,12 @@ public class QnaService {
 
     @Transactional
     public void deleteQuestion(User loginUser, Question deleteQuestion) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = deleteQuestionAndQuestionByAnswers(loginUser, deleteQuestion);
-
-        deleteHistoryService.saveAll(deleteHistories);
-    }
-
-    private List<DeleteHistory> deleteQuestionAndQuestionByAnswers(User loginUser, Question deleteQuestion) {
         Question question = findQuestionById(deleteQuestion);
 
         cascadeDeleteQuestion(loginUser, question);
+        List<DeleteHistory> deleteHistories = getDeleteHistories(question);
 
-        return getDeleteHistories(question);
+        deleteHistoryService.saveAll(deleteHistories);
     }
 
     private void cascadeDeleteQuestion(User loginUser, Question question) {
