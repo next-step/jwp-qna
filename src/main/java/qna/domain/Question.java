@@ -19,7 +19,7 @@ public class Question extends BaseTimeEntity {
     @Column(name = "contents")
     private String contents;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
 
