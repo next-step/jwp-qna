@@ -20,7 +20,8 @@ public class AnswerRepositoryTest {
     @DisplayName("Answer가 저장된다")
     @Test
     void testSave() {
-        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Answer answer = new Answer(UserTest.JAVAJIGI, question, "Answers Contents1");
         Answer savedAnswer = answerRepository.save(answer);
         assertAll(
                 () -> assertThat(savedAnswer.getId()).isNotNull(),

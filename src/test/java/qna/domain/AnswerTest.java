@@ -12,14 +12,16 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class AnswerTest {
+    private static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+
     @DisplayName("Answer를 객체 생성한다")
     @Test
     void testCreate() {
         String contents = "Answers Contents1";
-        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, contents);
+        Answer answer = new Answer(UserTest.JAVAJIGI, Q1, contents);
         assertAll(
                 () -> assertThat(answer.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
-                () -> assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
+                () -> assertThat(answer.getQuestionId()).isEqualTo(Q1.getId()),
                 () -> assertThat(answer.getContents()).isEqualTo(contents),
                 () -> assertThat(answer.getCreatedAt()).isCloseTo(LocalDateTime.now(), within(1, ChronoUnit.SECONDS)),
                 () -> assertThat(answer.getUpdatedAt()).isNull()
@@ -29,7 +31,7 @@ public class AnswerTest {
     @DisplayName("Write가 없으면 UnAuthorizedException을 던진다")
     @Test
     void testGivenNoWriteThenThrowException() {
-        assertThatThrownBy(() -> new Answer(null, QuestionTest.Q1, "Answers Contents1"))
+        assertThatThrownBy(() -> new Answer(null, Q1, "Answers Contents1"))
                 .isInstanceOf(UnAuthorizedException.class);
     }
 
