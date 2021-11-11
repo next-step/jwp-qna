@@ -63,32 +63,16 @@ public class Answer extends BaseEntityTime {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
     }
 
     public Question getQuestion() {
         return question;
     }
 
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
@@ -98,17 +82,6 @@ public class Answer extends BaseEntityTime {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
-
-    // @Override
-    // public String toString() {
-    //     return "Answer{" +
-    //         "id=" + id +
-    //         ", writerId=" + writerId +
-    //         ", questionId=" + questionId +
-    //         ", contents='" + contents + '\'' +
-    //         ", deleted=" + deleted +
-    //         '}';
-    // }
 
     @Override
     public String toString() {

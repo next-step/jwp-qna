@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import qna.common.CommonRepositoryTest;
 
