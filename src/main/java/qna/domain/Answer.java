@@ -68,13 +68,13 @@ public class Answer extends BaseEntity {
         if (isDeleted()) {
             throw new CannotDeleteException("이미 삭제된 답변입니다.");
         }
-        changeDeletedStatus(true);
+        changeDeletedTrue();
 
         return new DeleteHistory(ContentType.ANSWER, id, writer);
     }
 
-    private void changeDeletedStatus(boolean deleted) {
-        this.deleted = deleted;
+    private void changeDeletedTrue() {
+        this.deleted = true;
     }
 
     public Long getId() {

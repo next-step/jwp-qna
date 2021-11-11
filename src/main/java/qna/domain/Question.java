@@ -74,7 +74,7 @@ public class Question extends BaseEntity {
         if (isDeleted()) {
             throw new CannotDeleteException("이미 삭제된 질문입니다.");
         }
-        changeDeletedStatus(true);
+        changeDeletedTrue();
         return new DeleteHistory(ContentType.QUESTION, id, writer);
     }
 
@@ -89,8 +89,8 @@ public class Question extends BaseEntity {
         return result;
     }
 
-    private void changeDeletedStatus(boolean deleted) {
-        this.deleted = deleted;
+    private void changeDeletedTrue() {
+        this.deleted = true;
     }
 
     @Override
