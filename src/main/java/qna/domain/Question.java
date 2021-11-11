@@ -32,7 +32,7 @@ public class Question {
         this(null, title, contents);
     }
 
-    private Question() {
+    protected Question() {
     }
 
     public Question(Long id, String title, String contents) {
