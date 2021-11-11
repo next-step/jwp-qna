@@ -8,6 +8,7 @@ import qna.domain.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,15 +26,34 @@ public class QnaService {
 
     @Transactional
     public void deleteQuestion(User loginUser, Question deleteQuestion) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-
-        Question question = findQuestionById(deleteQuestion);
-        deleteHistories.add(question.delete(loginUser));
-
-        List<Answer> deleteAnswers = findAnswersByQuestionId(deleteQuestion);
-        deleteHistories.addAll(question.deleteQuestionByAnswers(loginUser, deleteAnswers));
+        List<DeleteHistory> deleteHistories = deleteQuestionAndQuestionByAnswers(loginUser, deleteQuestion);
 
         deleteHistoryService.saveAll(deleteHistories);
+    }
+
+    private List<DeleteHistory> deleteQuestionAndQuestionByAnswers(User loginUser, Question deleteQuestion) {
+        Question question = findQuestionById(deleteQuestion);
+
+        cascadeDeleteQuestion(loginUser, question);
+
+        return getDeleteHistories(question);
+    }
+
+    private void cascadeDeleteQuestion(User loginUser, Question question) {
+        findAnswersByQuestionId(question);
+        question.delete(loginUser);
+        question.cascadeDeleteAnswers(loginUser);
+    }
+
+    private List<DeleteHistory> getDeleteHistories(Question question) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()));
+        deleteHistories.addAll(question.getAnswers().stream()
+                .map(m -> new DeleteHistory(ContentType.ANSWER, m.getId(), m.getWriter()))
+                .collect(Collectors.toList()));
+
+        return deleteHistories;
     }
 
     private Question findQuestionById(Question question) {
