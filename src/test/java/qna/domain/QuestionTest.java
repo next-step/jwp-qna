@@ -21,7 +21,9 @@ public class QuestionTest {
 
     @Test
     public void 엔티티_생성(){
-        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        User user = new User("jerry92k", "12345678","jerrykim","jerry@gmail.com");
+        em.persist(user);
+        Question question = new Question("title1", "contents1").writeBy(user);
         em.persist(question);
         Question findQuestion = em.createQuery("select q from Question q where q.id=:id",Question.class)
             .setParameter("id",question.getId())
