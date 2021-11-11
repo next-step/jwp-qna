@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -94,21 +95,27 @@ public class Question extends BaseEntity {
     }
 
     public void delete(User deleter) {
+        throwOnNotQuestionOwner(deleter);
+        throwOnHavingAnyAnswersNotOwner();
+
+        this.deleted = true;
+        getNotDeletedAnswers().forEach(Answer::delete);
+    }
+
+    private void throwOnNotQuestionOwner(User deleter) {
         if (!isOwner(deleter)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
+    }
 
+    private void throwOnHavingAnyAnswersNotOwner() {
         if (hasAnyAnswersNotOwner()) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
-
-        this.deleted = true;
-        answers.forEach(Answer::delete);
     }
 
     private boolean hasAnyAnswersNotOwner() {
-        return answers.stream()
-            .filter(answer -> !answer.isDeleted())
+        return getNotDeletedAnswers().stream()
             .anyMatch(answer -> !answer.isOwner(writer));
     }
 
@@ -138,6 +145,12 @@ public class Question extends BaseEntity {
 
     public List<Answer> getAnswers() {
         return answers;
+    }
+
+    public List<Answer> getNotDeletedAnswers() {
+        return answers.stream()
+            .filter(answer -> !answer.isDeleted())
+            .collect(Collectors.toList());
     }
 
     @Override
