@@ -24,20 +24,8 @@ public class DeleteHistoryTest {
 
         // then
         assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getContentId()).isEqualTo(ANSWER_HISTORY.getContentId())
+            () -> assertThat(actual).isEqualTo(ANSWER_HISTORY)
         );
-    }
-
-    @Test
-    void identity() {
-
-        // when
-        DeleteHistory actual = deleteHistories.save(ANSWER_HISTORY);
-        DeleteHistory DB조회 = deleteHistories.findById(actual.getId()).get();
-
-        // then
-        assertThat(actual).isEqualTo(DB조회);
     }
 
     @Test
@@ -49,8 +37,8 @@ public class DeleteHistoryTest {
 
         // then
         assertAll(
-            () -> assertThat(answerDeleteHistory.getContentType()).isEqualTo(ContentType.ANSWER),
-            () -> assertThat(questionDeleteHistory.getContentType()).isEqualTo(ContentType.QUESTION)
+            () -> assertThat(answerDeleteHistory.isContentType(ContentType.ANSWER)).isTrue(),
+            () -> assertThat(questionDeleteHistory.isContentType(ContentType.QUESTION)).isTrue()
         );
     }
 }
