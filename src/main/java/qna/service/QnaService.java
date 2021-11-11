@@ -58,7 +58,7 @@ public class QnaService {
 
     private Question findQuestionById(Question question) {
         return questionRepository.findByIdAndDeletedFalse(question.getId())
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("질문을 찾을 수 없습니다."));
     }
 
     private List<Answer> findAnswersByQuestionId(Question deleteQuestion) {

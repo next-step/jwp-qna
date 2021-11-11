@@ -46,10 +46,10 @@ public class Answer extends BaseEntity {
 
     private void validation(User writer, Question question) {
         if (isEmpty(writer)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException("답변 작성자가 존재하지 않습니다.");
         }
         if (isEmpty(question)) {
-            throw new NotFoundException();
+            throw new NotFoundException("질문이 존재하지 않습니다.");
         }
     }
 
