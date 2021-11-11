@@ -83,10 +83,19 @@ public class Question extends BaseEntity {
     }
 
     public DeleteHistories delete(User loginUser) {
-        validation(loginUser);
-        delete();
+        deleteQuestion(loginUser);
+        answers.deleteAnswers(loginUser);
         return DeleteHistories.fromQuestion(this);
     }
+
+    private void deleteQuestion(User loginUser) {
+        validateOwner(loginUser);
+        this.deleted = true;
+    }
+
+    private void deleteAnswers() {
+    }
+
 
     public List<DeleteHistory> getDeleteHistoriesOfAnswers() {
         return answers.getDeleteHistories();
@@ -103,11 +112,6 @@ public class Question extends BaseEntity {
                 '}';
     }
 
-    private void validation(User loginUser) {
-        validateOwner(loginUser);
-        answers.validateAnswers(writer);
-    }
-
     private void validateOwner(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(ErrorMessage.DELETE_QUESTION_NOT_ALLOWED);
@@ -116,10 +120,5 @@ public class Question extends BaseEntity {
 
     private boolean isOwner(User writer) {
         return this.writer.equals(writer);
-    }
-
-    private void delete() {
-        this.deleted = true;
-        answers.deleteAnswers();
     }
 }

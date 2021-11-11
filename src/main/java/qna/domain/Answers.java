@@ -24,13 +24,9 @@ public class Answers {
         return answers;
     }
 
-    public void validateAnswers(User writer) {
-        for (Answer answer : answers) {
-            validateOwner(writer, answer);
-        }
-    }
 
-    public void deleteAnswers() {
+    public void deleteAnswers(User writer) {
+        validateAnswers(writer);
         for (Answer answer : getAnswers()) {
             answer.delete();
         }
@@ -42,6 +38,12 @@ public class Answers {
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()));
         }
         return deleteHistories;
+    }
+
+    private void validateAnswers(User writer) {
+        for (Answer answer : answers) {
+            validateOwner(writer, answer);
+        }
     }
 
     private void validateOwner(User writer, Answer answer) {
