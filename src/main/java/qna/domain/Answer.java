@@ -48,9 +48,11 @@ public class Answer extends BaseTime {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
+        writerBy(writer);
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
+        toQuestion(question);
         this.contents = contents;
     }
 
@@ -59,8 +61,9 @@ public class Answer extends BaseTime {
      *
      * @param writer
      */
-    public void writerBy(User writer) {
+    public Answer writerBy(User writer) {
         this.writer = writer;
+        return this;
     }
 
     public boolean isOwner(User writer) {

@@ -29,10 +29,8 @@ class AnswerRepositoryTest {
     public void setUp() {
         User javajigi = userRepository.save(UserTest.JAVAJIGI);
         User sanjigi = userRepository.save(UserTest.SANJIGI);
-        questionRepository.save(new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1
-            .getContents()).writeBy(javajigi));
-        questionRepository.save(new Question(QuestionTest.Q2.getTitle(), QuestionTest.Q2
-            .getContents()).writeBy(sanjigi));
+        questionRepository.save(new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents(), javajigi));
+        questionRepository.save(new Question(QuestionTest.Q2.getTitle(), QuestionTest.Q2.getContents(), sanjigi));
     }
 
     @AfterEach
@@ -48,8 +46,6 @@ class AnswerRepositoryTest {
         User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
         Question question = questionRepository.findByDeletedFalse().get(0);
         Answer answer = new Answer(javajigi, question, "answer1");
-        answer.writerBy(javajigi);
-        answer.toQuestion(question);
         Answer save = answerRepository.save(answer);
 
         assertAll(() -> {
@@ -65,8 +61,6 @@ class AnswerRepositoryTest {
         User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
         Question question = questionRepository.findByDeletedFalse().get(0);
         Answer answer = new Answer(javajigi, question, "answer1");
-        answer.writerBy(javajigi);
-        answer.toQuestion(question);
         answerRepository.save(answer);
         Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId());
 
@@ -83,12 +77,8 @@ class AnswerRepositoryTest {
     public void findByQuestionIdSuccess() {
         User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
         Question question = questionRepository.findByDeletedFalse().get(0);
-        Answer answer1 = AnswerTest.A1;
-        answer1.writerBy(javajigi);
-        answer1.toQuestion(question);
-        Answer answer2 = AnswerTest.A2;
-        answer2.writerBy(javajigi);
-        answer2.toQuestion(question);
+        Answer answer1 = new Answer(javajigi, question, "answer1");
+        Answer answer2 = new Answer(javajigi, question, "answer2");
         answerRepository.save(answer1);
         answerRepository.save(answer2);
 
@@ -104,7 +94,6 @@ class AnswerRepositoryTest {
         User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
         Question question = questionRepository.findByDeletedFalse().get(0);
         Answer answer = new Answer(javajigi, question, "answer1");
-        answer.writerBy(javajigi);
         Answer save = answerRepository.save(answer);
         assertThat(save.isOwner(UserTest.JAVAJIGI)).isTrue();
     }
@@ -115,8 +104,6 @@ class AnswerRepositoryTest {
         User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
         Question question = questionRepository.findByDeletedFalse().get(0);
         Answer answer = new Answer(javajigi, question, "answer1");
-        answer.writerBy(javajigi);
-        answer.toQuestion(question);
         Answer save = answerRepository.save(answer);
 
         save.setDeleted(true);

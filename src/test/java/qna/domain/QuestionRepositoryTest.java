@@ -38,8 +38,7 @@ class QuestionRepositoryTest {
         User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
 
         Question save = questionRepository.save(
-            new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents())
-                .writeBy(javajigi));
+            new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents(), javajigi));
 
         assertAll(() -> {
             assertThat(save.getWriter().equalsNameAndEmail(javajigi)).isTrue();
@@ -52,8 +51,7 @@ class QuestionRepositoryTest {
     public void findQuestionByDeletedFalseSuccess() {
         User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
         questionRepository.save(
-            new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents())
-                .writeBy(javajigi));
+            new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents(), javajigi));
 
         List<Question> questionList = questionRepository.findByDeletedFalse();
 
@@ -72,8 +70,7 @@ class QuestionRepositoryTest {
     public void updateDeletedSuccess() {
         User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
         Question save = questionRepository.save(
-            new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents())
-                .writeBy(javajigi));
+            new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents(), javajigi));
 
         save.setDeleted(true);
         Question deleted = questionRepository.save(save);
@@ -89,8 +86,7 @@ class QuestionRepositoryTest {
     public void findQuestionByIdSuccess() {
         User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
         Question save = questionRepository.save(
-            new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents())
-                .writeBy(javajigi));
+            new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents(), javajigi));
 
         Optional<Question> optionalQuestion = questionRepository
             .findByIdAndDeletedFalse(save.getId());

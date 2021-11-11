@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import qna.UnAuthorizedException;
 import qna.domain.common.BaseTime;
 
 @Entity
@@ -36,20 +37,25 @@ public class Question extends BaseTime {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answerList = new ArrayList<>();
 
     protected Question() {
     }
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    public Question(String title, String contents, User writer) {
+        this(null, title, contents, writer);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, String title, String contents, User writer) {
         this.id = id;
         this.title = title;
         this.contents = contents;
+
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
+        writeBy(writer);
     }
 
     /**
