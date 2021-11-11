@@ -10,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -98,19 +97,19 @@ public class QuestionTest {
     @ParameterizedTest
     @MethodSource("providerQuestionOtherWriter")
     @DisplayName("다른 작성자 삭제 방지 검증")
-    public void 다른_작성자_삭제_방지(User loginUser, Question exceptedQuestion, Answer exceptedAnswer) {
+    public void 다른_작성자_삭제_방지(User loginUser, Question exceptedQuestion) {
         assertThatThrownBy(() -> {
             exceptedQuestion.delete(loginUser);
-            exceptedQuestion.deleteQuestionByAnswers(loginUser, Arrays.asList(exceptedAnswer));
+            exceptedQuestion.cascadeDeleteAnswers(loginUser);
         }).isInstanceOf(CannotDeleteException.class);
     }
 
     @ParameterizedTest
     @MethodSource("providerQuestionSameWriter")
-    @DisplayName("다른 작성자 삭제 방지 검증")
-    public void 같은_작성자_삭제(User loginUser, Question exceptedQuestion, Answer exceptedAnswer) {
+    @DisplayName("다른 작성자 삭제 검증")
+    public void 같은_작성자_삭제(User loginUser, Question exceptedQuestion) {
         exceptedQuestion.delete(loginUser);
-        exceptedQuestion.deleteQuestionByAnswers(loginUser, Arrays.asList(exceptedAnswer));
+        exceptedQuestion.cascadeDeleteAnswers(loginUser);
     }
 
 }
