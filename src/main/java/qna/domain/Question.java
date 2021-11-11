@@ -104,11 +104,11 @@ public class Question extends BaseEntity {
     }
 
     private void validation(User loginUser) {
-        validateQuestion(loginUser);
+        validateOwner(loginUser);
         answers.validateAnswers(writer);
     }
 
-    private void validateQuestion(User loginUser) {
+    private void validateOwner(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(ErrorMessage.DELETE_QUESTION_NOT_ALLOWED);
         }

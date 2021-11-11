@@ -7,6 +7,7 @@ import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Embeddable
@@ -25,7 +26,7 @@ public class Answers {
 
     public void validateAnswers(User writer) {
         for (Answer answer : answers) {
-            validateAnswer(writer, answer);
+            validateOwner(writer, answer);
         }
     }
 
@@ -43,9 +44,22 @@ public class Answers {
         return deleteHistories;
     }
 
-    private void validateAnswer(User writer, Answer answer) {
+    private void validateOwner(User writer, Answer answer) {
         if (!answer.isOwner(writer)) {
             throw new CannotDeleteException(ErrorMessage.EXISTS_ANSWER_OF_OTHER);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answers answers1 = (Answers) o;
+        return Objects.equals(answers, answers1.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(answers);
     }
 }
