@@ -39,19 +39,6 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("Question 을 통해 Answer 에 question.getId() 등록")
-    void addAnswer() {
-        // given
-        Answer answer = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-
-        // when
-        Q1.addAnswer(answer);
-
-        // then
-        assertThat(Q1.getWriterId()).isEqualTo(answer.getId());
-    }
-
-    @Test
     @DisplayName("Question 의 작성 User 확인")
     void isOwner() {
 
