@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,7 +14,6 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class AnswerTest {
@@ -58,9 +56,7 @@ public class AnswerTest {
 
         Answer actual = findOneAnswer.orElse(null);
 
-        assertAll(
-                () -> assertThat(actual.equals(answer)).isTrue()
-        );
+        assertThat(actual.equals(answer)).isTrue();
     }
 
     @ParameterizedTest
@@ -69,9 +65,7 @@ public class AnswerTest {
     public void 답변_생성(Answer excepted) {
         Answer actual = answerRepository.save(excepted);
 
-        assertAll(
-                () -> assertThat(actual.equals(excepted)).isTrue()
-        );
+        assertThat(actual.equals(excepted)).isTrue();
     }
 
     @Test

@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class QuestionTest {
@@ -73,9 +72,7 @@ public class QuestionTest {
     public void 질문_생성(Question excepted) {
         Question actual = questionRepository.save(excepted);
 
-        assertAll(
-                () -> assertThat(actual.equals(excepted)).isTrue()
-        );
+        assertThat(actual.equals(excepted)).isTrue();
     }
 
     @ParameterizedTest
@@ -87,9 +84,7 @@ public class QuestionTest {
 
         Question actual = findOneQuestion.orElse(null);
 
-        assertAll(
-                () -> assertThat(actual.getWriter()).isEqualTo(US)
-        );
+        assertThat(actual.getWriter()).isEqualTo(US);
     }
 
     @Test
