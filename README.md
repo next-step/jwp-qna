@@ -65,3 +65,15 @@ JPA 엔티티 매핑에 대해 학습하기
     - writerId_작성자_일치
     - addAnswer
     - isOwner
+
+### 2단계 - 연관 관계 매핑
+
+객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+
+- [ ] Answer 와 Question 연관관계 매핑(answer <-> question)
+- [ ] Answer 와 User 연관관계 매핑(answer -> User)
+- [ ] DeleteHistory 연관관계 매핑(DeleteHistory -> user)
+- [ ] Question 연관관계 매핑(question -> user)
+- [ ] 연관 관계 테스트
+
+
