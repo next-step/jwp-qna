@@ -1,9 +1,12 @@
 package qna.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -94,12 +97,17 @@ public class Question extends BaseEntity {
         }
     }
 
-    public void delete(User deleter) {
+    public List<DeleteHistory> delete(User deleter) {
         throwOnNotQuestionOwner(deleter);
         throwOnHavingAnyAnswersNotOwner();
-
         this.deleted = true;
-        getNotDeletedAnswers().forEach(Answer::delete);
+
+        DeleteHistory questionDeleteHistory = DeleteHistory.ofQuestion(deleter, this);
+        List<DeleteHistory> answerDeleteHistories = deleteAnswers(deleter);
+
+        return Stream.of(Collections.singletonList(questionDeleteHistory), answerDeleteHistories)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
     }
 
     private void throwOnNotQuestionOwner(User deleter) {
@@ -112,6 +120,12 @@ public class Question extends BaseEntity {
         if (hasAnyAnswersNotOwner()) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
+    }
+
+    private List<DeleteHistory> deleteAnswers(User deleter) {
+        return getNotDeletedAnswers().stream()
+            .map(answer -> answer.delete(deleter))
+            .collect(Collectors.toList());
     }
 
     private boolean hasAnyAnswersNotOwner() {

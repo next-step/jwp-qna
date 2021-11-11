@@ -98,13 +98,20 @@ public class AnswerTest {
 	@Test
 	void delete() {
 		// given
-		Answer answer = AnswerFixture.A1(UserFixture.Y2O2U2N());
+		User user = UserFixture.Y2O2U2N();
+		Answer answer = AnswerFixture.A1(user);
 
 		// when
-		answer.delete();
+		DeleteHistory deleteHistory = answer.delete(user);
 
 		// then
-		assertThat(answer.isDeleted()).isTrue();
+		assertAll(
+			() -> assertThat(answer.isDeleted()).isTrue(),
+			() -> assertThat(deleteHistory).isNotNull(),
+			() -> assertThat(deleteHistory.getContentId()).isEqualTo(answer.getId()),
+			() -> assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER),
+			() -> assertThat(deleteHistory.getDeleter()).isEqualTo(user)
+		);
 	}
 
 	@DisplayName("사용자가 답변의 주인인지 알 수 있다.")

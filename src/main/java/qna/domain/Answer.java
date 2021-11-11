@@ -83,8 +83,10 @@ public class Answer extends BaseEntity {
         }
     }
 
-    public void delete() {
+    public DeleteHistory delete(User deleter) {
         this.deleted = true;
+
+        return DeleteHistory.ofAnswer(deleter, this);
     }
 
     public boolean isOwner(User user) {
