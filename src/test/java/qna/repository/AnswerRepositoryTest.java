@@ -8,6 +8,8 @@ import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.AnswerTest;
 
+import static org.mockito.ArgumentMatchers.any;
+
 @DataJpaTest
 public class AnswerRepositoryTest {
 
@@ -28,5 +30,27 @@ public class AnswerRepositoryTest {
         // then
         Assertions.assertThat(saved1).isEqualTo(answer1);
         Assertions.assertThat(saved2).isEqualTo(answer2);
+    }
+
+    @Test
+    public void find() {
+
+        // given
+        Answer answer1 = AnswerTest.A1;
+        Answer answer2 = AnswerTest.A2;
+
+        // when
+        Answer saved1 = answerRepository.save(answer1);
+        Answer saved2 = answerRepository.save(answer2);
+
+        Answer find1 = answerRepository.findById(saved1.getId())
+                .orElse(new Answer(any(), any(), any()));
+
+        Answer find2 = answerRepository.findById(saved2.getId())
+                .orElse(new Answer(any(), any(), any()));
+
+        // then
+        Assertions.assertThat(saved1).isEqualTo(find1);
+        Assertions.assertThat(saved2).isEqualTo(find2);
     }
 }
