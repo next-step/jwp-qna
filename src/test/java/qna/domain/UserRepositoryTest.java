@@ -28,7 +28,7 @@ class UserRepositoryTest {
 			() -> assertThat(actual.getName()).isEqualTo(expected.getName()),
 			() -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail())
 		);
-		assertThat(actual).isEqualTo(expected);
+		assertThat(actual).isSameAs(expected);
 	}
 
 	@Test
@@ -37,6 +37,6 @@ class UserRepositoryTest {
 		final User expected = userRepository.save(Fixture.user("user.id"));
 		final Optional<User> actual = userRepository.findByUserId(expected.getUserId());
 		assertThat(actual.isPresent()).isTrue();
-		assertThat(actual.get()).isEqualTo(expected);
+		assertThat(actual.get()).isSameAs(expected);
 	}
 }

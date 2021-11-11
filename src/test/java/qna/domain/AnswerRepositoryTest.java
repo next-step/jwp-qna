@@ -36,7 +36,7 @@ public class AnswerRepositoryTest {
 			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
 			() -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted())
 		);
-		assertThat(actual).isEqualTo(expected);
+		assertThat(actual).isSameAs(expected);
 	}
 
 	@Test
@@ -48,7 +48,7 @@ public class AnswerRepositoryTest {
 		final List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(expected.getQuestion());
 		assertThat(answers).containsExactly(expected);
 		answers.forEach(actual -> assertAll(
-			() -> assertThat(actual.getQuestion()).isEqualTo(expected.getQuestion()),
+			() -> assertThat(actual.getQuestion()).isSameAs(expected.getQuestion()),
 			() -> assertThat(actual.isDeleted()).isFalse()
 		));
 	}
@@ -62,7 +62,7 @@ public class AnswerRepositoryTest {
 		final Optional<Answer> maybeActual = answerRepository.findByIdAndDeletedFalse(expected.getId());
 		assertThat(maybeActual.isPresent()).isTrue();
 		final Answer actual = maybeActual.get();
-		assertThat(actual).isEqualTo(expected);
+		assertThat(actual).isSameAs(expected);
 		assertThat(actual.isDeleted()).isFalse();
 	}
 

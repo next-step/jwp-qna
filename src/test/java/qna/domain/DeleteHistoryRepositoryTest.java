@@ -21,6 +21,6 @@ public class DeleteHistoryRepositoryTest {
 		final Question question = Fixture.question("writer.id");
 		final DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
 		final DeleteHistory actual = deleteHistoryRepository.save(expected);
-		assertThat(actual).isEqualTo(expected);
+		assertThat(actual).isSameAs(expected);
 	}
 }

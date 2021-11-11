@@ -32,7 +32,7 @@ public class QuestionRepositoryTest {
 			() -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
 			() -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted())
 		);
-		assertThat(actual).isEqualTo(expected);
+		assertThat(actual).isSameAs(expected);
 	}
 
 	@Test
@@ -53,7 +53,7 @@ public class QuestionRepositoryTest {
 		final Optional<Question> maybeActual = questionRepository.findByIdAndDeletedFalse(expected.getId());
 		assertThat(maybeActual.isPresent()).isTrue();
 		final Question actual = maybeActual.get();
-		assertThat(actual).isEqualTo(expected);
+		assertThat(actual).isSameAs(expected);
 		assertThat(actual.isDeleted()).isFalse();
 	}
 
