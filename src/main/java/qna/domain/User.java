@@ -12,8 +12,6 @@ import static qna.utils.ValidationUtils.isEmpty;
 @Table(name = "user")
 public class User extends BaseEntity {
 
-    public static final GuestUser GUEST_USER = new GuestUser();
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -64,10 +62,6 @@ public class User extends BaseEntity {
         return userId;
     }
 
-    public boolean isGuestUser() {
-        return false;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -85,10 +79,4 @@ public class User extends BaseEntity {
         return Objects.hash(id, userId, password, name, email);
     }
 
-    private static class GuestUser extends User {
-        @Override
-        public boolean isGuestUser() {
-            return true;
-        }
-    }
 }
