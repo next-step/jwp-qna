@@ -16,7 +16,7 @@ public class AnswerTest {
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Test
-    void deleteddeleted_기본값_false() {
+    void deleted_기본값_false() {
         // then
         assertThat(A1.isDeleted()).isFalse();
     }
@@ -27,7 +27,7 @@ public class AnswerTest {
         Answer answer = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
         // when
-        answer.setDeleted(true);
+        answer.remove();
 
         // then
         assertThat(answer.isDeleted()).isTrue();
@@ -44,7 +44,7 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("toQuestion 메소드는 questionId 를 저장")
+    @DisplayName("toQuestion 메소드는 question 을 저장")
     void toQuestion() {
         // given
         QuestionTest.Q2.setId(1L);
@@ -53,10 +53,11 @@ public class AnswerTest {
         A2.toQuestion(QuestionTest.Q2);
 
         // then
-        assertThat(A2.getQuestionId()).isEqualTo(QuestionTest.Q2.getId());
+        assertThat(A2.getQuestion()).isEqualTo(QuestionTest.Q2);
     }
 
     @Test
+    @DisplayName("writer(작성자)가 없으면 예외 발생")
     void exception_create_User_null() {
         assertThatExceptionOfType(UnAuthorizedException.class) // then
             .isThrownBy(() -> {
@@ -66,11 +67,24 @@ public class AnswerTest {
     }
 
     @Test
+    @DisplayName("question(질문)이 없으면 예외 발생")
     void exception_create_Question_null() {
         assertThatExceptionOfType(NotFoundException.class) // then
             .isThrownBy(() -> {
                 // when
                 new Answer(UserTest.JAVAJIGI, null, "Answers Contents1");
+            });
+    }
+
+    @Test
+    @DisplayName("게스트는 답변 할 수 없습니다. 예외 발생")
+    void guest_answer_fail() {
+        User guest = User.GUEST_USER;
+
+        assertThatExceptionOfType(UnAuthorizedException.class) // then
+            .isThrownBy(() -> {
+                // when
+                new Answer(guest, QuestionTest.Q1, "Answers Contents1");
             });
     }
 }
