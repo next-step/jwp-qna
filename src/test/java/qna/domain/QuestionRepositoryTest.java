@@ -29,14 +29,11 @@ public class QuestionRepositoryTest {
 	@DisplayName("두건의 데이터가 저장되었는지 검증 ")
 	void save() {
 
-		// when
-		List<Question> expectedQuestionAll = questionRepository.findAll();
-
 		// then
 		assertAll(
-			() -> assertEquals(expectedQuestionAll.get(0), Q1),
-			() -> assertEquals(expectedQuestionAll.get(1), Q2),
-			() -> assertEquals(expectedQuestionAll.size(), 2)
+			() -> assertEquals(questions.get(0), Q1),
+			() -> assertEquals(questions.get(1), Q2),
+			() -> assertEquals(questions.size(), 2)
 		);
 
 	}
@@ -48,10 +45,10 @@ public class QuestionRepositoryTest {
 		// when
 		Question question = questions.get(0);
 		question.setDeleted(true);
-		List<Question> byDeletedFalse = questionRepository.findByDeletedFalse();
+		List<Question> expectedQuestions = questionRepository.findByDeletedFalse();
 
 		// then
-		assertEquals(byDeletedFalse.size(), 1);
+		assertEquals(expectedQuestions.size(), 1);
 
 	}
 }
