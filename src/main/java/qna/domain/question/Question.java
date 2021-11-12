@@ -1,9 +1,11 @@
 package qna.domain.question;
 
+import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 import qna.domain.Contents;
 import qna.domain.DateTimeBaseEntity;
 import qna.domain.Deleted;
+import qna.domain.deletehistory.DeleteHistories;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.user.User;
 import qna.domain.answer.Answer;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Where(clause = "deleted = false")
 public class Question extends DateTimeBaseEntity {
 
     @Id
@@ -34,7 +37,7 @@ public class Question extends DateTimeBaseEntity {
     private User writer;
 
     @Embedded
-    private Deleted deleted = new Deleted();
+    private Deleted deleted = new Deleted(false);
 
     public Question(String title, String contents) {
         this(null, new Title(title), new Contents(contents));
@@ -84,12 +87,16 @@ public class Question extends DateTimeBaseEntity {
         return writer;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = new Deleted(deleted);
-    }
-
     public boolean isDeleted() {
         return deleted.isDeleted();
+    }
+
+    public void restore() {
+        this.deleted = new Deleted(false);
+    }
+
+    public void delete() {
+        this.deleted = new Deleted(true);
     }
 
     @Override
@@ -116,12 +123,16 @@ public class Question extends DateTimeBaseEntity {
         return Objects.hash(id, title, contents, answers, writer, deleted);
     }
 
-    public DeleteHistory deletedBy(User user) {
+    public DeleteHistories deletedBy(User user) {
         if (!isOwner(user)) {
             throw new CannotDeleteException("삭제 권한이 없습니다.");
         }
-        this.setDeleted(true);
-        return DeleteHistory.ofQuestion(id, user, LocalDateTime.now());
+        this.delete();
+        DeleteHistory deleteHistory = DeleteHistory.ofQuestion(id, user, LocalDateTime.now());
+        DeleteHistories deleteHistories = answers.deleteBy(user);
+        deleteHistories.add(deleteHistory);
+
+        return deleteHistories;
     }
 
 }

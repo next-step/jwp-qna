@@ -26,14 +26,14 @@ public class Answer extends DateTimeBaseEntity {
     private User writer;
 
     @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"), name = "question_id")
     private Question question;
 
     @Embedded
     private Contents contents;
 
     @Embedded
-    private Deleted deleted;
+    private Deleted deleted = new Deleted(false);
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, new Contents(contents));
@@ -79,7 +79,7 @@ public class Answer extends DateTimeBaseEntity {
         return writer;
     }
 
-    public void setWriter(User writer) {
+    public void writerBy(User writer) {
         this.writer = writer;
     }
 
@@ -89,6 +89,14 @@ public class Answer extends DateTimeBaseEntity {
 
     public boolean isDeleted() {
         return deleted.isDeleted();
+    }
+
+    public void restore() {
+        this.deleted = new Deleted(false);
+    }
+
+    public void delete() {
+        this.deleted = new Deleted(true);
     }
 
     @Override
