@@ -36,7 +36,7 @@ public class Answer extends BaseTimeEntity {
     protected Answer() {
     }
 
-    public Answer(Long id, Question question, User writer, String contents) {
+    private Answer(Question question, User writer, String contents) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException("사용자 정보를 확인할 수 없습니다.");
         }
@@ -45,10 +45,13 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException("질문 글을 찾을 수 없습니다.");
         }
 
-        this.id = id;
         this.writer = writer;
         this.question = question;
         this.contents = new Contents(contents);
+    }
+
+    public static Answer create(Question question, User writer, String contents) {
+        return new Answer(question, writer, contents);
     }
 
     public void changeDeleteState(User loginUser) throws CannotDeleteException {

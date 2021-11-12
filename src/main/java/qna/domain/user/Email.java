@@ -20,7 +20,7 @@ public class Email {
 
     private void validate(String email) {
         if (!EMAIL_PATTERN.matcher(email).matches()) {
-            throw new IllegalStateException("이메일 형식을 확인해 주세요.");
+            throw new IllegalArgumentException("이메일 형식을 확인해 주세요.");
         }
     }
 

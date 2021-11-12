@@ -34,12 +34,15 @@ public class User extends BaseTimeEntity {
     protected User() {
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
+    private User(String userId, String password, String name, String email) {
         this.userId = new UserId(userId);
         this.password = new Password(password);
         this.name = new Name(name);
         this.email = new Email(email);
+    }
+
+    public static User crate(String userId, String password, String name, String email) {
+        return new User(userId, password, name, email);
     }
 
     public void update(User target) throws UnAuthenticationException {

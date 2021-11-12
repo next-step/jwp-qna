@@ -1,6 +1,5 @@
 package qna.domain.question;
 
-import com.sun.tools.sjavac.server.Sjavac;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,15 +16,15 @@ class QuestionTest {
 
     @BeforeEach
     void setUp() {
-        javajigi = new User(1L, "javajigi", "password", "user1", "javajigi@slipp.net");
-        sanjigi = new User(1L, "sanjigi", "password", "user2", "sanjigi@slipp.net");
+        javajigi = User.crate("javajigi", "password", "user1", "javajigi@slipp.net");
+        sanjigi = User.crate("sanjigi", "password", "user2", "sanjigi@slipp.net");
     }
 
     @Test
     @DisplayName("질문을 삭제하면 상태를 삭제 상태로 변경한다.")
     void changeDeleteState() throws CannotDeleteException {
         //given
-        Question question = new Question(1L, "title1", "contents1").writeBy(javajigi);
+        Question question = Question.create("title1", "contents1").writeBy(javajigi);
 
         //when
         question.changeDeleteState(javajigi);
@@ -37,7 +36,7 @@ class QuestionTest {
     @Test
     @DisplayName("질문 작성자가 아닌 경우 질문을 삭제할 수 없다.")
     void validateDeletable() {
-        Question question = new Question(1L, "title1", "contents1").writeBy(javajigi);
+        Question question = Question.create("title1", "contents1").writeBy(javajigi);
 
         //when //then
         assertThrows(CannotDeleteException.class,
@@ -48,10 +47,10 @@ class QuestionTest {
     @DisplayName("다른 사용자의 답변이 있는 경우 삭제할 수 없다.")
     void validateOtherAnswer() {
         //given
-        Question question = new Question(1L, "title1", "contents1").writeBy(javajigi);
+        Question question = Question.create("title1", "contents1").writeBy(javajigi);
 
         //when
-        Answer answer = new Answer(1L, question, sanjigi, "Answers Contents1");
+        Answer answer = Answer.create(question, sanjigi, "Answers Contents1");
         question.addAnswer(answer);
 
         //then
@@ -63,9 +62,9 @@ class QuestionTest {
     @DisplayName("질문자와 답변 글의 모든 답변자가 같은 경우 삭제할 수 있다.")
     void deleteQuestionWithAnswers() throws CannotDeleteException {
         //given
-        Question question = new Question(1L, "title1", "contents1").writeBy(javajigi);
-        question.addAnswer(new Answer(1L, question, javajigi, "Answers Contents1"));
-        question.addAnswer(new Answer(2L, question, javajigi, "Answers Contents2"));
+        Question question = Question.create("title1", "contents1").writeBy(javajigi);
+        question.addAnswer(Answer.create(question, javajigi, "Answers Contents1"));
+        question.addAnswer(Answer.create(question, javajigi, "Answers Contents2"));
 
         //when
         question.changeDeleteState(javajigi);

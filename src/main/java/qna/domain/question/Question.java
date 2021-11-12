@@ -36,10 +36,13 @@ public class Question extends BaseTimeEntity {
     protected Question() {
     }
 
-    public Question(Long id, String title, String contents) {
-        this.id = id;
+    private Question(String title, String contents) {
         this.title = new Title(title);
         this.contents = new Contents(contents);
+    }
+
+    public static Question create(String title, String contents) {
+        return new Question(title, contents);
     }
 
     public Question writeBy(User writer) {
