@@ -73,3 +73,15 @@ alter table user
 spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.show-sql=true
 
+### 무엇을 이해했는가? 
+
+1. Entity는 영속성 컨텍스트에서 보관하고 있다.
+2. 트랜잭션이 끝나는 시점에 나간다고 했는데 `save`가 먼저 나간 이유가 무엇인가? 
+   1. JPA는 먼저 query를 실행함으로써 IDENTITY를 생성해야하기에 flush 단계에 다가지 않고 먼저 나가게 된다.
+
+3. 왜 조회가 먼저가 되었는가? 
+   1. `merge`작업을 하기위해서 내가 존재하는 녀석인지 확인하기 위해서 작동했다.
+    
+4. flush 무엇인가? 
+   1. 이때 쓰기 지연 저장소에 쌓아 놨던 INSERT, UPDATE, DELETE SQL들이 DB에 날라간다
+      주의! 영속성 컨텍스트를 비우는 것이 아니다.
