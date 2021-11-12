@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -9,7 +8,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-@EntityListeners(AuditingEntityListener.class)
 public class Answer extends DateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
