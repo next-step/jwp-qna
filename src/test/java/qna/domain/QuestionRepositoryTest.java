@@ -76,7 +76,7 @@ public class QuestionRepositoryTest {
         User user = users.findByUserId("javajigi").get();
         Question excepted = questionRepository.save(Q2.writeBy(user));
 
-        List<Question> actual = questionRepository.findByWriter(user);
+        List<Question> actual = questionRepository.findByUser(user);
 
         assertAll(
                 () -> assertThat(actual).contains(excepted, savedQuestion)

@@ -17,7 +17,7 @@ public class Question extends DateTimeEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
-    private User writer;
+    private User user;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -32,28 +32,28 @@ public class Question extends DateTimeEntity{
     protected Question() {
     }
 
-    public Question writeBy(final User writer) {
-        this.writer = writer;
+    public Question writeBy(final User user) {
+        this.user = user;
         return this;
     }
 
-    public boolean isOwner(final User writer) {
-        return this.writer.equals(writer);
+    public boolean isOwner(final User user) {
+        return this.user.equals(user);
     }
 
     public void addAnswer(final Answer answer) {
         answer.toQuestion(this);
     }
 
-    public User getWriter() {
-        return writer;
+    public User getUser() {
+        return user;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(final boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -63,7 +63,7 @@ public class Question extends DateTimeEntity{
                 "id=" + getId() +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writer=" + writer +
+                ", user=" + user +
                 ", deleted=" + deleted +
                 '}';
     }

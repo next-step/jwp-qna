@@ -13,7 +13,7 @@ import java.util.Objects;
 public class Answer extends DateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
-    private User writer;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -26,14 +26,14 @@ public class Answer extends DateTimeEntity {
     @Column(name = "delete", nullable = false)
     private boolean deleted = false;
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+    public Answer(User user, Question question, String contents) {
+        this(null, user, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User user, Question question, String contents) {
         super.setId(id);
 
-        if (Objects.isNull(writer)) {
+        if (Objects.isNull(user)) {
             throw new UnAuthorizedException();
         }
 
@@ -41,7 +41,7 @@ public class Answer extends DateTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writer = writer;
+        this.user = user;
         this.question = question;
         this.contents = contents;
     }
@@ -49,8 +49,8 @@ public class Answer extends DateTimeEntity {
     protected Answer() {
     }
 
-    public boolean isOwner(final User writer) {
-        return this.writer.equals(writer);
+    public boolean isOwner(final User user) {
+        return this.user.equals(user);
     }
 
     public void toQuestion(final Question question) {
@@ -61,8 +61,8 @@ public class Answer extends DateTimeEntity {
         return question;
     }
 
-    public User getWriter() {
-        return writer;
+    public User getUser() {
+        return user;
     }
 
     public boolean isDeleted() {
@@ -77,7 +77,7 @@ public class Answer extends DateTimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + getId() +
-                ", writer=" + writer +
+                ", user=" + user +
                 ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +

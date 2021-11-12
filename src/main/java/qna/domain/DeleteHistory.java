@@ -16,7 +16,7 @@ public class DeleteHistory extends GeneratedId {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delete_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
-    private User deletedByWriter;
+    private User deletedByUser;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate = LocalDateTime.now();
@@ -24,15 +24,15 @@ public class DeleteHistory extends GeneratedId {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByWriter) {
-        this(null, contentType, contentId, deletedByWriter);
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
+        this(null, contentType, contentId, deletedByUser);
     }
 
-    public DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedByWriter) {
+    public DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedByUser) {
         super.setId(id);
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedByWriter = deletedByWriter;
+        this.deletedByUser = deletedByUser;
     }
 
     @Override
@@ -43,12 +43,12 @@ public class DeleteHistory extends GeneratedId {
         return Objects.equals(getId(), that.getId())
                 && contentType == that.contentType
                 && Objects.equals(contentId, that.contentId)
-                && Objects.equals(deletedByWriter, that.deletedByWriter);
+                && Objects.equals(deletedByUser, that.deletedByUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), contentType, contentId, deletedByWriter);
+        return Objects.hash(getId(), contentType, contentId, deletedByUser);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class DeleteHistory extends GeneratedId {
                 "id=" + getId() +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedByWriter=" + deletedByWriter +
+                ", deletedByUser=" + deletedByUser +
                 ", createdDate=" + createdDate +
                 '}';
     }
