@@ -10,9 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import qna.domain.common.BaseTime;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
-import qna.domain.common.BaseTime;
 
 @Entity
 public class Answer extends BaseTime {

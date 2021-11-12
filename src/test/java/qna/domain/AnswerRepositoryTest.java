@@ -29,8 +29,10 @@ class AnswerRepositoryTest {
     public void setUp() {
         User javajigi = userRepository.save(UserTest.JAVAJIGI);
         User sanjigi = userRepository.save(UserTest.SANJIGI);
-        questionRepository.save(new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents(), javajigi));
-        questionRepository.save(new Question(QuestionTest.Q2.getTitle(), QuestionTest.Q2.getContents(), sanjigi));
+        questionRepository.save(
+            new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents(), javajigi));
+        questionRepository
+            .save(new Question(QuestionTest.Q2.getTitle(), QuestionTest.Q2.getContents(), sanjigi));
     }
 
     @AfterEach

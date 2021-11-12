@@ -14,10 +14,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import qna.domain.common.BaseTime;
 import qna.exception.CannotDeleteException;
 import qna.exception.ErrorMessages;
 import qna.exception.UnAuthorizedException;
-import qna.domain.common.BaseTime;
 
 @Entity
 public class Question extends BaseTime {

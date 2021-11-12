@@ -10,7 +10,8 @@ class DeleteHistoryListTest {
     @Test
     @DisplayName("삭제히스토리 리스트 생성 및 한건 추가 성공")
     public void addDeleteHistoryList() {
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI);
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L,
+            UserTest.JAVAJIGI);
 
         DeleteHistoryList deleteHistoryList = new DeleteHistoryList(deleteHistory);
 

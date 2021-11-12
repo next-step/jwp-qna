@@ -6,6 +6,7 @@ import qna.exception.CannotDeleteException;
 import qna.exception.ErrorMessages;
 
 public class AnswerList {
+
     private List<Answer> answers;
 
     public AnswerList() {

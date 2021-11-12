@@ -8,8 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
-import qna.exception.UnAuthorizedException;
 import qna.domain.common.BaseTime;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 @Table(indexes = @Index(name = "UK_userId", columnList = "userId", unique = true))
