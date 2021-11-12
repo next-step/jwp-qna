@@ -28,7 +28,7 @@
 - [ ] 연관 관계 매핑
   - [ ] answer
   - [ ] delete_history
-  - [ ] question
+  - [X] question
   
 ``` h2
 alter table answer

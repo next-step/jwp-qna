@@ -1,16 +1,17 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import javax.persistence.EntityManager;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @DataJpaTest
 public class QuestionTest {
 
@@ -21,14 +22,19 @@ public class QuestionTest {
     QuestionRepository questionRepository;
 
     @Autowired
-    EntityManager em;
+    UserRepository userRepository;
+
+    @BeforeEach
+    void setUp() {
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
+    }
 
     @Test
     public void 질문_저장() {
         //given
         Question actual = questionRepository.save(Q1);
         Long savedId = actual.getId();
-        em.clear();
 
         //when
         Question expected = questionRepository.findById(savedId).get();
@@ -49,7 +55,7 @@ public class QuestionTest {
         //then
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
-                () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
+                () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
                 () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
         );
