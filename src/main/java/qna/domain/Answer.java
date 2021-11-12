@@ -1,9 +1,8 @@
 package qna.domain;
 
+import java.util.Objects;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-
-import java.util.Objects;
 
 public class Answer {
     private Long id;
@@ -83,11 +82,11 @@ public class Answer {
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", writerId=" + writerId +
+            ", questionId=" + questionId +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            '}';
     }
 }

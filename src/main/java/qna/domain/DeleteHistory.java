@@ -5,9 +5,9 @@ import java.util.Objects;
 
 public class DeleteHistory {
     private Long id;
-    private ContentType contentType;
-    private Long contentId;
-    private Long deletedById;
+    private final ContentType contentType;
+    private final Long contentId;
+    private final Long deletedById;
     private LocalDateTime createDate = LocalDateTime.now();
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
@@ -19,13 +19,17 @@ public class DeleteHistory {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DeleteHistory that = (DeleteHistory)o;
         return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+            contentType == that.contentType &&
+            Objects.equals(contentId, that.contentId) &&
+            Objects.equals(deletedById, that.deletedById);
     }
 
     @Override
@@ -36,11 +40,11 @@ public class DeleteHistory {
     @Override
     public String toString() {
         return "DeleteHistory{" +
-                "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
-                ", createDate=" + createDate +
-                '}';
+            "id=" + id +
+            ", contentType=" + contentType +
+            ", contentId=" + contentId +
+            ", deletedById=" + deletedById +
+            ", createDate=" + createDate +
+            '}';
     }
 }
