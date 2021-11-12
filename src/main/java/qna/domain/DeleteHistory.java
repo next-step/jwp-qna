@@ -5,13 +5,14 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import qna.TypeNotFoundException;
 
 @Entity
 @Table(name = "delete_history")
@@ -35,6 +36,9 @@ public class DeleteHistory {
     private Long deletedById;
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+        if (Objects.isNull(contentType)) {
+            throw new TypeNotFoundException();
+        }
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
