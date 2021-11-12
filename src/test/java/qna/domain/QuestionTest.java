@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,6 +21,12 @@ public class QuestionTest {
 
 	@Autowired
 	QuestionRepository questionRepository;
+
+	@BeforeAll
+	static void setUp(@Autowired UserRepository userRepository) {
+		userRepository.save(UserTest.JAVAJIGI);
+		userRepository.save(UserTest.SANJIGI);
+	}
 
 	@Test
 	void 질문_저장_테스트() {
@@ -54,11 +61,11 @@ public class QuestionTest {
 		Question question = questionRepository.save(new Question("t1", "con1").writeBy(UserTest.SANJIGI));
 
 		// when
-		question.setWriterId(UserTest.JAVAJIGI.getId());
+		question.setWriter(UserTest.JAVAJIGI);
 		Question expectQuestion = questionRepository.save(question);
 
 		// then
-		assertThat(expectQuestion.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+		assertThat(expectQuestion.getWriter()).isEqualTo(UserTest.JAVAJIGI);
 	}
 
 	@Test

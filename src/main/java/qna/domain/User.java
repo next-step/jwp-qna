@@ -1,22 +1,17 @@
 package qna.domain;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import qna.UnAuthorizedException;
 
 @Entity
 public class User extends BaseTimeEntity {
 	public static final GuestUser GUEST_USER = new GuestUser();
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
 	@Column(name = "user_id", length = 20, nullable = false)
 	private String userId;
@@ -30,6 +25,15 @@ public class User extends BaseTimeEntity {
 	@Column(name = "email", length = 50)
 	private String email;
 
+	@OneToMany(mappedBy = "writer")
+	private List<Question> questionList;
+
+	@OneToMany(mappedBy = "writer")
+	private List<Answer> answerList;
+
+	@OneToMany(mappedBy = "deletedByUser")
+	private List<DeleteHistory> deleteHistoryList;
+
 	protected User() {
 	}
 
@@ -38,7 +42,7 @@ public class User extends BaseTimeEntity {
 	}
 
 	public User(Long id, String userId, String password, String name, String email) {
-		this.id = id;
+		this.setId(id);
 		this.userId = userId;
 		this.password = password;
 		this.name = name;
@@ -79,14 +83,6 @@ public class User extends BaseTimeEntity {
 		return false;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getUserId() {
 		return userId;
 	}
@@ -119,10 +115,34 @@ public class User extends BaseTimeEntity {
 		this.email = email;
 	}
 
+	public List<Answer> getAnswerList() {
+		return answerList;
+	}
+
+	public void setAnswerList(List<Answer> answerList) {
+		this.answerList = answerList;
+	}
+
+	public List<Question> getQuestionList() {
+		return questionList;
+	}
+
+	public void setQuestionList(List<Question> questionList) {
+		this.questionList = questionList;
+	}
+
+	public List<DeleteHistory> getDeleteHistoryList() {
+		return deleteHistoryList;
+	}
+
+	public void setDeleteHistoryList(List<DeleteHistory> deleteHistoryList) {
+		this.deleteHistoryList = deleteHistoryList;
+	}
+
 	@Override
 	public String toString() {
 		return "User{" +
-			"id=" + id +
+			"id=" + getId() +
 			", userId='" + userId + '\'' +
 			", password='" + password + '\'' +
 			", name='" + name + '\'' +

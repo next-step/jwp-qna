@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,6 +19,14 @@ public class AnswerTest {
 	@Autowired
 	private AnswerRepository answerRepository;
 
+	@BeforeAll
+	static void setUp(@Autowired UserRepository userRepository, @Autowired QuestionRepository questionRepository) {
+		userRepository.save(UserTest.JAVAJIGI);
+		userRepository.save(UserTest.SANJIGI);
+		questionRepository.save(QuestionTest.Q1);
+		questionRepository.save(QuestionTest.Q2);
+	}
+
 	@Test
 	void 답변_저장_테스트() {
 		// given // when
@@ -27,7 +36,7 @@ public class AnswerTest {
 		assertAll(
 			() -> assertThat(answer.getCreatedDate()).isEqualTo(A1.getCreatedDate()),
 			() -> assertThat(answer.getId()).isEqualTo(A1.getId()),
-			() -> assertThat(answer.getQuestionId()).isEqualTo(A1.getQuestionId())
+			() -> assertThat(answer.getQuestion()).isEqualTo(A1.getQuestion())
 		);
 	}
 
@@ -52,11 +61,11 @@ public class AnswerTest {
 		Answer answer = answerRepository.save(new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Test1"));
 
 		// when
-		answer.setQuestionId(QuestionTest.Q2.getId());
+		answer.setQuestion(QuestionTest.Q2);
 		Answer expectAnswer = answerRepository.save(answer);
 
 		// then
-		assertThat(expectAnswer.getQuestionId()).isEqualTo(QuestionTest.Q2.getId());
+		assertThat(expectAnswer.getQuestion()).isEqualTo(QuestionTest.Q2);
 	}
 
 	@Test
