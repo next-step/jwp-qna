@@ -17,11 +17,6 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
-    @BeforeEach
-    void setUp() {
-
-    }
-
     @DisplayName("findByIdAndDeletedFalse 테스트")
     @Test
     void findByIdAndDeletedFalse() {
