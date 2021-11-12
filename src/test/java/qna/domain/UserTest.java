@@ -5,11 +5,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
+@EnableJpaAuditing
 public class UserTest {
 
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
@@ -36,6 +38,7 @@ public class UserTest {
                 () -> assertThat(savedSanjigi.getId()).isNotNull(),
                 () -> assertThat(savedSanjigi.getName()).isEqualTo(SANJIGI.getName())
         );
+
     }
 
     @DisplayName("아이디로 회원을 조회한다.")
