@@ -12,7 +12,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import qna.QuestionNotFoundException;
 import qna.TypeNotFoundException;
+import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "delete_history")
@@ -39,6 +41,15 @@ public class DeleteHistory {
         if (Objects.isNull(contentType)) {
             throw new TypeNotFoundException();
         }
+
+        if (Objects.isNull(contentId)) {
+            throw new QuestionNotFoundException();
+        }
+
+        if (Objects.isNull(deletedById)) {
+            throw new UnAuthorizedException();
+        }
+
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
