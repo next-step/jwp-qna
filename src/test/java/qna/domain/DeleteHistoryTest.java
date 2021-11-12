@@ -10,8 +10,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class DeleteHistoryTest {
-    DeleteHistory ANSWER_HISTORY = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
-    DeleteHistory QUESTION_HISTORY = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+    DeleteHistory ANSWER_HISTORY = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
+    DeleteHistory QUESTION_HISTORY = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI,
+        LocalDateTime.now());
 
     @Test
     void contentType_ENUM_일치_검증() {
