@@ -31,9 +31,9 @@ public class Answers {
         this.answers.add(answer);
     }
 
-    public DeleteHistories deletedBy(User user) throws CannotDeleteException {
+    public DeleteHistories deleteBy(User user) throws CannotDeleteException {
         return new DeleteHistories(getAnswers().stream()
-                .map(answer -> answer.deletedBy(user))
+                .map(answer -> answer.deleteBy(user))
                 .collect(Collectors.toList()));
     }
 
