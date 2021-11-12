@@ -20,3 +20,35 @@
   - [X] `DeleteHistory`
   - [X] `Question`
   - [X] `User`
+
+# 2단계 - 연관 관계 매핑
+- QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
+
+### 요구사항
+- [ ] 연관 관계 매핑
+  - [ ] answer
+  - [ ] delete_history
+  - [ ] question
+  
+``` h2
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
+
+```
