@@ -10,18 +10,20 @@ import java.util.Objects;
 @Entity
 @Table(name = "answer")
 @EntityListeners(AuditingEntityListener.class)
-public class Answer extends DateTimeEntity{
+public class Answer extends DateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     @Lob
     @Column(name = "contents")
@@ -45,43 +47,39 @@ public class Answer extends DateTimeEntity{
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     protected Answer() {
     }
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+    public boolean isOwner(final User writer) {
+        return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
+    public void toQuestion(final Question question) {
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public String getContents() {
-        return contents;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(final boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -89,8 +87,8 @@ public class Answer extends DateTimeEntity{
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

@@ -2,6 +2,7 @@ package qna.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "delete_history")
@@ -18,8 +19,9 @@ public class DeleteHistory {
     @Column(name = "content_id")
     private Long contentId;
 
-    @Column(name = "delete_by_id")
-    private Long deletedById;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delete_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedByWriter;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate = LocalDateTime.now();
@@ -27,19 +29,35 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
-        this(null, contentType, contentId, deletedById);
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByWriter) {
+        this(null, contentType, contentId, deletedByWriter);
     }
 
-    public DeleteHistory(Long id, ContentType contentType, Long contentId, Long deletedById) {
+    public DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedByWriter) {
         this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedByWriter = deletedByWriter;
     }
 
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DeleteHistory that = (DeleteHistory) o;
+        return Objects.equals(id, that.id)
+                && contentType == that.contentType
+                && Objects.equals(contentId, that.contentId)
+                && Objects.equals(deletedByWriter, that.deletedByWriter);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contentType, contentId, deletedByWriter);
     }
 
     @Override
@@ -48,7 +66,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedByWriter=" + deletedByWriter +
                 ", createdDate=" + createdDate +
                 '}';
     }
