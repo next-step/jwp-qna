@@ -2,6 +2,7 @@ package qna.domain;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,15 +42,14 @@ public class Answers {
         }
     }
 
-    public DeleteHistories delete(User writer) {
+    public void delete(User writer) {
         checkIsOwner(writer);
         delete();
-        return getDeleteHistories();
     }
 
-    public DeleteHistories getDeleteHistories() {
+    public DeleteHistories getDeleteHistories(LocalDateTime deletedTime) {
         return new DeleteHistories(answers.stream()
-                .map(Answer::getDeleteHistory)
+                .map(answer -> answer.getDeleteHistory(deletedTime))
                 .collect(Collectors.toList()));
     }
 
