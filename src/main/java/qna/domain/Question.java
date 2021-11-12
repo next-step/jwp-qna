@@ -18,6 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import qna.UnAuthorizedException;
+
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity {
@@ -46,11 +48,6 @@ public class Question extends BaseEntity {
     }
 
     public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
-        this.id = id;
         this.title = title;
         this.contents = contents;
     }
@@ -60,6 +57,9 @@ public class Question extends BaseEntity {
             return null;
         }
 
+        if (writer.isGuestUser()) {
+            throw new UnAuthorizedException(UnAuthorizedException.GUEST_USER_NOT_QUESTION);
+        }
         this.writer = writer;
         return this;
     }
