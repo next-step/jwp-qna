@@ -66,15 +66,6 @@ public class User extends BaseEntity {
         return this.password.equals(targetPassword);
     }
 
-    public boolean equalsNameAndEmail(User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
-
-        return name.equals(target.name) &&
-                email.equals(target.email);
-    }
-
     public boolean isGuestUser() {
         return false;
     }
@@ -87,16 +78,17 @@ public class User extends BaseEntity {
         return userId;
     }
 
-    public String getPassword() {
-        return password;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

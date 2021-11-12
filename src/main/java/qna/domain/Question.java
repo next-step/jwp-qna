@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,8 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,8 +33,7 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -54,10 +53,6 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
         answers.add(answer);
         answer.toQuestion(this);
@@ -65,14 +60,6 @@ public class Question extends BaseEntity {
 
     public Long getId() {
         return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
     }
 
     public User getWriter() {
@@ -83,12 +70,19 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public DeleteHistories delete(User loginUser) {
+        deleteQuestion(loginUser);
+        answers.deleteAnswers(loginUser);
+        return DeleteHistories.fromQuestion(this);
     }
 
-    public void delete() {
+    private void deleteQuestion(User loginUser) {
+        validateOwner(loginUser);
         this.deleted = true;
+    }
+
+    public List<DeleteHistory> getDeleteHistoriesOfAnswers() {
+        return answers.getDeleteHistories();
     }
 
     @Override
@@ -100,5 +94,15 @@ public class Question extends BaseEntity {
                 ", writerId=" + writer +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    private void validateOwner(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(ErrorMessage.DELETE_QUESTION_NOT_ALLOWED);
+        }
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 }

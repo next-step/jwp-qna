@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @EnableJpaAuditing
+@DisplayName("DeleteHistory 테스트")
 class DeleteHistoryTest {
 
     @Autowired
