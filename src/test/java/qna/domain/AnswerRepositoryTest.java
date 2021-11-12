@@ -23,15 +23,7 @@ class AnswerRepositoryTest {
         Answer savedAnswer = answerRepository.save(AnswerTest.A1);
 
         Optional<Answer> answerOptional = answerRepository.findByIdAndDeletedFalse(1L);
-        Answer answer1 = answerOptional.get();
-
-        assertAll(
-                () -> assertThat(answer1.getId()).isEqualTo(savedAnswer.getId()),
-                () -> assertThat(answer1.getWriterId()).isEqualTo(savedAnswer.getWriterId()),
-                () -> assertThat(answer1.getQuestionId()).isEqualTo(savedAnswer.getQuestionId()),
-                () -> assertThat(answer1.getContents()).isEqualTo(savedAnswer.getContents()),
-                () -> assertThat(answer1.isDeleted()).isEqualTo(savedAnswer.isDeleted())
-        );
+        assertThat(answerOptional).map(Answer::getId).hasValue(savedAnswer.getId());
     }
 
     @DisplayName("findByIdAndDeletedFalse 테스트")

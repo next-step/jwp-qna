@@ -21,15 +21,7 @@ class UserRepositoryTest {
         User savedUser = userRepository.save(UserTest.SANJIGI);
 
         Optional<User> userOptional = userRepository.findByUserId("sanjigi");
-        User user = userOptional.get();
-
-        assertAll(
-                () -> assertThat(user.getId()).isEqualTo(savedUser.getId()),
-                () -> assertThat(user.getUserId()).isEqualTo(savedUser.getUserId()),
-                () -> assertThat(user.getPassword()).isEqualTo(savedUser.getPassword()),
-                () -> assertThat(user.getName()).isEqualTo(savedUser.getName()),
-                () -> assertThat(user.getEmail()).isEqualTo(savedUser.getEmail())
-        );
+        assertThat(userOptional).map(User::getUserId).hasValue(savedUser.getUserId());
     }
 
 }
