@@ -1,6 +1,6 @@
 package qna.domain;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -43,9 +43,9 @@ public class Answer {
     private boolean deleted = false;
 
     @Column(nullable = false)
-    private Date created_at;
+    private LocalDateTime created_at = LocalDateTime.now();
 
-    private Date updated_at;
+    private LocalDateTime updated_at;
 
 
     public Answer(User writer, Question question, String contents) {
