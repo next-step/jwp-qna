@@ -20,8 +20,10 @@ class AnswerRepositoryTest extends CommonRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        this.writer = new User(1L, "writer", "123", "writer", "writer@mail.com");
-        this.question = new Question(1L, "question title", "question contents");
+        this.writer = userRepository.save(
+            new User(1L, "writer", "123", "writer", "writer@mail.com"));
+        this.question = questionRepository.save(
+            new Question(1L, "question title", "question contents"));
     }
 
     @DisplayName("Answer 를 저장한다")
@@ -38,7 +40,7 @@ class AnswerRepositoryTest extends CommonRepositoryTest {
         assertAll(
             () -> assertNotNull(savedAnswer.getId()),
             () -> assertTrue(savedAnswer.isOwner(writer)),
-            () -> assertEquals(question.getId(), savedAnswer.getQuestionId()),
+            () -> assertEquals(question, savedAnswer.getQuestion()),
             () -> assertEquals(answerContents, savedAnswer.getContents()),
             () -> assertFalse(savedAnswer.isDeleted()),
             () -> assertNotNull(savedAnswer.getCreatedAt())
@@ -103,7 +105,7 @@ class AnswerRepositoryTest extends CommonRepositoryTest {
 
         // then
         assertEquals(3, findAnswers.size());
-        assertThat(findAnswers).extracting("questionId").containsExactly(
+        assertThat(findAnswers).extracting("question").extracting("id").containsExactly(
             question.getId(), question.getId(), question.getId());
         assertThat(findAnswers).extracting("contents").containsExactly(
             firstAnswerContents, secondAnswerContents, thirdAnswerContents);
