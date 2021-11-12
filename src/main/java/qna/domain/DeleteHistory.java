@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import qna.UnAuthorizedException;
 
 @Entity
 public class DeleteHistory {
@@ -34,9 +35,14 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedUser) {
         this.contentType = contentType;
         this.contentId = contentId;
+
+        if (Objects.isNull(deletedUser)) {
+            throw new UnAuthorizedException();
+        }
+        deleteBy(deletedUser);
     }
 
     public DeleteHistory deleteBy(User deletedBy) {

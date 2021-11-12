@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -46,18 +47,17 @@ class QnaServiceTest {
     public void setUp() throws Exception {
         question = new Question("title1", "contents1", UserTest.JAVAJIGI);
         answer = new Answer( UserTest.JAVAJIGI, question, "Answers Contents1");
-
     }
 
     @Test
     public void delete_성공() throws Exception {
-        when(questionRepository.findByIdAndDeletedFalse(question.getId()))
+        when(questionRepository.findByIdAndDeletedFalse(ArgumentMatchers.anyLong()))
             .thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId()))
+        when(answerRepository.findByQuestionIdAndDeletedFalse(ArgumentMatchers.anyLong()))
             .thenReturn(Arrays.asList(answer));
 
         assertThat(question.isDeleted()).isFalse();
-        qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
+        qnaService.deleteQuestion(UserTest.JAVAJIGI, 1L);
 
         assertThat(question.isDeleted()).isTrue();
         verifyDeleteHistories();
@@ -101,9 +101,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-            new DeleteHistory(ContentType.QUESTION, question.getId())
-                .deleteBy(question.getWriter()),
-            new DeleteHistory(ContentType.ANSWER, answer.getId()).deleteBy(answer.getWriter())
+            new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()),
+            new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

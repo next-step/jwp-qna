@@ -12,6 +12,7 @@ import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
+import qna.domain.DeleteHistoryList;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.User;
@@ -41,26 +42,7 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-        if (!question.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
-        }
-
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.setDeleted(true);
-        deleteHistories
-            .add(new DeleteHistory(ContentType.QUESTION, questionId).deleteBy(loginUser));
-        for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories
-                .add(new DeleteHistory(ContentType.ANSWER, answer.getId()).deleteBy(loginUser));
-        }
-        deleteHistoryService.saveAll(deleteHistories);
+        DeleteHistoryList deleteHistories = question.getDeleteHistoryList(loginUser);
+        deleteHistoryService.saveAll(deleteHistories.getDeleteHistories());
     }
 }
