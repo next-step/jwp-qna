@@ -9,6 +9,11 @@ import java.util.Objects;
 @Entity
 @Table(name = "answer")
 public class Answer extends DateTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User user;
@@ -29,7 +34,7 @@ public class Answer extends DateTimeEntity {
     }
 
     public Answer(Long id, User user, Question question, String contents) {
-        super.setId(id);
+        this.id = id;
 
         if (Objects.isNull(user)) {
             throw new UnAuthorizedException();
@@ -45,6 +50,10 @@ public class Answer extends DateTimeEntity {
     }
 
     protected Answer() {
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public boolean isOwner(final User user) {

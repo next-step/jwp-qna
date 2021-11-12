@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class DateTimeEntity extends GeneratedId {
+public abstract class DateTimeEntity {
     @Column(name = "created_date", nullable = false)
     @CreatedDate
     private LocalDateTime createdDate;

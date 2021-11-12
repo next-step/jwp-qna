@@ -5,6 +5,11 @@ import javax.persistence.*;
 @Entity
 @Table(name = "question")
 public class Question extends DateTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User user;
@@ -24,7 +29,7 @@ public class Question extends DateTimeEntity {
     }
 
     public Question(Long id, String title, String contents) {
-        super.setId(id);
+        this.id = id;
         this.title = title;
         this.contents = contents;
     }
@@ -45,6 +50,10 @@ public class Question extends DateTimeEntity {
         answer.toQuestion(this);
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public User getUser() {
         return user;
     }
@@ -60,7 +69,7 @@ public class Question extends DateTimeEntity {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", user=" + user +

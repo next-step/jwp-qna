@@ -2,15 +2,17 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User extends DateTimeEntity{
+public class User extends DateTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "user_id", nullable = false, unique = true)
     private String userId;
@@ -32,7 +34,7 @@ public class User extends DateTimeEntity{
     }
 
     public User(Long id, String userId, String password, String name, String email) {
-        super.setId(id);
+        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -77,12 +79,16 @@ public class User extends DateTimeEntity{
         return userId;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(getId(), user.getId())
+        return Objects.equals(id, user.getId())
                 && Objects.equals(userId, user.userId)
                 && Objects.equals(password, user.password)
                 && Objects.equals(name, user.name)
@@ -91,13 +97,13 @@ public class User extends DateTimeEntity{
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), userId, password, name, email);
+        return Objects.hash(id, userId, password, name, email);
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", userId='" + userId + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
