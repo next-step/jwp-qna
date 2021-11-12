@@ -39,20 +39,16 @@ public class Answer extends BaseTime {
     }
 
     public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
-
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
         writerBy(writer);
+
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
         toQuestion(question);
+
         this.contents = contents;
     }
 
@@ -76,8 +72,10 @@ public class Answer extends BaseTime {
      * @param question
      */
     public void toQuestion(Question question) {
-        this.question = question;
-        question.addAnswer(this);
+        if (this.question != question) {
+            this.question = question;
+            question.addAnswer(this);
+        }
     }
 
     public Long getId() {
@@ -102,6 +100,24 @@ public class Answer extends BaseTime {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Answer answer = (Answer) o;
+        return Objects.equals(id, answer.id) && Objects.equals(writer, answer.writer) && Objects
+            .equals(question, answer.question);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, writer, question, contents, deleted);
     }
 
     @Override

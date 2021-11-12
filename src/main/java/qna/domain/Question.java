@@ -44,11 +44,6 @@ public class Question extends BaseTime {
     }
 
     public Question(String title, String contents, User writer) {
-        this(null, title, contents, writer);
-    }
-
-    public Question(Long id, String title, String contents, User writer) {
-        this.id = id;
         this.title = title;
         this.contents = contents;
 
@@ -79,7 +74,10 @@ public class Question extends BaseTime {
      * @param answer
      */
     public void addAnswer(Answer answer) {
-        this.answerList.add(answer);
+        if (!this.answerList.contains(answer)) {
+            this.answerList.add(answer);
+            answer.toQuestion(this);
+        }
     }
 
     public boolean equalsId(Question other) {
@@ -112,6 +110,23 @@ public class Question extends BaseTime {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Question question = (Question) o;
+        return Objects.equals(id, question.id) && Objects.equals(writer, question.getWriter());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writer, deleted, answerList);
     }
 
     @Override
