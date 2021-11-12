@@ -46,7 +46,7 @@ public class User extends DateTimeBaseEntity {
     }
 
     public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.getUserId())) {
+        if (!matchUserId(loginUser.getUserId().getId())) {
             throw new UnAuthorizedException();
         }
 
@@ -59,7 +59,7 @@ public class User extends DateTimeBaseEntity {
     }
 
     private boolean matchUserId(String userId) {
-        return this.userId.getUserId().equals(userId);
+        return this.userId.getId().equals(userId);
     }
 
     public boolean matchPassword(String targetPassword) {
@@ -83,8 +83,8 @@ public class User extends DateTimeBaseEntity {
         return id;
     }
 
-    public String getUserId() {
-        return userId.getUserId();
+    public UserId getUserId() {
+        return userId;
     }
 
     public String getName() {
