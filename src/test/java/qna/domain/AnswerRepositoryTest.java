@@ -62,7 +62,7 @@ public class AnswerRepositoryTest {
 
 	@Test
 	@DisplayName("기대값을 3건을 예상했지만 결과는 2건이다.")
-	void 여러건을_저장할때_동일한_객체라면_동일한객체는_저장되지않는다() {
+	void 여러건을_저장할때_동일한_객체라면_동일한객체는_변경이_없다면_INSERT되지_않는다() {
 
 		Answer save = answerRepository.save(A1);
 		System.out.println("save = " + save);
