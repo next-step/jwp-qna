@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -19,12 +20,12 @@ public class UserRepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		/*userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));*/
-		userRepository.save(JAVAJIGI);
+		userRepository.saveAll(Arrays.asList(JAVAJIGI,SANJIGI));
 	}
 
 	@Test
-	void updateEmail() {
+	@DisplayName("단건의 유저 이메일을 변경되는지 확인")
+	void give_User_when_changeEmail_then_changedEqualsEmail() {
 		// given
 		Optional<User> byUserId = userRepository.findByUserId(JAVAJIGI.getUserId());
 		User user = byUserId.get();
@@ -38,11 +39,13 @@ public class UserRepositoryTest {
 	}
 
 	@Test
-	void findByName() {
+	@DisplayName("이름으로 유저이름 조회시 동일한 이름 데이터가 조회 되는지 확인")
+	void when_findUserName_then_sameUserName() {
 		// when
 		User user = userRepository.findByName("javajigi").get();
 
 		// then
 		Assertions.assertThat(user.getName()).isEqualTo(JAVAJIGI.getName());
 	}
+
 }
