@@ -1,6 +1,7 @@
 package qna.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,6 +44,7 @@ class QnaServiceTest {
         question.addAnswer(answer);
     }
 
+    @DisplayName("delete question 성공")
     @Test
     public void delete_성공() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
@@ -55,6 +57,7 @@ class QnaServiceTest {
         verifyDeleteHistories();
     }
 
+    @DisplayName("delete question from 다른 사람 실패")
     @Test
     public void delete_다른_사람이_쓴_글() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
@@ -63,6 +66,7 @@ class QnaServiceTest {
                 .isInstanceOf(CannotDeleteException.class);
     }
 
+    @DisplayName("delete question 질문자의 대답만 있을 경우 성공")
     @Test
     public void delete_성공_질문자_답변자_같음() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
@@ -75,6 +79,7 @@ class QnaServiceTest {
         verifyDeleteHistories();
     }
 
+    @DisplayName("delete question answer에 다른 사람이 쓴 글 실패")
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
         Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
