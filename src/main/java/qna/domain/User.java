@@ -1,5 +1,8 @@
 package qna.domain;
 
+import static qna.ErrorMessage.*;
+
+import qna.ErrorMessage;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
@@ -47,11 +50,11 @@ public class User extends BaseTime {
 
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException(UN_AUTHORITY);
         }
 
         if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException(UN_AUTHORITY);
         }
 
         this.name = target.name;

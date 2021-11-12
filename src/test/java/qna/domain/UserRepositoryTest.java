@@ -24,28 +24,44 @@ public class UserRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("단건의 유저 이메일을 변경되는지 확인")
+	@DisplayName("유저 이메일이 변경되는지 확인")
 	void give_User_when_changeEmail_then_changedEqualsEmail() {
 		// given
 		Optional<User> byUserId = userRepository.findByUserId(JAVAJIGI.getUserId());
-		User user = byUserId.get();
+		User expectedUser = byUserId.get();
 
 		// when
 		final String updateEmail = "seunghoo@naver.com";
-		user.setEmail(updateEmail);
+		expectedUser.setEmail(updateEmail);
 
 		// then
-		Assertions.assertThat(user.getEmail()).isEqualTo(updateEmail);
+		Assertions.assertThat(expectedUser.getEmail()).isEqualTo(updateEmail);
 	}
 
 	@Test
-	@DisplayName("이름으로 유저이름 조회시 동일한 이름 데이터가 조회 되는지 확인")
+	@DisplayName("이름으로 조회시 데이터가 조회 되는지 확인")
 	void when_findUserName_then_sameUserName() {
 		// when
-		User user = userRepository.findByName("javajigi").get();
+		User expectedUser = userRepository.findByName("javajigi").get();
 
 		// then
-		Assertions.assertThat(user.getName()).isEqualTo(JAVAJIGI.getName());
+		Assertions.assertThat(expectedUser.getName()).isEqualTo(JAVAJIGI.getName());
 	}
 
+
+	@Test
+	@DisplayName("유저 비밀번호를 변경시 변경되는지 확인")
+	void given_user_whenChangePassword_then_isTrue() {
+
+		//given
+		User user = userRepository.findByName("javajigi").get();
+		String changePassword = "changePassword";
+
+		// when
+		user.setPassword(changePassword);
+		User expectedUser = userRepository.findByUserId(user.getUserId()).get();
+
+		// then
+		Assertions.assertThat(expectedUser.getPassword().equals(changePassword)).isTrue();
+	}
 }
