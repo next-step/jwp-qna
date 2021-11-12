@@ -68,10 +68,6 @@ public class Answer extends BaseEntity {
         return this.writer.getId().equals(writer.getId());
     }
 
-    public void toQuestion(Question question) {
-        this.question = question;
-    }
-
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         checkDeleteBy(loginUser);
         setDeleted(true);
