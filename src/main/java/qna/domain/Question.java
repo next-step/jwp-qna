@@ -43,6 +43,10 @@ public class Question {
 
     private LocalDateTime updatedAt;
 
+    protected Question() {
+
+    }
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }

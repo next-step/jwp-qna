@@ -54,7 +54,7 @@ public class User {
 
     private LocalDateTime updatedAt;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
