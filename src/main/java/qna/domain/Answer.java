@@ -14,7 +14,8 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "contents", columnDefinition = "LONGTEXT")
+    @Lob
+    @Column(name = "contents")
     private String contents;
 
     @Column(name = "created_at", nullable = false, updatable = false)
