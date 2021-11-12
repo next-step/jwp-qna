@@ -1,6 +1,8 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity{
@@ -21,6 +23,9 @@ public class Question extends BaseEntity{
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -44,7 +49,31 @@ public class Question extends BaseEntity{
         return this.writer.equals(writer);
     }
 
+    private void checkOwner(User writer) {
+        if (!isOwner(writer)) {
+            throw new RuntimeException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    public DeleteHistories delete(User writer) {
+        checkOwner(writer);
+        deleted = true;
+        answers.delete(writer);
+        return getDeleteHistories(writer, LocalDateTime.now());
+    }
+
+    private DeleteHistories getDeleteHistories(User writer, LocalDateTime deletedTime) {
+        return new DeleteHistories(
+                answers.getDeleteHistories(deletedTime),
+                getDeleteHistory(writer, deletedTime));
+    }
+
+    private DeleteHistory getDeleteHistory(User writer, LocalDateTime deletedTime) {
+        return DeleteHistory.question(id, writer, deletedTime);
+    }
+
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -66,6 +95,10 @@ public class Question extends BaseEntity{
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers.getAnswers();
     }
 
     public void setDeleted(boolean deleted) {
