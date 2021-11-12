@@ -73,6 +73,34 @@ alter table user
 spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.show-sql=true
 
+## 분석
+1. Answer
+   1. 객체를 생성
+      1. 유저가 null인지 확인한다
+      2. 유저가 답변을 다는 Question이 존재하는지 확인한다.
+   2. 필수 값은 무엇인가?
+      1. questionId
+      2. writerId
+2. Question
+   1. 객체를 생성
+   2. 기능
+      1. writerBy
+         1. 유저가 null인지 체크
+      2. AddAnswer
+3. DeleteHistory
+   1. 생성시 현재시간
+   2. 수정은 불가능(createDate)
+4. User
+   1. 기능
+      1. update
+         1. 아이디와 패스워드가 다른 경우 오류
+         2. 이름, 이메일 변경
+      2. equalsNameAndEmail
+         1. 이름과 이메일이 동일한지 체크
+      3. 유저를 게스트로 생성시
+         1. 게스트 여부 존재
+
+   
 ### 무엇을 이해했는가? 
 
 1. Entity는 영속성 컨텍스트에서 보관하고 있다.
@@ -86,35 +114,47 @@ spring.jpa.show-sql=true
    1. 이때 쓰기 지연 저장소에 쌓아 놨던 INSERT, UPDATE, DELETE SQL들이 DB에 날라간다
       주의! 영속성 컨텍스트를 비우는 것이 아니다.
 
+
 5. 동일한 객체를 컬렉션에담는경우 JPA는 모두 대상건을 저장한다.
 ![identity.png](src/main/resources/img/identity.png)
 
-5. 동일한 객체를 저장하는경우 JPA는 동일한 객체인경우 저장하지 않는다.
+
+6. 동일한 객체를 저장하는경우 JPA는 동일한 객체인경우 저장하지 않는다.
 ![img.png](src/main/resources/img/img.png)
 
-## 분석
-1. Answer
-   1. 객체를 생성 
-      1. 유저가 null인지 확인한다
-      2. 유저가 답변을 다는 Question이 존재하는지 확인한다.
-   2. 필수 값은 무엇인가? 
-      1. questionId
-      2. writerId
-2. Question
-   1. 객체를 생성
-   2. 기능
-      1. writerBy
-         1. 유저가 null인지 체크 
-      2. AddAnswer
-3. DeleteHistory
-   1. 생성시 현재시간 
-   2. 수정은 불가능(createDate) 
-4. User
-   1. 기능 
-      1. update
-         1. 아이디와 패스워드가 다른 경우 오류 
-         2. 이름, 이메일 변경 
-      2. equalsNameAndEmail
-         1. 이름과 이메일이 동일한지 체크
-      3. 유저를 게스트로 생성시 
-         1. 게스트 여부 존재
+
+7. [JPA: @DataJpaTest 에서 트랜잭션 Rollback 이 안된 이유는?](출처: https://namocom.tistory.com/995)
+
+
+[8. @GeneratedValue의 전략시](##무엇이문제였는가?)
+
+|생성 전략|설명|
+|:---:|:---:|
+|GenerationType.IDENTITY|데이터베이스에 키 생성방법을 위임|
+|GenerationType.AUTO|각 데이터베이스 방언에 따라 자동으로 지정(기본 값)|
+|GenerationType.TABLE|
+|GenerationType.SEQUENCE|	데이터베이스의 시퀸스를 이용해서 키 값을 생성|
+
+
+## 무엇이문제였는가?
+
+1. 트랜잭션 단위는 끝났지만 AutoIncrement 계속증가했다. 문제를 해결하기  `auto-increment 값을 재지정해주면 된다.`
+```java
+ @After
+ public void teardown() {
+     this.레파지토리.deleteAll();
+     this.entityManagr
+         .createNativeQuery("ALTER TABLE 테이블명 ALTER COLUMN `pofo_post_no` RESTART WITH 1")
+         .executeUpdate();
+ }
+```
+- 이 방법은 @DataJpaTest @Transactional이 적용되는 서비스 클래스를 테스트 할 때는 적용 가능하지만,
+- @SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT )를 사용하는 환경에서는 사용 할 수 없다.
+- 데이터의 존재유무에 대한 검증방식으로 해결할 수 있다.
+
+2. `객체`에 ID값을 넣었다고 해서 저장시 해당번호로 저장되지 않는다.
+   - 넣은 값을 실행하고 싶다면 `GeneratedValue` 삭제
+   - 이유는 아래의 전략에 따라서 @Id 값을 할당한다.
+      
+
+
