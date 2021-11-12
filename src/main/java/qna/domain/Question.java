@@ -4,20 +4,20 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "question")
-public class Question extends DateTimeEntity{
-    @Column(name = "title", nullable = false, length = 100)
-    private String title;
-
-    @Column(name = "delete", nullable = false)
-    private boolean deleted = false;
+public class Question extends DateTimeEntity {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User user;
 
     @Lob
     @Column(name = "contests")
     private String contents;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
-    private User user;
+    @Column(name = "delete", nullable = false)
+    private boolean deleted = false;
+
+    @Column(name = "title", nullable = false, length = 100)
+    private String title;
 
     public Question(String title, String contents) {
         this(null, title, contents);

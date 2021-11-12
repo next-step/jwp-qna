@@ -13,16 +13,16 @@ public class Answer extends DateTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-    private Question question;
-
     @Lob
     @Column(name = "contents")
     private String contents;
 
     @Column(name = "delete", nullable = false)
     private boolean deleted = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     public Answer(User user, Question question, String contents) {
         this(null, user, question, contents);
