@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import qna.NotFoundException;
+import qna.QuestionNotFoundException;
 import qna.UnAuthorizedException;
 
 public class AnswerTest {
@@ -53,6 +53,6 @@ public class AnswerTest {
 		// then
 		Assertions.assertThatThrownBy(() -> {
 			Answer answer = new Answer(JAVAJIGI, null, CONTENTS);
-		}).isInstanceOf(NotFoundException.class);
+		}).isInstanceOf(QuestionNotFoundException.class);
 	}
 }
