@@ -1,12 +1,20 @@
-package qna.domain;
+package qna.domain.answer;
 
+import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.*;
+import qna.domain.deletehistory.DeleteHistory;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Where(clause = "deleted = false")
 public class Answer extends DateTimeBaseEntity {
 
     @Id
@@ -18,20 +26,24 @@ public class Answer extends DateTimeBaseEntity {
     private User writer;
 
     @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"), name = "question_id")
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted = new Deleted(false);
 
     public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+        this(null, writer, question, new Contents(contents));
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
+        this(id, writer, question, new Contents(contents));
+    }
+
+    public Answer(Long id, User writer, Question question, Contents contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -67,7 +79,7 @@ public class Answer extends DateTimeBaseEntity {
         return writer;
     }
 
-    public void setWriter(User writer) {
+    public void writerBy(User writer) {
         this.writer = writer;
     }
 
@@ -76,11 +88,15 @@ public class Answer extends DateTimeBaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void restore() {
+        this.deleted = new Deleted(false);
+    }
+
+    public void delete() {
+        this.deleted = new Deleted(true);
     }
 
     @Override
@@ -105,5 +121,13 @@ public class Answer extends DateTimeBaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, writer, question, contents, deleted);
+    }
+
+    public DeleteHistory deleteBy(User user) {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.deleted = new Deleted(true);
+        return DeleteHistory.ofAnswer(id, user, LocalDateTime.now());
     }
 }

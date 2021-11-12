@@ -5,6 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
+import qna.domain.question.Question;
+import qna.domain.question.QuestionRepository;
+import qna.domain.user.User;
+import qna.domain.user.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,13 +52,13 @@ public class QuestionRepositoryTest {
         Question saveQuestion1 = saveQuestion(UserTest.JAVAJIGI, QuestionTest.Q1);
         Question saveQuestion2 = saveQuestion(UserTest.SANJIGI, QuestionTest.Q2);
 
-        assertEquals(2, questionRepository.findByDeletedFalse().size());
+        assertEquals(2, questionRepository.findAll().size());
     }
     @DisplayName("QUESTION ID로 삭제되지 않은 질문을 확인한다.")
     @Test
     void findByIdAndDeletedFalseTest() {
 
         Question saveQuestion2 = saveQuestion(UserTest.SANJIGI, QuestionTest.Q2);
-        assertSame(saveQuestion2, questionRepository.findByIdAndDeletedFalse(saveQuestion2.getId()).get());
+        assertSame(saveQuestion2, questionRepository.findById(saveQuestion2.getId()).get());
     }
 }
