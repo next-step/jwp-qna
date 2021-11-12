@@ -11,7 +11,7 @@ public class AnswerTest {
 
     @Test
     @DisplayName("기본 ddl 확인")
-    void baseTest() {
+    void checkDDL() {
         //
     }
 }
