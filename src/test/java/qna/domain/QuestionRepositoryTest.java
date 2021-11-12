@@ -29,7 +29,7 @@ public class QuestionRepositoryTest {
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
 			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
-			() -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
+			() -> assertThat(actual.getWriter()).isSameAs(expected.getWriter()),
 			() -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted())
 		);
 		assertThat(actual).isSameAs(expected);

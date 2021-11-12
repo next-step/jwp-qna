@@ -31,8 +31,8 @@ public class AnswerRepositoryTest {
 		final Answer actual = answerRepository.save(expected);
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
-			() -> assertThat(actual.getQuestion()).isEqualTo(expected.getQuestion()),
+			() -> assertThat(actual.getWriter()).isSameAs(expected.getWriter()),
+			() -> assertThat(actual.getQuestion()).isSameAs(expected.getQuestion()),
 			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
 			() -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted())
 		);
