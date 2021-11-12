@@ -41,7 +41,7 @@ public class UserRepositoryTest {
     void findByUserId() {
 
         User saveUser = saveUser(UserTest.JAVAJIGI);
-        assertSame(userRepository.findByUserId(saveUser.getUserId()).get(), saveUser);
+        assertThat(userRepository.findByUserId(saveUser.getUserId()).get()).isEqualTo(saveUser);
 
     }
 }

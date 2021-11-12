@@ -9,6 +9,7 @@ import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
 import qna.domain.question.Question;
 import qna.domain.question.QuestionRepository;
+import qna.domain.user.Name;
 import qna.domain.user.User;
 import qna.domain.user.UserRepository;
 
@@ -34,7 +35,7 @@ public class AnswerRepositoryTest {
         User saveUser = userRepository.save(user);
 
         question.writeBy(saveUser);
-        answer.setWriter(saveUser);
+        answer.writerBy(saveUser);
         question.addAnswer(answer);
         questionRepository.save(question);
         return answer;
@@ -46,7 +47,7 @@ public class AnswerRepositoryTest {
 
         Answer saveAnswer = saveAnswer(AnswerTest.A1, UserTest.JAVAJIGI, QuestionTest.Q1);
 
-        assertThat(saveAnswer.getWriter()).isEqualTo(UserTest.JAVAJIGI);
+        assertThat(saveAnswer.getWriter().getName()).isEqualTo(UserTest.JAVAJIGI.getName());
     }
 
     @DisplayName("QUESTION ID로 삭제되지 않은 질문을 확인한다.")
@@ -55,7 +56,7 @@ public class AnswerRepositoryTest {
 
         Answer saveAnswer = saveAnswer(AnswerTest.A1, UserTest.JAVAJIGI, QuestionTest.Q1);
 
-        assertEquals(1, answerRepository.findByQuestionIdAndDeletedFalse(saveAnswer.getQuestion().getId()).size());
+        assertEquals(1, answerRepository.findByQuestionId(saveAnswer.getQuestion().getId()).size());
     }
 
     @DisplayName("ANSWER ID로 삭제되지 않은 질문을 확인한다.")
@@ -63,7 +64,7 @@ public class AnswerRepositoryTest {
     void findByIdAndDeletedFalseTest() {
 
         Answer saveAnswer = saveAnswer(AnswerTest.A1, UserTest.JAVAJIGI, QuestionTest.Q1);
-        assertEquals(saveAnswer.getId(), answerRepository.findByIdAndDeletedFalse(saveAnswer.getId()).get().getId());
+        assertEquals(saveAnswer.getId(), answerRepository.findById(saveAnswer.getId()).get().getId());
 
     }
 }
