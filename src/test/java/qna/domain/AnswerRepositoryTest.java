@@ -3,6 +3,9 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static qna.domain.AnswerTest.*;
 
+import java.util.Optional;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -14,19 +17,20 @@ public class AnswerRepositoryTest {
 	AnswerRepository answerRepository;
 
 	@Test
-	void save() {
-
+	@DisplayName("입력된 정보와 저장된정보가 동일한지 확인")
+	void given_saveAnswer_When_save_then_saved_equals_saveAnswer() {
 		// when
-		Answer save = answerRepository.save(A1);
+		Answer expected = answerRepository.save(A1);
 
 		// then
-		assertThat(save.getWriterId()).isEqualTo(A1.getWriterId());
-		assertThat(save.getQuestionId()).isEqualTo(A1.getQuestionId());
-		assertThat(save.getContents()).isEqualTo(A1.getContents());
+		assertThat(expected.getWriterId()).isEqualTo(A1.getWriterId());
+		assertThat(expected.getQuestionId()).isEqualTo(A1.getQuestionId());
+		assertThat(expected.getContents()).isEqualTo(A1.getContents());
 	}
 
 	@Test
-	void findById() {
+	@DisplayName("Answer 저장한 정보의 id로 조회했을 때 조회한 값이 동일한지 확인")
+	void given_saveAnswer_when_findById_saved_equals_saveAnswer() {
 		//given
 		Answer answer = answerRepository.save(A1);
 
@@ -40,15 +44,16 @@ public class AnswerRepositoryTest {
 	}
 
 	@Test
-	void findByIdAndDeletedFalse() {
+	@DisplayName("저장된 정보가 false 기본값으로 저장되었는지 확인")
+	void given_saveAnswer_when_findByIdAndDeletedFalse_then_isFalse() {
 		//given
 		Answer answer = answerRepository.save(A1);
 
 		// when
-		Answer byIdAndDeletedFalse = answerRepository.findByIdAndDeletedFalse(answer.getId()).get();
+		Answer expected = answerRepository.findByIdAndDeletedFalse(answer.getId()).get();
 
 		// then
-		assertThat(byIdAndDeletedFalse.getId()).isEqualTo(A1.getId());
-
+		assertThat(expected.isDeleted()).isFalse();
 	}
+
 }

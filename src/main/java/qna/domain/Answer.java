@@ -1,5 +1,7 @@
 package qna.domain;
 
+import static qna.ErrorMessage.*;
+
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -9,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
-import qna.NotFoundException;
+import qna.QuestionNotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
@@ -43,11 +45,11 @@ public class Answer extends BaseTime {
         this.id = id;
 
         if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException(USER_IS_NOT_NULL);
         }
 
         if (Objects.isNull(question)) {
-            throw new NotFoundException();
+            throw new QuestionNotFoundException(QUESTION_NOT_FOUND);
         }
 
         this.writerId = writer.getId();
