@@ -6,6 +6,7 @@ import static qna.domain.QuestionTest.*;
 import java.util.Arrays;
 import java.util.List;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,14 +29,8 @@ public class QuestionRepositoryTest {
 	@Test
 	@DisplayName("두건의 데이터가 저장되었는지 검증 ")
 	void save() {
-
 		// then
-		assertAll(
-			() -> assertEquals(questions.get(0), Q1),
-			() -> assertEquals(questions.get(1), Q2),
-			() -> assertEquals(questions.size(), 2)
-		);
-
+		Assertions.assertThat(questions.size()).isEqualTo(2);
 	}
 
 	@Test
