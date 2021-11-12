@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
 
 public class AnswerTest {
 

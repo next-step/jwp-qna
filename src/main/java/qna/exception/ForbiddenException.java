@@ -1,4 +1,4 @@
-package qna;
+package qna.exception;
 
 public class ForbiddenException extends RuntimeException {
 
@@ -7,5 +7,9 @@ public class ForbiddenException extends RuntimeException {
 
     public ForbiddenException(String message) {
         super(message);
+    }
+
+    public ForbiddenException(ErrorMessages errorMessages) {
+        super(errorMessages.getValues());
     }
 }

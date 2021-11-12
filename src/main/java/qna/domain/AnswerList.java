@@ -2,7 +2,8 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import qna.CannotDeleteException;
+import qna.exception.CannotDeleteException;
+import qna.exception.ErrorMessages;
 
 public class AnswerList {
     private List<Answer> answers;
@@ -19,6 +20,10 @@ public class AnswerList {
         this.answers.add(answer);
     }
 
+    public int size() {
+        return this.answers.size();
+    }
+
     public void deleted(User loginUser, DeleteHistoryList deleteHistoryList)
         throws CannotDeleteException {
         for (Answer answer : answers) {
@@ -30,7 +35,7 @@ public class AnswerList {
 
     private void validate(Answer answer, User loginUser) throws CannotDeleteException {
         if (!answer.isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(ErrorMessages.ANSWER_OTHER_USER_CANNOT_DELETE);
         }
     }
 }

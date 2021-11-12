@@ -12,7 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 public class DeleteHistory {

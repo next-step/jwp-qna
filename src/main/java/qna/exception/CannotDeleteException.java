@@ -1,4 +1,4 @@
-package qna;
+package qna.exception;
 
 public class CannotDeleteException extends Exception {
 
@@ -6,5 +6,9 @@ public class CannotDeleteException extends Exception {
 
     public CannotDeleteException(String message) {
         super(message);
+    }
+
+    public CannotDeleteException(ErrorMessages errorMessages) {
+        super(errorMessages.getValues());
     }
 }

@@ -14,8 +14,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import qna.CannotDeleteException;
-import qna.UnAuthorizedException;
+import qna.exception.CannotDeleteException;
+import qna.exception.ErrorMessages;
+import qna.exception.UnAuthorizedException;
 import qna.domain.common.BaseTime;
 
 @Entity
@@ -115,7 +116,7 @@ public class Question extends BaseTime {
 
     public DeleteHistoryList getDeleteHistoryList(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(ErrorMessages.OTHER_USER_CANNOT_DELETE);
         }
         setDeleted(true);
         AnswerList answers = new AnswerList(this.answerList);

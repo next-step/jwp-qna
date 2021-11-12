@@ -15,7 +15,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import qna.CannotDeleteException;
+import qna.exception.CannotDeleteException;
 import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.ContentType;

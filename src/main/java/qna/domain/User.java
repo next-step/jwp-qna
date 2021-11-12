@@ -8,7 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 import qna.domain.common.BaseTime;
 
 @Entity

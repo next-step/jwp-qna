@@ -1,4 +1,4 @@
-package qna;
+package qna.exception;
 
 public class UnAuthenticationException extends Exception {
 
@@ -23,5 +23,9 @@ public class UnAuthenticationException extends Exception {
 
     public UnAuthenticationException(Throwable cause) {
         super(cause);
+    }
+
+    public UnAuthenticationException(ErrorMessages errorMessages) {
+        super(errorMessages.getValues());
     }
 }
