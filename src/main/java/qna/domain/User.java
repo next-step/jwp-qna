@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends BaseTime {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
