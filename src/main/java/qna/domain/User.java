@@ -12,12 +12,13 @@ public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(length = 20, nullable = false)
     private String userId;
-    @Column(nullable = false)
+    @Column(length = 20, nullable = false)
     private String password;
-    @Column(nullable = false)
+    @Column(length = 20,nullable = false)
     private String name;
+    @Column(length = 50)
     private String email;
 
     public User() {
