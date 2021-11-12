@@ -1,11 +1,41 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+@Entity
 public class Question {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Lob
     private String contents;
-    private Long writerId;
+
+    @Column(nullable = false)
+    private final LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column(length = 100, nullable = false)
+    private String title;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    private Long writerId;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -73,11 +103,11 @@ public class Question {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", contents='" + contents + '\'' +
+            ", writerId=" + writerId +
+            ", deleted=" + deleted +
+            '}';
     }
 }
