@@ -1,53 +1,56 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.*;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static qna.domain.QuestionTest.*;
+import static qna.domain.UserTest.*;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJpaTest
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
+
 public class AnswerTest {
-	public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+	public static final Answer A1 = new Answer(JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
 	public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-
-	@PersistenceContext
-	EntityManager entityManager;
+	public static final String CONTENTS = "답변1";
 
 	@Test
-	void 객체가_동일하다() {
-
-		// given
-		entityManager.persist(A1);
-		final Answer answer = entityManager.find(Answer.class, 1L);
-
-		// when
-		final Answer answer1 = entityManager.find(Answer.class, 1L);
-
+	@DisplayName("Answer 생성시 필수여부검사")
+	void given_A1_When_initAnswer_Then_require_WriterIdAndQuestionId_isTrue() {
 		// then
-		assertThat(answer).isSameAs(answer1);
-		assertThat(answer).isEqualTo(answer1);
+		assertThat(A1.getWriterId().equals(JAVAJIGI.getId())).isTrue();
+		assertThat(A1.getQuestionId().equals(Q1.getId())).isTrue();
 	}
 
 	@Test
-	void 객체가_동일하지않다() {
-
-		// given
-		entityManager.persist(A1);
-		final Answer answer = entityManager.find(Answer.class, 1L);
+	@DisplayName("A1가 삭제여부를 true 변경했을 때 삭제되었는지 확인")
+	void given_A1_When_delete_Then_isTrue() {
 
 		// when
-		entityManager.flush();
-		entityManager.clear();
-		final Answer answer1 = entityManager.find(Answer.class, 1L);
+		A1.setDeleted(true);
 
 		// then
-		assertThat(answer).isNotSameAs(answer1);
-		assertThat(answer).isNotEqualTo(answer1);
+		Assertions.assertThat(A1.isDeleted()).isTrue();
+	}
+
+	@Test
+	@DisplayName("유저가 없는 Answer 생성할 때 예외")
+	void given_Answer_When_userIsNull_Then_UnAuthorizedException() {
+		// then
+		Assertions.assertThatThrownBy(() -> {
+			Answer answer = new Answer(null, Q1, CONTENTS);
+		}).isInstanceOf(UnAuthorizedException.class);
+	}
+
+	@Test
+	@DisplayName("Qna가 null이 주어졌을 때 Answer 생서시 예외,")
+	void given_Answer_When_Question_Then_NotFoundException() {
+		// then
+		Assertions.assertThatThrownBy(() -> {
+			Answer answer = new Answer(JAVAJIGI, null, CONTENTS);
+		}).isInstanceOf(NotFoundException.class);
 	}
 }
