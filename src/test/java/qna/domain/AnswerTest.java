@@ -8,8 +8,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
 
 @DataJpaTest
 @DisplayName("Answer 테스트")
@@ -34,14 +32,8 @@ class AnswerTest {
         // when
         Answer result = answerRepository.save(answer);
 
-        // then
-        assertAll(
-                () -> assertThat(result.getId()).isEqualTo(answer.getId()),
-                () -> assertThat(result.getWriterId()).isEqualTo(answer.getWriterId()),
-                () -> assertThat(result.getQuestion()).isEqualTo(answer.getQuestion()),
-                () -> assertThat(result.getContents()).isEqualTo(answer.getContents()),
-                () -> assertThat(result.isDeleted()).isEqualTo(answer.isDeleted())
-        );
+        assertThat(result)
+                .isEqualTo(answer);
     }
 
     @DisplayName("findById 확인")
