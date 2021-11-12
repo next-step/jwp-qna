@@ -28,4 +28,11 @@ public class ContentId {
     public int hashCode() {
         return Objects.hash(contentId);
     }
+
+    @Override
+    public String toString() {
+        return "ContentId{" +
+                "contentId=" + contentId +
+                '}';
+    }
 }
