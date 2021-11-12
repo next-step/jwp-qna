@@ -9,6 +9,7 @@ import qna.NotFoundException;
 import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
 import qna.domain.answer.Answers;
+import qna.domain.deletehistory.DeleteHistories;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.question.Question;
 import qna.domain.question.QuestionRepository;
@@ -33,19 +34,14 @@ public class QnaService {
 
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {
-        return questionRepository.findByIdAndDeletedFalse(id)
+        return questionRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
     }
 
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(question.deletedBy(loginUser));
-
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
-        deleteHistories.addAll(new Answers(answers).deletedBy(loginUser).getDeleteHistories());
-
+        DeleteHistories deleteHistories = question.deletedBy(loginUser);
         deleteHistoryService.saveAll(deleteHistories);
     }
 }
