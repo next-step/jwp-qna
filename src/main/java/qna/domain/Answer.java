@@ -48,7 +48,7 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public void changeStateDelete(User loginUser) throws CannotDeleteException {
+    public void changeDeleteState(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }

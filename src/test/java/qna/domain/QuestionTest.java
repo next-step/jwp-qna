@@ -17,7 +17,7 @@ class QuestionTest {
         Question question = new Question(1L, "title1", "contents1").writeBy(user);
 
         //when
-        question.changeStateDelete(user);
+        question.changeDeleteState(user);
 
         //then
         assertThat(question.isDeleted()).isTrue();
@@ -32,7 +32,7 @@ class QuestionTest {
 
         //when //then
         assertThrows(CannotDeleteException.class,
-                () -> question.changeStateDelete(other));
+                () -> question.changeDeleteState(other));
     }
 
     @Test
@@ -49,7 +49,7 @@ class QuestionTest {
 
         //then
         assertThrows(CannotDeleteException.class,
-                () -> question.changeStateDelete(other));
+                () -> question.changeDeleteState(other));
     }
 
     @Test
@@ -62,7 +62,7 @@ class QuestionTest {
         question.addAnswer(new Answer(2L, question, user, "Answers Contents2"));
 
         //when
-        question.changeStateDelete(user);
+        question.changeDeleteState(user);
 
         //then
         assertThat(question.isDeleted()).isTrue();

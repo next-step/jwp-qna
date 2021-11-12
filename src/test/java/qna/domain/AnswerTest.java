@@ -20,6 +20,6 @@ class AnswerTest {
 
         //when //then
         assertThrows(CannotDeleteException.class,
-                () -> answer.changeStateDelete(user1));
+                () -> answer.changeDeleteState(user1));
     }
 }

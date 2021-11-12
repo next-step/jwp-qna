@@ -45,18 +45,18 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public void changeStateDelete(User loginUser) throws CannotDeleteException {
-        validateDeletable(loginUser);
-        this.deleted = true;
-
-        for (Answer answer : answers) {
-            answer.changeStateDelete(loginUser);
-        }
-    }
-
-    private void validateDeletable(User loginUser) throws CannotDeleteException {
+    public void changeDeleteState(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.deleted = true;
+
+        changeAnswerState(loginUser);
+    }
+
+    private void changeAnswerState(User loginUser) throws CannotDeleteException {
+        for (Answer answer : answers) {
+            answer.changeDeleteState(loginUser);
         }
     }
 
