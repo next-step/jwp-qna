@@ -28,4 +28,15 @@ public class DeleteHistories {
     public int hashCode() {
         return Objects.hash(deleteHistories);
     }
+
+    public void add(DeleteHistory deleteHistory) {
+        this.deleteHistories.add(deleteHistory);
+    }
+
+    @Override
+    public String toString() {
+        return "DeleteHistories{" +
+                "deleteHistories=" + deleteHistories +
+                '}';
+    }
 }
