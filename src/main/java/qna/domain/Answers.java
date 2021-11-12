@@ -41,16 +41,16 @@ public class Answers {
         }
     }
 
-    public List<DeleteHistory> delete(User writer) {
+    public DeleteHistories delete(User writer) {
         checkIsOwner(writer);
         delete();
         return getDeleteHistories();
     }
 
-    public List<DeleteHistory> getDeleteHistories() {
-        return answers.stream()
+    public DeleteHistories getDeleteHistories() {
+        return new DeleteHistories(answers.stream()
                 .map(Answer::getDeleteHistory)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     public List<Answer> getAnswers() {

@@ -7,15 +7,21 @@ import java.util.Objects;
 
 public class DeleteHistories {
 
-    private final List<DeleteHistory> deleteHistories = new ArrayList<>();
+    private final List<DeleteHistory> deleteHistories;
 
-    public DeleteHistories(List<DeleteHistory> questionDeleteHistories, DeleteHistory questionDeleteHistory) {
-        this.deleteHistories.add(questionDeleteHistory);
-        this.deleteHistories.addAll(questionDeleteHistories);
+    public DeleteHistories(DeleteHistories answerDeleteHistories, DeleteHistory questionDeleteHistory) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(questionDeleteHistory);
+        deleteHistories.addAll(answerDeleteHistories.deleteHistories);
+        this.deleteHistories = Collections.unmodifiableList(deleteHistories);
+    }
+
+    public DeleteHistories(List<DeleteHistory> collect) {
+        deleteHistories = Collections.unmodifiableList(collect);
     }
 
     public List<DeleteHistory> getDeleteHistories() {
-        return Collections.unmodifiableList(deleteHistories);
+        return deleteHistories;
     }
 
     @Override
