@@ -5,11 +5,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "question")
 public class Question extends DateTimeEntity{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
@@ -29,7 +24,7 @@ public class Question extends DateTimeEntity{
     }
 
     public Question(Long id, String title, String contents) {
-        this.id = id;
+        super.setId(id);
         this.title = title;
         this.contents = contents;
     }
@@ -50,10 +45,6 @@ public class Question extends DateTimeEntity{
         answer.toQuestion(this);
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public User getWriter() {
         return writer;
     }
@@ -69,7 +60,7 @@ public class Question extends DateTimeEntity{
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", writer=" + writer +

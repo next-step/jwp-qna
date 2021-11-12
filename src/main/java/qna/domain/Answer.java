@@ -11,12 +11,6 @@ import java.util.Objects;
 @Table(name = "answer")
 @EntityListeners(AuditingEntityListener.class)
 public class Answer extends DateTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
@@ -37,7 +31,7 @@ public class Answer extends DateTimeEntity {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+        super.setId(id);
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -63,10 +57,6 @@ public class Answer extends DateTimeEntity {
         this.question = question;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public Question getQuestion() {
         return question;
     }
@@ -86,7 +76,7 @@ public class Answer extends DateTimeEntity {
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", writer=" + writer +
                 ", question=" + question +
                 ", contents='" + contents + '\'' +

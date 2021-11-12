@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @DynamicInsert
 @DynamicUpdate
-public class DateTimeEntity {
+public abstract class DateTimeEntity extends GeneratedId {
     @Column(name = "created_date", nullable = false)
     @CreatedDate
     private LocalDateTime createdDate;

@@ -6,12 +6,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "delete_history")
-public class DeleteHistory {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
+public class DeleteHistory extends GeneratedId {
     @Column(name = "content_type")
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
@@ -34,14 +29,10 @@ public class DeleteHistory {
     }
 
     public DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedByWriter) {
-        this.id = id;
+        super.setId(id);
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByWriter = deletedByWriter;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     @Override
@@ -49,7 +40,7 @@ public class DeleteHistory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id)
+        return Objects.equals(getId(), that.getId())
                 && contentType == that.contentType
                 && Objects.equals(contentId, that.contentId)
                 && Objects.equals(deletedByWriter, that.deletedByWriter);
@@ -57,13 +48,13 @@ public class DeleteHistory {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedByWriter);
+        return Objects.hash(getId(), contentType, contentId, deletedByWriter);
     }
 
     @Override
     public String toString() {
         return "DeleteHistory{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
                 ", deletedByWriter=" + deletedByWriter +
