@@ -2,9 +2,12 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 import static qna.domain.AnswerTest.*;
+import static qna.domain.QuestionTest.*;
 
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.List;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +20,7 @@ public class AnswerRepositoryTest {
 	AnswerRepository answerRepository;
 
 	@Test
-	@DisplayName("입력된 정보와 저장된정보가 동일한지 확인")
-	void given_saveAnswer_When_save_then_saved_equals_saveAnswer() {
+	void 입력된정보와_저장된정보가_동일한가() {
 
 		// when
 		Answer expected = answerRepository.save(A1);
@@ -30,33 +32,39 @@ public class AnswerRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("Answer 저장한 정보의 id로 조회했을 때 조회한 값이 동일한지 확인")
-	void given_saveAnswer_when_findById_saved_equals_saveAnswer() {
+	void 삭제되지_않은_대상건중_한건을_true변경시_제외한_대상건만_조회() {
 
-		//given
-		Answer answer = answerRepository.save(A1);
+		// given
+		List<Answer> answers = answerRepository.saveAll(Arrays.asList(A1, A2));
+		Answer answer1 = answers.get(0);
+		answer1.setDeleted(true);
 
 		// when
-		Answer findAnsewer = answerRepository.findById(answer.getId()).get();
+		List<Answer> expectedAnswer = answerRepository.findByQuestionIdAndDeletedFalse(Q1.getId());
 
 		// then
-		assertThat(findAnsewer.getWriterId()).isEqualTo(A1.getWriterId());
-		assertThat(findAnsewer.getQuestionId()).isEqualTo(A1.getQuestionId());
-		assertThat(findAnsewer.getContents()).isEqualTo(A1.getContents());
+		assertThat(expectedAnswer.size()).isEqualTo(1);
+		assertThat(expectedAnswer.get(0).getId()).isEqualTo(A2.getId());
+		assertThat(A2.isDeleted()).isFalse();
 	}
 
 	@Test
-	@DisplayName("저장된 정보가 false 기본값으로 저장되었는지 확인")
-	void given_saveAnswer_when_findByIdAndDeletedFalse_then_isFalse() {
+	void 여러건을_저장할때_리스트에_데이터를_담는경우_동일한_객체라도_모두_저장된다() {
+		List<Answer> answers = Arrays.asList(A1, A2, A1, A2, A1, A2, A1, A2);
+		List<Answer> expectedAnswer = answerRepository.saveAll(answers);
 
-		//given
-		Answer answer = answerRepository.save(A1);
-
-		// when
-		Answer expected = answerRepository.findByIdAndDeletedFalse(answer.getId()).get();
-
-		// then
-		assertThat(expected.isDeleted()).isFalse();
+		Assertions.assertThat(expectedAnswer.size()).isEqualTo(8);
 	}
 
+	@Test
+	@DisplayName("기대값을 3건을 예상했지만 결과는 2건이다.")
+	void 여러건을_저장할때_동일한_객체라면_동일한객체는_저장되지않는다() {
+
+		answerRepository.save(A1);
+		answerRepository.save(A2);
+		answerRepository.save(A1);
+
+		List<Answer> expected = answerRepository.findAll();
+		Assertions.assertThat(expected.size()).isEqualTo(2);
+	}
 }
