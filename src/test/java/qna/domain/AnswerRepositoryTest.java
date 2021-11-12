@@ -19,6 +19,7 @@ public class AnswerRepositoryTest {
 	@Test
 	@DisplayName("입력된 정보와 저장된정보가 동일한지 확인")
 	void given_saveAnswer_When_save_then_saved_equals_saveAnswer() {
+
 		// when
 		Answer expected = answerRepository.save(A1);
 
@@ -31,6 +32,7 @@ public class AnswerRepositoryTest {
 	@Test
 	@DisplayName("Answer 저장한 정보의 id로 조회했을 때 조회한 값이 동일한지 확인")
 	void given_saveAnswer_when_findById_saved_equals_saveAnswer() {
+
 		//given
 		Answer answer = answerRepository.save(A1);
 
@@ -46,6 +48,7 @@ public class AnswerRepositoryTest {
 	@Test
 	@DisplayName("저장된 정보가 false 기본값으로 저장되었는지 확인")
 	void given_saveAnswer_when_findByIdAndDeletedFalse_then_isFalse() {
+
 		//given
 		Answer answer = answerRepository.save(A1);
 

@@ -1,7 +1,6 @@
 package qna.domain;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static qna.domain.QuestionTest.*;
 import static qna.domain.UserTest.*;
 
@@ -20,6 +19,7 @@ public class AnswerTest {
 	@Test
 	@DisplayName("Answer 생성시 필수여부검사")
 	void given_A1_When_initAnswer_Then_require_WriterIdAndQuestionId_isTrue() {
+
 		// then
 		assertThat(A1.getWriterId().equals(JAVAJIGI.getId())).isTrue();
 		assertThat(A1.getQuestionId().equals(Q1.getId())).isTrue();
@@ -39,6 +39,7 @@ public class AnswerTest {
 	@Test
 	@DisplayName("유저가 없는 Answer 생성할 때 예외")
 	void given_Answer_When_userIsNull_Then_UnAuthorizedException() {
+
 		// then
 		Assertions.assertThatThrownBy(() -> {
 			Answer answer = new Answer(null, Q1, CONTENTS);
@@ -48,6 +49,7 @@ public class AnswerTest {
 	@Test
 	@DisplayName("Qna가 null이 주어졌을 때 Answer 생서시 예외,")
 	void given_Answer_When_Question_Then_NotFoundException() {
+
 		// then
 		Assertions.assertThatThrownBy(() -> {
 			Answer answer = new Answer(JAVAJIGI, null, CONTENTS);
