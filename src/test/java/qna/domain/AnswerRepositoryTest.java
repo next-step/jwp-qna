@@ -50,7 +50,7 @@ class AnswerRepositoryTest {
 
         assertAll(() -> {
             assertThat(save.getWriter().equalsNameAndEmail(answer.getWriter()));
-            assertThat(save.getQuestion().equalsId(answer.getQuestion()));
+            assertThat(save.getQuestion().equals(answer.getQuestion()));
         });
 
     }
@@ -67,7 +67,7 @@ class AnswerRepositoryTest {
         assertAll(() -> {
             assertThat(optionalAnswer.isPresent()).isTrue();
             Answer findAnswer = optionalAnswer.get();
-            assertThat(findAnswer.getQuestion().equalsId(answer.getQuestion()));
+            assertThat(findAnswer.getQuestion().equals(answer.getQuestion()));
         });
 
     }

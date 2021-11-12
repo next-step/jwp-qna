@@ -82,14 +82,6 @@ public class Question extends BaseTime {
         }
     }
 
-    public boolean equalsId(Question other) {
-        if (Objects.isNull(other)) {
-            return false;
-        }
-
-        return this.id == other.getId();
-    }
-
     public Long getId() {
         return id;
     }
@@ -114,11 +106,15 @@ public class Question extends BaseTime {
         this.deleted = deleted;
     }
 
-    public DeleteHistoryList getDeleteHistoryList(User loginUser) throws CannotDeleteException {
+    public DeleteHistoryList deletedAndAnswers(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(ErrorMessages.OTHER_USER_CANNOT_DELETE);
         }
         setDeleted(true);
+        return getDeleteHistoryList(loginUser);
+    }
+
+    private DeleteHistoryList getDeleteHistoryList(User loginUser) throws CannotDeleteException {
         AnswerList answers = new AnswerList(this.answerList);
         DeleteHistoryList deleteHistoryList = new DeleteHistoryList(
             new DeleteHistory(ContentType.QUESTION, id, writer));
