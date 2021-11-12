@@ -1,5 +1,8 @@
 package qna.domain;
 
+import java.util.Objects;
+
+import javax.naming.AuthenticationException;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +12,11 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
+
+import qna.ErrorMessage;
+import qna.NotFoundException;
+import qna.QuestionNotFoundException;
+import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "question")
@@ -44,6 +52,9 @@ public class Question extends BaseTime{
     }
 
     public Question writeBy(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException(ErrorMessage.USER_IS_NOT_NULL);
+        }
         this.writerId = writer.getId();
         return this;
     }
