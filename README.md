@@ -86,6 +86,11 @@ spring.jpa.show-sql=true
    1. 이때 쓰기 지연 저장소에 쌓아 놨던 INSERT, UPDATE, DELETE SQL들이 DB에 날라간다
       주의! 영속성 컨텍스트를 비우는 것이 아니다.
 
+5. 동일한 객체를 컬렉션에담는경우 JPA는 모두 대상건을 저장한다.
+![identity.png](src/main/resources/img/identity.png)
+
+5. 동일한 객체를 저장하는경우 JPA는 동일한 객체인경우 저장하지 않는다.
+![img.png](src/main/resources/img/img.png)
 
 ## 분석
 1. Answer
