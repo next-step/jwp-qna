@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,26 +14,44 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
-    public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
 
     @Autowired
     AnswerRepository answers;
 
-    @Test
-    @DisplayName("Answer 저장 후 ID not null 체크")
-    void save() {
-        // when
-        Answer actual = answers.save(AnswerTest.A1);
+    @Autowired
+    QuestionRepository questions;
 
-        // then
-        assertThat(actual.getId()).isNotNull();
+    @Autowired
+    UserRepository users;
+
+    Question question;
+    Answer answer;
+    User user;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        user = users.save(new User("answerJavajigi", "password", "javajigi", "javajigi@slipp.net"));
+        question = new Question("title1", "contents1").writeBy(user);
+        answer = new Answer(question.getWriter(), question, "Answers Contents1");
     }
 
     @Test
-    @DisplayName("Answer 저장 후 DB조회 객체 동일성 체크")
-    void identity() {
+    @DisplayName("Answer 저장 후 ID not null 체크")
+    void save() {
+        // given
         // when
-        Answer actual = answers.save(AnswerTest.A1);
+        Answer expect = answers.save(answer);
+
+        // then
+        assertThat(expect.getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Answer 저장 후 findById 조회 결과 동일성 체크")
+    void identity() {
+        // given
+        // when
+        Answer actual = answers.save(answer);
         Answer expect = answers.findById(actual.getId()).get();
 
         // then
@@ -39,15 +59,12 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("toQuestion 맵핑 후 findByQuestionIdAndDeletedFalse 메소드 조회 포함 체크 ")
+    @DisplayName("Question 으로 답변 찾기 -> findByQuestionIdAndDeletedFalse 메소드 검증 ")
     void findByQuestionIdAndDeletedFalse() {
         // given
-        AnswerTest.A1.toQuestion(Q1);
-        AnswerTest.A1.setDeleted(false);
-
         // when
-        Answer expect = answers.save(AnswerTest.A1);
-        List<Answer> answerList = answers.findByQuestionIdAndDeletedFalse(Q1.getId());
+        Answer expect = answers.save(answer);
+        List<Answer> answerList = answers.findByQuestionAndDeletedFalse(expect.getQuestion());
 
         // then
         assertAll(
@@ -57,15 +74,14 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("delete 처리 후 findByQuestionIdAndDeletedFalse 메소드 조회 미포함 체크 ")
+    @DisplayName("remove 처리 후 findByQuestionIdAndDeletedFalse 메소드 조회 미포함 체크 ")
     void findByQuestionIdAndDeletedFalse_deleted() {
         // given
-        AnswerTest.A1.toQuestion(Q1);
-        AnswerTest.A1.setDeleted(true);
-        Answer expect = answers.save(AnswerTest.A1);
+        Answer expect = answers.save(answer);
+        expect.remove();
 
         // when
-        List<Answer> answerList = answers.findByQuestionIdAndDeletedFalse(Q1.getId());
+        List<Answer> answerList = answers.findByQuestionAndDeletedFalse(expect.getQuestion());
 
         // then
         assertAll(
@@ -75,19 +91,18 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제 안된 Answer 조회")
-    void findByIdAndDeletedFalse() {
+    @DisplayName("질문 변경 적용 확인")
+    void toQuestion() {
         // given
-        Answer expect = answers.save(AnswerTest.A1);
+        Answer actual = answers.save(answer);
+        Question changeQuestion = new Question("질문변경할께요", "contents1").writeBy(user);
 
-        // when
-        Answer actual = answers.findByIdAndDeletedFalse(expect.getId()).get();
+        //when
+        actual.toQuestion(changeQuestion);
+        Answer expect = answers.findByIdAndDeletedFalse(actual.getId()).get();
 
         // then
-        assertAll(
-            () -> assertThat(actual).isEqualTo(expect),
-            () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual.isDeleted()).isFalse()
-        );
+        assertThat(expect.getQuestion()).isEqualTo(changeQuestion);
     }
+
 }

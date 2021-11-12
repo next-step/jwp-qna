@@ -11,14 +11,13 @@ import qna.UnAuthorizedException;
 
 @DataJpaTest
 public class UserTest {
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "javajigi", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "sanjigi", "sanjigi@slipp.net");
+    public static final User JAVAJIGI = new User("javajigi", "password", "javajigi", "javajigi@slipp.net");
+    public static final User SANJIGI = new User("sanjigi", "password", "sanjigi", "sanjigi@slipp.net");
 
     @Test
     void 기본데이터_Not_Null_검증() {
         // then
         assertAll(
-            () -> assertThat(JAVAJIGI.getId()).isNotNull(),
             () -> assertThat(JAVAJIGI.getPassword()).isNotNull(),
             () -> assertThat(JAVAJIGI.getUserId()).isNotNull(),
             () -> assertThat(JAVAJIGI.getName()).isNotNull()
@@ -26,12 +25,12 @@ public class UserTest {
     }
 
     @Test
-    @DisplayName("유저정보 업데이트 후 equalsNameAndEmail 메소드 일치 확인")
-    void update_EqualsNameAndEmail_검증() {
+    @DisplayName("name 과 이메일 업데이트 후 equalsNameAndEmail 메소드로 변경 확인")
+    void update() {
         // given
         String changeName = "changeName";
         String changeEmail = "changeEmail@email.co.kr";
-        User user = new User("wooobo", "password", "myname", "theHwa@email.com");
+        User user = new User("wooobo", "password", "myname", "taeHwa@email.com");
         User changeUser = new User("wooobo", "password", changeName, changeEmail);
 
         // when
@@ -47,12 +46,12 @@ public class UserTest {
     @DisplayName("User update() 메소드 userId Null 예외 발생 체크")
     void update_matchUserId_userId_NULL_exception() {
         // given
-        User loginUserAndUserIdNULL = new User(1L, null, "password", "javajigi", "javajigi@slipp.net");
+        User guestUser = User.GUEST_USER;
 
         assertThatExceptionOfType(UnAuthorizedException.class) // then
             .isThrownBy(() -> {
                 // when
-                JAVAJIGI.update(loginUserAndUserIdNULL, JAVAJIGI);
+                JAVAJIGI.update(guestUser, JAVAJIGI);
             }).withMessage(UnAuthorizedException.UNAUTHORIZED_EXCEPTION_USER_ID_NULL_MESSAGE);
     }
 
@@ -60,13 +59,26 @@ public class UserTest {
     @DisplayName("User update() 메소드 password 같지 않을 경우 예외 발생 체크")
     void update_matchUserId_password_MISSMATCH_exception() {
         // given
-        User targetUserAndMissMatchPW = new User(1L, "javajigi", "change", "javajigi", "javajigi@slipp.net");
+        User targetUserAndMissMatchPW = new User("javajigi", "change", "javajigi", "javajigi@slipp.net");
 
         assertThatExceptionOfType(UnAuthorizedException.class) // then
             .isThrownBy(() -> {
                 // when
                 JAVAJIGI.update(JAVAJIGI, targetUserAndMissMatchPW);
             }).withMessage(UnAuthorizedException.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_MESSAGE);
+    }
+
+    @Test
+    @DisplayName("GUEST_USER 는 isGuestUser 가 true 입니다")
+    void isGuestUser() {
+        // given
+        User guestUser = User.GUEST_USER;
+
+        // when
+        boolean expect = guestUser.isGuestUser();
+
+        // then
+        assertThat(expect).isTrue();
     }
 
 }
