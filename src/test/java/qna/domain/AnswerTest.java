@@ -64,6 +64,7 @@ public class AnswerTest {
         Answer actualAnswer = answers.findByContents(A1.getContents())
                 .orElseThrow(() -> new IllegalArgumentException("answer가 존재하지 않습니다."));
 
+        assertThat(actualAnswer.isDeleted()).isTrue();
         answers.flush();
     }
 }
