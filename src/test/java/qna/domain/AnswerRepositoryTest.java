@@ -11,18 +11,28 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static qna.domain.AnswerTest.A1;
+import static qna.domain.QuestionTest.Q1;
+import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
     private Answer savedAnswer;
 
     @BeforeEach
     private void beforeEach() {
-        savedAnswer = answerRepository.save(A1);
+        User savedUser = userRepository.save(JAVAJIGI);
+        Question savedQuestion = questionRepository.save(Q1.writeBy(savedUser));
+        Answer actual = new Answer(savedUser, savedQuestion, "Answers Contents1");
+        savedAnswer = answerRepository.save(actual);
     }
 
     @Test
@@ -38,7 +48,7 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("question id로 deleted가 false인 answer 검색")
     public void findByQuestionIdAndDeletedFalseTest() {
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestion().getId());
         assertThat(answers).containsExactly(savedAnswer);
     }
 

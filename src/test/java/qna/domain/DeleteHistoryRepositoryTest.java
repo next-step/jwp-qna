@@ -11,21 +11,36 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static qna.domain.DeleteHistoryTest.DH_ANSWER;
-import static qna.domain.DeleteHistoryTest.DH_QUESTION;
+import static qna.domain.QuestionTest.Q1;
+import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
+
     private DeleteHistory answerSavedDeleteHistory;
     private DeleteHistory questionSavedDeleteHistory;
 
     @BeforeEach
     private void beforeEach() {
-        answerSavedDeleteHistory = deleteHistoryRepository.save(DH_ANSWER);
-        questionSavedDeleteHistory = deleteHistoryRepository.save(DH_QUESTION);
+        User javajigi = userRepository.save(JAVAJIGI);
+        User sanjigi = userRepository.save(SANJIGI);
+        Question question = questionRepository.save(Q1.writeBy(javajigi));
+        Answer answer = answerRepository.save(new Answer(javajigi, question, "Answers Contents1"));
+
+        answerSavedDeleteHistory = deleteHistoryRepository.save(new DeleteHistory(1L, ContentType.ANSWER, answer.getId(), javajigi));
+        questionSavedDeleteHistory = deleteHistoryRepository.save(new DeleteHistory(2L, ContentType.QUESTION, question.getId(), sanjigi));
     }
 
     @Test

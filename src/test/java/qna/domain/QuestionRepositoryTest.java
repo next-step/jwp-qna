@@ -12,17 +12,23 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static qna.domain.QuestionTest.Q1;
+import static qna.domain.QuestionTest.Q2;
+import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository users;
+
     private Question savedQuestion;
 
     @BeforeEach
     private void beforeEach() {
-        savedQuestion = questionRepository.save(Q1);
+        User savedUser = users.save(JAVAJIGI);
+        savedQuestion = questionRepository.save(Q1.writeBy(savedUser));
     }
 
     @Test
@@ -63,6 +69,18 @@ public class QuestionRepositoryTest {
         Optional<Question> oQuestion = questionRepository.findById(savedQuestion.getId());
 
         assertQuestionDeleted(oQuestion, true);
+    }
+
+    @Test
+    public void findByUser() {
+        User user = users.findByUserId("javajigi").get();
+        Question excepted = questionRepository.save(Q2.writeBy(user));
+
+        List<Question> actual = questionRepository.findByWriter(user);
+
+        assertAll(
+                () -> assertThat(actual).contains(excepted, savedQuestion)
+        );
     }
 
     private void assertQuestionDeleted(Optional<Question> oAnswer, boolean isDeleted) {

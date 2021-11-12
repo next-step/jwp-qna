@@ -5,9 +5,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.UnAuthorizedException;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
@@ -48,7 +50,22 @@ public class UserRepositoryTest {
     @DisplayName("찾는 user id가 없을 경우")
     public void findByUserIdNotFoundTest() {
         Optional<User> oUser = userRepository.findByUserId(SANJIGI.getUserId());
-
         assertFalse(oUser.isPresent());
+    }
+
+    @Test
+    @DisplayName("user 정보 변경")
+    public void updateByNameAndEmail() {
+        User target = new User("javajigi", "password", "java", "javajigi@gmail.com");
+        savedUser.update(savedUser, target);
+        User actual = userRepository.findById(savedUser.getId()).get();
+        assertEquals(savedUser, actual);
+    }
+
+    @Test
+    @DisplayName("user 정보 변경 실패")
+    public void updateByNameAndEmail_fail() {
+        User target = new User("javajigi", "pass", "java", "javajigi@gmail.com");
+        assertThatThrownBy(() -> savedUser.update(savedUser, target)).isInstanceOf(UnAuthorizedException.class);
     }
 }
