@@ -18,12 +18,16 @@ public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false, length = 20, unique = true)
     private String userId;
+
     @Column(nullable = false, length = 20)
     private String password;
+
     @Column(nullable = false, length = 20)
     private String name;
+
     @Column(length = 50)
     private String email;
 
@@ -78,14 +82,6 @@ public class User extends BaseEntity {
 
     public Long getId() {
         return id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public String getName() {

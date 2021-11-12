@@ -14,11 +14,15 @@ public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false, length = 100)
     private String title;
+
     @Lob
     private String contents;
+
     private Long writerId;
+
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -56,14 +60,6 @@ public class Question extends BaseEntity {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
@@ -74,10 +70,6 @@ public class Question extends BaseEntity {
 
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public boolean isDeleted() {

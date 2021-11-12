@@ -18,10 +18,14 @@ public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long writerId;
+
     private Long questionId;
+
     @Lob
     private String contents;
+
     @Column(nullable = false)
     private boolean deleted = false;
 
