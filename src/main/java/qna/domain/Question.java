@@ -1,6 +1,8 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -24,6 +26,9 @@ public class Question extends BaseTimeEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
+
     protected Question() {
     }
 
@@ -44,10 +49,6 @@ public class Question extends BaseTimeEntity {
 
     public boolean isOwner(User writer) {
         return this.writer.getId().equals(writer.getId());
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
     }
 
     public Long getId() {
@@ -88,6 +89,17 @@ public class Question extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
+        if (answer.getQuestion() != this) {
+            answer.setQuestion(this);
+        }
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override

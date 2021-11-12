@@ -85,7 +85,11 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void setQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().remove(this);
+        }
         this.question = question;
+        question.addAnswer(this);
     }
 
     public String getContents() {
