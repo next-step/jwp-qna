@@ -28,9 +28,7 @@ public class Answers {
     }
 
     private void checkIsOwner(User writer, Answer answer) {
-        if (!answer.isOwner(writer)) {
-            throw new RuntimeException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
+        answer.checkIsOwner(writer);
     }
 
     public void add(Answer answer) {
@@ -57,11 +55,5 @@ public class Answers {
 
     public List<Answer> getAnswers() {
         return Collections.unmodifiableList(answers);
-    }
-
-    public Answers getNotDeleted() {
-        return new Answers(answers.stream()
-                .filter(answer -> !answer.isDeleted())
-                .collect(Collectors.toList()));
     }
 }

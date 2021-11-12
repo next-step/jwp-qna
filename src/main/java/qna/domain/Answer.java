@@ -4,7 +4,6 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -54,6 +53,12 @@ public class Answer extends BaseEntity {
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
+    }
+
+    public void checkIsOwner(User writer) {
+        if (!isOwner(writer)) {
+            throw new RuntimeException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public void toQuestion(Question question) {
