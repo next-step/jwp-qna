@@ -47,29 +47,12 @@ class AnswerRepositoryTest {
 
         List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(1L);
 
-        assertAll(
-                () -> assertThat(answerList).hasSize(2),
-                () -> {
-                    Answer answer = answerList.get(0);
-                    assertAll(
-                            () -> assertThat(answer.getId()).isEqualTo(savedAnswer1.getId()),
-                            () -> assertThat(answer.getWriterId()).isEqualTo(savedAnswer1.getWriterId()),
-                            () -> assertThat(answer.getQuestionId()).isEqualTo(savedAnswer1.getQuestionId()),
-                            () -> assertThat(answer.getContents()).isEqualTo(savedAnswer1.getContents()),
-                            () -> assertThat(answer.isDeleted()).isEqualTo(savedAnswer1.isDeleted())
-                    );
-                },
-                () -> {
-                    Answer answer = answerList.get(1);
-                    assertAll(
-                            () -> assertThat(answer.getId()).isEqualTo(savedAnswer2.getId()),
-                            () -> assertThat(answer.getWriterId()).isEqualTo(savedAnswer2.getWriterId()),
-                            () -> assertThat(answer.getQuestionId()).isEqualTo(savedAnswer2.getQuestionId()),
-                            () -> assertThat(answer.getContents()).isEqualTo(savedAnswer2.getContents()),
-                            () -> assertThat(answer.isDeleted()).isEqualTo(savedAnswer2.isDeleted())
-                    );
-                }
-        );
+        assertThat(answerList).hasSize(2);
+        Answer answer1 = answerList.get(0);
+        Answer answer2 = answerList.get(1);
+
+        assertThat(answer1.getId()).isEqualTo(savedAnswer1.getId());
+        assertThat(answer2.getId()).isEqualTo(savedAnswer2.getId());
     }
 
 }
