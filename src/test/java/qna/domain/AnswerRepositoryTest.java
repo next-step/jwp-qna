@@ -5,6 +5,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.answer.Answer;
+import qna.answer.AnswerRepository;
+import qna.question.Question;
+import qna.question.QuestionRepository;
+import qna.user.User;
+import qna.user.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
