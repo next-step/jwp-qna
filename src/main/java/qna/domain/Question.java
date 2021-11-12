@@ -39,9 +39,9 @@ public class Question {
     private boolean deleted = false;
 
     @Column(nullable = false)
-    private LocalDateTime created_at = LocalDateTime.now();
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
     public Question(String title, String contents) {
         this(null, title, contents);

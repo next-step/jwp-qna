@@ -43,9 +43,9 @@ public class Answer {
     private boolean deleted = false;
 
     @Column(nullable = false)
-    private LocalDateTime created_at = LocalDateTime.now();
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
 
     public Answer(User writer, Question question, String contents) {
