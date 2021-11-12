@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import qna.UnAuthorizedException;
 
 @Entity
@@ -18,7 +19,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(length = 50)
     private String email;
@@ -29,6 +30,7 @@ public class User {
     @Column(length = 20, nullable = false)
     private String password;
 
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Column(length = 20, nullable = false, unique = true)

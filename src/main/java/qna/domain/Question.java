@@ -7,6 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 public class Question {
@@ -19,7 +21,7 @@ public class Question {
     private String contents;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -27,6 +29,7 @@ public class Question {
     @Column(length = 100, nullable = false)
     private String title;
 
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     private Long writerId;

@@ -4,13 +4,17 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class Answer {
 
@@ -22,13 +26,14 @@ public class Answer {
     private String contents;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = false)
     private boolean deleted = false;
 
     private Long questionId;
 
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     private Long writerId;

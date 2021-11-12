@@ -8,6 +8,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 public class DeleteHistory {
@@ -23,6 +24,7 @@ public class DeleteHistory {
 
     private Long deletedById;
 
+    @CreatedDate
     private LocalDateTime createDate;
 
     protected DeleteHistory() {
