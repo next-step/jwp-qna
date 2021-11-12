@@ -16,8 +16,9 @@ public class Answer extends BaseEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     @Column(name = "writer_id")
     private Long writerId;
@@ -25,13 +26,18 @@ public class Answer extends BaseEntity {
     protected Answer() {
     }
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+    private Answer(Long id, User writer, Question question, String contents) {
+        super(id);
+        this.writerId = writer.getId();
+        this.question = question;
+        this.contents = contents;
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        super(id);
+    public static Answer of(User writer, Question question, String contents) {
+        return of(null, writer, question, contents);
+    }
 
+    public static Answer of(Long id, User writer, Question question, String contents) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -40,25 +46,21 @@ public class Answer extends BaseEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
-        this.contents = contents;
+        Answer answer = new Answer(id, writer, question, contents);
+        question.addAnswer(answer);
+        return answer;
     }
 
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
     }
 
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
+    public Question getQuestion() {
+        return question;
     }
 
     public Long getWriterId() {
         return writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
     }
 
     public String getContents() {
@@ -71,5 +73,9 @@ public class Answer extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public boolean hasSameQuestion(Question question) {
+        return this.question == question;
     }
 }

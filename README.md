@@ -121,8 +121,11 @@ alter table question
 
 ### 기능목록
 
-- [ ] Answer에 Question을 연결한다
+- [X] Answer에 Question을 연결한다
   - 하나의 질문에는 여러 답변이 달린다
+  - Answer는 Question과 다대일 관계
+  - Question은 Answer와 일대다 관계
+  - Answer에 연결된 Question은 바뀌지 않는 것이 정합성 있다
 - [ ] Answer에 User(작성자)를 연결한다
   - 답변 작성자는 한명이다
 - [ ] DeleteHistory에 User(삭제자)를 연결한다

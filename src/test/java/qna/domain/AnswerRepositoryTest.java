@@ -10,24 +10,24 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
-    private AnswerRepository answerRepository;
-
     @Autowired
-    public AnswerRepositoryTest(AnswerRepository answerRepository) {
-        this.answerRepository = answerRepository;
-    }
+    private AnswerRepository answers;
+    @Autowired
+    private QuestionRepository questions;
 
     @DisplayName("Answer가 저장된다")
     @Test
     void testSave() {
-        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-        Answer answer = new Answer(UserTest.JAVAJIGI, question, "Answers Contents1");
-        Answer savedAnswer = answerRepository.save(answer);
+        // Answer에 대한 학습테스트
+        Question question = questions.save(new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI));
+        Answer answer = Answer.of(UserTest.JAVAJIGI, question, "Answers Contents1");
+        Answer savedAnswer = answers.save(answer);
         assertAll(
                 () -> assertThat(savedAnswer.getId()).isNotNull(),
                 () -> assertThat(savedAnswer.getWriterId()).isEqualTo(answer.getWriterId()),
-                () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(answer.getQuestionId()),
-                () -> assertThat(savedAnswer.getContents()).isEqualTo(answer.getContents())
+                () -> assertThat(savedAnswer.getQuestion()).isEqualTo(answer.getQuestion()),
+                () -> assertThat(savedAnswer.getContents()).isEqualTo(answer.getContents()),
+                () -> assertThat(question.getAnswers()).contains(answer)
         );
     }
 }
