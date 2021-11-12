@@ -85,3 +85,31 @@ spring.jpa.show-sql=true
 4. flush 무엇인가? 
    1. 이때 쓰기 지연 저장소에 쌓아 놨던 INSERT, UPDATE, DELETE SQL들이 DB에 날라간다
       주의! 영속성 컨텍스트를 비우는 것이 아니다.
+
+
+## 분석
+1. Answer
+   1. 객체를 생성 
+      1. 유저가 null인지 확인한다
+      2. 유저가 답변을 다는 Question이 존재하는지 확인한다.
+   2. 필수 값은 무엇인가? 
+      1. questionId
+      2. writerId
+2. Question
+   1. 객체를 생성
+   2. 기능
+      1. writerBy
+         1. 유저가 null인지 체크 
+      2. AddAnswer
+3. DeleteHistory
+   1. 생성시 현재시간 
+   2. 수정은 불가능(createDate) 
+4. User
+   1. 기능 
+      1. update
+         1. 아이디와 패스워드가 다른 경우 오류 
+         2. 이름, 이메일 변경 
+      2. equalsNameAndEmail
+         1. 이름과 이메일이 동일한지 체크
+      3. 유저를 게스트로 생성시 
+         1. 게스트 여부 존재
