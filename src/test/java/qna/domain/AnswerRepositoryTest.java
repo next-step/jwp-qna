@@ -33,7 +33,6 @@ public class AnswerRepositoryTest {
         user = users.save(new User("answerJavajigi", "password", "javajigi", "javajigi@slipp.net"));
         question = new Question("title1", "contents1").writeBy(user);
         answer = new Answer(question.getWriter(), question, "Answers Contents1");
-        question.addAnswer(answer);
     }
 
     @Test
@@ -48,7 +47,7 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("Answer 저장 후 DB조회 객체 동일성 체크")
+    @DisplayName("Answer 저장 후 findById 조회 결과 동일성 체크")
     void identity() {
         // given
         // when
@@ -60,7 +59,7 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("toQuestion 맵핑 후 findByQuestionIdAndDeletedFalse 조회 포함 체크 ")
+    @DisplayName("Question 으로 답변 찾기 -> findByQuestionIdAndDeletedFalse 메소드 검증 ")
     void findByQuestionIdAndDeletedFalse() {
         // given
         // when
@@ -75,7 +74,7 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("delete 처리 후 findByQuestionIdAndDeletedFalse 메소드 조회 미포함 체크 ")
+    @DisplayName("remove 처리 후 findByQuestionIdAndDeletedFalse 메소드 조회 미포함 체크 ")
     void findByQuestionIdAndDeletedFalse_deleted() {
         // given
         Answer expect = answers.save(answer);
@@ -92,21 +91,18 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제 안된 Answer 조회")
-    void findByIdAndDeletedFalse() {
+    @DisplayName("질문 변경 적용 확인")
+    void toQuestion() {
         // given
-        Answer expect = answers.save(answer);
+        Answer actual = answers.save(answer);
+        Question changeQuestion = new Question("질문변경할께요", "contents1").writeBy(user);
 
-        System.out.println(expect);
-        // when
-        Answer actual = answers.findByIdAndDeletedFalse(expect.getId()).get();
+        //when
+        actual.toQuestion(changeQuestion);
+        Answer expect = answers.findByIdAndDeletedFalse(actual.getId()).get();
 
         // then
-        assertAll(
-            () -> assertThat(actual).isEqualTo(expect),
-            () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual.isDeleted()).isFalse()
-        );
+        assertThat(expect.getQuestion()).isEqualTo(changeQuestion);
     }
 
 }
