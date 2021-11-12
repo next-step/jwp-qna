@@ -5,12 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DisplayName("DeleteHistory 테스트")
 class DeleteHistoryTest {
+    @Autowired
+    private UserRepository userRepository;
+
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
@@ -18,18 +22,52 @@ class DeleteHistoryTest {
     @Test
     void save_확인() {
         // given
-        DeleteHistory deleteHistory = DeleteHistoryTestFactory.create(ContentType.ANSWER, 1L, 1L);
+        User user = userRepository.save(UserTestFactory.create("user"));
+        DeleteHistory deleteHistory = DeleteHistoryTestFactory.create(ContentType.ANSWER, 1L, user);
 
         // when
         DeleteHistory actual = deleteHistoryRepository.save(deleteHistory);
 
         // then
-        assertAll(
-                () -> assertThat(actual.getId()).isEqualTo(deleteHistory.getId()),
-                () -> assertThat(actual.getContentType()).isEqualTo(deleteHistory.getContentType()),
-                () -> assertThat(actual.getContentId()).isEqualTo(deleteHistory.getContentId()),
-                () -> assertThat(actual.getDeletedById()).isEqualTo(deleteHistory.getDeletedById()),
-                () -> assertThat(actual.getCreateDate()).isEqualTo(deleteHistory.getCreateDate())
-        );
+        assertThat(actual)
+                .isEqualTo(deleteHistory);
+    }
+
+    @DisplayName("findById 확인")
+    @Test
+    void findById_확인() {
+        // given
+        User user = userRepository.save(UserTestFactory.create("user"));
+        DeleteHistory question = DeleteHistoryTestFactory.create(ContentType.ANSWER, 1L, user);
+
+        // when
+        DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(question);
+        Optional<DeleteHistory> actual = deleteHistoryRepository.findById(savedDeleteHistory.getId());
+
+        // then
+        assertThat(actual)
+                .isPresent()
+                .contains(savedDeleteHistory);
+    }
+
+    @DisplayName("update 확인")
+    @Test
+    void update_확인() {
+        // given
+        User user = userRepository.save(UserTestFactory.create("user"));
+        DeleteHistory question = DeleteHistoryTestFactory.create(ContentType.ANSWER, 1L, user);
+
+        // when
+        DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(question);
+        savedDeleteHistory.setContentType(ContentType.QUESTION);
+
+        Optional<DeleteHistory> actual = deleteHistoryRepository.findById(savedDeleteHistory.getId());
+
+        // then
+        assertThat(actual)
+                .isPresent();
+
+        assertThat(actual.get().getContentType())
+                .isEqualTo(ContentType.QUESTION);
     }
 }
