@@ -1,8 +1,11 @@
-package qna.domain;
+package qna.domain.answer;
 
-import qna.CannotDeleteException;
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.domain.BaseTimeEntity;
+import qna.domain.question.Question;
+import qna.domain.user.User;
+import qna.exception.CannotDeleteException;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -24,35 +27,35 @@ public class Answer extends BaseTimeEntity {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted = new Deleted();
 
     protected Answer() {
     }
 
     public Answer(Long id, Question question, User writer, String contents) {
         if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException("사용자 정보를 확인할 수 없습니다.");
         }
 
         if (Objects.isNull(question)) {
-            throw new NotFoundException();
+            throw new NotFoundException("질문 글을 찾을 수 없습니다.");
         }
 
         this.id = id;
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
+        this.contents = new Contents(contents);
     }
 
     public void changeDeleteState(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
-        this.deleted = true;
+        deleted.setTrue();
     }
 
     public boolean isOwner(User writer) {
@@ -60,7 +63,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public void toQuestion(Question question) {
@@ -73,13 +76,5 @@ public class Answer extends BaseTimeEntity {
 
     public User getWriter() {
         return writer;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public String getContents() {
-        return contents;
     }
 }

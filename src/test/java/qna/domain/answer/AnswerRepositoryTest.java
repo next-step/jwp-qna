@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.answer;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -6,12 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
+import qna.domain.question.Title;
+import qna.domain.user.UserId;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
 @DataJpaTest
@@ -39,10 +40,9 @@ class AnswerRepositoryTest {
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(1L);
 
         //then
-        assertThat(findAnswer).hasValueSatisfying(answer -> assertAll(
-                () -> assertThat(answer.getWriter().getUserId()).isEqualTo("sanjigi"),
-                () -> assertThat(answer.getQuestion().getTitle()).isEqualTo("question1"),
-                () -> assertThat(answer.getContents()).isEqualTo("Answers Contents1")
-        ));
+        assertThat(findAnswer).hasValueSatisfying(answer -> assertThat(answer)
+                .extracting("writer.userId", "question.title", "contents")
+                .contains(new UserId("sanjigi"), new Title("question1"), new Contents("Answers Contents1"))
+        );
     }
 }

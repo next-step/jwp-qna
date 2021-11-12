@@ -1,6 +1,9 @@
-package qna.domain;
+package qna.domain.history;
 
 import org.springframework.data.annotation.CreatedDate;
+import qna.domain.answer.Answer;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
