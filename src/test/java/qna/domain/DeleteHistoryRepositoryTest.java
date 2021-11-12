@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -57,12 +56,12 @@ public class DeleteHistoryRepositoryTest {
 
     @ParameterizedTest
     @CsvSource(value = {"QUESTION,ANSWER"})
-    @DisplayName("")
+    @DisplayName("nativeQuery 사용하여 ContentType 값 으로 조회")
     void findByContentType(ContentType QUESTION, ContentType ANSWER) {
         // given
         deleteHistories.save(questionHistory);
         deleteHistories.save(answerHistory);
-        
+
         // when
         // then
         assertAll(
