@@ -17,7 +17,7 @@ public class Question extends BaseTimeEntity {
     @Column(name = "contents")
     private String contents;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
