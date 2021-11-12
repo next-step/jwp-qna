@@ -26,7 +26,7 @@
 
 ### 요구사항
 - [ ] 연관 관계 매핑
-  - [ ] answer
+  - [X] answer
   - [ ] delete_history
   - [X] question
   
