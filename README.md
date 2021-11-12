@@ -43,6 +43,8 @@ JPA 엔티티 매핑에 대해 학습하기
 
 ## 기능 목록
 
+### 1단계 - 엔티티 매핑
+
 - [X] DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다
 - [X] @DataJpaTest 를 사용하여 학습 테스트를 해 본다.
 - [X] Spring Data JPA 사용 시 옵션으로 동작 쿼리를 로그를 확인해본다.
@@ -70,6 +72,13 @@ JPA 엔티티 매핑에 대해 학습하기
 
 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
 
+- [X] UserGuest.isGuestUser 테스트
+- UserRepository
+    - [X] users countByUserId 메소드 테스트
+    - [X] user 중복 생성 유니크 실패 테스트
+    - [X] findByName 사용자이름 목록 조회 테스트
+    - [X] 업데이트 쿼리 테스트
+    - [X] 동일성 테스트
 - [ ] Answer 와 Question 연관관계 매핑(answer <-> question)
 - [ ] Answer 와 User 연관관계 매핑(answer -> User)
 - [ ] DeleteHistory 연관관계 매핑(DeleteHistory -> user)
