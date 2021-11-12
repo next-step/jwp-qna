@@ -18,7 +18,7 @@ public class AnswerTest {
     @Test
     void deleted_기본값_false() {
         // then
-        assertThat(A1.isDeleted()).isFalse();
+        assertThat(new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2").isDeleted()).isFalse();
     }
 
     @Test
@@ -47,7 +47,6 @@ public class AnswerTest {
     @DisplayName("toQuestion 메소드는 question 을 저장")
     void toQuestion() {
         // given
-        QuestionTest.Q2.setId(1L);
 
         // when
         A2.toQuestion(QuestionTest.Q2);
@@ -79,6 +78,7 @@ public class AnswerTest {
     @Test
     @DisplayName("게스트는 답변 할 수 없습니다. 예외 발생")
     void guest_answer_fail() {
+        // given
         User guest = User.GUEST_USER;
 
         assertThatExceptionOfType(UnAuthorizedException.class) // then
