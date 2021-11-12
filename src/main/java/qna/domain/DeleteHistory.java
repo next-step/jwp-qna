@@ -38,15 +38,14 @@ public class DeleteHistory {
     public DeleteHistory(ContentType contentType, Long contentId, User deletedUser) {
         this.contentType = contentType;
         this.contentId = contentId;
-
-        if (Objects.isNull(deletedUser)) {
-            throw new UnAuthorizedException();
-        }
         deleteBy(deletedUser);
     }
 
-    public DeleteHistory deleteBy(User deletedBy) {
-        this.deletedBy = deletedBy;
+    public DeleteHistory deleteBy(User deletedUser) {
+        if (Objects.isNull(deletedUser)) {
+            throw new UnAuthorizedException();
+        }
+        this.deletedBy = deletedUser;
         return this;
     }
 

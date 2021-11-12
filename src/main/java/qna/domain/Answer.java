@@ -39,16 +39,8 @@ public class Answer extends BaseTime {
     }
 
     public Answer(User writer, Question question, String contents) {
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
         writerBy(writer);
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
         toQuestion(question);
-
         this.contents = contents;
     }
 
@@ -58,6 +50,9 @@ public class Answer extends BaseTime {
      * @param writer
      */
     public Answer writerBy(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
         this.writer = writer;
         return this;
     }
@@ -72,6 +67,9 @@ public class Answer extends BaseTime {
      * @param question
      */
     public void toQuestion(Question question) {
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
         if (this.question != question) {
             this.question = question;
             question.addAnswer(this);

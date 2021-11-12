@@ -48,10 +48,6 @@ public class Question extends BaseTime {
     public Question(String title, String contents, User writer) {
         this.title = title;
         this.contents = contents;
-
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
         writeBy(writer);
     }
 
@@ -62,6 +58,9 @@ public class Question extends BaseTime {
      * @return
      */
     public Question writeBy(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
         this.writer = writer;
         return this;
     }
