@@ -1,30 +1,19 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "question")
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Question extends BaseEntity {
     @Lob
     @Column(name = "contents")
     private String contents;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
     @Column(name = "title", length = 100, nullable = false)
     private String title;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     @Column(name = "writer_id")
     private Long writerId;
@@ -38,11 +27,10 @@ public class Question {
     }
 
     public Question(Long id, String title, String contents) {
+        super(id);
         validateTitle(title);
-        this.id = id;
         this.title = title;
         this.contents = contents;
-        this.createdAt = LocalDateTime.now();
     }
 
     private void validateTitle(String title) {
@@ -64,10 +52,6 @@ public class Question {
         answer.toQuestion(this);
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -86,26 +70,5 @@ public class Question {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", contents='" + contents + '\'' +
-                ", createdAt=" + createdAt +
-                ", deleted=" + deleted +
-                ", title='" + title + '\'' +
-                ", updatedAt=" + updatedAt +
-                ", writerId=" + writerId +
-                '}';
     }
 }
