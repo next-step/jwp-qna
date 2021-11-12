@@ -18,7 +18,7 @@ public class Answer extends BaseTimeEntity {
     private String contents;
     private boolean deleted = false;
 
-    public Answer() {
+    protected Answer() {
     }
 
     public Answer(User writer, Question question, String contents) {
