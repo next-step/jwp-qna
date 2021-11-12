@@ -18,7 +18,7 @@ public class QuestionTest {
     void deleted() {
         // given
         // when
-        Q1.setDeleted(true);
+        Q1.remove();
 
         // then
         assertThat(Q1.isDeleted()).isTrue();

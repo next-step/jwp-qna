@@ -24,11 +24,10 @@ public class QuestionRepositoryTest {
     UserRepository users;
 
     private Question question;
-    private User user;
 
     @BeforeEach
     public void setUp() throws Exception {
-        user = users.save(new User("answerJavajigi", "password", "javajigi", "javajigi@slipp.net"));
+        User user = users.save(new User("answerJavajigi", "password", "javajigi", "javajigi@slipp.net"));
         question = new Question("title1", "contents1").writeBy(user);
     }
 
@@ -54,26 +53,12 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제안된 Question 조회 검증, 조회결과있음")
-    void findByIdAndDeletedFalse() {
-        // given
-        question.setDeleted(false);
-
-        // when
-        Question actual = questions.save(question);
-        Question expect = questions.findByIdAndDeletedFalse(actual.getId()).get();
-
-        // then
-        assertThat(expect).isNotNull();
-    }
-
-    @Test
     @DisplayName("삭제안된 Question 조회 검증, 조회결과없음")
     void findByIdAndDeletedFalse_deleted_true() {
         // given
         // when
         Question actual = questions.save(question);
-        actual.setDeleted(true);
+        actual.remove();
         Optional<Question> expect = questions.findByIdAndDeletedFalse(question.getId());
 
         // then
@@ -81,16 +66,41 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제안된 전체 질문 목록 불러오기 검증")
-    void findByDeletedFalse() {
+    @DisplayName("getAnswers 메소드를 통해 답변 목록 확인")
+    void getAnswers() {
         // given
-        QuestionTest.Q1.setDeleted(false);
+        Answer answer = new Answer(question.getWriter(), question, "Answers Contents1");
 
         // when
-        Question actual = questions.save(QuestionTest.Q1);
+        question.addAnswer(answer);
+        List<Answer> answers = question.getAnswers();
 
-        List<Question> expect = questions.findByDeletedFalse();
-
-        assertThat(expect).contains(actual);
+        // then
+        assertThat(answers).contains(answer);
     }
+
+    @Test
+    @DisplayName("remove 로 삭제 시 연관 answer 도 deleted 확인")
+    void remove() {
+        // given
+        Answer answer1 = new Answer(question.getWriter(), question, "Answers Contents1");
+        Answer answer2 = new Answer(question.getWriter(), question, "Answers Contents1");
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+        questions.save(question);
+        questions.flush();
+        Long cacheQuestionId = question.getId();
+
+        // when
+        question.remove();
+        questions.flush();
+        Question deletedQuestion = questions.findById(cacheQuestionId).get();
+        List<Answer> deletedAnswers = deletedQuestion.getAnswers();
+
+        // then
+        assertThat(deletedAnswers.stream()
+            .filter(answer -> !answer.isDeleted())
+            .count()).isEqualTo(0L);
+    }
+
 }

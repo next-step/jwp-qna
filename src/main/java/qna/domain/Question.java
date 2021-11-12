@@ -37,7 +37,7 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
 
     @Column(name = "deleted", nullable = false)
@@ -59,6 +59,7 @@ public class Question extends BaseEntity {
         if (writer.isGuestUser()) {
             throw new UnAuthorizedException(UnAuthorizedException.GUEST_USER_NOT_QUESTION);
         }
+
         this.writer = writer;
         return this;
     }
@@ -69,6 +70,15 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answers.add(answer);
+        answer.toQuestion(this);
+    }
+
+    public void remove() {
+        for (Answer answer : answers) {
+            answer.remove();
+        }
+
+        this.deleted = true;
     }
 
     public List<Answer> getAnswers() {
@@ -79,32 +89,8 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public User getWriter() {
@@ -117,8 +103,9 @@ public class Question extends BaseEntity {
             "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", writerId=" + writer.getId() +
+            ", writerId=" + writer +
             ", deleted=" + deleted +
             '}';
     }
+
 }
