@@ -14,17 +14,18 @@ public class Answer extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "writer_id")
+    @Column
     private Long writerId;
 
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     @Lob
-    @Column(name = "contents", columnDefinition = "longtext")
+    @Column(columnDefinition = "longtext")
     private String contents;
 
-    @Column(name = "deleted")
+    @Column
     private boolean deleted = false;
 
     protected Answer() {
@@ -47,7 +48,7 @@ public class Answer extends BaseTime {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -56,7 +57,7 @@ public class Answer extends BaseTime {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -75,12 +76,12 @@ public class Answer extends BaseTime {
         this.writerId = writerId;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public String getContents() {
@@ -104,7 +105,7 @@ public class Answer extends BaseTime {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

@@ -13,16 +13,16 @@ public class DeleteHistory {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "content_type")
+    @Column
     private ContentType contentType;
 
-    @Column(name = "content_id")
+    @Column
     private Long contentId;
 
-    @Column(name = "delete_by_id")
+    @Column
     private Long deletedById;
 
-    @Column(name = "create_date")
+    @Column
     private LocalDateTime createDate = LocalDateTime.now();
 
     protected DeleteHistory() {

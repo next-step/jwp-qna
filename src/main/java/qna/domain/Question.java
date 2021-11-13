@@ -10,16 +10,17 @@ public class Question extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", length = 100, nullable = false)
+    @Column(length = 100, nullable = false)
     private String title;
 
-    @Column(name = "contents", columnDefinition = "TEXT")
+    @Lob
+    @Column(columnDefinition = "longtext")
     private String contents;
 
-    @Column(name = "writer_id")
+    @Column
     private Long writerId;
 
-    @Column(name = "deleted", nullable = false)
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Question() {

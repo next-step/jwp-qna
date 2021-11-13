@@ -29,7 +29,7 @@ public class AnswerTest {
                 () -> assertThat(actualAnswer1).isNotNull(),
                 () -> assertThat(actualAnswer1.getId()).isNotNull(),
                 () -> assertThat(actualAnswer1.getContents()).isEqualTo(A1.getContents()),
-                () -> assertThat(actualAnswer1.getQuestionId()).isNull(),
+                () -> assertThat(actualAnswer1.getQuestion()).isNotNull(),
                 () -> assertThat(actualAnswer1.getWriterId()).isNotNull()
         );
 
@@ -37,7 +37,7 @@ public class AnswerTest {
                 () -> assertThat(actualAnswer2).isNotNull(),
                 () -> assertThat(actualAnswer2.getId()).isNotNull(),
                 () -> assertThat(actualAnswer2.getContents()).isEqualTo(A2.getContents()),
-                () -> assertThat(actualAnswer2.getQuestionId()).isNull(),
+                () -> assertThat(actualAnswer2.getQuestion()).isNotNull(),
                 () -> assertThat(actualAnswer2.getWriterId()).isNotNull()
         );
     }
@@ -65,5 +65,12 @@ public class AnswerTest {
 
         assertThat(actualAnswer.isDeleted()).isTrue();
         answers.flush();
+    }
+
+    @DisplayName("answer - question 연관관계 테스트")
+    @Test
+    void associateAnswerAndQuestionTest() {
+        Question question = A1.getQuestion();
+        assertThat(question).isNotNull();
     }
 }
