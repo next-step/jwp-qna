@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -39,8 +40,8 @@ public class Question extends BaseTimeEntity {
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
 
-	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-	private List<Answer> answers = new ArrayList<>();
+	@Embedded
+	private Answers answers = new Answers();
 
 	protected Question() {
 	}
@@ -67,7 +68,6 @@ public class Question extends BaseTimeEntity {
 
 	public void addAnswer(Answer answer) {
 		answers.add(answer);
-		answer.toQuestion(this);
 	}
 
 	public Long getId() {
@@ -95,16 +95,11 @@ public class Question extends BaseTimeEntity {
 			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 		}
 		deleted = true;
-		deleteAnswers(loginUser);
+		answers.deleteAnswers(loginUser);
 	}
 
-	public void deleteAnswers(User loginUser) throws CannotDeleteException {
-		for (Answer answer : answers) {
-			answer.delete(loginUser);
-		}
-	}
 
-	public List<Answer> getAnswers() {
+	public Answers getAnswers() {
 		return answers;
 	}
 
