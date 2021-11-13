@@ -16,6 +16,14 @@
 - [ ] 도메인 중심적 사고, 객체 단위로 생각하는 설계 방식 이해
 - [x] 각 도메인 별 Entity 설정 및 data 설정
 - [x] DataJpaTest 학습 테스트 사용
+  
+## 현재 고민 중인 부분
+- [ ] Question과 Answer를 하나로 묶을 수 있는 개념이 필요한지에 대한 고민
+  - DeleteHistory에서 contentId로만 Question과 Answer를 받고 있는데 이 부분을 조정하기 위해서는
+  - Question과 Answer의 부모격인 엔티티나 객체가 나와서 id들을 받아주는 것이 좋겠다고 생각한다.
+  - 현재 생각나는 네이밍은 Content이다. (근데 Question과 Answer만을 포함하는 추상적인 개념이 아니라 조심스럽다.)
+  
+- [ ] 유저가 DeleteHistory를 몰라도 될까? 에 대한 고민
 
 ## 학습 테스트 하며 기록한 글
 
