@@ -79,10 +79,6 @@ public class Answer extends AuditEntity {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public User getWriter() {
 		return writer;
 	}
