@@ -17,104 +17,102 @@ import qna.UnAuthorizedException;
 @Entity
 public class Answer extends BaseTime {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Lob
-    @Column
-    private String contents;
+	@Lob
+	@Column
+	private String contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+	@Column(nullable = false)
+	private boolean deleted = false;
 
-    @Column(name = "question_id")
-    private Long questionId;
+	@Column(name = "question_id")
+	private Long questionId;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+	@Column(name = "writer_id")
+	private Long writerId;
 
-    protected Answer() {
-    }
+	protected Answer() {
+	}
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
+	public Answer(User writer, Question question, String contents) {
+		this(null, writer, question, contents);
+	}
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+	public Answer(Long id, User writer, Question question, String contents) {
+		this.id = id;
 
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException(USER_IS_NOT_NULL);
-        }
+		if (Objects.isNull(writer)) {
+			throw new UnAuthorizedException(USER_IS_NOT_NULL);
+		}
 
-        if (Objects.isNull(question)) {
-            throw new QuestionNotFoundException(QUESTION_NOT_FOUND);
-        }
+		if (Objects.isNull(question)) {
+			throw new QuestionNotFoundException(QUESTION_NOT_FOUND);
+		}
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
-        this.contents = contents;
-    }
+		this.writerId = writer.getId();
+		this.questionId = question.getId();
+		this.contents = contents;
+	}
 
+	public boolean isOwner(User writer) {
+		return this.writerId.equals(writer.getId());
+	}
 
+	public void toQuestion(Question question) {
+		this.questionId = question.getId();
+	}
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getWriterId() {
+		return writerId;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setWriterId(Long writerId) {
+		this.writerId = writerId;
+	}
 
-    public Long getWriterId() {
-        return writerId;
-    }
+	public Long getQuestionId() {
+		return questionId;
+	}
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
+	public void setQuestionId(Long questionId) {
+		this.questionId = questionId;
+	}
 
-    public Long getQuestionId() {
-        return questionId;
-    }
+	public String getContents() {
+		return contents;
+	}
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
+	public void setContents(String contents) {
+		this.contents = contents;
+	}
 
-    public String getContents() {
-        return contents;
-    }
+	public boolean isDeleted() {
+		return deleted;
+	}
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "Answer{" +
+			"id=" + id +
+			", writerId=" + writerId +
+			", questionId=" + questionId +
+			", contents='" + contents + '\'' +
+			", deleted=" + deleted +
+			'}';
+	}
 }

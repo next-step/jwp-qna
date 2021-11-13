@@ -6,10 +6,8 @@ import static qna.domain.UserTest.*;
 import java.time.LocalDateTime;
 
 import org.assertj.core.api.Assertions;
-import org.hibernate.annotations.NotFound;
 import org.junit.jupiter.api.Test;
 
-import qna.NotFoundException;
 import qna.QuestionNotFoundException;
 import qna.TypeNotFoundException;
 import qna.UnAuthorizedException;
@@ -26,7 +24,7 @@ public class DeleteHistoryTest {
 		Assertions.assertThatThrownBy(() -> {
 				new DeleteHistory(null, Q1.getId(), JAVAJIGI.getId(), LocalDateTime.now());
 			}).isInstanceOf(TypeNotFoundException.class)
-			.hasMessageContaining(ContentType.valuesString());
+			.hasMessageContaining("");
 	}
 
 	@Test

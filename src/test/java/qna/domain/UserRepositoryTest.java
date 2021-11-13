@@ -20,7 +20,7 @@ public class UserRepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		userRepository.saveAll(Arrays.asList(JAVAJIGI,SANJIGI));
+		userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));
 	}
 
 	@Test
@@ -47,7 +47,6 @@ public class UserRepositoryTest {
 		// then
 		Assertions.assertThat(expectedUser.getName()).isEqualTo(JAVAJIGI.getName());
 	}
-
 
 	@Test
 	@DisplayName("유저 비밀번호를 변경시 변경되는지 확인")
