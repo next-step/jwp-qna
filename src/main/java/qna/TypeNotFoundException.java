@@ -7,6 +7,6 @@ import qna.domain.ContentType;
 
 public class TypeNotFoundException extends RuntimeException {
 	public TypeNotFoundException() {
-		super(format(TYPE_NOT_FOUND,ContentType.valuesString()));
+		super("contentType은 필수 입력입니다");
 	}
 }
