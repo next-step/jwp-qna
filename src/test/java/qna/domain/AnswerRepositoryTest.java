@@ -30,4 +30,8 @@ public class AnswerRepositoryTest {
         String actual = answers.findByContentsContaining(expected).getContents();
         assertThat(actual).isEqualTo(expected);
     }
+
+    @Test
+    void test() {
+    }
 }

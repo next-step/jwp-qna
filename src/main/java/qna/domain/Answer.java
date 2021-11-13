@@ -1,12 +1,14 @@
 package qna.domain;
 
+import com.sun.istack.NotNull;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 /**
@@ -30,7 +32,13 @@ public class Answer {
     private Long id;
     private Long writerId;
     private Long questionId;
+    @Lob
     private String contents;
+    @CreatedDate
+    @Column(nullable = false)
+    private ZonedDateTime createdAt;
+    @LastModifiedDate
+    private ZonedDateTime updatedAt;
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
