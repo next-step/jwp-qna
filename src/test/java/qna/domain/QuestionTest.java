@@ -22,7 +22,8 @@ public class QuestionTest {
 
     @BeforeEach
     void setup() {
-        final User user = userRepository.save(Q1.getWriter());
+        UserTest.JAVAJIGI.setId(null);
+        final User user = userRepository.save(UserTest.JAVAJIGI);
         Q1.setWriter(user);
     }
 

@@ -24,6 +24,7 @@ public class AnswerTest {
 
     @BeforeEach
     void setup() {
+        A1.getWriter().setId(null);
         final User user = userRepository.save(A1.getWriter());
         A1.setWriter(user);
         final Question question = questionRepository.save(QuestionTest.Q1);
