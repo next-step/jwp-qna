@@ -41,7 +41,15 @@ public class DeleteHistory {
 
     public DeleteHistory(ContentType contentType, Long contentId, User writer) {
         this.contentId = contentId;
+        deleteBy(writer);
+    }
+
+    private void deleteBy(User writer) {
+        if (this.writer != null) {
+            this.writer.getDeleteHistories().remove(this);
+        }
         this.writer = writer;
+        writer.getDeleteHistories().add(this);
     }
 
     @Override

@@ -1,5 +1,8 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -25,6 +29,9 @@ public class Question extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    private List<Answer> answers = new ArrayList<>();
+
     protected Question() {
     }
 
@@ -39,7 +46,11 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
+        if (this.writer != null) {
+            this.writer.getQuestions().remove(this);
+        }
         this.writer = writer;
+        writer.getQuestions().add(this);
         return this;
     }
 
@@ -72,12 +83,16 @@ public class Question extends BaseTimeEntity {
         return writer;
     }
 
-    public void setContents(String contents) {
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    void setContents(String contents) {
         this.contents = contents;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
     }
 
     @Override

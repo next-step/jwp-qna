@@ -21,8 +21,12 @@ public class QuestionTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AnswerRepository answerRepository;
+
     @AfterEach
     void tearDown() {
+        answerRepository.deleteAll();
         questionRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -38,6 +42,7 @@ public class QuestionTest {
         assertThat(actual.getTitle()).isEqualTo(expected.getTitle());
         assertThat(actual.getContents()).isEqualTo(expected.getContents());
         assertThat(actual.getWriter()).isSameAs(user);
+        assertThat(user.getQuestions()).contains(expected);
     }
 
     @Test
@@ -85,11 +90,24 @@ public class QuestionTest {
     @DisplayName("저장한 객체에 대해 soft delete를 한 후, findByIdAndDeletedFalse함수로 조회하면 나오지 않는지 테스트")
     void findByIdAndDeletedFalse() {
         Question expected = saveNewDefaultQuestion();
-        expected.setDeleted(true);
+        expected.delete();
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(
             () -> questionRepository.findByIdAndDeletedFalse(expected.getId()).get()
         );
+    }
+
+    @Test
+    void addAnswer() {
+        Question question = saveNewDefaultQuestion();
+        User user = userRepository.save(new User("minseoklim", "password", "임민석", "mslim@naver.com"));
+        Question oldQuestion = questionRepository.save(new Question("다른 질문", "졸립니다").writeBy(user));
+        Answer answer = answerRepository.save(new Answer(user, oldQuestion, "Answers Contents1"));
+        question.addAnswer(answer);
+
+        assertThat(question.getAnswers()).contains(answer);
+        assertThat(answer.getQuestion()).isEqualTo(question);
+        assertThat(answer.getQuestion()).isNotEqualTo(oldQuestion);
     }
 
     private Question saveNewDefaultQuestion() {

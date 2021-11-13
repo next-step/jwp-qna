@@ -41,6 +41,8 @@ public class AnswerTest {
         assertThat(actual.getContents()).isEqualTo(expected.getContents());
         assertThat(actual.getWriter()).isSameAs(user);
         assertThat(actual.getQuestion()).isSameAs(question);
+        assertThat(actual.getQuestion().getAnswers()).contains(actual);
+        assertThat(actual.getWriter().getAnswers()).contains(actual);
     }
 
     @Test
@@ -88,7 +90,7 @@ public class AnswerTest {
     @DisplayName("저장한 객체에 대해 soft delete를 한 후, findByIdAndDeletedFalse함수로 조회하면 나오지 않는지 테스트")
     void findByIdAndDeletedFalse() {
         Answer saved = saveNewDefaultAnswer();
-        saved.setDeleted(true);
+        saved.delete();
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(
             () -> answerRepository.findByIdAndDeletedFalse(saved.getId()).get()

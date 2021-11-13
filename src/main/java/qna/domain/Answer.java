@@ -47,18 +47,30 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writer = writer;
+        writeBy(writer);
         toQuestion(question);
         this.contents = contents;
+    }
+
+    private void writeBy(User writer) {
+        if (this.writer != null) {
+            this.writer.getAnswers().remove(this);
+        }
+        this.writer = writer;
+        writer.getAnswers().add(this);
+    }
+
+    public void toQuestion(Question question) {
+        if (this.question != null) {
+            this.question.getAnswers().remove(this);
+        }
+        this.question = question;
+        question.getAnswers().add(this);
     }
 
     public boolean isOwner(User writer) {
         String writerUserId = this.writer.getUserId();
         return writerUserId.equals(writer.getUserId());
-    }
-
-    public void toQuestion(Question question) {
-        this.question = question;
     }
 
     public Long getId() {
@@ -81,12 +93,12 @@ public class Answer extends BaseTimeEntity {
         return writer;
     }
 
-    public void setContents(String contents) {
+    void setContents(String contents) {
         this.contents = contents;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
     }
 
     @Override
