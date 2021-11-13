@@ -1,12 +1,13 @@
 package qna.domain;
 
+import java.util.Collections;
 import java.util.List;
 
 public class DeleteHistories {
 	private final List<DeleteHistory> values;
 
 	private DeleteHistories(List<DeleteHistory> values) {
-		this.values = values;
+		this.values = Collections.unmodifiableList(values);
 	}
 
 	public static DeleteHistories of(List<DeleteHistory> deleteHistories) {
