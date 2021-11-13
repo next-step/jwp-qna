@@ -72,16 +72,16 @@ public class Question extends BaseEntity {
     
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         if (!loginUser.equals(writer)) {
-            throw new CannotDeleteException("본인의 질문만 삭제 가능합니다");
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         if (answers.getAnswers().size() != 0 && !answers.checkWriter(writer)) {
-            throw new CannotDeleteException("질문에 다른사람의 답변이 있어서 삭제 불가능");
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         this.deleted = true;
-        List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
+        DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, id, writer));
-        answers.delete();
-        return DeleteHistories.of(deleteHistories);
+        deleteHistories.add(answers.delete().getDeleteHistories());
+        return deleteHistories;
     }
 
     public Long getId() {
@@ -99,13 +99,14 @@ public class Question extends BaseEntity {
     public User getWriter() {
         return writer;
     }
+    
+
+    public Answers getAnswers() {
+        return answers;
+    }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public int countAnswers() {
-        return answers.getAnswers().size();
     }
 
     @Override

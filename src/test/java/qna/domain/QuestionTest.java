@@ -77,7 +77,7 @@ public class QuestionTest {
         answers.save(answer);
         question.addAnswer(answer);
         question.delete(UserTest.JENNIE);
-        assertThat(question.countAnswers()).isEqualTo(0);
+        assertThat(question.getAnswers().getAnswers().get(0).isDeleted()).isTrue();
     }
 
     @Test

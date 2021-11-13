@@ -22,9 +22,10 @@ public class Answers {
         answers.add(answer);
     }
     
-    public void delete() {
-        answers.forEach(answer -> answer.delete());
-        answers.clear();
+    public DeleteHistories delete() {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        answers.forEach(answer -> deleteHistories.add(answer.delete()));
+        return deleteHistories;
     }
     
     public void delete(Answer answer) {

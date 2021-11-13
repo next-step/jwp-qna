@@ -14,9 +14,9 @@ public class DeleteHistories {
         this.deleteHistories.addAll(deleteHistories);
         return this;
     }
-
-    public DeleteHistories add(ContentType contentType, Long contentId, User deletedBy) {
-        deleteHistories.add(DeleteHistory.of(contentType, contentId, deletedBy));
+    
+    public DeleteHistories add(DeleteHistory deleteHistory) {
+        deleteHistories.add(deleteHistory);
         return this;
     }
 
