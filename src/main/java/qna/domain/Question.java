@@ -99,9 +99,15 @@ public class Question extends BaseEntityTime {
         return this.writer.equals(writer);
     }
 
-    public void delete() {
+    public void delete(User owner) {
+        validateQuestionDelete(owner);
         deleted = true;
         answers.deleteAll();
+    }
+
+    private void validateQuestionDelete(User owner) {
+        validateQuestionOwner(owner);
+        getAnswers().validateAnswersOwner(owner);
     }
 
     public List<DeleteHistory> createDeleteHistories() {

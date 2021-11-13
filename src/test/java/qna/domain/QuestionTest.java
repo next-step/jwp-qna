@@ -19,15 +19,17 @@ public class QuestionTest {
 
     private Question question;
     private List<Answer> answerList;
+    private User writer;
 
     @BeforeEach
     void setUp() {
-        User writer = new User("writer", "123", "writer", "writer@mail.com");
+        writer = new User("writer", "123", "writer", "writer@mail.com");
         question = createQuestion("question", "contents");
         answerList = Arrays.asList(
             AnswerTest.createAnswer(writer, question),
             AnswerTest.createAnswer(writer, question));
         question.setAnswers(new Answers(answerList));
+        question.setWriter(writer);
     }
 
     @DisplayName("로그인 사용자와 질문한 사람이 같은 경우에만 삭제가 가능하다")
@@ -43,7 +45,7 @@ public class QuestionTest {
     @Test
     void delete() {
         // when
-        question.delete();
+        question.delete(writer);
 
         // then
         assertTrue(question.isDeleted());
