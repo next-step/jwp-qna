@@ -7,5 +7,6 @@
      - id는 AutoIncrement 이다.
      - content(question or answer) 와 1 : 1 관계이다.
  - DDL 참고하여 question entity 생성한다.
+     - user와 N : 1 관계이다.
  - DDL 참고하여 user entity 생성한다.
     - user_id는 unique 하다.
