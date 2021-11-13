@@ -95,15 +95,4 @@ public class Answer extends BaseEntity {
     public boolean isDeleted() {
         return deleted;
     }
-
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writer=" + writer +
-                ", question=" + question +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
-    }
 }

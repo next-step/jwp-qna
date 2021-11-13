@@ -1,8 +1,5 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -67,17 +64,21 @@ public class Question extends BaseEntity {
     }
     
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        deleteValidation(loginUser);
+        this.deleted = true;
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, id, writer));
+        deleteHistories.add(answers.delete().getDeleteHistories());
+        return deleteHistories;
+    }
+    
+    private void deleteValidation(User loginUser) throws CannotDeleteException {
         if (!loginUser.equals(writer)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         if (answers.getAnswers().size() != 0 && !answers.checkWriter(writer)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
-        this.deleted = true;
-        DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, id, writer));
-        deleteHistories.add(answers.delete().getDeleteHistories());
-        return deleteHistories;
     }
 
     public Long getId() {
@@ -103,10 +104,5 @@ public class Question extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" + "id=" + id + ", title='" + title + '\'' + ", contents='" + contents + '\'' + ", writer=" + writer + ", deleted=" + deleted + '}';
     }
 }
