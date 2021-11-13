@@ -89,7 +89,15 @@ class AnswersTest {
 
         // then
         assertThat(answerList).extracting("deleted")
-            .containsExactly(true, true, true);
+            .containsOnly(true);
+    }
+
+    @DisplayName("질문들의 이력 정보를 가져온다")
+    @Test
+    void createDeleteHistories() {
+        List<DeleteHistory> deleteHistories = answers.createDeleteHistories();
+        assertEquals(3, deleteHistories.size());
+        assertThat(deleteHistories).extracting("contentType").containsOnly(ContentType.ANSWER);
     }
 
     private Answer createAnswer(User writer, Question question) {

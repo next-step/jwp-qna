@@ -2,6 +2,10 @@ package qna.domain;
 
 import static qna.exception.ExceptionMessage.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -95,6 +99,18 @@ public class Question extends BaseEntityTime {
         return this.writer.equals(writer);
     }
 
+    public void delete() {
+        deleted = true;
+        answers.deleteAll();
+    }
+
+    public List<DeleteHistory> createDeleteHistories() {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(answers.createDeleteHistories());
+        return deleteHistories;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -104,10 +120,5 @@ public class Question extends BaseEntityTime {
             ", writer=" + writer +
             ", deleted=" + deleted +
             '}';
-    }
-
-    public void delete() {
-        deleted = true;
-        answers.deleteAll();
     }
 }

@@ -17,12 +17,16 @@ public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
+
     private Long contentId;
+
     @OneToOne
     @JoinColumn(name = "deleted_by_Id")
     private User deletedBy;
+
     private LocalDateTime createDate = LocalDateTime.now();
 
     protected DeleteHistory() {
