@@ -18,13 +18,10 @@ public class QnaService {
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
     private QuestionRepository questionRepository;
-    private AnswerRepository answerRepository;
     private DeleteHistoryService deleteHistoryService;
 
-    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository,
-        DeleteHistoryService deleteHistoryService) {
+    public QnaService(QuestionRepository questionRepository, DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;
-        this.answerRepository = answerRepository;
         this.deleteHistoryService = deleteHistoryService;
     }
 
@@ -35,29 +32,12 @@ public class QnaService {
     }
 
     @Transactional
-    public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
+    public List<DeleteHistory> deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-        if (!question.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
 
-        // List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(question);
-        List<Answer> answers = question.getAnswers();
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
-        }
-
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.delete();
-        deleteHistories.add(
-            new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter(), LocalDateTime.now()));
-        for (Answer answer : answers) {
-            answer.delete();
-            deleteHistories.add(
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
+        List<DeleteHistory> deleteHistories = question.delete(loginUser);
         deleteHistoryService.saveAll(deleteHistories);
+
+        return deleteHistories;
     }
 }
