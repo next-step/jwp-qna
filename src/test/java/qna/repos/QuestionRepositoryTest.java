@@ -6,9 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
 import qna.domain.Question;
+import qna.domain.User;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,27 +25,33 @@ public class QuestionRepositoryTest {
     @Autowired
     private AnswerRepository answers;
 
+    @Autowired
+    private UserRepository users;
+
     @DisplayName("Question 저장 테스트")
     @Test
     void save() {
-        Question expected = Q1;
-        Question actual = questions.save(Q1);
+        User user = users.save(UserRepositoryTest.JAVAJIGI);
+        users.save(user);
+        Question actual = questions.save(new Question("title1", "contents1").writeBy(user));
 
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
+                () -> assertThat(actual.getContents()).isEqualTo("contents1")
         );
     }
 
     @DisplayName("Question deleted=false 경우 테스트")
     @Test
     void findByIdAndDeletedFalse() {
-        Question q1 = questions.save(Q1);
-        Question q2 = questions.save(Q2);
+        User user = users.save(UserRepositoryTest.JAVAJIGI);
+        users.save(user);
+        Question q1 = questions.save(new Question("title1", "contents1").writeBy(user));
+        Question q2 = questions.save(new Question("title2", "contents2").writeBy(user));
 
-        Q2.setDeleted(true);
+        q2.setDeleted(true);
 
-        questions.save(Q2);
+        questions.save(q2);
 
         Optional<Question> a1Result = questions.findByIdAndDeletedFalse(q1.getId());
         Optional<Question> a2Result = questions.findByIdAndDeletedFalse(q2.getId());
@@ -62,8 +67,10 @@ public class QuestionRepositoryTest {
     @DisplayName("Question Answer 연관관계 테스트")
     @Test
     void saveQuestionAndAnswer() {
-        Question q1 = questions.save(Q1);
-        q1.addAnswer(answers.save(new Answer(UserRepositoryTest.JAVAJIGI, q1, "Answers Contents1")));
+        User user = users.save(UserRepositoryTest.JAVAJIGI);
+        users.save(user);
+        Question q1 = questions.save(new Question("title1", "contents1").writeBy(user));
+        q1.addAnswer(answers.save(new Answer(user, q1, "Answers Contents1")));
         Question actual = questions.save(q1);
         List<Answer> answers = actual.getAnswers();
         assertThat(answers).hasSize(1);
