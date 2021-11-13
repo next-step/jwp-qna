@@ -20,7 +20,7 @@ public class AnswerTest {
         String contents = "Answers Contents1";
         Answer answer = Answer.of(UserTest.JAVAJIGI, Q1, contents);
         assertAll(
-                () -> assertThat(answer.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
+                () -> assertThat(answer.getWriter()).isEqualTo(UserTest.JAVAJIGI),
                 () -> assertThat(answer.getQuestion()).isEqualTo(Q1),
                 () -> assertThat(answer.getContents()).isEqualTo(contents),
                 () -> assertThat(answer.getCreatedAt()).isCloseTo(LocalDateTime.now(), within(1, ChronoUnit.SECONDS)),

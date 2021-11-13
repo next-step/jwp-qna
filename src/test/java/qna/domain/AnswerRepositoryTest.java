@@ -14,17 +14,20 @@ public class AnswerRepositoryTest {
     private AnswerRepository answers;
     @Autowired
     private QuestionRepository questions;
+    @Autowired
+    private UserRepository users;
 
     @DisplayName("Answer가 저장된다")
     @Test
     void testSave() {
         // Answer에 대한 학습테스트
-        Question question = questions.save(new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI));
-        Answer answer = Answer.of(UserTest.JAVAJIGI, question, "Answers Contents1");
+        User writer = users.save(UserTest.JAVAJIGI);
+        Question question = questions.save(new Question("title1", "contents1").writeBy(writer));
+        Answer answer = Answer.of(writer, question, "Answers Contents1");
         Answer savedAnswer = answers.save(answer);
         assertAll(
                 () -> assertThat(savedAnswer.getId()).isNotNull(),
-                () -> assertThat(savedAnswer.getWriterId()).isEqualTo(answer.getWriterId()),
+                () -> assertThat(savedAnswer.getWriter()).isEqualTo(answer.getWriter()),
                 () -> assertThat(savedAnswer.getQuestion()).isEqualTo(answer.getQuestion()),
                 () -> assertThat(savedAnswer.getContents()).isEqualTo(answer.getContents()),
                 () -> assertThat(question.getAnswers()).contains(answer)

@@ -126,8 +126,10 @@ alter table question
   - Answer는 Question과 다대일 관계
   - Question은 Answer와 일대다 관계
   - Answer에 연결된 Question은 바뀌지 않는 것이 정합성 있다
-- [ ] Answer에 User(작성자)를 연결한다
+- [X] Answer에 User(작성자)를 연결한다
   - 답변 작성자는 한명이다
+  - Answer는 User와 다대일 관계
+  - 작성자는 필수고 변경되지 않는 것이 정합성 있음
 - [ ] DeleteHistory에 User(삭제자)를 연결한다
   - 삭제자는 한명이다
 - [ ] Question에 User(작성자)를 연결한다
