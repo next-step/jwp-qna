@@ -1,5 +1,6 @@
 package qna.domain;
 
+import com.sun.istack.NotNull;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -7,7 +8,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Answer {
+public class Answer extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,7 +18,9 @@ public class Answer {
     @ManyToOne
     @JoinColumn(name = "questionId")
     private Question question;
+    @Lob
     private String contents;
+    @NotNull
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
