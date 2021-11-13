@@ -1,10 +1,10 @@
 package qna.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -18,6 +18,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
 
 @Entity
@@ -34,7 +35,7 @@ public class Question extends BaseEntity {
     @Column(name = "contents")
     private String contents;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
@@ -71,16 +72,22 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answers.add(answer);
-        answer.toQuestion(this);
     }
 
-    public void delete() {
-        for (Answer answer : getAnswers()) {
-            answer.delete();
+    public List<DeleteHistory> delete(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
-        // Todo  deleteHistory() ?? 뭔가 호출해야될것같은데;;?
+        List<DeleteHistory> deleteHistories = new ArrayList<>(answers.delete(loginUser));
+        deleteHistories.add(DeleteHistory.OfQuestion(this));
+
         this.deleted = true;
+        return deleteHistories;
+    }
+
+    public void removeAnswer(Answer answer) {
+        answers.removeAnswer(answer);
     }
 
     public Long getId() {
@@ -96,7 +103,7 @@ public class Question extends BaseEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers.values();
+        return Collections.unmodifiableList(answers.values());
     }
 
     @Override

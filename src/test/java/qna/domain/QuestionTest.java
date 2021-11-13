@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -17,11 +18,13 @@ public class QuestionTest {
     @Test
     void deleted() {
         // given
+        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+
         // when
-        Q1.delete();
+        question.delete(UserTest.JAVAJIGI);
 
         // then
-        assertThat(Q1.isDeleted()).isTrue();
+        assertThat(question.isDeleted()).isTrue();
     }
 
     @Test

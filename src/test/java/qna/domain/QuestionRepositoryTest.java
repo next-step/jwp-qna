@@ -25,12 +25,12 @@ public class QuestionRepositoryTest {
     UserRepository users;
 
     private Question question;
-    private User user1;
+    private User user;
 
     @BeforeEach
     public void setUp() throws Exception {
-        user1 = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
-        question = new Question("title1", "contents1").writeBy(user1);
+        user = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
+        question = new Question("title1", "contents1").writeBy(user);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class QuestionRepositoryTest {
         // given
         // when
         Question actual = questions.save(question);
-        actual.delete();
+        actual.delete(actual.getWriter());
         Optional<Question> expect = questions.findByIdAndDeletedFalse(question.getId());
 
         // then
@@ -90,7 +90,7 @@ public class QuestionRepositoryTest {
         savedQ1.addAnswer(answer1);
 
         // when
-        savedQ1.delete();
+        savedQ1.delete(user);
         questions.flush();
 
         //then
