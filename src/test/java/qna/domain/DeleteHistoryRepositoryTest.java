@@ -12,23 +12,23 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
+    @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
     @Autowired
-    public DeleteHistoryRepositoryTest(DeleteHistoryRepository deleteHistoryRepository) {
-        this.deleteHistoryRepository = deleteHistoryRepository;
-    }
+    private UserRepository users;
 
     @DisplayName("DeleteHistory가 저장된다")
     @Test
     void testSave() {
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
+        User writer = users.save(new User("userId", "password", "name", "email"));
+        DeleteHistory deleteHistory = DeleteHistory.of(ContentType.ANSWER, 1L, writer, LocalDateTime.now());
         DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
         assertAll(
                 () -> assertThat(savedDeleteHistory.getId()).isNotNull(),
                 () -> assertThat(savedDeleteHistory.getContentType()).isEqualTo(deleteHistory.getContentType()),
                 () -> assertThat(savedDeleteHistory.getContentId()).isEqualTo(deleteHistory.getContentId()),
-                () -> assertThat(savedDeleteHistory.getDeletedById()).isEqualTo(deleteHistory.getDeletedById())
+                () -> assertThat(savedDeleteHistory.getDeletedBy()).isEqualTo(deleteHistory.getDeletedBy())
         );
     }
 }

@@ -126,10 +126,10 @@ alter table question
   - Answer는 Question과 다대일 관계
   - Question은 Answer와 일대다 관계
   - Answer에 연결된 Question은 바뀌지 않는 것이 정합성 있다
-- [ ] Answer, Question, DeleteHistory의 작성자(삭제자) 연결
-  - [ ] 공통사항 적용
-    - [ ] 각 객체는 User와 다대일 관계
-    - [ ] 작성자(삭제자)는 필수고 변경되지 않는 것이 정합성 있음
+- [X] Answer, Question, DeleteHistory의 작성자(삭제자) 연결
+  - [X] 공통사항 적용
+    - [X] 각 객체는 User와 다대일 관계
+    - [X] 작성자(삭제자)는 필수고 변경되지 않는 것이 정합성 있음
   - [X] Answer에 User(작성자)를 연결한다
-  - [ ] DeleteHistory에 User(삭제자)를 연결한다
+  - [X] DeleteHistory에 User(삭제자)를 연결한다
   - [X] Question에 User(작성자)를 연결한다

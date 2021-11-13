@@ -89,11 +89,6 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    // TODO Question 변경 시 삭제
-    public Long getWriterId() {
-        return writer.getId();
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
