@@ -81,14 +81,25 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("질문에 다른사람의 답변이 있으면 삭제 불가능")
-    void 삭제시_답변_여부_확인() {
+    @DisplayName("다른 사람의 질문은 삭제 불가능")
+    void 삭제시_로그인_계정_확인() {
         Question question = new Question("질문할게요~", "이럴땐 어떻게 해야하나요?").writeBy(UserTest.JENNIE);
         questions.save(question);
         Answer answer = new Answer(UserTest.JENNIE, question, "이렇게 한번 해보세요!!");
         answers.save(answer);
         question.addAnswer(answer);
         assertThatThrownBy(() -> question.delete(UserTest.JAVAJIGI)).isInstanceOf(CannotDeleteException.class);
+    }
+    
+    @Test
+    @DisplayName("질문에 다른사람의 답변이 있으면 삭제 불가능")
+    void 삭제시_다른사람_답변_여부_확인() {
+        Question question = new Question("질문할게요~", "이럴땐 어떻게 해야하나요?").writeBy(UserTest.JENNIE);
+        questions.save(question);
+        Answer answer = new Answer(UserTest.SOOKI, question, "이렇게 한번 해보세요!!");
+        answers.save(answer);
+        question.addAnswer(answer);
+        assertThatThrownBy(() -> question.delete(UserTest.JENNIE)).isInstanceOf(CannotDeleteException.class);
     }
 
 }

@@ -15,6 +15,7 @@ public class UserTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
     public static final User JENNIE = new User("jennie", "password", "name", "jennie@hello.com");
+    public static final User SOOKI = new User("sooki", "password", "name", "sooki@hello.com");
     
 
     @Autowired

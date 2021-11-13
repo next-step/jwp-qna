@@ -34,5 +34,9 @@ public class Answers {
     public List<Answer> getAnswers() {
         return answers;
     }
+    
+    public boolean checkWriter(User writer) {
+        return answers.stream().allMatch(answer -> answer.isSameWriter(writer));
+    }
 
 }

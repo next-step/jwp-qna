@@ -75,6 +75,10 @@ public class Answer extends BaseEntity {
         deleteHistories.add(DeleteHistory.of(ContentType.ANSWER, id, writer));
         return DeleteHistories.of(deleteHistories);
     }
+    
+    public boolean isSameWriter(User writer) {
+        return this.writer.equals(writer);
+    }
 
     public Long getId() {
         return id;
