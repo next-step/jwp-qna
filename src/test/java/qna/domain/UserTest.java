@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.fixture.UserFixture;
 
 import java.util.Optional;
 
@@ -19,7 +20,7 @@ class UserTest {
     @Test
     void save_확인() {
         // given
-        User user = UserTestFactory.create("user");
+        User user = UserFixture.create("user");
 
         // when
         User actual = userRepository.save(user);
@@ -33,7 +34,7 @@ class UserTest {
     @Test
     void findById_확인() {
         // given
-        User savedUser = userRepository.save(UserTestFactory.create("user"));
+        User savedUser = userRepository.save(UserFixture.create("user"));
 
         // when
         Optional<User> actual = userRepository.findById(savedUser.getId());
@@ -48,7 +49,7 @@ class UserTest {
     @Test
     void update_확인() {
         // given
-        User savedUser = userRepository.save(UserTestFactory.create("user"));
+        User savedUser = userRepository.save(UserFixture.create("user"));
 
         // when
         savedUser.setUserId("user2");

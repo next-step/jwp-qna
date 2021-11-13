@@ -1,7 +1,11 @@
-package qna.domain;
+package qna.fixture;
 
-public class AnswerTestFactory {
-    private AnswerTestFactory() {
+import qna.domain.Answer;
+import qna.domain.Question;
+import qna.domain.User;
+
+public class AnswerFixture {
+    private AnswerFixture() {
         throw new UnsupportedOperationException();
     }
 

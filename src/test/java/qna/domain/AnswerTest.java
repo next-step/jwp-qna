@@ -4,6 +4,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.fixture.AnswerFixture;
+import qna.fixture.QuestionFixture;
+import qna.fixture.UserFixture;
 
 import java.util.Optional;
 
@@ -25,9 +28,9 @@ class AnswerTest {
     @Test
     void save_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        Question question = questionRepository.save(QuestionTestFactory.create("title", "contents", user));
-        Answer answer = AnswerTestFactory.create(user, question, "Answers Contents");
+        User user = userRepository.save(UserFixture.create("user"));
+        Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
+        Answer answer = AnswerFixture.create(user, question, "Answers Contents");
 
         // when
         Answer result = answerRepository.save(answer);
@@ -40,9 +43,9 @@ class AnswerTest {
     @Test
     void findById_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        Question question = questionRepository.save(QuestionTestFactory.create("title", "contents", user));
-        Answer answer = AnswerTestFactory.create(user, question, "Answers Contents");
+        User user = userRepository.save(UserFixture.create("user"));
+        Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
+        Answer answer = AnswerFixture.create(user, question, "Answers Contents");
 
         // when
         Answer savedAnswer = answerRepository.save(answer);
@@ -58,9 +61,9 @@ class AnswerTest {
     @Test
     void update_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        Question question = questionRepository.save(QuestionTestFactory.create("title", "contents", user));
-        Answer answer = AnswerTestFactory.create(user, question, "Answers Contents");
+        User user = userRepository.save(UserFixture.create("user"));
+        Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
+        Answer answer = AnswerFixture.create(user, question, "Answers Contents");
 
         // when
         Answer savedAnswer = answerRepository.save(answer);

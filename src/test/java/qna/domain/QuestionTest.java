@@ -4,6 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.fixture.QuestionFixture;
+import qna.fixture.UserFixture;
 
 import java.util.Optional;
 
@@ -22,8 +24,8 @@ class QuestionTest {
     @Test
     void save_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        Question question = QuestionTestFactory.create("title", "content", user);
+        User user = userRepository.save(UserFixture.create("user"));
+        Question question = QuestionFixture.create("title", "content", user);
 
         // when
         Question actual = questionRepository.save(question);
@@ -36,8 +38,8 @@ class QuestionTest {
     @Test
     void findById_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        Question question = QuestionTestFactory.create("title", "contents", user);
+        User user = userRepository.save(UserFixture.create("user"));
+        Question question = QuestionFixture.create("title", "contents", user);
 
         // when
         Question savedQuestion = questionRepository.save(question);
@@ -53,8 +55,8 @@ class QuestionTest {
     @Test
     void update_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        Question question = QuestionTestFactory.create("title", "contents", user);
+        User user = userRepository.save(UserFixture.create("user"));
+        Question question = QuestionFixture.create("title", "contents", user);
 
         // when
         Question savedQuestion = questionRepository.save(question);

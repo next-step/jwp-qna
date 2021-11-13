@@ -4,6 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.fixture.DeleteHistoryFixture;
+import qna.fixture.UserFixture;
 
 import java.util.Optional;
 
@@ -22,8 +24,8 @@ class DeleteHistoryTest {
     @Test
     void save_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        DeleteHistory deleteHistory = DeleteHistoryTestFactory.create(ContentType.ANSWER, 1L, user);
+        User user = userRepository.save(UserFixture.create("user"));
+        DeleteHistory deleteHistory = DeleteHistoryFixture.create(ContentType.ANSWER, 1L, user);
 
         // when
         DeleteHistory actual = deleteHistoryRepository.save(deleteHistory);
@@ -37,8 +39,8 @@ class DeleteHistoryTest {
     @Test
     void findById_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        DeleteHistory question = DeleteHistoryTestFactory.create(ContentType.ANSWER, 1L, user);
+        User user = userRepository.save(UserFixture.create("user"));
+        DeleteHistory question = DeleteHistoryFixture.create(ContentType.ANSWER, 1L, user);
 
         // when
         DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(question);
@@ -54,8 +56,8 @@ class DeleteHistoryTest {
     @Test
     void update_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        DeleteHistory question = DeleteHistoryTestFactory.create(ContentType.ANSWER, 1L, user);
+        User user = userRepository.save(UserFixture.create("user"));
+        DeleteHistory question = DeleteHistoryFixture.create(ContentType.ANSWER, 1L, user);
 
         // when
         DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(question);

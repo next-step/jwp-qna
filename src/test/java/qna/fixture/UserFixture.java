@@ -1,7 +1,9 @@
-package qna.domain;
+package qna.fixture;
 
-public class UserTestFactory {
-    private UserTestFactory() {
+import qna.domain.User;
+
+public class UserFixture {
+    private UserFixture() {
         throw new UnsupportedOperationException();
     }
 

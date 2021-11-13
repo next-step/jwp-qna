@@ -1,7 +1,10 @@
-package qna.domain;
+package qna.fixture;
 
-public class QuestionTestFactory {
-    private QuestionTestFactory() {
+import qna.domain.Question;
+import qna.domain.User;
+
+public class QuestionFixture {
+    private QuestionFixture() {
         throw new UnsupportedOperationException();
     }
 
