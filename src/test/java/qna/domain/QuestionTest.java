@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +22,7 @@ public class QuestionTest {
     private QuestionRepository questions;
 
     @Autowired
-    private UserRepository users;
-
-    @Autowired
     private AnswerRepository answers;
-
-    @BeforeEach
-    void setUp() {
-        users.save(UserTest.JENNIE);
-    }
 
     @Test
     @DisplayName("저장됐는지 확인")
