@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +25,12 @@ public class QuestionRepositoryTest {
     UserRepository users;
 
     private Question question;
+    private User user1;
 
     @BeforeEach
     public void setUp() throws Exception {
-        User user = users.save(new User("answerJavajigi", "password", "javajigi", "javajigi@slipp.net"));
-        question = new Question("title1", "contents1").writeBy(user);
+        user1 = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
+        question = new Question("title1", "contents1").writeBy(user1);
     }
 
     @Test
@@ -58,7 +60,7 @@ public class QuestionRepositoryTest {
         // given
         // when
         Question actual = questions.save(question);
-        actual.remove();
+        actual.delete();
         Optional<Question> expect = questions.findByIdAndDeletedFalse(question.getId());
 
         // then

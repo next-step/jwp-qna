@@ -2,9 +2,11 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -14,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import qna.UnAuthorizedException;
@@ -37,11 +38,11 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private final Answers answers = new Answers(new ArrayList<>());
 
     @Column(name = "deleted", nullable = false)
-    private boolean deleted = false;
+    private boolean deleted = Boolean.FALSE;
 
     protected Question() {
     }
@@ -73,20 +74,13 @@ public class Question extends BaseEntity {
         answer.toQuestion(this);
     }
 
-    public void remove() {
-        for (Answer answer : answers) {
+    public void delete() {
+        for (Answer answer : getAnswers()) {
             answer.delete();
         }
 
+        // Todo  deleteHistory() ?? 뭔가 호출해야될것같은데;;?
         this.deleted = true;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
     }
 
     public Long getId() {
@@ -99,6 +93,10 @@ public class Question extends BaseEntity {
 
     public User getWriter() {
         return writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers.values();
     }
 
     @Override

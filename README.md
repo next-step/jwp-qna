@@ -86,10 +86,14 @@ JPA 엔티티 매핑에 대해 학습하기
     - [X] findByName 사용자이름 목록 조회 테스트
     - [X] 업데이트 쿼리 테스트
     - [X] 동일성 테스트
-- [ ] Answer 와 Question 연관관계 매핑(answer <-> question)
-- [ ] Answer 와 User 연관관계 매핑(answer -> User)
-- [ ] DeleteHistory 연관관계 매핑(DeleteHistory -> user)
-- [ ] Question 연관관계 매핑(question -> user)
-- [ ] 연관 관계 테스트
-
+- [X] 게스트 질문 and 답변 작성 예외 테스트
+- [X] Answer.setDeleted 메소드에서 remove 로 이름 변경
+- [X] DeleteHistory 조회 에서 nativeQuery 사용하여 ContentType 별로 조회하기
+- [X] Question 삭제시 연관 Answer 같이 remove (deleted) 수행
+- [X] User.email 일급컬렉션 구현
+- [X] (Question) List<Answer> answers 일급컬렉션?
+- [ ] (Question) addAnswer validation 필요한게 없을까?
+- [ ] DeleteHistory - saveAll 일괄저장 구현
+- [ ] Question 삭제시 DeleteHistory 같이 저장?
+- [ ] Answer 삭제시 DeleteHistory 같이 저장?
 
