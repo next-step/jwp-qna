@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,15 @@ public class QuestionTest {
 
     @Autowired
     private QuestionRepository questions;
+    
+    @Autowired
+    private UserRepository users;
 
+    @BeforeEach
+    void setUp() {
+        users.save(UserTest.JENNIE);
+    }
+    
     @Test
     @DisplayName("저장됐는지 확인")
     void 저장() {
@@ -45,6 +54,17 @@ public class QuestionTest {
         questions.save(expected);
         expected.delete();
         assertThat(questions.findById(expected.getId()).get().isDeleted()).isTrue();
+    }
+    
+    @Test
+    @DisplayName("질문 삭제시 삭제 이력 확인")
+    void 삭제_이력_확인() {
+        Question expected = new Question("질문할게요~", "이럴땐 어떻게 해야하나요?").writeBy(UserTest.JENNIE);
+        questions.save(expected);
+        DeleteHistories deleteHistories = expected.delete();
+        deleteHistories.getDeleteHistories();
+        System.out.println("힝구  " + expected.getWriter().getId());
+        assertThat(deleteHistories.getDeleteHistories()).hasSize(1);
     }
 
 }

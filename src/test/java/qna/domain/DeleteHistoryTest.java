@@ -19,7 +19,7 @@ public class DeleteHistoryTest {
     @DisplayName("저장됐는지 확인")
     void 저장() {
         User deletedBy = new User("jennie", "password", "jennie", "jennie@slipp.net");
-        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, deletedBy, LocalDateTime.of(2021,  11, 10, 1, 1, 1));
+        DeleteHistory expected = DeleteHistory.of(ContentType.QUESTION, 1L, deletedBy);
         DeleteHistory actual = deleteHistory.save(expected);
         assertThat(actual).isEqualTo(expected);
     }
