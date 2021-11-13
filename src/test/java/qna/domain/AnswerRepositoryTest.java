@@ -4,8 +4,13 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import qna.CannotDeleteException;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 
@@ -36,7 +41,7 @@ public class AnswerRepositoryTest {
     void setUp() {
         this.user1 = userRepository.save(UserTest.JAVAJIGI);
         this.user2 = userRepository.save(UserTest.SANJIGI);
-        this.question1 = questionRepository.save(QuestionTest.Q1);
+        this.question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
     }
 
     @Test
@@ -54,5 +59,22 @@ public class AnswerRepositoryTest {
                 () -> assertThat(answer.getQuestion()).isEqualTo(question1),
                 () -> assertThat(answer2.getQuestion()).isEqualTo(question1)
         );
+    }
+
+    @Test
+    @DisplayName("Answer 삭제 시 DeleteHistory 를 반환한다.")
+    public void T2_answerDelete() throws Exception {
+        //WHEN
+        Answer answer = answerRepository.save(new Answer(user1, question1, "Answers Contents1"));
+        Answer answer2 = answerRepository.save(new Answer(user2, question1, "Answers Contents2"));
+        //THEN
+        assertThat(answer.delete(user1)).isInstanceOf(DeleteHistory.class);
+        assertThatThrownBy(()-> answer2.delete(user1)).isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        //WHEN
+        answerRepository.flush();
+        Answer findAnswer = answerRepository.findById(answer.getId()).get();
+        //THEN
+        //assertThat(findAnswer.isDeleted()).isTrue();
     }
 }

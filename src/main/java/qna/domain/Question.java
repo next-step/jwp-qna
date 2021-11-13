@@ -1,7 +1,13 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 public class Question extends BaseEntity {
@@ -18,6 +24,9 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     private boolean deleted = false;
 
@@ -44,6 +53,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -86,6 +96,7 @@ public class Question extends BaseEntity {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -112,6 +123,31 @@ public class Question extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, title, contents, writer, deleted);
+    }
+
+    public boolean hasAnswers() {
+        return answers.size() > 0;
+    }
+
+    public boolean checkAnswers(User loginUser) {
+        if (!hasAnswers()) return true;
+        return answers.stream().filter(answer -> !answer.isDeleted()).allMatch(answers -> isOwner(loginUser));
+
+    }
+
+    private DeleteHistory createDeleteHistory() {
+        setDeleted(true);
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+    }
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(createDeleteHistory());
+        for(Answer notDeletedAnswer : answers.stream().filter(answer -> !answer.isDeleted()).collect(Collectors.toList())) {
+            deleteHistories.add(notDeletedAnswer.delete(loginUser));
+        }
+        return deleteHistories;
     }
 }
 
