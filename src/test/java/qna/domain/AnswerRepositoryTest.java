@@ -69,14 +69,8 @@ public class AnswerRepositoryTest {
 		Answer save2 = answerRepository.save(A1);
 
 		List<Answer> expected = answerRepository.findAll();
-		Assertions.assertThat(expected.size()).isEqualTo(2);
+		Assertions.assertThat(expected.size()).isEqualTo(3);
 	}
 
-	@AfterEach
-	public void teardown() {
-		this.answerRepository.deleteAll();
-		this.entityManager
-			.createNativeQuery("ALTER TABLE answer ALTER COLUMN `id` RESTART WITH 1")
-			.executeUpdate();
-	}
+
 }
