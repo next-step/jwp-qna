@@ -16,13 +16,13 @@ public class AnswerTest {
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Autowired
-    private AnswerRepository answer;
+    private AnswerRepository answers;
 
     @Test
     @DisplayName("저장됐는지 확인")
     void 저장() {
         Answer expected = new Answer(UserTest.JENNIE, QuestionTest.Q1, "New Answer Contents");
-        Answer actual = answer.save(expected);
+        Answer actual = answers.save(expected);
         assertAll(() -> assertThat(actual).isEqualTo(expected), 
                 () -> assertThat(expected.getId()).isNotNull(), 
                 () -> assertThat(expected.getId()).isEqualTo(actual.getId()));
@@ -32,19 +32,18 @@ public class AnswerTest {
     @DisplayName("아이디로 조회")
     void 아이디로_조회() {
         Answer expected = new Answer(UserTest.JENNIE, QuestionTest.Q1, "New Answer Contents");
-        answer.save(expected);
-        Optional<Answer> actual = answer.findById(expected.getId());
+        answers.save(expected);
+        Optional<Answer> actual = answers.findById(expected.getId());
         assertAll(() -> assertThat(actual.isPresent()).isTrue(), 
                 () -> assertThat(actual.orElse(null)).isEqualTo(expected));
     }
     
     @Test
-    @DisplayName("삭제됐는지 확인")
-    void 삭제() {
-        Answer expected = new Answer(UserTest.JENNIE, QuestionTest.Q1, "New Answer Contents");
-        answer.save(expected);
-        answer.delete(expected);
-        Optional<Answer> actual = answer.findById(expected.getId());
-        assertThat(actual.isPresent()).isFalse();
+    @DisplayName("답변을 삭제하면 삭제 상태로 변경")
+    void 삭제_상태_확인() {
+        Answer expected = new Answer(UserTest.JENNIE, QuestionTest.Q1, "이렇게 하시면 됩니다~");
+        answers.save(expected);
+        expected.delete();
+        assertThat(answers.findById(expected.getId()).get().isDeleted()).isTrue();
     }
 }
