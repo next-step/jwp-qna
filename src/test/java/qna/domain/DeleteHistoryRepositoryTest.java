@@ -28,7 +28,7 @@ public class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        javajigi = users.save(new User("answerJavajigi", "password", "javajigi", "javajigi@slipp.net"));
+        javajigi = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
         answerHistory = new DeleteHistory(ContentType.ANSWER, 1L, javajigi, LocalDateTime.now());
         questionHistory = new DeleteHistory(ContentType.QUESTION, 1L, javajigi, LocalDateTime.now());
     }

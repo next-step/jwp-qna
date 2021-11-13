@@ -3,7 +3,6 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -31,7 +30,7 @@ public class DeleteHistory {
     @Column(name = "content_id")
     private Long contentId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
 
@@ -48,30 +47,20 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
+    public static DeleteHistory OfQuestion(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+    }
+
+    public static DeleteHistory OfAnswer(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
+    }
+
     public boolean isContentType(ContentType contentType) {
         return this.contentType == contentType;
     }
 
     public Long getId() {
         return id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        DeleteHistory that = (DeleteHistory)o;
-        return Objects.equals(id, that.id) &&
-            contentType == that.contentType &&
-            Objects.equals(contentId, that.contentId) &&
-            Objects.equals(deletedBy, that.deletedBy);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedBy);
     }
 
     @Override
@@ -85,4 +74,21 @@ public class DeleteHistory {
             '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        DeleteHistory that = (DeleteHistory)o;
+        return Objects.equals(id, that.id)
+            && contentType == that.contentType
+            && Objects.equals(contentId, that.contentId)
+            && Objects.equals(deletedBy, that.deletedBy);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contentType, contentId, deletedBy, createDate);
+    }
 }
