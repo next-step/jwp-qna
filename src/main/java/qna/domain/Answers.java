@@ -35,5 +35,9 @@ public class Answers {
     public boolean checkWriter(User writer) {
         return answers.stream().allMatch(answer -> answer.isSameWriter(writer));
     }
+    
+    public int countAnswers() {
+        return answers.size();
+    }
 
 }
