@@ -16,7 +16,8 @@ public class DeleteHistoriesTest {
         List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
         deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, QuestionTest.Q1.getId(), UserTest.JENNIE));
         deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, QuestionTest.Q2.getId(), UserTest.JENNIE));
-        assertThat(DeleteHistories.of(deleteHistories).getDeleteHistories()).hasSize(2);
+        DeleteHistories deleteHistries = new DeleteHistories();
+        assertThat(deleteHistries.add(deleteHistories).getDeleteHistories()).hasSize(2);
     }
 
 }

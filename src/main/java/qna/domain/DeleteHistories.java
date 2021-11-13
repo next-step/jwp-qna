@@ -1,18 +1,20 @@
 package qna.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DeleteHistories {
     private final List<DeleteHistory> deleteHistories;
 
-    private DeleteHistories(List<DeleteHistory> deleteHistories) {
-        this.deleteHistories = deleteHistories;
+    public DeleteHistories() {
+        this.deleteHistories = new ArrayList<DeleteHistory>();
     }
 
-    public static DeleteHistories of(List<DeleteHistory> deleteHistories) {
-        return new DeleteHistories(deleteHistories);
+    public DeleteHistories add(List<DeleteHistory> deleteHistories) {
+        this.deleteHistories.addAll(deleteHistories);
+        return this;
     }
-    
+
     public DeleteHistories add(ContentType contentType, Long contentId, User deletedBy) {
         deleteHistories.add(DeleteHistory.of(contentType, contentId, deletedBy));
         return this;
