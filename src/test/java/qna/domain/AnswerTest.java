@@ -19,16 +19,6 @@ import qna.fixture.UserFixture;
 
 @DisplayName("답변")
 public class AnswerTest {
-	private static Stream<Arguments> ofFailArguments() {
-		return Stream.of(
-			Arguments.of(
-				null,
-				"contents",
-				UnAuthorizedException.class
-			)
-		);
-	}
-
 	public static Stream<Arguments> isOwnerArguments() {
 		return Stream.of(
 			Arguments.of(
@@ -57,19 +47,22 @@ public class AnswerTest {
 		// then
 		assertAll(
 			() -> assertThat(answer).isNotNull(),
-			() -> assertThat(answer.getContents()).isEqualTo(contents),
+			() -> assertThat(answer.getContents()).isEqualTo(AnswerContents.of(contents)),
 			() -> assertThat(answer.isDeleted()).isFalse(),
 			() -> assertThat(answer.getWriter()).isEqualTo(writer)
 		);
 	}
 
-	@DisplayName("답변을 생성할 수 없다.")
-	@ParameterizedTest
-	@MethodSource(value = "ofFailArguments")
-	void of_fail(User writer, String contents, Class<?> expectedExceptionType) {
-		// given & when & then
+	@DisplayName("작성자가 없을 경우 답변을 생성할 수 없다.")
+	@Test
+	void of_fail() {
+		// given
+		User writer = null;
+		String contents = "contents";
+
+		// when & then
 		assertThatThrownBy(() -> Answer.of(writer, contents))
-			.isInstanceOf(expectedExceptionType);
+			.isInstanceOf(UnAuthorizedException.class);
 	}
 
 	@DisplayName("답변에 질문을 등록할 수 있다.")
@@ -105,13 +98,20 @@ public class AnswerTest {
 	@Test
 	void delete() {
 		// given
-		Answer answer = AnswerFixture.A1(UserFixture.Y2O2U2N());
+		User user = UserFixture.Y2O2U2N();
+		Answer answer = AnswerFixture.A1(user);
 
 		// when
-		answer.delete();
+		DeleteHistory deleteHistory = answer.delete(user);
 
 		// then
-		assertThat(answer.isDeleted()).isTrue();
+		assertAll(
+			() -> assertThat(answer.isDeleted()).isTrue(),
+			() -> assertThat(deleteHistory).isNotNull(),
+			() -> assertThat(deleteHistory.getContentId()).isEqualTo(answer.getId()),
+			() -> assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER),
+			() -> assertThat(deleteHistory.getDeleter()).isEqualTo(user)
+		);
 	}
 
 	@DisplayName("사용자가 답변의 주인인지 알 수 있다.")

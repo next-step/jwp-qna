@@ -3,6 +3,8 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import qna.CannotDeleteException;
 import qna.fixture.AnswerFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
@@ -61,9 +64,9 @@ public class QuestionTest {
 		// then
 		assertAll(
 			() -> assertThat(question).isNotNull(),
-			() -> assertThat(question.getContents()).isEqualTo(contents),
+			() -> assertThat(question.getContents()).isEqualTo(QuestionContents.of(contents)),
 			() -> assertThat(question.isDeleted()).isFalse(),
-			() -> assertThat(question.getTitle()).isEqualTo(title),
+			() -> assertThat(question.getTitle()).isEqualTo(QuestionTitle.of(title)),
 			() -> assertThat(question.getWriter()).isEqualTo(writer)
 		);
 	}
@@ -90,7 +93,8 @@ public class QuestionTest {
 		// then
 		assertAll(
 			() -> assertThat(question.getAnswers()).contains(answer),
-			() -> assertThat(answer.getQuestion()).isEqualTo(question)
+			() -> assertThat(answer.getQuestion()).isEqualTo(question),
+			() -> assertThat(question.getAnswers()).hasSize(1)
 		);
 	}
 
@@ -118,17 +122,74 @@ public class QuestionTest {
 			.isInstanceOf(RuntimeException.class);
 	}
 
-	@DisplayName("질문을 삭제할 수 있다.")
+	@DisplayName("자신이 등록한 질문을 답변이 없는 경우에 삭제할 수 있다.")
 	@Test
-	void delete() {
+	void delete_on_empty_answers() {
 		// given
-		Question question = QuestionFixture.Q1(UserFixture.Y2O2U2N());
+		User user = UserFixture.Y2O2U2N();
+		Question question = QuestionFixture.Q1(user);
 
 		// when
-		question.delete();
+		DeleteHistories deleteHistories = question.delete(user);
 
 		// then
-		assertThat(question.isDeleted()).isTrue();
+		assertAll(
+			() -> assertThat(question.isDeleted()).isTrue(),
+			() -> assertThat(question.getAnswers()).isEmpty(),
+			() -> assertThat(deleteHistories.getValues())
+				.extracting(deleteHistory -> deleteHistory.getContentType() == ContentType.QUESTION)
+				.isNotNull()
+		);
+	}
+
+	@DisplayName("자신이 등록한 질문에 답변이 모두 자신이 등록한 경우, 질문을 삭제할 수 있다.")
+	@Test
+	void delete_on_self_answered() {
+		// given
+		User user = UserFixture.Y2O2U2N();
+		Question question = QuestionFixture.SELF_ANSWERED_Q(user);
+
+		// when
+		DeleteHistories deleteHistories = question.delete(user);
+
+		// then
+		assertAll(
+			() -> assertThat(question.isDeleted()).isTrue(),
+			() -> question.getAnswers().forEach((answer) -> assertThat(answer.isDeleted()).isTrue()),
+			() -> assertThat(deleteHistories.getValues())
+				.extracting(deleteHistory -> deleteHistory.getContentType() == ContentType.QUESTION)
+				.isNotNull()
+		);
+	}
+
+	@DisplayName("본인이 작성하지 않은 질문은 삭제할 수 없다.")
+	@Test
+	void delete_fail_on_not_question_owner() {
+		// given
+		Question question = QuestionFixture.Q1(UserFixture.Y2O2U2N());
+		User deleter = UserFixture.SEMISTONE222();
+
+		// when
+		assertThatThrownBy(() -> question.delete(deleter))
+			.isInstanceOf(CannotDeleteException.class);
+	}
+
+	@DisplayName("본인이 등록하지 않은 답변이 있을 경우, 질문을 삭제할 수 없다.")
+	@Test
+	void delete_fail_on_not_answer_owner() {
+		// given
+		User questionWriter = UserFixture.Y2O2U2N();
+		Question question = QuestionFixture.Q1(questionWriter);
+		List<Answer> answers = Arrays.asList(
+			AnswerFixture.A1(questionWriter),
+			AnswerFixture.A2(questionWriter),
+			AnswerFixture.A3(UserFixture.JUN222())
+		);
+		answers.forEach(question::addAnswer);
+
+		// when
+		assertThatThrownBy(() -> question.delete(questionWriter))
+			.isInstanceOf(CannotDeleteException.class);
 	}
 
 	@DisplayName("사용자가 질문의 주인인지 알 수 있다.")

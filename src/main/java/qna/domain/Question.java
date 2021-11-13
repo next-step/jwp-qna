@@ -1,10 +1,15 @@
 package qna.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -12,10 +17,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import qna.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
@@ -25,15 +31,14 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "contents")
-    @Lob
-    private String contents;
+    @Embedded
+    private QuestionContents contents;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
-    @Column(name = "title", nullable = false, length = 100)
-    private String title;
+    @Embedded
+    private QuestionTitle title;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -46,6 +51,7 @@ public class Question extends BaseEntity {
         throwOnEmptyAnswer(answer);
         throwOnAlreadyRegisteredAnswer(answer);
 
+        answers.add(answer);
         answer.setQuestion(this);
     }
 
@@ -65,13 +71,18 @@ public class Question extends BaseEntity {
 
     }
 
-    private Question(Long id, String contents, boolean deleted, String title, User writer, List<Answer> answers) {
+    private Question(
+        Long id,
+        QuestionContents contents,
+        boolean deleted,
+        QuestionTitle title,
+        User writer
+    ) {
         this.id = id;
         this.contents = contents;
         this.deleted = deleted;
         this.title = title;
         this.writer = writer;
-        this.answers = answers;
     }
 
     public static Question of(User writer, String title, String contents) {
@@ -81,7 +92,12 @@ public class Question extends BaseEntity {
     public static Question of(Long id, User writer, String title, String contents) {
         throwOnEmptyTitle(title);
 
-        return new Question(id, contents, false, title, writer, new ArrayList<>());
+        return new Question(
+            id,
+            QuestionContents.of(contents),
+            false,
+            QuestionTitle.of(title),
+            writer);
     }
 
     private static void throwOnEmptyTitle(String title) {
@@ -90,11 +106,43 @@ public class Question extends BaseEntity {
         }
     }
 
-    public void delete() {
+    public DeleteHistories delete(User deleter) {
+        throwOnNotQuestionOwner(deleter);
+        throwOnHavingAnyAnswersNotOwner();
         this.deleted = true;
+
+        DeleteHistory questionDeleteHistory = DeleteHistory.ofQuestion(deleter, this);
+        List<DeleteHistory> answerDeleteHistories = deleteAnswers(deleter);
+        List<DeleteHistory> deleteHistories = Stream.of(Collections.singletonList(questionDeleteHistory), answerDeleteHistories)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
+        return DeleteHistories.of(deleteHistories);
     }
 
-    public boolean isOwner(User user) {
+    private void throwOnNotQuestionOwner(User deleter) {
+        if (!isOwner(deleter)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private void throwOnHavingAnyAnswersNotOwner() {
+        if (hasAnyAnswersNotOwner()) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
+    private List<DeleteHistory> deleteAnswers(User deleter) {
+        return getNotDeletedAnswers().stream()
+            .map(answer -> answer.delete(deleter))
+            .collect(Collectors.toList());
+    }
+
+    private boolean hasAnyAnswersNotOwner() {
+        return getNotDeletedAnswers().stream()
+            .anyMatch(answer -> !answer.isOwner(writer));
+    }
+
+    boolean isOwner(User user) {
         return this.writer.equals(user);
     }
 
@@ -102,7 +150,7 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public String getContents() {
+    public QuestionContents getContents() {
         return contents;
     }
 
@@ -110,7 +158,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public String getTitle() {
+    public QuestionTitle getTitle() {
         return title;
     }
 
@@ -120,6 +168,12 @@ public class Question extends BaseEntity {
 
     public List<Answer> getAnswers() {
         return answers;
+    }
+
+    public List<Answer> getNotDeletedAnswers() {
+        return answers.stream()
+            .filter(answer -> !answer.isDeleted())
+            .collect(Collectors.toList());
     }
 
     @Override

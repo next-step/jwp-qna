@@ -40,8 +40,7 @@ class UserRepositoryTest {
 	@Test
 	void findByUserId() {
 		// given
-		User expected = UserFixture.SEMISTONE222();
-		userRepository.save(expected);
+		User expected = userRepository.save(UserFixture.SEMISTONE222());
 
 		// when
 		User actual = userRepository.findByUserId(expected.getUserId())
