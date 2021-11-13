@@ -95,6 +95,10 @@ public class Question extends BaseTimeEntity {
 			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 		}
 		deleted = true;
+		deleteAnswers(loginUser);
+	}
+
+	public void deleteAnswers(User loginUser) throws CannotDeleteException {
 		for (Answer answer : answers) {
 			answer.delete(loginUser);
 		}
