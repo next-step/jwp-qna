@@ -61,6 +61,10 @@ public class Question extends BaseEntity {
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
     }
+    
+    public void delete() {
+        this.deleted = true;
+    }
 
     public Long getId() {
         return id;
