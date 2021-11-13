@@ -104,7 +104,7 @@ public class Question extends AuditEntity {
 			"id=" + id +
 			", title='" + title + '\'' +
 			", contents='" + contents + '\'' +
-			", writer=" + writer +
+			", writerId=" + writer.getId() +
 			", deleted=" + deleted +
 			'}';
 	}

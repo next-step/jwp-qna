@@ -67,7 +67,7 @@ public class DeleteHistory extends AuditEntity {
 			"id=" + id +
 			", contentType=" + contentType +
 			", contentId=" + contentId +
-			", deletedById=" + deletedBy +
+			", deletedById=" + deletedBy.getId() +
 			", createDate=" + createdAt +
 			'}';
 	}
