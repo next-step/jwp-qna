@@ -142,13 +142,13 @@ public class QuestionTest {
 	@MethodSource(value = "deleteArguments")
 	void delete(Question question, User deleter) {
 		// given & when
-		List<DeleteHistory> deleteHistories = question.delete(deleter);
+		DeleteHistories deleteHistories = question.delete(deleter);
 
 		// then
 		assertAll(
 			() -> assertThat(question.isDeleted()).isTrue(),
 			() -> question.getAnswers().forEach((answer) -> assertThat(answer.isDeleted()).isTrue()),
-			() -> assertThat(deleteHistories)
+			() -> assertThat(deleteHistories.getValues())
 				.extracting(deleteHistory -> deleteHistory.getContentType() == ContentType.QUESTION)
 				.isNotNull()
 		);

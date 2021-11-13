@@ -106,17 +106,17 @@ public class Question extends BaseEntity {
         }
     }
 
-    public List<DeleteHistory> delete(User deleter) {
+    public DeleteHistories delete(User deleter) {
         throwOnNotQuestionOwner(deleter);
         throwOnHavingAnyAnswersNotOwner();
         this.deleted = true;
 
         DeleteHistory questionDeleteHistory = DeleteHistory.ofQuestion(deleter, this);
         List<DeleteHistory> answerDeleteHistories = deleteAnswers(deleter);
-
-        return Stream.of(Collections.singletonList(questionDeleteHistory), answerDeleteHistories)
+        List<DeleteHistory> deleteHistories = Stream.of(Collections.singletonList(questionDeleteHistory), answerDeleteHistories)
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
+        return DeleteHistories.of(deleteHistories);
     }
 
     private void throwOnNotQuestionOwner(User deleter) {
