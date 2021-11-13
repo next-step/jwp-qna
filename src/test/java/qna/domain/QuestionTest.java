@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 import qna.fixture.AnswerFixture;
+import qna.fixture.DeleteHistoryFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
@@ -99,7 +100,8 @@ class QuestionTest {
 
             // then
             assertThat(deleteHistories)
-                    .hasSize(1);
+                    .hasSize(1)
+                    .contains(DeleteHistoryFixture.create(ContentType.QUESTION, question.getId(), question.getWriter()));
 
             verifyQuestionDeleteStatus(question.getId(), true);
         }
@@ -118,7 +120,11 @@ class QuestionTest {
 
             // then
             assertThat(deleteHistories)
-                    .hasSize(2);
+                    .hasSize(2)
+                    .contains(
+                            DeleteHistoryFixture.create(ContentType.QUESTION, question.getId(), question.getWriter()),
+                            DeleteHistoryFixture.create(ContentType.ANSWER, answer.getId(), answer.getWriter())
+                    );
 
             verifyDeletedStatus(question.getId(), answer.getId(), true);
         }
