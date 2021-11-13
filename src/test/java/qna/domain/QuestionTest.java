@@ -92,5 +92,21 @@ public class QuestionTest {
         question.addAnswer(answer);
         assertThatThrownBy(() -> question.delete(UserTest.JENNIE)).isInstanceOf(CannotDeleteException.class);
     }
+    
+    @Test
+    @DisplayName("답변이 질문에 잘 달렸나 확인")
+    void 질문_답변_매핑_확인() {
+        Question question = new Question("질문할게요~", "이럴땐 어떻게 해야하나요?").writeBy(UserTest.JENNIE);
+        questions.save(question);
+        Answer firstAnswer = new Answer(UserTest.SOOKI, question, "이렇게 한번 해보세요!!");
+        Answer secondAnswer = new Answer(UserTest.JENNIE, question, "감사합니다~!");
+        answers.save(firstAnswer);
+        answers.save(secondAnswer);
+        question.addAnswer(firstAnswer);
+        question.addAnswer(secondAnswer);
+        Question actual = questions.findById(question.getId()).get();
+        Answers actualAnswers = actual.getAnswers();
+        assertThat(actualAnswers.countAnswers()).isEqualTo(2);
+    }
 
 }
