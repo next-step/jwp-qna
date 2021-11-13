@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
-class UserTest {
+public class UserTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
@@ -16,7 +16,7 @@ class UserTest {
     private UserRepository users;
 
     @Test
-     void save_사용자_생성() {
+    void save_사용자_생성() {
         User actual = new User("lsh", "lsh", "lsh", "lsh@gmail.com");
         User expected = users.save(actual);
         assertThat(expected).isEqualTo(actual);
