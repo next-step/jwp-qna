@@ -1,20 +1,31 @@
 package qna.domain;
 
 import qna.UnAuthorizedException;
+import qna.domain.common.BaseTimeEntity;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class User {
+@Entity
+@Table(name = "user")
+public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
 
-    private User() {
-    }
+    @Column(name = "user_id", length = 20, nullable = false)
+    private String userId;
+
+    @Column(name = "password", length = 20, nullable = false)
+    private String password;
+
+    @Column(name = "name", length = 20, nullable = false)
+    private String name;
+
+    @Column(name = "email", length = 50)
+    private String email;
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
@@ -26,6 +37,9 @@ public class User {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    protected User() {
     }
 
     public void update(User loginUser, User target) {
