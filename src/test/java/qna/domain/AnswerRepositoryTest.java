@@ -1,8 +1,6 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -13,9 +11,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @BeforeAll
+    void setUp() {
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
+        questionRepository.save(QuestionTest.Q1);
+        questionRepository.save(QuestionTest.Q2);
+    }
 
     @DisplayName("findByIdAndDeletedFalse 테스트")
     @Test
@@ -26,7 +37,7 @@ class AnswerRepositoryTest {
         assertThat(answerOptional).map(Answer::getId).hasValue(savedAnswer.getId());
     }
 
-    @DisplayName("findByIdAndDeletedFalse 테스트")
+    @DisplayName("findByQuestionIdAndDeletedFalse 테스트")
     @Test
     void findByQuestionIdAndDeletedFalse() {
         Answer savedAnswer1 = answerRepository.save(AnswerTest.A1);
