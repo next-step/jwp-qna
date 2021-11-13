@@ -16,10 +16,13 @@ public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long writerId;
     private Long questionId;
+
     @Lob
     private String contents;
+
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
