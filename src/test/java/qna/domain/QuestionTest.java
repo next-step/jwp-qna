@@ -77,7 +77,7 @@ public class QuestionTest {
         answers.save(answer);
         question.addAnswer(answer);
         question.delete();
-        assertThat(question.getAnswers()).hasSize(0);
+        assertThat(question.countAnswers()).isEqualTo(1);
     }
 
 }

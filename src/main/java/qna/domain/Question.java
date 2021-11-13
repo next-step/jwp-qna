@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -13,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Question extends BaseEntity {
@@ -34,8 +34,8 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
     
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<Answer>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -60,19 +60,19 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
         answer.toQuestion(this);
+        answers.add(answer);
     }
     
     public void deleteAnswer(Answer answer) {
-        answers.removeIf(ans -> ans.equals(answer));
+        answers.delete(answer);
     }
     
     public DeleteHistories delete() {
         this.deleted = true;
         List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
         deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, id, writer));
-        answers.stream().forEach(ans -> ans.delete());
+        answers.delete();
         return DeleteHistories.of(deleteHistories);
     }
 
@@ -96,13 +96,8 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
+    public int countAnswers() {
+        return answers.getAnswers().size();
     }
 
     @Override
