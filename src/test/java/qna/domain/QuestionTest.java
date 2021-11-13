@@ -4,9 +4,12 @@ import static org.assertj.core.api.Assertions.*;
 
 import javax.persistence.EntityManager;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import qna.CannotDeleteException;
 
 @DataJpaTest
 public class QuestionTest {
@@ -27,5 +30,19 @@ public class QuestionTest {
             .getSingleResult();
 
         assertThat(findQuestion).isEqualTo(question);
+    }
+
+    @Test
+    @DisplayName("question 작성자와 삭제요청자가 다른 경우 예외")
+    public void delete_예외테스트(){
+        User writer = new User("jerry92k", "12345678","jerrykim","jerry@gmail.com");
+        User deleter = new User("tom", "34323f","tom","tom@gmail.com");
+        em.persist(writer);
+        em.persist(deleter);
+        Question question = new Question("title1", "contents1").writeBy(writer);
+        em.persist(question);
+        assertThatThrownBy(()->{
+            question.delete(deleter);
+        }).isInstanceOf(CannotDeleteException.class);
     }
 }

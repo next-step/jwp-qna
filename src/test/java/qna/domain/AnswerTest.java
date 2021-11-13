@@ -4,11 +4,13 @@ import static org.assertj.core.api.Assertions.*;
 
 import javax.persistence.EntityManager;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -49,5 +51,32 @@ public class AnswerTest {
         assertThatThrownBy(()->{
             Answer answer = new Answer(UserTest.JAVAJIGI, null, "Answer entity unit test");
         }).isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    public void delete_작성자와_삭제요청자가_다른_경우_예외(){
+        User writer = new User("jerry92k", "12345678","jerrykim","jerry@gmail.com");
+        User deleter = new User("tom", "34323f","tom","tom@gmail.com");
+        em.persist(writer);
+        em.persist(deleter);
+
+        Answer answer = new Answer(deleter, QuestionTest.Q1, "Answer entity unit test");
+
+        assertThatThrownBy(()->{
+            answer.delete(writer);
+        }).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    public void delete_작성자와_삭제요청자가_다르지만_이미_삭제된_경우_정상_처리() throws CannotDeleteException {
+        User writer = new User("jerry92k", "12345678","jerrykim","jerry@gmail.com");
+        User deleter = new User("tom", "34323f","tom","tom@gmail.com");
+        em.persist(writer);
+        em.persist(deleter);
+
+        Answer answer = new Answer(writer, QuestionTest.Q1, "Answer entity unit test");
+        answer.delete(writer);
+        answer.delete(deleter);
+        assertThat(answer.isDeleted()).isTrue();
     }
 }
