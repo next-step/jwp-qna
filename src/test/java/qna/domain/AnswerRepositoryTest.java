@@ -30,7 +30,7 @@ public class AnswerRepositoryTest {
                 () -> assertThat(savedAnswer.getWriter()).isEqualTo(answer.getWriter()),
                 () -> assertThat(savedAnswer.getQuestion()).isEqualTo(answer.getQuestion()),
                 () -> assertThat(savedAnswer.getContents()).isEqualTo(answer.getContents()),
-                () -> assertThat(question.getAnswers()).contains(answer)
+                () -> assertThat(question.getAnswers().contains(answer)).isTrue()
         );
     }
 }

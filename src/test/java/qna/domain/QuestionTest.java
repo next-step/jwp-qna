@@ -39,7 +39,7 @@ public class QuestionTest {
         Question question = Question.of("title1", "contents1", writer);
         Answer answer = Answer.of(writer, question, "대답");
         question.addAnswer(answer);
-        assertThat(question.getAnswers()).hasSize(1);
+        assertThat(question.getAnswers().size()).isEqualTo(1);
     }
 
     @DisplayName("내 질문에 대한 답변이 아닌 것을 등록하면 오류를 던진다")

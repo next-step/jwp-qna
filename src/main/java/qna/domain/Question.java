@@ -3,8 +3,6 @@ package qna.domain;
 import qna.ForbiddenException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -23,8 +21,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -72,9 +70,7 @@ public class Question extends BaseEntity {
         if (!answer.hasSameQuestion(this)) {
             throw new ForbiddenException("이 질문과 다른 답변을 등록할 수 없습니다");
         }
-        if (!answers.contains(answer)) {
-            answers.add(answer);
-        }
+        answers.add(answer);
     }
 
     public String getTitle() {
@@ -97,7 +93,7 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 }
