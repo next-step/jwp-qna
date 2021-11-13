@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,7 +40,7 @@ public class Question extends BaseTimeEntity {
 	private User writer;
 
 	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-	private List<Answer> answers;
+	private List<Answer> answers = new ArrayList<>();
 
 	protected Question() {
 	}
@@ -65,6 +66,7 @@ public class Question extends BaseTimeEntity {
 	}
 
 	public void addAnswer(Answer answer) {
+		answers.add(answer);
 		answer.toQuestion(this);
 	}
 
@@ -92,7 +94,7 @@ public class Question extends BaseTimeEntity {
 		if(!isOwner(loginUser)){
 			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 		}
-		deleted = false;
+		deleted = true;
 		for (Answer answer : answers) {
 			answer.delete(loginUser);
 		}
