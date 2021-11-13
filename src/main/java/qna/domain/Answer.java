@@ -8,6 +8,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
@@ -36,9 +37,9 @@ public class Answer {
     private String contents;
     @CreatedDate
     @Column(nullable = false)
-    private ZonedDateTime createdAt;
+    private LocalDateTime createdAt;
     @LastModifiedDate
-    private ZonedDateTime updatedAt;
+    private LocalDateTime updatedAt;
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
