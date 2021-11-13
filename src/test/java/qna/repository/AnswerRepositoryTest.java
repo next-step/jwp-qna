@@ -75,11 +75,10 @@ class AnswerRepositoryTest {
 	}
 
 	@Test
-	void findByWriterIdAndQuestionId() {
+	void findByWriterAndQuestion() {
 		Answer savedAnswer = answerRepository.save(
 			new Answer(user, question, "Answer entity unit test"));
-		List<Answer> findAnswers = answerRepository.findByWriterIdAndQuestionId(user.getId(),
-			question.getId());
+		List<Answer> findAnswers = answerRepository.findByWriterAndQuestion(user,question);
 		assertThat(findAnswers.contains(savedAnswer)).isTrue();
 	}
 
@@ -98,6 +97,15 @@ class AnswerRepositoryTest {
 		Answer savedAnswer = answerRepository.save(
 			new Answer(user, question, content));
 		List<Answer> findAnswers = answerRepository.findByCreatedAtBetween(LocalDateTime.now().minusMinutes(30),LocalDateTime.now().plusMinutes(30));
+		assertThat(findAnswers.contains(savedAnswer)).isTrue();
+	}
+
+	@Test
+	void findByQuestionAndDeletedFalse() {
+		String content="Answer entity unit test";
+		Answer savedAnswer = answerRepository.save(
+			new Answer(user, question, content));
+		List<Answer> findAnswers = answerRepository.findByQuestionAndDeletedFalse(question);
 		assertThat(findAnswers.contains(savedAnswer)).isTrue();
 	}
 }
