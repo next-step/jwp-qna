@@ -65,11 +65,8 @@ public class AnswerRepositoryTest {
 	void 여러건을_저장할때_동일한_객체라면_동일한객체는_변경이_없다면_INSERT되지_않는다() {
 
 		Answer save = answerRepository.save(A1);
-		System.out.println("save = " + save);
 		Answer save1 = answerRepository.save(A2);
-		System.out.println("save1 = " + save1);
 		Answer save2 = answerRepository.save(A1);
-		System.out.println("save2 = " + save2);
 
 		List<Answer> expected = answerRepository.findAll();
 		Assertions.assertThat(expected.size()).isEqualTo(2);
