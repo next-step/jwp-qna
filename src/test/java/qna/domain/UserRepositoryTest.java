@@ -27,4 +27,8 @@ public class UserRepositoryTest {
         );
 
     }
+
+    @Test
+    void findByUserId() {
+    }
 }
