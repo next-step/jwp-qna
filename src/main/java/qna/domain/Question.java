@@ -1,7 +1,8 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -23,6 +24,9 @@ public class Question extends BaseEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }
@@ -31,6 +35,10 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     protected Question() {
@@ -47,6 +55,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
