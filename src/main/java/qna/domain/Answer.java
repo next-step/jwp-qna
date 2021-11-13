@@ -20,7 +20,8 @@ public class Answer extends BaseTime {
     @Column(name = "question_id")
     private Long questionId;
 
-    @Column(name = "contents", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "contents", columnDefinition = "longtext")
     private String contents;
 
     @Column(name = "deleted")
