@@ -1,5 +1,6 @@
 package qna.repos;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,17 @@ public class QuestionRepositoryTest {
     @Autowired
     private UserRepository users;
 
+    private User user;
+
+    @BeforeEach
+    void setUp() {
+        user = users.save(UserRepositoryTest.JAVAJIGI);
+        users.save(user);
+    }
+
     @DisplayName("Question 저장 테스트")
     @Test
     void save() {
-        User user = users.save(UserRepositoryTest.JAVAJIGI);
-        users.save(user);
         Question actual = questions.save(new Question("title1", "contents1").writeBy(user));
 
         assertAll(
@@ -44,8 +51,6 @@ public class QuestionRepositoryTest {
     @DisplayName("Question deleted=false 경우 테스트")
     @Test
     void findByIdAndDeletedFalse() {
-        User user = users.save(UserRepositoryTest.JAVAJIGI);
-        users.save(user);
         Question q1 = questions.save(new Question("title1", "contents1").writeBy(user));
         Question q2 = questions.save(new Question("title2", "contents2").writeBy(user));
 
@@ -67,8 +72,6 @@ public class QuestionRepositoryTest {
     @DisplayName("Question Answer 연관관계 테스트")
     @Test
     void saveQuestionAndAnswer() {
-        User user = users.save(UserRepositoryTest.JAVAJIGI);
-        users.save(user);
         Question q1 = questions.save(new Question("title1", "contents1").writeBy(user));
         q1.addAnswer(answers.save(new Answer(user, q1, "Answers Contents1")));
         Question actual = questions.save(q1);

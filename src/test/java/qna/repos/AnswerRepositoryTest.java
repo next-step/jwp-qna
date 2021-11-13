@@ -30,18 +30,21 @@ public class AnswerRepositoryTest {
     @Autowired
     EntityManager em;
 
+    private User user;
+
+    private Question question;
+
     @BeforeEach
     void setUp() {
-
+        user = users.save(UserRepositoryTest.JAVAJIGI);
+        users.save(user);
+        question = new Question("title1", "contents1").writeBy(user);
+        questions.save(question);
     }
 
     @DisplayName("Answer 저장 테스트")
     @Test
     void save() {
-        User user = users.save(UserRepositoryTest.JAVAJIGI);
-        users.save(user);
-        Question question = new Question("title1", "contents1").writeBy(user);
-        questions.save(question);
         Answer actual = answers.save(new Answer(user, question, "contents1"));
 
         assertAll(
@@ -53,10 +56,6 @@ public class AnswerRepositoryTest {
     @DisplayName("Answer deleted=false 경우 테스트")
     @Test
     void findByIdAndDeletedFalse() {
-        User user = users.save(UserRepositoryTest.JAVAJIGI);
-        users.save(user);
-        Question question = new Question("title1", "contents1").writeBy(user);
-        questions.save(question);
         Answer a1 = answers.save(new Answer(user, question, "contents1"));
         Answer a2 = answers.save(new Answer(user, question, "contents2"));
 
