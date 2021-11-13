@@ -72,6 +72,13 @@ JPA 엔티티 매핑에 대해 학습하기
 
 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
 
+- User entity
+    - [X] @Embedded Email 구현
+- [X] Answer 와 Question 연관관계 매핑(answer <-> question)
+- [X] Answer 와 User 연관관계 매핑(answer -> User)
+- [X] DeleteHistory 연관관계 매핑(DeleteHistory -> user)
+- [X] Question 연관관계 매핑(question -> user)
+- [ ] 연관 관계 테스트
 - [X] UserGuest.isGuestUser 테스트
 - UserRepository
     - [X] users countByUserId 메소드 테스트

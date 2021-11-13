@@ -5,6 +5,7 @@ import qna.UnAuthorizedException;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,13 +30,13 @@ public class User extends BaseEntity {
     @Column(name = "name", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "email", length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
+    public User(String userId, String password, String name, Email email) {
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -104,12 +105,12 @@ public class User extends BaseEntity {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
+    public void setEmail(Email changeEmail) {
+        this.email = changeEmail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public String getEmail() {
+        return email.getValue();
     }
 
     private static class GuestUser extends User {
@@ -126,7 +127,7 @@ public class User extends BaseEntity {
             ", userId='" + userId + '\'' +
             ", password='" + password + '\'' +
             ", name='" + name + '\'' +
-            ", email='" + email + '\'' +
+            ", email='" + email.getValue() + '\'' +
             '}';
     }
 

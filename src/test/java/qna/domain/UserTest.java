@@ -11,8 +11,8 @@ import qna.UnAuthorizedException;
 
 @DataJpaTest
 public class UserTest {
-    public static final User JAVAJIGI = new User("javajigi", "password", "javajigi", "javajigi@slipp.net");
-    public static final User SANJIGI = new User("sanjigi", "password", "sanjigi", "sanjigi@slipp.net");
+    public static final User JAVAJIGI = new User("javajigi", "password", "javajigi", new Email("javajigi@slipp.net"));
+    public static final User SANJIGI = new User("sanjigi", "password", "sanjigi", new Email("sanjigi@slipp.net"));
 
     @Test
     void 기본데이터_Not_Null_검증() {
@@ -29,8 +29,8 @@ public class UserTest {
     void update() {
         // given
         String changeName = "changeName";
-        String changeEmail = "changeEmail@email.co.kr";
-        User user = new User("wooobo", "password", "myname", "taeHwa@email.com");
+        Email changeEmail = new Email("changeEmail@email.co.kr");
+        User user = new User("wooobo", "password", "myname", new Email("taeHwa@email.com"));
         User changeUser = new User("wooobo", "password", changeName, changeEmail);
 
         // when
@@ -59,7 +59,7 @@ public class UserTest {
     @DisplayName("User update() 메소드 password 같지 않을 경우 예외 발생 체크")
     void update_matchUserId_password_MISSMATCH_exception() {
         // given
-        User targetUserAndMissMatchPW = new User("javajigi", "change", "javajigi", "javajigi@slipp.net");
+        User targetUserAndMissMatchPW = new User("javajigi", "change", "javajigi", new Email("javajigi@slipp.net"));
 
         assertThatExceptionOfType(UnAuthorizedException.class) // then
             .isThrownBy(() -> {
@@ -79,6 +79,16 @@ public class UserTest {
 
         // then
         assertThat(expect).isTrue();
+    }
+
+    @Test
+    @DisplayName("User - Email type 아닐 경우 예외 발생")
+    void not_email_save_fail() {
+        assertThatExceptionOfType(RuntimeException.class) // then
+            .isThrownBy(() -> {
+                // when
+                new User("javajigi", "change", "javajigi", new Email("javajigi"));
+            });
     }
 
 }

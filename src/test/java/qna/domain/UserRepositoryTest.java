@@ -3,21 +3,15 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
-
-import qna.UnAuthorizedException;
 
 @DataJpaTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -26,7 +20,7 @@ public class UserRepositoryTest {
     private static final String USERID2 = "userId2";
     private static final String PASSWORD = "PASSWORD";
     private static final String NAME = "MYNAME";
-    private static final String EMAIL = "email@gmail.com";
+    private static final Email EMAIL = new Email("javajigi@slipp.net");
 
     @Autowired
     UserRepository users;
@@ -40,7 +34,7 @@ public class UserRepositoryTest {
         // when
         User actual = users.save(USER1);
         User expect = users.findByUserId(USER1.getUserId()).get();
-
+        System.out.println(expect);
         // then
         assertThat(actual).isSameAs(expect);
     }
