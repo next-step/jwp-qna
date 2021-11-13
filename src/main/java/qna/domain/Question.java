@@ -15,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.CannotDeleteException;
+
 @Entity
 public class Question extends BaseEntity {
     @Id
@@ -68,7 +70,10 @@ public class Question extends BaseEntity {
         answers.delete(answer);
     }
     
-    public DeleteHistories delete() {
+    public DeleteHistories delete() throws CannotDeleteException {
+        if (answers.getAnswers().size() != 0) {
+            throw new CannotDeleteException("질문에 답변이 있어서 삭제 불가능");
+        }
         this.deleted = true;
         List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
         deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, id, writer));
