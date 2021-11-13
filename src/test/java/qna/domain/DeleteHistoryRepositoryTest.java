@@ -44,6 +44,7 @@ public class DeleteHistoryRepositoryTest {
     }
 
     @Test
+    @DisplayName("DeleteHistory 등록 테스트")
     public void T1_save() throws Exception {
         //GIVEN
         Question QUESTION_NO_ANSWER = questionRepository.save(new Question("title1", "contents1").writeBy(user));
@@ -54,6 +55,7 @@ public class DeleteHistoryRepositoryTest {
     }
 
     @Test
+    @DisplayName("DeleteHistory 에 추가한 Question, Answer는 deleted 컬럼이 true 값이어야 한다.")
     public void T2_save() throws Exception {
         //GIVEN
         Question QUESTION_WITH_OWN_ANSWER = questionRepository.save(new Question("title2", "contents2").writeBy(user));
