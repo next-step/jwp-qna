@@ -35,6 +35,10 @@ public class User {
   @JoinColumn(name="writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
   private final List<Answer> answers = new ArrayList<>();
 
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+  private final List<DeleteHistory> deleteHistories = new ArrayList<>();
+
   protected User() {}
 
   public User(String userId, String password, String name, String email) {

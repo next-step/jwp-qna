@@ -15,14 +15,15 @@ public class DeleteHistory {
 
   private Long contentId;
 
-  private Long deletedById;
+  @ManyToOne
+  private User deletedById;
 
   @Column(columnDefinition = "datetime(6)")
   private LocalDateTime createDate = LocalDateTime.now();
 
   protected DeleteHistory() {}
 
-  public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+  public DeleteHistory(ContentType contentType, Long contentId, User deletedById, LocalDateTime createDate) {
     this.contentType = contentType;
     this.contentId = contentId;
     this.deletedById = deletedById;
@@ -51,7 +52,7 @@ public class DeleteHistory {
       "id=" + id +
       ", contentType=" + contentType +
       ", contentId=" + contentId +
-      ", deletedById=" + deletedById +
+      ", deletedByUser=" + deletedById +
       ", createDate=" + createDate +
       '}';
   }
