@@ -48,7 +48,7 @@ public class DeleteHistoryRepositoryTest {
         //GIVEN
         Question QUESTION_NO_ANSWER = questionRepository.save(new Question("title1", "contents1").writeBy(user));
         //WHEN
-        List<DeleteHistory> deleteHistories = repository.saveAll(QUESTION_NO_ANSWER.delete(user));
+        List<DeleteHistory> deleteHistories = repository.saveAll(QUESTION_NO_ANSWER.delete(user).getDeleteHistoryList());
         //THEN
         assertThat(deleteHistories).hasSize(1);
     }
@@ -61,7 +61,7 @@ public class DeleteHistoryRepositoryTest {
         QUESTION_WITH_OWN_ANSWER.addAnswer(answerRepository.save(new Answer(user, QUESTION_WITH_OWN_ANSWER, "Answers Contents1")));
         QUESTION_WITH_OWN_ANSWER.addAnswer(answerRepository.save(new Answer(user, QUESTION_WITH_OWN_ANSWER, "Answers Contents2")));
         //THEN
-        List<DeleteHistory> findDeleteHistory = repository.saveAll(QUESTION_WITH_OWN_ANSWER.delete(user));
+        List<DeleteHistory> findDeleteHistory = repository.saveAll(QUESTION_WITH_OWN_ANSWER.delete(user).getDeleteHistoryList());
         assertThat(findDeleteHistory).hasSize(3);
         //WHEN
         Question question = questionRepository.findById(QUESTION_WITH_OWN_ANSWER.getId()).get();

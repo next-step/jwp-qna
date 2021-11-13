@@ -119,12 +119,12 @@ public class Question extends BaseEntity {
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(createDeleteHistory());
+        DeleteHistories deleteHistories = DeleteHistories.of();
+        deleteHistories.addDeleteHistory(createDeleteHistory());
         for(Answer answer : answers.deletedFalseAnswers()) {
-            deleteHistories.add(answer.delete(loginUser));
+            deleteHistories.addDeleteHistory(answer.delete(loginUser));
         }
         return deleteHistories;
     }

@@ -105,8 +105,8 @@ public class QuestionRepositoryTest {
 
         //THEN
         assertAll(
-                () -> assertThat(QUESTION_NO_ANSWER.delete(user1)).hasSize(1),
-                () -> assertThat(QUESTION_WITH_OWN_ANSWER.delete(user1)).hasSize(3)
+                () -> assertThat(QUESTION_NO_ANSWER.delete(user1).getDeleteHistoryList()).hasSize(1),
+                () -> assertThat(QUESTION_WITH_OWN_ANSWER.delete(user1).getDeleteHistoryList()).hasSize(3)
         );
         Question findQuestion1 = questionRepository.findById(QUESTION_NO_ANSWER.getId()).get();
         Question findQuestion2 = questionRepository.findById(QUESTION_WITH_OWN_ANSWER.getId()).get();
