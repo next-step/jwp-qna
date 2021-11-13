@@ -30,7 +30,7 @@ import qna.UnAuthorizedException;
  */
 @Entity
 @Table(indexes = @Index(columnList = "user_id", unique = true))
-public class User {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -48,11 +48,6 @@ public class User {
 
     @Column(length = 50)
     private String email;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private LocalDateTime updatedAt;
 
     protected User() {
     }
