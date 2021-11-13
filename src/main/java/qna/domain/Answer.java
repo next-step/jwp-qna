@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
@@ -18,7 +17,7 @@ import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends BaseTimeEntity {
+public class Answer extends BaseTimeEntity implements SavingDeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -66,11 +65,22 @@ public class Answer extends BaseTimeEntity {
         return this.getWriterId().equals(writer.getId());
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         setDeleted(true);
+
+        return toDeleteHistory();
+    }
+
+    @Override
+    public DeleteHistory toDeleteHistory() {
+        if (deleted) {
+            return new DeleteHistory(ContentType.ANSWER, id, writer);
+        }
+
+        throw new IllegalStateException("삭제시에만 기록을 남길 수 있습니다.");
     }
 
     public void toQuestion(Question question) {

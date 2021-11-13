@@ -1,13 +1,23 @@
 package qna.domain;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import qna.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
-public class Question extends BaseTimeEntity {
+public class Question extends BaseTimeEntity implements SavingDeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -41,6 +51,35 @@ public class Question extends BaseTimeEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
+        if (answer.getQuestion() != this) {
+            answer.setQuestion(this);
+        }
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        setDeleted(true);
+
+        return toDeleteHistory();
+    }
+
+    @Override
+    public DeleteHistory toDeleteHistory() {
+        if (deleted) {
+            return new DeleteHistory(ContentType.QUESTION, id, writer);
+        }
+
+        throw new IllegalStateException("삭제시에만 기록을 남길 수 있습니다.");
     }
 
     public Question writeBy(User writer) {
@@ -92,17 +131,6 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
-    public void addAnswer(Answer answer) {
-        this.answers.add(answer);
-        if (answer.getQuestion() != this) {
-            answer.setQuestion(this);
-        }
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
     @Override
     public String toString() {
         return "Question{" +
@@ -112,14 +140,5 @@ public class Question extends BaseTimeEntity {
             ", writerId=" + writer +
             ", deleted=" + deleted +
             '}';
-    }
-
-    public Question delete(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-        setDeleted(true);
-
-        return this;
     }
 }

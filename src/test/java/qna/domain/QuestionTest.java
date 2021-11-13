@@ -1,8 +1,8 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,11 +29,12 @@ public class QuestionTest {
     @DisplayName("자신의 질문만 삭제할 수 있다")
     void delete1() throws CannotDeleteException {
         User writer = new User(1L, "1", "password", "user1", "test@email.com");
-        TestDummy.QUESTION1.setWriter(writer);
+        Question question = new Question("title", "contents");
+        question.setWriter(writer);
 
-        Question deletedQuestion = TestDummy.QUESTION1.delete(writer);
+        question.delete(writer);
 
-        assertThat(deletedQuestion.isDeleted()).isTrue();
+        assertThat(question.isDeleted()).isTrue();
     }
 
     @Test
