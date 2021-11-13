@@ -1,18 +1,18 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import java.time.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.*;
+import org.springframework.data.jpa.domain.support.*;
 
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public abstract class BaseEntity {
     @CreatedDate
     @Column(nullable = false)
-    protected LocalDateTime createdDate;
+    protected LocalDateTime createdDate = LocalDateTime.now();
 
     @LastModifiedDate
     protected LocalDateTime modifiedDate;
