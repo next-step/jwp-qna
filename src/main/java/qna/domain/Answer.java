@@ -90,6 +90,9 @@ public class Answer extends BaseTimeEntity {
 	}
 
 	public void delete(User loginUser) throws CannotDeleteException {
+		if(isDeleted()){	/* loginUser와 다른 사용자 소유여도 이미 지워진 거면 exception 안나게 처리 */
+			return;
+		}
 		if (!isOwner(loginUser)) {
 			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 		}
