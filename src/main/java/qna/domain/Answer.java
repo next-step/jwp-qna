@@ -59,10 +59,6 @@ public class Answer extends BaseEntityTime {
         changeQuestion(question);
     }
 
-    public void toQuestion(Question question) {
-        this.question = question;
-    }
-
     public Long getId() {
         return id;
     }

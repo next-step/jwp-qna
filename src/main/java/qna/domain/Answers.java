@@ -3,6 +3,7 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -18,6 +19,12 @@ public class Answers {
 
     public Answers(List<Answer> answers) {
         this.answers = answers;
+    }
+
+    public void updateDeletedFalseAnswers() {
+        this.answers = answers.stream()
+            .filter(answer -> !answer.isDeleted())
+            .collect(Collectors.toList());
     }
 
     public void validateAnswersOwner(User owner) {

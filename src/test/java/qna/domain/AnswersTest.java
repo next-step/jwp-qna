@@ -100,6 +100,20 @@ class AnswersTest {
         assertThat(deleteHistories).extracting("contentType").containsOnly(ContentType.ANSWER);
     }
 
+    @Test
+    void updateDeletedFalseAnswers() {
+        // given
+        Answer deletedTrueAnswer = createAnswer(UserTest.JAVAJIGI, question);
+        deletedTrueAnswer.setDeleted(true);
+        question.addAnswer(deletedTrueAnswer);
+
+        // when
+        question.getAnswers().updateDeletedFalseAnswers();
+
+        // then
+        assertEquals(3, question.getAnswers().size());
+    }
+
     private Answer createAnswer(User writer, Question question) {
         return new Answer(writer, question, "contents");
     }
