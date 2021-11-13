@@ -70,9 +70,9 @@ public class Question extends BaseEntity {
         answers.delete(answer);
     }
     
-    public DeleteHistories delete() throws CannotDeleteException {
-        if (answers.getAnswers().size() != 0) {
-            throw new CannotDeleteException("질문에 답변이 있어서 삭제 불가능");
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        if (answers.getAnswers().size() != 0 && !loginUser.equals(writer)) {
+            throw new CannotDeleteException("질문에 다른사람의 답변이 있어서 삭제 불가능");
         }
         this.deleted = true;
         List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();

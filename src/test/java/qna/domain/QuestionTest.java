@@ -55,7 +55,7 @@ public class QuestionTest {
     void 삭제_상태_확인() throws CannotDeleteException {
         Question expected = new Question("질문할게요~", "이럴땐 어떻게 해야하나요?").writeBy(UserTest.JENNIE);
         questions.save(expected);
-        expected.delete();
+        expected.delete(UserTest.JENNIE);
         assertThat(questions.findById(expected.getId()).get().isDeleted()).isTrue();
     }
 
@@ -64,7 +64,7 @@ public class QuestionTest {
     void 삭제_이력_확인() throws CannotDeleteException {
         Question expected = new Question("질문할게요~", "이럴땐 어떻게 해야하나요?").writeBy(UserTest.JENNIE);
         questions.save(expected);
-        DeleteHistories deleteHistories = expected.delete();
+        DeleteHistories deleteHistories = expected.delete(UserTest.JENNIE);
         assertThat(deleteHistories.getDeleteHistories()).hasSize(1);
     }
 
@@ -76,19 +76,19 @@ public class QuestionTest {
         Answer answer = new Answer(UserTest.JENNIE, question, "이렇게 한번 해보세요!!");
         answers.save(answer);
         question.addAnswer(answer);
-        question.delete();
-        assertThat(question.countAnswers()).isEqualTo(1);
+        question.delete(UserTest.JENNIE);
+        assertThat(question.countAnswers()).isEqualTo(0);
     }
 
     @Test
-    @DisplayName("질문에 답변이 있으면 삭제 불가능")
+    @DisplayName("질문에 다른사람의 답변이 있으면 삭제 불가능")
     void 삭제시_답변_여부_확인() {
         Question question = new Question("질문할게요~", "이럴땐 어떻게 해야하나요?").writeBy(UserTest.JENNIE);
         questions.save(question);
         Answer answer = new Answer(UserTest.JENNIE, question, "이렇게 한번 해보세요!!");
         answers.save(answer);
         question.addAnswer(answer);
-        assertThatThrownBy(() -> question.delete()).isInstanceOf(CannotDeleteException.class);
+        assertThatThrownBy(() -> question.delete(UserTest.JAVAJIGI)).isInstanceOf(CannotDeleteException.class);
     }
 
 }
