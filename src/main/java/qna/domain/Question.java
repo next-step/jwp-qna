@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -18,7 +19,9 @@ public class Question extends BaseTimeEntity {
     @Column(columnDefinition = "longtext")
     private String contents;
 
-    private Long writerId;
+    @ManyToOne
+    private User writer;
+
     private boolean deleted = false;
 
     public Question(String title, String contents) {
@@ -35,12 +38,12 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -71,12 +74,8 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -89,12 +88,13 @@ public class Question extends BaseTimeEntity {
 
     @Override
     public String toString() {
-        return "Question{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", contents='" + contents + '\'' +
-            ", writerId=" + writerId +
-            ", deleted=" + deleted +
-            '}';
+        final StringBuilder sb = new StringBuilder("Question{");
+        sb.append("id=").append(id);
+        sb.append(", title='").append(title).append('\'');
+        sb.append(", contents='").append(contents).append('\'');
+        sb.append(", writer=").append(writer);
+        sb.append(", deleted=").append(deleted);
+        sb.append('}');
+        return sb.toString();
     }
 }

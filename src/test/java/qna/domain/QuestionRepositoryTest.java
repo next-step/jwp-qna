@@ -21,13 +21,17 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private User user;
     private LocalDateTime startTime;
 
     @BeforeEach
     void setUp() {
         startTime = LocalDateTime.now();
-        user = new User(1L, "userId", "password", "name", "email");
+        user = new User("userId", "password", "name", "email");
+        userRepository.save(user);
     }
 
     @DisplayName("질문 저장")
@@ -41,10 +45,12 @@ class QuestionRepositoryTest {
             () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
             () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
-            () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
+            () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
             () -> assertThat(actual.getCreatedAt()).isAfter(startTime),
             () -> assertThat(actual.getUpdatedAt()).isAfter(startTime)
         );
+
+        questionRepository.flush();
     }
 
     @DisplayName("삭제되지 않은 질문 조회")
@@ -69,13 +75,13 @@ class QuestionRepositoryTest {
         Question expected = new Question("title", "contents").writeBy(user);
         questionRepository.save(expected);
 
-        Question actual = questionRepository.findByIdAndDeletedFalse(1L).get();
+        Question actual = questionRepository.findByIdAndDeletedFalse(user.getId()).get();
 
         assertAll(
             () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
             () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
-            () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
+            () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
             () -> assertThat(actual.getCreatedAt()).isAfter(startTime),
             () -> assertThat(actual.getUpdatedAt()).isAfter(startTime)
         );
@@ -89,8 +95,26 @@ class QuestionRepositoryTest {
         questionRepository.save(question);
         question.setDeleted(true);
 
-        Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(1L);
+        Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(user.getId());
 
         assertThat(actual.isPresent()).isFalse();
+    }
+
+    @DisplayName("작성자로 질문 조회")
+    @Test
+    void findByWriter() {
+        Question expected = new Question("title", "contents").writeBy(user);
+        questionRepository.save(expected);
+
+        Question actual = questionRepository.findByWriter(user).get();
+
+        assertAll(
+            () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
+            () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
+            () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
+            () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
+            () -> assertThat(actual.getCreatedAt()).isAfter(startTime),
+            () -> assertThat(actual.getUpdatedAt()).isAfter(startTime)
+        );
     }
 }
