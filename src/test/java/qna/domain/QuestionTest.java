@@ -63,7 +63,6 @@ public class QuestionTest {
         questions.save(expected);
         DeleteHistories deleteHistories = expected.delete();
         deleteHistories.getDeleteHistories();
-        System.out.println("힝구  " + expected.getWriter().getId());
         assertThat(deleteHistories.getDeleteHistories()).hasSize(1);
     }
 
