@@ -1,43 +1,78 @@
 package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.stream.Stream;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
 
 @DataJpaTest
 @DisplayName("Answer 테스트")
 class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Autowired
     private AnswerRepository answerRepository;
 
-    private static Stream<Arguments> testAnswers() {
-        return Stream.of(Arguments.of(A1), Arguments.of(A2));
+    @DisplayName("Save 확인")
+    @Test
+    void save_확인() {
+        // given
+        User user = userRepository.save(UserTestFactory.create("user"));
+        Question question = questionRepository.save(QuestionTestFactory.create("title", "contents", user));
+        Answer answer = AnswerTestFactory.create(user, question, "Answers Contents");
+
+        // when
+        Answer result = answerRepository.save(answer);
+
+        assertThat(result)
+                .isEqualTo(answer);
     }
 
-    @DisplayName("Save 확인")
-    @ParameterizedTest(name = "{displayName} ({index}) -> param = [{arguments}]")
-    @MethodSource("testAnswers")
-    void save_확인(Answer expectedResult) {
-        Answer result = answerRepository.save(expectedResult);
+    @DisplayName("findById 확인")
+    @Test
+    void findById_확인() {
+        // given
+        User user = userRepository.save(UserTestFactory.create("user"));
+        Question question = questionRepository.save(QuestionTestFactory.create("title", "contents", user));
+        Answer answer = AnswerTestFactory.create(user, question, "Answers Contents");
 
-        assertAll(
-                () -> assertThat(result.getId()).isEqualTo(expectedResult.getId()),
-                () -> assertThat(result.getWriterId()).isEqualTo(expectedResult.getWriterId()),
-                () -> assertThat(result.getQuestionId()).isEqualTo(expectedResult.getQuestionId()),
-                () -> assertThat(result.getContents()).isEqualTo(expectedResult.getContents()),
-                () -> assertThat(result.isDeleted()).isEqualTo(expectedResult.isDeleted())
-        );
+        // when
+        Answer savedAnswer = answerRepository.save(answer);
+        Optional<Answer> actual = answerRepository.findById(savedAnswer.getId());
+
+        // then
+        assertThat(actual)
+                .isPresent()
+                .contains(savedAnswer);
+    }
+
+    @DisplayName("update 확인")
+    @Test
+    void update_확인() {
+        // given
+        User user = userRepository.save(UserTestFactory.create("user"));
+        Question question = questionRepository.save(QuestionTestFactory.create("title", "contents", user));
+        Answer answer = AnswerTestFactory.create(user, question, "Answers Contents");
+
+        // when
+        Answer savedAnswer = answerRepository.save(answer);
+        savedAnswer.setContents("Answers Contents2");
+
+        Optional<Answer> actual = answerRepository.findById(savedAnswer.getId());
+
+        // then
+        assertThat(actual)
+                .isPresent();
+
+        assertThat(actual.get().getContents())
+                .isEqualTo("Answers Contents2");
     }
 }
