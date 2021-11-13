@@ -16,12 +16,17 @@ class QuestionRepositoryTest {
 
 	@Autowired
 	QuestionRepository questions;
+	
+	@Autowired
+	UserRepository users;
 
 	@Test
 	@DisplayName("질문을 저장하면 ID가 존재해야 한다")
 	void saveTest() {
 		// given
-		Question question1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+		User writer1 = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+		writer1 = users.save(writer1);
+		Question question1 = new Question("title1", "contents1").writeBy(writer1);
 
 		// when
 		questions.save(question1);
@@ -35,9 +40,13 @@ class QuestionRepositoryTest {
 	void findByDeletedFalseTest() {
 
 		// given
-		Question question1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+		User writer1 = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+		User writer2 = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+		writer1 = users.save(writer1);
+		writer2 = users.save(writer2);
+		Question question1 = new Question("title1", "contents1").writeBy(writer1);
 		question1.setDeleted(true);
-		Question question2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+		Question question2 = new Question("title2", "contents2").writeBy(writer2);
 		questions.save(question1);
 		questions.save(question2);
 
@@ -57,8 +66,12 @@ class QuestionRepositoryTest {
 	void findByIdAndDeletedFalse() {
 
 		// given
-		Question question1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-		Question deletedQuestion = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+		User writer1 = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+		User writer2 = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+		writer1 = users.save(writer1);
+		writer2 = users.save(writer2);
+		Question question1 = new Question("title1", "contents1").writeBy(writer1);
+		Question deletedQuestion = new Question("title2", "contents2").writeBy(writer2);
 		deletedQuestion.setDeleted(true);
 		questions.save(question1);
 		questions.save(deletedQuestion);

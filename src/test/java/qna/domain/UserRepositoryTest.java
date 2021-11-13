@@ -25,7 +25,7 @@ class UserRepositoryTest {
 		User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
 
 		// when
-		users.save(user1);
+		user1 = users.save(user1);
 
 		// then
 		assertThat(user1.getId()).isNotNull();
@@ -37,16 +37,17 @@ class UserRepositoryTest {
 		// given
 		User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
 		User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
-		users.save(user1);
-		users.save(user2);
+		user1 = users.save(user1);
+		user2 = users.save(user2);
 
 		// when
 		Optional<User> result = users.findByUserId(user1.getUserId());
 
 		// then
+		User finalUser = user1;
 		assertAll(
 			() -> assertThat(result).isPresent(),
-			() -> assertThat(result).containsSame(user1)
+			() -> assertThat(result).containsSame(finalUser)
 		);
 	}
 
