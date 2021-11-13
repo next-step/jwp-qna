@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -17,6 +18,8 @@ import java.util.Objects;
 
 @Entity
 public class Answer extends BaseEntity {
+
+    public static final String ERROR_MESSAGE_DIFFERENT_OWNER_AND_LOGIN_USER = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,10 +39,6 @@ public class Answer extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
     public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
@@ -52,7 +51,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
-        setQuestion(question);
+        this.question = question;
         this.contents = contents;
     }
 
@@ -62,6 +61,19 @@ public class Answer extends BaseEntity {
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
+    }
+
+    public void checkAbleToDelete(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(ERROR_MESSAGE_DIFFERENT_OWNER_AND_LOGIN_USER);
+        }
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        checkAbleToDelete(loginUser);
+
+        this.setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter());
     }
 
     public Long getId() {

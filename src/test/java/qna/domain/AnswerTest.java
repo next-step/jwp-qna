@@ -1,9 +1,12 @@
 package qna.domain;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.fixture.AnswerFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
@@ -77,5 +80,45 @@ class AnswerTest {
 
         assertThat(actual.get().getContents())
                 .isEqualTo("Answers Contents2");
+    }
+
+    @DisplayName("delete 확인")
+    @Nested
+    class delete {
+        @DisplayName("owner가 맞음")
+        @Test
+        void owner가_맞음() throws CannotDeleteException {
+            // given
+            User user = userRepository.save(UserFixture.create("user"));
+            Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
+            Answer answer = answerRepository.save(AnswerFixture.create(user, question, "Answers Contents"));
+
+            // when
+            DeleteHistory deleteHistory = answer.delete(user);
+
+            // then
+            assertThat(answer.isDeleted())
+                    .isTrue();
+
+            assertThat(deleteHistory)
+                    .isNotNull();
+
+            assertThat(deleteHistory.getDeletedBy())
+                    .isEqualTo(user);
+        }
+
+        @DisplayName("owner가 아님")
+        @Test
+        void owner가_아님() {
+            // given
+            User user = userRepository.save(UserFixture.create("user"));
+            User loginUser = userRepository.save(UserFixture.create("loginUser"));
+            Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
+            Answer answer = answerRepository.save(AnswerFixture.create(user, question, "Answers Contents"));
+
+            // when, then
+            Assertions.assertThatThrownBy(() -> answer.delete(loginUser))
+                    .isInstanceOf(CannotDeleteException.class);
+        }
     }
 }
