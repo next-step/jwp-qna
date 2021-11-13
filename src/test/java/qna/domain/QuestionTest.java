@@ -2,14 +2,11 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 import java.util.List;
 import org.assertj.core.groups.Tuple;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 @DataJpaTest
 public class QuestionTest {
@@ -19,46 +16,39 @@ public class QuestionTest {
     @Autowired
     QuestionRepository questionRepository;
 
-    @MockBean
+    @Autowired
     UserRepository userRepository;
-
-    @BeforeEach
-    void setUp() {
-        목업_자바지기와_상지기_유저등록(UserTest.JAVAJIGI);
-        목업_자바지기와_상지기_유저등록(UserTest.SANJIGI);
-    }
-
-    private void 목업_자바지기와_상지기_유저등록(final User user) {
-        //given - save user
-        given(userRepository.save(user)).willReturn(user);
-
-        //when - save user
-        userRepository.save(user);
-
-        //then - save user
-        verify(userRepository, times(1)).save(user);
-    }
 
     @Test
     void save() {
+        //given
+        final User javajigi = 유저등록(UserTest.JAVAJIGI);
+        final User sanjigi = 유저등록(UserTest.SANJIGI);
+
         //when
-        final Question javajigiQuestion = questionRepository.save(Q1);
-        final Question sanjigiQuestion = questionRepository.save(Q2);
+        final Question javajigiQuestion = questionRepository.save(Q1.writeBy(javajigi));
+        final Question sanjigiQuestion = questionRepository.save(Q2.writeBy(sanjigi));
+
+        System.out.println(javajigiQuestion);
+        System.out.println(sanjigiQuestion);
 
         //then
         assertAll(
             () -> assertThat(javajigiQuestion).isNotNull(),
-            () -> assertThat(javajigiQuestion.isOwner(UserTest.JAVAJIGI)).isTrue(),
+            () -> assertThat(javajigiQuestion.isOwner(javajigi)).isTrue(),
             () -> assertThat(sanjigiQuestion).isNotNull(),
-            () -> assertThat(sanjigiQuestion.isOwner(UserTest.SANJIGI)).isTrue()
+            () -> assertThat(sanjigiQuestion.isOwner(sanjigi)).isTrue()
         );
     }
 
     @Test
     void findByDeletedFalse() {
         //given
-        final Question javajigiQuestion = questionRepository.save(Q1);
-        final Question sanjigiQuestion = questionRepository.save(Q2);
+        final User javajigi = 유저등록(UserTest.JAVAJIGI);
+        final User sanjigi = 유저등록(UserTest.SANJIGI);
+
+        final Question javajigiQuestion = questionRepository.save(Q1.writeBy(javajigi));
+        final Question sanjigiQuestion = questionRepository.save(Q2.writeBy(sanjigi));
 
         questionRepository.delete(sanjigiQuestion);
 
@@ -69,7 +59,7 @@ public class QuestionTest {
             () -> assertThat(actualQuestions).isNotEmpty(),
             () -> assertThat(actualQuestions).hasSize(1),
             () -> assertThat(actualQuestions)
-                .extracting(question -> question.isOwner(UserTest.JAVAJIGI), Question::isDeleted)
+                .extracting(question -> question.isOwner(javajigi), Question::isDeleted)
                 .containsExactly(new Tuple(true, false))
         );
     }
@@ -77,8 +67,11 @@ public class QuestionTest {
     @Test
     void findByIdAndDeletedFalse() {
         //given
-        final Question javajigiQuestion = questionRepository.save(Q1);
-        final Question sanjigiQuestion = questionRepository.save(Q2);
+        final User javajigi = 유저등록(UserTest.JAVAJIGI);
+        final User sanjigi = 유저등록(UserTest.SANJIGI);
+
+        final Question javajigiQuestion = questionRepository.save(Q1.writeBy(javajigi));
+        final Question sanjigiQuestion = questionRepository.save(Q2.writeBy(sanjigi));
 
         questionRepository.delete(sanjigiQuestion);
 
@@ -87,8 +80,12 @@ public class QuestionTest {
             questionRepository.findByIdAndDeletedFalse(javajigiQuestion.getId()).orElseThrow(RuntimeException::new);
 
         assertAll(
-            () -> assertThat(actualQuestion.isOwner(UserTest.JAVAJIGI)).isTrue(),
+            () -> assertThat(actualQuestion.isOwner(javajigi)).isTrue(),
             () -> assertThat(actualQuestion.isDeleted()).isFalse()
         );
+    }
+
+    private User 유저등록(final User user) {
+        return userRepository.save(user);
     }
 }
