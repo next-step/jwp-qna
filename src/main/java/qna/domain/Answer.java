@@ -4,10 +4,13 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -15,101 +18,103 @@ import qna.UnAuthorizedException;
 @Entity
 public class Answer extends AuditEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Lob
-    @Column
-    private String contents;
+	@Lob
+	@Column
+	private String contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+	@Column(nullable = false)
+	private boolean deleted = false;
 
-    @Column
-    private Long questionId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "fk_answer_to_question")
+	private Question question;
 
-    @Column
-    private Long writerId;
+	@Column
+	private Long writerId;
 
-    private Answer(){}
+	protected Answer() {
+	}
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
+	public Answer(User writer, Question question, String contents) {
+		this(null, writer, question, contents);
+	}
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+	public Answer(Long id, User writer, Question question, String contents) {
+		this.id = id;
 
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
+		if (Objects.isNull(writer)) {
+			throw new UnAuthorizedException();
+		}
 
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
+		if (Objects.isNull(question)) {
+			throw new NotFoundException();
+		}
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
-        this.contents = contents;
-    }
+		this.writerId = writer.getId();
+		this.question = question;
+		this.contents = contents;
+	}
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
+	public boolean isOwner(User writer) {
+		return this.writerId.equals(writer.getId());
+	}
 
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
-    }
+	public void toQuestion(Question question) {
+		this.question = question;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Long getWriterId() {
-        return writerId;
-    }
+	public Long getWriterId() {
+		return writerId;
+	}
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
+	public void setWriterId(Long writerId) {
+		this.writerId = writerId;
+	}
 
-    public Long getQuestionId() {
-        return questionId;
-    }
+	public Question getQuestion() {
+		return question;
+	}
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
+	public void setQuestion(Question question) {
+		this.question = question;
+	}
 
-    public String getContents() {
-        return contents;
-    }
+	public String getContents() {
+		return contents;
+	}
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
+	public void setContents(String contents) {
+		this.contents = contents;
+	}
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+	public boolean isDeleted() {
+		return deleted;
+	}
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "Answer{" +
+			"id=" + id +
+			", writerId=" + writerId +
+			", question=" + question +
+			", contents='" + contents + '\'' +
+			", deleted=" + deleted +
+			'}';
+	}
 }
