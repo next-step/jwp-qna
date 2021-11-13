@@ -38,7 +38,7 @@ public class UserTest {
     void update() {
         final User saved = userRepository.save(JAVAJIGI);
         saved.setUserId("jigi2");
-        User found = userRepository.findByUserId("jigi2").orElseGet(()->null);
+        final User found = userRepository.findByUserId("jigi2").orElseThrow(() -> new RuntimeException("테스트실패"));
         assertThat(found).isEqualTo(saved);
     }
 
