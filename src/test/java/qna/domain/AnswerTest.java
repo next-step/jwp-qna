@@ -15,6 +15,9 @@ public class AnswerTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
 
     @Test
     @DisplayName("Answer Entity Create 및 ID 생성 테스트")
@@ -48,5 +51,14 @@ public class AnswerTest {
         answerRepository.flush();
         final Answer found = answerRepository.findById(saved.getId()).orElseGet(() -> null);
         assertThat(found).isNull();
+    }
+
+    @Test
+    @DisplayName("Question Entity를 가지고 있는 Answer Entity Save 테스트")
+    void saveWithQuestion() {
+        final Question question = questionRepository.save(QuestionTest.Q1);
+        final Answer saved = answerRepository.save(A1);
+        final Answer found = answerRepository.findById(saved.getId()).orElseThrow(() -> new RuntimeException("테스트실패"));
+        assertThat(found.getQuestion()).isEqualTo(question);
     }
 }
