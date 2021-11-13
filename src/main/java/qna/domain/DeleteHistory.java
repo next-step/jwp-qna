@@ -3,6 +3,7 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -21,6 +22,8 @@ public class DeleteHistory {
 
     private Long contentId;
     private Long deletedById;
+
+    @Column(length = 6)
     private LocalDateTime createDate = LocalDateTime.now();
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
