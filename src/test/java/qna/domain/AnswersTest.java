@@ -24,7 +24,6 @@ public class AnswersTest {
         answers.add(new Answer(UserTest.JENNIE, QuestionTest.Q1, "이렇게 하시면 됩니다~"));
         answers.add(new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "이렇게 하시면 됩니다~2"));
         answers.add(new Answer(UserTest.SANJIGI, QuestionTest.Q1, "이렇게 하시면 됩니다~3"));
-        answers.delete();
-        assertThat(answers.getAnswers()).hasSize(0);
+        assertThat(answers.delete().countDeleteHistories()).isEqualTo(3);
     }
 }

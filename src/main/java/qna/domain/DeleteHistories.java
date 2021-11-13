@@ -23,4 +23,8 @@ public class DeleteHistories {
     public List<DeleteHistory> getDeleteHistories() {
         return deleteHistories;
     }
+    
+    public int countDeleteHistories() {
+        return deleteHistories.size();
+    }
 }
