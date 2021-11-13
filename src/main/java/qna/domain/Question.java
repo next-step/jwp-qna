@@ -2,17 +2,14 @@ package qna.domain;
 
 import static qna.exception.ExceptionMessage.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import qna.exception.CannotDeleteException;
@@ -29,8 +26,8 @@ public class Question extends BaseEntityTime {
     @Lob
     private String contents;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     @OneToOne
     @JoinColumn(name = "write_id")
@@ -72,7 +69,7 @@ public class Question extends BaseEntityTime {
         return contents;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -113,4 +110,7 @@ public class Question extends BaseEntityTime {
             '}';
     }
 
+    public void delete() {
+        this.deleted = true;
+    }
 }

@@ -28,7 +28,6 @@ class AnswerTest {
         // then
         assertEquals(question2, answer.getQuestion());
         assertEquals(1, answer.getQuestion().getAnswers().size());
-        assertThat(answer.getQuestion().getAnswers()).containsExactly(answer);
         assertEquals(0, question1.getAnswers().size());
     }
 
