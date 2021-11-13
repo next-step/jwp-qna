@@ -29,6 +29,7 @@ public class UserRepositoryTest {
 
     }
 
+    @DisplayName("검색 테스트")
     @Test
     void findByUserId() {
         User save = userRepository.save(UserTest.JAVAJIGI);
@@ -46,6 +47,4 @@ public class UserRepositoryTest {
         User result = userRepository.findByUserId("javajigi").orElseGet(() -> null);
         assertThat(result).isNull();
     }
-
-
 }
