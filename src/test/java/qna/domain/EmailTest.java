@@ -25,13 +25,23 @@ class EmailTest {
 		assertThat(email).isNotNull();
 	}
 
-	@DisplayName("이메일을 생성할 수 없다.")
+	@DisplayName("이메일은 이메일 형식을 따른다.")
 	@ParameterizedTest
 	@ValueSource(strings = {
 		"notemailformat",
+	})
+	void of_fail_invalid_format(String value) {
+		// given & when & then
+		assertThatThrownBy(() -> Email.of(value))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@DisplayName("이메일은 길이가 50자를 넘을 수 없다.")
+	@ParameterizedTest
+	@ValueSource(strings = {
 		"emailformat@buttoolonglonglonglonglonglonglonglong.com",
 	})
-	void of_fail(String value) {
+	void of_fail_too_long(String value) {
 		// given & when & then
 		assertThatThrownBy(() -> Email.of(value))
 			.isInstanceOf(IllegalArgumentException.class);

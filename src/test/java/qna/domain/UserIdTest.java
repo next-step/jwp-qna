@@ -25,14 +25,14 @@ class UserIdTest {
 		assertThat(userId).isNotNull();
 	}
 
-	@DisplayName("사용자 ID를 생성할 수 없다.")
+	@DisplayName("사용자 ID는 20자 이내여야 한다.")
 	@ParameterizedTest
 	@EmptySource
 	@NullSource
 	@ValueSource(strings = {
 		"111111111111111111111",
 	})
-	void of_fail(String value) {
+	void of_fail_too_long(String value) {
 		// given & when & then
 		assertThatThrownBy(() -> UserId.of(value))
 			.isInstanceOf(IllegalArgumentException.class);

@@ -24,14 +24,14 @@ class UserPasswordTest {
 		assertThat(password).isNotNull();
 	}
 
-	@DisplayName("사용자 비밀번호를 생성할 수 없다.")
+	@DisplayName("사용자 비밀번호는 20자 이내여아 한다.")
 	@ParameterizedTest
 	@EmptySource
 	@NullSource
 	@ValueSource(strings = {
 		"passwordpasswordpassword",
 	})
-	void of_fail(String value) {
+	void of_fail_too_long(String value) {
 		// given & when & then
 		assertThatThrownBy(() -> UserPassword.of(value))
 			.isInstanceOf(IllegalArgumentException.class);
