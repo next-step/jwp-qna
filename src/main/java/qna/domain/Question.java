@@ -5,7 +5,6 @@ import qna.ForbiddenException;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "question")
@@ -20,8 +19,9 @@ public class Question extends BaseEntity {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
@@ -29,30 +29,41 @@ public class Question extends BaseEntity {
     protected Question() {
     }
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    private Question(String title, String contents, User writer) {
+        this(null, title, contents, writer);
     }
 
-    public Question(Long id, String title, String contents) {
+    private Question(Long id, String title, String contents, User writer) {
         super(id);
-        validateTitle(title);
         this.title = title;
         this.contents = contents;
+        this.writer = writer;
     }
 
-    private void validateTitle(String title) {
+    public static Question of(String title, String contents, User writer) {
+        return of(null, title, contents, writer);
+    }
+
+    public static Question of(Long id, String title, String contents, User writer) {
+        validateTitle(title);
+        validateWriter(writer);
+        return new Question(id, title, contents, writer);
+    }
+
+    private static void validateWriter(User writer) {
+        if (writer == null) {
+            throw new IllegalArgumentException("작성자를 입력하세요");
+        }
+    }
+
+    private static void validateTitle(String title) {
         if (title == null || title.isEmpty()) {
             throw new IllegalArgumentException("title을 입력하세요");
         }
     }
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
-    }
-
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -74,8 +85,13 @@ public class Question extends BaseEntity {
         return contents;
     }
 
+    public User getWriter() {
+        return writer;
+    }
+
+    // TODO Question 변경 시 삭제
     public Long getWriterId() {
-        return writerId;
+        return writer.getId();
     }
 
     public boolean isDeleted() {
@@ -88,18 +104,5 @@ public class Question extends BaseEntity {
 
     public List<Answer> getAnswers() {
         return answers;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Question question = (Question) o;
-        return deleted == question.deleted && Objects.equals(contents, question.contents) && Objects.equals(title, question.title) && Objects.equals(writerId, question.writerId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(contents, deleted, title, writerId);
     }
 }

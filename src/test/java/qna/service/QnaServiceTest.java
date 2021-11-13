@@ -38,7 +38,7 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        question = Question.of(1L, "title1", "contents1", UserTest.JAVAJIGI);
         answer = Answer.of(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
     }
@@ -77,7 +77,7 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Question question1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Question question1 = Question.of("title1", "contents1", UserTest.JAVAJIGI);
         Answer answer2 = Answer.of(2L, UserTest.SANJIGI, question1, "Answers Contents1");
         question.addAnswer(answer2);
 

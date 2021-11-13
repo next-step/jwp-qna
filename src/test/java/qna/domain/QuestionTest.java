@@ -16,7 +16,7 @@ public class QuestionTest {
     void testCreate() {
         String title = "title1";
         String contents = "contents1";
-        Question question = new Question(title, contents);
+        Question question = Question.of(title, contents, UserTest.JAVAJIGI);
         assertAll(
             () -> assertThat(question.getTitle()).isEqualTo(title),
             () -> assertThat(question.getContents()).isEqualTo(contents),
@@ -25,20 +25,18 @@ public class QuestionTest {
         );
     }
 
-    @DisplayName("Question에 작성자를 입력한다")
+    @DisplayName("Question에 작성자가 없으면 오류를 던진다")
     @Test
     void testWriteBy() {
-        Question question = new Question("title1", "contents1");
-        User writer = new User("user1", "1234", "userName", "email");
-        question.writeBy(writer);
-        assertThat(question.getWriterId()).isEqualTo(writer.getId());
+        assertThatThrownBy(() -> Question.of("title1", "contents1", null))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("내 질문에 대한 답변을 등록한다")
     @Test
     void testAddAnswer() {
-        Question question = new Question("title1", "contents1");
         User writer = new User("user1", "1234", "userName", "email");
+        Question question = Question.of("title1", "contents1", writer);
         Answer answer = Answer.of(writer, question, "대답");
         question.addAnswer(answer);
         assertThat(question.getAnswers()).hasSize(1);
@@ -47,9 +45,9 @@ public class QuestionTest {
     @DisplayName("내 질문에 대한 답변이 아닌 것을 등록하면 오류를 던진다")
     @Test
     void testGivenAnotherAnswerThrowException() {
-        Question question1 = new Question("title1", "contents1");
-        Question question2 = new Question("title2", "contents3");
         User writer = new User("user1", "1234", "userName", "email");
+        Question question1 = Question.of("title1", "contents1", writer);
+        Question question2 = Question.of("title2", "contents3", writer);
         Answer answer = Answer.of(writer, question1, "대답");
         assertThatThrownBy(() -> question2.addAnswer(answer))
                 .isInstanceOf(ForbiddenException.class);

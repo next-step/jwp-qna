@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class AnswerTest {
-    private static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+    private static final Question Q1 = Question.of("title1", "contents1", UserTest.JAVAJIGI);
 
     @DisplayName("Answer를 객체 생성한다")
     @Test

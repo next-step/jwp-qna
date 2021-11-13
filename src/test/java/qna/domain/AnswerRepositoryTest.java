@@ -22,7 +22,7 @@ public class AnswerRepositoryTest {
     void testSave() {
         // Answer에 대한 학습테스트
         User writer = users.save(UserTest.JAVAJIGI);
-        Question question = questions.save(new Question("title1", "contents1").writeBy(writer));
+        Question question = questions.save(Question.of("title1", "contents1", writer));
         Answer answer = Answer.of(writer, question, "Answers Contents1");
         Answer savedAnswer = answers.save(answer);
         assertAll(
