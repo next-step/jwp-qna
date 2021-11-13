@@ -1,5 +1,9 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,7 +14,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
+
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -33,6 +40,9 @@ public class Question extends BaseEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
+    private List<Answer> answers = new ArrayList<>();
+    
     @PrePersist
     private void onCreateForQuestion() {
         this.deleted = false;
@@ -61,7 +71,26 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        this.answers.add(answer);
+    }
+
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        checkDeleteBy(loginUser);
+        setDeleted(true);
+
+        DeleteHistories deleteHistories = DeleteHistories.valueOf(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
+        
+        for (Answer answer : this.answers) {
+            deleteHistories.add(answer.delete(loginUser));
+        }
+
+        return deleteHistories;
+    }
+
+    public void checkDeleteBy(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public Long getId() {

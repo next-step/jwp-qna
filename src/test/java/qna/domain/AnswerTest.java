@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,11 +15,14 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
+
 @TestInstance(Lifecycle.PER_CLASS)
 @DataJpaTest
 public class AnswerTest {
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A3 = new Answer(UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents3");
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -35,6 +39,7 @@ public class AnswerTest {
         UserRepository.save(UserTest.SANJIGI);
 
         questionRepository.save(QuestionTest.Q1);
+        questionRepository.save(QuestionTest.Q2);
 
         answerRepository.save(A1);
         answerRepository.save(A2);
@@ -80,5 +85,38 @@ public class AnswerTest {
             () -> Assertions.assertThat(answers.get().getQuestionId()).isEqualTo(A1.getQuestionId()),
             () -> Assertions.assertThat(answers.get().getContents()).isEqualTo(A1.getContents())
         );
+    }
+
+    @DisplayName("로그인된 사용자가 입력한 답변이 아닌 것을 지울경우 에러가 발생한다.")
+    @Test
+    public void check_deleteError_notOnwer() {
+        // given
+        User loginUser = UserTest.SANJIGI;
+
+        // when
+        // then
+        Assertions.assertThatExceptionOfType(CannotDeleteException.class)
+                    .isThrownBy(() -> A1.delete(loginUser));
+    }
+
+    @DisplayName("로그인된 사용자가 입력한 답변을 지울 경우 삭제 상태값이 true가 되고 삭제이력을 반환한다.")
+    @Test
+    public void delete_Onwer() throws CannotDeleteException {
+        // given
+        User loginUser = UserTest.JAVAJIGI;
+
+        // when
+        DeleteHistory deleteHistory = A1.delete(loginUser);
+
+        // then
+        DeleteHistory expectedDeleteHistory = new DeleteHistory(ContentType.ANSWER, A1.getId(), A1.getWriter(), LocalDateTime.now());
+
+        assertAll(
+            () -> Assertions.assertThat(deleteHistory.getContentId()).isEqualTo(expectedDeleteHistory.getContentId()),
+            () -> Assertions.assertThat(deleteHistory.getContentType()).isEqualTo(expectedDeleteHistory.getContentType()),
+            () -> Assertions.assertThat(deleteHistory.getDeletedByUser()).isEqualTo(expectedDeleteHistory.getDeletedByUser())
+        );
+
+        Assertions.assertThat(A1.isDeleted()).isTrue();
     }
 }
