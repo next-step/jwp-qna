@@ -10,10 +10,6 @@ import java.util.Objects;
 @Table(name = "answer")
 public class Answer extends BaseTime {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @OneToOne
     @JoinColumn(name = "writer_id")
     private User writer;
@@ -30,7 +26,7 @@ public class Answer extends BaseTime {
     private boolean deleted = false;
 
     protected Answer() {
-
+        super();
     }
 
     public Answer(User writer, Question question, String contents) {
@@ -38,7 +34,7 @@ public class Answer extends BaseTime {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+        super(id);
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -62,11 +58,11 @@ public class Answer extends BaseTime {
     }
 
     public Long getId() {
-        return id;
+        return super.id;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        super.id = id;
     }
 
     public User getWriter() {
