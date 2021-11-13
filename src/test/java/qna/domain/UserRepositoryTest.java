@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -30,5 +31,21 @@ public class UserRepositoryTest {
 
     @Test
     void findByUserId() {
+        User save = userRepository.save(UserTest.JAVAJIGI);
+        User result = userRepository.findByUserId("javajigi").get();
+
+        assertThat(result).isEqualTo(save);
     }
+
+    @DisplayName("삭제 테스트")
+    @Test
+    void delete() {
+        User save = userRepository.save(UserTest.JAVAJIGI);
+        userRepository.delete(save);
+        userRepository.flush();
+        User found = userRepository.findByUserId("javajigi").orElseGet(() -> null);
+        assertThat(found).isNull();
+    }
+
+
 }
