@@ -35,7 +35,7 @@ public class Question extends BaseEntity {
     private boolean deleted = false;
     
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers;
+    private List<Answer> answers = new ArrayList<Answer>();
 
     protected Question() {
     }
@@ -60,13 +60,19 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
+    }
+    
+    public void deleteAnswer(Answer answer) {
+        answers.removeIf(ans -> ans.equals(answer));
     }
     
     public DeleteHistories delete() {
         this.deleted = true;
         List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
         deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, id, writer));
+        answers.stream().forEach(ans -> ans.delete());
         return DeleteHistories.of(deleteHistories);
     }
 
@@ -88,6 +94,15 @@ public class Question extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
     }
 
     @Override

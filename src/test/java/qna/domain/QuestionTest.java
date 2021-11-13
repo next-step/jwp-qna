@@ -21,6 +21,9 @@ public class QuestionTest {
     
     @Autowired
     private UserRepository users;
+    
+    @Autowired
+    private AnswerRepository answers;
 
     @BeforeEach
     void setUp() {
@@ -63,6 +66,18 @@ public class QuestionTest {
         questions.save(expected);
         DeleteHistories deleteHistories = expected.delete();
         assertThat(deleteHistories.getDeleteHistories()).hasSize(1);
+    }
+    
+    @Test
+    @DisplayName("질문을 삭제하면 답변도 삭제 상태로 변경")
+    void 삭제시_답변_삭제_확인() {
+        Question question = new Question("질문할게요~", "이럴땐 어떻게 해야하나요?").writeBy(UserTest.JENNIE);
+        questions.save(question);
+        Answer answer = new Answer(UserTest.JENNIE, question, "이렇게 한번 해보세요!!");
+        answers.save(answer);
+        question.addAnswer(answer);
+        question.delete();
+        assertThat(question.getAnswers()).hasSize(0);
     }
 
 }

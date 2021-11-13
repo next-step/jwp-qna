@@ -73,6 +73,7 @@ public class Answer extends BaseEntity {
         this.deleted = true;
         List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
         deleteHistories.add(DeleteHistory.of(ContentType.ANSWER, id, writer));
+        question.deleteAnswer(this);
         return DeleteHistories.of(deleteHistories);
     }
 
