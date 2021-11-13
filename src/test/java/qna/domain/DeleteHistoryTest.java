@@ -1,34 +1,27 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.*;
+import static qna.domain.ContentType.*;
+import static qna.domain.UserTest.*;
+
+import java.time.*;
+import java.util.stream.*;
+
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.time.LocalDateTime;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.ContentType.ANSWER;
-import static qna.domain.ContentType.QUESTION;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
+import org.junit.jupiter.params.*;
+import org.junit.jupiter.params.provider.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.boot.test.autoconfigure.orm.jpa.*;
 
 @DataJpaTest
 public class DeleteHistoryTest {
-    public static final DeleteHistory DH1 = new DeleteHistory(QUESTION, 1L, JAVAJIGI, LocalDateTime.of(2021, 11, 8, 0, 0, 0));
-    public static final DeleteHistory DH2 = new DeleteHistory(ANSWER, 5L, SANJIGI, LocalDateTime.of(2021, 11, 9, 0, 0, 0));
+    public static final DeleteHistory DH1 = new DeleteHistory(QUESTION, 1L, JAVAJIGI,
+        LocalDateTime.of(2021, 11, 8, 0, 0, 0));
+    public static final DeleteHistory DH2 = new DeleteHistory(ANSWER, 5L, SANJIGI,
+        LocalDateTime.of(2021, 11, 9, 0, 0, 0));
 
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
-
-    @BeforeAll
-    void setUp() {
-        deleteHistoryRepository.save(DH1);
-        deleteHistoryRepository.save(DH2);
-    }
 
     private static Stream<Arguments> provideDeleteHistories() {
         return Stream.of(
@@ -44,6 +37,5 @@ public class DeleteHistoryTest {
         DeleteHistory actual = deleteHistoryRepository.save(expected);
         assertThat(actual).isEqualTo(expected);
     }
-
 
 }
