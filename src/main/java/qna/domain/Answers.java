@@ -10,6 +10,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
+import qna.CannotDeleteException;
+
 @Embeddable
 public class Answers implements Serializable {
 
@@ -31,13 +33,25 @@ public class Answers implements Serializable {
         values.add(answer);
     }
 
-    public List<DeleteHistory> delete() {
+    public List<DeleteHistory> delete(User questionWriter) {
+        validWrittenByQuetionWriter(questionWriter);
+        
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : values) {
             deleteHistories.add(answer.delete(answer.getWriter()));
         }
 
         return deleteHistories;
+    }
+
+    private void validWrittenByQuetionWriter(User questionWriter) {
+        long answersByQuestionWriterCount = values.stream()
+            .filter(answer -> answer.isOwner(questionWriter))
+            .count();
+
+        if (answersByQuestionWriterCount != values.size()) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public void removeAnswer(Answer answer) {
