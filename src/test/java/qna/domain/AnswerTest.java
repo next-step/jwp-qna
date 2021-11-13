@@ -27,7 +27,7 @@ public class AnswerTest {
         Answer answer = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
         // when
-        answer.delete();
+        answer.delete(UserTest.SANJIGI);
 
         // then
         assertThat(answer.isDeleted()).isTrue();
@@ -47,7 +47,6 @@ public class AnswerTest {
     @DisplayName("toQuestion 메소드는 question 을 저장")
     void toQuestion() {
         // given
-
         // when
         A2.toQuestion(QuestionTest.Q2);
 

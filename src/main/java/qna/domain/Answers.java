@@ -1,8 +1,10 @@
 package qna.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -11,7 +13,7 @@ import javax.persistence.OneToMany;
 @Embeddable
 public class Answers implements Serializable {
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Answer> values;
 
     protected Answers() {
@@ -21,12 +23,27 @@ public class Answers implements Serializable {
         this.values = answers;
     }
 
+    public List<Answer> values() {
+        return values;
+    }
+
     public void add(Answer answer) {
         values.add(answer);
     }
 
-    public List<Answer> values() {
-        return values;
+    public List<DeleteHistory> delete() {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : values) {
+            deleteHistories.add(answer.delete(answer.getWriter()));
+        }
+
+        return deleteHistories;
+    }
+
+    public void removeAnswer(Answer answer) {
+        values = values.stream()
+            .filter(answer1 -> !answer1.equals(answer))
+            .collect(Collectors.toList());
     }
 
     @Override

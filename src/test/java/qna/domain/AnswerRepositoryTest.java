@@ -29,8 +29,8 @@ public class AnswerRepositoryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        user = users.save(new User("answerJavajigi", "password", "javajigi", "javajigi@slipp.net"));
-        question = new Question("title1", "contents1").writeBy(user);
+        user = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
+        question = questions.save(new Question("title1", "contents1").writeBy(user));
         answer = new Answer(question.getWriter(), question, "Answers Contents1");
     }
 
@@ -77,7 +77,7 @@ public class AnswerRepositoryTest {
     void findByQuestionIdAndDeletedFalse_deleted() {
         // given
         Answer expect = answers.save(answer);
-        expect.delete();
+        expect.delete(user);
 
         // when
         List<Answer> answerList = answers.findByQuestionAndDeletedFalse(expect.getQuestion());
@@ -94,7 +94,7 @@ public class AnswerRepositoryTest {
     void toQuestion() {
         // given
         Answer actual = answers.save(answer);
-        Question changeQuestion = new Question("질문변경할께요", "contents1").writeBy(user);
+        Question changeQuestion = questions.save(new Question("질문변경할께요", "contents1").writeBy(user));
 
         //when
         actual.toQuestion(changeQuestion);
@@ -103,5 +103,4 @@ public class AnswerRepositoryTest {
         // then
         assertThat(expect.getQuestion()).isEqualTo(changeQuestion);
     }
-
 }
