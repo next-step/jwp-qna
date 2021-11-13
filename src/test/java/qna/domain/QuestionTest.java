@@ -18,20 +18,26 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @AfterEach
     void tearDown() {
         questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
     void save() {
-        Question expected = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        User user = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        Question expected = new Question("title1", "contents1").writeBy(user);
 
         Question actual = questionRepository.save(expected);
 
         assertThat(actual.getId()).isNotNull();
         assertThat(actual.getTitle()).isEqualTo(expected.getTitle());
         assertThat(actual.getContents()).isEqualTo(expected.getContents());
+        assertThat(actual.getWriter()).isSameAs(user);
     }
 
     @Test
@@ -87,7 +93,8 @@ public class QuestionTest {
     }
 
     private Question saveNewDefaultQuestion() {
-        Question defaultQuestion = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        User user = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        Question defaultQuestion = new Question("title1", "contents1").writeBy(user);
         return questionRepository.save(defaultQuestion);
     }
 }

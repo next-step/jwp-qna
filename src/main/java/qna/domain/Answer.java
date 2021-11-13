@@ -4,9 +4,11 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -22,11 +24,13 @@ public class Answer extends BaseTimeEntity {
 
     private boolean deleted = false;
 
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Question question;
 
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User writer;
 
-    public Answer() {
+    protected Answer() {
     }
 
     public Answer(User writer, Question question, String contents) {
@@ -39,58 +43,46 @@ public class Answer extends BaseTimeEntity {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
-
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        toQuestion(question);
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        String writerUserId = this.writer.getUserId();
+        return writerUserId.equals(writer.getUserId());
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public User getWriter() {
+        return writer;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
     }
 
     public void setDeleted(boolean deleted) {
@@ -101,8 +93,8 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
             "id=" + id +
-            ", writerId=" + writerId +
-            ", questionId=" + questionId +
+            ", writerId=" + writer.getId() +
+            ", questionId=" + question.getId() +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';

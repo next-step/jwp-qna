@@ -30,7 +30,7 @@ public class User extends BaseTimeEntity {
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
-    public User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -83,40 +83,28 @@ public class User extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public String getEmail() {
+        return email;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getPassword() {
+        return password;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUserId() {
+        return userId;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
