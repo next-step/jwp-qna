@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static qna.exception.ExceptionMessage.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,5 +23,28 @@ public class QuestionTest {
         assertThatThrownBy(() -> Q1.validateQuestionOwner(UserTest.SANJIGI))
             .isInstanceOf(CannotDeleteException.class)
             .hasMessage(CANNOT_DELETE_QUESTION_MESSAGE.getMessage());
+    }
+
+    @DisplayName("질문을 삭제하면 답변들도 함께 삭제 된다")
+    @Test
+    void delete() {
+        // given
+        User writer = new User("writer", "123", "writer", "writer@mail.com");
+        Question question = createQuestion("question", "contents");
+        List<Answer> answerList = Arrays.asList(
+            AnswerTest.createAnswer(writer, question),
+            AnswerTest.createAnswer(writer, question));
+        question.setAnswers(new Answers(answerList));
+
+        // when
+        question.delete();
+
+        // then
+        assertTrue(question.isDeleted());
+        assertThat(answerList).extracting("deleted").containsExactly(true, true);
+    }
+
+    public static Question createQuestion(String title, String contents) {
+        return new Question(title, contents);
     }
 }

@@ -36,4 +36,10 @@ public class Answers {
     public int size() {
         return answers.size();
     }
+
+    public void deleteAll() {
+        for (Answer answer : answers) {
+            answer.setDeleted(true);
+        }
+    }
 }

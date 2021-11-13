@@ -6,6 +6,7 @@ import static qna.exception.ExceptionMessage.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,7 @@ import qna.exception.CannotDeleteException;
 
 class AnswersTest {
     private Answers answers;
+    private List<Answer> answerList;
     private Answer firstAnswer;
     private Question question;
 
@@ -23,12 +25,13 @@ class AnswersTest {
         User writer = UserTest.JAVAJIGI;
         question = createQuestion("question", "contents", writer);
         firstAnswer = createAnswer(writer, question);
-
-        this.answers = new Answers(new ArrayList<>(Arrays.asList(
+        answerList = Arrays.asList(
             firstAnswer,
             createAnswer(writer, question),
             createAnswer(writer, question)
-        )));
+        );
+
+        this.answers = new Answers(new ArrayList<>(answerList));
     }
 
     @DisplayName("질문자와 답변들의 답변자가 같은경우 예외가 발생하지 않는다")
@@ -76,6 +79,17 @@ class AnswersTest {
         answers.add(createAnswer(UserTest.JAVAJIGI, question));
         answers.add(createAnswer(UserTest.JAVAJIGI, question));
         assertEquals(5, answers.size());
+    }
+
+    @DisplayName("질문을 전체 삭제한다")
+    @Test
+    void deleteAll() {
+        // when
+        answers.deleteAll();
+
+        // then
+        assertThat(answerList).extracting("deleted")
+            .containsExactly(true, true, true);
     }
 
     private Answer createAnswer(User writer, Question question) {

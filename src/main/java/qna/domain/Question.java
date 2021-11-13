@@ -61,12 +61,8 @@ public class Question extends BaseEntityTime {
         return id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
+    public void setAnswers(Answers answers) {
+        this.answers = answers;
     }
 
     public Answers getAnswers() {
@@ -111,6 +107,7 @@ public class Question extends BaseEntityTime {
     }
 
     public void delete() {
-        this.deleted = true;
+        deleted = true;
+        answers.deleteAll();
     }
 }

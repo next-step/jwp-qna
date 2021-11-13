@@ -11,9 +11,6 @@ import org.junit.jupiter.api.Test;
 import qna.exception.CannotDeleteException;
 
 class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, Q1, "Answers Contents2");
-
     @DisplayName("changeQuestion 을 여러번 호출하면 기존 question 의 answer 는 지워진다.")
     @Test
     void changeQuestion() {
@@ -45,11 +42,7 @@ class AnswerTest {
             .hasMessage(CANNOT_DELETE_ANSWER_DIFFERENT_USER_MESSAGE.getMessage());
     }
 
-    private Question createQuestion(String title, String contents) {
-        return new Question(title, contents);
-    }
-
-    private Answer createAnswer(User writer, Question question) {
+    public static Answer createAnswer(User writer, Question question) {
         return new Answer(writer, question, "Contents");
     }
 }
