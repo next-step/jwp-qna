@@ -65,6 +65,12 @@ public class Answer extends AuditEntity {
 		return this.writer.equals(writer);
 	}
 
+	public Answer writerBy(User writer) {
+		this.writer = writer;
+		writer.getAnswers().add(this);
+		return this;
+	}
+
 	public void toQuestion(Question question) {
 		this.question = question;
 	}
@@ -81,7 +87,7 @@ public class Answer extends AuditEntity {
 		return writer;
 	}
 
-	public void setWriter(User writer) {
+	protected void setWriter(User writer) {
 		this.writer = writer;
 	}
 

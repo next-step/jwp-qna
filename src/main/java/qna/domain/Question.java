@@ -47,6 +47,7 @@ public class Question extends AuditEntity {
 
 	public Question writeBy(User writer) {
 		this.writer = writer;
+		writer.getQuestions().add(this);
 		return this;
 	}
 
@@ -86,7 +87,7 @@ public class Question extends AuditEntity {
 		return writer;
 	}
 
-	public void setWriter(User writer) {
+	protected void setWriter(User writer) {
 		this.writer = writer;
 	}
 
