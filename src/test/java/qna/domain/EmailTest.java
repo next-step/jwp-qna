@@ -28,7 +28,8 @@ class EmailTest {
 	@DisplayName("이메일을 생성할 수 없다.")
 	@ParameterizedTest
 	@ValueSource(strings = {
-		"111111111111111111111111111111111111111111111111111",
+		"notemailformat",
+		"emailformat@buttoolonglonglonglonglonglonglonglong.com",
 	})
 	void of_fail(String value) {
 		// given & when & then

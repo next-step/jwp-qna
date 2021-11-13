@@ -1,12 +1,15 @@
 package qna.domain;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
 public class Email {
+	private static final String EMPTY = "";
+	private static final Pattern PATTERN = Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$");
 	private static final int MAX_LENGTH = 50;
 
 	@Column(name = "email", length = MAX_LENGTH)
@@ -21,8 +24,12 @@ public class Email {
 	}
 
 	public static Email of(String value) {
-		if (value == null) {
-			return new Email(null);
+		if (value == null || value.isEmpty()) {
+			return new Email(EMPTY);
+		}
+
+		if (!PATTERN.matcher(value).matches()) {
+			throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
 		}
 
 		if (value.length() > MAX_LENGTH) {
