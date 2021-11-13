@@ -1,67 +1,74 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import javax.persistence.EntityManager;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.*;
+import static org.springframework.test.annotation.DirtiesContext.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class QuestionTest {
-  public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-  public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
-
   @Autowired
   QuestionRepository questionRepository;
-  @Autowired
-  EntityManager entityManager;
 
-  @AfterEach
-  void tearDown() {
-    questionRepository.deleteAll();
-    entityManager
-      .createNativeQuery("alter table question alter column `id` restart with 1")
-      .executeUpdate();
+  private Question q1;
+  private Question q2;
+
+  @BeforeEach
+  void setUp() {
+    q1 = QuestionFactory.create("test", "contents");
+    q2 = QuestionFactory.create("test q2", "contents q2");
   }
 
+  @DisplayName("질문을 저장한다.")
   @Test
   void save() {
-    assertThat(questionRepository.save(Q1).getId()).isEqualTo(Q1.getId());
-  }
+    Question actual = questionRepository.save(q1);
 
-  @Test
-  void findById() {
-    questionRepository.save(Q1);
-    questionRepository.save(Q2);
-
-    Question question = questionRepository.findById(1L).orElse(null);
-
-    Assertions.assertAll(
-      () -> assertThat(question.getId()).isEqualTo(Q1.getId()),
-      () -> assertThat(question.getTitle()).isEqualTo(Q1.getTitle()),
-      () -> assertThat(question.getContents()).isEqualTo(Q1.getContents())
+    assertAll(
+      () -> assertThat(actual.getId()).isNotNull(),
+      () -> assertThat(actual.getTitle()).isEqualTo(q1.getTitle()),
+      () -> assertThat(actual.getContents()).isEqualTo(q1.getContents())
     );
   }
 
+  @DisplayName("질문을 ID로 찾는다.")
+  @Test
+  void findById() {
+    questionRepository.save(q1);
+
+    Question question = questionRepository.findById(1L).orElse(null);
+
+    assertAll(
+      () -> assertThat(question.getId()).isNotNull(),
+      () -> assertThat(question.getTitle()).isEqualTo(q1.getTitle()),
+      () -> assertThat(question.getContents()).isEqualTo(q1.getContents())
+    );
+  }
+
+  @DisplayName("모든 질문을 검색한다.")
   @Test
   void findAll() {
-    questionRepository.save(Q1);
-    questionRepository.save(Q2);
+    questionRepository.save(q1);
+    questionRepository.save(q2);
 
     assertThat(questionRepository.findAll().size()).isEqualTo(2);
   }
 
+  @DisplayName("모든 질문을 삭제한다.")
   @Test
   void deleteAll() {
-    questionRepository.save(Q1);
-    questionRepository.save(Q2);
+    questionRepository.save(q1);
+    questionRepository.save(q2);
 
     assertThat(questionRepository.count()).isEqualTo(2L);
 
