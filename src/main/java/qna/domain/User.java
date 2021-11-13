@@ -4,19 +4,12 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import qna.UnAuthorizedException;
 
 @Entity
-public class User {
+public class User extends AbstractIdEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(nullable = false)
     private final LocalDateTime createdAt = LocalDateTime.now();

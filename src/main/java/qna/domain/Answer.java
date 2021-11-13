@@ -6,9 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -19,12 +16,7 @@ import qna.UnAuthorizedException;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Answer {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Answer extends AbstractIdEntity {
     @Lob
     private String contents;
 
@@ -53,7 +45,7 @@ public class Answer {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+        super.id = id;
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
