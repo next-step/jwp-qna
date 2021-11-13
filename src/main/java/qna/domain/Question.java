@@ -25,8 +25,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     private boolean deleted = false;
 
@@ -53,7 +53,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        this.answers.add(answer);
+        this.answers.addAnswer(answer);
         answer.toQuestion(this);
     }
 
@@ -111,13 +111,7 @@ public class Question extends BaseEntity {
     }
 
     public boolean hasAnswers() {
-        return answers.size() > 0;
-    }
-
-    public boolean checkAnswers(User loginUser) {
-        if (!hasAnswers()) return true;
-        return answers.stream().filter(answer -> !answer.isDeleted()).allMatch(answers -> isOwner(loginUser));
-
+        return answers.hasAnswers();
     }
 
     private DeleteHistory createDeleteHistory() {
@@ -129,8 +123,8 @@ public class Question extends BaseEntity {
         if (!isOwner(loginUser)) throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(createDeleteHistory());
-        for(Answer notDeletedAnswer : answers.stream().filter(answer -> !answer.isDeleted()).collect(Collectors.toList())) {
-            deleteHistories.add(notDeletedAnswer.delete(loginUser));
+        for(Answer answer : answers.deletedFalseAnswers()) {
+            deleteHistories.add(answer.delete(loginUser));
         }
         return deleteHistories;
     }
