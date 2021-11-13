@@ -1,9 +1,6 @@
 package qna.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -12,6 +9,7 @@ public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Enumerated(EnumType.STRING)
     private ContentType contentType;
     private Long contentId;
     private Long deletedById;
@@ -53,5 +51,13 @@ public class DeleteHistory {
                 ", deletedById=" + deletedById +
                 ", createDate=" + createDate +
                 '}';
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public Long getContentId() {
+        return this.contentId;
     }
 }
