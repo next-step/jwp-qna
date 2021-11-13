@@ -16,7 +16,7 @@ public class QuestionTest {
     @DisplayName("로그인 사용자와 질문한 사람이 같은 경우에만 삭제가 가능하다")
     @Test
     void validateQuestionOwner() {
-        assertTrue(Q1.validateQuestionOwner(UserTest.JAVAJIGI));
+        assertDoesNotThrow(() -> Q1.validateQuestionOwner(UserTest.JAVAJIGI));
         assertThatThrownBy(() -> Q1.validateQuestionOwner(UserTest.SANJIGI))
             .isInstanceOf(CannotDeleteException.class)
             .hasMessage(CANNOT_DELETE_QUESTION_MESSAGE.getMessage());

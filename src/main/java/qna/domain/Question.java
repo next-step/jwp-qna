@@ -92,11 +92,10 @@ public class Question extends BaseEntityTime {
         this.deleted = deleted;
     }
 
-    public boolean validateQuestionOwner(User owner) {
+    public void validateQuestionOwner(User owner) {
         if (!isOwner(owner)) {
             throw new CannotDeleteException(CANNOT_DELETE_QUESTION_MESSAGE.getMessage());
         }
-        return true;
     }
 
     private boolean isOwner(User writer) {
