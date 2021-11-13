@@ -2,10 +2,14 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Question extends AuditEntity {
@@ -24,8 +28,9 @@ public class Question extends AuditEntity {
 	@Column(length = 100, nullable = false)
 	private String title;
 
-	@Column
-	private Long writerId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+	private User writer;
 
 	protected Question() {
 	}
@@ -41,12 +46,12 @@ public class Question extends AuditEntity {
 	}
 
 	public Question writeBy(User writer) {
-		this.writerId = writer.getId();
+		this.writer = writer;
 		return this;
 	}
 
 	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
+		return this.writer.equals(writer);
 	}
 
 	public void addAnswer(Answer answer) {
@@ -77,12 +82,12 @@ public class Question extends AuditEntity {
 		this.contents = contents;
 	}
 
-	public Long getWriterId() {
-		return writerId;
+	public User getWriter() {
+		return writer;
 	}
 
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
+	public void setWriter(User writer) {
+		this.writer = writer;
 	}
 
 	public boolean isDeleted() {
@@ -99,7 +104,7 @@ public class Question extends AuditEntity {
 			"id=" + id +
 			", title='" + title + '\'' +
 			", contents='" + contents + '\'' +
-			", writerId=" + writerId +
+			", writer=" + writer +
 			", deleted=" + deleted +
 			'}';
 	}

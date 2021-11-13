@@ -28,9 +28,9 @@ class AnswerRepositoryTest {
 	void saveTest() {
 		// given
 		User writer1 = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+		writer1 = users.save(writer1);
 		Question q1 = new Question("title1", "contents1").writeBy(writer1);
 		q1 = questions.save(q1);
-		writer1 = users.save(writer1);
 		Answer answer = new Answer(writer1, q1, "Answers Contents1");
 
 		// when
