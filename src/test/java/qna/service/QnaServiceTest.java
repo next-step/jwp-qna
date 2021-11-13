@@ -8,18 +8,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.domain.Answer;
-import qna.domain.AnswerRepository;
-import qna.fixture.AnswerFixture;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
-import qna.fixture.QuestionFixture;
 import qna.domain.User;
+import qna.fixture.AnswerFixture;
+import qna.fixture.DeleteHistoryFixture;
+import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +31,6 @@ import static org.mockito.Mockito.when;
 class QnaServiceTest {
     @Mock
     private QuestionRepository questionRepository;
-
-    @Mock
-    private AnswerRepository answerRepository;
 
     @Mock
     private DeleteHistoryService deleteHistoryService;
@@ -52,8 +48,7 @@ class QnaServiceTest {
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId()))
                 .thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId()))
-                .thenReturn(Collections.singletonList(answer));
+
         assertThat(question.isDeleted())
                 .isFalse();
 
@@ -91,8 +86,6 @@ class QnaServiceTest {
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId()))
                 .thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId()))
-                .thenReturn(Collections.singletonList(answer));
 
         qnaService.deleteQuestion(user, question.getId());
 
@@ -119,8 +112,6 @@ class QnaServiceTest {
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId()))
                 .thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId()))
-                .thenReturn(Arrays.asList(answer1, answer2));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(user1, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
@@ -128,8 +119,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories(Question question, Answer answer) {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter())
+                DeleteHistoryFixture.create(ContentType.QUESTION, question.getId(), question.getWriter()),
+                DeleteHistoryFixture.create(ContentType.ANSWER, answer.getId(), answer.getWriter())
         );
 
         verify(deleteHistoryService)
