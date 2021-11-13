@@ -1,8 +1,8 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +20,8 @@ public class AnswerTest {
 
         assertAll(
             () -> assertThat(answer.getQuestion().getId()).isEqualTo(question.getId()),
-            () -> assertThat(question.getAnswers().size()).isEqualTo(1),
-            () -> assertThat(question.getAnswers().get(0).getId()).isEqualTo(answer.getId())
+            () -> assertThat(question.getAnswers().getValues().size()).isEqualTo(1),
+            () -> assertThat(question.getAnswers().getValues().get(0).getId()).isEqualTo(answer.getId())
         );
     }
 
