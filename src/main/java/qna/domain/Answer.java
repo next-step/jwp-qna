@@ -24,7 +24,7 @@ public class Answer extends BaseTimeEntity {
     @Column(name = "id")
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
@@ -102,7 +102,11 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void setQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().remove(this);
+        }
         this.question = question;
+        question.addAnswer(this);
     }
 
     public String getContents() {

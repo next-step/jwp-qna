@@ -24,21 +24,22 @@ public class AnswerRepositoryTest {
     @Test
     void save() {
         User savedQuestionWriter = userRepository.save(TestDummy.USER_SANJIGI);
-        TestDummy.QUESTION1.setWriter(savedQuestionWriter);
-        Question savedQuestion = questionRepository.save(TestDummy.QUESTION1);
+        Question question = new Question("question", "contents");
+        question.setWriter(savedQuestionWriter);
+        Question savedQuestion = questionRepository.save(question);
         User savedAnswerWriter = userRepository.save(TestDummy.USER_JAVAJIGI);
-        TestDummy.ANSWER1.setQuestion(savedQuestion);
-        TestDummy.ANSWER1.setWriter(savedAnswerWriter);
+        Answer answer = new Answer(TestDummy.USER_JAVAJIGI, savedQuestion, "answer contents");
+        answer.setWriter(savedAnswerWriter);
 
-        Answer savedAnswer = answerRepository.save(TestDummy.ANSWER1);
+        Answer savedAnswer = answerRepository.save(answer);
 
         assertAll(
-            () -> assertThat(savedAnswer.getWriterId()).isEqualTo(TestDummy.ANSWER1.getWriterId()),
-            () -> assertThat(savedAnswer.getQuestion().getTitle()).isEqualTo(TestDummy.QUESTION1.getTitle()),
-            () -> assertThat(savedAnswer.getQuestion().getContents()).isEqualTo(TestDummy.QUESTION1.getContents()),
-            () -> assertThat(savedAnswer.getQuestion().getWriter()).isEqualTo(TestDummy.QUESTION1.getWriter()),
-            () -> assertThat(savedAnswer.getContents()).isEqualTo(TestDummy.ANSWER1.getContents()),
-            () -> assertThat(savedAnswer.isDeleted()).isEqualTo(TestDummy.ANSWER1.isDeleted()),
+            () -> assertThat(savedAnswer.getWriterId()).isEqualTo(answer.getWriterId()),
+            () -> assertThat(savedAnswer.getQuestion().getTitle()).isEqualTo(question.getTitle()),
+            () -> assertThat(savedAnswer.getQuestion().getContents()).isEqualTo(question.getContents()),
+            () -> assertThat(savedAnswer.getQuestion().getWriter()).isEqualTo(question.getWriter()),
+            () -> assertThat(savedAnswer.getContents()).isEqualTo(answer.getContents()),
+            () -> assertThat(savedAnswer.isDeleted()).isEqualTo(answer.isDeleted()),
             () -> assertThat(savedAnswer.getCreatedDateTime()).isBefore(LocalDateTime.now())
         );
     }
@@ -46,23 +47,24 @@ public class AnswerRepositoryTest {
     @Test
     void read() {
         User savedQuestionWriter = userRepository.save(TestDummy.USER_SANJIGI);
-        TestDummy.QUESTION1.setWriter(savedQuestionWriter);
-        Question savedQuestion = questionRepository.save(TestDummy.QUESTION1);
+        Question question = new Question("question", "contents");
+        question.setWriter(savedQuestionWriter);
+        Question savedQuestion = questionRepository.save(question);
         User savedAnswerWriter = userRepository.save(TestDummy.USER_JAVAJIGI);
-        TestDummy.ANSWER1.setQuestion(savedQuestion);
-        TestDummy.ANSWER1.setWriter(savedAnswerWriter);
-        Long savedAnswerId = answerRepository.save(TestDummy.ANSWER1).getId();
+        Answer answer = new Answer(TestDummy.USER_JAVAJIGI, savedQuestion, "answer contents");
+        answer.setWriter(savedAnswerWriter);
+        Long savedAnswerId = answerRepository.save(answer).getId();
 
         Answer savedAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswerId).get();
 
         assertAll(
             () -> assertThat(savedAnswer.getId()).isEqualTo(savedAnswer.getId()),
-            () -> assertThat(savedAnswer.getWriterId()).isEqualTo(TestDummy.ANSWER1.getWriterId()),
-            () -> assertThat(savedAnswer.getQuestion().getTitle()).isEqualTo(TestDummy.QUESTION1.getTitle()),
-            () -> assertThat(savedAnswer.getQuestion().getContents()).isEqualTo(TestDummy.QUESTION1.getContents()),
-            () -> assertThat(savedAnswer.getQuestion().getWriter()).isEqualTo(TestDummy.QUESTION1.getWriter()),
-            () -> assertThat(savedAnswer.getContents()).isEqualTo(TestDummy.ANSWER1.getContents()),
-            () -> assertThat(savedAnswer.isDeleted()).isEqualTo(TestDummy.ANSWER1.isDeleted()),
+            () -> assertThat(savedAnswer.getWriterId()).isEqualTo(answer.getWriterId()),
+            () -> assertThat(savedAnswer.getQuestion().getTitle()).isEqualTo(question.getTitle()),
+            () -> assertThat(savedAnswer.getQuestion().getContents()).isEqualTo(question.getContents()),
+            () -> assertThat(savedAnswer.getQuestion().getWriter()).isEqualTo(question.getWriter()),
+            () -> assertThat(savedAnswer.getContents()).isEqualTo(answer.getContents()),
+            () -> assertThat(savedAnswer.isDeleted()).isEqualTo(answer.isDeleted()),
             () -> assertThat(savedAnswer.getCreatedDateTime()).isBefore(LocalDateTime.now())
         );
     }
