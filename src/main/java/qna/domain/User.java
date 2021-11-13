@@ -30,12 +30,6 @@ public class User extends BaseEntity {
     private String name;
     
     private String email;
-    
-    @OneToMany(mappedBy = "writer")
-    private List<Answer> answers;
-    
-    @OneToMany(mappedBy = "writer")
-    private List<Question> questions;
 
     protected User() {
     }
