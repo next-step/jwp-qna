@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -29,6 +30,7 @@ class QuestionRepositoryTest {
         user = new User(1L, "userId", "password", "name", "email");
     }
 
+    @DisplayName("질문 저장")
     @Test
     void save() {
         Question expected = new Question("title", "contents").writeBy(user);
@@ -45,6 +47,7 @@ class QuestionRepositoryTest {
         );
     }
 
+    @DisplayName("삭제되지 않은 질문 조회")
     @Test
     void findByDeletedFalse() {
         Question expected1 = new Question("title1", "contents1").writeBy(user);
@@ -60,6 +63,7 @@ class QuestionRepositoryTest {
         assertIterableEquals(notDeletedQuestions, Arrays.asList(expected1, expected2));
     }
 
+    @DisplayName("삭제되지 않은 질문 id로 조회")
     @Test
     void findByIdAndDeletedFalse_exists() {
         Question expected = new Question("title", "contents").writeBy(user);
@@ -77,6 +81,7 @@ class QuestionRepositoryTest {
         );
     }
 
+    @DisplayName("삭제되지 않은 질문 id로 조회하여 존재하지 않는 케이스")
     @Test
     void findByIdAndDeletedFalse_notExists() {
         Question question = new Question("title", "contents").writeBy(user);

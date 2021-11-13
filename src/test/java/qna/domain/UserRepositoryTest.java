@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -24,6 +25,7 @@ class UserRepositoryTest {
         startTime = LocalDateTime.now();
     }
 
+    @DisplayName("유저 저장")
     @Test
     void save() {
         User expected = new User("userId", "password", "name", "email");
@@ -41,6 +43,7 @@ class UserRepositoryTest {
         );
     }
 
+    @DisplayName("id로 유저 조회")
     @Test
     void findByUserId() {
         User expected = new User("userId", "password", "name", "email");
