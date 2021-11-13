@@ -10,12 +10,12 @@ import java.util.Objects;
 @Table(name = "answer")
 public class Answer extends BaseTime {
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
 
-    @ManyToOne
-    @JoinColumn(name = "question_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
     @Lob
@@ -71,10 +71,6 @@ public class Answer extends BaseTime {
 
     public void setWriter(User writer) {
         this.writer = writer;
-    }
-
-    public Long getWriterId() {
-        return writer.getId();
     }
 
     public Question getQuestion() {

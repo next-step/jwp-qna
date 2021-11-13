@@ -29,9 +29,11 @@ public class AnswerTest {
     @Test
     void saveAnswerTest() {
         A1.setWriter(users.save(A1.getWriter()));
+        A1.getQuestion().setWriter(A1.getWriter());
         A1.setQuestion(questions.save(A1.getQuestion()));
 
         A2.setWriter(users.save(A2.getWriter()));
+        A2.getQuestion().setWriter(A2.getWriter());
         A2.setQuestion(questions.save(A2.getQuestion()));
 
         Answer actualAnswer1 = answers.save(A1);
@@ -58,7 +60,7 @@ public class AnswerTest {
     @Test
     void findByContentsTest() {
         A1.setWriter(users.save(A1.getWriter()));
-        A1.setQuestion(questions.save(A1.getQuestion()));
+        questions.save(A1.getQuestion());
         final Answer savedAnswer = answers.save(A1);
         Answer actualAnswer = answers.findByContents(A1.getContents())
                 .orElseThrow(() -> new IllegalArgumentException("answer가 존재하지 않습니다."));
@@ -73,6 +75,7 @@ public class AnswerTest {
     @Test
     void updateAnswerTest() {
         A1.setWriter(users.save(A1.getWriter()));
+        A1.getQuestion().setWriter(A1.getWriter());
         A1.setQuestion(questions.save(A1.getQuestion()));
         final Answer savedAnswer = answers.save(A1);
         savedAnswer.setDeleted(true);

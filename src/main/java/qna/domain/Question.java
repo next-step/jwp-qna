@@ -13,7 +13,7 @@ public class Question extends BaseTime {
     @Column(columnDefinition = "longtext")
     private String contents;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
 
@@ -77,10 +77,6 @@ public class Question extends BaseTime {
 
     public void setWriter(User writer) {
         this.writer = writer;
-    }
-
-    public Long getWriterId() {
-        return writer.getId();
     }
 
     public boolean isDeleted() {
