@@ -1,6 +1,7 @@
 package qna.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,11 +12,13 @@ import qna.domain.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -85,6 +88,16 @@ class QnaServiceTest {
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @DisplayName("답변이 없는 경우 삭제가 가능하다")
+    @Test
+    void delete_답변이_없는_경우() {
+        question.setAnswers(new Answers(Collections.emptyList()));
+
+        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+
+        assertDoesNotThrow(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId()));
     }
 
     private void verifyDeleteHistories() {
