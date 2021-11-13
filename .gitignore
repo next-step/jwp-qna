@@ -36,3 +36,6 @@ out/
 
 ### VS Code ###
 .vscode/
+/src/**/java/subway/
+/src/**/resources/
+!/src/**/resources/application.properties
