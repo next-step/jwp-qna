@@ -1,16 +1,41 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import static qna.ErrorMessage.*;
 
 import java.util.Objects;
 
-public class Answer {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+
+import qna.QuestionNotFoundException;
+import qna.UnAuthorizedException;
+
+@Entity
+public class Answer extends BaseTime {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+
+    @Lob
+    @Column
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column(name = "question_id")
+    private Long questionId;
+
+    @Column(name = "writer_id")
+    private Long writerId;
+
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -20,17 +45,19 @@ public class Answer {
         this.id = id;
 
         if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException(USER_IS_NOT_NULL);
         }
 
         if (Objects.isNull(question)) {
-            throw new NotFoundException();
+            throw new QuestionNotFoundException(QUESTION_NOT_FOUND);
         }
 
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
     }
+
+
 
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
