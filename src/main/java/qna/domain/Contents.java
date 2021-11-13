@@ -18,4 +18,8 @@ public class Contents {
     public static Contents of(String contents) {
         return new Contents(contents);
     }
+    
+    public boolean isEmpty() {
+        return contents.isEmpty();
+    }
 }

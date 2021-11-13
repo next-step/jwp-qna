@@ -18,4 +18,8 @@ public class Title {
     public static Title of(String title) {
         return new Title(title);
     }
+    
+    public boolean isEmpty() {
+        return title.isEmpty();
+    }
 }
