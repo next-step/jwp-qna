@@ -78,9 +78,9 @@ class AnswerRepositoryTest {
 	void findByWriterIdAndQuestionId() {
 		Answer savedAnswer = answerRepository.save(
 			new Answer(user, question, "Answer entity unit test"));
-		List<Answer> findAnswers = answerRepository.findByWriterIdAndQuestionId(UserTest.JAVAJIGI.getId(),
-			QuestionTest.Q1.getId());
-		assertThat(findAnswers.contains(savedAnswer));
+		List<Answer> findAnswers = answerRepository.findByWriterIdAndQuestionId(user.getId(),
+			question.getId());
+		assertThat(findAnswers.contains(savedAnswer)).isTrue();
 	}
 
 	@Test
@@ -89,7 +89,7 @@ class AnswerRepositoryTest {
 		Answer savedAnswer = answerRepository.save(
 			new Answer(user, question, content));
 		List<Answer> findAnswers = answerRepository.findByContentsStartingWith(content);
-		assertThat(findAnswers.contains(savedAnswer));
+		assertThat(findAnswers.contains(savedAnswer)).isTrue();
 	}
 
 	@Test
@@ -98,6 +98,6 @@ class AnswerRepositoryTest {
 		Answer savedAnswer = answerRepository.save(
 			new Answer(user, question, content));
 		List<Answer> findAnswers = answerRepository.findByCreatedAtBetween(LocalDateTime.now().minusMinutes(30),LocalDateTime.now().plusMinutes(30));
-		assertThat(findAnswers.contains(savedAnswer));
+		assertThat(findAnswers.contains(savedAnswer)).isTrue();
 	}
 }
