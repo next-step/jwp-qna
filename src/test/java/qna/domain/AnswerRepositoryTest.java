@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,7 +77,7 @@ public class AnswerRepositoryTest {
     void findByQuestionIdAndDeletedFalse_deleted() {
         // given
         Answer expect = answers.save(answer);
-        expect.remove();
+        expect.delete();
 
         // when
         List<Answer> answerList = answers.findByQuestionAndDeletedFalse(expect.getQuestion());

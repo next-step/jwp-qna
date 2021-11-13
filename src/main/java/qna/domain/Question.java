@@ -75,10 +75,14 @@ public class Question extends BaseEntity {
 
     public void remove() {
         for (Answer answer : answers) {
-            answer.remove();
+            answer.delete();
         }
 
         this.deleted = true;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public List<Answer> getAnswers() {
@@ -108,4 +112,23 @@ public class Question extends BaseEntity {
             '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Question question = (Question)o;
+        return deleted == question.deleted
+            && Objects.equals(id, question.id)
+            && Objects.equals(title, question.title)
+            && Objects.equals(contents, question.contents)
+            && Objects.equals(writer, question.writer)
+            && Objects.equals(answers, question.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writer, answers, deleted);
+    }
 }

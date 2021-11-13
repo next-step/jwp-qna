@@ -80,27 +80,22 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("remove 로 삭제 시 연관 answer 도 deleted 확인")
-    void remove() {
+    @DisplayName("delete 메소드 호출시 연관 답변도 delete 되는지 확인")
+    void deleted_and_answer_delete() {
         // given
-        Answer answer1 = new Answer(question.getWriter(), question, "Answers Contents1");
-        Answer answer2 = new Answer(question.getWriter(), question, "Answers Contents1");
-        question.addAnswer(answer1);
-        question.addAnswer(answer2);
-        questions.save(question);
-        questions.flush();
-        Long cacheQuestionId = question.getId();
+        Question savedQ1 = questions.save(question);
+        Answer answer1 = new Answer(savedQ1.getWriter(), savedQ1, "Answers Contents2");
+        savedQ1.addAnswer(answer1);
 
         // when
-        question.remove();
+        savedQ1.delete();
         questions.flush();
-        Question deletedQuestion = questions.findById(cacheQuestionId).get();
-        List<Answer> deletedAnswers = deletedQuestion.getAnswers();
 
-        // then
-        assertThat(deletedAnswers.stream()
-            .filter(answer -> !answer.isDeleted())
-            .count()).isEqualTo(0L);
+        //then
+        Question deletedQ1 = questions.findById(savedQ1.getId()).get();
+        assertAll(
+            () -> assertThat(deletedQ1.isDeleted()).isTrue(),
+            () -> assertThat(deletedQ1.getAnswers().get(0).isDeleted()).isTrue()
+        );
     }
-
 }

@@ -27,7 +27,7 @@ public class AnswerTest {
         Answer answer = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
         // when
-        answer.remove();
+        answer.delete();
 
         // then
         assertThat(answer.isDeleted()).isTrue();
