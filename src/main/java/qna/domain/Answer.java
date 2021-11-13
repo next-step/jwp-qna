@@ -1,5 +1,7 @@
 package qna.domain;
 
+import static qna.exception.ExceptionMessage.*;
+
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -11,6 +13,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
@@ -19,14 +22,18 @@ public class Answer extends BaseEntityTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @OneToOne
     @JoinColumn(name = "writer_id")
     private User writer;
+
     @ManyToOne
     @JoinColumn(name = "question_id")
     private Question question;
+
     @Lob
     private String contents;
+
     private boolean deleted = false;
 
     protected Answer() {
@@ -50,10 +57,6 @@ public class Answer extends BaseEntityTime {
         this.writer = writer;
         this.contents = contents;
         changeQuestion(question);
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -90,6 +93,16 @@ public class Answer extends BaseEntityTime {
         }
         this.question = question;
         question.getAnswers().add(this);
+    }
+
+    public void validateAnswerOwner(User owner) {
+        if (!isOwner(owner)) {
+            throw new CannotDeleteException(CANNOT_DELETE_ANSWER_DIFFERENT_USER_MESSAGE.getMessage());
+        }
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     @Override

@@ -56,10 +56,6 @@ public class Question extends BaseEntityTime {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
     }
@@ -96,11 +92,15 @@ public class Question extends BaseEntityTime {
         this.deleted = deleted;
     }
 
-    public boolean validateQuestionOwner(User loginUser) {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException(CANNOT_DELETE_EXCEPTION_MESSAGE.getMessage());
+    public boolean validateQuestionOwner(User owner) {
+        if (!isOwner(owner)) {
+            throw new CannotDeleteException(CANNOT_DELETE_QUESTION_MESSAGE.getMessage());
         }
         return true;
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     @Override

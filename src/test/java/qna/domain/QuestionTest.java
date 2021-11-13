@@ -19,7 +19,6 @@ public class QuestionTest {
         assertTrue(Q1.validateQuestionOwner(UserTest.JAVAJIGI));
         assertThatThrownBy(() -> Q1.validateQuestionOwner(UserTest.SANJIGI))
             .isInstanceOf(CannotDeleteException.class)
-            .hasMessage(CANNOT_DELETE_EXCEPTION_MESSAGE.getMessage());
-
+            .hasMessage(CANNOT_DELETE_QUESTION_MESSAGE.getMessage());
     }
 }
