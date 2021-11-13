@@ -46,4 +46,13 @@ public class AnswerTest {
         expected.delete();
         assertThat(answers.findById(expected.getId()).get().isDeleted()).isTrue();
     }
+    
+    @Test
+    @DisplayName("답변 삭제시 삭제 이력 확인")
+    void 삭제_이력_확인() {
+        Answer expected = new Answer(UserTest.JENNIE, QuestionTest.Q1, "이렇게 하시면 됩니다~");
+        answers.save(expected);
+        DeleteHistories deleteHistories = expected.delete();
+        assertThat(deleteHistories.getDeleteHistories()).hasSize(1);
+    }
 }

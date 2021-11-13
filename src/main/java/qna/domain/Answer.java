@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -67,8 +69,11 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
     
-    public void delete() {
+    public DeleteHistories delete() {
         this.deleted = true;
+        List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
+        deleteHistories.add(DeleteHistory.of(ContentType.ANSWER, id, writer));
+        return DeleteHistories.of(deleteHistories);
     }
 
     public Long getId() {

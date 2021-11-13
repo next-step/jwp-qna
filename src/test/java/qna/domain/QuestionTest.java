@@ -62,7 +62,6 @@ public class QuestionTest {
         Question expected = new Question("질문할게요~", "이럴땐 어떻게 해야하나요?").writeBy(UserTest.JENNIE);
         questions.save(expected);
         DeleteHistories deleteHistories = expected.delete();
-        deleteHistories.getDeleteHistories();
         assertThat(deleteHistories.getDeleteHistories()).hasSize(1);
     }
 
