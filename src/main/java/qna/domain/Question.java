@@ -1,5 +1,7 @@
 package qna.domain;
 
+import static qna.exception.ExceptionMessage.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,20 +15,27 @@ import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import qna.exception.CannotDeleteException;
+
 @Entity
 public class Question extends BaseEntityTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(length = 100, nullable = false)
     private String title;
+
     @Lob
     private String contents;
+
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
+
     @OneToOne
     @JoinColumn(name = "write_id")
     private User writer;
+
     private boolean deleted = false;
 
     protected Question() {
@@ -87,6 +96,13 @@ public class Question extends BaseEntityTime {
         this.deleted = deleted;
     }
 
+    public boolean validateQuestionOwner(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(CANNOT_DELETE_EXCEPTION_MESSAGE.getMessage());
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -97,4 +113,5 @@ public class Question extends BaseEntityTime {
             ", deleted=" + deleted +
             '}';
     }
+
 }
