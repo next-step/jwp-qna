@@ -27,6 +27,10 @@ public class Question extends BaseEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
+    private List<Answer> answers = new ArrayList<>();
+
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -87,6 +91,14 @@ public class Question extends BaseEntity {
 
     public void setWriter(User writer) {
         this.writer = writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
     }
 
     public boolean isDeleted() {
