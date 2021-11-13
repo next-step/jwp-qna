@@ -43,8 +43,8 @@ public class UserRepositoryTest {
         User save = userRepository.save(UserTest.JAVAJIGI);
         userRepository.delete(save);
         userRepository.flush();
-        User found = userRepository.findByUserId("javajigi").orElseGet(() -> null);
-        assertThat(found).isNull();
+        User result = userRepository.findByUserId("javajigi").orElseGet(() -> null);
+        assertThat(result).isNull();
     }
 
 
