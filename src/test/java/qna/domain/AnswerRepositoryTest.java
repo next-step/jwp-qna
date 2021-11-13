@@ -75,6 +75,6 @@ public class AnswerRepositoryTest {
         answerRepository.flush();
         Answer findAnswer = answerRepository.findById(answer.getId()).get();
         //THEN
-        //assertThat(findAnswer.isDeleted()).isTrue();
+        assertThat(findAnswer.isDeleted()).isTrue();
     }
 }

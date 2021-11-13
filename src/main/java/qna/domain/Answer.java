@@ -99,17 +99,6 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writer=" + writer +
-                ", question=" + question +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
-    }
-
     private DeleteHistory createDeleteHistory() {
         this.setDeleted(true);
         return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
