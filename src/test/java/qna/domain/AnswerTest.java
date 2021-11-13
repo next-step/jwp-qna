@@ -2,13 +2,10 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 @DataJpaTest
 public class AnswerTest {
@@ -18,65 +15,46 @@ public class AnswerTest {
     @Autowired
     AnswerRepository answerRepository;
 
-    @MockBean
+    @Autowired
     UserRepository userRepository;
 
-    @MockBean
+    @Autowired
     QuestionRepository questionRepository;
-
-    @BeforeEach
-    void setUp() {
-        목업_자바지기와_상지기_유저등록(UserTest.JAVAJIGI);
-        목업_자바지기와_상지기_유저등록(UserTest.SANJIGI);
-        목업_질문등록(QuestionTest.Q1);
-        목업_질문등록(QuestionTest.Q2);
-    }
-
-    private void 목업_자바지기와_상지기_유저등록(final User user) {
-        //given - save user
-        given(userRepository.save(user)).willReturn(user);
-
-        //when - save user
-        userRepository.save(user);
-
-        //then - save user
-        verify(userRepository, times(1)).save(user);
-    }
-
-    private void 목업_질문등록(final Question question) {
-        //given - save question
-        given(questionRepository.save(question)).willReturn(question);
-
-        //when - save question
-        questionRepository.save(question);
-
-        //then - save question
-        verify(questionRepository, times(1)).save(question);
-    }
 
     @Test
     void save() {
+        //given
+        final User javajigi = 유저등록(UserTest.JAVAJIGI);
+        final User sanjigi = 유저등록(UserTest.SANJIGI);
+
+        final Question javajigiQuestion = 질문등록(javajigi, QuestionTest.Q1);
+
         //when
-        final Answer javajigiAnswer = answerRepository.save(A1);
-        final Answer sanjigiAnswer = answerRepository.save(A2);
+        final Answer javajigiAnswer = 답변등록(javajigi, javajigiQuestion, A1);
+        final Answer sanjigiAnswer = 답변등록(sanjigi, javajigiQuestion, A2);
 
         //then
         assertAll(
-            () -> assertThat(javajigiAnswer.isOwner(UserTest.JAVAJIGI)).isTrue(),
-            () -> assertThat(javajigiAnswer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
-            () -> assertThat(sanjigiAnswer.isOwner(UserTest.SANJIGI)).isTrue(),
-            () -> assertThat(sanjigiAnswer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId())
+            () -> assertThat(javajigiAnswer.isOwner(javajigi)).isTrue(),
+            () -> assertThat(javajigiAnswer.getQuestion()).isEqualTo(javajigiQuestion),
+            () -> assertThat(sanjigiAnswer.isOwner(sanjigi)).isTrue(),
+            () -> assertThat(sanjigiAnswer.getQuestion()).isEqualTo(javajigiQuestion)
         );
     }
 
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        //when
-        final Answer javajigiAnswer = answerRepository.save(A1);
-        final Answer sanjigiAnswer = answerRepository.save(A2);
+        //given
+        final User javajigi = 유저등록(UserTest.JAVAJIGI);
+        final User sanjigi = 유저등록(UserTest.SANJIGI);
+
+        final Question javajigiQuestion = 질문등록(javajigi, QuestionTest.Q1);
+
+        final Answer javajigiAnswer = 답변등록(javajigi, javajigiQuestion, A1);
+        final Answer sanjigiAnswer = 답변등록(sanjigi, javajigiQuestion, A2);
 
         //when
-        final List<Answer> actualAnswers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        final List<Answer> actualAnswers = answerRepository.findByQuestionIdAndDeletedFalse(javajigiQuestion.getId());
 
         //then
         assertAll(
@@ -89,13 +67,29 @@ public class AnswerTest {
     @Test
     void findByIdAndDeletedFalse() {
         //given
-        final Answer javajigiAnswer = answerRepository.save(A1);
+        final User javajigi = 유저등록(UserTest.JAVAJIGI);
+        final Question javajigiQuestion = 질문등록(javajigi, QuestionTest.Q1);
+        final Answer javajigiAnswer = 답변등록(javajigi, javajigiQuestion, A1);
 
         //then
         final Answer actual = answerRepository.findByIdAndDeletedFalse(javajigiAnswer.getId())
             .orElseThrow(RuntimeException::new);
 
         //then
-        assertThat(actual.isOwner(UserTest.JAVAJIGI)).isTrue();
+        assertThat(actual.isOwner(javajigi)).isTrue();
+    }
+
+    private User 유저등록(final User user) {
+        return userRepository.save(user);
+    }
+
+    private Question 질문등록(final User user, final Question question) {
+        return questionRepository.save(question.writeBy(user));
+    }
+
+    private Answer 답변등록(final User writer, final Question question, final Answer answer) {
+        answer.setWriter(writer);
+        answer.setQuestion(question);
+        return answerRepository.save(answer);
     }
 }
