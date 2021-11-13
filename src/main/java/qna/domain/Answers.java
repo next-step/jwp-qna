@@ -27,10 +27,6 @@ public class Answers {
         answers.forEach(answer -> deleteHistories.add(answer.delete()));
         return deleteHistories;
     }
-    
-    public void delete(Answer answer) {
-        answers.removeIf(ans -> ans.equals(answer));
-    }
 
     public List<Answer> getAnswers() {
         return answers;

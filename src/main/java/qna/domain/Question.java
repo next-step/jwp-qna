@@ -66,10 +66,6 @@ public class Question extends BaseEntity {
         answers.add(answer);
     }
     
-    public void deleteAnswer(Answer answer) {
-        answers.delete(answer);
-    }
-    
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         if (!loginUser.equals(writer)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
