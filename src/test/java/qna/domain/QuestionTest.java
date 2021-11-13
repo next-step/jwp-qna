@@ -50,21 +50,6 @@ public class QuestionTest {
 		);
 	}
 
-	public static Stream<Arguments> deleteArguments() {
-		return Stream.of(
-			// 답변이 없는 경우
-			Arguments.of(
-				QuestionFixture.Q1(UserFixture.Y2O2U2N()),
-				UserFixture.Y2O2U2N()
-			),
-			// 답변이 있지만 모든 답변을 질문자가 작성한 경우
-			Arguments.of(
-				QuestionFixture.SELF_ANSWERED_Q(UserFixture.Y2O2U2N()),
-				UserFixture.Y2O2U2N()
-			)
-		);
-	}
-
 	@DisplayName("질문을 생성할 수 있다.")
 	@Test
 	void of() {
@@ -137,12 +122,35 @@ public class QuestionTest {
 			.isInstanceOf(RuntimeException.class);
 	}
 
-	@DisplayName("질문을 삭제할 수 있다.")
-	@ParameterizedTest
-	@MethodSource(value = "deleteArguments")
-	void delete(Question question, User deleter) {
-		// given & when
-		DeleteHistories deleteHistories = question.delete(deleter);
+	@DisplayName("자신이 등록한 질문을 답변이 없는 경우에 삭제할 수 있다.")
+	@Test
+	void delete_on_empty_answers() {
+		// given
+		User user = UserFixture.Y2O2U2N();
+		Question question = QuestionFixture.Q1(user);
+
+		// when
+		DeleteHistories deleteHistories = question.delete(user);
+
+		// then
+		assertAll(
+			() -> assertThat(question.isDeleted()).isTrue(),
+			() -> assertThat(question.getAnswers()).isEmpty(),
+			() -> assertThat(deleteHistories.getValues())
+				.extracting(deleteHistory -> deleteHistory.getContentType() == ContentType.QUESTION)
+				.isNotNull()
+		);
+	}
+
+	@DisplayName("자신이 등록한 질문에 답변이 모두 자신이 등록한 경우, 질문을 삭제할 수 있다.")
+	@Test
+	void delete_on_self_answered() {
+		// given
+		User user = UserFixture.Y2O2U2N();
+		Question question = QuestionFixture.SELF_ANSWERED_Q(user);
+
+		// when
+		DeleteHistories deleteHistories = question.delete(user);
 
 		// then
 		assertAll(
@@ -152,7 +160,6 @@ public class QuestionTest {
 				.extracting(deleteHistory -> deleteHistory.getContentType() == ContentType.QUESTION)
 				.isNotNull()
 		);
-
 	}
 
 	@DisplayName("본인이 작성하지 않은 질문은 삭제할 수 없다.")
