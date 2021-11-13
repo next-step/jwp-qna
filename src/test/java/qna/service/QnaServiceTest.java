@@ -77,7 +77,9 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
+        Question question = new Question("title1", "contents1")
+            .writeBy(UserTest.JAVAJIGI);
+        Answer answer2 = new Answer(2L, UserTest.SANJIGI, question, "Answers Contents1");
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));

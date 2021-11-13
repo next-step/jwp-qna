@@ -26,8 +26,11 @@ public class AnswerTest {
 
     @BeforeEach
     void setUp() {
-        answer1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-        answer2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+        Question question = new Question("title1", "contents1")
+            .writeBy(UserTest.JAVAJIGI);
+
+        answer1 = new Answer(UserTest.JAVAJIGI, question, "Answers Contents1");
+        answer2 = new Answer(UserTest.SANJIGI, question, "Answers Contents2");
 
         answerRepository.save(answer1);
         answerRepository.save(answer2);
