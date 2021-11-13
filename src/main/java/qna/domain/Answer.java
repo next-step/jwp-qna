@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import qna.NotFoundException;
@@ -21,7 +22,7 @@ public class Answer extends BaseEntityTime {
     @OneToOne
     @JoinColumn(name = "writer_id")
     private User writer;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "question_id")
     private Question question;
     @Lob
@@ -47,8 +48,8 @@ public class Answer extends BaseEntityTime {
         }
 
         this.writer = writer;
-        this.question = question;
         this.contents = contents;
+        changeQuestion(question);
     }
 
     public boolean isOwner(User writer) {
@@ -81,6 +82,14 @@ public class Answer extends BaseEntityTime {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void changeQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().remove(this);
+        }
+        this.question = question;
+        question.getAnswers().add(this);
     }
 
     @Override
