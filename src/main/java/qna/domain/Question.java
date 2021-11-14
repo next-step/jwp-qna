@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import qna.CannotDeleteException;
@@ -26,9 +25,8 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    @Lob
-    @Column(name = "contents")
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -43,14 +41,14 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
     protected Question() {
     }
 
-    public Question(String title, String contents) {
+    Question(String title, String contents) {
         this(null, title, contents);
     }
 
     public Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
-        this.contents = contents;
+        this.contents = Contents.from(contents);
     }
 
     public void addAnswer(Answer answer) {
@@ -111,16 +109,8 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
+    public Contents getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public User getWriter() {
