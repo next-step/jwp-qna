@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.persistence.EntityManager;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -20,6 +22,8 @@ public class AnswerTest {
     @Autowired
     QuestionRepository questionRepository;
     Answer savedAnswer;
+    @Autowired
+    EntityManager em;
 
     @BeforeEach
     void init() {
@@ -68,4 +72,19 @@ public class AnswerTest {
         assertThat(answerRepository.findByIdAndDeletedFalse(A1.getId()).isPresent()).isFalse();
     }
 
+    @Test
+    void 수정() {
+        questionRepository.save(QuestionTest.Q1);
+        savedAnswer.setWriter(UserTest.SANJIGI);
+        answerRepository.flush();
+        em.clear();
+        User sanjigi = userRepository.findByUserId(UserTest.SANJIGI.getUserId()).get();
+        assertThat(sanjigi.getAnswers().get(0).getId()).isEqualTo(savedAnswer.getId());
+    }
+
+    @Test
+    void 삭제() {
+        answerRepository.delete(savedAnswer);
+        assertThat(answerRepository.findById(savedAnswer.getId())).isEmpty();
+    }
 }
