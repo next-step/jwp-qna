@@ -39,12 +39,12 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    public static DeleteHistory questionDeleteHistoryOf(Long contentId, User deletedById) {
-        return new DeleteHistory(ContentType.QUESTION, contentId, deletedById, LocalDateTime.now());
+    public static DeleteHistory questionDeleteHistoryOf(Long contentId, User deletedById, LocalDateTime localDateTime) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deletedById, localDateTime);
     }
 
-    public static DeleteHistory answerDeleteHistoryOf(Long contentId, User deletedById) {
-        return new DeleteHistory(ContentType.ANSWER, contentId, deletedById, LocalDateTime.now());
+    public static DeleteHistory answerDeleteHistoryOf(Long contentId, User deletedById, LocalDateTime localDateTime) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deletedById, localDateTime);
     }
 
     @Override
