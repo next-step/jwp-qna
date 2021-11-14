@@ -13,7 +13,7 @@ public class DeleteHistoriesTest {
     @Test
     @DisplayName("삭제이력 목록 생성 확인")
     void 삭제이력_목록_확인() {
-        List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
+        DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, QuestionTest.Q1.getId(), UserTest.JENNIE));
         deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, QuestionTest.Q2.getId(), UserTest.JENNIE));
         DeleteHistories deleteHistries = new DeleteHistories();
