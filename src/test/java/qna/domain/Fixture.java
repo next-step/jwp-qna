@@ -14,6 +14,12 @@ public class Fixture {
 
 	public static Answer answer(String writerId) {
 		final Question question = question(String.format("question.%s", writerId));
-		return new Answer(user(writerId), question, "answer.contents");
+		return answer(question, writerId);
+	}
+
+	public static Answer answer(Question question, String writerId) {
+		final Answer answer = new Answer(user(writerId), question, "answer.contents");
+		question.addAnswer(answer);
+		return answer;
 	}
 }
