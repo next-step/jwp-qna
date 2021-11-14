@@ -65,15 +65,15 @@ public class Question extends BaseEntity {
 	}
 
 	public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-        answers.add(answer);
+		answer.toQuestion(this);
+		answers.add(answer);
 	}
 
 	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
 		if (!isOwner(loginUser)) {
 			throw new CannotDeleteException(Message.CAN_NOT_DELETE_QUESTION_WITHOUT_OWNERSHIP.getContent());
 		}
-        final List<DeleteHistory> deletedAnswerHistories = deleteAnswers(loginUser);
+		final List<DeleteHistory> deletedAnswerHistories = deleteAnswers(loginUser);
 		setDeleted(true);
 		return new ArrayList<DeleteHistory>() {{
 			add(new DeleteHistory(ContentType.QUESTION, getId(), getWriter()));
@@ -81,13 +81,14 @@ public class Question extends BaseEntity {
 		}};
 	}
 
-    private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
-        try {
-            return answers.delete(loginUser);
-        } catch (CannotDeleteException e) {
-            throw new CannotDeleteException(Message.CAN_NOT_DELETE_QUESTION_HAVING_ANSWER_WRITTEN_BY_OTHER.getContent());
-        }
-    }
+	private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
+		try {
+			return answers.delete(loginUser);
+		} catch (CannotDeleteException e) {
+			throw new CannotDeleteException(
+				Message.CAN_NOT_DELETE_QUESTION_HAVING_ANSWER_WRITTEN_BY_OTHER.getContent());
+		}
+	}
 
 	public Long getId() {
 		return id;
