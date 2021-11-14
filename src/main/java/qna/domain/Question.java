@@ -2,12 +2,14 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import org.springframework.data.annotation.LastModifiedDate;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends AbstractIdEntity {
@@ -30,6 +32,9 @@ public class Question extends AbstractIdEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
+    @Embedded
+    private Answers answers;
+
     protected Question() {
     }
 
@@ -41,6 +46,7 @@ public class Question extends AbstractIdEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {
@@ -54,10 +60,19 @@ public class Question extends AbstractIdEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
+    }
+
+    public void deleteBy(User writer) {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        this.deleted = true;
     }
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Long id) {
@@ -65,7 +80,7 @@ public class Question extends AbstractIdEntity {
     }
 
     public String getTitle() {
-        return title;
+        return this.title;
     }
 
     public void setTitle(String title) {
@@ -73,7 +88,7 @@ public class Question extends AbstractIdEntity {
     }
 
     public String getContents() {
-        return contents;
+        return this.contents;
     }
 
     public void setContents(String contents) {
@@ -81,7 +96,7 @@ public class Question extends AbstractIdEntity {
     }
 
     public User getWriter() {
-        return writer;
+        return this.writer;
     }
 
     public void setWriter(User writer) {
@@ -89,11 +104,11 @@ public class Question extends AbstractIdEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return this.deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public Answers getAnswers() {
+        return this.answers;
     }
 
     @Override
