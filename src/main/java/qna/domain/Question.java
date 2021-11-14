@@ -2,10 +2,6 @@ package qna.domain;
 
 import static qna.exception.ExceptionMessage.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -63,10 +59,6 @@ public class Question extends BaseEntityTime {
         return id;
     }
 
-    public void setAnswers(Answers answers) {
-        this.answers = answers;
-    }
-
     public Answers getAnswers() {
         return answers;
     }
@@ -106,13 +98,6 @@ public class Question extends BaseEntityTime {
     private void validateQuestionDelete(User owner) {
         validateQuestionOwner(owner);
         getAnswers().validateAnswersOwner(owner);
-    }
-
-    public List<DeleteHistory> createDeleteHistories() {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
-        deleteHistories.addAll(answers.createDeleteHistories());
-        return deleteHistories;
     }
 
     @Override

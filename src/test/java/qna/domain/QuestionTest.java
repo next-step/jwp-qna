@@ -28,7 +28,6 @@ public class QuestionTest {
         answerList = Arrays.asList(
             AnswerTest.createAnswer(writer, question),
             AnswerTest.createAnswer(writer, question));
-        question.setAnswers(new Answers(answerList));
         question.setWriter(writer);
     }
 
@@ -50,19 +49,6 @@ public class QuestionTest {
         // then
         assertTrue(question.isDeleted());
         assertThat(answerList).extracting("deleted").containsOnly(true);
-    }
-
-    @DisplayName("answer 를 포함한 question 삭제 이력을 반환한다")
-    @Test
-    void createDeleteHistories() {
-        // when
-        List<DeleteHistory> deleteHistories = question.createDeleteHistories();
-
-        // then
-        assertEquals(3, deleteHistories.size());
-        assertThat(deleteHistories)
-            .extracting("contentType")
-            .containsExactly(ContentType.QUESTION, ContentType.ANSWER, ContentType.ANSWER);
     }
 
     public static Question createQuestion(String title, String contents) {

@@ -10,7 +10,6 @@ import javax.persistence.OneToMany;
 
 @Embeddable
 public class Answers {
-
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import qna.domain.DeleteHistories;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.User;
@@ -37,6 +38,6 @@ public class QnaService {
         Question question = findQuestionByIdAndDeletedFalseAnswers(questionId);
         question.delete(loginUser);
 
-        deleteHistoryService.saveAll(question.createDeleteHistories());
+        deleteHistoryService.saveAll(new DeleteHistories(question).getDeleteHistories());
     }
 }

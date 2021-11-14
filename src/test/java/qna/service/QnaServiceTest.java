@@ -6,7 +6,6 @@ import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +18,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import qna.domain.Answer;
-import qna.domain.AnswerRepository;
-import qna.domain.Answers;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
@@ -33,9 +30,6 @@ import qna.exception.CannotDeleteException;
 class QnaServiceTest {
     @Mock
     private QuestionRepository questionRepository;
-
-    @Mock
-    private AnswerRepository answerRepository;
 
     @Mock
     private DeleteHistoryService deleteHistoryService;
@@ -97,7 +91,7 @@ class QnaServiceTest {
     @DisplayName("답변이 없는 경우 삭제가 가능하다")
     @Test
     void delete_답변이_없는_경우() {
-        question.setAnswers(new Answers(Collections.emptyList()));
+        question.getAnswers().remove(answer);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
