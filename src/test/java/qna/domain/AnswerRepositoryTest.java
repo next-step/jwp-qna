@@ -73,7 +73,7 @@ public class AnswerRepositoryTest {
         expect.delete(USER);
 
         // when
-        Answer answer = answers.findByIdAndDeletedFalse(expect.getId()).get();
+        Answer answer = answers.findById(expect.getId()).get();
 
         // then
         assertAll(

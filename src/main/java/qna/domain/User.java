@@ -114,7 +114,7 @@ public class User extends BaseEntity {
     }
 
     public boolean isMine(User writer) {
-        return Objects.equals(this.id, writer.getId());
+        return this.equals(writer);
     }
 
     private static class GuestUser extends User {
