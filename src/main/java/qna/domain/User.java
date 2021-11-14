@@ -56,14 +56,6 @@ public class User extends BaseEntity {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
-    }
-
-    public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
-    }
-
     public boolean equalsNameAndEmail(User target) {
         if (Objects.isNull(target)) {
             return false;
@@ -111,6 +103,14 @@ public class User extends BaseEntity {
 
     public String getEmail() {
         return email.getValue();
+    }
+
+    private boolean matchUserId(String userId) {
+        return this.userId.equals(userId);
+    }
+
+    private boolean matchPassword(String targetPassword) {
+        return this.password.equals(targetPassword);
     }
 
     private static class GuestUser extends User {

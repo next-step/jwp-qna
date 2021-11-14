@@ -26,7 +26,6 @@ public class Email implements Serializable {
     public void validEmail(String email) {
         Matcher matcher = emailPattern.matcher(email);
         if (!matcher.matches()) {
-            // Todo 커스턴 예외 처리 만들기
             throw new RuntimeException("이메일 형식이 아닙니다.");
         }
     }

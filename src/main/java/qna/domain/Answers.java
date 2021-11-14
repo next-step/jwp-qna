@@ -21,10 +21,6 @@ public class Answers implements Serializable {
     protected Answers() {
     }
 
-    protected Answers(List<Answer> answers) {
-        this.values = answers;
-    }
-
     public List<Answer> values() {
         return values;
     }

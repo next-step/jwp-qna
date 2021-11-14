@@ -57,14 +57,6 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
     public DeleteHistory delete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
@@ -73,6 +65,14 @@ public class Answer extends BaseEntity {
         this.deleted = true;
 
         return DeleteHistory.OfAnswer(this);
+    }
+
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    public boolean isDeleted() {
+        return deleted;
     }
 
     public Long getId() {

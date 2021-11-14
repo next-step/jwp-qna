@@ -66,14 +66,6 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
-    public void addAnswer(Answer answer) {
-        answers.add(answer);
-    }
-
     public List<DeleteHistory> delete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
@@ -86,12 +78,20 @@ public class Question extends BaseEntity {
         return deleteHistories;
     }
 
-    public Long getId() {
-        return id;
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
     }
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public User getWriter() {
