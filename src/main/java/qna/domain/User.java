@@ -1,12 +1,17 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import qna.UnAuthorizedException;
 
@@ -30,7 +35,16 @@ public class User extends BaseTimeEntity {
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
-    public User() {
+    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
+    private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
+    private List<Answer> answers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -83,40 +97,52 @@ public class User extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public String getEmail() {
+        return email;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getPassword() {
+        return password;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setEmail(String email) {
+    List<Question> getQuestions() {
+        return questions;
+    }
+
+    public List<Question> getReadOnlyQuestions() {
+        return Collections.unmodifiableList(questions);
+    }
+
+    List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public List<Answer> getReadOnlyAnswers() {
+        return Collections.unmodifiableList(answers);
+    }
+
+    List<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
+    }
+
+    public List<DeleteHistory> getReadOnlyDeleteHistories() {
+        return Collections.unmodifiableList(deleteHistories);
+    }
+
+    void setEmail(String email) {
         this.email = email;
+    }
+
+    void setName(String name) {
+        this.name = name;
     }
 
     @Override

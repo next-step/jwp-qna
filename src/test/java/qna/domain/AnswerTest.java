@@ -16,19 +16,33 @@ public class AnswerTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
     @AfterEach
     void tearDown() {
         answerRepository.deleteAll();
+        questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
     void save() {
-        Answer expected = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        User user = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        Question question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
+        Answer expected = new Answer(user, question, "Answers Contents1");
 
         Answer actual = answerRepository.save(expected);
 
         assertThat(actual.getId()).isNotNull();
         assertThat(actual.getContents()).isEqualTo(expected.getContents());
+        assertThat(actual.getWriter()).isSameAs(user);
+        assertThat(actual.getQuestion()).isSameAs(question);
+        assertThat(actual.getQuestion().getAnswers()).contains(actual);
+        assertThat(actual.getWriter().getAnswers()).contains(actual);
     }
 
     @Test
@@ -38,7 +52,7 @@ public class AnswerTest {
 
         Answer actual = answerRepository.findById(expected.getId()).get();
 
-        assertThat(actual == expected).isTrue();
+        assertThat(actual).isSameAs(expected);
     }
 
     @Test
@@ -67,7 +81,7 @@ public class AnswerTest {
     void findByQuestionIdAndDeletedFalse() {
         Answer expected = saveNewDefaultAnswer();
 
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestionId());
+        List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(expected.getQuestion());
 
         assertThat(answers).isNotEmpty();
     }
@@ -76,7 +90,7 @@ public class AnswerTest {
     @DisplayName("저장한 객체에 대해 soft delete를 한 후, findByIdAndDeletedFalse함수로 조회하면 나오지 않는지 테스트")
     void findByIdAndDeletedFalse() {
         Answer saved = saveNewDefaultAnswer();
-        saved.setDeleted(true);
+        saved.delete();
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(
             () -> answerRepository.findByIdAndDeletedFalse(saved.getId()).get()
@@ -84,7 +98,9 @@ public class AnswerTest {
     }
 
     private Answer saveNewDefaultAnswer() {
-        Answer defaultAnswer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        User user = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        Question question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
+        Answer defaultAnswer = new Answer(user, question, "Answers Contents1");
         return answerRepository.save(defaultAnswer);
     }
 }

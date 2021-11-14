@@ -18,20 +18,31 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
+
     @AfterEach
     void tearDown() {
+        answerRepository.deleteAll();
         questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
     void save() {
-        Question expected = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        User user = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        Question expected = new Question("title1", "contents1").writeBy(user);
 
         Question actual = questionRepository.save(expected);
 
         assertThat(actual.getId()).isNotNull();
         assertThat(actual.getTitle()).isEqualTo(expected.getTitle());
         assertThat(actual.getContents()).isEqualTo(expected.getContents());
+        assertThat(actual.getWriter()).isSameAs(user);
+        assertThat(user.getQuestions()).contains(expected);
     }
 
     @Test
@@ -79,15 +90,29 @@ public class QuestionTest {
     @DisplayName("저장한 객체에 대해 soft delete를 한 후, findByIdAndDeletedFalse함수로 조회하면 나오지 않는지 테스트")
     void findByIdAndDeletedFalse() {
         Question expected = saveNewDefaultQuestion();
-        expected.setDeleted(true);
+        expected.delete();
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(
             () -> questionRepository.findByIdAndDeletedFalse(expected.getId()).get()
         );
     }
 
+    @Test
+    void addAnswer() {
+        Question question = saveNewDefaultQuestion();
+        User user = userRepository.save(new User("minseoklim", "password", "임민석", "mslim@naver.com"));
+        Question oldQuestion = questionRepository.save(new Question("다른 질문", "졸립니다").writeBy(user));
+        Answer answer = answerRepository.save(new Answer(user, oldQuestion, "Answers Contents1"));
+        question.addAnswer(answer);
+
+        assertThat(question.getAnswers()).contains(answer);
+        assertThat(answer.getQuestion()).isEqualTo(question);
+        assertThat(answer.getQuestion()).isNotEqualTo(oldQuestion);
+    }
+
     private Question saveNewDefaultQuestion() {
-        Question defaultQuestion = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        User user = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        Question defaultQuestion = new Question("title1", "contents1").writeBy(user);
         return questionRepository.save(defaultQuestion);
     }
 }
