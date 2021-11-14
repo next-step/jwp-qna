@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -18,7 +19,9 @@ public class Answer extends BaseTimeEntity {
     private Long id;
 
     private Long writerId;
-    private Long questionId;
+
+    @ManyToOne
+    private Question question;
 
     @Lob
     private String contents;
@@ -41,7 +44,7 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -53,7 +56,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -72,12 +75,8 @@ public class Answer extends BaseTimeEntity {
         this.writerId = writerId;
     }
 
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
@@ -101,7 +100,7 @@ public class Answer extends BaseTimeEntity {
         return "Answer{" +
             "id=" + id +
             ", writerId=" + writerId +
-            ", questionId=" + questionId +
+            ", question=" + question +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';
