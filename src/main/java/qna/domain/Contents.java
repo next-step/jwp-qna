@@ -3,6 +3,8 @@ package qna.domain;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 
+import qna.util.ValidationUtils;
+
 @Embeddable
 public class Contents {
     @Lob
@@ -21,12 +23,7 @@ public class Contents {
     }
     
     private static void checkValidation(String contents) {
-        if (isEmpty(contents)) {
-            throw new IllegalArgumentException("내용을 입력하지 않았습니다.");
-        }
+        ValidationUtils.checkEmpty(contents);
     }
     
-    private static boolean isEmpty(String contents) {
-        return contents.isEmpty();
-    }
 }

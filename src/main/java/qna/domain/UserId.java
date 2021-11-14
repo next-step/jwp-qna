@@ -3,6 +3,8 @@ package qna.domain;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import qna.util.ValidationUtils;
+
 @Embeddable
 public class UserId {
     public static final int USER_ID_MAX_SIZE = 20;
@@ -23,16 +25,8 @@ public class UserId {
     }
     
     private static void checkValidation(String userId) {
-        if (isEmpty(userId)) {
-            throw new IllegalArgumentException("아이디를 입력하지 않았습니다.");
-        }
-        if (userId.length() > USER_ID_MAX_SIZE) {
-            throw new IllegalArgumentException(String.format("아이디의 길이가 %d자를 초과했습니다.", USER_ID_MAX_SIZE));
-        }
+        ValidationUtils.checkEmpty(userId);
+        ValidationUtils.checkLength(userId, USER_ID_MAX_SIZE);
     }
     
-    private static boolean isEmpty(String userId) {
-        return userId.isEmpty();
-    }
-
 }
