@@ -2,6 +2,7 @@ package qna.answer;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.action.DeletedContentAction;
 import qna.domain.DateTimeEntity;
 import qna.question.Question;
 import qna.user.User;
@@ -11,7 +12,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends DateTimeEntity {
+public class Answer extends DateTimeEntity implements DeletedContentAction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -79,8 +80,9 @@ public class Answer extends DateTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(final boolean deleted) {
-        this.deleted = deleted;
+    @Override
+    public void deleteContent() {
+        this.deleted = true;
     }
 
     @Override

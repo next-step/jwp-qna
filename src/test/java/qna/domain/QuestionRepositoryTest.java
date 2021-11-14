@@ -68,7 +68,7 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("question에 delete를 true로 수정")
     public void updateQuestionDeletedTrue() {
-        savedQuestion.setDeleted(true);
+        savedQuestion.deleteContent();
 
         Optional<Question> oQuestion = questionRepository.findById(savedQuestion.getId());
 

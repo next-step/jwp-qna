@@ -1,5 +1,6 @@
 package qna.question;
 
+import qna.action.DeletedContentAction;
 import qna.answer.Answer;
 import qna.domain.DateTimeEntity;
 import qna.user.User;
@@ -8,7 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "question")
-public class Question extends DateTimeEntity {
+public class Question extends DateTimeEntity implements DeletedContentAction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -66,8 +67,9 @@ public class Question extends DateTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(final boolean deleted) {
-        this.deleted = deleted;
+    @Override
+    public void deleteContent() {
+        this.deleted = true;
     }
 
     @Override

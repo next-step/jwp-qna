@@ -68,7 +68,7 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("answer에 delete를 true로 수정")
     public void updateAnswerDeletedTrue(){
-        savedAnswer.setDeleted(true);
+        savedAnswer.deleteContent();
         Optional<Answer> oAnswer = answerRepository.findById(savedAnswer.getId());
         assertAnswerDeleted(oAnswer, true);
     }
