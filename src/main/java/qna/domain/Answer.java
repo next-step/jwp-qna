@@ -44,13 +44,7 @@ public class Answer extends BaseEntity {
     }
 
     public Answer(User writer, Question question, String contents) {
-        if (Objects.isNull(writer) || writer.isGuestUser()) {
-            throw new UnAuthorizedException();
-        }
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
+        validCanWritten(writer, question);
 
         this.writer = writer;
         this.question = question;
@@ -85,6 +79,16 @@ public class Answer extends BaseEntity {
 
     public User getWriter() {
         return writer;
+    }
+
+    private void validCanWritten(User writer, Question question) {
+        if (Objects.isNull(writer) || writer.isGuestUser()) {
+            throw new UnAuthorizedException();
+        }
+
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
     }
 
     @Override

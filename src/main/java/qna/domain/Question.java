@@ -54,13 +54,7 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        if (writer == null) {
-            return null;
-        }
-
-        if (writer.isGuestUser()) {
-            throw new UnAuthorizedException(UnAuthorizedException.GUEST_USER_NOT_QUESTION);
-        }
+        validCanWritten(writer);
 
         this.writer = writer;
         return this;
@@ -100,6 +94,16 @@ public class Question extends BaseEntity {
 
     public List<Answer> getAnswers() {
         return Collections.unmodifiableList(answers.values());
+    }
+
+    private void validCanWritten(User writer) {
+        if (writer == null) {
+            throw new UnAuthorizedException();
+        }
+
+        if (writer.isGuestUser()) {
+            throw new UnAuthorizedException(UnAuthorizedException.GUEST_USER_NOT_QUESTION);
+        }
     }
 
     @Override
