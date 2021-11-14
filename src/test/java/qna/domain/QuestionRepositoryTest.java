@@ -27,6 +27,7 @@ public class QuestionRepositoryTest {
     @Test
     void findById() {
         Question question = questions.save(QuestionTest.Q1);
+
         Question result = questions.findById(question.getId()).get();
 
         assertThat(result).isEqualTo(question);

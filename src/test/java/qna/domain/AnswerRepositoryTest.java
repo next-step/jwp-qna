@@ -46,7 +46,6 @@ public class AnswerRepositoryTest {
         Answer answer = answers.save(new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1"));
 
         answer.setContents("update Contents");
-
         Answer answer2 = answers.findByContents("update Contents");
 
         assertThat(answer2).isNotNull();

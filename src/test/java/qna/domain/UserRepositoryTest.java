@@ -42,9 +42,11 @@ public class UserRepositoryTest {
     @Test
     void delete() {
         User save = userRepository.save(UserTest.JAVAJIGI);
+
         userRepository.delete(save);
         userRepository.flush();
         User result = userRepository.findByUserId("javajigi").orElseGet(() -> null);
+
         assertThat(result).isNull();
     }
 }
