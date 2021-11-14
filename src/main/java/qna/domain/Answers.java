@@ -6,6 +6,8 @@ import java.util.List;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
+import qna.CannotDeleteException;
+
 @Embeddable
 public class Answers {
     @OneToMany(mappedBy = "question")
@@ -32,7 +34,13 @@ public class Answers {
         return answers;
     }
     
-    public boolean checkWriter(User writer) {
+    public void checkDeletableByQuestion(User writer) throws CannotDeleteException {
+        if (countAnswers() != 0 && !checkWriter(writer)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+    
+    private boolean checkWriter(User writer) {
         return answers.stream().allMatch(answer -> answer.isSameWriter(writer));
     }
     
