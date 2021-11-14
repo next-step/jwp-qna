@@ -27,21 +27,23 @@ public class QuestionRepositoryTest {
     void setUp() {
         //given
         user = users.save(UserTest.JAVAJIGI);
-        question = questions.save(new Question("title1", "contents1").writeBy(user));
+        question = new Question("title1", "contents1").writeBy(user);
     }
 
     @DisplayName("저장 테스트")
     @Test
     void saveWithUser() {
 
-        question = questions.save(new Question("title1", "contents1").writeBy(user));
+        Question result = questions.save(question);
 
-        assertThat(question.getId()).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result).isEqualTo(question);
     }
 
     @DisplayName("검색 테스트")
     @Test
     void findById() {
+        questions.save(question);
 
         Question result = questions.findById(question.getId()).get();
 
@@ -51,6 +53,7 @@ public class QuestionRepositoryTest {
     @DisplayName("삭제 테스트")
     @Test
     void delete() {
+        questions.save(question);
 
         questions.delete(question);
 
