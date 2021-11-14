@@ -8,11 +8,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.AnswerTest;
-import qna.domain.Question;
 import qna.domain.QuestionTest;
 import qna.domain.UserTest;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
 @DataJpaTest
@@ -20,11 +18,6 @@ public class AnswerRepositoryTest {
 
     @Autowired
     private AnswerRepository answerRepository;
-
-    @BeforeEach
-    public void beforeEach() {
-        answerRepository.deleteAll();
-    }
 
     @Test
     public void save() {
