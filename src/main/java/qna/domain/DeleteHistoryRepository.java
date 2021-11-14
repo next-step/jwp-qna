@@ -9,4 +9,6 @@ import org.springframework.data.repository.query.Param;
 public interface DeleteHistoryRepository extends JpaRepository<DeleteHistory, Long> {
     @Query(value = "select * from delete_history where content_type = :#{#type?.name()}", nativeQuery = true)
     List<DeleteHistory> findByContentType(@Param("type") ContentType type);
+
+    List<DeleteHistory> findByContentIdAndContentType(Long questionId, ContentType contentType);
 }

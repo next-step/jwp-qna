@@ -63,6 +63,10 @@ public class DeleteHistory {
         return id;
     }
 
+    public ContentType getContentType() {
+        return contentType;
+    }
+
     @Override
     public String toString() {
         return "DeleteHistory{" +
