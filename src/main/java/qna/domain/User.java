@@ -1,19 +1,37 @@
 package qna.domain;
 
+import com.sun.istack.NotNull;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class User {
+@Entity
+public class User extends BaseEntity{
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
+    @Column(unique = true)
     private String userId;
+    @NotNull
     private String password;
+    @NotNull
     private String name;
     private String email;
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
+    @OneToMany(mappedBy = "writer")
+    private List<Question> questions = new ArrayList<>();
+    @OneToMany(mappedBy = "deletedByUser")
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
