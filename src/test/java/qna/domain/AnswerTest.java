@@ -50,7 +50,7 @@ public class AnswerTest {
         assertAll(
             () -> assertThat(actual).isNotNull(),
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getWriterId()).isEqualTo(answer1.getWriterId()),
+            () -> assertThat(actual.getWriter().getId()).isEqualTo(answer1.getWriter().getId()),
             () -> assertThat(actual.getQuestion().getId()).isEqualTo(answer1.getQuestion().getId())
         );
     }
@@ -89,12 +89,12 @@ public class AnswerTest {
 
     @Test
     void test_작성자_id로_조회() {
-        Answer actual = answerRepository.findByWriterId(answer1.getWriterId())
+        Answer actual = answerRepository.findByWriterId(answer1.getWriter().getId())
             .orElse(null);
 
         assertAll(
             () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual.getWriterId()).isEqualTo(answer1.getWriterId())
+            () -> assertThat(actual.getWriter().getId()).isEqualTo(answer1.getWriter().getId())
         );
     }
 

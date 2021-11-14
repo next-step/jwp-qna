@@ -1,9 +1,12 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.OneToMany;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
@@ -24,6 +27,9 @@ public class User extends BaseEntity {
 
     @Column(length = 50)
     private String email;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
 
     protected User() {
     }
@@ -88,6 +94,15 @@ public class User extends BaseEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+        answer.toWriter(this);
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override
