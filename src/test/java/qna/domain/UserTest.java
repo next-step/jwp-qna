@@ -47,7 +47,7 @@ public class UserTest {
     @Test
     void update() {
         // given
-        User user = userRepository.findById(JAVAJIGI.getId()).get();
+        User user = userRepository.findAll().get(0);
         String newName = "박성민";
 
         // when
@@ -55,6 +55,6 @@ public class UserTest {
 
         // then
         List<User> result = userRepository.findByName(newName);
-        assertThat(result).containsExactly(JAVAJIGI);
+        assertThat(result).containsExactly(user);
     }
 }
