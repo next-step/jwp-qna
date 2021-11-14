@@ -24,11 +24,11 @@ public class User extends BaseEntity{
     @NotNull
     private String name;
     private String email;
-    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "writer")
     private List<Answer> answers = new ArrayList<>();
-    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "writer")
     private List<Question> questions = new ArrayList<>();
-    @OneToMany(mappedBy = "deletedByUser", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "deletedByUser")
     private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected User() {

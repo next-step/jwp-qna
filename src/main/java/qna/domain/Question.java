@@ -15,7 +15,7 @@ public class Question extends BaseEntity{
     private String title;
     @Lob
     private String contents;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writerId")
     private User writer;
     @NotNull
