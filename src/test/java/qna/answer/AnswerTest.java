@@ -3,8 +3,8 @@ package qna.answer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.NotFoundException;
-import qna.domain.QuestionTest;
 import qna.domain.UserTest;
+import qna.question.QuestionTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

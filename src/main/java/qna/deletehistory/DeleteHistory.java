@@ -33,11 +33,11 @@ public class DeleteHistory implements NullCheckAction {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
+    public DeleteHistory(final ContentType contentType, final Long contentId, final User deletedByUser) {
         this(null, contentType, contentId, deletedByUser);
     }
 
-    public DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedByUser) {
+    public DeleteHistory(final Long id, final ContentType contentType, final Long contentId, final User deletedByUser) {
         throwExceptionIsNullObject(deletedByUser);
         this.id = id;
         this.contentType = contentType;
