@@ -44,7 +44,7 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("QuestionRepository 저장 후 DB조회 객체 동일성 체크")
+    @DisplayName("QuestionRepository 저장 후 DB 조회 객체 동일성 체크")
     void identity() {
         // when
         Question actual = questions.save(question);
@@ -55,30 +55,32 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제안된 Question 조회 검증, 조회결과없음")
-    void findByIdAndDeletedFalse_deleted_true() {
+    @DisplayName("질문 삭제 후 해당 Question 조회결과없음 검증")
+    void findByIdAndDeletedFalse_false() {
         // given
         // when
-        Question actual = questions.save(question);
-        actual.delete(actual.getWriter());
-        Optional<Question> expect = questions.findByIdAndDeletedFalse(question.getId());
+        questions.save(question);
+        question.delete(question.getWriter());
+        Optional<Question> actual = questions.findByIdAndDeletedFalse(question.getId());
 
         // then
-        assertThat(expect.isPresent()).isFalse();
+        assertThat(actual.isPresent()).isFalse();
     }
 
     @Test
     @DisplayName("getAnswers 메소드를 통해 답변 목록 확인")
     void getAnswers() {
         // given
-        Answer answer = new Answer(question.getWriter(), question, "Answers Contents1");
+        Answer expect = new Answer(question.getWriter(), question, "Answers Contents1");
+        question.addAnswer(expect);
+        questions.save(question);
 
         // when
-        question.addAnswer(answer);
-        List<Answer> answers = question.getAnswers();
+        Question findQuestion = questions.findByIdAndDeletedFalse(question.getId()).get();
+        List<Answer> actual = findQuestion.getAnswers();
 
         // then
-        assertThat(answers).contains(answer);
+        assertThat(actual).contains(expect);
     }
 
     @Test
