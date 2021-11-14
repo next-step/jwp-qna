@@ -1,5 +1,6 @@
 package qna.deletehistory;
 
+import qna.action.NullCheckAction;
 import qna.domain.ContentType;
 import qna.user.User;
 
@@ -9,7 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "delete_history")
-public class DeleteHistory {
+public class DeleteHistory implements NullCheckAction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -37,6 +38,7 @@ public class DeleteHistory {
     }
 
     public DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedByUser) {
+        throwExceptionIsNullObject(deletedByUser);
         this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;

@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.deletehistory;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.answer.Answer;
 import qna.answer.AnswerRepository;
-import qna.deletehistory.DeleteHistory;
-import qna.deletehistory.DeleteHistoryRepository;
+import qna.domain.ContentType;
 import qna.question.Question;
 import qna.question.QuestionRepository;
 import qna.user.User;
