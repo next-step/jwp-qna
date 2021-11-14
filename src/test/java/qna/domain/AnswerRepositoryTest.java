@@ -5,11 +5,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnitUtil;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -22,6 +26,12 @@ public class AnswerRepositoryTest {
 
     @Autowired
     UserRepository users;
+
+    @Autowired
+    private EntityManagerFactory factory;
+
+    @Autowired
+    private TestEntityManager testEntityManager;
 
     Question question;
     Answer answer;
@@ -102,5 +112,25 @@ public class AnswerRepositoryTest {
 
         // then
         assertThat(expect.getQuestion()).isEqualTo(changeQuestion);
+    }
+
+    @Test
+    @DisplayName("Question,writer(User) lazy 로딩 확인")
+    void question_lazy_loading() {
+        // given
+        PersistenceUnitUtil persistenceUnitUtil = factory.getPersistenceUnitUtil();
+        Answer saveAnswer = answers.save(answer);
+
+        // when
+        testEntityManager.clear();
+        Answer actual = answers.findByIdAndDeletedFalse(saveAnswer.getId()).get();
+
+        // then
+        boolean questionExpect = persistenceUnitUtil.isLoaded(actual, "question");
+        boolean writerExpect = persistenceUnitUtil.isLoaded(actual, "writer");
+        assertAll(
+            () -> assertThat(questionExpect).isFalse(),
+            () -> assertThat(writerExpect).isFalse()
+        );
     }
 }
