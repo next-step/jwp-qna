@@ -120,6 +120,21 @@ public class User extends BaseEntity{
         this.email = email;
     }
 
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
+        answer.setWriter(this);
+    }
+
+    public void addAQuestion(Question question) {
+        this.questions.add(question);
+        question.setWriter(this);
+    }
+
+    public void addDeleteHistory(DeleteHistory deleteHistory) {
+        this.deleteHistories.add(deleteHistory);
+        deleteHistory.setDeletedByUser(this);
+    }
+
     @Override
     public String toString() {
         return "User{" +

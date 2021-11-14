@@ -27,6 +27,14 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
+    public User getDeletedByUser() {
+        return deletedByUser;
+    }
+
+    public void setDeletedByUser(User deletedByUser) {
+        this.deletedByUser = deletedByUser;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

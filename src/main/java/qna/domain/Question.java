@@ -45,10 +45,6 @@ public class Question extends BaseEntity{
         return this.writer.getId().equals(writer.getId());
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
-
     public Long getId() {
         return id;
     }
@@ -93,8 +89,9 @@ public class Question extends BaseEntity{
         return answers;
     }
 
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
+        answer.setQuestion(this);
     }
 
     @Override
