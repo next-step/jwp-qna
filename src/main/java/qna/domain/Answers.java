@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -8,15 +9,17 @@ import javax.persistence.*;
 @Embeddable
 public class Answers {
     @OneToMany(mappedBy = "question")
-    private final List<Answer> answers = new ArrayList<>();
+    private List<Answer> answers = new ArrayList<>();
 
     protected Answers() {
     }
 
-    public List<DeleteHistory> delete(User loginUser) {
-        return answers.stream()
-            .map(e -> e.delete(loginUser))
-            .collect(Collectors.toList());
+    public DeleteHistories delete(User loginUser, LocalDateTime localDateTime) {
+        return DeleteHistories.from(
+            answers.stream()
+                .map(e -> e.delete(loginUser, localDateTime))
+                .collect(Collectors.toList())
+        );
     }
 
     public void add(Answer answer) {
