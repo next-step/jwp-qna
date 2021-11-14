@@ -54,10 +54,8 @@ class QnaServiceTest {
 
     @Test
     public void delete_성공() throws Exception {
-        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(
+        when(questionRepository.findByIdAndDeletedFalseWithAnswers(question.getId())).thenReturn(
             Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(
-            Arrays.asList(answer));
 
         assertThat(question.isDeleted()).isFalse();
         qnaService.deleteQuestion(JAVAJIGI, question.getId());
@@ -67,8 +65,8 @@ class QnaServiceTest {
     }
 
     @Test
-    public void delete_다른_사람이_쓴_글() throws Exception {
-        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(
+    public void delete_다른_사람이_쓴_글() {
+        when(questionRepository.findByIdAndDeletedFalseWithAnswers(question.getId())).thenReturn(
             Optional.of(question));
 
         assertThatThrownBy(
@@ -78,10 +76,8 @@ class QnaServiceTest {
 
     @Test
     public void delete_성공_질문자_답변자_같음() throws Exception {
-        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(
+        when(questionRepository.findByIdAndDeletedFalseWithAnswers(question.getId())).thenReturn(
             Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(
-            Arrays.asList(answer));
 
         qnaService.deleteQuestion(JAVAJIGI, question.getId());
 
@@ -96,10 +92,8 @@ class QnaServiceTest {
             "Answers Contents1");
         question.addAnswer(answer2);
 
-        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(
+        when(questionRepository.findByIdAndDeletedFalseWithAnswers(question.getId())).thenReturn(
             Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(
-            Arrays.asList(answer, answer2));
 
         assertThatThrownBy(
             () -> qnaService.deleteQuestion(JAVAJIGI, question.getId()))
