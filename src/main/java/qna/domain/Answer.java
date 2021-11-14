@@ -12,10 +12,12 @@ public class Answer extends BaseTimeEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
   private User writer;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
   private Question question;
 
   @Lob

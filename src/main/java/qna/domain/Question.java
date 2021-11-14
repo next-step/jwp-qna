@@ -16,15 +16,12 @@ public class Question extends BaseTimeEntity {
   @Lob
   private String contents;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
   private User writer;
 
   @Column(columnDefinition = "bit", nullable = false)
   private boolean deleted = false;
-
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-  private final List<Answer> answers = new ArrayList<>();
 
   public Question(String title, String contents) {
     this(null, title, contents);
@@ -45,15 +42,6 @@ public class Question extends BaseTimeEntity {
 
   public boolean isOwner(User writer) {
     return this.writer.equals(writer);
-  }
-
-  public void addAnswer(Answer answer) {
-    answer.toQuestion(this);
-    answers.add(answer);
-  }
-
-  public List<Answer> getAnswers() {
-    return answers;
   }
 
   public Long getId() {

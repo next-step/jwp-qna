@@ -3,8 +3,6 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -26,18 +24,6 @@ public class User {
 
   @Column(nullable = false, length = 50)
   private String email;
-
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name="writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
-  private final List<Question> questions = new ArrayList<>();
-
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name="writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
-  private final List<Answer> answers = new ArrayList<>();
-
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
-  private final List<DeleteHistory> deleteHistories = new ArrayList<>();
 
   protected User() {}
 
@@ -64,14 +50,6 @@ public class User {
 
     this.name = target.name;
     this.email = target.email;
-  }
-
-  public List<Question> getQuestions() {
-    return questions;
-  }
-
-  public List<Answer> getAnswer() {
-    return answers;
   }
 
   private boolean matchUserId(String userId) {
