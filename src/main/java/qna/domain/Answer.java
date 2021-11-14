@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.*;
 import java.util.*;
 
 import javax.persistence.*;
@@ -51,10 +52,10 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public DeleteHistory delete(User loginUser) {
+    public DeleteHistory delete(User loginUser, LocalDateTime localDateTime) {
         validate(loginUser);
         deleted = true;
-        return DeleteHistory.answerDeleteHistoryOf(id, loginUser);
+        return DeleteHistory.answerDeleteHistoryOf(id, loginUser, localDateTime);
     }
 
     private void validate(User loginUser) {
