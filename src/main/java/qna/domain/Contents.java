@@ -16,10 +16,17 @@ public class Contents {
     }
 
     public static Contents of(String contents) {
+        checkValidation(contents);
         return new Contents(contents);
     }
     
-    public boolean isEmpty() {
+    private static void checkValidation(String contents) {
+        if (isEmpty(contents)) {
+            throw new IllegalArgumentException("내용을 입력하지 않았습니다.");
+        }
+    }
+    
+    private static boolean isEmpty(String contents) {
         return contents.isEmpty();
     }
 }

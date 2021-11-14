@@ -5,7 +5,9 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class Name {
-    @Column(nullable = false, length = 20)
+    public static final int NAME_MAX_SIZE = 20;
+    
+    @Column(nullable = false, length = NAME_MAX_SIZE)
     private String name;
     
     protected Name() {
@@ -16,10 +18,20 @@ public class Name {
     }
 
     public static Name of(String name) {
+        checkValidation(name);
         return new Name(name);
     }
     
-    public boolean isEmpty() {
+    private static void checkValidation(String name) {
+        if (isEmpty(name)) {
+            throw new IllegalArgumentException("이름을 입력하지 않았습니다.");
+        }
+        if (name.length() > NAME_MAX_SIZE) {
+            throw new IllegalArgumentException(String.format("이름 길이가 %d자를 초과했습니다.", NAME_MAX_SIZE));
+        }
+    }
+    
+    private static boolean isEmpty(String name) {
         return name.isEmpty();
     }
 
