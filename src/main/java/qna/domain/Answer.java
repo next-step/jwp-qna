@@ -24,6 +24,10 @@ public class Answer extends BaseTimeEntity {
 
     private Long writerId;
 
+    protected Answer() {
+
+    }
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }

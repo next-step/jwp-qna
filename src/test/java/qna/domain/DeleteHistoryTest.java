@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +28,21 @@ class DeleteHistoryTest {
         deleteHistoryRepository.save(D2);
     }
 
+    @AfterEach
+    void clean() {
+        deleteHistoryRepository.deleteAll();
+    }
+
     @Test
     void findById() {
+        // given
+        DeleteHistory deleteHistory = deleteHistoryRepository.findAll().get(0);
+
         // when
-        DeleteHistory result1 = deleteHistoryRepository.findById(D1.getId()).get();
-        DeleteHistory result2 = deleteHistoryRepository.findById(D2.getId()).get();
+        DeleteHistory result = deleteHistoryRepository.findById(deleteHistory.getId()).get();
 
         // then
-        assertThat(result1).isEqualTo(D1);
-        assertThat(result2).isEqualTo(D2);
+        assertThat(result).isEqualTo(deleteHistory);
     }
 
     @Test

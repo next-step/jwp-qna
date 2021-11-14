@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +27,21 @@ public class UserTest {
         userRepository.save(SANJIGI);
     }
 
+    @AfterEach
+    void clean() {
+        userRepository.deleteAll();
+    }
+
     @Test
     void findById() {
+        // given
+        User user = userRepository.findAll().get(0);
+
         // when
-        User result1 = userRepository.findById(JAVAJIGI.getId()).get();
-        User result2 = userRepository.findById(SANJIGI.getId()).get();
+        User result = userRepository.findById(user.getId()).get();
 
         // then
-        assertThat(result1).isEqualTo(JAVAJIGI);
-        assertThat(result2).isEqualTo(SANJIGI);
+        assertThat(result).isEqualTo(user);
     }
 
     @Test

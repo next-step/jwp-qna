@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,21 +27,27 @@ public class QuestionTest {
         questionRepository.save(Q2);
     }
 
+    @AfterEach
+    void clean() {
+        questionRepository.deleteAll();
+    }
+
     @Test
     void findById() {
+        // given
+        Question question = questionRepository.findAll().get(0);
+
         // when
-        Question result1 = questionRepository.findById(Q1.getId()).get();
-        Question result2 = questionRepository.findById(Q2.getId()).get();
+        Question result = questionRepository.findById(question.getId()).get();
 
         // then
-        assertThat(result1).isEqualTo(Q1);
-        assertThat(result2).isEqualTo(Q2);
+        assertThat(result).isEqualTo(question);
     }
 
     @Test
     void update() {
         // given
-        Question question = questionRepository.findById(Q1.getId()).get();
+        Question question = questionRepository.findAll().get(0);
         String newContents = "Update Contents";
 
         // when
@@ -48,7 +55,7 @@ public class QuestionTest {
 
         // then
         List<Question> result = questionRepository.findByContents(newContents);
-        assertThat(result).containsExactly(Q1);
+        assertThat(result).containsExactly(question);
     }
 
     @Test
