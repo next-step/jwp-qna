@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -69,6 +71,14 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
         setDeleted(true);
 
         return toDeleteHistory();
+    }
+
+    public DeleteHistories deleteWithAnswers(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistoryList = new ArrayList<>();
+        deleteHistoryList.add(delete(loginUser));
+        deleteHistoryList.addAll(getAnswers().deleteAll(loginUser));
+
+        return DeleteHistories.from(deleteHistoryList);
     }
 
     @Override
