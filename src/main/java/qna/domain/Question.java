@@ -22,8 +22,8 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "title", length = 100, nullable = false)
-    private String title;
+    @Embedded
+    private Title title;
 
     @Embedded
     private Contents contents;
@@ -47,7 +47,7 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
+        this.title = Title.from(title);
         this.contents = Contents.from(contents);
     }
 
@@ -105,7 +105,7 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
         this.id = id;
     }
 
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 
