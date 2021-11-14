@@ -3,8 +3,8 @@
 ## 관계 예상 그림
 
 - 3차 예상 (연관 관계 매핑 후)
-  
-  ![jwp-qna drawio-v3](https://user-images.githubusercontent.com/17772475/141681868-d6eaee13-f163-4272-ad36-dbc4aab1caf8.png)
+
+  ![jwp-qna drawio-v3](https://user-images.githubusercontent.com/17772475/141682152-7a9aac6f-3410-4ac2-9771-90cafdb32169.png)
 
 
 - 2차 예상 (테스트 케이스 만든 후)
