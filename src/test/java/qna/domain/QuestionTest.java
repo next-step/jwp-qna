@@ -4,9 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.ForbiddenException;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -20,7 +17,6 @@ public class QuestionTest {
         assertAll(
             () -> assertThat(question.getTitle()).isEqualTo(title),
             () -> assertThat(question.getContents()).isEqualTo(contents),
-            () -> assertThat(question.getCreatedAt()).isCloseTo(LocalDateTime.now(), within(1, ChronoUnit.SECONDS)),
             () -> assertThat(question.getUpdatedAt()).isNull()
         );
     }

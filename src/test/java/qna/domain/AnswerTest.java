@@ -5,9 +5,6 @@ import org.junit.jupiter.api.Test;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -23,7 +20,6 @@ public class AnswerTest {
                 () -> assertThat(answer.getWriter()).isEqualTo(UserTest.JAVAJIGI),
                 () -> assertThat(answer.getQuestion()).isEqualTo(Q1),
                 () -> assertThat(answer.getContents()).isEqualTo(contents),
-                () -> assertThat(answer.getCreatedAt()).isCloseTo(LocalDateTime.now(), within(1, ChronoUnit.SECONDS)),
                 () -> assertThat(answer.getUpdatedAt()).isNull()
         );
     }

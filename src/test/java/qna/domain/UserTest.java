@@ -5,9 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -25,7 +22,6 @@ public class UserTest {
             () -> assertThat(user.getPassword()).isEqualTo(password),
             () -> assertThat(user.getName()).isEqualTo(name),
             () -> assertThat(user.getEmail()).isEqualTo(email),
-            () -> assertThat(user.getCreatedAt()).isCloseTo(LocalDateTime.now(), within(1, ChronoUnit.SECONDS)),
             () -> assertThat(user.getUpdatedAt()).isNull()
         );
     }

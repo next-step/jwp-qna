@@ -5,7 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -30,6 +34,7 @@ public class AnswerRepositoryTest {
                 () -> assertThat(savedAnswer.getWriter()).isEqualTo(answer.getWriter()),
                 () -> assertThat(savedAnswer.getQuestion()).isEqualTo(answer.getQuestion()),
                 () -> assertThat(savedAnswer.getContents()).isEqualTo(answer.getContents()),
+                () -> assertThat(savedAnswer.getCreatedAt()).isCloseTo(LocalDateTime.now(), within(1, ChronoUnit.SECONDS)),
                 () -> assertThat(question.getAnswers().contains(answer)).isTrue()
         );
     }
