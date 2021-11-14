@@ -4,6 +4,7 @@ import static qna.exception.ExceptionMessage.*;
 
 import java.util.Objects;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,8 +32,8 @@ public class Answer extends BaseEntityTime {
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     private boolean deleted = false;
 
@@ -55,7 +56,7 @@ public class Answer extends BaseEntityTime {
         }
 
         this.writer = writer;
-        this.contents = contents;
+        this.contents = new Contents(contents);
         changeQuestion(question);
     }
 
@@ -71,7 +72,7 @@ public class Answer extends BaseEntityTime {
         return question;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
