@@ -11,6 +11,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByName(String name);
 
     long countByUserId(String userId);
-
-    // List<UserMapping> findAllBy();
 }
