@@ -44,7 +44,9 @@ public class Answer {
 	private boolean deleted;
 
 	private Long questionId;
+
 	private LocalDateTime updatedAt;
+
 	private Long writerId;
 
 	protected Answer() {
@@ -68,6 +70,8 @@ public class Answer {
 		this.writerId = writer.getId();
 		this.questionId = question.getId();
 		this.contents = contents;
+		this.createdAt = LocalDateTime.now();
+		this.updatedAt = LocalDateTime.now();
 	}
 
 	public boolean isOwner(User writer) {
@@ -127,5 +131,23 @@ public class Answer {
 			", contents='" + contents + '\'' +
 			", deleted=" + deleted +
 			'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Answer answer = (Answer)o;
+		return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents,
+			answer.contents) && Objects.equals(createdAt, answer.createdAt) && Objects.equals(
+			questionId, answer.questionId) && Objects.equals(updatedAt, answer.updatedAt)
+			&& Objects.equals(writerId, answer.writerId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, contents, createdAt, deleted, questionId, updatedAt, writerId);
 	}
 }

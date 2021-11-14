@@ -26,11 +26,14 @@ public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long contentId;
 
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
+
     private LocalDateTime createDate;
+
     private Long deletedById;
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
@@ -41,6 +44,18 @@ public class DeleteHistory {
     }
 
     protected DeleteHistory(){
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(ContentType contentType) {
+        this.contentType = contentType;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override

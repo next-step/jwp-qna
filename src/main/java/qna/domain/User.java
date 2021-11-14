@@ -53,19 +53,16 @@ public class User {
 	@Column(length = 20, nullable = false, unique = true)
 	private String userId;
 
-	private User() {
+	protected User() {
 	}
 
 	public User(String userId, String password, String name, String email) {
-		this(null, userId, password, name, email);
-	}
-
-	public User(Long id, String userId, String password, String name, String email) {
-		this.id = id;
 		this.userId = userId;
 		this.password = password;
 		this.name = name;
 		this.email = email;
+		this.createdAt = LocalDateTime.now();
+		this.updatedAt = LocalDateTime.now();
 	}
 
 	public void update(User loginUser, User target) {
@@ -151,6 +148,24 @@ public class User {
 			", name='" + name + '\'' +
 			", email='" + email + '\'' +
 			'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		User user = (User)o;
+		return Objects.equals(id, user.id) && Objects.equals(createdAt, user.createdAt)
+			&& Objects.equals(email, user.email) && Objects.equals(name, user.name)
+			&& Objects.equals(password, user.password) && Objects.equals(updatedAt, user.updatedAt)
+			&& Objects.equals(userId, user.userId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, createdAt, email, name, password, updatedAt, userId);
 	}
 
 	private static class GuestUser extends User {
