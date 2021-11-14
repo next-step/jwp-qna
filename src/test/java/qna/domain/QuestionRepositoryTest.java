@@ -10,24 +10,23 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
+    @Autowired
     private QuestionRepository questionRepository;
 
     @Autowired
-    public QuestionRepositoryTest(QuestionRepository questionRepository) {
-        this.questionRepository = questionRepository;
-    }
+    private UserRepository users;
 
     @DisplayName("Question을 저장한다")
     @Test
     void testSave() {
-        User writer = new User("user1", "1234", "userName", "email");
-        Question question = new Question("title1", "contents1").writeBy(writer);
+        User writer = users.save(new User("user1", "1234", "userName", "email"));
+        Question question = Question.of("title1", "contents1", writer);
         Question savedQuestion = questionRepository.save(question);
         assertAll(
                 () -> assertThat(savedQuestion.getId()).isNotNull(),
                 () -> assertThat(savedQuestion.getTitle()).isEqualTo(question.getTitle()),
                 () -> assertThat(savedQuestion.getContents()).isEqualTo(question.getContents()),
-                () -> assertThat(savedQuestion.getWriterId()).isEqualTo(question.getWriterId())
+                () -> assertThat(savedQuestion.getWriter()).isEqualTo(question.getWriter())
         );
     }
 }

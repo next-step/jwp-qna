@@ -1,20 +1,15 @@
 package qna.domain;
 
+import qna.ForbiddenException;
+
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "question")
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "contents", columnDefinition = "LONGTEXT")
+public class Question extends BaseEntity {
+    @Lob
+    @Column(name = "contents")
     private String contents;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
@@ -22,49 +17,60 @@ public class Question {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
-    @Column(name = "writer_id")
-    private Long writerId;
-
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    private Question(String title, String contents, User writer) {
+        this(null, title, contents, writer);
     }
 
-    public Question(Long id, String title, String contents) {
-        validateTitle(title);
-        this.id = id;
+    private Question(Long id, String title, String contents, User writer) {
+        super(id);
         this.title = title;
         this.contents = contents;
-        this.createdAt = LocalDateTime.now();
+        this.writer = writer;
     }
 
-    private void validateTitle(String title) {
+    public static Question of(String title, String contents, User writer) {
+        return of(null, title, contents, writer);
+    }
+
+    public static Question of(Long id, String title, String contents, User writer) {
+        validateTitle(title);
+        validateWriter(writer);
+        return new Question(id, title, contents, writer);
+    }
+
+    private static void validateWriter(User writer) {
+        if (writer == null) {
+            throw new IllegalArgumentException("작성자를 입력하세요");
+        }
+    }
+
+    private static void validateTitle(String title) {
         if (title == null || title.isEmpty()) {
             throw new IllegalArgumentException("title을 입력하세요");
         }
     }
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
-    }
-
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
-
-    public Long getId() {
-        return id;
+        // 질문이 반드시 있은 다음에 답변이 생성된다.
+        // 답변에 이 질문이 포함되어 있음이 강제 되어야 한다.
+        if (!answer.hasSameQuestion(this)) {
+            throw new ForbiddenException("이 질문과 다른 답변을 등록할 수 없습니다");
+        }
+        answers.add(answer);
     }
 
     public String getTitle() {
@@ -75,8 +81,8 @@ public class Question {
         return contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -87,24 +93,7 @@ public class Question {
         this.deleted = deleted;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", contents='" + contents + '\'' +
-                ", createdAt=" + createdAt +
-                ", deleted=" + deleted +
-                ", title='" + title + '\'' +
-                ", updatedAt=" + updatedAt +
-                ", writerId=" + writerId +
-                '}';
+    public Answers getAnswers() {
+        return answers;
     }
 }
