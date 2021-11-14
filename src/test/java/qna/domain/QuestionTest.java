@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -142,9 +143,12 @@ class QuestionTest {
             Answer answer = answerRepository.save(AnswerFixture.create(otherUser, question, "Answer Contents"));
             question.addAnswer(answer);
 
-            // when, then
+            // when
+            ThrowableAssert.ThrowingCallable throwingCallable = () -> question.delete(otherUser);
+
+            // then
             assertAll(
-                    () -> assertThatThrownBy(() -> question.delete(otherUser))
+                    () -> assertThatThrownBy(throwingCallable)
                             .isInstanceOf(CannotDeleteException.class),
                     () -> verifyDeletedStatus(question.getId(), answer.getId(), false)
             );
