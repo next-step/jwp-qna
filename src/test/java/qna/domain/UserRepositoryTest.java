@@ -69,7 +69,7 @@ public class UserRepositoryTest {
         users.save(USER1);
 
         // when
-        USER1.setUserId("user_id 변경");
+        USER1.changeUserId("user_id 변경");
         User expect = users.findByUserId(USER1.getUserId()).get();
 
         // then
@@ -96,7 +96,7 @@ public class UserRepositoryTest {
     @DisplayName("user_id(유니크) 동일한 유저 저장시 예외 발생 테스트")
     void unique_fail() {
         // given
-        USER2.setUserId(USERID);
+        USER2.changeUserId(USERID);
 
         assertThatExceptionOfType(DataIntegrityViolationException.class) // then
             .isThrownBy(() -> {

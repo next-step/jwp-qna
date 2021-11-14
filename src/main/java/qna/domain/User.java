@@ -69,6 +69,10 @@ public class User extends BaseEntity {
         return false;
     }
 
+    public void changeUserId(String changeUserId) {
+        this.userId = changeUserId;
+    }
+
     public Long getId() {
         return id;
     }
@@ -77,32 +81,12 @@ public class User extends BaseEntity {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEmail(Email changeEmail) {
-        this.email = changeEmail;
-    }
-
-    public String getEmail() {
-        return email.getValue();
     }
 
     private boolean matchUserId(String userId) {
