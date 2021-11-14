@@ -1,8 +1,8 @@
 package qna.answer;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-import qna.action.DeletedContentAction;
 import qna.domain.DateTimeEntity;
 import qna.question.Question;
 import qna.user.User;
@@ -12,7 +12,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends DateTimeEntity implements DeletedContentAction {
+public class Answer extends DateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -51,6 +51,8 @@ public class Answer extends DateTimeEntity implements DeletedContentAction {
         this.user = user;
         this.question = question;
         this.contents = contents;
+
+        question.addAnswer(this);
     }
 
     protected Answer() {
@@ -58,14 +60,6 @@ public class Answer extends DateTimeEntity implements DeletedContentAction {
 
     public Long getId() {
         return id;
-    }
-
-    public boolean isOwner(final User user) {
-        return this.user.equals(user);
-    }
-
-    public void toQuestion(final Question question) {
-        this.question = question;
     }
 
     public Question getQuestion() {
@@ -80,8 +74,7 @@ public class Answer extends DateTimeEntity implements DeletedContentAction {
         return deleted;
     }
 
-    @Override
-    public void deleteContent() {
+    public void deleteAnswer() {
         this.deleted = true;
     }
 
@@ -94,5 +87,11 @@ public class Answer extends DateTimeEntity implements DeletedContentAction {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public void throwExceptionNotDeletableUser(User loginUser) throws CannotDeleteException {
+        if (!this.user.equals(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 }

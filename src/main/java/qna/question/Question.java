@@ -1,15 +1,17 @@
 package qna.question;
 
-import qna.action.DeletedContentAction;
+import qna.CannotDeleteException;
 import qna.answer.Answer;
 import qna.domain.DateTimeEntity;
 import qna.user.User;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
-public class Question extends DateTimeEntity implements DeletedContentAction {
+public class Question extends DateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -29,30 +31,31 @@ public class Question extends DateTimeEntity implements DeletedContentAction {
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
+
+    public Question(String title, String contents, User user) {
+        this(null, title, contents, user);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, String title, String contents, User user) {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.user = user;
     }
 
     protected Question() {
     }
 
-    public Question writeBy(final User user) {
-        this.user = user;
-        return this;
-    }
-
-    public boolean isOwner(final User user) {
-        return this.user.equals(user);
+    public void throwExceptionNotDeletableUser(final User loginUser) throws CannotDeleteException {
+        if (!this.user.equals(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public void addAnswer(final Answer answer) {
-        answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public Long getId() {
@@ -63,13 +66,22 @@ public class Question extends DateTimeEntity implements DeletedContentAction {
         return user;
     }
 
+    public List<Answer> getAnswers() {
+        return new ArrayList<>(answers);
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
 
-    @Override
-    public void deleteContent() {
+    public void deleteQuestion() {
         this.deleted = true;
+    }
+
+    public void deleteAnswers() {
+        for (Answer answer : answers) {
+            answer.deleteAnswer();
+        }
     }
 
     @Override
@@ -81,5 +93,11 @@ public class Question extends DateTimeEntity implements DeletedContentAction {
                 ", user=" + user +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public void throwExceptionNotDeletableAnswers(User loginUser) throws CannotDeleteException {
+        for (Answer answer : answers) {
+            answer.throwExceptionNotDeletableUser(loginUser);
+        }
     }
 }
