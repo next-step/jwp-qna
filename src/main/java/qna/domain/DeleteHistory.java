@@ -30,6 +30,14 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public User getDeletedBy() {
+        return deletedBy;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
