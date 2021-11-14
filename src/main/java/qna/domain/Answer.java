@@ -59,10 +59,6 @@ public class Answer extends BaseEntity {
         this.contents = Contents.of(contents);
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void toQuestion(Question question) {
         this.question = question;
     }
@@ -82,14 +78,6 @@ public class Answer extends BaseEntity {
 
     public User getWriter() {
         return writer;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public Contents getContents() {
-        return contents;
     }
 
     public boolean isDeleted() {

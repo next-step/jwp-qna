@@ -53,10 +53,6 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
         answers.add(answer);
@@ -83,18 +79,9 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public Title getTitle() {
-        return title;
-    }
-
-    public Contents getContents() {
-        return contents;
-    }
-
     public User getWriter() {
         return writer;
     }
-    
 
     public Answers getAnswers() {
         return answers;
