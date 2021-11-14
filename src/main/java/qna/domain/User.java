@@ -4,7 +4,6 @@ import javax.persistence.*;
 
 @Entity
 public class User extends BaseTimeEntity {
-    public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,36 +28,8 @@ public class User extends BaseTimeEntity {
         this.email = email;
     }
 
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
-    }
-
-    public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
-    }
-
-    public boolean isGuestUser() {
-        return false;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
     public String getUserId() {
         return userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     @Override
@@ -72,10 +43,4 @@ public class User extends BaseTimeEntity {
                 '}';
     }
 
-    private static class GuestUser extends User {
-        @Override
-        public boolean isGuestUser() {
-            return true;
-        }
-    }
 }
