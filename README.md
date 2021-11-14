@@ -52,5 +52,5 @@ alter table question
   * 다대일(N:1) 관계다
 * [ ] delete_history - user 연관관계를 매핑한다.
   * 다대일(N:1) 관계다
-* [ ] question - user 연관관계를 매핑한다.
+* [x] question - user 연관관계를 매핑한다.
   * 다대일(N:1) 관계다
