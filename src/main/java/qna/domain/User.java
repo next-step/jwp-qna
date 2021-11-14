@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,14 +18,18 @@ public class User extends BaseEntityTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true, length = 20, nullable = false)
-    private String userId;
-    @Column(length = 20, nullable = false)
-    private String password;
-    @Column(length = 20, nullable = false)
-    private String name;
+
+    @Embedded
+    private UserId userId;
+
+    @Embedded
+    private Password password;
+
+    @Embedded
+    private Username name;
+
     @Column(length = 50)
-    private String email;
+    private Email email;
 
     protected User() {
     }
@@ -35,10 +40,10 @@ public class User extends BaseEntityTime {
 
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+        this.userId = new UserId(userId);
+        this.password = new Password(password);
+        this.name = new Username(name);
+        this.email = new Email(email);
     }
 
     public void update(User loginUser, User target) {
@@ -54,11 +59,11 @@ public class User extends BaseEntityTime {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    private boolean matchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
+    public boolean matchPassword(Password targetPassword) {
         return this.password.equals(targetPassword);
     }
 
@@ -79,20 +84,12 @@ public class User extends BaseEntityTime {
         return id;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
+    public Username getName() {
         return name;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     @Override
