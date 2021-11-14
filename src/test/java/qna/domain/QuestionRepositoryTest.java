@@ -54,8 +54,8 @@ class QuestionRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("Answer 삭제 테스트")
-	public void AnswerRepositoryDeleteTest() {
+	@DisplayName("Question 삭제 테스트")
+	public void QuestionRepositoryDeleteTest() {
 		//given
 		Question savedOne = questionRepository.save(QuestionTest.Q1);
 		Question savedTwo = questionRepository.save(QuestionTest.Q2);

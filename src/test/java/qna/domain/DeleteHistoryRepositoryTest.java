@@ -55,8 +55,8 @@ class DeleteHistoryRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("Answer 삭제 테스트")
-	public void AnswerRepositoryDeleteTest() {
+	@DisplayName("DeleteHistory 삭제 테스트")
+	public void DeleteHistoryRepositoryDeleteTest() {
 		//given
 		DeleteHistory savedOne = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now()));
 		DeleteHistory savedTwo = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now()));
