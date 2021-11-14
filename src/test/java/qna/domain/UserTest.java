@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.UnAuthorizedException;
 
-@DataJpaTest
 public class UserTest {
     public static final User JAVAJIGI = new User("javajigi", "password", "javajigi", new Email("javajigi@slipp.net"));
     public static final User SANJIGI = new User("sanjigi", "password", "sanjigi", new Email("sanjigi@slipp.net"));
@@ -30,16 +29,16 @@ public class UserTest {
         // given
         String changeName = "changeName";
         Email changeEmail = new Email("changeEmail@email.co.kr");
-        User user = new User("wooobo", "password", "myname", new Email("taeHwa@email.com"));
-        User changeUser = new User("wooobo", "password", changeName, changeEmail);
+        User actual = new User("wooobo", "password", "myname", new Email("taeHwa@email.com"));
+        User expect = new User("wooobo", "password", changeName, changeEmail);
 
         // when
-        user.setName(changeName);
-        user.setEmail(changeEmail);
-        user.update(user, changeUser);
+        actual.setName(changeName);
+        actual.setEmail(changeEmail);
+        actual.update(actual, expect);
 
         // then
-        assertThat(user.equalsNameAndEmail(changeUser)).isTrue();
+        assertThat(actual.equalsNameAndEmail(expect)).isTrue();
     }
 
     @Test
@@ -75,10 +74,10 @@ public class UserTest {
         User guestUser = User.GUEST_USER;
 
         // when
-        boolean expect = guestUser.isGuestUser();
+        boolean actual = guestUser.isGuestUser();
 
         // then
-        assertThat(expect).isTrue();
+        assertThat(actual).isTrue();
     }
 
     @Test
