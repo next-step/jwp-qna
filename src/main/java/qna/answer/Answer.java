@@ -39,23 +39,33 @@ public class Answer extends DateTimeEntity {
 
     public Answer(Long id, User user, Question question, String contents) {
         this.id = id;
-
-        if (Objects.isNull(user)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
-
         this.user = user;
         this.question = question;
         this.contents = contents;
-
+        throwExceptionIsNullUser();
+        throwExceptionIsNullQuestion();
         question.addAnswer(this);
     }
 
     protected Answer() {
+    }
+
+    private void throwExceptionIsNullQuestion() {
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
+    }
+
+    private void throwExceptionIsNullUser() {
+        if (Objects.isNull(user)) {
+            throw new UnAuthorizedException();
+        }
+    }
+
+    public void throwExceptionNotDeletableUser(User loginUser) throws CannotDeleteException {
+        if (!this.user.equals(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -79,6 +89,23 @@ public class Answer extends DateTimeEntity {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answer answer = (Answer) o;
+        return deleted == answer.deleted
+                && Objects.equals(id, answer.id)
+                && Objects.equals(user, answer.user)
+                && Objects.equals(contents, answer.contents)
+                && Objects.equals(question, answer.question);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, user, contents, deleted, question);
+    }
+
+    @Override
     public String toString() {
         return "Answer{" +
                 "id=" + getId() +
@@ -87,11 +114,5 @@ public class Answer extends DateTimeEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
-    }
-
-    public void throwExceptionNotDeletableUser(User loginUser) throws CannotDeleteException {
-        if (!this.user.equals(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
     }
 }
