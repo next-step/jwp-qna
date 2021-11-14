@@ -38,8 +38,8 @@ class UserRepositoryTest {
             () -> assertThat(actual.getPassword()).isEqualTo(expected.getPassword()),
             () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
             () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail()),
-            () -> assertThat(actual.getCreatedAt()).isAfter(startTime),
-            () -> assertThat(actual.getUpdatedAt()).isAfter(startTime)
+            () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
+            () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
         );
     }
 
@@ -57,8 +57,8 @@ class UserRepositoryTest {
             () -> assertThat(actual.getPassword()).isEqualTo(expected.getPassword()),
             () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
             () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail()),
-            () -> assertThat(actual.getCreatedAt()).isAfter(startTime),
-            () -> assertThat(actual.getUpdatedAt()).isAfter(startTime)
+            () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
+            () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
         );
     }
 }

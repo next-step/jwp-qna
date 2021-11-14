@@ -46,8 +46,8 @@ class QuestionRepositoryTest {
             () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
             () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
-            () -> assertThat(actual.getCreatedAt()).isAfter(startTime),
-            () -> assertThat(actual.getUpdatedAt()).isAfter(startTime)
+            () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
+            () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
         );
 
         questionRepository.flush();
@@ -75,15 +75,15 @@ class QuestionRepositoryTest {
         Question expected = new Question("title", "contents").writeBy(user);
         questionRepository.save(expected);
 
-        Question actual = questionRepository.findByIdAndDeletedFalse(user.getId()).get();
+        Question actual = questionRepository.findByIdAndDeletedFalse(expected.getId()).get();
 
         assertAll(
             () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
             () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
             () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
-            () -> assertThat(actual.getCreatedAt()).isAfter(startTime),
-            () -> assertThat(actual.getUpdatedAt()).isAfter(startTime)
+            () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
+            () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
         );
     }
 
@@ -113,8 +113,8 @@ class QuestionRepositoryTest {
             () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
             () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
-            () -> assertThat(actual.getCreatedAt()).isAfter(startTime),
-            () -> assertThat(actual.getUpdatedAt()).isAfter(startTime)
+            () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
+            () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
         );
     }
 }
