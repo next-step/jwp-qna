@@ -18,9 +18,9 @@ class AnswerRepositoryTest extends CommonRepositoryTest {
     @BeforeEach
     void setUp() {
         writer = userRepository.save(
-            new User(null, "writer", "123", "writer", "writer@mail.com"));
+            new User("writer", "123", "writer", "writer@mail.com"));
         question = questionRepository.save(
-            new Question(null, "question title", "question contents", writer));
+            new Question("question title", "question contents", writer));
     }
 
     @DisplayName("Answer 를 저장한다")
