@@ -14,8 +14,9 @@ public class AnswerTest {
     @DisplayName("작성자가 답변 삭제")
     void delete() throws CannotDeleteException {
         final Answer answer = Fixture.answer("writer.id");
-        answer.delete(answer.getWriter());
+        final DeleteHistory deleteHistory = answer.delete(answer.getWriter());
         assertThat(answer.isDeleted()).isTrue();
+        assertThat(deleteHistory).isNotNull();
     }
 
     @Test

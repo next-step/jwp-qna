@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -67,17 +69,21 @@ public class Question extends BaseEntity {
         answers.add(answer);
 	}
 
-	public void delete(User loginUser) throws CannotDeleteException {
+	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
 		if (!isOwner(loginUser)) {
 			throw new CannotDeleteException(Message.CAN_NOT_DELETE_QUESTION_WITHOUT_OWNERSHIP.getContent());
 		}
-        deleteAnswers(loginUser);
+        final List<DeleteHistory> deletedAnswerHistories = deleteAnswers(loginUser);
 		setDeleted(true);
+		return new ArrayList<DeleteHistory>() {{
+			add(new DeleteHistory(ContentType.QUESTION, getId(), getWriter()));
+			addAll(deletedAnswerHistories);
+		}};
 	}
 
-    private void deleteAnswers(User loginUser) throws CannotDeleteException {
+    private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
         try {
-            answers.delete(loginUser);
+            return answers.delete(loginUser);
         } catch (CannotDeleteException e) {
             throw new CannotDeleteException(Message.CAN_NOT_DELETE_QUESTION_HAVING_ANSWER_WRITTEN_BY_OTHER.getContent());
         }

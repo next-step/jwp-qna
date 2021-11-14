@@ -2,6 +2,8 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +17,10 @@ public class QuestionTest {
     @DisplayName("질문자가 답변 없는 질문 삭제")
     void delete_not_having_answer() throws CannotDeleteException {
         final Question question = Fixture.question("writer.id");
-        question.delete(question.getWriter());
+        final List<DeleteHistory> deleteHistories = question.delete(question.getWriter());
         assertThat(question.isDeleted()).isTrue();
+        assertThat(deleteHistories).isNotNull();
+        assertThat(deleteHistories.size()).isEqualTo(1);
     }
 
     @Test
@@ -24,9 +28,12 @@ public class QuestionTest {
     void delete_answered_by_questioner() throws CannotDeleteException {
         final Question question = Fixture.question("writer.id");
         final User questioner = question.getWriter();
-        question.addAnswer(Fixture.answer(question, questioner.getUserId()));
-        question.delete(questioner);
+        Fixture.answer(question, questioner.getUserId());
+
+        final List<DeleteHistory> deleteHistories = question.delete(questioner);
         assertThat(question.isDeleted()).isTrue();
+        assertThat(deleteHistories).isNotNull();
+        assertThat(deleteHistories.size()).isEqualTo(2);
     }
 
     @Test

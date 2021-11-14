@@ -70,11 +70,12 @@ public class Answer extends BaseEntity {
         setQuestion(question);
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(Message.CAN_NOT_DELETE_ANSWER_WITHOUT_OWNERSHIP.getContent());
         }
         setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, getId(), getWriter());
     }
 
     public Long getId() {
