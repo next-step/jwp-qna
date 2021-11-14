@@ -1,11 +1,48 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Question {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Column(name = "contents")
+    @Lob
     private String contents;
-    private Long writerId;
+
+    @Column(name = "created_at", nullable = false)
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    @Column(name = "title", nullable = false, length = 100)
+    private String title;
+
+    @Column(name = "updated_at")
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    @Column(name = "writer_id")
+    private Long writerId;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -73,11 +110,11 @@ public class Question {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", contents='" + contents + '\'' +
+            ", writerId=" + writerId +
+            ", deleted=" + deleted +
+            '}';
     }
 }

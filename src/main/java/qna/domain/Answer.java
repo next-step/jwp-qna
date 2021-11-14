@@ -1,16 +1,51 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
-
+@Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Answer {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+
+    @Column(name = "contents")
+    @Lob
     private String contents;
+
+    @Column(name = "created_at", nullable = false)
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    @Column(name = "question_id")
+    private Long questionId;
+
+    @Column(name = "updated_at")
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    @Column(name = "writer_id")
+    private Long writerId;
+
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -83,11 +118,11 @@ public class Answer {
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", writerId=" + writerId +
+            ", questionId=" + questionId +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            '}';
     }
 }

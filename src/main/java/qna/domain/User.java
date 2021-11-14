@@ -1,19 +1,49 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
-
+@Entity
+@EntityListeners(AuditingEntityListener.class)
 public class User {
+
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
+    @Column(name = "created_at", nullable = false)
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @Column(name = "email", length = 50)
     private String email;
 
-    private User() {
+    @Column(name = "name", nullable = false, length = 20)
+    private String name;
+
+    @Column(name = "password", nullable = false, length = 20)
+    private String password;
+
+    @Column(name = "updated_at")
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    @Column(name = "user_id", unique = true, nullable = false, length = 20)
+    private String userId;
+
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -55,7 +85,7 @@ public class User {
         }
 
         return name.equals(target.name) &&
-                email.equals(target.email);
+            email.equals(target.email);
     }
 
     public boolean isGuestUser() {
@@ -105,15 +135,16 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+            "id=" + id +
+            ", userId='" + userId + '\'' +
+            ", password='" + password + '\'' +
+            ", name='" + name + '\'' +
+            ", email='" + email + '\'' +
+            '}';
     }
 
     private static class GuestUser extends User {
+
         @Override
         public boolean isGuestUser() {
             return true;
