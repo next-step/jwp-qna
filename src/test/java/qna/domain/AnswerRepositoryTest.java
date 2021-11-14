@@ -33,15 +33,15 @@ public class AnswerRepositoryTest {
     @Autowired
     private TestEntityManager testEntityManager;
 
-    Question question;
-    Answer answer;
-    User user;
+    Question QUESTION;
+    Answer ANSWER;
+    User USER;
 
     @BeforeEach
     public void setUp() throws Exception {
-        user = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
-        question = questions.save(new Question("title1", "contents1").writeBy(user));
-        answer = new Answer(question.getWriter(), question, "Answers Contents1");
+        USER = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
+        QUESTION = questions.save(new Question("title1", "contents1").writeBy(USER));
+        ANSWER = new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1");
     }
 
     @Test
@@ -49,7 +49,7 @@ public class AnswerRepositoryTest {
     void save() {
         // given
         // when
-        Answer expect = answers.save(answer);
+        Answer expect = answers.save(ANSWER);
 
         // then
         assertThat(expect.getId()).isNotNull();
@@ -60,7 +60,7 @@ public class AnswerRepositoryTest {
     void identity() {
         // given
         // when
-        Answer actual = answers.save(answer);
+        Answer actual = answers.save(ANSWER);
         Answer expect = answers.findById(actual.getId()).get();
 
         // then
@@ -72,7 +72,7 @@ public class AnswerRepositoryTest {
     void findByQuestionIdAndDeletedFalse() {
         // given
         // when
-        Answer expect = answers.save(answer);
+        Answer expect = answers.save(ANSWER);
         List<Answer> answerList = answers.findByQuestionAndDeletedFalse(expect.getQuestion());
 
         // then
@@ -86,8 +86,8 @@ public class AnswerRepositoryTest {
     @DisplayName("remove 처리 후 findByQuestionIdAndDeletedFalse 메소드 조회 미포함 체크 ")
     void findByQuestionIdAndDeletedFalse_deleted() {
         // given
-        Answer expect = answers.save(answer);
-        expect.delete(user);
+        Answer expect = answers.save(ANSWER);
+        expect.delete(USER);
 
         // when
         List<Answer> answerList = answers.findByQuestionAndDeletedFalse(expect.getQuestion());
@@ -104,7 +104,7 @@ public class AnswerRepositoryTest {
     void question_lazy_loading() {
         // given
         PersistenceUnitUtil persistenceUnitUtil = factory.getPersistenceUnitUtil();
-        Answer saveAnswer = answers.save(answer);
+        Answer saveAnswer = answers.save(ANSWER);
 
         // when
         testEntityManager.clear();

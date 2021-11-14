@@ -24,20 +24,20 @@ public class QuestionRepositoryTest {
     @Autowired
     UserRepository users;
 
-    private Question question;
-    private User user;
+    private Question QUESTION;
+    private User USER;
 
     @BeforeEach
     public void setUp() throws Exception {
-        user = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
-        question = new Question("title1", "contents1").writeBy(user);
+        USER = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
+        QUESTION = new Question("title1", "contents1").writeBy(USER);
     }
 
     @Test
     @DisplayName("QuestionRepository 저장 후 ID not null 체크")
     void save() {
         // when
-        Question actual = questions.save(question);
+        Question actual = questions.save(QUESTION);
 
         // then
         assertThat(actual.getId()).isNotNull();
@@ -47,7 +47,7 @@ public class QuestionRepositoryTest {
     @DisplayName("QuestionRepository 저장 후 DB 조회 객체 동일성 체크")
     void identity() {
         // when
-        Question actual = questions.save(question);
+        Question actual = questions.save(QUESTION);
         Question expect = questions.findById(actual.getId()).get();
 
         // then
@@ -59,9 +59,9 @@ public class QuestionRepositoryTest {
     void findByIdAndDeletedFalse_false() {
         // given
         // when
-        questions.save(question);
-        question.delete(question.getWriter());
-        Optional<Question> actual = questions.findByIdAndDeletedFalse(question.getId());
+        questions.save(QUESTION);
+        QUESTION.delete(QUESTION.getWriter());
+        Optional<Question> actual = questions.findByIdAndDeletedFalse(QUESTION.getId());
 
         // then
         assertThat(actual.isPresent()).isFalse();
@@ -71,12 +71,12 @@ public class QuestionRepositoryTest {
     @DisplayName("getAnswers 메소드를 통해 답변 목록 확인")
     void getAnswers() {
         // given
-        Answer expect = new Answer(question.getWriter(), question, "Answers Contents1");
-        question.addAnswer(expect);
-        questions.save(question);
+        Answer expect = new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1");
+        QUESTION.addAnswer(expect);
+        questions.save(QUESTION);
 
         // when
-        Question findQuestion = questions.findByIdAndDeletedFalse(question.getId()).get();
+        Question findQuestion = questions.findByIdAndDeletedFalse(QUESTION.getId()).get();
         List<Answer> actual = findQuestion.getAnswers();
 
         // then
@@ -87,12 +87,12 @@ public class QuestionRepositoryTest {
     @DisplayName("delete 메소드 호출시 연관 답변도 delete 되는지 확인")
     void deleted_and_answer_delete() {
         // given
-        Question savedQ1 = questions.save(question);
+        Question savedQ1 = questions.save(QUESTION);
         Answer answer1 = new Answer(savedQ1.getWriter(), savedQ1, "Answers Contents2");
         savedQ1.addAnswer(answer1);
 
         // when
-        savedQ1.delete(user);
+        savedQ1.delete(USER);
         questions.flush();
 
         //then

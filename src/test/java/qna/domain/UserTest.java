@@ -32,8 +32,6 @@ public class UserTest {
         User expect = new User("wooobo", "password", changeName, changeEmail);
 
         // when
-        actual.setName(changeName);
-        actual.setEmail(changeEmail);
         actual.update(actual, expect);
 
         // then
