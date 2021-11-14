@@ -86,7 +86,7 @@ public class Answer extends BaseTimeEntity {
 	}
 
 	public void delete(User loginUser) throws CannotDeleteException {
-		if(isDeleted()){	/* loginUser와 다른 사용자 소유여도 이미 지워진 거면 exception 안나게 처리 */
+		if (isDeleted()) {    /* loginUser와 다른 사용자 소유여도 이미 지워진 거면 exception 안나게 처리 */
 			return;
 		}
 		if (!isOwner(loginUser)) {
@@ -100,7 +100,7 @@ public class Answer extends BaseTimeEntity {
 		if (this == o) {
 			return true;
 		}
-		if(o==null){
+		if (o == null) {
 			return false;
 		}
 
