@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -24,16 +23,11 @@ public class QuestionTest {
     @Autowired
     UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        userRepository.save(UserTest.JAVAJIGI);
-        userRepository.save(UserTest.SANJIGI);
-    }
-
     @Test
     public void 질문_저장() {
         //given
-        Question actual = questionRepository.save(Q1);
+        User write = userRepository.save(TestUserFactory.create("donkey"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
         Long savedId = actual.getId();
 
         //when
@@ -46,7 +40,8 @@ public class QuestionTest {
     @Test
     public void 질문_저장_후_질문불러오기() {
         //given
-        Question actual = questionRepository.save(Q1);
+        User write = userRepository.save(TestUserFactory.create("donkey"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
 
         //when
         List<Question> questionList = questionRepository.findAll();
@@ -64,7 +59,8 @@ public class QuestionTest {
     @Test
     public void 질문_저장_후_삭제() {
         //given
-        Question actual = questionRepository.save(Q1);
+        User write = userRepository.save(TestUserFactory.create("donkey"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
 
         //when
         actual.setDeleted(true);
@@ -76,8 +72,9 @@ public class QuestionTest {
     @Test
     public void 제목에_같은_단어가_포함되는_질문_목록_조회() {
         //given
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
+        User write = userRepository.save(TestUserFactory.create("donkey"));
+        questionRepository.save(TestQuestionFactory.create("title", "content", write));
+        questionRepository.save(TestQuestionFactory.create("title", "content", write));
 
         String title = "title";
 

@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import javax.persistence.EntityManager;
-
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,15 +18,11 @@ public class UserTest {
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    EntityManager em;
-
     @Test
     public void 사용자_저장() {
         //given
-        User actual = userRepository.save(JAVAJIGI);
+        User actual = userRepository.save(TestUserFactory.create("donkey"));
         Long savedId = actual.getId();
-        em.clear();
 
         //when
         User expected = userRepository.findById(savedId).get();
@@ -40,7 +34,7 @@ public class UserTest {
     @Test
     public void 사용자_저장_후_사용자_불러오기() {
         //given
-        User actual = userRepository.save(JAVAJIGI);
+        User actual = userRepository.save(TestUserFactory.create("donkey"));
 
         //when
         List<User> userList = userRepository.findAll();
@@ -59,9 +53,8 @@ public class UserTest {
     @Test
     public void 사용자_이름으로_사용자_목록_조회() {
         //given
-        userRepository.save(JAVAJIGI);
-        userRepository.save(SANJIGI);
-        em.clear();
+        userRepository.save(TestUserFactory.create("donkey"));
+        userRepository.save(TestUserFactory.create("dh"));
 
         String name = "name";
 
