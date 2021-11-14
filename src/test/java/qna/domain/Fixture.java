@@ -7,15 +7,13 @@ public class Fixture {
 	}
 
 	public static Question question(String writerId) {
-		final User writer = user(writerId);
 		final Question question = new Question("title", "question.contents");
-		question.writeBy(writer);
+		question.writeBy(user(writerId));
 		return question;
 	}
 
 	public static Answer answer(String writerId) {
-		final User writer = user(writerId);
-		final Question question = question("question.writer.id");
-		return new Answer(writer, question, "answer.contents");
+		final Question question = question(String.format("question.%s", writerId));
+		return new Answer(user(writerId), question, "answer.contents");
 	}
 }
