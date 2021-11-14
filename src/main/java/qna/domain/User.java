@@ -135,6 +135,18 @@ public class User extends BaseEntity{
         deleteHistory.setDeletedByUser(this);
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
+    }
+
     @Override
     public String toString() {
         return "User{" +
