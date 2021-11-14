@@ -13,6 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -31,6 +34,9 @@ public class Question extends BaseTimeEntity {
 
     @Column(nullable = false, length = 100)
     private String title;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -56,7 +62,11 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.add(answer);
+
+        if (answer.getQuestion() != this) {
+            answer.toQuestion(this);
+        }
     }
 
     public Long getId() {
@@ -71,16 +81,12 @@ public class Question extends BaseTimeEntity {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public User getWriter() {
@@ -104,12 +110,13 @@ public class Question extends BaseTimeEntity {
                 && Objects.equals(getId(), question.getId())
                 && Objects.equals(getContents(), question.getContents())
                 && Objects.equals(getTitle(), question.getTitle())
+                && Objects.equals(answers, question.answers)
                 && Objects.equals(getWriter(), question.getWriter());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getContents(), isDeleted(), getTitle(), getWriter());
+        return Objects.hash(getId(), getContents(), isDeleted(), getTitle(), answers, getWriter());
     }
 
     @Override
@@ -119,7 +126,9 @@ public class Question extends BaseTimeEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 ", title='" + title + '\'' +
+                ", answers=" + answers +
                 ", writer=" + writer +
                 "} ";
     }
+
 }
