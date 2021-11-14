@@ -1,9 +1,12 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @EntityListeners(AuditingEntityListener.class)
@@ -20,6 +23,9 @@ public class Question extends BaseEntity {
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -45,6 +51,11 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.add(answer);
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public String getTitle() {

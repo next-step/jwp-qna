@@ -23,7 +23,7 @@
   - [x] 상속 대상 클래스 수정
 
 ### 2단계
-- [ ] answer와 question의 연관관계
+- [x] answer와 question의 연관관계
 - [ ] answer와 writer_id (User)의 연관관계
 - [ ] delete_history와 deleted_by_id (User)의 연관관계
 - [ ] question과 writer_id (User)의 연관관계

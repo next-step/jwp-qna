@@ -51,7 +51,7 @@ public class AnswerTest {
             () -> assertThat(actual).isNotNull(),
             () -> assertThat(actual.getId()).isNotNull(),
             () -> assertThat(actual.getWriterId()).isEqualTo(answer1.getWriterId()),
-            () -> assertThat(actual.getQuestionId()).isEqualTo(answer1.getQuestionId())
+            () -> assertThat(actual.getQuestion().getId()).isEqualTo(answer1.getQuestion().getId())
         );
     }
 
@@ -78,12 +78,12 @@ public class AnswerTest {
 
     @Test
     void test_질문_id로_조회() {
-        List<Answer> answers = answerRepository.findByQuestionId(answer1.getQuestionId());
+        List<Answer> answers = answerRepository.findByQuestionId(answer1.getQuestion().getId());
 
         assertAll(
             () -> assertThat(answers).isNotNull(),
             () -> assertThat(answers).hasSize(2),
-            () -> assertThat(answers.get(0).getQuestionId()).isEqualTo(answer1.getQuestionId())
+            () -> assertThat(answers.get(0).getQuestion().getId()).isEqualTo(answer1.getQuestion().getId())
         );
     }
 
@@ -142,12 +142,14 @@ public class AnswerTest {
     @Test
     @DisplayName("질문 ID로 조회 후 삭제 되지 않았음을 확인한다.")
     void test_findByQuestionIdAndDeletedFalse() {
+        Long questionId = answer1.getQuestion().getId();
+
         List<Answer> answers =
-            answerRepository.findByQuestionIdAndDeletedFalse(answer1.getQuestionId());
+            answerRepository.findByQuestionIdAndDeletedFalse(questionId);
 
         assertAll(
             () -> assertThat(answers).isNotNull(),
-            () -> assertThat(answers.get(0).getQuestionId()).isEqualTo(answer1.getQuestionId()),
+            () -> assertThat(answers.get(0).getQuestion().getId()).isEqualTo(answer1.getQuestion().getId()),
             () -> assertThat(answers.get(0).isDeleted()).isEqualTo(answer1.isDeleted()),
             () -> assertThat(answers.get(0).isDeleted()).isFalse()
         );
