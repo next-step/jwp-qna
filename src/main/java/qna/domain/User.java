@@ -109,7 +109,7 @@ public class User extends BaseTimeEntity {
 			return false;
 		}
 
-		if (o instanceof User) {
+		if (!(o instanceof User)) {
 			return false;
 		}
 

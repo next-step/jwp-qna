@@ -104,7 +104,7 @@ public class Answer extends BaseTimeEntity {
 			return false;
 		}
 
-		if (o instanceof Answer) {
+		if (!(o instanceof Answer)) {
 			return false;
 		}
 
