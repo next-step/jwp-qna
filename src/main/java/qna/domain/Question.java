@@ -1,7 +1,7 @@
 package qna.domain;
 
+import java.time.*;
 import java.util.*;
-import java.util.stream.*;
 
 import javax.persistence.*;
 
@@ -30,6 +30,9 @@ public class Question extends BaseEntity {
     @Embedded
     private final Answers answers = new Answers();
 
+    @Embedded
+    private final DeleteHistories deleteHistories = new DeleteHistories();
+
     protected Question() {
     }
 
@@ -43,16 +46,19 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public List<DeleteHistory> deleteQuestionAndAnswers(User loginUser) {
-        return Stream.of(delete(loginUser), answers.delete(loginUser))
-            .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+    public DeleteHistories delete(User loginUser, LocalDateTime localDateTime) {
+        deleteQuestion(loginUser, localDateTime);
+        deleteHistories.getDeleteHistories().addAll(
+            answers.delete(loginUser, localDateTime)
+                .getDeleteHistories()
+        );
+        return deleteHistories;
     }
 
-    private List<DeleteHistory> delete(User loginUser) {
+    private void deleteQuestion(User loginUser, LocalDateTime localDateTime) {
         validate(loginUser);
         deleted = true;
-        return Collections.singletonList(DeleteHistory.questionDeleteHistoryOf(id, loginUser));
+        deleteHistories.add(DeleteHistory.questionDeleteHistoryOf(id, loginUser, localDateTime));
     }
 
     private void validate(User loginUser) {
