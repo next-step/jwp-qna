@@ -3,13 +3,25 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
 public class Answer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "question_id")
     private Long questionId;
+
+    @Lob
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
@@ -30,6 +42,9 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
+    }
+
+    protected Answer() {
     }
 
     public boolean isOwner(User writer) {
