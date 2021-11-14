@@ -113,6 +113,10 @@ public class User extends BaseEntity {
         return this.password.equals(targetPassword);
     }
 
+    public boolean isMine(User writer) {
+        return Objects.equals(this.id, writer.getId());
+    }
+
     private static class GuestUser extends User {
         @Override
         public boolean isGuestUser() {

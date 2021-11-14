@@ -79,7 +79,7 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+        return this.writer.isMine(writer);
     }
 
     public void addAnswer(Answer answer) {
