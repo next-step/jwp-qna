@@ -83,7 +83,8 @@ public class AnswerTest {
         assertAll(
             () -> assertThat(answers).isNotNull(),
             () -> assertThat(answers).hasSize(2),
-            () -> assertThat(answers.get(0).getQuestion().getId()).isEqualTo(answer1.getQuestion().getId())
+            () -> assertThat(answers.get(0).getQuestion().getId()).isEqualTo(
+                answer1.getQuestion().getId())
         );
     }
 
@@ -149,7 +150,8 @@ public class AnswerTest {
 
         assertAll(
             () -> assertThat(answers).isNotNull(),
-            () -> assertThat(answers.get(0).getQuestion().getId()).isEqualTo(answer1.getQuestion().getId()),
+            () -> assertThat(answers.get(0).getQuestion().getId()).isEqualTo(
+                answer1.getQuestion().getId()),
             () -> assertThat(answers.get(0).isDeleted()).isEqualTo(answer1.isDeleted()),
             () -> assertThat(answers.get(0).isDeleted()).isFalse()
         );
