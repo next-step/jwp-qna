@@ -20,15 +20,20 @@ public class Answer extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     @ManyToOne
-    @JoinColumn(name ="writer_id")
+    @JoinColumn(name = "writer_id")
     private User writer;
 
     protected Answer() {
 
+    }
+
+    public Answer(String contents) {
+        this.contents = contents;
     }
 
     public Answer(User writer, Question question, String contents) {
@@ -47,7 +52,7 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.writer = writer;
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -55,8 +60,12 @@ public class Answer extends BaseTimeEntity {
         return this.writer.getId().equals(writer.getId());
     }
 
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
+    public void setQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().remove(this);
+        }
+        this.question = question;
+        question.getAnswers().add(this);
     }
 
     public Long getId() {
@@ -65,6 +74,10 @@ public class Answer extends BaseTimeEntity {
 
     public Long getWriterId() {
         return writer.getId();
+    }
+
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
@@ -83,12 +96,16 @@ public class Answer extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
+    public void setUser(User writer) {
+        this.writer = writer;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writer.getId() +
-                ", questionId=" + questionId +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

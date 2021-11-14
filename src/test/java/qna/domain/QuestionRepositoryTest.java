@@ -60,6 +60,4 @@ public class QuestionRepositoryTest {
         Question result = questions.findById(question.getId()).orElseGet(() -> null);
         assertThat(result).isNull();
     }
-
-
 }

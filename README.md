@@ -46,7 +46,7 @@ alter table question
             references user
 ~~~
 
-* [ ] answer - question 연관관계를 매핑한다.
+* [x] answer - question 연관관계를 매핑한다.
   * 일대다(1:N) 관계다
 * [x] answer - user 연관관계를 매핑한다.
   * 다대일(N:1) 관계다
