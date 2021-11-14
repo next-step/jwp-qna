@@ -28,7 +28,7 @@ public class QuestionTest {
         answerList = Arrays.asList(
             AnswerTest.createAnswer(writer, question),
             AnswerTest.createAnswer(writer, question));
-        question.setWriter(writer);
+        question.writeBy(writer);
     }
 
     @DisplayName("로그인 사용자와 질문한 사람이 같은 경우에만 삭제가 가능하다")

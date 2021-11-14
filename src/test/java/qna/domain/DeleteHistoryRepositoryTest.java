@@ -20,7 +20,7 @@ class DeleteHistoryRepositoryTest extends CommonRepositoryTest {
         writer = userRepository.save(
             new User("questionWriter", "123", "questionWriter", "writer@email.com"));
         question = questionRepository.save(new Question("question", "questionContents"));
-        question.setWriter(writer);
+        question.writeBy(writer);
         answer = answerRepository.save(new Answer(writer, question, "answerContents"));
     }
 
