@@ -2,6 +2,10 @@
 
 ## 관계 예상 그림
 
+- 3차 예상 (연관 관계 매핑 후)
+  ![jwp-qna drawio-v3](https://user-images.githubusercontent.com/17772475/141681868-d6eaee13-f163-4272-ad36-dbc4aab1caf8.png)
+
+
 - 2차 예상 (테스트 케이스 만든 후)
   
   ![jwp-qna drawio-v2](https://user-images.githubusercontent.com/17772475/141173769-0c66d797-aba8-45ae-9339-045e410c234a.png)
