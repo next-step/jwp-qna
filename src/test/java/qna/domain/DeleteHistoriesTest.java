@@ -13,8 +13,11 @@ public class DeleteHistoriesTest {
     @Test
     @DisplayName("삭제이력 목록 생성 확인")
     void 삭제이력_목록_확인() {
+        // Given
         List<DeleteHistory> answerHistories = new ArrayList<DeleteHistory>();
         answerHistories.add(DeleteHistory.of(ContentType.ANSWER, AnswerTest.A2.getId(), UserTest.JENNIE));
+        
+        // When, Then
         assertThat(DeleteHistories.of(DeleteHistory.of(ContentType.QUESTION, QuestionTest.Q1.getId(), UserTest.JENNIE), DeleteHistories.fromAnswers(answerHistories)).getDeleteHistories()).hasSize(2);
     }
 
