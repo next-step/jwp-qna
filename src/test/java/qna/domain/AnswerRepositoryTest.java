@@ -8,22 +8,19 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import qna.common.CommonRepositoryTest;
 
 class AnswerRepositoryTest extends CommonRepositoryTest {
-    @Autowired
-    private AnswerRepository answerRepository;
     private User writer;
     private Question question;
 
     @BeforeEach
     void setUp() {
-        this.writer = userRepository.save(
-            new User(1L, "writer", "123", "writer", "writer@mail.com"));
-        this.question = questionRepository.save(
-            new Question(1L, "question title", "question contents"));
+        writer = userRepository.save(
+            new User(null, "writer", "123", "writer", "writer@mail.com"));
+        question = questionRepository.save(
+            new Question(null, "question title", "question contents", writer));
     }
 
     @DisplayName("Answer 를 저장한다")

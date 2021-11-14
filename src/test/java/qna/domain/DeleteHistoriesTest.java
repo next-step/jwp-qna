@@ -14,8 +14,7 @@ class DeleteHistoriesTest {
     void create() {
         // given
         User writer = UserTest.JAVAJIGI;
-        Question question = QuestionTest.createQuestion("question", "questionContents")
-            .writeBy(writer);
+        Question question = QuestionTest.createQuestion("question", "questionContents", writer);
         Answer firstAnswer = AnswerTest.createAnswer(writer, question);
         Answer secondAnswer = AnswerTest.createAnswer(writer, question);
 

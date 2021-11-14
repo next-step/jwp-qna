@@ -120,6 +120,6 @@ class AnswersTest {
     }
 
     private Question createQuestion(String title, String contents, User writer) {
-        return new Question(title, contents).writeBy(writer);
+        return new Question(title, contents, writer);
     }
 }

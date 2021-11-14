@@ -2,6 +2,8 @@ package qna.domain;
 
 import static qna.exception.ExceptionMessage.*;
 
+import java.util.Objects;
+
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import qna.exception.CannotDeleteException;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 public class Question extends BaseEntityTime {
@@ -36,19 +39,20 @@ public class Question extends BaseEntityTime {
     protected Question() {
     }
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    public Question(String title, String contents, User writer) {
+        this(null, title, contents, writer);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, String title, String contents, User writer) {
         this.id = id;
         this.title = new Title(title);
         this.contents = new Contents(contents);
-    }
 
-    public Question writeBy(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
+
         this.writer = writer;
-        return this;
     }
 
     public void addAnswer(Answer answer) {

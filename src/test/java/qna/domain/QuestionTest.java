@@ -14,8 +14,7 @@ import org.junit.jupiter.api.Test;
 import qna.exception.CannotDeleteException;
 
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question("title1", "contents1", UserTest.JAVAJIGI);
 
     private Question question;
     private List<Answer> answerList;
@@ -24,11 +23,10 @@ public class QuestionTest {
     @BeforeEach
     void setUp() {
         writer = new User("writer", "123", "writer", "writer@mail.com");
-        question = createQuestion("question", "contents");
+        question = createQuestion("question", "contents", writer);
         answerList = Arrays.asList(
             AnswerTest.createAnswer(writer, question),
             AnswerTest.createAnswer(writer, question));
-        question.writeBy(writer);
     }
 
     @DisplayName("로그인 사용자와 질문한 사람이 같은 경우에만 삭제가 가능하다")
@@ -51,7 +49,7 @@ public class QuestionTest {
         assertThat(answerList).extracting("deleted").containsOnly(true);
     }
 
-    public static Question createQuestion(String title, String contents) {
-        return new Question(title, contents);
+    public static Question createQuestion(String title, String contents, User writer) {
+        return new Question(title, contents, writer);
     }
 }

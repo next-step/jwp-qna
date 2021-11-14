@@ -15,9 +15,10 @@ class AnswerTest {
     @Test
     void changeQuestion() {
         // given
-        Question question1 = createQuestion("question1", "questionContents1");
-        Question question2 = createQuestion("question2", "questionContents2");
-        Answer answer = createAnswer(UserTest.JAVAJIGI, question1);
+        User writer = UserTest.JAVAJIGI;
+        Question question1 = createQuestion("question1", "questionContents1", writer);
+        Question question2 = createQuestion("question2", "questionContents2", writer);
+        Answer answer = createAnswer(writer, question1);
 
         // when
         answer.changeQuestion(question2);
@@ -32,7 +33,7 @@ class AnswerTest {
     @Test
     void validateAnswerOwner() {
         // given
-        Question question = createQuestion("question", "questionContents");
+        Question question = createQuestion("question", "questionContents", UserTest.JAVAJIGI);
         Answer answer = createAnswer(UserTest.JAVAJIGI, question);
 
         // when && then

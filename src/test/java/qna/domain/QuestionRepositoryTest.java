@@ -27,8 +27,7 @@ class QuestionRepositoryTest extends CommonRepositoryTest {
     @Test
     void save() {
         // given
-        Question question = createQuestion("question", "contents")
-            .writeBy(writer);
+        Question question = createQuestion("question", "contents", writer);
 
         // when
         Question savedQuestion = questionRepository.save(question);
@@ -41,8 +40,7 @@ class QuestionRepositoryTest extends CommonRepositoryTest {
     @Test
     void findById() {
         // given
-        Question savedQuestion = questionRepository.save(createQuestion("question", "contents")
-            .writeBy(writer));
+        Question savedQuestion = questionRepository.save(createQuestion("question", "contents", writer));
 
         // when
         Question findQuestion = questionRepository.findById(savedQuestion.getId()).orElse(null);
@@ -60,8 +58,8 @@ class QuestionRepositoryTest extends CommonRepositoryTest {
         String secondTitle = "question2";
         String firstContents = "contents1";
         String secondContents = "contents2";
-        questionRepository.save(createQuestion(firstTitle, firstContents).writeBy(writer));
-        questionRepository.save(createQuestion(secondTitle, secondContents).writeBy(writer));
+        questionRepository.save(createQuestion(firstTitle, firstContents, writer));
+        questionRepository.save(createQuestion(secondTitle, secondContents, writer));
 
         // when
         List<Question> questions = questionRepository.findByDeletedFalse();
@@ -78,8 +76,7 @@ class QuestionRepositoryTest extends CommonRepositoryTest {
     @Test
     void findByIdAndDeletedFalse() {
         // given
-        Question savedQuestion = questionRepository.save(createQuestion("question", "contents")
-            .writeBy(writer));
+        Question savedQuestion = questionRepository.save(createQuestion("question", "contents", writer));
 
         // when
         Question findQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId()).orElse(null);
@@ -93,8 +90,7 @@ class QuestionRepositoryTest extends CommonRepositoryTest {
     @Test
     void findByIdAndDeletedFalseNull() {
         // given
-        Question savedQuestion = questionRepository.save(createQuestion("question", "contents")
-            .writeBy(writer));
+        Question savedQuestion = questionRepository.save(createQuestion("question", "contents", writer));
         savedQuestion.setDeleted(true);
 
         // when
@@ -104,7 +100,7 @@ class QuestionRepositoryTest extends CommonRepositoryTest {
         assertNull(findQuestion);
     }
 
-    private Question createQuestion(String title, String contents) {
-        return new Question(title, contents);
+    private Question createQuestion(String title, String contents, User writer) {
+        return new Question(title, contents, writer);
     }
 }
