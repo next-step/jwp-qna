@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,13 +31,13 @@ public class Answers {
 		return answers.contains(answer);
 	}
 
-	public void deleteAnswers(User loginUser) throws CannotDeleteException {
+	public void delete(User loginUser) throws CannotDeleteException {
 		for (Answer answer : answers) {
 			answer.delete(loginUser);
 		}
 	}
 
-	public List<Answer> getAnswers() {
+	public List<Answer> getAll() {
 		return answers;
 	}
 }
