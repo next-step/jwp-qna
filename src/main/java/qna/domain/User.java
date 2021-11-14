@@ -31,6 +31,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "writer")
     private List<Answer> answers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "writer")
+    private List<Question> questions = new ArrayList<>();
+
     protected User() {
     }
 
@@ -103,6 +106,15 @@ public class User extends BaseEntity {
 
     public List<Answer> getAnswers() {
         return answers;
+    }
+
+    public void addQuestion(Question question) {
+        questions.add(question);
+        question.toWriter(this);
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
     }
 
     @Override

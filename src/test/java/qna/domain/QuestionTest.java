@@ -51,7 +51,7 @@ public class QuestionTest {
             () -> assertThat(actual.getId()).isEqualTo(question1.getId()),
             () -> assertThat(actual.getTitle()).isEqualTo(question1.getTitle()),
             () -> assertThat(actual.getContents()).isEqualTo(question1.getContents()),
-            () -> assertThat(actual.getWriterId()).isEqualTo(question1.getWriterId())
+            () -> assertThat(actual.getWriter().getId()).isEqualTo(question1.getWriter().getId())
         );
     }
 
