@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,12 @@ public class UserTest {
   UserRepository userRepository;
   @Autowired
   EntityManager entityManager;
+
+  @BeforeEach
+  void reset() {
+    entityManager.createNativeQuery("ALTER TABLE `user` ALTER COLUMN `id` RESTART WITH 1")
+      .executeUpdate();
+  }
 
   @DisplayName("사용자를 저장한다.")
   @Test

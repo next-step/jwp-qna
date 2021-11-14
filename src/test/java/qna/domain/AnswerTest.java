@@ -6,10 +6,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import javax.persistence.EntityManager;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.*;
@@ -25,20 +21,13 @@ public class AnswerTest {
   @Autowired
   private QuestionRepository questionRepository;
 
-  private User questionWriter;
-  private User answerWriter;
-  private Question question;
-
-  @BeforeEach
-  void setUp() {
-    questionWriter = UserFactory.create("test_question_pro", "pass", "test", "dev22@gmail.com");
-    answerWriter = UserFactory.create("wonjune", "pass", "june", "dev@gmail.com");
-    question = QuestionFactory.create("test question", "contents").writeBy(questionWriter);
-  }
-
   @DisplayName("답변을 저장한다.")
   @Test
   void save() {
+    User questionWriter = UserFactory.create("test_question_pro", "pass", "test", "dev22@gmail.com");
+    User answerWriter = UserFactory.create("wonjune", "pass", "june", "dev@gmail.com");
+    Question question = QuestionFactory.create("test question", "contents").writeBy(questionWriter);
+
     Answer answer = AnswerFactory.create(answerWriter, question, "test contents");
 
     Answer actual = answerRepository.save(answer);
@@ -53,6 +42,10 @@ public class AnswerTest {
   @DisplayName("답변을 삭제한다.")
   @Test
   void delete() {
+    User questionWriter = UserFactory.create("test_question_pro", "pass", "test", "dev22@gmail.com");
+    User answerWriter = UserFactory.create("wonjune", "pass", "june", "dev@gmail.com");
+    Question question = QuestionFactory.create("test question", "contents").writeBy(questionWriter);
+
     Answer answer = AnswerFactory.create(answerWriter, question, "test contents");
     answerRepository.save(answer);
 
@@ -63,6 +56,10 @@ public class AnswerTest {
   @DisplayName("답변의 내용을 수정한다.")
   @Test
   void updateContentsById() {
+    User questionWriter = UserFactory.create("test_question_pro", "pass", "test", "dev22@gmail.com");
+    User answerWriter = UserFactory.create("wonjune", "pass", "june", "dev@gmail.com");
+    Question question = QuestionFactory.create("test question", "contents").writeBy(questionWriter);
+
     Answer answer = AnswerFactory.create(answerWriter, question, "test contents");
     answerRepository.save(answer);
     String updateContents = "updated contents";
@@ -75,6 +72,10 @@ public class AnswerTest {
   @DisplayName("ID로 답변을 찾는다.")
   @Test
   void findById() {
+    User questionWriter = UserFactory.create("test_question_pro", "pass", "test", "dev22@gmail.com");
+    User answerWriter = UserFactory.create("wonjune", "pass", "june", "dev@gmail.com");
+    Question question = QuestionFactory.create("test question", "contents").writeBy(questionWriter);
+
     Answer answer = AnswerFactory.create(answerWriter, question, "test contents");
     answerRepository.save(answer);
 
@@ -86,13 +87,15 @@ public class AnswerTest {
   @DisplayName("답변을 작성자 ID로 찾는다.")
   @Test
   void findAnswersByWriterId() {
+    User questionWriter = UserFactory.create("test_question_pro", "pass", "test", "dev22@gmail.com");
+    User answerWriter = UserFactory.create("wonjune", "pass", "june", "dev@gmail.com");
+    Question question = QuestionFactory.create("test question", "contents").writeBy(questionWriter);
+
     Answer answer = AnswerFactory.create(answerWriter, question, "test contents");
     userRepository.save(answerWriter);
     userRepository.save(questionWriter);
     questionRepository.save(question);
     answerRepository.save(answer);
-
-    answerWriter.getAnswer().add(answer);
 
     assertThat(answerRepository.findByWriterId(answerWriter.getId()).get(0)).isEqualTo(answer);
   }

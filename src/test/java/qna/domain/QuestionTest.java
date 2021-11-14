@@ -8,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import javax.persistence.EntityManager;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.*;
@@ -20,18 +22,23 @@ public class QuestionTest {
   @Autowired
   QuestionRepository questionRepository;
 
-  private Question q1;
-  private Question q2;
+  @Autowired
+  EntityManager entityManager;
 
   @BeforeEach
   void setUp() {
-    q1 = QuestionFactory.create("test", "contents");
-    q2 = QuestionFactory.create("test q2", "contents q2");
+    entityManager.createNativeQuery("ALTER TABLE `question` ALTER COLUMN `id` RESTART WITH 1")
+      .executeUpdate();
+
+    Question q1 = QuestionFactory.create("test", "contents");
+    Question q2 = QuestionFactory.create("test q2", "contents q2");
   }
 
   @DisplayName("질문을 저장한다.")
   @Test
   void save() {
+    Question q1 = QuestionFactory.create("test", "contents");
+    Question q2 = QuestionFactory.create("test q2", "contents q2");
     Question actual = questionRepository.save(q1);
 
     assertAll(
@@ -44,6 +51,8 @@ public class QuestionTest {
   @DisplayName("질문을 ID로 찾는다.")
   @Test
   void findById() {
+    Question q1 = QuestionFactory.create("test", "contents");
+    Question q2 = QuestionFactory.create("test q2", "contents q2");
     questionRepository.save(q1);
 
     Question question = questionRepository.findById(1L).orElse(null);
@@ -58,6 +67,8 @@ public class QuestionTest {
   @DisplayName("모든 질문을 검색한다.")
   @Test
   void findAll() {
+    Question q1 = QuestionFactory.create("test", "contents");
+    Question q2 = QuestionFactory.create("test q2", "contents q2");
     questionRepository.save(q1);
     questionRepository.save(q2);
 
@@ -67,6 +78,8 @@ public class QuestionTest {
   @DisplayName("모든 질문을 삭제한다.")
   @Test
   void deleteAll() {
+    Question q1 = QuestionFactory.create("test", "contents");
+    Question q2 = QuestionFactory.create("test q2", "contents q2");
     questionRepository.save(q1);
     questionRepository.save(q2);
 
