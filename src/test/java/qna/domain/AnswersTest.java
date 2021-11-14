@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AnswersTest {
 
-    @DisplayName("로그인 사용자와 질문한 사람이 같은 경우 답변 삭제")
+    @DisplayName("로그인 사용자와 질문한 사람이 같은 경우 답변 삭제 성공")
     @Test
     void deleteSuccessOneAnswer() throws CannotDeleteException {
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
@@ -25,12 +25,12 @@ class AnswersTest {
         assertThat(deleteHistories).hasSize(1);
     }
 
-    @DisplayName("로그인 사용자와 질문한 사람이 같은 경우 답변 삭제")
+    @DisplayName("로그인 사용자와 질문한 사람이 같은 경우 답변 여러개 삭제 성공")
     @Test
     void deleteSuccessAnswers() throws CannotDeleteException {
         Answer answer1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
         Answer answer2 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q2, "Answers Contents2");
-        Answers answers = new Answers(Arrays.asList(answer1,answer2));
+        Answers answers = new Answers(Arrays.asList(answer1, answer2));
 
         List<DeleteHistory> deleteHistories = answers.delete(UserTest.JAVAJIGI);
 

@@ -12,7 +12,7 @@ public class AnswerTest {
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
-    @DisplayName("로그인 사용자와 질문한 사람이 같은 경우 질문 삭제")
+    @DisplayName("로그인 사용자와 질문한 사람이 같은 경우 질문 삭제 성공")
     @Test
     void deleteSuccess() throws CannotDeleteException {
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
