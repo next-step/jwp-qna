@@ -12,8 +12,8 @@ import org.springframework.data.jpa.domain.support.*;
 public abstract class BaseEntity {
     @CreatedDate
     @Column(nullable = false)
-    protected LocalDateTime createdDate = LocalDateTime.now();
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @LastModifiedDate
-    protected LocalDateTime modifiedDate;
+    private LocalDateTime modifiedDate;
 }
