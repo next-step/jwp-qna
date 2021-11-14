@@ -12,10 +12,8 @@ public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 100, nullable = false)
-    private String title;
-    @Lob
-    private String contents;
+    @Embedded
+    private QuestionBody questionBody;
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
@@ -33,8 +31,7 @@ public class Question extends BaseTimeEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
-        this.contents = contents;
+        this.questionBody = new QuestionBody(title,contents);
         this.answers = new Answers();
     }
 
@@ -81,8 +78,8 @@ public class Question extends BaseTimeEntity {
     public String toString() {
         return "Question{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
+                ", title='" + questionBody.getTitle() + '\'' +
+                ", contents='" + questionBody.getContents() + '\'' +
                 ", writerId=" + writer +
                 ", deleted=" + deleted +
                 '}';
