@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DisplayName("Question 테스트")
@@ -75,14 +76,14 @@ class QuestionTest {
         Optional<Question> actual = questionRepository.findById(savedQuestion.getId());
 
         // then
-        assertThat(actual)
-                .isPresent();
-
-        assertThat(actual.get().getTitle())
-                .isEqualTo("title2");
-
-        assertThat(actual.get().getContents())
-                .isEqualTo("contents2");
+        assertAll(
+                () -> assertThat(actual)
+                        .isPresent(),
+                () -> assertThat(actual.get().getTitle())
+                        .isEqualTo("title2"),
+                () -> assertThat(actual.get().getContents())
+                        .isEqualTo("contents2")
+        );
     }
 
     @DisplayName("delete 테스트")
@@ -99,11 +100,12 @@ class QuestionTest {
             List<DeleteHistory> deleteHistories = question.delete(user);
 
             // then
-            assertThat(deleteHistories)
-                    .hasSize(1)
-                    .contains(DeleteHistoryFixture.create(ContentType.QUESTION, question.getId(), question.getWriter()));
-
-            verifyQuestionDeleteStatus(question.getId(), true);
+            assertAll(
+                    () -> assertThat(deleteHistories)
+                            .hasSize(1)
+                            .contains(DeleteHistoryFixture.create(ContentType.QUESTION, question.getId(), question.getWriter())),
+                    () -> verifyQuestionDeleteStatus(question.getId(), true)
+            );
         }
 
         @DisplayName("소유자의_question과 Answer만 존재")
@@ -119,14 +121,15 @@ class QuestionTest {
             List<DeleteHistory> deleteHistories = question.delete(user);
 
             // then
-            assertThat(deleteHistories)
-                    .hasSize(2)
-                    .contains(
-                            DeleteHistoryFixture.create(ContentType.QUESTION, question.getId(), question.getWriter()),
-                            DeleteHistoryFixture.create(ContentType.ANSWER, answer.getId(), answer.getWriter())
-                    );
-
-            verifyDeletedStatus(question.getId(), answer.getId(), true);
+            assertAll(
+                    () -> assertThat(deleteHistories)
+                            .hasSize(2)
+                            .contains(
+                                    DeleteHistoryFixture.create(ContentType.QUESTION, question.getId(), question.getWriter()),
+                                    DeleteHistoryFixture.create(ContentType.ANSWER, answer.getId(), answer.getWriter())
+                            ),
+                    () -> verifyDeletedStatus(question.getId(), answer.getId(), true)
+            );
         }
 
         @DisplayName("다른 사용자의 Answer가 존재")
@@ -140,10 +143,11 @@ class QuestionTest {
             question.addAnswer(answer);
 
             // when, then
-            assertThatThrownBy(() -> question.delete(otherUser))
-                    .isInstanceOf(CannotDeleteException.class);
-
-            verifyDeletedStatus(question.getId(), answer.getId(), false);
+            assertAll(
+                    () -> assertThatThrownBy(() -> question.delete(otherUser))
+                            .isInstanceOf(CannotDeleteException.class),
+                    () -> verifyDeletedStatus(question.getId(), answer.getId(), false)
+            );
         }
 
         private void verifyDeletedStatus(Long questionId, Long answerId, boolean deleteStatus) {

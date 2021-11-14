@@ -9,6 +9,7 @@ import qna.fixture.UserFixture;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DisplayName("User 테스트")
@@ -57,10 +58,11 @@ class UserTest {
         Optional<User> actual = userRepository.findById(savedUser.getId());
 
         // then
-        assertThat(actual)
-                .isPresent();
-
-        assertThat(actual.get().getUserId())
-                .isEqualTo("user2");
+        assertAll(
+                () -> assertThat(actual)
+                        .isPresent(),
+                () -> assertThat(actual.get().getUserId())
+                        .isEqualTo("user2")
+        );
     }
 }

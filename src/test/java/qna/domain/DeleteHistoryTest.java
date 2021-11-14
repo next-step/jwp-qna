@@ -10,6 +10,7 @@ import qna.fixture.UserFixture;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DisplayName("DeleteHistory 테스트")
@@ -66,10 +67,11 @@ class DeleteHistoryTest {
         Optional<DeleteHistory> actual = deleteHistoryRepository.findById(savedDeleteHistory.getId());
 
         // then
-        assertThat(actual)
-                .isPresent();
-
-        assertThat(actual.get().getContentType())
-                .isEqualTo(ContentType.QUESTION);
+        assertAll(
+                () -> assertThat(actual)
+                        .isPresent(),
+                () -> assertThat(actual.get().getContentType())
+                        .isEqualTo(ContentType.QUESTION)
+        );
     }
 }

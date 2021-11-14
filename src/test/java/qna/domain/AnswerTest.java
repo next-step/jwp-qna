@@ -14,6 +14,7 @@ import qna.fixture.UserFixture;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DisplayName("Answer 테스트")
@@ -75,11 +76,13 @@ class AnswerTest {
         Optional<Answer> actual = answerRepository.findById(savedAnswer.getId());
 
         // then
-        assertThat(actual)
-                .isPresent();
+        assertAll(
+                () -> assertThat(actual)
+                        .isPresent(),
+                () -> assertThat(actual.get().getContents())
+                        .isEqualTo("Answers Contents2")
+        );
 
-        assertThat(actual.get().getContents())
-                .isEqualTo("Answers Contents2");
     }
 
     @DisplayName("delete 확인")
@@ -97,14 +100,14 @@ class AnswerTest {
             DeleteHistory deleteHistory = answer.delete(user);
 
             // then
-            assertThat(answer.isDeleted())
-                    .isTrue();
-
-            assertThat(deleteHistory)
-                    .isNotNull();
-
-            assertThat(deleteHistory.getDeletedBy())
-                    .isEqualTo(user);
+            assertAll(
+                    () -> assertThat(answer.isDeleted())
+                            .isTrue(),
+                    () -> assertThat(deleteHistory)
+                            .isNotNull(),
+                    () -> assertThat(deleteHistory.getDeletedBy())
+                            .isEqualTo(user)
+            );
         }
 
         @DisplayName("owner가 아님")
