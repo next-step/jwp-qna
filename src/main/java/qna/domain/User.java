@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -33,6 +34,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "writer")
     private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "deleter")
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected User() {
     }
@@ -126,6 +130,15 @@ public class User extends BaseEntity {
             ", name='" + name + '\'' +
             ", email='" + email + '\'' +
             '}';
+    }
+
+    public void addDeleteHistory(DeleteHistory deleteHistory) {
+        deleteHistories.add(deleteHistory);
+        deleteHistory.toDeleter(this);
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return null;
     }
 
     private static class GuestUser extends User {

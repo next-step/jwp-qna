@@ -25,7 +25,7 @@
 ### 2단계
 - [x] answer와 question의 연관관계
 - [x] answer와 writer_id (User)의 연관관계
-- [ ] delete_history와 deleted_by_id (User)의 연관관계
+- [x] delete_history와 deleted_by_id (User)의 연관관계
 - [x] question과 writer_id (User)의 연관관계
 
 연관관계 시나리오 (예상)
