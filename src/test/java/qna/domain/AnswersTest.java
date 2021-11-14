@@ -100,6 +100,7 @@ class AnswersTest {
         assertThat(deleteHistories).extracting("contentType").containsOnly(ContentType.ANSWER);
     }
 
+    @DisplayName("삭제되지 않은 답변만 추출한다")
     @Test
     void updateDeletedFalseAnswers() {
         // given

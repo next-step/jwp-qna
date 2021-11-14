@@ -69,9 +69,9 @@ class QuestionRepositoryTest extends CommonRepositoryTest {
         // then
         assertEquals(2, questions.size());
         assertThat(questions).extracting("title")
-            .containsExactly(firstTitle, secondTitle);
+            .containsExactly(new Title(firstTitle), new Title(secondTitle));
         assertThat(questions).extracting("contents")
-            .containsExactly(firstContents, secondContents);
+            .containsExactly(new Contents(firstContents), new Contents(secondContents));
     }
 
     @DisplayName("삭제되지 않은 Question 을 아이디로 가져온다")

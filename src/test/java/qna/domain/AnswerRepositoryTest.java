@@ -108,7 +108,7 @@ class AnswerRepositoryTest extends CommonRepositoryTest {
         assertThat(findAnswers).extracting("question").extracting("id").containsExactly(
             question.getId(), question.getId(), question.getId());
         assertThat(findAnswers).extracting("contents").containsExactly(
-            firstAnswerContents, secondAnswerContents, thirdAnswerContents);
+            new Contents(firstAnswerContents), new Contents(secondAnswerContents), new Contents(thirdAnswerContents));
     }
 
     private Answer createAnswer(String answerContents) {
