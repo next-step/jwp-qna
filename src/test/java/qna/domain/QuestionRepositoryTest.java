@@ -1,6 +1,5 @@
 package qna.domain;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -22,7 +21,7 @@ public class QuestionRepositoryTest {
 
     @Test
     void save() {
-        User savedUser = userRepository.save(TestDummy.USER_SANJIGI);
+        User savedUser = userRepository.save(TestDummy.USER_JAVAJIGI);
         TestDummy.QUESTION1.setWriter(savedUser);
         Question savedQuestion = questionRepository.save(TestDummy.QUESTION1);
 
@@ -37,7 +36,7 @@ public class QuestionRepositoryTest {
 
     @Test
     void read() {
-        User savedUser = userRepository.save(TestDummy.USER_SANJIGI);
+        User savedUser = userRepository.save(TestDummy.USER_JAVAJIGI);
         TestDummy.QUESTION1.setWriter(savedUser);
         Long savedId = questionRepository.save(TestDummy.QUESTION1).getId();
         Question savedQuestion = questionRepository.findByIdAndDeletedFalse(savedId).get();
@@ -55,12 +54,21 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("질문을 저장하는 경우, 답변도 같이 저장된다.")
     void saveAfterAddAnswer() {
-        userRepository.save(TestDummy.USER_JAVAJIGI);
-        userRepository.save(TestDummy.USER_SANJIGI);
-        TestDummy.QUESTION1.addAnswer(TestDummy.ANSWER2);
-        TestDummy.QUESTION1.addAnswer(TestDummy.ANSWER1);
+        User user1 = new User("user1", "password", "name", "email");
+        User user2 = new User("user2", "password", "name", "email");
+        userRepository.save(user1);
+        userRepository.save(user2);
+        Question question = new Question("title", "contents");
+        question.setWriter(user1);
+        questionRepository.save(question);
 
-        Long savedId = questionRepository.save(TestDummy.QUESTION1).getId();
+        Answer answer1 = new Answer(user1, question, "answer");
+        Answer answer2 = new Answer(user2, question, "answer2");
+
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+
+        Long savedId = questionRepository.save(question).getId();
 
         Question savedQuestion = questionRepository.findByIdAndDeletedFalseWithAnswers(savedId).get();
 
@@ -70,19 +78,24 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("답변 삭제후, 질문 저장")
     void 답변_삭제후_질문_저장() throws CannotDeleteException {
-        userRepository.save(TestDummy.USER_JAVAJIGI);
-        userRepository.save(TestDummy.USER_SANJIGI);
-        TestDummy.QUESTION1.addAnswer(TestDummy.ANSWER2);
-        TestDummy.QUESTION1.addAnswer(TestDummy.ANSWER1);
-        TestDummy.ANSWER1.delete(TestDummy.USER_JAVAJIGI);
+        User user1 = new User("user1", "password", "name", "email");
+        userRepository.save(user1);
+        Question question = new Question("title", "contents");
+        question.setWriter(user1);
+        questionRepository.save(question);
 
-        Long savedId = questionRepository.save(TestDummy.QUESTION1).getId();
+        Answer answer1 = new Answer(user1, question, "answer");
+        Answer answer2 = new Answer(user1, question, "answer2");
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+        answer2.delete(user1);
+
+        Long savedId = questionRepository.save(question).getId();
 
         Question savedQuestion = questionRepository.findByIdAndDeletedFalseWithAnswers(savedId).get();
 
-        assertThat(savedQuestion.getAnswers().getValues()
+        assertThat((int) savedQuestion.getAnswers().getValues()
             .stream()
-            .filter(answer -> !answer.isDeleted())
-            .collect(toList()).size()).isEqualTo(1);
+            .filter(answer -> !answer.isDeleted()).count()).isEqualTo(1);
     }
 }

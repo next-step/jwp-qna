@@ -9,7 +9,7 @@ import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> values;
 
     protected Answers() {
