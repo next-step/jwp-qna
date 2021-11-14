@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @EntityListeners(value = AuditingEntityListener.class)
 @MappedSuperclass
-public class AuditEntity {
+public abstract class AuditEntity {
 
 	@Column(nullable = false)
 	@CreationTimestamp
@@ -21,5 +21,4 @@ public class AuditEntity {
 	@Column
 	@UpdateTimestamp
 	protected LocalDateTime updatedAt;
-
 }

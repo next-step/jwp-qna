@@ -1,5 +1,42 @@
 # JPA 학습
 
+## 2단계 - 연관관계 맵핑
+
+- 객체에서는 참조로, 테이블에서는 외래 키를 통해 연관관계를 만든다.
+
+## 기능 목록
+
+- Answer 의 questionId를 Question 객체 참조로 변경한다.
+    - ManyToOne 으로 한다. 한 질문에 대해 여러 답변을 작성할 수 있기 때문에, Question 와 Answer 는 1:N 관계이다.
+- Answer 의 writerId를 Writer 객체 참조로 변경한다
+    - ManyToOne 으로 한다. 유저 한명이 여러 답변을 작성할 수 있기 때문에, Writer 와 Answer는 1:N 관계이다.
+- DeleteHistory 의 deleteById 를 User 객체 참조로 변경한다
+    - ManyToOne 으로 한다.
+- Question 의 writerId를 User 참조로 변경한다
+    - ManyToOne 으로 한다
+
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
+```
+
 ## 1단계 - 엔티티 맵핑
 
 - DDL을 통해서 엔티티 클래스와 리포지토리 클래스를 작성한다
