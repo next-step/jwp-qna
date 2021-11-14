@@ -79,4 +79,18 @@ public class Answer extends BaseEntity {
     public boolean hasSameQuestion(Question question) {
         return this.question == question;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Answer answer = (Answer) o;
+        return deleted == answer.deleted && Objects.equals(contents, answer.contents) && Objects.equals(question, answer.question) && Objects.equals(writer, answer.writer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), contents, deleted, question, writer);
+    }
 }
