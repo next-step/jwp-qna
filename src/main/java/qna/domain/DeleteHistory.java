@@ -10,7 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class DeleteHistory {
@@ -23,7 +23,7 @@ public class DeleteHistory {
 
     private Long contentId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "deleted_by_Id")
     private User deletedBy;
 

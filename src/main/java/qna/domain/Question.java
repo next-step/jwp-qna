@@ -10,7 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 import qna.exception.CannotDeleteException;
 import qna.exception.UnAuthorizedException;
@@ -30,7 +30,7 @@ public class Question extends BaseEntityTime {
     @Embedded
     private Answers answers = new Answers();
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "write_id")
     private User writer;
 
