@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import qna.common.exception.CannotDeleteException;
 import qna.common.exception.NotFoundException;
 import qna.common.exception.UnAuthorizedException;
 
@@ -14,12 +15,14 @@ public class AnswerTest {
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Test
+    @DisplayName("Answer 의 deleted 컬럼의 default 값은 false입니다.")
     void deleted_기본값_false() {
         // then
         assertThat(new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2").isDeleted()).isFalse();
     }
 
     @Test
+    @DisplayName("답변 작성자가 답변 삭제 처리, 결과 true")
     void deleted() {
         // given
         Answer answer = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
@@ -32,6 +35,21 @@ public class AnswerTest {
     }
 
     @Test
+    @DisplayName("답변 작성자가 아닌 User 가 삭제 처리, 결과 false")
+    void deleted_false() {
+        // given
+        Answer answer = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+
+        assertThatExceptionOfType(CannotDeleteException.class) // then
+            .isThrownBy(() -> {
+                // when
+                answer.delete(UserTest.JAVAJIGI);
+            });
+
+    }
+
+    @Test
+    @DisplayName("질문 writer(작성자) 검증")
     void isOwner_질문_작성자_확인() {
 
         // then

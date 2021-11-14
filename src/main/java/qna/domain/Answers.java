@@ -34,7 +34,7 @@ public class Answers implements Serializable {
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : values) {
-            deleteHistories.add(answer.delete(answer.getWriter()));
+            deleteHistories.add(answer.delete(questionWriter));
         }
 
         return deleteHistories;

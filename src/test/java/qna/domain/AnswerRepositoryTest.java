@@ -3,8 +3,6 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnitUtil;
 
@@ -68,33 +66,17 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("Question 으로 답변 찾기 -> findByQuestionIdAndDeletedFalse 메소드 검증 ")
-    void findByQuestionIdAndDeletedFalse() {
-        // given
-        // when
-        Answer expect = answers.save(ANSWER);
-        List<Answer> answerList = answers.findByQuestionAndDeletedFalse(expect.getQuestion());
-
-        // then
-        assertAll(
-            () -> assertThat(answerList).contains(expect),
-            () -> assertThat(expect.isDeleted()).isFalse()
-        );
-    }
-
-    @Test
-    @DisplayName("remove 처리 후 findByQuestionIdAndDeletedFalse 메소드 조회 미포함 체크 ")
-    void findByQuestionIdAndDeletedFalse_deleted() {
+    @DisplayName("remove 처리 후 findByIdAndDeletedFalse 메소드 조회 미포함 체크 ")
+    void deleted_findByIdAndDeletedFalse() {
         // given
         Answer expect = answers.save(ANSWER);
         expect.delete(USER);
 
         // when
-        List<Answer> answerList = answers.findByQuestionAndDeletedFalse(expect.getQuestion());
+        Answer answer = answers.findByIdAndDeletedFalse(expect.getId()).get();
 
         // then
         assertAll(
-            () -> assertThat(answerList.contains(expect)).isFalse(),
             () -> assertThat(expect.isDeleted()).isTrue()
         );
     }
