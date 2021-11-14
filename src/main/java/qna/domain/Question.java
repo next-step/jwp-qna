@@ -43,7 +43,7 @@ public class Question extends BaseEntity {
     private final Answers answers = new Answers();
 
     @Column(name = "deleted", nullable = false)
-    private boolean deleted = Boolean.FALSE;
+    private boolean deleted = false;
 
     protected Question() {
     }

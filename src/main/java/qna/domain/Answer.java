@@ -38,7 +38,7 @@ public class Answer extends BaseEntity {
     private String contents;
 
     @Column(name = "deleted", nullable = false)
-    private boolean deleted = Boolean.FALSE;
+    private boolean deleted = false;
 
     protected Answer() {
     }
