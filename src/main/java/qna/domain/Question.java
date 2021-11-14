@@ -1,9 +1,13 @@
 package qna.domain;
 
+import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -13,6 +17,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import qna.ErrorMessage;
@@ -35,6 +41,9 @@ public class Question extends BaseTime {
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writerId;
+
+	@OneToMany(mappedBy = "question", cascade = ALL)
+	private List<Answer> answers = new ArrayList();
 
 	@Column(nullable = false)
 	private boolean deleted = false;
@@ -66,6 +75,11 @@ public class Question extends BaseTime {
 
 	public void addAnswer(Answer answer) {
 		answer.toQuestion(this);
+		answers.add(answer);
+	}
+
+	public List<Answer> getAnswers() {
+		return answers;
 	}
 
 	public Long getId() {
