@@ -45,11 +45,11 @@ public class QuestionRepositoryTest {
 		User javajigi = userRepository.save(JAVAJIGI);
 		User sanjigi = userRepository.save(SANJIGI);
 
-		Question question1 = new Question(null, TITLE_1, CONTENTS_1).writeBy(javajigi);
+		final Question question1 = new Question(null, TITLE_1, CONTENTS_1).writeBy(javajigi);
 		question1.addAnswer(new Answer(null, javajigi, question1, ANSWER_1));
 		question1.addAnswer(new Answer(null, javajigi, question1, ANSWER_2));
 
-		Question question2 = new Question(null, TITLE_2, CONTENTS_2).writeBy(sanjigi);
+		final Question question2 = new Question(null, TITLE_2, CONTENTS_2).writeBy(sanjigi);
 		question2.addAnswer(new Answer(null, sanjigi, question2, ANSWER_3));
 		questionRepository.saveAll(asList(question1,question2));
 	}
