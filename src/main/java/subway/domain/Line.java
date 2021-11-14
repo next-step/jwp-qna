@@ -20,7 +20,7 @@ public class Line {
     private String name;
 
     @OneToMany(mappedBy = "line")
-    private List<Station> stations = new ArrayList<>();
+    private final List<Station> stations = new ArrayList<>();
 
     protected Line() {
     }

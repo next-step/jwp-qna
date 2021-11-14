@@ -47,7 +47,6 @@ public class Station {
 
     public void setLine(Line line) {
         this.line = line;
-        line.getStations().add(this);
     }
 
     public Line getLine() {

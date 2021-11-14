@@ -43,6 +43,6 @@ public class StationTest {
         station1.changeName("몽촌토성역");
         station1.changeName("잠실역"); // 변화된 내용이 없어서 update 쿼리가 실행이 안된다.
         Station station2 = stations.findByName("몽촌토성역");
-        Assertions.assertThat(station2).isNotNull();
+        Assertions.assertThat(station2).isNull();
     }
 }
