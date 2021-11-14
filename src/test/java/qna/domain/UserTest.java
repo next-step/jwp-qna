@@ -25,7 +25,7 @@ public class UserTest {
         final User savedUser2 = users.save(SANJIGI);
 
         assertAll(
-                    () -> assertThat(savedUser1.getId()).isEqualTo(JAVAJIGI.getId()),
+                    () -> assertThat(savedUser1.getId()).isNotNull(),
                     () -> assertThat(savedUser1.getUserId()).isEqualTo(JAVAJIGI.getUserId()),
                     () -> assertThat(savedUser1.getPassword()).isEqualTo(JAVAJIGI.getPassword()),
                     () -> assertThat(savedUser1.getName()).isEqualTo(JAVAJIGI.getName()),
@@ -33,7 +33,7 @@ public class UserTest {
                 );
 
         assertAll(
-                () -> assertThat(savedUser2.getId()).isEqualTo(SANJIGI.getId()),
+                () -> assertThat(savedUser2.getId()).isNotNull(),
                 () -> assertThat(savedUser2.getUserId()).isEqualTo(SANJIGI.getUserId()),
                 () -> assertThat(savedUser2.getPassword()).isEqualTo(SANJIGI.getPassword()),
                 () -> assertThat(savedUser2.getName()).isEqualTo(SANJIGI.getName()),
@@ -73,4 +73,12 @@ public class UserTest {
 
         assertThat(actualUser1.getName()).isEqualTo("JAVA");
     }
+
+//    @DisplayName("user와 delete history간의 연관관계 테스트")
+//    @Test
+//    void associateUserWithDeleteHistoryTest() {
+//
+//        JAVAJIGI.
+//
+//    }
 }

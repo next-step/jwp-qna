@@ -10,24 +10,23 @@ import java.util.Objects;
 @Table(name = "answer")
 public class Answer extends BaseTime {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id")
+    private User writer;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", nullable = false)
+    private Question question;
 
-    @Column(name = "question_id")
-    private Long questionId;
-
-    @Column(name = "contents", columnDefinition = "TEXT")
+    @Lob
+    @Column(columnDefinition = "longtext")
     private String contents;
 
-    @Column(name = "deleted")
+    @Column
     private boolean deleted = false;
 
     protected Answer() {
-
+        super();
     }
 
     public Answer(User writer, Question question, String contents) {
@@ -35,7 +34,7 @@ public class Answer extends BaseTime {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+        super(id);
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -45,41 +44,41 @@ public class Answer extends BaseTime {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
-        return id;
+        return super.id;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        super.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public String getContents() {
@@ -102,8 +101,8 @@ public class Answer extends BaseTime {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

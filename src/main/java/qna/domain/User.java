@@ -10,20 +10,16 @@ import java.util.Objects;
 public class User extends BaseTime {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "user_id", length = 20, nullable = false, unique = true)
+    @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
-    @Column(name = "password", length = 20, nullable = false)
+    @Column(length = 20, nullable = false)
     private String password;
 
-    @Column(name = "name", length = 20, nullable = false)
+    @Column(length = 20, nullable = false)
     private String name;
 
-    @Column(name = "email", length = 50)
+    @Column(length = 50)
     private String email;
 
     protected User() {
@@ -34,7 +30,7 @@ public class User extends BaseTime {
     }
 
     public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
+        super(id);
         this.userId = userId;
         this.password = password;
         this.name = name;
