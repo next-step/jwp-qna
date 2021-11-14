@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -53,12 +52,6 @@ public class Answers implements Serializable {
         if (answersByQuestionWriterCount != values.size()) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
-    }
-
-    public void removeAnswer(Answer answer) {
-        values = values.stream()
-            .filter(answer1 -> !answer1.equals(answer))
-            .collect(Collectors.toList());
     }
 
     @Override

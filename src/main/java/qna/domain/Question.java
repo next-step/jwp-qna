@@ -40,7 +40,7 @@ public class Question extends BaseEntity {
     private User writer;
 
     @Embedded
-    private final Answers answers = new Answers(new ArrayList<>());
+    private final Answers answers = new Answers();
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = Boolean.FALSE;
@@ -84,10 +84,6 @@ public class Question extends BaseEntity {
 
         this.deleted = true;
         return deleteHistories;
-    }
-
-    public void removeAnswer(Answer answer) {
-        answers.removeAnswer(answer);
     }
 
     public Long getId() {
