@@ -40,7 +40,7 @@ public class AnswerTest {
     void setUp() {
         now = LocalDateTime.now();
         user = userRepository.save(UserTest.JAVAJIGI);
-        question = questionRepository.save(new Question("title1", "contents1"));
+        question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
         answer = answerRepository.save(new Answer(user, question, "Answers Contents1"));
     }
 
@@ -117,6 +117,7 @@ public class AnswerTest {
         assertAll(
                 () -> assertThat(questionFromRepo.getContents()).isEqualTo("contents1"),
                 () -> assertThat(questionFromRepo.getAnswers().size()).isEqualTo(1),
+                () -> assertThat(questionFromRepo.getAnswers().get(0)).isEqualTo(answer),
                 () -> assertThat(questionFromRepo.getCreatedAt()).isAfter(now),
                 () -> assertThat(questionFromRepo.getUpdatedAt()).isAfter(now)
         );
