@@ -13,11 +13,9 @@ public class DeleteHistoriesTest {
     @Test
     @DisplayName("삭제이력 목록 생성 확인")
     void 삭제이력_목록_확인() {
-        DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, QuestionTest.Q1.getId(), UserTest.JENNIE));
-        deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, QuestionTest.Q2.getId(), UserTest.JENNIE));
-        DeleteHistories deleteHistries = new DeleteHistories();
-        assertThat(deleteHistries.add(deleteHistories).getDeleteHistories()).hasSize(2);
+        List<DeleteHistory> answerHistories = new ArrayList<DeleteHistory>();
+        answerHistories.add(DeleteHistory.of(ContentType.ANSWER, AnswerTest.A2.getId(), UserTest.JENNIE));
+        assertThat(DeleteHistories.of(DeleteHistory.of(ContentType.QUESTION, QuestionTest.Q1.getId(), UserTest.JENNIE), DeleteHistories.fromAnswers(answerHistories)).getDeleteHistories()).hasSize(2);
     }
 
 }

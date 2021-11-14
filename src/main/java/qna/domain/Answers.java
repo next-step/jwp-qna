@@ -25,9 +25,9 @@ public class Answers {
     }
     
     public DeleteHistories delete() {
-        DeleteHistories deleteHistories = new DeleteHistories();
+        List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
         answers.forEach(answer -> deleteHistories.add(answer.delete()));
-        return deleteHistories;
+        return DeleteHistories.fromAnswers(deleteHistories);
     }
 
     public List<Answer> getAnswers() {
