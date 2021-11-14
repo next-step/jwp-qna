@@ -41,6 +41,26 @@ JPA 엔티티 매핑에 대해 학습하기
     - CascadeType.DETACH – 부모 엔티티가 detach()를 수행하게 되면, 연관된 엔티티도 detach() 상태가 되어 변경사항이 반영되지 않음.
     - CascadeType.ALL – 모든 Cascade 적용
 
+### @Mock 테스트란 [모의 객체(Mock Object)]
+
+> 모의 객체(Mock Object)란 주로 객체 지향 프로그래밍으로 개발한 프로그램을 테스트 할 경우 테스트를 수행할 모듈과 연결되는 외부의 다른 서비스나 모듈들을 실제 사용하는 모듈을 사용하지 않고 실제의 모듈을 "흉내"내는 "가짜" 모듈을 작성하여 테스트의 효용성을 높이는데 사용하는 객체이다. 사용자 인터페이스(UI)나 데이터베이스 테스트 등과 같이 자동화된 테스트를 수행하기 어려운 때 널리 사용된다.  
+> 출처: [위키피디아](https://ko.wikipedia.org/wiki/%EB%AA%A8%EC%9D%98_%EA%B0%9D%EC%B2%B4)
+
+> Mock 객체는 언제 필요한가?   
+> 1.테스트 작성을 위한 환경 구축이 어려운 경우  
+> 2.테스트가 특정 경우나 순간에 의존적인 경우   
+> 3.테스트 시간이 오래 걸리는 경우   
+> 4.개인 PC의 성능이나 서버의 성능문제로 오래 걸릴수 있는 경우 시간을 단축하기 위해 사용한다.  
+> 출처: https://www.crocus.co.kr/1555 [Crocus]
+
+- @InjectMocks 는 @Mock 이 붙은 객체를 주입시키는 어노테이션
+
+### @Transactional(propagation = Propagation.REQUIRES_NEW)
+
+> Propagation.REQUIRES_NEW로 설정되었을 때에는 매번 새로운 트랜잭션을 시작한다.
+> (새로운 연결을 생성하고 실행한다.) 만약, 호출한 곳에서 이미 트랜잭션이 설정되어 있다면(기존의 연결이 존재한다면) 기존의 트랜잭션은 메써드가 종료할 때까지 잠시 대기 상태로 두고 자신의 트랜잭션을 실행한다. 새로운 트랜잭션 안에서 예외가 발생해도 호출한 곳에는 롤백이 전파되지 않는다. 즉, 2개의 트랜잭션은 완전히 독립적인 별개로 단위로 작동한다.  
+> 출처 https://jsonobject.tistory.com/467
+
 ## 기능 목록
 
 ### 1단계 - 엔티티 매핑
@@ -78,22 +98,17 @@ JPA 엔티티 매핑에 대해 학습하기
 - [X] Answer 와 User 연관관계 매핑(answer -> User)
 - [X] DeleteHistory 연관관계 매핑(DeleteHistory -> user)
 - [X] Question 연관관계 매핑(question -> user)
-- [ ] 연관 관계 테스트
-- [X] UserGuest.isGuestUser 테스트
-- UserRepository
-    - [X] users countByUserId 메소드 테스트
+- [X] 연관 관계 테스트
+- User Test
+    - [X] UserGuest.isGuestUser 테스트
+    - [X] users Email 검증 테스트
     - [X] user 중복 생성 유니크 실패 테스트
-    - [X] findByName 사용자이름 목록 조회 테스트
-    - [X] 업데이트 쿼리 테스트
-    - [X] 동일성 테스트
-- [X] 게스트 질문 and 답변 작성 예외 테스트
-- [X] Answer.setDeleted 메소드에서 remove 로 이름 변경
-- [X] DeleteHistory 조회 에서 nativeQuery 사용하여 ContentType 별로 조회하기
-- [X] Question 삭제시 연관 Answer 같이 remove (deleted) 수행
-- [X] User.email 일급컬렉션 구현
-- [X] (Question) List<Answer> answers 일급컬렉션?
-- [ ] (Question) addAnswer validation 필요한게 없을까?
-- [ ] DeleteHistory - saveAll 일괄저장 구현
-- [ ] Question 삭제시 DeleteHistory 같이 저장?
-- [ ] Answer 삭제시 DeleteHistory 같이 저장?
-
+- Question Test
+    - [X] Question 삭제시 연관 Answer 같이 remove (deleted) 수행
+- Answer Test
+    - [X] 게스트 질문 and 답변 작성 예외 테스트
+    - [X] Question Lazy 로딩 테스트
+- [X] (Question) Answers @Embedded 로 변경
+- [X] Question 삭제시 DeleteHistory 리턴
+- [X] Answer 삭제시 DeleteHistory 리턴
+- [X] QnaServiceTest(@Mock) 테스트 리팩토링
