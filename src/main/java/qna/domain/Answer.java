@@ -2,13 +2,13 @@ package qna.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import qna.CannotDeleteException;
@@ -31,9 +31,8 @@ public class Answer extends BaseTimeEntity implements SavingDeleteHistory {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    @Column(name = "contents")
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
@@ -41,7 +40,7 @@ public class Answer extends BaseTimeEntity implements SavingDeleteHistory {
     protected Answer() {
     }
 
-    public Answer(User writer, Question question, String contents) {
+    Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
 
@@ -58,7 +57,7 @@ public class Answer extends BaseTimeEntity implements SavingDeleteHistory {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
+        this.contents = Contents.from(contents);
     }
 
     public boolean isOwner(User writer) {
@@ -119,12 +118,8 @@ public class Answer extends BaseTimeEntity implements SavingDeleteHistory {
         question.addAnswer(this);
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
