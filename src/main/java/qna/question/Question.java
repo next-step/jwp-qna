@@ -14,9 +14,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "question")
 public class Question extends DateTimeEntity implements NullCheckAction {
-    private static final int MAX_LENGTH_TITLE = 100;
-    private static final int MIN_LENGTH_TITLE = 1;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -33,11 +30,11 @@ public class Question extends DateTimeEntity implements NullCheckAction {
     @Column(name = "delete", nullable = false)
     private boolean deleted = false;
 
-    @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
-    private String title;
+    @Embedded
+    private Title title;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question(final String title, final String contents, final User user) {
         this(null, title, contents, user);
@@ -45,27 +42,16 @@ public class Question extends DateTimeEntity implements NullCheckAction {
 
     public Question(final Long id, final String title, final String contents, final User user) {
         throwExceptionIsNullObject(user);
+        throwExceptionIsNullObject(title);
         this.id = id;
-        this.title = title;
+        this.title = new Title(title);
         this.contents = contents;
         this.user = user;
-
-        validateTitle();
     }
 
     protected Question() {
     }
 
-    private void validateTitle() {
-        throwExceptionIsNullObject(title);
-        if (isInvalidTitleLength()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private boolean isInvalidTitleLength() {
-        return title.length() < MIN_LENGTH_TITLE || title.length() > MAX_LENGTH_TITLE;
-    }
 
     public void throwExceptionNotDeletableUser(final User loginUser) throws CannotDeleteException {
         if (!this.user.equals(loginUser)) {
@@ -73,14 +59,8 @@ public class Question extends DateTimeEntity implements NullCheckAction {
         }
     }
 
-    public void throwExceptionNotDeletableAnswers(final User loginUser) throws CannotDeleteException {
-        for (Answer answer : answers) {
-            answer.throwExceptionNotDeletableUser(loginUser);
-        }
-    }
-
-    public void addAnswer(final Answer answer) {
-        answers.add(answer);
+    public void throwExceptionNotDeletableAnswersInQuestion(final User loginUser) throws CannotDeleteException {
+        answers.throwExceptionNotDeletableAnswers(loginUser);
     }
 
     public Long getId() {
@@ -91,8 +71,12 @@ public class Question extends DateTimeEntity implements NullCheckAction {
         return user;
     }
 
+    public void addAnswer(Answer answer) {
+        this.answers.addAnswer(answer);
+    }
+
     public List<Answer> getAnswers() {
-        return new ArrayList<>(answers);
+        return new ArrayList<>(answers.getAnswers());
     }
 
     public boolean isDeleted() {
@@ -104,9 +88,7 @@ public class Question extends DateTimeEntity implements NullCheckAction {
     }
 
     public void deleteAnswers() {
-        for (Answer answer : answers) {
-            answer.deleteAnswer();
-        }
+        answers.changeDeletedAnswer();
     }
 
     @Override

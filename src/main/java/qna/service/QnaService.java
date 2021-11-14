@@ -33,7 +33,7 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Question question) throws CannotDeleteException {
         question.throwExceptionNotDeletableUser(loginUser);
-        question.throwExceptionNotDeletableAnswers(loginUser);
+        question.throwExceptionNotDeletableAnswersInQuestion(loginUser);
 
         question.deleteQuestion();
         question.deleteAnswers();

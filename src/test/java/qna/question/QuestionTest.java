@@ -105,7 +105,7 @@ public class QuestionTest {
         actual.addAnswer(A1);
         actual.addAnswer(A2);
         //then
-        assertThatThrownBy(() -> actual.throwExceptionNotDeletableAnswers(SANJIGI)).isInstanceOf(CannotDeleteException.class);
+        assertThatThrownBy(() -> actual.throwExceptionNotDeletableAnswersInQuestion(SANJIGI)).isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
