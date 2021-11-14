@@ -100,21 +100,6 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("질문 변경 적용 확인")
-    void toQuestion() {
-        // given
-        Answer actual = answers.save(answer);
-        Question changeQuestion = questions.save(new Question("질문변경할께요", "contents1").writeBy(user));
-
-        //when
-        actual.toQuestion(changeQuestion);
-        Answer expect = answers.findByIdAndDeletedFalse(actual.getId()).get();
-
-        // then
-        assertThat(expect.getQuestion()).isEqualTo(changeQuestion);
-    }
-
-    @Test
     @DisplayName("Question,writer(User) lazy 로딩 확인")
     void question_lazy_loading() {
         // given

@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -40,17 +39,6 @@ public class AnswerTest {
             () -> assertThat(A1.isOwner(UserTest.JAVAJIGI)).isTrue(),
             () -> assertThat(A1.isOwner(UserTest.SANJIGI)).isFalse()
         );
-    }
-
-    @Test
-    @DisplayName("toQuestion 메소드는 question 을 저장")
-    void toQuestion() {
-        // given
-        // when
-        A2.toQuestion(QuestionTest.Q2);
-
-        // then
-        assertThat(A2.getQuestion()).isEqualTo(QuestionTest.Q2);
     }
 
     @Test
