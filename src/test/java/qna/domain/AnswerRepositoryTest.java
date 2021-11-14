@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static qna.domain.AnswerTest.*;
 import static qna.domain.QuestionTest.*;
+import static qna.domain.UserTest.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,10 +13,14 @@ import javax.persistence.PersistenceContext;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.transaction.AfterTransaction;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -23,19 +28,14 @@ public class AnswerRepositoryTest {
 	@Autowired
 	AnswerRepository answerRepository;
 
-	@PersistenceContext
+	@Autowired
+	QuestionRepository questionRepository;
+
+	@Autowired
+	UserRepository userRepository;
+
+	@Autowired
 	EntityManager entityManager;
-
-	@Test
-	void 입력된정보와_저장된정보가_동일한가() {
-
-		// when
-		Answer expected = answerRepository.save(A1);
-		// then
-		assertThat(expected.getWriterId()).isEqualTo(A1.getWriterId());
-		assertThat(expected.getQuestionId()).isEqualTo(A1.getQuestionId());
-		assertThat(expected.getContents()).isEqualTo(A1.getContents());
-	}
 
 	@Test
 	void 삭제되지_않은_대상건중_한건을_true변경시_제외한_대상건만_조회() {
@@ -49,7 +49,7 @@ public class AnswerRepositoryTest {
 		List<Answer> expectedAnswer = answerRepository.findByQuestionIdAndDeletedFalse(Q1.getId());
 		// then
 		assertThat(expectedAnswer.size()).isEqualTo(1);
-		assertThat(expectedAnswer.get(0).getId()).isEqualTo(A2.getId());
+		assertThat(expectedAnswer.get(0).equals(A2)).isTrue();
 		assertThat(A2.isDeleted()).isFalse();
 	}
 
@@ -72,5 +72,13 @@ public class AnswerRepositoryTest {
 		Assertions.assertThat(expected.size()).isEqualTo(3);
 	}
 
+	@AfterEach
+	public void test() {
+		System.out.println("끝");
+	}
 
+	@AfterTransaction
+	public void test1() {
+		System.out.println("트랜잭션");
+	}
 }

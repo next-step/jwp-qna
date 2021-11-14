@@ -18,11 +18,6 @@ public class UserRepositoryTest {
 	@Autowired
 	private UserRepository userRepository;
 
-	@BeforeEach
-	void setUp() {
-		userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));
-	}
-
 	@Test
 	@DisplayName("유저 이메일이 변경되는지 확인")
 	void give_User_when_changeEmail_then_changedEqualsEmail() {

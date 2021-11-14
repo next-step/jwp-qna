@@ -1,13 +1,18 @@
 package qna.domain;
 
+import static javax.persistence.FetchType.*;
+
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import qna.ErrorMessage;
@@ -27,8 +32,9 @@ public class Question extends BaseTime {
 	@Lob
 	private String contents;
 
-	@Column(name = "writer_id")
-	private Long writerId;
+	@ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+	private User writerId;
 
 	@Column(nullable = false)
 	private boolean deleted = false;
@@ -50,12 +56,12 @@ public class Question extends BaseTime {
 		if (Objects.isNull(writer)) {
 			throw new UnAuthorizedException(ErrorMessage.USER_IS_NOT_NULL);
 		}
-		this.writerId = writer.getId();
+		this.writerId = writer;
 		return this;
 	}
 
 	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
+		return this.writerId.equals(writer);
 	}
 
 	public void addAnswer(Answer answer) {
@@ -86,11 +92,11 @@ public class Question extends BaseTime {
 		this.contents = contents;
 	}
 
-	public Long getWriterId() {
+	public User getWriterId() {
 		return writerId;
 	}
 
-	public void setWriterId(Long writerId) {
+	public void setWriterId(User writerId) {
 		this.writerId = writerId;
 	}
 

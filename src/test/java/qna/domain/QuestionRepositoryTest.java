@@ -21,11 +21,6 @@ public class QuestionRepositoryTest {
 
 	private List<Question> questions;
 
-	@BeforeEach
-	void setUp() {
-		questions = questionRepository.saveAll(Arrays.asList(Q1, Q2));
-	}
-
 	@Test
 	@DisplayName("두건의 데이터가 저장되었는지 검증 ")
 	void save() {

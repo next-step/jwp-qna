@@ -21,8 +21,7 @@ public class AnswerTest {
 	void given_A1_When_initAnswer_Then_require_WriterIdAndQuestionId_isTrue() {
 
 		// then
-		assertThat(A1.getWriterId().equals(JAVAJIGI.getId())).isTrue();
-		assertThat(A1.getQuestionId().equals(Q1.getId())).isTrue();
+		assertThat(A1.getQuestion().equals(Q1)).isTrue();
 	}
 
 	@Test

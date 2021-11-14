@@ -1,15 +1,19 @@
 package qna.domain;
 
+import static javax.persistence.FetchType.*;
 import static qna.ErrorMessage.*;
 
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 import qna.QuestionNotFoundException;
 import qna.UnAuthorizedException;
@@ -28,11 +32,13 @@ public class Answer extends BaseTime {
 	@Column(nullable = false)
 	private boolean deleted = false;
 
-	@Column(name = "question_id")
-	private Long questionId;
+	@ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+	private Question question;
 
-	@Column(name = "writer_id")
-	private Long writerId;
+	@ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+	private User user;
 
 	protected Answer() {
 	}
@@ -52,17 +58,17 @@ public class Answer extends BaseTime {
 			throw new QuestionNotFoundException(QUESTION_NOT_FOUND);
 		}
 
-		this.writerId = writer.getId();
-		this.questionId = question.getId();
+		this.user = writer;
+		this.question = question;
 		this.contents = contents;
 	}
 
 	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
+		return this.user.equals(writer);
 	}
 
 	public void toQuestion(Question question) {
-		this.questionId = question.getId();
+		this.question = question;
 	}
 
 	public Long getId() {
@@ -73,20 +79,20 @@ public class Answer extends BaseTime {
 		this.id = id;
 	}
 
-	public Long getWriterId() {
-		return writerId;
+	public Question getQuestion() {
+		return question;
 	}
 
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
+	public void setQuestion(Question question) {
+		this.question = question;
 	}
 
-	public Long getQuestionId() {
-		return questionId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setQuestionId(Long questionId) {
-		this.questionId = questionId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public String getContents() {
@@ -109,10 +115,10 @@ public class Answer extends BaseTime {
 	public String toString() {
 		return "Answer{" +
 			"id=" + id +
-			", writerId=" + writerId +
-			", questionId=" + questionId +
 			", contents='" + contents + '\'' +
 			", deleted=" + deleted +
+			", question=" + question +
+			", user=" + user +
 			'}';
 	}
 }
