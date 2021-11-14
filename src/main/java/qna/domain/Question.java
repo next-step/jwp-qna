@@ -1,8 +1,11 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Table(name = "question")
 public class Question extends BaseTimeEntity {
 
     @Id
@@ -15,11 +18,15 @@ public class Question extends BaseTimeEntity {
     @Lob
     private String contents;
 
-    @Column
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -35,16 +42,21 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.add(answer);
+        answer.setQuestion(this);
     }
 
     public Long getId() {
@@ -71,12 +83,8 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return this.writer;
     }
 
     public boolean isDeleted() {
@@ -87,13 +95,14 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
+
     @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + this.writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }

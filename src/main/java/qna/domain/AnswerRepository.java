@@ -11,4 +11,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
     Optional<Answer> findByIdAndDeletedFalse(Long id);
 
     Answer findByContents(String contents);
+
 }
