@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 import qna.CannotDeleteException;
@@ -15,13 +16,13 @@ import qna.CannotDeleteException;
 @Embeddable
 public class Answers implements Serializable {
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<Answer> values;
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Answer> values = new ArrayList<>();
 
     protected Answers() {
     }
 
-    public Answers(List<Answer> answers) {
+    protected Answers(List<Answer> answers) {
         this.values = answers;
     }
 
@@ -34,8 +35,8 @@ public class Answers implements Serializable {
     }
 
     public List<DeleteHistory> delete(User questionWriter) {
-        validWrittenByQuetionWriter(questionWriter);
-        
+        validWrittenByQuestionWriter(questionWriter);
+
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : values) {
             deleteHistories.add(answer.delete(answer.getWriter()));
@@ -44,7 +45,7 @@ public class Answers implements Serializable {
         return deleteHistories;
     }
 
-    private void validWrittenByQuetionWriter(User questionWriter) {
+    private void validWrittenByQuestionWriter(User questionWriter) {
         long answersByQuestionWriterCount = values.stream()
             .filter(answer -> answer.isOwner(questionWriter))
             .count();
@@ -67,7 +68,7 @@ public class Answers implements Serializable {
         if (o == null || getClass() != o.getClass())
             return false;
         Answers answers = (Answers)o;
-        return Objects.equals(values, answers.values);
+        return Objects.equals(this.values, answers.values);
     }
 
     @Override
