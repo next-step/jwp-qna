@@ -18,12 +18,16 @@
 - [x] DataJpaTest 학습 테스트 사용
   
 ## 현재 고민 중인 부분
-- [ ] Question과 Answer를 하나로 묶을 수 있는 개념이 필요한지에 대한 고민
+- Question과 Answer를 하나로 묶을 수 있는 개념이 필요한지에 대한 고민
   - DeleteHistory에서 contentId로만 Question과 Answer를 받고 있는데 이 부분을 조정하기 위해서는
-  - Question과 Answer의 부모격인 엔티티나 객체가 나와서 id들을 받아주는 것이 좋겠다고 생각한다.
-  - 현재 생각나는 네이밍은 Content이다. (근데 Question과 Answer만을 포함하는 추상적인 개념이 아니라 조심스럽다.)
+  - Question과 Answer의 부모격인 엔티티나 객체가 나와서 id들을 받아주는 것이 좋겠다고 생각함
+  - 현재 생각나는 네이밍은 Content이다. (근데 Question과 Answer만을 포함하는 추상적인 개념이 아니라 조심스러움)
   
-- [ ] 유저가 DeleteHistory를 몰라도 될까? 에 대한 고민
+- 유저가 DeleteHistory를 몰라도 될까? 에 대한 고민
+
+- Referential integrity constraint violation [FK 참조 무결성 위반](https://devwithpug.github.io/spring/jpa-1/#:~:text=%EC%9D%B4%20%EC%97%90%EB%9F%AC%EB%8A%94%20%EC%B0%B8%EC%A1%B0%20%EB%AC%B4%EA%B2%B0%EC%84%B1,%ED%95%B4%EC%84%9C%20%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94%20%EB%AC%B8%EC%A0%9C%EC%9D%B4%EB%8B%A4.)
+- 원인 : Question 에 등록된 User 엔티티가 등록되지 않고 객체로만 있었어서 flush()할 때 에러가 발생
+- 하지만 왜 참조 무결성 위반 에러가 떴는지는 연구가 필요
 
 ## 학습 테스트 하며 기록한 글
 
