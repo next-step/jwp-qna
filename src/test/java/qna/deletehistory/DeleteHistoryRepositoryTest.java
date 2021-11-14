@@ -18,7 +18,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static qna.domain.UserTest.JAVAJIGI;
+import static qna.user.UserTest.JAVAJIGI;
 
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {

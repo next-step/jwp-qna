@@ -34,7 +34,7 @@ public class Question extends DateTimeEntity implements NullCheckAction {
     private Title title;
 
     @Embedded
-    private Answers answers = new Answers();
+    private final Answers answers = new Answers();
 
     public Question(final String title, final String contents, final User user) {
         this(null, title, contents, user);
@@ -42,7 +42,6 @@ public class Question extends DateTimeEntity implements NullCheckAction {
 
     public Question(final Long id, final String title, final String contents, final User user) {
         throwExceptionIsNullObject(user);
-        throwExceptionIsNullObject(title);
         this.id = id;
         this.title = new Title(title);
         this.contents = contents;

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.user.User;
+import qna.user.UserId;
 import qna.user.UserRepository;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static qna.domain.UserTest.JAVAJIGI;
+import static qna.user.UserTest.JAVAJIGI;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
@@ -73,7 +74,7 @@ public class QuestionRepositoryTest {
 
     @Test
     public void findByUser() {
-        User user = users.findByUserId("javajigi").get();
+        User user = users.findByUserId(new UserId("javajigi")).get();
 
         List<Question> actual = questionRepository.findByUser(user);
 

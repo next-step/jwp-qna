@@ -11,21 +11,22 @@ import qna.answer.Answer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static qna.TestStringGenerate.generateByLength;
 import static qna.answer.AnswerTest.A1;
 import static qna.answer.AnswerTest.A2;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
+import static qna.user.UserTest.JAVAJIGI;
+import static qna.user.UserTest.SANJIGI;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1", JAVAJIGI);
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "t", "titletitletitletitletitletitletitletitletitletitle" +
-            "titletitletitletitletitletitletitletitletitletitle"
+    @ValueSource(ints = {
+            1, 100
     })
     @DisplayName("질문 생성")
-    public void createQuestionTest(String title) {
+    public void createQuestionTest(int titleLength) {
+        String title = generateByLength(titleLength);
         Question actual = new Question(title, "contents1", JAVAJIGI);
         assertThat(actual).isEqualTo(new Question(title, "contents1", JAVAJIGI));
     }
@@ -39,24 +40,16 @@ public class QuestionTest {
     @Test
     @DisplayName("질문 생성 실패 - null title")
     public void createQuestionTest_nullTitle() {
-        assertThatThrownBy(() -> new Question(null, "contents1", JAVAJIGI)).isInstanceOf(NotFoundException.class);
+        assertThatThrownBy(() -> new Question(null, "contents1", JAVAJIGI)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "", "aaaaaaaaaaaaaaaaaaaa" +
-            "aaaaaaaaaaaaaaaaaaaa" +
-            "aaaaaaaaaaaaaaaaaaaa" +
-            "aaaaaaaaaaaaaaaaaaaa" +
-            "aaaaaaaaaaaaaaaaaaaa" +
-            "aaaaaaaaaaaaaaaaaaaa" +
-            "aaaaaaaaaaaaaaaaaaaa" +
-            "aaaaaaaaaaaaaaaaaaaa" +
-            "aaaaaaaaaaaaaaaaaaaa" +
-            "aaaaaaaaaaaaaaaaaaaaa"
+    @ValueSource(ints = {
+            0, 101
     })
     @DisplayName("질문 생성 실패 - title의 길이는 0보다크고 100보다 작아야한다.")
-    public void createQuestionTest_nullTitle(String title) {
+    public void createQuestionTest_nullTitle(int titleLength) {
+        String title = generateByLength(titleLength);
         assertThatThrownBy(() -> new Question(title, "contents1", JAVAJIGI)).isInstanceOf(IllegalArgumentException.class);
     }
 

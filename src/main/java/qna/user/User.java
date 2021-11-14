@@ -10,22 +10,23 @@ import java.util.Objects;
 @Table(name = "user")
 public class User extends DateTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "user_id", nullable = false, unique = true)
-    private String userId;
+    @Embedded
+    private UserId userId;
 
-    @Column(name = "password", nullable = false, length = 20)
-    private String password;
+    @Embedded
+    private Password password;
 
-    @Column(name = "name", nullable = false, length = 20)
-    private String name;
+    @Embedded
+    private Name name;
 
-    @Column(name = "email", length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
@@ -36,31 +37,23 @@ public class User extends DateTimeEntity {
 
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+        this.userId = new UserId(userId);
+        this.password = new Password(password);
+        this.name = new Name(name);
+        this.email = new Email(email);
     }
 
     public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
+        if (!userId.equals(loginUser.userId)) {
             throw new UnAuthorizedException();
         }
 
-        if (!matchPassword(target.password)) {
+        if (!password.equals(target.password)) {
             throw new UnAuthorizedException();
         }
 
         this.name = target.name;
         this.email = target.email;
-    }
-
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
-    }
-
-    public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
     }
 
     public boolean equalsNameAndEmail(User target) {
@@ -76,7 +69,7 @@ public class User extends DateTimeEntity {
         return false;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 

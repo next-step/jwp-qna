@@ -4,10 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
+import static qna.common.QnaConst.MIN_TEXT_LENGTH;
+
 @Embeddable
 public class Title {
     private static final int MAX_LENGTH_TITLE = 100;
-    private static final int MIN_LENGTH_TITLE = 1;
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
@@ -21,13 +22,13 @@ public class Title {
     }
 
     private void validateTitle() {
-        if (isInvalidTitleLength()) {
+        if (Objects.isNull(title) || isInvalidTitleLength()) {
             throw new IllegalArgumentException("질문의 제목 길이는 최소 1이상 100이하여야 합니다.");
         }
     }
 
     private boolean isInvalidTitleLength() {
-        return title.length() < MIN_LENGTH_TITLE || title.length() > MAX_LENGTH_TITLE;
+        return title.length() < MIN_TEXT_LENGTH || title.length() > MAX_LENGTH_TITLE;
     }
 
     @Override

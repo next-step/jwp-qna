@@ -11,9 +11,9 @@ import qna.answer.Answer;
 import qna.deletehistory.DeleteHistory;
 import qna.deletehistory.DeleteHistoryRepository;
 import qna.domain.ContentType;
-import qna.domain.UserTest;
 import qna.question.Question;
 import qna.question.QuestionTest;
+import qna.user.UserTest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
-import static qna.domain.UserTest.JAVAJIGI;
+import static qna.user.UserTest.JAVAJIGI;
 
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
