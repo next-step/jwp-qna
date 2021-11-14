@@ -14,7 +14,7 @@ public class AnswerRepositoryTest {
 
     @Test
     void save() {
-        final Answer expected = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        final Answer expected = AnswerTest.A1;
         final Answer actual = answers.save(expected);
 
         assertAll(
@@ -25,7 +25,7 @@ public class AnswerRepositoryTest {
 
     @Test
     void findByContentsContainingTest() {
-        String expected = "Answers Contents1";
+        String expected = AnswerTest.A1.getContents();
         answers.save(new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, expected));
         String actual = answers.findByContentsContaining(expected).getContents();
         assertThat(actual).isEqualTo(expected);

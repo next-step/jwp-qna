@@ -25,8 +25,8 @@ public class QuestionRepositoryTest {
 
     @Test
     void findByContentsContainingTest() {
-        String expected = "contents1";
-        questions.save(new Question("title1", expected).writeBy(UserTest.JAVAJIGI));
+        String expected = QuestionTest.Q1.getContents();
+        questions.save(QuestionTest.Q1);
         String actual = questions.findByContentsContaining(expected).getContents();
         assertThat(actual).isEqualTo(expected);
     }
