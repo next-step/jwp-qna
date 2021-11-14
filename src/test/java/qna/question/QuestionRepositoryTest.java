@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.PreExecutionTest;
 import qna.user.User;
 import qna.user.UserId;
 import qna.user.UserRepository;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static qna.user.UserTest.JAVAJIGI;
 
 @DataJpaTest
-public class QuestionRepositoryTest {
+public class QuestionRepositoryTest extends PreExecutionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
@@ -28,7 +29,6 @@ public class QuestionRepositoryTest {
 
     @BeforeEach
     private void beforeEach() {
-        User savedUser = users.save(JAVAJIGI);
         savedQuestion = questionRepository.save(new Question("title1", "contents1", savedUser));
     }
 
@@ -73,6 +73,7 @@ public class QuestionRepositoryTest {
     }
 
     @Test
+    @DisplayName("user객체로 question 검색")
     public void findByUser() {
         User user = users.findByUserId(new UserId("javajigi")).get();
 
