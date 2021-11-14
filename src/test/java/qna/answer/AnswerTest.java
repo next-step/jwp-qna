@@ -1,19 +1,20 @@
-package qna.domain;
+package qna.answer;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.NotFoundException;
-import qna.UnAuthorizedException;
-import qna.answer.Answer;
+import qna.domain.QuestionTest;
+import qna.domain.UserTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AnswerTest {
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Test
-    @DisplayName("답변 생성 성공")
+    @DisplayName("답변 생성")
     public void createAnswerTest() {
         Answer actual = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
 
@@ -23,7 +24,7 @@ public class AnswerTest {
     @Test
     @DisplayName("답변 생성 실패 - null user")
     public void createAnswerTest_nullUser() {
-        assertThatThrownBy(() -> new Answer(null, QuestionTest.Q1, "Answers Contents")).isInstanceOf(UnAuthorizedException.class);
+        assertThatThrownBy(() -> new Answer(null, QuestionTest.Q1, "Answers Contents")).isInstanceOf(NotFoundException.class);
     }
 
     @Test

@@ -1,8 +1,7 @@
 package qna.answer;
 
 import qna.CannotDeleteException;
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.action.NullCheckAction;
 import qna.domain.DateTimeEntity;
 import qna.question.Question;
 import qna.user.User;
@@ -12,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends DateTimeEntity {
+public class Answer extends DateTimeEntity implements NullCheckAction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -33,36 +32,25 @@ public class Answer extends DateTimeEntity {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    public Answer(User user, Question question, String contents) {
+    public Answer(final User user, final Question question, final String contents) {
         this(null, user, question, contents);
     }
 
-    public Answer(Long id, User user, Question question, String contents) {
+    public Answer(final Long id, final User user, final Question question, final String contents) {
+        throwExceptionIsNullObject(user);
+        throwExceptionIsNullObject(question);
         this.id = id;
         this.user = user;
         this.question = question;
         this.contents = contents;
-        throwExceptionIsNullUser();
-        throwExceptionIsNullQuestion();
+
         question.addAnswer(this);
     }
 
     protected Answer() {
     }
 
-    private void throwExceptionIsNullQuestion() {
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
-    }
-
-    private void throwExceptionIsNullUser() {
-        if (Objects.isNull(user)) {
-            throw new UnAuthorizedException();
-        }
-    }
-
-    public void throwExceptionNotDeletableUser(User loginUser) throws CannotDeleteException {
+    public void throwExceptionNotDeletableUser(final User loginUser) throws CannotDeleteException {
         if (!this.user.equals(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }

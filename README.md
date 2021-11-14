@@ -19,4 +19,10 @@
   - [X] 중복되는 아이디 나누기
   - [X] 라인 정리
   - [X] 필드 이름 변경
+- [ ] 도메인 테스트 추가
+  - [X] Answer
+  - [ ] DeleteHistories
+  - [ ] DeleteHistory
+  - [ ] Question
+  - [ ] User
   
