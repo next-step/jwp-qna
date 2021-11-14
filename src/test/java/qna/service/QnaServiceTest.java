@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import qna.CannotDeleteException;
+import qna.common.exception.CannotDeleteException;
 import qna.domain.*;
 
 import java.time.LocalDateTime;
@@ -91,7 +91,7 @@ class QnaServiceTest {
             new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()),
             new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now())
         );
-        
+
         verify(deleteHistoryService).saveAll(deleteHistories);
     }
 }

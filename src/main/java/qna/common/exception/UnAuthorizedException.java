@@ -1,4 +1,4 @@
-package qna;
+package qna.common.exception;
 
 public class UnAuthorizedException extends RuntimeException {
     public static final String UNAUTHORIZED_EXCEPTION_USER_ID_NULL_MESSAGE = "인증되지 않은 사용자입니다.";

@@ -1,8 +1,8 @@
 package qna.domain;
 
-import qna.CannotDeleteException;
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.common.exception.CannotDeleteException;
+import qna.common.exception.NotFoundException;
+import qna.common.exception.UnAuthorizedException;
 
 import java.util.Objects;
 

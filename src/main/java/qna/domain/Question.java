@@ -18,8 +18,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import qna.CannotDeleteException;
-import qna.UnAuthorizedException;
+import qna.common.exception.CannotDeleteException;
+import qna.common.exception.UnAuthorizedException;
 
 @Entity
 @Table(name = "question")

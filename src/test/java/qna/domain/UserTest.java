@@ -5,9 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import qna.UnAuthorizedException;
+import qna.common.exception.UnAuthorizedException;
 
 public class UserTest {
     public static final User JAVAJIGI = new User("javajigi", "password", "javajigi", new Email("javajigi@slipp.net"));

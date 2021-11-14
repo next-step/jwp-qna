@@ -1,6 +1,6 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
+import qna.common.exception.UnAuthorizedException;
 
 import java.util.Objects;
 

@@ -10,7 +10,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
-import qna.CannotDeleteException;
+import qna.common.exception.CannotDeleteException;
 
 @Embeddable
 public class Answers implements Serializable {
