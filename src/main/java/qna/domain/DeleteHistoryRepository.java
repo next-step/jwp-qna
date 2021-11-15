@@ -7,7 +7,7 @@ public interface DeleteHistoryRepository extends JpaRepository<DeleteHistory, Lo
 
     Optional<DeleteHistory> findByContentId(Long contentId);
 
-    Optional<DeleteHistory> findByDeletedById(Long deletedById);
+    Optional<DeleteHistory> findByDeleter(User deleter);
 
     Optional<DeleteHistory> findByContentType(ContentType contentType);
 }

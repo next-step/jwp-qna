@@ -25,9 +25,9 @@ class DeleteHistoryTest {
 
     @BeforeEach
     void setUp() {
-        history1 = new DeleteHistory(ContentType.QUESTION, 1L, 1L,
+        history1 = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI,
             LocalDateTime.now());
-        history2 = new DeleteHistory(ContentType.ANSWER, 2L, 2L,
+        history2 = new DeleteHistory(ContentType.ANSWER, 2L, UserTest.SANJIGI,
             LocalDateTime.now());
 
         deleteHistoryRepository.save(history1);
@@ -50,7 +50,7 @@ class DeleteHistoryTest {
             () -> assertThat(actual.getId()).isEqualTo(history1.getId()),
             () -> assertThat(actual.getContentType()).isEqualTo(history1.getContentType()),
             () -> assertThat(actual.getContentId()).isEqualTo(history1.getContentId()),
-            () -> assertThat(actual.getDeletedById()).isEqualTo(history1.getDeletedById())
+            () -> assertThat(actual.getDeleter()).isEqualTo(history1.getDeleter())
         );
     }
 
@@ -67,13 +67,13 @@ class DeleteHistoryTest {
     }
 
     @Test
-    void test_삭제한_id로_조회() {
-        DeleteHistory actual = deleteHistoryRepository.findByDeletedById(history1.getDeletedById())
+    void test_삭제한_사용자로_조회() {
+        DeleteHistory actual = deleteHistoryRepository.findByDeleter(history1.getDeleter())
             .orElse(null);
 
         assertAll(
             () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual.getDeletedById()).isEqualTo(history1.getDeletedById()),
+            () -> assertThat(actual.getDeleter()).isEqualTo(history1.getDeleter()),
             () -> assertThat(actual).isSameAs(history1)
         );
     }
