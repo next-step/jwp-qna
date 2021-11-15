@@ -51,7 +51,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.matchId(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
