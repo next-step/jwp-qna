@@ -82,10 +82,6 @@ public class Answer extends BaseTimeEntity implements SavingDeleteHistory {
         throw new IllegalStateException("삭제시에만 기록을 남길 수 있습니다.");
     }
 
-    public void toQuestion(Question question) {
-        this.question = question;
-    }
-
     public Long getId() {
         return id;
     }
