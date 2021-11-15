@@ -3,14 +3,14 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import javax.persistence.EntityManager;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @DataJpaTest
 public class QuestionTest {
 
@@ -21,14 +21,14 @@ public class QuestionTest {
     QuestionRepository questionRepository;
 
     @Autowired
-    EntityManager em;
+    UserRepository userRepository;
 
     @Test
     public void 질문_저장() {
         //given
-        Question actual = questionRepository.save(Q1);
+        User write = userRepository.save(TestUserFactory.create("donkey"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
         Long savedId = actual.getId();
-        em.clear();
 
         //when
         Question expected = questionRepository.findById(savedId).get();
@@ -40,7 +40,8 @@ public class QuestionTest {
     @Test
     public void 질문_저장_후_질문불러오기() {
         //given
-        Question actual = questionRepository.save(Q1);
+        User write = userRepository.save(TestUserFactory.create("donkey"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
 
         //when
         List<Question> questionList = questionRepository.findAll();
@@ -49,7 +50,7 @@ public class QuestionTest {
         //then
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
-                () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
+                () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
                 () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
         );
@@ -58,7 +59,8 @@ public class QuestionTest {
     @Test
     public void 질문_저장_후_삭제() {
         //given
-        Question actual = questionRepository.save(Q1);
+        User write = userRepository.save(TestUserFactory.create("donkey"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
 
         //when
         actual.setDeleted(true);
@@ -70,8 +72,9 @@ public class QuestionTest {
     @Test
     public void 제목에_같은_단어가_포함되는_질문_목록_조회() {
         //given
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
+        User write = userRepository.save(TestUserFactory.create("donkey"));
+        questionRepository.save(TestQuestionFactory.create("title", "content", write));
+        questionRepository.save(TestQuestionFactory.create("title", "content", write));
 
         String title = "title";
 

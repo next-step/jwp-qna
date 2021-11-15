@@ -3,13 +3,14 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @DataJpaTest
 public class AnswerTest {
 
@@ -20,14 +21,18 @@ public class AnswerTest {
     AnswerRepository answerRepository;
 
     @Autowired
-    EntityManager em;
+    QuestionRepository questionRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Test
     public void 답변저장() {
         //given
-        Answer actual = answerRepository.save(A1);
+        User write = userRepository.save(TestUserFactory.create("donkey"));
+        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", write));
+        Answer actual = answerRepository.save(TestAnswerFactory.create(write, question, "content"));
         Long savedId = actual.getId();
-        em.clear();
 
         //when
         Answer expected = answerRepository.findById(savedId).get();
@@ -39,7 +44,9 @@ public class AnswerTest {
     @Test
     public void 답변저장_후_답변불러오기() {
         //given
-        Answer actual = answerRepository.save(A1);
+        User write = userRepository.save(TestUserFactory.create("donkey"));
+        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", write));
+        Answer actual = answerRepository.save(TestAnswerFactory.create(write, question, "content"));
 
         //when
         List<Answer> answerList = answerRepository.findAll();
@@ -48,8 +55,8 @@ public class AnswerTest {
         //then
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
-                () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
-                () -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId()),
+                () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
+                () -> assertThat(actual.getQuestion()).isEqualTo(expected.getQuestion()),
                 () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
         );
     }
@@ -57,7 +64,9 @@ public class AnswerTest {
     @Test
     public void 답변저장_후_삭제() {
         //given
-        Answer actual = answerRepository.save(A1);
+        User write = userRepository.save(TestUserFactory.create("donkey"));
+        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", write));
+        Answer actual = answerRepository.save(TestAnswerFactory.create(write, question, "content"));
 
         //when
         actual.setDeleted(true);
@@ -69,16 +78,19 @@ public class AnswerTest {
     @Test
     public void 같은_내용이_포함되는_답변목록_조회() {
         //given
-        answerRepository.save(A1);
-        answerRepository.save(A2);
-
+        User write = userRepository.save(TestUserFactory.create("donkey"));
+        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", write));
+        Answer answers1 = TestAnswerFactory.create(write, question, "Answers");
+        Answer answers2 = TestAnswerFactory.create(write, question, "Answers");
+        answerRepository.save(answers1);
+        answerRepository.save(answers2);
         String contents = "Answers";
 
         //when
         List<Answer> expected = answerRepository.findByContentsContains(contents);
 
         //then
-        assertThat(2).isEqualTo(expected.size());
+        assertThat(expected).hasSize(2);
     }
 
 }
