@@ -1,11 +1,10 @@
 package qna.domain;
 
-import java.time.*;
-import java.util.*;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
-
-import qna.*;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "question")
@@ -30,9 +29,6 @@ public class Question extends BaseEntity {
     @Embedded
     private Answers answers = new Answers();
 
-    @Embedded
-    private DeleteHistories deleteHistories = new DeleteHistories();
-
     protected Question() {
     }
 
@@ -46,8 +42,8 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public DeleteHistories delete(User loginUser, LocalDateTime localDateTime) {
-        deleteQuestion(loginUser, localDateTime);
+    public DeleteHistories delete(User loginUser, LocalDateTime localDateTime, DeleteHistories deleteHistories) {
+        deleteQuestion(loginUser, localDateTime, deleteHistories);
         deleteHistories.getDeleteHistories().addAll(
             answers.delete(loginUser, localDateTime)
                 .getDeleteHistories()
@@ -55,7 +51,7 @@ public class Question extends BaseEntity {
         return deleteHistories;
     }
 
-    private void deleteQuestion(User loginUser, LocalDateTime localDateTime) {
+    private void deleteQuestion(User loginUser, LocalDateTime localDateTime, DeleteHistories deleteHistories) {
         validate(loginUser);
         deleted = true;
         deleteHistories.add(DeleteHistory.questionDeleteHistoryOf(id, loginUser, localDateTime));
@@ -118,7 +114,7 @@ public class Question extends BaseEntity {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        final Question question = (Question)o;
+        final Question question = (Question) o;
         return id.equals(question.id);
     }
 
