@@ -18,8 +18,12 @@ public class Question extends BaseTimeEntity {
     @Column(name="contents")
     private String contents;
 
-    @Column(name="writer_id")
-    private Long writerId;
+    @Embedded
+    private Answers answers;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     @Column(name="deleted", nullable = false)
     private boolean deleted = false;
@@ -32,54 +36,39 @@ public class Question extends BaseTimeEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers();
     }
 
     protected Question() {
     }
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
-    }
-
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answer.setQuestion(this);
+        answers.addAnswer(answer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
+    public User getWriter() {
+        return writer;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public Answers getAnswers() {
+        return answers;
     }
 
     public boolean isDeleted() {
@@ -96,8 +85,13 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public Question writeBy(User writer) {
+        this.writer = writer;
+        return this;
     }
 }
