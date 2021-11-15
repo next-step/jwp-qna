@@ -15,7 +15,7 @@ public class DeleteHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id")
     private User deletedByUser;
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
@@ -44,8 +44,7 @@ public class DeleteHistory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeleteHistory that = (DeleteHistory) o;
-//        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(contentId, that.contentId) && Objects.equals(getDeletedByUser(), that.getDeletedByUser()) && Objects.equals(createDate, that.createDate);
-        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(contentId, that.contentId) && Objects.equals(getDeletedByUser(), that.getDeletedByUser());
+        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(contentId, that.contentId) && Objects.equals(getDeletedByUser(), that.getDeletedByUser()) && Objects.equals(createDate, that.createDate);
     }
 
     @Override
