@@ -39,14 +39,6 @@ public class DeleteHistory {
         return id;
     }
 
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public Long getContentId() {
-        return contentId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

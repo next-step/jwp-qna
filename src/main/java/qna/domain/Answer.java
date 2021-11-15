@@ -49,16 +49,8 @@ public class Answer extends BaseEntity{
         return this.writer.getId().equals(writer.getId());
     }
 
-    public void toQuestion(Question question) {
-        this.question.getId().equals(question.getId());
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public User getWriter() {
@@ -79,10 +71,6 @@ public class Answer extends BaseEntity{
 
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
