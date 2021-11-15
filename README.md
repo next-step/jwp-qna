@@ -2,19 +2,14 @@
 
 ## 관계 예상 그림
 
+- 4차 예상 (step2 - 1차 피드백 후)
+
+  ![jwp-qna drawio-v4](https://user-images.githubusercontent.com/17772475/141789834-f8434d22-fc8c-4855-96c0-677e705d5fb6.png)
+
+
 - 3차 예상 (연관 관계 매핑 후)
 
   ![jwp-qna drawio-v3](https://user-images.githubusercontent.com/17772475/141682152-7a9aac6f-3410-4ac2-9771-90cafdb32169.png)
-
-
-- 2차 예상 (테스트 케이스 만든 후)
-  
-  ![jwp-qna drawio-v2](https://user-images.githubusercontent.com/17772475/141173769-0c66d797-aba8-45ae-9339-045e410c234a.png)
-
-
-- 1차 예상 (테스트 케이스 만들기 전)
-  
-  ![jwp-qna drawio](https://user-images.githubusercontent.com/17772475/141093329-1eb6babd-9951-43f2-ad3c-fdaf11c457a9.png)
   
 
 ## 할 일
