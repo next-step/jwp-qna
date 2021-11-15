@@ -1,13 +1,9 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -24,8 +20,7 @@ import java.util.Objects;
  * )
  */
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Answer {
+public class Answer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,11 +29,6 @@ public class Answer {
     private Long questionId;
     @Lob
     private String contents;
-    @CreatedDate
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
