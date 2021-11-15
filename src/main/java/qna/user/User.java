@@ -1,13 +1,14 @@
-package qna.domain;
+package qna.user;
 
 import qna.UnAuthorizedException;
+import qna.domain.DateTimeEntity;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User extends DateTimeEntity{
+public class User extends DateTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -15,17 +16,17 @@ public class User extends DateTimeEntity{
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId;
+    @Embedded
+    private UserId userId;
 
-    @Column(name = "password", nullable = false)
-    private String password;
+    @Embedded
+    private Password password;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Embedded
+    private Name name;
 
-    @Column(name = "email")
-    private String email;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
@@ -36,31 +37,23 @@ public class User extends DateTimeEntity{
 
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+        this.userId = new UserId(userId);
+        this.password = new Password(password);
+        this.name = new Name(name);
+        this.email = new Email(email);
     }
 
     public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
+        if (!userId.equals(loginUser.userId)) {
             throw new UnAuthorizedException();
         }
 
-        if (!matchPassword(target.password)) {
+        if (!password.equals(target.password)) {
             throw new UnAuthorizedException();
         }
 
         this.name = target.name;
         this.email = target.email;
-    }
-
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
-    }
-
-    public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
     }
 
     public boolean equalsNameAndEmail(User target) {
@@ -76,6 +69,10 @@ public class User extends DateTimeEntity{
         return false;
     }
 
+    public UserId getUserId() {
+        return userId;
+    }
+
     public Long getId() {
         return id;
     }
@@ -85,18 +82,16 @@ public class User extends DateTimeEntity{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id)
+        return Objects.equals(id, user.getId())
                 && Objects.equals(userId, user.userId)
                 && Objects.equals(password, user.password)
                 && Objects.equals(name, user.name)
-                && Objects.equals(email, user.email)
-                && Objects.equals(getCreatedDate(), user.getCreatedDate())
-                && Objects.equals(getUpdatedDate(), user.getUpdatedDate());
+                && Objects.equals(email, user.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email, getCreatedDate(), getUpdatedDate());
+        return Objects.hash(id, userId, password, name, email);
     }
 
     @Override
