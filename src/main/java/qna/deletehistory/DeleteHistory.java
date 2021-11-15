@@ -1,6 +1,7 @@
 package qna.deletehistory;
 
 import qna.action.NullCheckAction;
+import qna.answer.Answer;
 import qna.domain.ContentType;
 import qna.user.User;
 
@@ -28,7 +29,7 @@ public class DeleteHistory implements NullCheckAction {
     private User deletedByUser;
 
     @Column(name = "created_date")
-    private LocalDateTime createdDate = LocalDateTime.now();
+    private final LocalDateTime createdDate = LocalDateTime.now();
 
     protected DeleteHistory() {
     }
@@ -43,6 +44,10 @@ public class DeleteHistory implements NullCheckAction {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
+    }
+
+    public static DeleteHistory of(Answer answer){
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getUser());
     }
 
     public Long getId() {

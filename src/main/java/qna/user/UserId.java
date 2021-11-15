@@ -4,8 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
-import static qna.common.QnaConst.MIN_TEXT_LENGTH;
-
 @Embeddable
 public class UserId {
     private static final int MAX_LENGTH_USERID = 20;
@@ -28,7 +26,7 @@ public class UserId {
     }
 
     private boolean isInvalidUserIdLength() {
-        return userId.length() < MIN_TEXT_LENGTH || userId.length() > MAX_LENGTH_USERID;
+        return userId.isEmpty() || userId.length() > MAX_LENGTH_USERID;
     }
 
     @Override

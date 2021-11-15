@@ -4,8 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
-import static qna.common.QnaConst.MIN_TEXT_LENGTH;
-
 @Embeddable
 public class Password {
     private static final int MAX_LENGTH_PASSWORD = 20;
@@ -28,7 +26,7 @@ public class Password {
     }
 
     private boolean isInvalidPasswordLength() {
-        return password.length() < MIN_TEXT_LENGTH || password.length() > MAX_LENGTH_PASSWORD;
+        return password.isEmpty() || password.length() > MAX_LENGTH_PASSWORD;
     }
 
     @Override

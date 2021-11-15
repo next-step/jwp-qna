@@ -51,7 +51,7 @@ public class AnswerRepositoryTest extends PreExecutionTest {
     @Test
     @DisplayName("answer에 delete를 true로 수정")
     public void updateAnswerDeletedTrue() {
-        savedAnswer.deleteAnswer();
+        savedAnswer.delete();
         Optional<Answer> oAnswer = answerRepository.findById(savedAnswer.getId());
         assertAnswerDeleted(oAnswer, true);
     }

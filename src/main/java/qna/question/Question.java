@@ -75,7 +75,7 @@ public class Question extends DateTimeEntity implements NullCheckAction {
     }
 
     public List<Answer> getAnswers() {
-        return new ArrayList<>(answers.getAnswers());
+        return answers.getAnswers();
     }
 
     public boolean isDeleted() {

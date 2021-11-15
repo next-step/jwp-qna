@@ -1,7 +1,6 @@
 package qna.answer;
 
 import qna.CannotDeleteException;
-import qna.action.NullCheckAction;
 import qna.domain.DateTimeEntity;
 import qna.question.Question;
 import qna.user.User;
@@ -11,7 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends DateTimeEntity implements NullCheckAction {
+public class Answer extends DateTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -37,8 +36,8 @@ public class Answer extends DateTimeEntity implements NullCheckAction {
     }
 
     public Answer(final Long id, final User user, final Question question, final String contents) {
-        throwExceptionIsNullObject(user);
-        throwExceptionIsNullObject(question);
+        Objects.requireNonNull(user, "사용자는 필수로 입력 해야 합니다.");
+        Objects.requireNonNull(question, "질문은 필수로 입력 해야 합니다.");
         this.id = id;
         this.user = user;
         this.question = question;
@@ -72,7 +71,7 @@ public class Answer extends DateTimeEntity implements NullCheckAction {
         return deleted;
     }
 
-    public void deleteAnswer() {
+    public void delete() {
         this.deleted = true;
     }
 

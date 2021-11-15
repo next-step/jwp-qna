@@ -1,7 +1,7 @@
 package qna.deletehistory;
 
-import qna.answer.Answer;
 import qna.domain.ContentType;
+import qna.question.Answers;
 import qna.question.Question;
 
 import java.util.ArrayList;
@@ -16,9 +16,10 @@ public class DeleteHistories {
         this.deleteHistories = deleteHistories;
     }
 
-    public static DeleteHistories fromAnswers(final List<Answer> answers) {
-        return new DeleteHistories(answers.stream()
-                .map(answer -> new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getUser()))
+    public static DeleteHistories fromAnswers(final Answers answers) {
+        return new DeleteHistories(answers.getAnswers()
+                .stream()
+                .map(DeleteHistory::of)
                 .collect(Collectors.toList()));
     }
 

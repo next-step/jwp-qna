@@ -8,6 +8,7 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.deletehistory.DeleteHistories;
 import qna.deletehistory.DeleteHistoryRepository;
+import qna.question.Answers;
 import qna.question.Question;
 import qna.question.QuestionRepository;
 import qna.user.User;
@@ -37,7 +38,8 @@ public class QnaService {
 
         question.deleteQuestion();
         question.deleteAnswers();
-        DeleteHistories deleteHistories = DeleteHistories.fromAnswers(question.getAnswers());
+        Answers answers = new Answers(question.getAnswers());
+        DeleteHistories deleteHistories = DeleteHistories.fromAnswers(answers);
         deleteHistories.addDeleteQuestion(question);
         deleteHistoryRepository.saveAll(deleteHistories.getDeleteHistories());
     }

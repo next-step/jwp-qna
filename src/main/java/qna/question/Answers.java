@@ -18,13 +18,17 @@ public class Answers {
     protected Answers() {
     }
 
+    public Answers(List<Answer> answers){
+        this.answers = answers;
+    }
+
     public void addAnswer(final Answer answer) {
         answers.add(answer);
     }
 
     public void changeDeletedAnswer() {
         for (Answer answer : answers) {
-            answer.deleteAnswer();
+            answer.delete();
         }
     }
 

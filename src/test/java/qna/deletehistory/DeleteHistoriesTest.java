@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import qna.question.Answers;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -17,7 +18,7 @@ class DeleteHistoriesTest {
 
     private static Stream<Arguments> createDeleteHistories() {
         return Stream.of(
-                Arguments.of(DeleteHistories.fromAnswers(Arrays.asList(A1, A2)))
+                Arguments.of(DeleteHistories.fromAnswers(new Answers(Arrays.asList(A1, A2))))
         );
     }
 
@@ -25,7 +26,7 @@ class DeleteHistoriesTest {
     @MethodSource("createDeleteHistories")
     @DisplayName("삭제 이력 리스트 객체 생성")
     public void createDeleteHistoriesTest(DeleteHistories actual) {
-        assertThat(actual).isEqualTo(DeleteHistories.fromAnswers(Arrays.asList(A1, A2)));
+        assertThat(actual).isEqualTo(DeleteHistories.fromAnswers(new Answers(Arrays.asList(A1, A2))));
     }
 
     @ParameterizedTest

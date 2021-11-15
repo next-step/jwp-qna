@@ -4,8 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
-import static qna.common.QnaConst.MIN_TEXT_LENGTH;
-
 @Embeddable
 public class Name {
     private static final int MAX_LENGTH_NAME = 20;
@@ -28,7 +26,7 @@ public class Name {
     }
 
     private boolean isInvalidNameLength() {
-        return name.length() < MIN_TEXT_LENGTH || name.length() > MAX_LENGTH_NAME;
+        return name.isEmpty() || name.length() > MAX_LENGTH_NAME;
     }
 
     @Override
