@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import qna.CannotDeleteException;
-import qna.Message;
+import qna.ErrorMessage;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
@@ -42,7 +42,7 @@ public class QuestionTest {
         final Question question = Fixture.question("writer.id");
         assertThatExceptionOfType(CannotDeleteException.class)
             .isThrownBy(() -> question.delete(Fixture.user("other.id")))
-            .withMessage(Message.CAN_NOT_DELETE_QUESTION_WITHOUT_OWNERSHIP.getContent());
+            .withMessage(ErrorMessage.CAN_NOT_DELETE_QUESTION_WITHOUT_OWNERSHIP.getContent());
     }
 
     @Test
@@ -52,6 +52,6 @@ public class QuestionTest {
         question.addAnswer(Fixture.answer(question, "other.id"));
         assertThatExceptionOfType(CannotDeleteException.class)
             .isThrownBy(() -> question.delete(question.getWriter()))
-            .withMessage(Message.CAN_NOT_DELETE_QUESTION_HAVING_ANSWER_WRITTEN_BY_OTHER.getContent());
+            .withMessage(ErrorMessage.CAN_NOT_DELETE_QUESTION_HAVING_ANSWER_WRITTEN_BY_OTHER.getContent());
     }
 }

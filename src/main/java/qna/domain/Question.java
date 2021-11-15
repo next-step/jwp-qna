@@ -17,7 +17,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import qna.CannotDeleteException;
-import qna.Message;
+import qna.ErrorMessage;
 
 @Entity
 public class Question extends BaseEntity {
@@ -71,7 +71,7 @@ public class Question extends BaseEntity {
 
 	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
 		if (!isOwner(loginUser)) {
-			throw new CannotDeleteException(Message.CAN_NOT_DELETE_QUESTION_WITHOUT_OWNERSHIP.getContent());
+			throw new CannotDeleteException(ErrorMessage.CAN_NOT_DELETE_QUESTION_WITHOUT_OWNERSHIP.getContent());
 		}
 		final List<DeleteHistory> deletedAnswerHistories = deleteAnswers(loginUser);
 		setDeleted(true);
@@ -86,7 +86,7 @@ public class Question extends BaseEntity {
 			return answers.delete(loginUser);
 		} catch (CannotDeleteException e) {
 			throw new CannotDeleteException(
-				Message.CAN_NOT_DELETE_QUESTION_HAVING_ANSWER_WRITTEN_BY_OTHER.getContent());
+				ErrorMessage.CAN_NOT_DELETE_QUESTION_HAVING_ANSWER_WRITTEN_BY_OTHER.getContent());
 		}
 	}
 

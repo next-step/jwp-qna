@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import qna.CannotDeleteException;
-import qna.Message;
+import qna.ErrorMessage;
 
 public class AnswerTest {
 
@@ -26,6 +26,6 @@ public class AnswerTest {
         final Answer answer = Fixture.answer("writer.id");
         assertThatExceptionOfType(CannotDeleteException.class)
             .isThrownBy(() -> answer.delete(loginUser))
-            .withMessage(Message.CAN_NOT_DELETE_ANSWER_WITHOUT_OWNERSHIP.getContent());
+            .withMessage(ErrorMessage.CAN_NOT_DELETE_ANSWER_WITHOUT_OWNERSHIP.getContent());
     }
 }

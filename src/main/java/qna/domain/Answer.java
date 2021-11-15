@@ -14,7 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import qna.CannotDeleteException;
-import qna.Message;
+import qna.ErrorMessage;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -72,7 +72,7 @@ public class Answer extends BaseEntity {
 
 	public DeleteHistory delete(User loginUser) throws CannotDeleteException {
 		if (!isOwner(loginUser)) {
-			throw new CannotDeleteException(Message.CAN_NOT_DELETE_ANSWER_WITHOUT_OWNERSHIP.getContent());
+			throw new CannotDeleteException(ErrorMessage.CAN_NOT_DELETE_ANSWER_WITHOUT_OWNERSHIP.getContent());
 		}
 		setDeleted(true);
 		return new DeleteHistory(ContentType.ANSWER, getId(), getWriter());
