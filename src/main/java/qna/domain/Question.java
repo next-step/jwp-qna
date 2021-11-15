@@ -16,7 +16,7 @@ public class Question extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writerId")
     private User writer;
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private boolean deleted = false;
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Answer> answers = new ArrayList<>();

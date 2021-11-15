@@ -19,7 +19,7 @@ public class Answer extends BaseEntity{
     private Question question;
     @Lob
     private String contents;
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
