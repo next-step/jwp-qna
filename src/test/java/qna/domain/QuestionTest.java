@@ -33,7 +33,7 @@ public class QuestionTest {
         answer.writerBy(UserTest.JAVAJIGI);
         answer.toQuestion(question);
 
-        DeleteHistoryList deleteHistoryList = question.deletedAndAnswers(UserTest.JAVAJIGI);
+        DeleteHistoryList deleteHistoryList = question.deleteQuestion(UserTest.JAVAJIGI);
 
         assertThat(deleteHistoryList.size()).isEqualTo(2);
 
@@ -44,7 +44,7 @@ public class QuestionTest {
     public void getDeleteHistoryNoAnswerSuccess() throws Exception {
         Question question = question1;
 
-        DeleteHistoryList deleteHistoryList = question.deletedAndAnswers(UserTest.JAVAJIGI);
+        DeleteHistoryList deleteHistoryList = question.deleteQuestion(UserTest.JAVAJIGI);
 
         assertThat(deleteHistoryList.size()).isEqualTo(1);
 
@@ -60,7 +60,7 @@ public class QuestionTest {
 
         //when
         ThrowableAssert.ThrowingCallable throwingCallable = () ->
-            question.deletedAndAnswers(UserTest.SANJIGI);
+            question.deleteQuestion(UserTest.SANJIGI);
 
         //then
         assertThatExceptionOfType(CannotDeleteException.class)
@@ -82,7 +82,7 @@ public class QuestionTest {
 
         //when
         ThrowableAssert.ThrowingCallable throwingCallable = () ->
-            question.deletedAndAnswers(UserTest.JAVAJIGI);
+            question.deleteQuestion(UserTest.JAVAJIGI);
 
         //then
         assertThatExceptionOfType(CannotDeleteException.class)

@@ -60,19 +60,19 @@ class QnaServiceTest {
 
     @Test
     public void delete_다른_사람이_쓴_글() throws Exception {
-        when(questionRepository.findByIdAndDeletedFalse(question.getId()))
+        when(questionRepository.findByIdAndDeletedFalse(ArgumentMatchers.anyLong()))
             .thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.SANJIGI, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.SANJIGI, 1L))
             .isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
     public void delete_성공_질문자_답변자_같음() throws Exception {
-        when(questionRepository.findByIdAndDeletedFalse(question.getId()))
+        when(questionRepository.findByIdAndDeletedFalse(ArgumentMatchers.anyLong()))
             .thenReturn(Optional.of(question));
 
-        qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
+        qnaService.deleteQuestion(UserTest.JAVAJIGI, 1L);
 
         assertThat(question.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
@@ -82,10 +82,10 @@ class QnaServiceTest {
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
 
-        when(questionRepository.findByIdAndDeletedFalse(question.getId()))
+        when(questionRepository.findByIdAndDeletedFalse(ArgumentMatchers.anyLong()))
             .thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.SANJIGI, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.SANJIGI, 1L))
             .isInstanceOf(CannotDeleteException.class);
     }
 

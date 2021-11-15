@@ -2,11 +2,18 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.persistence.OneToMany;
 import qna.exception.CannotDeleteException;
 import qna.exception.ErrorMessages;
 
+@Embeddable
 public class AnswerList {
 
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers;
 
     public AnswerList() {
@@ -17,15 +24,7 @@ public class AnswerList {
         this.answers = answers;
     }
 
-    public void add(Answer answer) {
-        this.answers.add(answer);
-    }
-
-    public int size() {
-        return this.answers.size();
-    }
-
-    public void deleted(User loginUser, DeleteHistoryList deleteHistoryList)
+    public void deleteAnswers(User loginUser, DeleteHistoryList deleteHistoryList)
         throws CannotDeleteException {
         for (Answer answer : answers) {
             validate(answer, loginUser);
@@ -38,5 +37,18 @@ public class AnswerList {
         if (!answer.isOwner(loginUser)) {
             throw new CannotDeleteException(ErrorMessages.ANSWER_OTHER_USER_CANNOT_DELETE);
         }
+    }
+
+
+    public void add(Answer answer) {
+        answers.add(answer);
+    }
+
+    public int size() {
+        return answers.size();
+    }
+
+    public boolean contains(Answer target) {
+        return answers.contains(target);
     }
 }

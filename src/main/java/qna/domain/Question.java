@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -39,8 +40,8 @@ public class Question extends BaseTime {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answerList = new ArrayList<>();
+    @Embedded
+    private AnswerList answerList = new AnswerList();
 
     protected Question() {
     }
@@ -105,7 +106,7 @@ public class Question extends BaseTime {
         this.deleted = deleted;
     }
 
-    public DeleteHistoryList deletedAndAnswers(User loginUser) throws CannotDeleteException {
+    public DeleteHistoryList deleteQuestion(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(ErrorMessages.OTHER_USER_CANNOT_DELETE);
         }
@@ -114,10 +115,9 @@ public class Question extends BaseTime {
     }
 
     private DeleteHistoryList getDeleteHistoryList(User loginUser) throws CannotDeleteException {
-        AnswerList answers = new AnswerList(this.answerList);
         DeleteHistoryList deleteHistoryList = new DeleteHistoryList(
             new DeleteHistory(ContentType.QUESTION, id, writer));
-        answers.deleted(loginUser, deleteHistoryList);
+        answerList.deleteAnswers(loginUser, deleteHistoryList);
         return deleteHistoryList;
     }
 

@@ -33,7 +33,7 @@ class AnswerListTest {
         assertThat(answer.isDeleted()).isFalse();
 
         DeleteHistoryList deleteHistoryList = new DeleteHistoryList();
-        answerList.deleted(UserTest.JAVAJIGI, deleteHistoryList);
+        answerList.deleteAnswers(UserTest.JAVAJIGI, deleteHistoryList);
 
         assertAll(() -> {
             assertThat(deleteHistoryList.size()).isEqualTo(1);
@@ -50,7 +50,7 @@ class AnswerListTest {
 
         //when
         ThrowableAssert.ThrowingCallable throwingCallable = () ->
-            answerList.deleted(UserTest.SANJIGI, deleteHistoryList);
+            answerList.deleteAnswers(UserTest.SANJIGI, deleteHistoryList);
 
         //then
         assertThatExceptionOfType(CannotDeleteException.class)
