@@ -1,5 +1,6 @@
 package qna.domain;
 
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static qna.domain.AnswerTest.*;
 import static qna.domain.QuestionTest.*;
@@ -34,51 +35,24 @@ public class AnswerRepositoryTest {
 	@Autowired
 	UserRepository userRepository;
 
-	@Autowired
-	EntityManager entityManager;
-
 	@Test
 	void 삭제되지_않은_대상건중_한건을_true변경시_제외한_대상건만_조회() {
 
-		// given
-		List<Answer> answers = answerRepository.saveAll(Arrays.asList(A1, A2));
-		Answer answer1 = answers.get(0);
-		answer1.setDeleted(true);
+		User javajigi = userRepository.save(JAVAJIGI);
+
+		Question question1 = new Question(null, "title1", "contents1").writeBy(javajigi);
+		question1.addAnswer(new Answer(null, javajigi, question1, "답글1"));
+		question1.addAnswer(new Answer(null, javajigi, question1, "답글2"));
+		questionRepository.save(question1);
 
 		// when
-		List<Answer> expectedAnswer = answerRepository.findByQuestionIdAndDeletedFalse(Q1.getId());
+		List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
+		Answer answer = answers.get(0);
+		answer.setDeleted(true);
+
+		List<Answer> expectedAnswers = answerRepository.findByDeletedFalse();
+
 		// then
-		assertThat(expectedAnswer.size()).isEqualTo(1);
-		assertThat(expectedAnswer.get(0).equals(A2)).isTrue();
-		assertThat(A2.isDeleted()).isFalse();
-	}
-
-	@Test
-	void 여러건을_저장할때_리스트에_데이터를_담는경우_동일한_객체라도_모두_저장된다() {
-		List<Answer> answers = Arrays.asList(A1, A2, A1, A2, A1, A2, A1, A2);
-		List<Answer> expectedAnswer = answerRepository.saveAll(answers);
-		Assertions.assertThat(expectedAnswer.size()).isEqualTo(8);
-	}
-
-	@Test
-	@DisplayName("기대값을 3건을 예상했지만 결과는 2건이다.")
-	void 여러건을_저장할때_동일한_객체라면_동일한객체는_변경이_없다면_INSERT되지_않는다() {
-
-		Answer save = answerRepository.save(A1);
-		Answer save1 = answerRepository.save(A2);
-		Answer save2 = answerRepository.save(A1);
-
-		List<Answer> expected = answerRepository.findAll();
-		Assertions.assertThat(expected.size()).isEqualTo(3);
-	}
-
-	@AfterEach
-	public void test() {
-		System.out.println("끝");
-	}
-
-	@AfterTransaction
-	public void test1() {
-		System.out.println("트랜잭션");
+		assertThat(expectedAnswers.size() == 1).isTrue();
 	}
 }
