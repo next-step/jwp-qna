@@ -59,12 +59,16 @@ public class Answer extends BaseEntity {
     }
 
     public void setQuestion(Question question) {
+        this.question = question;
+    }
+
+    public void changeQuestion(Question question) {
         if (!Objects.isNull(question)) {
             this.question.getAnswers().remove(this);
         }
 
-        this.question.getAnswers().add(this);
-        this.question = question;
+        setQuestion(question);
+        question.getAnswers().add(this);
     }
 
     public void removeQuestion() {
