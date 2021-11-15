@@ -1,72 +1,74 @@
 package qna.domain;
 
-import javax.persistence.Column;
+import static qna.exception.ExceptionMessage.*;
+
+import java.util.Objects;
+
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
+
+import qna.exception.CannotDeleteException;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 public class Question extends BaseEntityTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 100, nullable = false)
-    private String title;
-    @Lob
-    private String contents;
-    @OneToOne
+
+    @Embedded
+    private Title title;
+
+    @Embedded
+    private Contents contents;
+
+    @Embedded
+    private Answers answers = new Answers();
+
+    @ManyToOne
     @JoinColumn(name = "write_id")
     private User writer;
+
     private boolean deleted = false;
 
     protected Question() {
     }
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    public Question(String title, String contents, User writer) {
+        this(null, title, contents, writer);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, String title, String contents, User writer) {
         this.id = id;
-        this.title = title;
-        this.contents = contents;
-    }
+        this.title = new Title(title);
+        this.contents = new Contents(contents);
 
-    public Question writeBy(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
+
         this.writer = writer;
-        return this;
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answer.changeQuestion(this);
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
+    public Answers getAnswers() {
+        return answers;
     }
 
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -75,6 +77,27 @@ public class Question extends BaseEntityTime {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void validateQuestionOwner(User owner) {
+        if (!isOwner(owner)) {
+            throw new CannotDeleteException(CANNOT_DELETE_QUESTION_MESSAGE.getMessage());
+        }
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    public void delete(User owner) {
+        validateQuestionDelete(owner);
+        deleted = true;
+        answers.deleteAll();
+    }
+
+    private void validateQuestionDelete(User owner) {
+        validateQuestionOwner(owner);
+        getAnswers().validateAnswersOwner(owner);
     }
 
     @Override

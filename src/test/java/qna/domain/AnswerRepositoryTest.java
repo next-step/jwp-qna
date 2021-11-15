@@ -8,22 +8,19 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import qna.common.CommonRepositoryTest;
 
 class AnswerRepositoryTest extends CommonRepositoryTest {
-    @Autowired
-    private AnswerRepository answerRepository;
     private User writer;
     private Question question;
 
     @BeforeEach
     void setUp() {
-        this.writer = userRepository.save(
-            new User(1L, "writer", "123", "writer", "writer@mail.com"));
-        this.question = questionRepository.save(
-            new Question(1L, "question title", "question contents"));
+        writer = userRepository.save(
+            new User("writer", "123", "writer", "writer@mail.com"));
+        question = questionRepository.save(
+            new Question("question title", "question contents", writer));
     }
 
     @DisplayName("Answer 를 저장한다")
@@ -39,9 +36,9 @@ class AnswerRepositoryTest extends CommonRepositoryTest {
         // then
         assertAll(
             () -> assertNotNull(savedAnswer.getId()),
-            () -> assertTrue(savedAnswer.isOwner(writer)),
             () -> assertEquals(question, savedAnswer.getQuestion()),
-            () -> assertEquals(answerContents, savedAnswer.getContents()),
+            () -> assertEquals(1, savedAnswer.getQuestion().getAnswers().size()),
+            () -> assertEquals(new Contents(answerContents), savedAnswer.getContents()),
             () -> assertFalse(savedAnswer.isDeleted()),
             () -> assertNotNull(savedAnswer.getCreatedAt())
         );
@@ -108,7 +105,7 @@ class AnswerRepositoryTest extends CommonRepositoryTest {
         assertThat(findAnswers).extracting("question").extracting("id").containsExactly(
             question.getId(), question.getId(), question.getId());
         assertThat(findAnswers).extracting("contents").containsExactly(
-            firstAnswerContents, secondAnswerContents, thirdAnswerContents);
+            new Contents(firstAnswerContents), new Contents(secondAnswerContents), new Contents(thirdAnswerContents));
     }
 
     private Answer createAnswer(String answerContents) {

@@ -1,31 +1,38 @@
 package qna.domain;
 
+import static qna.exception.ExceptionMessage.*;
+
 import java.util.Objects;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.exception.CannotDeleteException;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseEntityTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
+
+    @ManyToOne
     @JoinColumn(name = "writer_id")
     private User writer;
-    @OneToOne
+
+    @ManyToOne
     @JoinColumn(name = "question_id")
     private Question question;
-    @Lob
-    private String contents;
+
+    @Embedded
+    private Contents contents;
+
     private boolean deleted = false;
 
     protected Answer() {
@@ -47,16 +54,8 @@ public class Answer extends BaseEntityTime {
         }
 
         this.writer = writer;
-        this.question = question;
-        this.contents = contents;
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
-    public void toQuestion(Question question) {
-        this.question = question;
+        this.contents = new Contents(contents);
+        changeQuestion(question);
     }
 
     public Long getId() {
@@ -71,7 +70,7 @@ public class Answer extends BaseEntityTime {
         return question;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
@@ -81,6 +80,24 @@ public class Answer extends BaseEntityTime {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void changeQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().remove(this);
+        }
+        this.question = question;
+        question.getAnswers().add(this);
+    }
+
+    public void validateAnswerOwner(User owner) {
+        if (!isOwner(owner)) {
+            throw new CannotDeleteException(CANNOT_DELETE_ANSWER_DIFFERENT_USER_MESSAGE.getMessage());
+        }
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     @Override
