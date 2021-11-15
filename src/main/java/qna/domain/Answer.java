@@ -32,10 +32,6 @@ public class Answer extends BaseTimeEntity {
 
     }
 
-    public Answer(String contents) {
-        this.contents = contents;
-    }
-
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
@@ -52,7 +48,7 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.writer = writer;
-        this.question = question;
+        setQuestion(question);
         this.contents = contents;
     }
 
@@ -60,7 +56,7 @@ public class Answer extends BaseTimeEntity {
         return this.writer.getId().equals(writer.getId());
     }
 
-    public void setQuestion(Question question) {
+    private void setQuestion(Question question) {
         if (Objects.nonNull(this.question)) {
             this.question.getAnswers().remove(this);
         }

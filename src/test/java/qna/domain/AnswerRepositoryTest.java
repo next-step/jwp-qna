@@ -34,14 +34,13 @@ public class AnswerRepositoryTest {
     void setUp() {
         user = users.save(UserTest.JAVAJIGI);
         question = questions.save(new Question("title1", "contents1").writeBy(user));
-        answer = new Answer("Answers Contents1");
+        answer = new Answer(user, question, "Answers Contents1");
     }
     
     @DisplayName("user, question 연관관계 설정 후 저장 검증")
     @Test
     void saveWithUserAndQuestion() {
         answer.setUser(user);
-        answer.setQuestion(question);
         Answer result = answers.save(answer);
         answers.flush();
 
@@ -86,11 +85,10 @@ public class AnswerRepositoryTest {
         assertThat(answers.findAll()).isEmpty();
     }
 
-    @DisplayName("qustion 양방향 연관관계 검증")
+    @DisplayName("qustion 단방향 연관관계 검증")
     @Test
     void findByQuestionIdAndDeletedFalse() {
         answer.setUser(user);
-        answer.setQuestion(question);
         answers.save(answer);
         Question then = questions.findById(question.getId()).get();
 
