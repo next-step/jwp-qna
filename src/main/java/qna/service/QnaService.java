@@ -38,8 +38,7 @@ public class QnaService {
 
         question.deleteQuestion();
         question.deleteAnswers();
-        Answers answers = new Answers(question.getAnswers());
-        DeleteHistories deleteHistories = DeleteHistories.fromAnswers(answers);
+        DeleteHistories deleteHistories = DeleteHistories.fromAnswers(new Answers(question.getAnswers()));
         deleteHistories.addDeleteQuestion(question);
         deleteHistoryRepository.saveAll(deleteHistories.getDeleteHistories());
     }
