@@ -18,11 +18,66 @@ public class AnswerTest {
     @Test
     void save() {
         final Answer actual = answers.save(A1);
-        assertThat(actual.getId()).isNotNull();
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
             () -> assertThat(actual.getContents()).isEqualTo(A1.getContents()),
             () -> assertThat(actual.getQuestionId()).isEqualTo(A1.getQuestionId())
+        );
+    }
+
+    @Test
+    void findByWriterId() {
+        final Answer user1 = answers.save(A1);
+        final Answer user2 = answers.findByWriterId(UserTest.JAVAJIGI.getId());
+        assertAll(
+            () -> assertThat(user2.getId()).isEqualTo(user1.getId()),
+            () -> assertThat(user2.getContents()).isEqualTo(user1.getContents()),
+            () -> assertThat(user2.getQuestionId()).isEqualTo(user1.getQuestionId()),
+            () -> assertThat(user2.getWriterId()).isEqualTo(user1.getWriterId()),
+            () -> assertThat(user2).isEqualTo(user1),
+            () -> assertThat(user2).isSameAs(user1)
+        );
+    }
+
+    @Test
+    void findByQuestionId() {
+        final Answer user1 = answers.save(A1);
+        final Answer user2 = answers.findByQuestionId(QuestionTest.Q1.getId());
+        assertAll(
+            () -> assertThat(user2.getId()).isEqualTo(user1.getId()),
+            () -> assertThat(user2.getContents()).isEqualTo(user1.getContents()),
+            () -> assertThat(user2.getQuestionId()).isEqualTo(user1.getQuestionId()),
+            () -> assertThat(user2.getWriterId()).isEqualTo(user1.getWriterId()),
+            () -> assertThat(user2).isEqualTo(user1),
+            () -> assertThat(user2).isSameAs(user1)
+        );
+    }
+
+    @Test
+    void findByIdAndDeletedFalse() {
+        final Answer user1 = answers.save(A2);
+        final Answer user2 = answers.findByIdAndDeletedFalse(A2.getId()).get();
+        assertAll(
+            () -> assertThat(user2.getId()).isEqualTo(user1.getId()),
+            () -> assertThat(user2.getContents()).isEqualTo(user1.getContents()),
+            () -> assertThat(user2.getQuestionId()).isEqualTo(user1.getQuestionId()),
+            () -> assertThat(user2.getWriterId()).isEqualTo(user1.getWriterId()),
+            () -> assertThat(user2).isEqualTo(user1),
+            () -> assertThat(user2).isSameAs(user1)
+        );
+    }
+
+    @Test
+    void findByContentsLike() {
+        final Answer user1 = answers.save(A1);
+        final Answer user2 = answers.findByContentsLike("%Contents1%");
+        assertAll(
+            () -> assertThat(user2.getId()).isEqualTo(user1.getId()),
+            () -> assertThat(user2.getContents()).isEqualTo(user1.getContents()),
+            () -> assertThat(user2.getQuestionId()).isEqualTo(user1.getQuestionId()),
+            () -> assertThat(user2.getWriterId()).isEqualTo(user1.getWriterId()),
+            () -> assertThat(user2).isEqualTo(user1),
+            () -> assertThat(user2).isSameAs(user1)
         );
     }
 }
