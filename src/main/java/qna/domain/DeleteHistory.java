@@ -43,6 +43,13 @@ public class DeleteHistory extends AuditEntity {
 		this.createdAt = createDate;
 	}
 
+	public DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedBy) {
+		this.id = id;
+		this.contentType = contentType;
+		this.contentId = contentId;
+		this.deletedBy = deletedBy;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -50,15 +57,12 @@ public class DeleteHistory extends AuditEntity {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		DeleteHistory that = (DeleteHistory)o;
-		return Objects.equals(id, that.id) &&
-			contentType == that.contentType &&
-			Objects.equals(contentId, that.contentId) &&
-			Objects.equals(deletedBy, that.deletedBy);
+		return Objects.equals(id, that.id);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, contentType, contentId, deletedBy);
+		return Objects.hash(id);
 	}
 
 	@Override
