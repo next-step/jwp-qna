@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Where;
+
 import qna.UnAuthorizedException;
 
 @Entity
@@ -35,9 +37,11 @@ public class User extends BaseTimeEntity {
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
+    @Where(clause = "deleted = false")
     @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
     private List<Question> questions = new ArrayList<>();
 
+    @Where(clause = "deleted = false")
     @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
     private List<Answer> answers = new ArrayList<>();
 
