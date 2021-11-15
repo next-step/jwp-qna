@@ -10,11 +10,11 @@ import qna.CannotDeleteException;
 import qna.domain.*;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,13 +40,19 @@ class QnaServiceTest {
     }
 
     @Test
-    public void delete_성공() throws Exception {
+    public void delete_성공() {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThat(question.isDeleted()).isFalse();
-        qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
+        assertAll(
+                () -> {
+                    assertThat(question.isDeleted()).isFalse();
+                    qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
+                },
+                () -> assertThat(question.isDeleted()).isTrue(),
+                () -> question.getAnswers().list().stream()
+                        .forEach(answerInQuestion -> assertThat(answerInQuestion.isDeleted()).isTrue())
+        );
 
-        assertThat(question.isDeleted()).isTrue();
         verifyDeleteHistories();
     }
 
@@ -55,7 +61,8 @@ class QnaServiceTest {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.SANJIGI, question.getId()))
-                .isInstanceOf(CannotDeleteException.class);
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("질문을 삭제할 권한이 없습니다.");
     }
 
     @Test
@@ -64,8 +71,11 @@ class QnaServiceTest {
 
         qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
 
-        assertThat(question.isDeleted()).isTrue();
-        assertThat(answer.isDeleted()).isTrue();
+        assertAll(
+                () -> assertThat(question.isDeleted()).isTrue(),
+                () -> assertThat(answer.isDeleted()).isTrue()
+        );
+
         verifyDeleteHistories();
     }
 
@@ -81,10 +91,10 @@ class QnaServiceTest {
     }
 
     private void verifyDeleteHistories() {
-        List<DeleteHistory> deleteHistories = Arrays.asList(
+        DeleteHistories deleteHistories = new DeleteHistories(Arrays.asList(
                 new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()),
                 new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter())
-        );
+        ));
         verify(deleteHistoryService).saveAll(deleteHistories);
     }
 }
