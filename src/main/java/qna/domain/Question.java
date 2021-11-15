@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,5 +107,15 @@ public class Question extends BaseEntity {
 
     public User getWriter() {
         return this.writer;
+    }
+
+    public void delete(User user) {
+        validateQuestion(user);
+    }
+
+    private void validateQuestion(User user) {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 }
