@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,17 +18,17 @@ public class User extends BaseTimeEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "user_id", length = 20, unique = true, nullable = false)
-    private String userId;
+    @Embedded
+    private UserId userId;
 
-    @Column(name = "password", length = 20, nullable = false)
-    private String password;
+    @Embedded
+    private Password password;
 
-    @Column(name = "name", length = 20, nullable = false)
-    private String name;
+    @Embedded
+    private Name name;
 
-    @Column(name = "email", length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
@@ -37,6 +38,14 @@ public class User extends BaseTimeEntity {
     }
 
     public User(Long id, String userId, String password, String name, String email) {
+        this.id = id;
+        this.userId = UserId.from(userId);
+        this.password = Password.from(password);
+        this.name = Name.from(name);
+        this.email = Email.from(email);
+    }
+
+    public User(Long id, UserId userId, Password password, Name name, Email email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -52,23 +61,23 @@ public class User extends BaseTimeEntity {
         this.id = id;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
-    public String getPassword() {
+    public Password getPassword() {
         return password;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(Name name) {
         this.name = name;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
