@@ -47,8 +47,8 @@ public class User extends BaseTimeEntity {
 
     public void update(User target) throws UnAuthenticationException {
         isAuthentication(target);
-        userId.isMatch(target.userId);
-        password.isMatch(target.password);
+        userId.validateMatching(target.userId);
+        password.validateMathing(target.password);
 
         this.name = target.name;
         this.email = target.email;

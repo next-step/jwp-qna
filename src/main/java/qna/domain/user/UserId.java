@@ -19,7 +19,7 @@ public class UserId {
         this.userId = userId;
     }
 
-    public void isMatch(UserId targetUserId) {
+    public void validateMatching(UserId targetUserId) {
         if (!this.equals(targetUserId)) {
             throw new UnAuthorizedException("사용자 정보가 일치하지 않습니다.");
         }

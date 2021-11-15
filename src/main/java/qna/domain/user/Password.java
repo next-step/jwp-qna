@@ -19,7 +19,7 @@ public class Password {
         this.password = password;
     }
 
-    public void isMatch(Password targetPassword) {
+    public void validateMathing(Password targetPassword) {
         if (!this.equals(targetPassword)) {
             throw new UnAuthorizedException("사용자 정보가 일치하지 않습니다.");
         }

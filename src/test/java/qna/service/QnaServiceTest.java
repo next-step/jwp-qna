@@ -39,7 +39,7 @@ class QnaServiceTest {
     public void setUp() {
         javajigi = User.crate("javajigi", "password", "user1", "javajigi@slipp.net");
         sanjigi = User.crate("sanjigi", "password", "user2", "sanjigi@slipp.net");
-        question = Question.create("title1", "contents1").writeBy(javajigi);
+        question = Question.create("title1", "contents1", javajigi);
         answer = Answer.create(question, javajigi, "Answers Contents1");
         question.addAnswer(answer);
     }

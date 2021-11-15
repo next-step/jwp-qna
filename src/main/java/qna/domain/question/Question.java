@@ -36,18 +36,14 @@ public class Question extends BaseTimeEntity {
     protected Question() {
     }
 
-    private Question(String title, String contents) {
+    private Question(String title, String contents, User writer) {
         this.title = new Title(title);
         this.contents = new Contents(contents);
-    }
-
-    public static Question create(String title, String contents) {
-        return new Question(title, contents);
-    }
-
-    public Question writeBy(User writer) {
         this.writer = writer;
-        return this;
+    }
+
+    public static Question create(String title, String contents, User writer) {
+        return new Question(title, contents, writer);
     }
 
     public void changeDeleteState(User loginUser) throws CannotDeleteException {
