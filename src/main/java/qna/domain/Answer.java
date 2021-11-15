@@ -63,7 +63,7 @@ public class Answer extends BaseEntity {
     }
 
     public void changeQuestion(Question question) {
-        if (!Objects.isNull(question)) {
+        if (!Objects.isNull(this.question)) {
             this.question.getAnswers().remove(this);
         }
 

@@ -57,7 +57,7 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        if (!Objects.isNull(writer)) {
+        if (!Objects.isNull(this.writer)) {
             this.writer.getQuestions().remove(this);
         }
 
