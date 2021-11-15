@@ -73,12 +73,4 @@ public class UserTest {
 
         assertThat(actualUser1.getName()).isEqualTo("JAVA");
     }
-
-//    @DisplayName("user와 delete history간의 연관관계 테스트")
-//    @Test
-//    void associateUserWithDeleteHistoryTest() {
-//
-//        JAVAJIGI.
-//
-//    }
 }
