@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.NoSuchElementException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -12,19 +11,15 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class UserRepositoryTest {
 
-    private User user;
-
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        user = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    }
-
     @Test
     void save() {
-        final User actual = userRepository.save(user);
+        final User expected = TestUserFactory.create(
+            "javajigi", "password", "name", "javajigi@slipp.net"
+        );
+        final User actual = userRepository.save(expected);
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
             () -> assertThat(actual.getUserId()).isNotNull(),
@@ -36,9 +31,15 @@ public class UserRepositoryTest {
 
     @Test
     void findByUserId() {
-        userRepository.save(user);
-        final User actual = userRepository.findByUserId(user.getUserId())
+        final User expected = TestUserFactory.create(
+            "javajigi", "password", "name", "javajigi@slipp.net"
+        );
+        userRepository.save(expected);
+        final User actual = userRepository.findByUserId(expected.getUserId())
             .orElseThrow(NoSuchElementException::new);
-        assertThat(actual.getUserId()).isEqualTo(user.getUserId());
+        assertAll(
+            () -> assertThat(actual).isNotNull(),
+            () -> assertThat(actual.getUserId()).isEqualTo(expected.getUserId())
+        );
     }
 }
