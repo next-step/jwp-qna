@@ -1,9 +1,9 @@
 ### 2단계 피드백
 - [ ] cascade 전략 고민
 - [ ] `Answer` 의 영속 상태가 `User` 의 영속 상태까지 영향을 미치는 것에 대해서는 고민
-- [ ] setDelete(true) 대신 delete()라고 객체에게 명확한 메시지명으로 메시지 전달
+- [x] setDelete(true) 대신 delete()라고 객체에게 명확한 메시지명으로 메시지 전달
 - [ ] `QuestionTest` 에서  id를 지정한 이유 고민 및 테스트 독립성 지키기
-- [ ] `Answer` `toString` 메소드 에서 NPE 유발 방지
+- [x] `Answer` `toString` 메소드 에서 NPE 유발 방지
 - [ ] `AnswerRepository` questionId 를 통해서 어떻게 가져올지 고민하기.
   ```이런식으로도 가능합니다.
     List<Answer> findByQuestionAndDeletedFalse(Question question);

@@ -122,8 +122,8 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writer.getId() +
-                ", questionId=" + question.getId() +
+                ", writerId=" + (Objects.isNull(writer) ? null : writer.getId()) +
+                ", questionId=" + (Objects.isNull(question) ? null : question.getId()) +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
