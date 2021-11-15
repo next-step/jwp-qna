@@ -65,7 +65,7 @@ public class Question extends BaseEntity {
 	}
 
 	public void addAnswer(Answer answer) {
-		answer.toQuestion(this);
+		answer.setQuestion(this);
 		answers.add(answer);
 	}
 
@@ -74,7 +74,7 @@ public class Question extends BaseEntity {
 			throw new CannotDeleteException(ErrorMessage.CAN_NOT_DELETE_QUESTION_WITHOUT_OWNERSHIP.getContent());
 		}
 		final List<DeleteHistory> deletedAnswerHistories = deleteAnswers(loginUser);
-		setDeleted(true);
+		delete();
 		return new ArrayList<DeleteHistory>() {{
 			add(new DeleteHistory(ContentType.QUESTION, getId(), getWriter()));
 			addAll(deletedAnswerHistories);
@@ -94,40 +94,24 @@ public class Question extends BaseEntity {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getTitle() {
 		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
 	}
 
 	public String getContents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
 	public User getWriter() {
 		return writer;
-	}
-
-	public void setWriter(User writer) {
-		this.writer = writer;
 	}
 
 	public boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+	private void delete() {
+		this.deleted = true;
 	}
 
 	@Override
