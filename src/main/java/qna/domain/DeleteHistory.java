@@ -65,15 +65,14 @@ public class DeleteHistory {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedByUser, that.deletedByUser) &&
-                Objects.equals(createDate, that.createDate);
+        final DeleteHistory that = (DeleteHistory) o;
+        return Objects.equals(id, that.id)
+                && contentType == that.contentType
+                && Objects.equals(contentId, that.contentId)
+                && Objects.equals(deletedByUser, that.deletedByUser);
     }
 
     @Override
@@ -87,6 +86,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
+                ", deletedByUser=" + deletedByUser +
                 ", createDate=" + createDate +
                 '}';
     }

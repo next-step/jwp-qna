@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -52,8 +54,19 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public void delete(User loginUser) throws CannotDeleteException {
+        isOwner(loginUser);
+        this.deleted = true;
+    }
+
+    public void deleteCancel() {
+        this.deleted =false;
+    }
+
+    public void isOwner(User loginUser) throws CannotDeleteException {
+        if (!this.writer.equals(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -68,16 +81,8 @@ public class Question extends BaseTimeEntity {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public User getWriter() {
@@ -88,20 +93,16 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Question question = (Question) o;
-        return deleted == question.deleted &&
-                Objects.equals(id, question.id) &&
-                Objects.equals(title, question.title) &&
-                Objects.equals(contents, question.contents) &&
-                Objects.equals(writer, question.writer);
+        final Question question = (Question) o;
+        return deleted == question.deleted
+                && Objects.equals(id, question.id)
+                && Objects.equals(title, question.title)
+                && Objects.equals(contents, question.contents)
+                && Objects.equals(writer, question.writer);
     }
 
     @Override
@@ -115,6 +116,7 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }
