@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -78,6 +79,14 @@ public class Answer extends BaseEntity {
 
     public boolean hasSameQuestion(Question question) {
         return this.question == question;
+    }
+
+    public void delete(User principal) throws CannotDeleteException {
+        if (!isOwner(principal)) {
+            throw new CannotDeleteException("답변 작성자만 삭제할 수 있습니다");
+        }
+        this.deleted = true;
+        question.removeAnswer(this);
     }
 
     @Override

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -37,5 +38,16 @@ public class AnswerRepositoryTest {
                 () -> assertThat(savedAnswer.getCreatedAt()).isCloseTo(LocalDateTime.now(), within(1, ChronoUnit.SECONDS)),
                 () -> assertThat(question.getAnswers().contains(answer)).isTrue()
         );
+    }
+
+    @DisplayName("Answer를 삭제한다")
+    @Test
+    void testAnswer() throws CannotDeleteException {
+        // 학습 테스트
+        User writer = users.save(UserTest.JAVAJIGI);
+        Question question = questions.save(Question.of("title1", "contents1", writer));
+        Answer answer = answers.save(Answer.of(writer, question, "Answers Contents1"));
+        answer.delete(writer);
+        answers.flush();
     }
 }

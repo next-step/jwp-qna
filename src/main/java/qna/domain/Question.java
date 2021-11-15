@@ -74,6 +74,10 @@ public class Question extends BaseEntity {
         answers.add(answer);
     }
 
+    public void removeAnswer(Answer answer) {
+        answers.remove(answer);
+    }
+
     public String getTitle() {
         return title;
     }
