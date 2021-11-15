@@ -1,7 +1,6 @@
 package qna.user;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 import qna.domain.BaseEntity;
 
 import javax.persistence.*;
@@ -11,6 +10,7 @@ import java.util.Objects;
 @Table(name = "user")
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
+    private static final String USER_IS_REQUIRED = "사용자는 필수로 입력해야 합니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,7 +46,7 @@ public class User extends BaseEntity {
 
     public static User getOrElseThrow(User user){
         if(Objects.isNull(user)){
-            throw new IllegalArgumentException("사용자는 필수로 입력해야 합니다.");
+            throw new IllegalArgumentException(USER_IS_REQUIRED);
         }
         return user;
     }

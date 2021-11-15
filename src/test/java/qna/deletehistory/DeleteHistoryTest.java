@@ -2,7 +2,6 @@ package qna.deletehistory;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import qna.NotFoundException;
 import qna.domain.ContentType;
 import qna.user.UserTest;
 

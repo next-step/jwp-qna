@@ -1,6 +1,6 @@
 package qna.question;
 
-import qna.CannotDeleteException;
+import qna.exception.CannotDeleteException;
 import qna.answer.Answer;
 import qna.domain.BaseEntity;
 import qna.user.User;
@@ -11,6 +11,9 @@ import java.util.Objects;
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity{
+    private static final String CAN_NOT_DELETE = "질문을 삭제할 권한이 없습니다.";
+    private static final String QUESTION_IS_REQUIRED = "질문은 필수로 입력 해야 합니다.";
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User user;
@@ -39,14 +42,14 @@ public class Question extends BaseEntity{
 
     public static Question getOrElseThrow(Question question){
         if(Objects.isNull(question)){
-            throw new IllegalArgumentException("질문은 필수로 입력 해야 합니다.");
+            throw new IllegalArgumentException(QUESTION_IS_REQUIRED);
         }
         return question;
     }
 
     public void throwExceptionNotDeletableUser(final User loginUser) throws CannotDeleteException {
         if (!this.user.equals(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(CAN_NOT_DELETE);
         }
     }
 

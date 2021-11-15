@@ -2,7 +2,6 @@ package qna.answer;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import qna.NotFoundException;
 import qna.question.QuestionTest;
 import qna.user.UserTest;
 

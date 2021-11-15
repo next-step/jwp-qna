@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import qna.CannotDeleteException;
+import qna.exception.CannotDeleteException;
 import qna.answer.Answer;
 import qna.deletehistory.DeleteHistory;
 import qna.deletehistory.DeleteHistoryRepository;

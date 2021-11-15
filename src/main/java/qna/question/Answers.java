@@ -1,6 +1,6 @@
 package qna.question;
 
-import qna.CannotDeleteException;
+import qna.exception.CannotDeleteException;
 import qna.answer.Answer;
 import qna.deletehistory.DeleteHistory;
 import qna.user.User;

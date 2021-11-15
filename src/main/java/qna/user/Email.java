@@ -7,6 +7,7 @@ import java.util.Objects;
 @Embeddable
 public class Email {
     private static final int MAX_LENGTH_EMAIL = 50;
+    private static final String INVALID_EMAIL_LENGTH_MESSAGE = "이메일의 길이는 1이상 50이하여야 합니다.";
 
     @Column(name = "email", length = MAX_LENGTH_EMAIL)
     private String email;
@@ -21,7 +22,7 @@ public class Email {
 
     private void validateEmail() {
         if (!Objects.isNull(email) && isInvalidUserIdLength()) {
-            throw new IllegalArgumentException("이메일의 길이는 1이상 50이하여야 합니다.");
+            throw new IllegalArgumentException(INVALID_EMAIL_LENGTH_MESSAGE);
         }
     }
 

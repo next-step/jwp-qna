@@ -7,6 +7,7 @@ import java.util.Objects;
 @Embeddable
 public class Title {
     private static final int MAX_LENGTH_TITLE = 100;
+    private static final String INVALID_TITLE_MESSAGE = "질문의 제목 길이는 최소 1이상 100이하여야 합니다.";
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
@@ -21,7 +22,7 @@ public class Title {
 
     private void validateTitle() {
         if (Objects.isNull(title) || isInvalidTitleLength()) {
-            throw new IllegalArgumentException("질문의 제목 길이는 최소 1이상 100이하여야 합니다.");
+            throw new IllegalArgumentException(INVALID_TITLE_MESSAGE);
         }
     }
 

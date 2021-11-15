@@ -1,6 +1,6 @@
 package qna.answer;
 
-import qna.CannotDeleteException;
+import qna.exception.CannotDeleteException;
 import qna.domain.BaseEntity;
 import qna.question.Question;
 import qna.user.User;
@@ -11,6 +11,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseEntity {
+    private static final String CAN_NOT_DELETE_OTHER_ANSWER = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User user;
@@ -39,7 +41,7 @@ public class Answer extends BaseEntity {
 
     public void throwExceptionNotDeletableUser(final User loginUser) throws CannotDeleteException {
         if (!this.user.equals(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(CAN_NOT_DELETE_OTHER_ANSWER);
         }
     }
 
