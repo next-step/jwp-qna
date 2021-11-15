@@ -34,7 +34,7 @@ public class QuestionTest {
     @Test
     @DisplayName("질문 생성 실패 - null user")
     public void createQuestionTest_nullUser() {
-        assertThatThrownBy(() -> new Question("title1", "contents1", null)).isInstanceOf(NotFoundException.class);
+        assertThatThrownBy(() -> new Question("title1", "contents1", null)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

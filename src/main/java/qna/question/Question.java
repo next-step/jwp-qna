@@ -1,24 +1,17 @@
 package qna.question;
 
 import qna.CannotDeleteException;
-import qna.action.NullCheckAction;
 import qna.answer.Answer;
-import qna.domain.DateTimeEntity;
+import qna.domain.BaseEntity;
 import qna.user.User;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "question")
-public class Question extends DateTimeEntity implements NullCheckAction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
+public class Question extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User user;
@@ -37,20 +30,20 @@ public class Question extends DateTimeEntity implements NullCheckAction {
     private final Answers answers = new Answers();
 
     public Question(final String title, final String contents, final User user) {
-        this(null, title, contents, user);
-    }
-
-    public Question(final Long id, final String title, final String contents, final User user) {
-        throwExceptionIsNullObject(user);
-        this.id = id;
         this.title = new Title(title);
         this.contents = contents;
-        this.user = user;
+        this.user = User.getOrElseThrow(user);
     }
 
     protected Question() {
     }
 
+    public static Question getOrElseThrow(Question question){
+        if(Objects.isNull(question)){
+            throw new IllegalArgumentException("질문은 필수로 입력 해야 합니다.");
+        }
+        return question;
+    }
 
     public void throwExceptionNotDeletableUser(final User loginUser) throws CannotDeleteException {
         if (!this.user.equals(loginUser)) {
@@ -60,10 +53,6 @@ public class Question extends DateTimeEntity implements NullCheckAction {
 
     public void throwExceptionNotDeletableAnswersInQuestion(final User loginUser) throws CannotDeleteException {
         answers.throwExceptionNotDeletableAnswers(loginUser);
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public User getUser() {
@@ -96,7 +85,7 @@ public class Question extends DateTimeEntity implements NullCheckAction {
         if (o == null || getClass() != o.getClass()) return false;
         Question question = (Question) o;
         return deleted == question.deleted
-                && Objects.equals(id, question.id)
+                && Objects.equals(getId(), question.getId())
                 && Objects.equals(user, question.user)
                 && Objects.equals(contents, question.contents)
                 && Objects.equals(title, question.title)
@@ -105,13 +94,13 @@ public class Question extends DateTimeEntity implements NullCheckAction {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, contents, deleted, title, answers);
+        return Objects.hash(getId(), user, contents, deleted, title, answers);
     }
 
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", user=" + user +

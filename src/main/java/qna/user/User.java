@@ -1,14 +1,15 @@
 package qna.user;
 
+import qna.NotFoundException;
 import qna.UnAuthorizedException;
-import qna.domain.DateTimeEntity;
+import qna.domain.BaseEntity;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User extends DateTimeEntity {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -41,6 +42,13 @@ public class User extends DateTimeEntity {
         this.password = new Password(password);
         this.name = new Name(name);
         this.email = new Email(email);
+    }
+
+    public static User getOrElseThrow(User user){
+        if(Objects.isNull(user)){
+            throw new IllegalArgumentException("사용자는 필수로 입력해야 합니다.");
+        }
+        return user;
     }
 
     public void update(User loginUser, User target) {

@@ -4,14 +4,17 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class DateTimeEntity {
+public abstract class BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "created_date", nullable = false)
     @CreatedDate
     private LocalDateTime createdDate;
@@ -26,5 +29,9 @@ public abstract class DateTimeEntity {
 
     public LocalDateTime getUpdatedDate() {
         return updatedDate;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

@@ -1,7 +1,7 @@
 package qna.answer;
 
 import qna.CannotDeleteException;
-import qna.domain.DateTimeEntity;
+import qna.domain.BaseEntity;
 import qna.question.Question;
 import qna.user.User;
 
@@ -10,12 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends DateTimeEntity{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
+public class Answer extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User user;
@@ -32,15 +27,8 @@ public class Answer extends DateTimeEntity{
     private Question question;
 
     public Answer(final User user, final Question question, final String contents) {
-        this(null, user, question, contents);
-    }
-
-    public Answer(final Long id, final User user, final Question question, final String contents) {
-        Objects.requireNonNull(user, "사용자는 필수로 입력 해야 합니다.");
-        Objects.requireNonNull(question, "질문은 필수로 입력 해야 합니다.");
-        this.id = id;
-        this.user = user;
-        this.question = question;
+        this.user = User.getOrElseThrow(user);
+        this.question = Question.getOrElseThrow(question);
         this.contents = contents;
 
         question.addAnswer(this);
@@ -53,10 +41,6 @@ public class Answer extends DateTimeEntity{
         if (!this.user.equals(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public Question getQuestion() {
@@ -81,7 +65,7 @@ public class Answer extends DateTimeEntity{
         if (o == null || getClass() != o.getClass()) return false;
         Answer answer = (Answer) o;
         return deleted == answer.deleted
-                && Objects.equals(id, answer.id)
+                && Objects.equals(getId(), answer.getId())
                 && Objects.equals(user, answer.user)
                 && Objects.equals(contents, answer.contents)
                 && Objects.equals(question, answer.question);
@@ -89,7 +73,7 @@ public class Answer extends DateTimeEntity{
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, contents, deleted, question);
+        return Objects.hash(getId(), user, contents, deleted, question);
     }
 
     @Override
