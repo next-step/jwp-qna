@@ -100,10 +100,6 @@ public class User extends BaseTimeEntity {
         return email;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
