@@ -10,7 +10,7 @@ import java.util.Objects;
 @Table(name = "answer")
 public class Answer extends BaseTime {
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
 
