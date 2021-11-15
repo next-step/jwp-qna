@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.fixture.AnswerFixture;
+
 @DataJpaTest
 public class AnswerRepositoryTest {
 
@@ -27,22 +29,22 @@ public class AnswerRepositoryTest {
 	@Test
 	@DisplayName("저장하기 전후의 객체가 서로 동일한 객체인가")
 	void save() {
-		final Answer expected = Fixture.answer("writer.id");
+		final Answer expected = AnswerFixture.질문자와_답변자가_다른_답변("writer.id");
 		final Answer actual = answerRepository.save(expected);
 		assertAll(
+			() -> assertThat(actual).isSameAs(expected),
 			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
-			() -> assertThat(actual.getQuestion()).isEqualTo(expected.getQuestion()),
+			() -> assertThat(actual.getWriter()).isSameAs(expected.getWriter()),
+			() -> assertThat(actual.getQuestion()).isSameAs(expected.getQuestion()),
 			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
 			() -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted())
 		);
-		assertThat(actual).isSameAs(expected);
 	}
 
 	@Test
 	@DisplayName("저장된 객체가 질문의 답변 중 삭제 되지 않은 리스트에 포함된 객체인가")
 	void findByQuestionIdAndDeletedFalse() {
-		final Answer expected = saved(Fixture.answer("writer.id"));
+		final Answer expected = saved(AnswerFixture.질문자와_답변자가_다른_답변("writer.id"));
 		assertThat(expected.isDeleted()).isFalse();
 
 		final List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(expected.getQuestion());
@@ -56,14 +58,16 @@ public class AnswerRepositoryTest {
 	@Test
 	@DisplayName("저장된 객체가 삭제되지 않고 id로 검색한 객체와 동일한가")
 	void findByIdAndDeletedFalse() {
-		final Answer expected = saved(Fixture.answer("writer.id"));
+		final Answer expected = saved(AnswerFixture.질문자와_답변자가_다른_답변("writer.id"));
 		assertThat(expected.isDeleted()).isFalse();
 
 		final Optional<Answer> maybeActual = answerRepository.findByIdAndDeletedFalse(expected.getId());
 		assertThat(maybeActual.isPresent()).isTrue();
 		final Answer actual = maybeActual.get();
-		assertThat(actual).isSameAs(expected);
-		assertThat(actual.isDeleted()).isFalse();
+		assertAll(
+			() -> assertThat(actual).isSameAs(expected),
+			() -> assertThat(actual.isDeleted()).isFalse()
+		);
 	}
 
 	private Answer saved(Answer answer) {
