@@ -3,12 +3,12 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity {
+    private static final String QUESTION_ERROR_MESSAGE = "질문을 삭제할 권한이 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -112,11 +112,13 @@ public class Question extends BaseEntity {
     public void delete(User user) {
         validateQuestion(user);
         answers.validateAnswer(writer);
+        deleted = true;
+        answers.delete();
     }
 
     private void validateQuestion(User user) {
         if (!isOwner(user)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(QUESTION_ERROR_MESSAGE);
         }
     }
 }
