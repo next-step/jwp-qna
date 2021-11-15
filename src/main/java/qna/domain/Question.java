@@ -1,11 +1,43 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "question")
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Column
+    @Lob
     private String contents;
-    private Long writerId;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column(nullable = false, length = 100)
+    private String title;
+
+    @Column
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @Column
+    private Long writerId;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -73,11 +105,13 @@ public class Question {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", contents='" + contents + '\'' +
+            ", createdAt=" + createdAt +
+            ", deleted=" + deleted +
+            ", title='" + title + '\'' +
+            ", updatedAt=" + updatedAt +
+            ", writerId=" + writerId +
+            '}';
     }
 }
