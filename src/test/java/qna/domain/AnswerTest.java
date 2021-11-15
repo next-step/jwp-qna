@@ -111,7 +111,7 @@ public class AnswerTest {
     @DisplayName("answer save with question 추가")
     @Test
     void saveQuestionWithAnswerTest() {
-        question.addAnswer(answer);
+        answer.changeQuestion(question);
         Question questionFromRepo = questionRepository.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertAll(
@@ -126,7 +126,7 @@ public class AnswerTest {
     @DisplayName("answer remove with question 삭제")
     @Test
     void removeQuestionWithAnswerTest() {
-        question.removeAnswer(answer);
+        answer.removeQuestion();
         Question questionFromRepo = questionRepository.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertAll(
