@@ -2,6 +2,7 @@ package qna.deletehistory;
 
 import qna.answer.Answer;
 import qna.domain.ContentType;
+import qna.question.Question;
 import qna.user.User;
 
 import javax.persistence.*;
@@ -41,11 +42,15 @@ public class DeleteHistory{
         this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedByUser = User.getOrElseThrow(deletedByUser);;
+        this.deletedByUser = User.getOrElseThrow(deletedByUser);
     }
 
-    public static DeleteHistory of(Answer answer){
+    public static DeleteHistory fromAnswer(Answer answer){
         return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getUser());
+    }
+
+    public static DeleteHistory fromQuestion(Question question){
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getUser());
     }
 
     public Long getId() {

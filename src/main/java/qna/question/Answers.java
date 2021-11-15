@@ -2,6 +2,7 @@ package qna.question;
 
 import qna.CannotDeleteException;
 import qna.answer.Answer;
+import qna.deletehistory.DeleteHistory;
 import qna.user.User;
 
 import javax.persistence.Embeddable;
@@ -9,6 +10,7 @@ import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Embeddable
 public class Answers {
@@ -22,11 +24,11 @@ public class Answers {
         this.answers = answers;
     }
 
-    public void addAnswer(final Answer answer) {
+    public void add(final Answer answer) {
         answers.add(answer);
     }
 
-    public void changeDeletedAnswer() {
+    public void delete() {
         for (Answer answer : answers) {
             answer.delete();
         }
@@ -38,8 +40,10 @@ public class Answers {
         }
     }
 
-    public List<Answer> getAnswers() {
-        return new ArrayList<>(answers);
+    public List<DeleteHistory> createDeleteHistories(){
+        return answers.stream()
+                .map(DeleteHistory::fromAnswer)
+                .collect(Collectors.toList());
     }
 
     @Override

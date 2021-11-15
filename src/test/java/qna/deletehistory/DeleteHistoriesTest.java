@@ -4,37 +4,37 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import qna.question.Answers;
+import qna.question.Question;
 
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.answer.AnswerTest.A1;
 import static qna.answer.AnswerTest.A2;
-import static qna.question.QuestionTest.Q1;
+import static qna.user.UserTest.JAVAJIGI;
 
 class DeleteHistoriesTest {
 
     private static Stream<Arguments> createDeleteHistories() {
+        Question question = new Question("title1", "contents1", JAVAJIGI);
+        question.addAnswer(A1);
+        question.addAnswer(A2);
         return Stream.of(
-                Arguments.of(DeleteHistories.fromAnswers(new Answers(Arrays.asList(A1, A2))))
+                Arguments.of(new DeleteHistories(question))
         );
     }
 
     @ParameterizedTest
     @MethodSource("createDeleteHistories")
     @DisplayName("삭제 이력 리스트 객체 생성")
-    public void createDeleteHistoriesTest(DeleteHistories actual) {
-        assertThat(actual).isEqualTo(DeleteHistories.fromAnswers(new Answers(Arrays.asList(A1, A2))));
-    }
-
-    @ParameterizedTest
-    @MethodSource("createDeleteHistories")
-    @DisplayName("삭제된 질문 추가")
-    public void addDeleteQuestionTest(DeleteHistories actual) {
-        actual.addDeleteQuestion(Q1);
-        assertThat(actual.getDeleteHistories()).hasSize(3);
+    public void createDeleteHistoriesTest(DeleteHistories expected) {
+        //given
+        Question actual = new Question("title1", "contents1", JAVAJIGI);
+        //when
+        actual.addAnswer(A1);
+        actual.addAnswer(A2);
+        //then
+        assertThat(new DeleteHistories(actual)).isEqualTo(expected);
     }
 
 }

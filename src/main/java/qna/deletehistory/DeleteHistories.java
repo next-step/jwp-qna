@@ -1,30 +1,22 @@
 package qna.deletehistory;
 
-import qna.domain.ContentType;
-import qna.question.Answers;
 import qna.question.Question;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class DeleteHistories {
     private final List<DeleteHistory> deleteHistories;
 
-    private DeleteHistories(final List<DeleteHistory> deleteHistories) {
-        this.deleteHistories = deleteHistories;
+    public DeleteHistories(Question question) {
+        this.deleteHistories = createDeleteHistoriesByQuestion(question);
     }
 
-    public static DeleteHistories fromAnswers(final Answers answers) {
-        return new DeleteHistories(answers.getAnswers()
-                .stream()
-                .map(DeleteHistory::of)
-                .collect(Collectors.toList()));
-    }
-
-    public void addDeleteQuestion(final Question question) {
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getUser()));
+    private List<DeleteHistory> createDeleteHistoriesByQuestion(Question question) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.fromQuestion(question));
+        deleteHistories.addAll(question.getAnswers().createDeleteHistories());
+        return deleteHistories;
     }
 
     public List<DeleteHistory> getDeleteHistories() {

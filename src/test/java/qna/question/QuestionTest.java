@@ -6,8 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import qna.CannotDeleteException;
-import qna.NotFoundException;
-import qna.answer.Answer;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -67,12 +68,12 @@ public class QuestionTest {
 
     @Test
     @DisplayName("질문 삭제 상태로 변경")
-    public void deleteQuestionTest() {
+    public void deleteQuestionTest() throws CannotDeleteException {
         //given
         Question actual = new Question("title2", "contents2", SANJIGI);
         assertThat(actual.isDeleted()).isFalse();
         //when
-        actual.deleteQuestion();
+        actual.delete(SANJIGI);
         //then
         assertThat(actual.isDeleted()).isTrue();
     }
@@ -82,11 +83,11 @@ public class QuestionTest {
     public void addAnswerTest() {
         //given
         Question actual = new Question("title2", "contents2", SANJIGI);
-        assertThat(actual.getAnswers()).hasSize(0);
+        assertThat(actual.getAnswers()).isEqualTo(new Answers(new ArrayList<>()));
         //when
         actual.addAnswer(A1);
         //then
-        assertThat(actual.getAnswers()).contains(A1).hasSize(1);
+        assertThat(actual.getAnswers()).isEqualTo(new Answers(Arrays.asList(A1)));
     }
 
     @Test
@@ -103,14 +104,16 @@ public class QuestionTest {
 
     @Test
     @DisplayName("질문에 달린 답변 삭제 상태로 변경")
-    public void deleteAnswersInQuestionTest() {
+    public void deleteAnswersInQuestionTest() throws CannotDeleteException {
         //given
         Question actual = new Question("title2", "contents2", SANJIGI);
+        Answers expected = new Answers(Arrays.asList(A2));
+        expected.delete();
         //when
         actual.addAnswer(A2);
-        actual.deleteAnswers();
+        actual.deleteAnswers(SANJIGI);
         //then
-        assertThat(actual.getAnswers().stream().map(Answer::isDeleted)).doesNotContain(false);
+        assertThat(actual.getAnswers()).isEqualTo(expected);
     }
 
 

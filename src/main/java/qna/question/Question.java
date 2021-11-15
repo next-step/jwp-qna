@@ -6,7 +6,6 @@ import qna.domain.BaseEntity;
 import qna.user.User;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -60,23 +59,26 @@ public class Question extends BaseEntity{
     }
 
     public void addAnswer(Answer answer) {
-        this.answers.addAnswer(answer);
+        this.answers.add(answer);
     }
 
-    public List<Answer> getAnswers() {
-        return answers.getAnswers();
+    public Answers getAnswers() {
+        return answers;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void deleteQuestion() {
-        this.deleted = true;
+    public void delete(User loginUser) throws CannotDeleteException {
+        throwExceptionNotDeletableUser(loginUser);
+        deleteAnswers(loginUser);
+        deleted = true;
     }
 
-    public void deleteAnswers() {
-        answers.changeDeletedAnswer();
+    public void deleteAnswers(User loginUser) throws CannotDeleteException {
+        throwExceptionNotDeletableAnswersInQuestion(loginUser);
+        answers.delete();
     }
 
     @Override
