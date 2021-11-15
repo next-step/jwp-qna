@@ -28,10 +28,10 @@ public class Question extends BaseEntity {
     private User writer;
 
     @Embedded
-    private final Answers answers = new Answers();
+    private Answers answers = new Answers();
 
     @Embedded
-    private final DeleteHistories deleteHistories = new DeleteHistories();
+    private DeleteHistories deleteHistories = new DeleteHistories();
 
     protected Question() {
     }
