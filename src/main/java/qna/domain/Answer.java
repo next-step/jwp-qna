@@ -15,7 +15,6 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
-@Table(name = "answer")
 public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,16 +24,16 @@ public class Answer {
     @Lob
     private String contents;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column(name = "question_id")
+    @Column
     private Long questionId;
 
-    @Column(name = "updated_at")
+    @Column
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Column
