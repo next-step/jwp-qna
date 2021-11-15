@@ -55,7 +55,7 @@ public class QuestionTest {
     Question q2 = QuestionFactory.create("test q2", "contents q2");
     questionRepository.save(q1);
 
-    Question question = questionRepository.findById(1L).orElse(null);
+    Question question = questionRepository.findById(q1.getId()).orElse(null);
 
     assertAll(
       () -> assertThat(question.getId()).isNotNull(),
@@ -83,10 +83,10 @@ public class QuestionTest {
     questionRepository.save(q1);
     questionRepository.save(q2);
 
-    assertThat(questionRepository.count()).isEqualTo(2L);
+    assertThat(questionRepository.count()).isEqualTo(2);
 
     questionRepository.deleteAll();
 
-    assertThat(questionRepository.count()).isEqualTo(0L);
+    assertThat(questionRepository.count()).isEqualTo(0);
   }
 }

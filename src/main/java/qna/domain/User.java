@@ -3,6 +3,8 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -24,6 +26,15 @@ public class User {
 
   @Column(nullable = false, length = 50)
   private String email;
+
+  @OneToMany(mappedBy = "writer")
+  private final List<Answer> answers = new ArrayList<>();
+
+  @OneToMany(mappedBy = "writer")
+  private final List<Question> questions = new ArrayList<>();
+
+  @OneToMany(mappedBy = "deletedBy")
+  private final List<DeleteHistory> deleteHistories = new ArrayList<>();
 
   protected User() {}
 
@@ -111,6 +122,32 @@ public class User {
 
   public void setEmail(String email) {
     this.email = email;
+  }
+
+  public void addAnswer(Answer answer) {
+    answers.add(answer);
+  }
+
+  public List<Answer> getAnswers() {
+    return answers;
+  }
+
+  public void addQuestion(Question question) {
+    questions.add(question);
+    question.writeBy(this);
+  }
+
+  public List<Question> getQuestions() {
+    return questions;
+  }
+
+  public void addDeleteHistory(DeleteHistory deleteHistory) {
+    deleteHistories.add(deleteHistory);
+    deleteHistory.toDeletedBy(this);
+  }
+
+  public List<DeleteHistory> getDeleteHistories() {
+    return deleteHistories;
   }
 
   @Override

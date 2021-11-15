@@ -23,6 +23,11 @@ public class Question extends BaseTimeEntity {
   @Column(columnDefinition = "bit", nullable = false)
   private boolean deleted = false;
 
+  @OneToMany(mappedBy = "question")
+  private final List<Answer> answers = new ArrayList<>();
+
+  protected Question() {}
+
   public Question(String title, String contents) {
     this(null, title, contents);
   }
@@ -32,8 +37,6 @@ public class Question extends BaseTimeEntity {
     this.title = title;
     this.contents = contents;
   }
-
-  protected Question() {}
 
   public Question writeBy(User writer) {
     this.writer = writer;
@@ -82,6 +85,14 @@ public class Question extends BaseTimeEntity {
 
   public void setDeleted(boolean deleted) {
     this.deleted = deleted;
+  }
+
+  public void addAnswer(Answer answer) {
+    answers.add(answer);
+  }
+
+  public List<Answer> getAnswers() {
+    return answers;
   }
 
   @Override

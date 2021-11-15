@@ -55,7 +55,7 @@ public class UserTest {
     userRepository.save(JAVAJIGI);
     userRepository.save(SANJIGI);
 
-    Optional<User> actual = userRepository.findById(2L);
+    Optional<User> actual = userRepository.findById(SANJIGI.getId());
 
     assertThat(actual.get()).isEqualTo(SANJIGI);
   }
@@ -81,9 +81,9 @@ public class UserTest {
 
     assertThat(userRepository.count()).isEqualTo(2);
 
-    userRepository.deleteById(1L);
+    userRepository.deleteById(JAVAJIGI.getId());
 
-    assertThat(userRepository.findById(1L).isPresent()).isFalse();
+    assertThat(userRepository.findById(JAVAJIGI.getId()).isPresent()).isFalse();
   }
 
   @DisplayName("사용자의 이름을 식별자로 수정한다.")
@@ -92,8 +92,8 @@ public class UserTest {
     userRepository.save(JAVAJIGI);
     userRepository.save(SANJIGI);
 
-    userRepository.updateNameById(1L, "js");
+    userRepository.updateNameById(JAVAJIGI.getId(), "js");
 
-    assertThat(userRepository.findById(1L).map(User::getName).get()).isEqualTo("js");
+    assertThat(userRepository.findById(JAVAJIGI.getId()).map(User::getName).get()).isEqualTo("js");
   }
 }
