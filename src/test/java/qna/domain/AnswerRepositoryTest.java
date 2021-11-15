@@ -4,9 +4,10 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.test.annotation.DirtiesContext;
+import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 
@@ -20,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DataJpaTest
 @EnableJpaAuditing
 @TestMethodOrder(MethodOrderer.MethodName.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class AnswerRepositoryTest {
     @Autowired
@@ -38,15 +38,15 @@ public class AnswerRepositoryTest {
     void setUp() {
         this.user1 = userRepository.save(UserTest.JAVAJIGI);
         this.user2 = userRepository.save(UserTest.SANJIGI);
-        this.question1 = questionRepository.save(QuestionTest.Q1);
+        this.question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
     }
 
     @Test
     @DisplayName("Answer 검증 테스트")
     public void T1_answerSaveTest() {
         //WHEN
-        Answer answer = answerRepository.save(AnswerTest.A1);
-        Answer answer2 = answerRepository.save(AnswerTest.A2);
+        Answer answer = answerRepository.save(new Answer(user1, question1, "Answers Contents1"));
+        Answer answer2 = answerRepository.save(new Answer(user2, question1, "Answers Contents2"));
         //THEN
         assertAll(
                 () -> assertThat(answer.isOwner(user1)).isTrue(),
@@ -56,5 +56,37 @@ public class AnswerRepositoryTest {
                 () -> assertThat(answer.getQuestion()).isEqualTo(question1),
                 () -> assertThat(answer2.getQuestion()).isEqualTo(question1)
         );
+    }
+
+    @Test
+    @DisplayName("Answer 삭제 시 DeleteHistory 를 반환한다.")
+    public void T2_answerDeleteReturnDeleteHistory() throws Exception {
+        //WHEN
+        Answer answer = answerRepository.save(new Answer(user1, question1, "Answers Contents1"));
+        //THEN
+        assertThat(answer.delete(user1)).isInstanceOf(DeleteHistory.class);
+    }
+
+
+    @Test
+    @DisplayName("다른 사람이 작성한 답변이 있는 경우 예외를 발생시킨다ㅣ.")
+    public void T2_deleteException() throws Exception {
+        //WHEN
+        Answer answer2 = answerRepository.save(new Answer(user2, question1, "Answers Contents2"));
+        //THEN
+        assertThatThrownBy(() -> answer2.delete(user1)).isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("Answer 삭제 시 delete field 값은 true 이어야 한다.")
+    public void T3_answerDelete() throws Exception {
+        //WHEN
+        Answer answer = answerRepository.save(new Answer(user1, question1, "Answers Contents1"));
+        answer.delete(user1);
+        answerRepository.flush();
+        Answer findAnswer = answerRepository.findById(answer.getId()).get();
+        //THEN
+        assertThat(findAnswer.isDeleted()).isTrue();
     }
 }

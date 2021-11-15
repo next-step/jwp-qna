@@ -1,6 +1,9 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +21,9 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @Embedded
+    private Answers answers = new Answers();
 
     private boolean deleted = false;
 
@@ -44,7 +50,27 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.addAnswer(answer);
         answer.toQuestion(this);
+    }
+
+    public boolean hasAnswers() {
+        return answers.hasAnswers();
+    }
+
+    private DeleteHistory createDeleteHistory() {
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+    }
+
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        DeleteHistories deleteHistories = DeleteHistories.of();
+        deleteHistories.addDeleteHistory(createDeleteHistory());
+        setDeleted(true);
+        for (Answer answer : answers.notDeletedAnswers()) {
+            deleteHistories.addDeleteHistory(answer.delete(loginUser));
+        }
+        return deleteHistories;
     }
 
     public Long getId() {
@@ -86,32 +112,18 @@ public class Question extends BaseEntity {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writer=" + writer +
-                ", deleted=" + deleted +
-                '}';
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Question question = (Question) o;
-        return deleted == question.deleted &&
-                Objects.equals(id, question.id) &&
-                Objects.equals(title, question.title) &&
-                Objects.equals(contents, question.contents) &&
-                Objects.equals(writer, question.writer);
+        return Objects.equals(id, question.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writer, deleted);
+        return Objects.hash(id);
     }
 }
 
