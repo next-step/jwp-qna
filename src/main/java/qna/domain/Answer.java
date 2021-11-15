@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -72,7 +73,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -101,6 +102,7 @@ public class Answer extends BaseEntity {
 
     public void setQuestion(Question question) {
         this.question = question;
+        question.addAnswer(this);
     }
 
     public String getContents() {
@@ -123,8 +125,8 @@ public class Answer extends BaseEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writer.getId() +
-                ", questionId=" + question.getId() +
+                ", writerId=" + Optional.of(writer).orElseGet(User::new).getId() +
+                ", questionId=" + Optional.of(question).orElseGet(Question::new).getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
