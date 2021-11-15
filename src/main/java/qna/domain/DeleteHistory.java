@@ -1,10 +1,14 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class DeleteHistory {
 
     @Id
@@ -16,29 +20,51 @@ public class DeleteHistory {
     private Long contentId;
 
     @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_deletehistory_to_user"))
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
-    private LocalDateTime createDate = LocalDateTime.now();
+    @Column(updatable = false)
+    @CreatedDate
+    private LocalDateTime createDate;
 
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
-        this.createDate = createDate;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public User getDeletedBy() {
+        return deletedBy;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedBy, that.deletedBy);
+        return Objects.equals(id, that.id);
     }
 
     @Override
