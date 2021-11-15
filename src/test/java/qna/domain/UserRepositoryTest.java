@@ -1,8 +1,10 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.*;
 import static qna.domain.UserTest.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
@@ -10,7 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.Rollback;
 
 @DataJpaTest
 public class UserRepositoryTest {
@@ -18,10 +22,17 @@ public class UserRepositoryTest {
 	@Autowired
 	private UserRepository userRepository;
 
+	@BeforeEach
+	void setUp() {
+		// given
+		userRepository.save(JAVAJIGI);
+		userRepository.save(SANJIGI);
+	}
+
 	@Test
 	@DisplayName("유저 이메일이 변경되는지 확인")
 	void give_User_when_changeEmail_then_changedEqualsEmail() {
-		// given
+
 		Optional<User> byUserId = userRepository.findByUserId(JAVAJIGI.getUserId());
 		User expectedUser = byUserId.get();
 
@@ -36,8 +47,9 @@ public class UserRepositoryTest {
 	@Test
 	@DisplayName("이름으로 조회시 데이터가 조회 되는지 확인")
 	void when_findUserName_then_sameUserName() {
+
 		// when
-		User expectedUser = userRepository.findByName("javajigi").get();
+		User expectedUser = userRepository.findByName(JAVAJIGI.getName()).get();
 
 		// then
 		Assertions.assertThat(expectedUser.getName()).isEqualTo(JAVAJIGI.getName());
@@ -47,8 +59,7 @@ public class UserRepositoryTest {
 	@DisplayName("유저 비밀번호를 변경시 변경되는지 확인")
 	void given_user_whenChangePassword_then_isTrue() {
 
-		//given
-		User user = userRepository.findByName("javajigi").get();
+		User user = userRepository.findByName(JAVAJIGI.getName()).get();
 		String changePassword = "changePassword";
 
 		// when
