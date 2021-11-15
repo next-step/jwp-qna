@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,20 @@ public class AnswerTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @BeforeEach
+    void setup() {
+        A1.getWriter().setId(null);
+        final User user = userRepository.save(A1.getWriter());
+        A1.setWriter(user);
+        final Question question = questionRepository.save(QuestionTest.Q1);
+        A1.setQuestion(question);
+    }
 
     @Test
     @DisplayName("Answer Entity Create 및 ID 생성 테스트")
@@ -48,5 +63,13 @@ public class AnswerTest {
         answerRepository.flush();
         final Answer found = answerRepository.findById(saved.getId()).orElseGet(() -> null);
         assertThat(found).isNull();
+    }
+
+    @Test
+    @DisplayName("Question Entity를 가지고 있는 Answer Entity Save 테스트")
+    void saveWithQuestion() {
+        final Answer saved = answerRepository.save(A1);
+        final Answer found = answerRepository.findById(saved.getId()).orElseThrow(() -> new RuntimeException("테스트실패"));
+        assertThat(found.getQuestion()).isEqualTo(saved.getQuestion());
     }
 }
