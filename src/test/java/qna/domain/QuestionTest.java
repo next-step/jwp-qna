@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DataJpaTest
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Autowired
     QuestionRepository questionRepository;
@@ -23,68 +22,78 @@ public class QuestionTest {
     AnswerRepository answerRepository;
     @Autowired
     EntityManager em;
+    User user1;
+    Question question1;
+    Answer answer1;
 
     @BeforeEach
     void init() {
-        userRepository.save(UserTest.JAVAJIGI);
-        userRepository.save(UserTest.SANJIGI);
-        questionRepository.save(Q1);
+        user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        question1 = new Question("title1", "contents1").writeBy(user1);
+        answer1 = new Answer(user1, question1, "Answers Contents1");
+        userRepository.save(user1);
+        questionRepository.save(question1);
     }
 
     @Test
     void 저장() {
-        Question savedQuestion = questionRepository.save(Q1);
+        Question foundQuestion = questionRepository.findById(question1.getId()).get();
         assertAll(
-                () -> assertThat(savedQuestion.getId()).isNotNull(),
-                () -> assertThat(savedQuestion.getContents()).isEqualTo(Q1.getContents())
+                () -> assertThat(question1.getId()).isNotNull(),
+                () -> assertThat(question1.getContents()).isEqualTo(foundQuestion.getContents())
         );
     }
 
     @Test
     void 검색() {
-        assertThat(questionRepository.findById(Q1.getId()).get())
-                .isEqualTo(Q1);
+        Question foundQuestion = questionRepository.findById(question1.getId()).get();
+        assertThat(questionRepository.findById(question1.getId()).get())
+                .isEqualTo(foundQuestion);
     }
 
     @Test
     void 연관관계_유저() {
-        UserTest.JAVAJIGI.addAQuestion(Q1);
+        em.flush();
+        em.clear();
+        User foundUser = userRepository.findById(user1.getId()).get();
         assertAll(
-                () -> assertThat(Q1.getWriter()).isEqualTo(UserTest.JAVAJIGI),
-                () -> assertThat(UserTest.JAVAJIGI.getQuestions().get(0)).isEqualTo(Q1)
+                () -> assertThat(question1.getWriter()).isEqualTo(user1),
+                () -> assertThat(foundUser.getQuestions().get(0).getId()).isEqualTo(question1.getId())
         );
     }
 
     @Test
     void 연관관계_답변() {
-        Answer savedAnswer = answerRepository.save(AnswerTest.A1);
-        Q1.addAnswer(AnswerTest.A1);
+        Answer savedAnswer = answerRepository.save(answer1);
+        question1.addAnswer(savedAnswer);
+        em.flush();
+        em.clear();
+        Answer foundAnswer = answerRepository.findById(savedAnswer.getId()).get();
         assertAll(
-                () -> assertThat(savedAnswer.getQuestion()).isEqualTo(Q1),
-                () -> assertThat(Q1.getAnswers().get(0)).isEqualTo(savedAnswer)
+                () -> assertThat(foundAnswer.getQuestion().getId()).isEqualTo(question1.getId()),
+                () -> assertThat(question1.getAnswers().get(0).getId()).isEqualTo(foundAnswer.getId())
         );
     }
 
     @Test
     void cascadeTest() {
-        Answer savedAnswer = answerRepository.save(AnswerTest.A1);
-        Q1.addAnswer(AnswerTest.A1);
-        questionRepository.delete(Q1);
+        Answer savedAnswer = answerRepository.save(answer1);
+        question1.addAnswer(savedAnswer);
+        questionRepository.delete(question1);
         assertThat(answerRepository.findById(savedAnswer.getId()).isPresent()).isFalse();
     }
 
     @Test
     void 수정() {
-        Q1.setContents("컨텐츠 수정");
+        question1.setContents("컨텐츠 수정");
         questionRepository.flush();
         em.clear();
-        assertThat(questionRepository.findById(Q1.getId()).get().getContents()).isEqualTo(Q1.getContents());
+        assertThat(questionRepository.findById(question1.getId()).get().getContents()).isEqualTo(question1.getContents());
     }
 
     @Test
     void 삭제() {
-        Question question = questionRepository.findById(Q1.getId()).get();
-        questionRepository.delete(question);
-        assertThat( questionRepository.findById(Q1.getId())).isEmpty();
+        questionRepository.delete(question1);
+        assertThat(questionRepository.findById(question1.getId())).isEmpty();
     }
 }

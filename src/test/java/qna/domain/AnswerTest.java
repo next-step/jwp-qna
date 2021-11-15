@@ -12,9 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-
     @Autowired
     AnswerRepository answerRepository;
     @Autowired
@@ -24,19 +21,25 @@ public class AnswerTest {
     Answer savedAnswer;
     @Autowired
     EntityManager em;
+    Answer answer1;
+    User user1;
+    User user2;
+    Question question1;
 
     @BeforeEach
     void init() {
-        userRepository.save(UserTest.JAVAJIGI);
-        userRepository.save(UserTest.SANJIGI);
-        savedAnswer = answerRepository.save(A1);
+        user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        question1 = new Question("title1", "contents1").writeBy(user1);
+        answer1 = new Answer(user1, question1, "Answers Contents1");
+        savedAnswer = answerRepository.save(answer1);
     }
 
     @Test
     void 저장() {
         assertAll(
                 () -> assertThat(savedAnswer.getId()).isNotNull(),
-                () -> assertThat(savedAnswer.getContents()).isEqualTo(A1.getContents())
+                () -> assertThat(savedAnswer.getContents()).isEqualTo(answer1.getContents())
         );
     }
 
@@ -48,38 +51,42 @@ public class AnswerTest {
 
     @Test
     void 연관관계_유저() {
-        UserTest.JAVAJIGI.addAnswer(A1);
+        user1.addAnswer(answer1);
+        userRepository.save(user1);
         assertAll(
-                () -> assertThat(savedAnswer.getWriter()).isEqualTo(UserTest.JAVAJIGI),
-                () -> assertThat(UserTest.JAVAJIGI.getAnswers().get(0)).isEqualTo(savedAnswer)
+                () -> assertThat(savedAnswer.getWriter()).isEqualTo(user1),
+                () -> assertThat(user1.getAnswers().get(0)).isEqualTo(savedAnswer)
         );
     }
 
     @Test
     void 연관관계_질문() {
-        Question question = questionRepository.save(QuestionTest.Q1);
-        question.addAnswer(A1);
+        Question savedQuestion = questionRepository.save(question1);
+        savedQuestion.addAnswer(answer1);
         assertAll(
-                () -> assertThat(savedAnswer.getQuestion()).isEqualTo(question),
-                () -> assertThat(question.getAnswers().get(0)).isEqualTo(savedAnswer)
+                () -> assertThat(savedAnswer.getQuestion()).isEqualTo(savedQuestion),
+                () -> assertThat(savedQuestion.getAnswers().get(0)).isEqualTo(savedAnswer)
         );
     }
 
     @Test
     void 검색_없을경우() {
-        A1.setDeleted(true);
-        questionRepository.save(QuestionTest.Q1);
-        assertThat(answerRepository.findByIdAndDeletedFalse(A1.getId()).isPresent()).isFalse();
+        answer1.setDeleted(true);
+        userRepository.save(user1);
+        questionRepository.save(question1);
+        assertThat(answerRepository.findByIdAndDeletedFalse(answer1.getId()).isPresent()).isFalse();
     }
 
     @Test
     void 수정() {
-        questionRepository.save(QuestionTest.Q1);
-        savedAnswer.setWriter(UserTest.SANJIGI);
+        userRepository.save(user1);
+        User savedUser2 = userRepository.save(user2);
+        questionRepository.save(question1);
+        savedAnswer.setWriter(user2);
         answerRepository.flush();
         em.clear();
-        User sanjigi = userRepository.findByUserId(UserTest.SANJIGI.getUserId()).get();
-        assertThat(sanjigi.getAnswers().get(0).getId()).isEqualTo(savedAnswer.getId());
+        savedUser2 = userRepository.findById(savedUser2.getId()).get();
+        assertThat(savedUser2.getAnswers().get(0).getId()).isEqualTo(savedAnswer.getId());
     }
 
     @Test

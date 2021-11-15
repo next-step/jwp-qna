@@ -24,11 +24,16 @@ public class DeleteHistoryTest {
 
     DeleteHistory deleteHistory;
     DeleteHistory savedDeleteHistory;
+    Question question1;
+    User user1;
 
     @BeforeEach
     void init() {
-        Question savedQuestion = questionRepository.save(QuestionTest.Q1);
-        deleteHistory = new DeleteHistory(ContentType.QUESTION, savedQuestion.getId(), UserTest.JAVAJIGI, LocalDateTime.now());
+        user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        question1 = new Question("title1", "contents1").writeBy(user1);
+        userRepository.save(user1);
+        Question savedQuestion = questionRepository.save(question1);
+        deleteHistory = new DeleteHistory(ContentType.QUESTION, savedQuestion.getId(), user1, LocalDateTime.now());
         savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
     }
 
@@ -48,12 +53,11 @@ public class DeleteHistoryTest {
 
     @Test
     void 연관관계_유저() {
-        User savedUser = userRepository.save(UserTest.JAVAJIGI);
-        savedUser.addDeleteHistory(savedDeleteHistory);
+        user1.addDeleteHistory(savedDeleteHistory);
         em.flush();
         em.clear();
         DeleteHistory foundDeleteHistory = deleteHistoryRepository.findById(savedDeleteHistory.getId()).get();
-        assertThat(foundDeleteHistory.getDeletedByUser().getId()).isEqualTo(savedUser.getId());
+        assertThat(foundDeleteHistory.getDeletedByUser().getId()).isEqualTo(user1.getId());
     }
 
     @Test
