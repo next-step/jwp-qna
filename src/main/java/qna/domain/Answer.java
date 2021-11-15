@@ -1,6 +1,5 @@
 package qna.domain;
 
-import com.sun.istack.NotNull;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -20,7 +19,7 @@ public class Answer extends BaseEntity{
     private Question question;
     @Lob
     private String contents;
-    @NotNull
+    @Column(nullable = false, updatable = false)
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {

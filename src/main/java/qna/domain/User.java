@@ -1,10 +1,8 @@
 package qna.domain;
 
-import com.sun.istack.NotNull;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,12 +14,11 @@ public class User extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
-    @Column(unique = true)
+    @Column(nullable = false, updatable = false, unique = true)
     private String userId;
-    @NotNull
+    @Column(nullable = false, updatable = false)
     private String password;
-    @NotNull
+    @Column(nullable = false, updatable = false)
     private String name;
     private String email;
     @OneToMany(mappedBy = "writer")

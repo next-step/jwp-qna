@@ -1,7 +1,5 @@
 package qna.domain;
 
-import com.sun.istack.NotNull;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +9,14 @@ public class Question extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
+    @Column(nullable = false, updatable = false)
     private String title;
     @Lob
     private String contents;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writerId")
     private User writer;
-    @NotNull
+    @Column(nullable = false, updatable = false)
     private boolean deleted = false;
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Answer> answers = new ArrayList<>();
