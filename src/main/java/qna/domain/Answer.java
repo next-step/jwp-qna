@@ -62,7 +62,7 @@ public class Answer extends BaseEntity {
 		this.contents = contents;
 	}
 
-	public boolean isOwner(User writer) {
+	private boolean isOwner(User writer) {
 		return this.writer.equals(writer);
 	}
 
