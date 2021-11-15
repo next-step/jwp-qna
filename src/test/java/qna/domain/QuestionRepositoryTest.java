@@ -38,7 +38,6 @@ public class QuestionRepositoryTest {
         final Question question = TestQuestionFactory.create("title1", "contents1");
 
         // when
-        question.setDeleted(false);
         questionRepository.save(question);
         final List<Question> actual = questionRepository.findByDeletedFalse();
 
@@ -52,7 +51,6 @@ public class QuestionRepositoryTest {
         final Question question = TestQuestionFactory.create("title1", "contents1");
 
         // when
-        question.setDeleted(false);
         questionRepository.save(question);
         final Question actual = questionRepository.findByIdAndDeletedFalse(question.getId())
             .orElseThrow(NoSuchElementException::new);

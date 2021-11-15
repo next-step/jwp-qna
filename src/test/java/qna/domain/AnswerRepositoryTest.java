@@ -58,7 +58,6 @@ public class AnswerRepositoryTest {
 
         // when
         answerRepository.save(answer);
-        answer.setDeleted(false);
         final List<Answer> actual =
             answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestionId());
 
@@ -79,7 +78,6 @@ public class AnswerRepositoryTest {
 
         // when
         answerRepository.save(answer);
-        answer.setDeleted(false);
         final Answer actual = answerRepository.findByIdAndDeletedFalse(answer.getId())
             .orElseThrow(NoSuchElementException::new);
 
