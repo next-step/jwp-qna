@@ -14,7 +14,7 @@
 * question - user 매핑
 * delete_history - user 매핑
 
-## step1 - 엔티티 매
+## step1 - 엔티티 매핑
 * Answer 엔티티 작성
 * Answer 테스트
 * Question 엔티티 작성
