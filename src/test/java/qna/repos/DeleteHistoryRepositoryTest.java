@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.User;
+import qna.domain.UserTest;
 
 import java.time.LocalDateTime;
 
@@ -22,10 +23,15 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("DeleteHistory 저장 테스트")
     @Test
     void save() {
-        User user = users.save(UserRepositoryTest.JAVAJIGI);
+        //given
+        User user = users.save(UserTest.JAVAJIGI);
         users.save(user);
+
+        //when
         DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 0L, user, LocalDateTime.now());
         DeleteHistory actual = deleteHistories.save(deleteHistory);
+
+        //then
         assertThat(actual).isEqualTo(deleteHistory);
     }
 }

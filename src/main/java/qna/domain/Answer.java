@@ -99,6 +99,11 @@ public class Answer extends BaseEntity {
         return this.writer;
     }
 
-    public void addUser(User save) {
+    public void setQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().remove(this);
+        }
+        this.question = question;
+        question.getAnswers().add(this);
     }
 }
