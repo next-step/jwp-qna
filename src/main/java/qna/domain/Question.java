@@ -1,12 +1,10 @@
 package qna.domain;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Question {
+public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,21 +12,15 @@ public class Question {
     @Lob
     private String contents;
 
-    @CreationTimestamp
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
     @Column(nullable = false)
     private boolean deleted = false;
 
     @Column(nullable = false, length = 100)
     private String title;
-
-    @CreationTimestamp
-    private LocalDateTime updatedAt = LocalDateTime.now();
-
     private Long writerId;
 
+    public Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);

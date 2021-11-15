@@ -1,15 +1,13 @@
 package qna.domain;
 
-import org.hibernate.annotations.CreationTimestamp;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class Answer {
+public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,16 +15,9 @@ public class Answer {
     @Lob
     private String contents;
 
-    @CreationTimestamp
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();;
-
     @Column(nullable = false)
     private boolean deleted = false;
     private Long questionId;
-
-    @CreationTimestamp
-    private LocalDateTime updatedAt = LocalDateTime.now();;
     private Long writerId;
 
     public Answer(User writer, Question question, String contents) {

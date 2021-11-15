@@ -1,23 +1,17 @@
 package qna.domain;
 
-import org.hibernate.annotations.CreationTimestamp;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class User {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @CreationTimestamp
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(length = 50)
     private String email;
@@ -27,10 +21,6 @@ public class User {
 
     @Column(nullable = false, length = 20)
     private String password;
-
-    @CreationTimestamp
-    private LocalDateTime updatedAt = LocalDateTime.now();
-
 
     @Column(unique = true, length = 20)
     private String userId;
