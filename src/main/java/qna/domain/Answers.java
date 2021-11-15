@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
@@ -14,7 +13,7 @@ import qna.CannotDeleteException;
 @Embeddable
 public class Answers {
 
-	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "question")
 	private List<Answer> answers = new ArrayList<>();
 
 	public void add(Answer answer) {
