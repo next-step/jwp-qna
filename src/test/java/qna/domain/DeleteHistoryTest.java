@@ -21,19 +21,23 @@ public class DeleteHistoryTest {
         LocalDateTime.of(2021, 11, 9, 0, 0, 0));
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
     private static Stream<Arguments> provideDeleteHistories() {
         return Stream.of(
-            Arguments.of(DH1),
-            Arguments.of(DH2)
+            Arguments.of(JAVAJIGI, DH1),
+            Arguments.of(SANJIGI, DH2)
         );
     }
 
     @DisplayName("DeleteHistory객체룰 입력으로 받는 save통하여 저장한 후 조회하면, 결과의 속성과 입력객체의 속성은 동일하다.")
     @ParameterizedTest
     @MethodSource("provideDeleteHistories")
-    void saveTest(DeleteHistory expected) {
+    void saveTest(User user, DeleteHistory expected) {
+        userRepository.save(user);
         DeleteHistory actual = deleteHistoryRepository.save(expected);
         assertThat(actual).isEqualTo(expected);
     }
