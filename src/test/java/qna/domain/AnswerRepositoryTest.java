@@ -3,35 +3,62 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnitUtil;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
-    public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
 
     @Autowired
     AnswerRepository answers;
 
-    @Test
-    @DisplayName("Answer 저장 후 ID not null 체크")
-    void save() {
-        // when
-        Answer actual = answers.save(AnswerTest.A1);
+    @Autowired
+    QuestionRepository questions;
 
-        // then
-        assertThat(actual.getId()).isNotNull();
+    @Autowired
+    UserRepository users;
+
+    @Autowired
+    private EntityManagerFactory factory;
+
+    @Autowired
+    private TestEntityManager testEntityManager;
+
+    Question QUESTION;
+    Answer ANSWER;
+    User USER;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        USER = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
+        QUESTION = questions.save(new Question("title1", "contents1").writeBy(USER));
+        ANSWER = new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1");
     }
 
     @Test
-    @DisplayName("Answer 저장 후 DB조회 객체 동일성 체크")
-    void identity() {
+    @DisplayName("Answer 저장 후 ID not null 체크")
+    void save() {
+        // given
         // when
-        Answer actual = answers.save(AnswerTest.A1);
+        Answer expect = answers.save(ANSWER);
+
+        // then
+        assertThat(expect.getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Answer 저장 후 findById 조회 결과 동일성 체크")
+    void identity() {
+        // given
+        // when
+        Answer actual = answers.save(ANSWER);
         Answer expect = answers.findById(actual.getId()).get();
 
         // then
@@ -39,55 +66,38 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("toQuestion 맵핑 후 findByQuestionIdAndDeletedFalse 메소드 조회 포함 체크 ")
-    void findByQuestionIdAndDeletedFalse() {
+    @DisplayName("remove 처리 후 findByIdAndDeletedFalse 메소드 조회 미포함 체크 ")
+    void deleted_findByIdAndDeletedFalse() {
         // given
-        AnswerTest.A1.toQuestion(Q1);
-        AnswerTest.A1.setDeleted(false);
+        Answer expect = answers.save(ANSWER);
+        expect.delete(USER);
 
         // when
-        Answer expect = answers.save(AnswerTest.A1);
-        List<Answer> answerList = answers.findByQuestionIdAndDeletedFalse(Q1.getId());
+        Answer answer = answers.findById(expect.getId()).get();
 
         // then
         assertAll(
-            () -> assertThat(answerList).contains(expect),
-            () -> assertThat(expect.isDeleted()).isFalse()
-        );
-    }
-
-    @Test
-    @DisplayName("delete 처리 후 findByQuestionIdAndDeletedFalse 메소드 조회 미포함 체크 ")
-    void findByQuestionIdAndDeletedFalse_deleted() {
-        // given
-        AnswerTest.A1.toQuestion(Q1);
-        AnswerTest.A1.setDeleted(true);
-        Answer expect = answers.save(AnswerTest.A1);
-
-        // when
-        List<Answer> answerList = answers.findByQuestionIdAndDeletedFalse(Q1.getId());
-
-        // then
-        assertAll(
-            () -> assertThat(answerList.contains(expect)).isFalse(),
             () -> assertThat(expect.isDeleted()).isTrue()
         );
     }
 
     @Test
-    @DisplayName("삭제 안된 Answer 조회")
-    void findByIdAndDeletedFalse() {
+    @DisplayName("Question,writer(User) lazy 로딩 확인")
+    void question_lazy_loading() {
         // given
-        Answer expect = answers.save(AnswerTest.A1);
+        PersistenceUnitUtil persistenceUnitUtil = factory.getPersistenceUnitUtil();
+        Answer saveAnswer = answers.save(ANSWER);
 
         // when
-        Answer actual = answers.findByIdAndDeletedFalse(expect.getId()).get();
+        testEntityManager.clear();
+        Answer actual = answers.findByIdAndDeletedFalse(saveAnswer.getId()).get();
 
         // then
+        boolean questionExpect = persistenceUnitUtil.isLoaded(actual, "question");
+        boolean writerExpect = persistenceUnitUtil.isLoaded(actual, "writer");
         assertAll(
-            () -> assertThat(actual).isEqualTo(expect),
-            () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual.isDeleted()).isFalse()
+            () -> assertThat(questionExpect).isFalse(),
+            () -> assertThat(writerExpect).isFalse()
         );
     }
 }

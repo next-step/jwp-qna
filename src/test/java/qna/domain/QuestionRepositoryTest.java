@@ -1,7 +1,12 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,23 +16,38 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class QuestionRepositoryTest {
 
     @Autowired
+    AnswerRepository answers;
+
+    @Autowired
     QuestionRepository questions;
+
+    @Autowired
+    UserRepository users;
+
+    private Question QUESTION;
+    private User USER;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        USER = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
+        QUESTION = new Question("title1", "contents1").writeBy(USER);
+    }
 
     @Test
     @DisplayName("QuestionRepository 저장 후 ID not null 체크")
     void save() {
         // when
-        Question actual = questions.save(QuestionTest.Q1);
+        Question actual = questions.save(QUESTION);
 
         // then
         assertThat(actual.getId()).isNotNull();
     }
 
     @Test
-    @DisplayName("QuestionRepository 저장 후 DB조회 객체 동일성 체크")
+    @DisplayName("QuestionRepository 저장 후 DB 조회 객체 동일성 체크")
     void identity() {
         // when
-        Question actual = questions.save(QuestionTest.Q2);
+        Question actual = questions.save(QUESTION);
         Question expect = questions.findById(actual.getId()).get();
 
         // then
@@ -35,13 +55,51 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제안된 Question 조회 검증")
-    void findByIdAndDeletedFalse() {
+    @DisplayName("질문 삭제 후 해당 Question 조회결과없음 검증")
+    void findByIdAndDeletedFalse_false() {
+        // given
         // when
-        Question actual = questions.save(QuestionTest.Q2);
-        Question expect = questions.findByIdAndDeletedFalse(actual.getId()).get();
+        questions.save(QUESTION);
+        QUESTION.delete(QUESTION.getWriter());
+        Optional<Question> actual = questions.findByIdAndDeletedFalse(QUESTION.getId());
 
         // then
-        assertThat(actual).isEqualTo(expect);
+        assertThat(actual.isPresent()).isFalse();
+    }
+
+    @Test
+    @DisplayName("getAnswers 메소드를 통해 답변 목록 확인")
+    void getAnswers() {
+        // given
+        Answer expect = new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1");
+        QUESTION.addAnswer(expect);
+        questions.save(QUESTION);
+
+        // when
+        Question findQuestion = questions.findByIdAndDeletedFalse(QUESTION.getId()).get();
+        List<Answer> actual = findQuestion.getAnswers();
+
+        // then
+        assertThat(actual).contains(expect);
+    }
+
+    @Test
+    @DisplayName("delete 메소드 호출시 연관 답변도 delete 되는지 확인")
+    void deleted_and_answer_delete() {
+        // given
+        Question savedQ1 = questions.save(QUESTION);
+        Answer answer1 = new Answer(savedQ1.getWriter(), savedQ1, "Answers Contents2");
+        savedQ1.addAnswer(answer1);
+
+        // when
+        savedQ1.delete(USER);
+        questions.flush();
+
+        //then
+        Question deletedQ1 = questions.findById(savedQ1.getId()).get();
+        assertAll(
+            () -> assertThat(deletedQ1.isDeleted()).isTrue(),
+            () -> assertThat(deletedQ1.getAnswers().get(0).isDeleted()).isTrue()
+        );
     }
 }
