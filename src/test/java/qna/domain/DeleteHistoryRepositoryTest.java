@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.fixture.QuestionFixture;
+
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
 
@@ -17,11 +19,11 @@ public class DeleteHistoryRepositoryTest {
 	@Test
 	@DisplayName("저장하기 전후의 객체가 서로 동일한 객체인가")
 	void save() {
-		final Question question = Fixture.question("writer.id");
+		final Question question = QuestionFixture.식별자가_userId인_유저가_작성한_질문("writer.id");
 		final DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter());
 		final DeleteHistory actual = deleteHistoryRepository.save(expected);
-		assertThat(actual).isSameAs(expected);
 		assertAll(
+			() -> assertThat(actual).isSameAs(expected),
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getCreateDate()).isNotNull()
 		);
