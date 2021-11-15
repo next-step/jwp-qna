@@ -30,7 +30,7 @@ public class DeleteHistory {
 	private Long id;
 
 	@OneToOne
-	@JoinColumn(name = "contend_id")
+	@JoinColumn(name = "contend_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_question"))
 	private Question question;
 
 	@Column(name = "content_type")
@@ -40,11 +40,11 @@ public class DeleteHistory {
 	@Column(name = "create_date", updatable = false)
 	private LocalDateTime createDate = LocalDateTime.now();
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "delete_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
-	private User deleteUser;
+	private User deleteByUser;
 
-	public DeleteHistory(ContentType contentType, Question question, User deleteUser, LocalDateTime createDate) {
+	public DeleteHistory(ContentType contentType, Question question, User deleteByUser, LocalDateTime createDate) {
 		if (Objects.isNull(contentType)) {
 			throw new TypeNotFoundException();
 		}
@@ -53,13 +53,13 @@ public class DeleteHistory {
 			throw new QuestionNotFoundException();
 		}
 
-		if (Objects.isNull(deleteUser)) {
+		if (Objects.isNull(deleteByUser)) {
 			throw new UnAuthorizedException();
 		}
 
 		this.contentType = contentType;
 		this.question = question;
-		this.deleteUser = deleteUser;
+		this.deleteByUser = deleteByUser;
 		this.createDate = createDate;
 	}
 
@@ -76,12 +76,12 @@ public class DeleteHistory {
 		return Objects.equals(id, that.id) &&
 			contentType == that.contentType &&
 			Objects.equals(question, that.question) &&
-			Objects.equals(deleteUser, that.deleteUser);
+			Objects.equals(deleteByUser, that.deleteByUser);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, contentType, question, deleteUser);
+		return Objects.hash(id, contentType, question, deleteByUser);
 	}
 
 	@Override
