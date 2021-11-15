@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -18,9 +19,13 @@ public class QuestionTest {
     void delete_not_having_answer() throws CannotDeleteException {
         final Question question = Fixture.question("writer.id");
         final List<DeleteHistory> deleteHistories = question.delete(question.getWriter());
-        assertThat(question.isDeleted()).isTrue();
-        assertThat(deleteHistories).isNotNull();
-        assertThat(deleteHistories.size()).isEqualTo(1);
+        assertAll(
+            () -> assertThat(question.isDeleted()).isTrue(),
+            () -> {
+                assertThat(deleteHistories).isNotNull();
+                assertThat(deleteHistories.size()).isEqualTo(1);
+            }
+        );
     }
 
     @Test
@@ -31,9 +36,13 @@ public class QuestionTest {
         Fixture.answer(question, questioner.getUserId());
 
         final List<DeleteHistory> deleteHistories = question.delete(questioner);
-        assertThat(question.isDeleted()).isTrue();
-        assertThat(deleteHistories).isNotNull();
-        assertThat(deleteHistories.size()).isEqualTo(2);
+        assertAll(
+            () -> assertThat(question.isDeleted()).isTrue(),
+            () -> {
+                assertThat(deleteHistories).isNotNull();
+                assertThat(deleteHistories.size()).isEqualTo(2);
+            }
+        );
     }
 
     @Test

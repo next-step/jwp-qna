@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,8 +16,10 @@ public class AnswerTest {
     void delete() throws CannotDeleteException {
         final Answer answer = Fixture.answer("writer.id");
         final DeleteHistory deleteHistory = answer.delete(answer.getWriter());
-        assertThat(answer.isDeleted()).isTrue();
-        assertThat(deleteHistory).isNotNull();
+        assertAll(
+            () -> assertThat(answer.isDeleted()).isTrue(),
+            () -> assertThat(deleteHistory).isNotNull()
+        );
     }
 
     @Test
