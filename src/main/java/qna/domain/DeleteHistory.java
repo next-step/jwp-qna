@@ -11,6 +11,7 @@ public class DeleteHistory {
     private Long id;
 
     @Column(name = "content_type")
+    @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
     @Column(name = "content_id")
