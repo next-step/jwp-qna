@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import qna.CannotDeleteException;
+
 @DataJpaTest
 public class QuestionTest {
 
@@ -69,7 +71,7 @@ public class QuestionTest {
 	}
 
 	@Test
-	void 질문_삭제_테스트() {
+	void 질문repo_질문_삭제_테스트() {
 		// given
 		Question q1 = new Question("t1", "con1").writeBy(UserTest.JAVAJIGI);
 		Question q2 = new Question("t2", "con2").writeBy(UserTest.JAVAJIGI);
@@ -97,5 +99,36 @@ public class QuestionTest {
 		assertThatThrownBy(() -> {
 			questionRepository.save(q1);
 		}).isInstanceOf(DataIntegrityViolationException.class);
+	}
+
+	@Test
+	void 질문_삭제시_질문한사람_불일치_예외발생_테스트() {
+		// given
+		Question q = new Question("Q", "contents").writeBy(UserTest.SANJIGI);
+
+		// when // then
+		assertThatThrownBy(() -> {
+			q.validDeleteUser(UserTest.JAVAJIGI);
+		}).isInstanceOf(CannotDeleteException.class);
+	}
+
+	@Test
+	void 질문_삭제_테스트() throws Exception {
+		// given
+		Question q1 = new Question("t1", "con1").writeBy(UserTest.JAVAJIGI);
+		q1.addAnswers(Arrays.asList(
+			new Answer(UserTest.JAVAJIGI, q1, "a1"),
+			new Answer(UserTest.JAVAJIGI, q1, "a2"),
+			new Answer(UserTest.JAVAJIGI, q1, "a3")
+		));
+
+		// when
+		DeleteHistories deleteHistories = q1.delete(UserTest.JAVAJIGI);
+
+		// then
+		assertAll(
+			() -> assertThat(deleteHistories.getDeleteHistoryList().size()).isEqualTo(4),
+			() -> assertThat(q1.isDeleted()).isTrue()
+		);
 	}
 }

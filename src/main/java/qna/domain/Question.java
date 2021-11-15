@@ -1,12 +1,17 @@
 package qna.domain;
 
+import java.util.List;
+
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -24,6 +29,9 @@ public class Question extends BaseTimeEntity {
 
 	@Column(name = "deleted", nullable = false)
 	private boolean deleted = false;
+
+	@Embedded
+	private Answers answers = new Answers();
 
 	protected Question() {
 	}
@@ -48,7 +56,12 @@ public class Question extends BaseTimeEntity {
 	}
 
 	public void addAnswer(Answer answer) {
+		answers.add(answer);
 		answer.toQuestion(this);
+	}
+
+	public void addAnswers(List<Answer> answerList) {
+		answers.addAll(answerList);
 	}
 
 	public String getTitle() {
@@ -81,6 +94,24 @@ public class Question extends BaseTimeEntity {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public Answers getAnswers() {
+		return answers;
+	}
+
+	public void validDeleteUser(User user) throws CannotDeleteException {
+		if (!isOwner(user)) {
+			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+		}
+	}
+
+	public DeleteHistories delete(User user) throws CannotDeleteException {
+		DeleteHistories deleteHistories = getAnswers().deleteAll(user);
+		setDeleted(true);
+		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(), writer));
+
+		return deleteHistories;
 	}
 
 	@Override
