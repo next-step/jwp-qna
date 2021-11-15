@@ -4,23 +4,17 @@ import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.*;
-import static qna.domain.QuestionTest.*;
 import static qna.domain.UserTest.*;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.transaction.AfterTransaction;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = NONE)
@@ -40,18 +34,26 @@ public class QuestionRepositoryTest {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private AnswerRepository answerRepository;
+
+	User javajigi;
+	User sanjigi;
+	Question question1;
+	Question question2;
+
 	@BeforeEach
 	void setUp() {
-		User javajigi = userRepository.save(JAVAJIGI);
-		User sanjigi = userRepository.save(SANJIGI);
+		javajigi = userRepository.save(JAVAJIGI);
+		sanjigi = userRepository.save(SANJIGI);
 
-		final Question question1 = new Question(null, TITLE_1, CONTENTS_1).writeBy(javajigi);
+		question1 = new Question(null, TITLE_1, CONTENTS_1).writeBy(javajigi);
 		question1.addAnswer(new Answer(null, javajigi, question1, ANSWER_1));
 		question1.addAnswer(new Answer(null, javajigi, question1, ANSWER_2));
 
-		final Question question2 = new Question(null, TITLE_2, CONTENTS_2).writeBy(sanjigi);
+		question2 = new Question(null, TITLE_2, CONTENTS_2).writeBy(sanjigi);
 		question2.addAnswer(new Answer(null, sanjigi, question2, ANSWER_3));
-		questionRepository.saveAll(asList(question1,question2));
+		questionRepository.saveAll(asList(question1, question2));
 	}
 
 	@Test
@@ -94,5 +96,23 @@ public class QuestionRepositoryTest {
 
 		// then
 		assertThat(answers.size()).isEqualTo(2);
+	}
+
+	@Test
+	void 답글을_가지고서_주체인_Question을_조회한다() {
+		// given
+		List<Answer> answers = asList(
+			new Answer(javajigi, question1, "안녕하세요1"),
+			new Answer(javajigi, question1, "안녕하세요2"),
+			new Answer(sanjigi, question2, "안녕하세요3"));
+
+		answerRepository.saveAll(answers);
+
+		// when
+		List<Question> findQuestions = questionRepository.findByAnswersIn(answers);
+		Questions questions = new Questions(findQuestions);
+
+		// then
+		assertThat(questions).isEqualTo(new Questions(Arrays.asList(question1,question2)));
 	}
 }
