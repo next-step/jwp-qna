@@ -1,5 +1,7 @@
 package qna.domain;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -21,6 +23,12 @@ public class Answers {
 
     public static Answers from(List<Answer> answers) {
         return new Answers(answers);
+    }
+
+    Answers notDeletedAnswers() {
+        return from(values.stream()
+            .filter(answer -> !answer.isDeleted())
+            .collect(toList()));
     }
 
     public List<DeleteHistory> deleteAll(User loginUser) throws CannotDeleteException {

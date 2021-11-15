@@ -62,6 +62,10 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
         return answers;
     }
 
+    Answers notDeletedAnswers() {
+        return answers.notDeletedAnswers();
+    }
+
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
@@ -74,7 +78,7 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
     public DeleteHistories deleteWithAnswers(User loginUser) throws CannotDeleteException {
         List<DeleteHistory> deleteHistoryList = new ArrayList<>();
         deleteHistoryList.add(delete(loginUser));
-        deleteHistoryList.addAll(getAnswers().deleteAll(loginUser));
+        deleteHistoryList.addAll(notDeletedAnswers().deleteAll(loginUser));
 
         return DeleteHistories.from(deleteHistoryList);
     }

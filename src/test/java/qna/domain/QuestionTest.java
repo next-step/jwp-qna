@@ -49,4 +49,58 @@ public class QuestionTest {
                 () -> TestDummy.QUESTION1.delete(other))
             .withMessage("질문을 삭제할 권한이 없습니다.");
     }
+
+    @Test
+    @DisplayName("질문, 답변 모두 삭제시 질문, 답변의 삭제 기록이 남는다")
+    void deleteWithAnswers1() throws CannotDeleteException {
+        // given
+        User writer = new User(1L, "1", "password", "user1", "test@email.com");
+        Question question = new Question(10L, "question", "contents").writeBy(writer);
+
+        Answer answer1 = new Answer(100L, writer, question, "answer1");
+        Answer answer2 = new Answer(101L, writer, question, "answer2");
+
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+
+        // when
+        DeleteHistories result = question.deleteWithAnswers(writer);
+
+        // then
+        assertAll(
+            () -> assertThat(result.getValues().size()).isEqualTo(3),
+            () -> assertThat(result.getValues()).contains(
+                new DeleteHistory(ContentType.QUESTION, 10L, writer),
+                new DeleteHistory(ContentType.ANSWER, 100L, writer),
+                new DeleteHistory(ContentType.ANSWER, 101L, writer)
+            )
+        );
+    }
+
+    @Test
+    @DisplayName("이미 삭제된 답변은 삭제 기록이 남으면 안된다.")
+    void deleteWithAnswers2() throws CannotDeleteException {
+        // given
+        User writer = new User(1L, "1", "password", "user1", "test@email.com");
+        Question question = new Question(10L, "question", "contents").writeBy(writer);
+
+        Answer answer1 = new Answer(100L, writer, question, "answer1");
+        Answer answer2 = new Answer(101L, writer, question, "answer2");
+        answer2.delete(writer);
+
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+
+        // when
+        DeleteHistories result = question.deleteWithAnswers(writer);
+
+        // then
+        assertAll(
+            () -> assertThat(result.getValues().size()).isEqualTo(2),
+            () -> assertThat(result.getValues()).contains(
+                new DeleteHistory(ContentType.QUESTION, 10L, writer),
+                new DeleteHistory(ContentType.ANSWER, 100L, writer)
+            )
+        );
+    }
 }
