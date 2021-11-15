@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.support.*;
 public abstract class BaseEntity {
     @CreatedDate
     @Column(nullable = false)
-    private LocalDateTime createdDate = LocalDateTime.now();
+    private LocalDateTime createdDate;
 
     @LastModifiedDate
     private LocalDateTime modifiedDate;
