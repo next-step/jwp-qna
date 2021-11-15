@@ -11,10 +11,10 @@ import java.util.List;
  * description : DeleteHistory 일급 컬렉션 적용
  */
 public class DeleteHistories {
-    private final List<DeleteHistory> deleteHistoryList;
+    private final List<DeleteHistory> deleteHistories;
 
     private DeleteHistories() {
-        this.deleteHistoryList = new ArrayList<>();
+        this.deleteHistories = new ArrayList<>();
     }
 
     public static DeleteHistories of() {
@@ -22,10 +22,10 @@ public class DeleteHistories {
     }
 
     public void addDeleteHistory(DeleteHistory deleteHistory) {
-        this.deleteHistoryList.add(deleteHistory);
+        this.deleteHistories.add(deleteHistory);
     }
 
     public List<DeleteHistory> getDeleteHistoryList() {
-        return deleteHistoryList;
+        return deleteHistories;
     }
 }

@@ -12,7 +12,9 @@ import java.util.Random;
 public class StringUtils {
     private static final int SMALL_A = 'a';
     private static final int SMALL_Z = 'z';
-    private StringUtils() {}
+
+    private StringUtils() {
+    }
 
     /***
      * @source : https://www.baeldung.com/java-random-string

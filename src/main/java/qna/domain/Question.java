@@ -4,10 +4,7 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Entity
 public class Question extends BaseEntity {
@@ -55,6 +52,25 @@ public class Question extends BaseEntity {
     public void addAnswer(Answer answer) {
         this.answers.addAnswer(answer);
         answer.toQuestion(this);
+    }
+
+    public boolean hasAnswers() {
+        return answers.hasAnswers();
+    }
+
+    private DeleteHistory createDeleteHistory() {
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+    }
+
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        DeleteHistories deleteHistories = DeleteHistories.of();
+        deleteHistories.addDeleteHistory(createDeleteHistory());
+        setDeleted(true);
+        for (Answer answer : answers.notDeletedAnswers()) {
+            deleteHistories.addDeleteHistory(answer.delete(loginUser));
+        }
+        return deleteHistories;
     }
 
     public Long getId() {
@@ -108,25 +124,6 @@ public class Question extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public boolean hasAnswers() {
-        return answers.hasAnswers();
-    }
-
-    private DeleteHistory createDeleteHistory() {
-        setDeleted(true);
-        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
-    }
-
-    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        DeleteHistories deleteHistories = DeleteHistories.of();
-        deleteHistories.addDeleteHistory(createDeleteHistory());
-        for(Answer answer : answers.deletedFalseAnswers()) {
-            deleteHistories.addDeleteHistory(answer.delete(loginUser));
-        }
-        return deleteHistories;
     }
 }
 

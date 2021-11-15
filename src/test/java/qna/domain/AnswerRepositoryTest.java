@@ -6,9 +6,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import qna.CannotDeleteException;
 
-import java.util.List;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -63,15 +60,30 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("Answer 삭제 시 DeleteHistory 를 반환한다.")
-    public void T2_answerDelete() throws Exception {
+    public void T2_answerDeleteReturnDeleteHistory() throws Exception {
         //WHEN
         Answer answer = answerRepository.save(new Answer(user1, question1, "Answers Contents1"));
-        Answer answer2 = answerRepository.save(new Answer(user2, question1, "Answers Contents2"));
         //THEN
         assertThat(answer.delete(user1)).isInstanceOf(DeleteHistory.class);
-        assertThatThrownBy(()-> answer2.delete(user1)).isInstanceOf(CannotDeleteException.class)
-                .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
+
+
+    @Test
+    @DisplayName("다른 사람이 작성한 답변이 있는 경우 예외를 발생시킨다ㅣ.")
+    public void T2_deleteException() throws Exception {
         //WHEN
+        Answer answer2 = answerRepository.save(new Answer(user2, question1, "Answers Contents2"));
+        //THEN
+        assertThatThrownBy(() -> answer2.delete(user1)).isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("Answer 삭제 시 delete field 값은 true 이어야 한다.")
+    public void T3_answerDelete() throws Exception {
+        //WHEN
+        Answer answer = answerRepository.save(new Answer(user1, question1, "Answers Contents1"));
+        answer.delete(user1);
         answerRepository.flush();
         Answer findAnswer = answerRepository.findById(answer.getId()).get();
         //THEN

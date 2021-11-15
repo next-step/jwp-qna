@@ -26,7 +26,7 @@ public class Answers {
         return this.answers.size() > 0;
     }
 
-    public List<Answer> deletedFalseAnswers() {
+    public List<Answer> notDeletedAnswers() {
         return this.answers.stream().filter(answer -> !answer.isDeleted()).collect(Collectors.toList());
     }
 }
