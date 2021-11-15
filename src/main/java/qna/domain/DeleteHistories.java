@@ -1,15 +1,12 @@
 package qna.domain;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.*;
-
-@Embeddable
 public class DeleteHistories {
-    @OneToMany(mappedBy = "deletedById")
     private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-    protected DeleteHistories() {
+    public DeleteHistories() {
     }
 
     private DeleteHistories(List<DeleteHistory> deleteHistories) {
