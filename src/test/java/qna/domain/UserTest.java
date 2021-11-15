@@ -22,7 +22,7 @@ public class UserTest {
     }
 
     @Test
-    public void findById(){
+    public void findById() {
         final User user = userRepository.findById(userRepository.save(SANJIGI).getId())
                 .orElseThrow(NotFoundException::new);
         assertThat(user.getUserId()).isEqualTo("sanjigi");

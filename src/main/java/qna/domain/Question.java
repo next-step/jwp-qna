@@ -1,7 +1,6 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 public class Question extends BaseEntity {
