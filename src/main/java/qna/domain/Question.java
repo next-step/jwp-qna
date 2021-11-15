@@ -27,8 +27,8 @@ public class Question extends BaseEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -40,7 +40,7 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -111,6 +111,7 @@ public class Question extends BaseEntity {
 
     public void delete(User user) {
         validateQuestion(user);
+        answers.validateAnswer(writer);
     }
 
     private void validateQuestion(User user) {

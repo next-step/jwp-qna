@@ -5,10 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.domain.Answer;
-import qna.domain.Question;
-import qna.domain.User;
-import qna.domain.UserTest;
+import qna.domain.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -78,9 +75,9 @@ public class QuestionRepositoryTest {
         //when
         q1.addAnswer(answers.save(new Answer(user, q1, "Answers Contents1")));
         Question actual = questions.save(q1);
-        List<Answer> answers = actual.getAnswers();
+        Answers answers = actual.getAnswers();
 
         //then
-        assertThat(answers).hasSize(1);
+        assertThat(answers.getSize()).isEqualTo(1);
     }
 }

@@ -101,9 +101,9 @@ public class Answer extends BaseEntity {
 
     public void setQuestion(Question question) {
         if (Objects.nonNull(this.question)) {
-            this.question.getAnswers().remove(this);
+            this.question.getAnswers().getAnswers().remove(this);
         }
         this.question = question;
-        question.getAnswers().add(this);
+        question.getAnswers().getAnswers().add(this);
     }
 }
