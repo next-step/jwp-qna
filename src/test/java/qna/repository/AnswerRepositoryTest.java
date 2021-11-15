@@ -14,11 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
 import qna.domain.Answer;
 import qna.domain.Question;
-import qna.domain.QuestionTest;
 import qna.domain.User;
-import qna.domain.UserTest;
 
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -62,25 +61,24 @@ class AnswerRepositoryTest {
 	}
 
 	@Test
-	void findByIdAndDeletedTrue() {
+	void findByIdAndDeletedTrue() throws CannotDeleteException {
 		Answer savedAnswer = answerRepository.save(
 			new Answer(user, question, "Answer entity unit test"));
 		Optional<Answer> findNoAnswer = answerRepository.findByIdAndDeletedTrue(savedAnswer.getId());
 		assertThat(findNoAnswer.isPresent()).isFalse();    /* 삭제되지 않았기 때문에 검색 안됨	*/
 
-		savedAnswer.delete();
+		savedAnswer.delete(user);
 		answerRepository.save(savedAnswer);
 		Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedTrue(savedAnswer.getId());
 		assertThat(findAnswer.isPresent()).isTrue();
 	}
 
 	@Test
-	void findByWriterIdAndQuestionId() {
+	void findByWriterAndQuestion() {
 		Answer savedAnswer = answerRepository.save(
 			new Answer(user, question, "Answer entity unit test"));
-		List<Answer> findAnswers = answerRepository.findByWriterIdAndQuestionId(UserTest.JAVAJIGI.getId(),
-			QuestionTest.Q1.getId());
-		assertThat(findAnswers.contains(savedAnswer));
+		List<Answer> findAnswers = answerRepository.findByWriterAndQuestion(user,question);
+		assertThat(findAnswers.contains(savedAnswer)).isTrue();
 	}
 
 	@Test
@@ -89,7 +87,7 @@ class AnswerRepositoryTest {
 		Answer savedAnswer = answerRepository.save(
 			new Answer(user, question, content));
 		List<Answer> findAnswers = answerRepository.findByContentsStartingWith(content);
-		assertThat(findAnswers.contains(savedAnswer));
+		assertThat(findAnswers.contains(savedAnswer)).isTrue();
 	}
 
 	@Test
@@ -98,6 +96,15 @@ class AnswerRepositoryTest {
 		Answer savedAnswer = answerRepository.save(
 			new Answer(user, question, content));
 		List<Answer> findAnswers = answerRepository.findByCreatedAtBetween(LocalDateTime.now().minusMinutes(30),LocalDateTime.now().plusMinutes(30));
-		assertThat(findAnswers.contains(savedAnswer));
+		assertThat(findAnswers.contains(savedAnswer)).isTrue();
+	}
+
+	@Test
+	void findByQuestionAndDeletedFalse() {
+		String content="Answer entity unit test";
+		Answer savedAnswer = answerRepository.save(
+			new Answer(user, question, content));
+		List<Answer> findAnswers = answerRepository.findByQuestionAndDeletedFalse(question);
+		assertThat(findAnswers.contains(savedAnswer)).isTrue();
 	}
 }

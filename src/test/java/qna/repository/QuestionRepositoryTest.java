@@ -13,10 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
 import qna.domain.Question;
-import qna.domain.QuestionTest;
 import qna.domain.User;
-import qna.domain.UserTest;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -42,24 +41,24 @@ class QuestionRepositoryTest {
 	}
 
 	@Test
-	public void findByDeletedFalse(){
+	public void findByDeletedFalse() throws CannotDeleteException {
 		Question savedQuestion = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
 		List<Question> findQuestions = questionRepository.findByDeletedFalse();
 		assertThat(findQuestions.contains(savedQuestion)).isTrue();
 
-		savedQuestion.delete();
+		savedQuestion.delete(user1);
 		questionRepository.save(savedQuestion);
 		findQuestions = questionRepository.findByDeletedFalse();
 		assertThat(findQuestions.contains(savedQuestion)).isFalse();
 	}
 
 	@Test
-	public void findByIdAndDeletedFalse(){
+	public void findByIdAndDeletedFalse() throws CannotDeleteException {
 		Question savedQuestion = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
 		Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
 		assertThat(findQuestion.isPresent()).isTrue();
 
-		savedQuestion.delete();
+		savedQuestion.delete(user1);
 		questionRepository.save(savedQuestion);
 		findQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
 		assertThat(findQuestion.isPresent()).isFalse();
