@@ -14,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DataJpaTest
 public class AnswerTest {
 
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, "Answers Contents1");
+    public static final Answer A2 = new Answer(UserTest.SANJIGI, "Answers Contents2");
 
     @Autowired
     AnswerRepository answerRepository;
@@ -31,7 +31,9 @@ public class AnswerTest {
         //given
         User write = userRepository.save(TestUserFactory.create("donkey"));
         Question question = questionRepository.save(TestQuestionFactory.create("title", "content", write));
-        Answer actual = answerRepository.save(TestAnswerFactory.create(write, question, "content"));
+        Answer actual = answerRepository.save(TestAnswerFactory.create(write, "content"));
+        question.addAnswer(actual);
+
         Long savedId = actual.getId();
 
         //when
@@ -46,7 +48,8 @@ public class AnswerTest {
         //given
         User write = userRepository.save(TestUserFactory.create("donkey"));
         Question question = questionRepository.save(TestQuestionFactory.create("title", "content", write));
-        Answer actual = answerRepository.save(TestAnswerFactory.create(write, question, "content"));
+        Answer actual = answerRepository.save(TestAnswerFactory.create(write, "content"));
+        question.addAnswer(actual);
 
         //when
         List<Answer> answerList = answerRepository.findAll();
@@ -56,7 +59,6 @@ public class AnswerTest {
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
                 () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
-                () -> assertThat(actual.getQuestion()).isEqualTo(expected.getQuestion()),
                 () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
         );
     }
@@ -66,7 +68,8 @@ public class AnswerTest {
         //given
         User write = userRepository.save(TestUserFactory.create("donkey"));
         Question question = questionRepository.save(TestQuestionFactory.create("title", "content", write));
-        Answer actual = answerRepository.save(TestAnswerFactory.create(write, question, "content"));
+        Answer actual = answerRepository.save(TestAnswerFactory.create(write, "content"));
+        question.addAnswer(actual);
 
         //when
         actual.setDeleted(true);
@@ -80,10 +83,11 @@ public class AnswerTest {
         //given
         User write = userRepository.save(TestUserFactory.create("donkey"));
         Question question = questionRepository.save(TestQuestionFactory.create("title", "content", write));
-        Answer answers1 = TestAnswerFactory.create(write, question, "Answers");
-        Answer answers2 = TestAnswerFactory.create(write, question, "Answers");
-        answerRepository.save(answers1);
-        answerRepository.save(answers2);
+        Answer answers1 = answerRepository.save(TestAnswerFactory.create(write, "Answers"));
+        Answer answers2 = answerRepository.save(TestAnswerFactory.create(write, "Answers"));
+        question.addAnswer(answers1);
+        question.addAnswer(answers2);
+
         String contents = "Answers";
 
         //when
@@ -92,5 +96,4 @@ public class AnswerTest {
         //then
         assertThat(expected).hasSize(2);
     }
-
 }

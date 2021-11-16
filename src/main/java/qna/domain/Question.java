@@ -35,7 +35,8 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private List<Answer> answers = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -63,10 +64,6 @@ public class Question extends BaseTimeEntity {
 
     public void addAnswer(Answer answer) {
         answers.add(answer);
-
-        if (answer.getQuestion() != this) {
-            answer.toQuestion(this);
-        }
     }
 
     public Long getId() {

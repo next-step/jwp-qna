@@ -6,8 +6,8 @@ public class TestAnswerFactory {
 
     }
 
-    public static Answer create(User writer, Question question, String contents) {
-        return new Answer(writer, question, contents);
+    public static Answer create(User writer, String contents) {
+        return new Answer(writer, contents);
     }
 
 }
