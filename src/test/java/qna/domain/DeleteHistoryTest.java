@@ -25,7 +25,7 @@ class DeleteHistoryTest {
     @Test
     void save_확인() {
         // given
-        User user = userRepository.save(UserFixture.create("user"));
+        User user = userRepository.save(UserFixture.ID가_없는_사용자());
         DeleteHistory deleteHistory = DeleteHistoryFixture.create(ContentType.ANSWER, 1L, user);
 
         // when
@@ -40,7 +40,7 @@ class DeleteHistoryTest {
     @Test
     void findById_확인() {
         // given
-        User user = userRepository.save(UserFixture.create("user"));
+        User user = userRepository.save(UserFixture.ID가_없는_사용자());
         DeleteHistory question = DeleteHistoryFixture.create(ContentType.ANSWER, 1L, user);
 
         // when
@@ -57,7 +57,7 @@ class DeleteHistoryTest {
     @Test
     void update_확인() {
         // given
-        User user = userRepository.save(UserFixture.create("user"));
+        User user = userRepository.save(UserFixture.ID가_없는_사용자());
         DeleteHistory question = DeleteHistoryFixture.create(ContentType.ANSWER, 1L, user);
 
         // when

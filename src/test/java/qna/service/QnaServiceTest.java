@@ -41,7 +41,7 @@ class QnaServiceTest {
     @DisplayName("delete 성공")
     @Test
     void delete_성공() throws Exception {
-        User user = UserFixture.create(1L, "user");
+        User user = UserFixture.ID가_있는_사용자();
         Question question = QuestionFixture.create(1L, "title", "contents", user);
         Answer answer = AnswerFixture.create(1L, user, question, "Answers Contents");
         question.addAnswer(answer);
@@ -63,23 +63,23 @@ class QnaServiceTest {
     @DisplayName("delete 다른 사람이 쓴 글")
     @Test
     void delete_다른_사람이_쓴_글() {
-        User user1 = UserFixture.create(1L, "user1");
-        User user2 = UserFixture.create(2L, "user2");
-        Question question = QuestionFixture.create(1L, "title", "contents", user1);
-        Answer answer = AnswerFixture.create(1L, user1, question, "Answers Contents");
+        User user = UserFixture.ID가_있는_사용자();
+        User otherUser = UserFixture.ID가_있는_다른_사용자();
+        Question question = QuestionFixture.create(1L, "title", "contents", user);
+        Answer answer = AnswerFixture.create(1L, user, question, "Answers Contents");
         question.addAnswer(answer);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId()))
                 .thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(user2, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(otherUser, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
     @DisplayName("delete 성공 질문자 답변자 같음")
     @Test
     void delete_성공_질문자_답변자_같음() throws Exception {
-        User user = UserFixture.create(1L, "user");
+        User user = UserFixture.ID가_있는_사용자();
         Question question = QuestionFixture.create(1L, "title", "contents", user);
         Answer answer = AnswerFixture.create(1L, user, question, "Answers Contents");
         question.addAnswer(answer);
@@ -100,20 +100,20 @@ class QnaServiceTest {
     @DisplayName("delete 답변 중 다른 사람이 쓴 글")
     @Test
     void delete_답변_중_다른_사람이_쓴_글() {
-        User user1 = UserFixture.create(1L, "user1");
-        User user2 = UserFixture.create(2L, "user2");
+        User user = UserFixture.ID가_있는_사용자();
+        User otherUser = UserFixture.ID가_있는_다른_사용자();
 
-        Question question = QuestionFixture.create(1L, "title", "contents", user1);
+        Question question = QuestionFixture.create(1L, "title", "contents", user);
 
-        Answer answer1 = AnswerFixture.create(1L, user1, question, "Answers Contents1");
-        Answer answer2 = AnswerFixture.create(2L, user2, question, "Answers Contents2");
+        Answer answer1 = AnswerFixture.create(1L, user, question, "Answers Contents1");
+        Answer answer2 = AnswerFixture.create(2L, otherUser, question, "Answers Contents2");
         question.addAnswer(answer1);
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId()))
                 .thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(user1, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(user, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 

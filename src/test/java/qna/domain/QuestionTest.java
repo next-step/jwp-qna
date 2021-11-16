@@ -35,7 +35,7 @@ class QuestionTest {
     @Test
     void save_확인() {
         // given
-        User user = userRepository.save(UserFixture.create("user"));
+        User user = userRepository.save(UserFixture.ID가_없는_사용자());
         Question question = QuestionFixture.create("title", "content", user);
 
         // when
@@ -49,7 +49,7 @@ class QuestionTest {
     @Test
     void findById_확인() {
         // given
-        User user = userRepository.save(UserFixture.create("user"));
+        User user = userRepository.save(UserFixture.ID가_없는_사용자());
         Question question = QuestionFixture.create("title", "contents", user);
 
         // when
@@ -66,7 +66,7 @@ class QuestionTest {
     @Test
     void update_확인() {
         // given
-        User user = userRepository.save(UserFixture.create("user"));
+        User user = userRepository.save(UserFixture.ID가_없는_사용자());
         Question question = QuestionFixture.create("title", "contents", user);
 
         // when
@@ -94,7 +94,7 @@ class QuestionTest {
         @Test
         void 소유자의_question만_존재() throws CannotDeleteException {
             // given
-            User user = userRepository.save(UserFixture.create("user"));
+            User user = userRepository.save(UserFixture.ID가_없는_사용자());
             Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
 
             // when
@@ -113,7 +113,7 @@ class QuestionTest {
         @Test
         void 소유자의_question과_Answer만_존재() throws CannotDeleteException {
             // given
-            User user = userRepository.save(UserFixture.create("user"));
+            User user = userRepository.save(UserFixture.ID가_없는_사용자());
             Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
             Answer answer = answerRepository.save(AnswerFixture.create(user, question, "Answer Contents"));
             question.addAnswer(answer);
@@ -137,8 +137,8 @@ class QuestionTest {
         @Test
         void 다른_사용자의_Answer가_존재() {
             // given
-            User user = userRepository.save(UserFixture.create("user"));
-            User otherUser = userRepository.save(UserFixture.create("otherUser"));
+            User user = userRepository.save(UserFixture.ID가_없는_사용자());
+            User otherUser = userRepository.save(UserFixture.ID가_없는_다른_사용자());
             Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
             Answer answer = answerRepository.save(AnswerFixture.create(otherUser, question, "Answer Contents"));
             question.addAnswer(answer);

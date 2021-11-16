@@ -21,7 +21,7 @@ class UserTest {
     @Test
     void save_확인() {
         // given
-        User user = UserFixture.create("user");
+        User user = new User("user", "password", "name", "email");
 
         // when
         User actual = userRepository.save(user);
@@ -35,7 +35,7 @@ class UserTest {
     @Test
     void findById_확인() {
         // given
-        User savedUser = userRepository.save(UserFixture.create("user"));
+        User savedUser = userRepository.save(UserFixture.ID가_없는_사용자());
 
         // when
         Optional<User> actual = userRepository.findById(savedUser.getId());
@@ -50,7 +50,7 @@ class UserTest {
     @Test
     void update_확인() {
         // given
-        User savedUser = userRepository.save(UserFixture.create("user"));
+        User savedUser = userRepository.save(UserFixture.ID가_없는_사용자());
 
         // when
         savedUser.setUserId("user2");

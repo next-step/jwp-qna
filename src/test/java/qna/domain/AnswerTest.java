@@ -33,7 +33,7 @@ class AnswerTest {
     @Test
     void save_확인() {
         // given
-        User user = userRepository.save(UserFixture.create("user"));
+        User user = userRepository.save(UserFixture.ID가_없는_사용자());
         Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
         Answer answer = AnswerFixture.create(user, question, "Answers Contents");
 
@@ -48,7 +48,7 @@ class AnswerTest {
     @Test
     void findById_확인() {
         // given
-        User user = userRepository.save(UserFixture.create("user"));
+        User user = userRepository.save(UserFixture.ID가_없는_사용자());
         Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
         Answer answer = AnswerFixture.create(user, question, "Answers Contents");
 
@@ -66,7 +66,7 @@ class AnswerTest {
     @Test
     void update_확인() {
         // given
-        User user = userRepository.save(UserFixture.create("user"));
+        User user = userRepository.save(UserFixture.ID가_없는_사용자());
         Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
         Answer answer = AnswerFixture.create(user, question, "Answers Contents");
 
@@ -93,7 +93,7 @@ class AnswerTest {
         @Test
         void owner가_맞음() throws CannotDeleteException {
             // given
-            User user = userRepository.save(UserFixture.create("user"));
+            User user = userRepository.save(UserFixture.ID가_없는_사용자());
             Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
             Answer answer = answerRepository.save(AnswerFixture.create(user, question, "Answers Contents"));
 
@@ -115,13 +115,13 @@ class AnswerTest {
         @Test
         void owner가_아님() {
             // given
-            User user = userRepository.save(UserFixture.create("user"));
-            User loginUser = userRepository.save(UserFixture.create("loginUser"));
+            User user = userRepository.save(UserFixture.ID가_없는_사용자());
+            User otherUser = userRepository.save(UserFixture.ID가_없는_다른_사용자());
             Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
             Answer answer = answerRepository.save(AnswerFixture.create(user, question, "Answers Contents"));
 
             // when
-            ThrowableAssert.ThrowingCallable throwingCallable = () -> answer.delete(loginUser);
+            ThrowableAssert.ThrowingCallable throwingCallable = () -> answer.delete(otherUser);
 
             // then
             Assertions.assertThatThrownBy(throwingCallable)
