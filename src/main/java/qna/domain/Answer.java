@@ -6,6 +6,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -59,11 +60,16 @@ public class Answer extends BaseTime {
         return isOwner(writer);
     }
 
-    public void delete(User writer) throws CannotDeleteException {
+    public DeleteHistory delete(User writer) throws CannotDeleteException {
         if(!canDelete(writer)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         this.deleted = true;
+        return recordDeleteHistory();
+    }
+
+    private DeleteHistory recordDeleteHistory() {
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
     }
 
     public void toQuestion(Question question) {
@@ -104,6 +110,10 @@ public class Answer extends BaseTime {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public boolean isNotDeleted() {
+        return !deleted;
     }
 
     public void setDeleted(boolean deleted) {

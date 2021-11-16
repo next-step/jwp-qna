@@ -6,6 +6,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 @Table(name = "question")
@@ -55,28 +58,40 @@ public class Question extends BaseTime {
         return isOwner(writer);
     }
 
-    public DeleteHistory delete(User writer) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User writer) throws CannotDeleteException {
         if(!canDelete(writer)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
         this.deleted = true;
-        return recordDeleteHistory();
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(recordDeleteHistory());
+        deleteHistories.addAll(deleteAnswer(writer));
+        return deleteHistories;
     }
 
     private DeleteHistory recordDeleteHistory() {
         return new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
     }
 
-    public void deleteAnswer(User writer) throws CannotDeleteException {
+    private List<Answer> notDeletedAnswers() {
+        return this.answers.stream()
+                            .filter(a -> a.isNotDeleted())
+                            .collect(toList());
+    }
 
+    public List<DeleteHistory> deleteAnswer(User writer) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        List<Answer> answers = notDeletedAnswers();
         for(Answer answer : answers)
         {
-            answer.delete(writer);
+            deleteHistories.add(answer.delete(writer));
         }
+        return deleteHistories;
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
 
