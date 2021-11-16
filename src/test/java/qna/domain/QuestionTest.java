@@ -101,7 +101,6 @@ public class QuestionTest {
     @Test
     void saveQuestionWithAnswerTest() {
         final Answer answer = answerRepository.save(new Answer(user, question, "Answers Contents1"));
-        question.addAnswer(answer);
         Question actual = questionRepository.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertAll(
