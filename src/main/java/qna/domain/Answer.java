@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -137,5 +138,10 @@ public class Answer extends AuditEntity {
 	@Override
 	public int hashCode() {
 		return id != null ? id.hashCode() : 0;
+	}
+
+	public DeleteHistory delete() {
+		this.deleted = true;
+		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
 	}
 }
