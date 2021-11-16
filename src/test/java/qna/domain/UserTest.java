@@ -30,9 +30,9 @@ public class UserTest {
 
     @BeforeEach
     void setUp() {
-        user1 = new User(1L, "user1", "password", "alice",
+        user1 = new User("user1", "password", "alice",
             "alice@gmail.com");
-        user2 = new User(2L, "user2", "password", "bob",
+        user2 = new User("user2", "password", "bob",
             "bob@gmail.com");
 
         userRepository.save(user1);
@@ -104,14 +104,15 @@ public class UserTest {
 
     @Test
     void test_사용자_이메일_수정() {
+        String newEmail = "new.alice@gmail.com";
+        user1.setEmail(newEmail);
+
         User actual = userRepository.findByUserId(user1.getUserId())
             .orElse(null);
 
-        actual.setEmail("new.alice@gmail.com");
-
         assertAll(
             () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual.getEmail()).isEqualTo("new.alice@gmail.com")
+            () -> assertThat(actual.getEmail()).isEqualTo(newEmail)
         );
     }
 }
