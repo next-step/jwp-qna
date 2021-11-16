@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -60,10 +61,12 @@ public class Question extends BaseTimeEntity {
         answers.add(answer);
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         validateOwner(loginUser);
-        answers.delete(loginUser);
+        List<DeleteHistory> deleteHistories = answers.delete(loginUser);
         this.deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, loginUser));
+        return deleteHistories;
     }
 
     private void validateOwner(User loginUser) throws CannotDeleteException {

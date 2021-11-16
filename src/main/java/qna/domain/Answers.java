@@ -24,13 +24,14 @@ public class Answers {
         answers.add(answer);
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         validateOwner(loginUser);
-        deleteAll();
-    }
-
-    private void deleteAll() {
-        answers.forEach(Answer::delete);
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : answers) {
+            answer.delete();
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), loginUser));
+        }
+        return deleteHistories;
     }
 
     private void validateOwner(User loginUser) throws CannotDeleteException {
@@ -43,7 +44,4 @@ public class Answers {
         return answers.stream().allMatch(answer -> answer.isOwner(loginUser));
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
-    }
 }
