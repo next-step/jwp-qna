@@ -35,7 +35,7 @@ public class Answers {
 
     private void validateOwner(User loginUser) throws CannotDeleteException {
         if(!isEntireAnswersOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 수 없습니다.");
+            throw new CannotDeleteException("질문자와 답변자가 다른 경우 답변을 삭제할 수 없습니다.");
         }
     }
 
