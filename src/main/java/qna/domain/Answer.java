@@ -45,15 +45,15 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.writer = writer;
-        this.question = question;
         this.contents = contents;
+        setQuestion(question);
     }
 
     protected Answer() {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public Long getId() {
@@ -80,7 +80,10 @@ public class Answer extends BaseTimeEntity {
         return question;
     }
 
-    public void setQuestion(final Question question) {
+    private void setQuestion(final Question question) {
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().removeAnswer(this);
+        }
         this.question = question;
         question.getAnswers().addAnswer(this);
     }
@@ -89,8 +92,8 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writer.getId() +
-                ", questionId=" + question.getId() +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
