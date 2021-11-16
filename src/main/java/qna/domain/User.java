@@ -14,10 +14,6 @@ import javax.persistence.SequenceGenerator;
 import qna.UnAuthorizedException;
 
 @Entity
-@SequenceGenerator(name = "question_sequence_gen",
-	sequenceName = "question_sequence",
-	initialValue = 1,
-	allocationSize = 50)
 public class User extends BaseTime {
 	public static final GuestUser GUEST_USER = new GuestUser();
 
