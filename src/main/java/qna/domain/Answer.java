@@ -1,6 +1,5 @@
 package qna.domain;
 
-import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -55,9 +54,9 @@ public class Answer extends BaseTimeEntity {
     }
 
 
-    public void isOwner(User loginUser) throws CannotDeleteException {
+    public void isOwner(User loginUser) {
         if (!this.writer.equals(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new UnAuthorizedException("답변을 삭제할 권한이 없습니다.");
         }
     }
 
