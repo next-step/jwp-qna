@@ -131,7 +131,7 @@ public class AnswerTest {
 
     @Test
     void test_동일_작성자_답변_삭제() throws CannotDeleteException {
-        DeleteHistory deleteHistory = answer1.answerDelete(answer1.getWriter());
+        DeleteHistory deleteHistory = answer1.delete(answer1.getWriter());
 
         assertAll(
             () -> assertThat(answer1.isDeleted()).isTrue(),
@@ -145,7 +145,7 @@ public class AnswerTest {
 
         assertAll(
             () -> assertThat(answer1.getWriter()).isNotEqualTo(anotherWriter),
-            () -> assertThatThrownBy(() -> answer1.answerDelete(anotherWriter))
+            () -> assertThatThrownBy(() -> answer1.delete(anotherWriter))
                 .isInstanceOf(CannotDeleteException.class),
             () -> assertThat(answer1.isDeleted()).isFalse()
         );
