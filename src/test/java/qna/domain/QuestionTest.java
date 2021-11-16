@@ -89,9 +89,7 @@ public class QuestionTest {
         @DisplayName("답변이 있다면 모든 답변자가 질문자와 동일해야 한다")
         @Test
         void givenAnswersAndSameWriterWhenDeleteQuestionThenDeleted() throws CannotDeleteException {
-            question.addAnswer(USER1, "content1");
-            question.addAnswer(USER1, "content2");
-            question.addAnswer(USER1, "content3");
+            addAnswerWithSameWriter(USER1);
             question.delete(USER1);
             assertThat(question.getAnswers()).hasSize(0);
         }
@@ -99,9 +97,7 @@ public class QuestionTest {
         @DisplayName("질문자와 다른 답변자가 있다면 오류를 던진다")
         @Test
         void givenAnswersWhenDeleteQuestionThenThrowException() throws CannotDeleteException {
-            question.addAnswer(USER1, "content1");
-            question.addAnswer(USER1, "content2");
-            question.addAnswer(USER2, "content3");
+            addAnswerWithDifferentWriter(USER1, USER2);
             assertThatThrownBy(() -> question.delete(USER1))
                     .isInstanceOf(CannotDeleteException.class);
         }
@@ -109,10 +105,32 @@ public class QuestionTest {
         @DisplayName("질문자와 다른 답변자가 있다면 삭제되지 않는다")
         @Test
         void givenAnswersWhenDeleteQuestionThenDoNotDeleted() throws CannotDeleteException {
-            question.addAnswer(USER1, "content1");
-            question.addAnswer(USER1, "content2");
-            question.addAnswer(USER2, "content3");
+            addAnswerWithDifferentWriter(USER1, USER2);
             assertThat(question.isDeleted()).isFalse();
+        }
+
+        @DisplayName("답변을 삭제하면 삭제 기록을 생성한다")
+        @Test
+        void whenDeleteAnswerThenCrateDeleteHistory() throws CannotDeleteException {
+            addAnswerWithSameWriter(USER1);
+            question.delete(USER1);
+            QuestionDeleteHistory deleteHistory = question.getQuestionDeleteHistory();
+            assertAll(
+                    () -> assertThat(deleteHistory.getQuestion()).isEqualTo(question),
+                    () -> assertThat(deleteHistory.getDeletedBy()).isEqualTo(question.getWriter())
+            );
+        }
+
+        private void addAnswerWithSameWriter(User user) {
+            question.addAnswer(user, "content1");
+            question.addAnswer(user, "content2");
+            question.addAnswer(user, "content3");
+        }
+
+        private void addAnswerWithDifferentWriter(User user1, User user2) {
+            question.addAnswer(user1, "content1");
+            question.addAnswer(user1, "content2");
+            question.addAnswer(user2, "content3");
         }
     }
 }

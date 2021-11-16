@@ -27,11 +27,10 @@ public class Question extends BaseEntity {
     @Embedded
     private Answers answers = new Answers();
 
-    protected Question() {
-    }
+    @OneToOne(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private QuestionDeleteHistory questionDeleteHistory;
 
-    private Question(String title, String contents, User writer) {
-        this(null, title, contents, writer);
+    protected Question() {
     }
 
     private Question(Long id, String title, String contents, User writer) {
@@ -86,6 +85,7 @@ public class Question extends BaseEntity {
         }
         answers.deleteAll(writer);
         this.deleted = true;
+        this.questionDeleteHistory = new QuestionDeleteHistory(this);
     }
 
     public String getTitle() {
@@ -106,6 +106,10 @@ public class Question extends BaseEntity {
 
     public List<Answer> getAnswers() {
         return answers.getAnswers();
+    }
+
+    public QuestionDeleteHistory getQuestionDeleteHistory() {
+        return questionDeleteHistory;
     }
 
     @Override

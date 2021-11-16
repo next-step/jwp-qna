@@ -2,6 +2,7 @@ package qna.domain;
 
 import qna.CannotDeleteException;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.*;
@@ -9,7 +10,7 @@ import java.util.stream.Collectors;
 
 @Embeddable
 public class Answers {
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Answer> answers = new ArrayList<>();
 
     protected Answers() {
