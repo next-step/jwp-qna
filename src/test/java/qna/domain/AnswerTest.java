@@ -88,18 +88,6 @@ public class AnswerTest {
         );
     }
 
-    @DisplayName("삭제되지 않은 답안목록 조회 성공을 테스트합니다.")
-    @Test
-    public void 삭제되지_않은_답안목록_조회_성공() {
-        List<Answer> answers = new ArrayList<>();
-        answers.add(A1);
-        answers.add(A2);
-
-        answerRepository.saveAll(answers);
-
-        //assertThat(notDeletedAnswers).hasSize(answers.size());
-    }
-
     @DisplayName("답안정보(id) 조회 실패를 테스트합니다.")
     @Test
     public void id_조회_실패() {
