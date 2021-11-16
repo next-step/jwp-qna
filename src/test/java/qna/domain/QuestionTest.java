@@ -15,8 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class QuestionTest {
 
-    private Question question1;
-    private Question question2;
+    @Autowired UserRepository userRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -24,12 +23,27 @@ public class QuestionTest {
     @Autowired
     private EntityManager entityManager;
 
+    private User user1;
+    private User user2;
+
+    private Question question1;
+    private Question question2;
+
     @BeforeEach
     void setUp() {
+        user1 = new User("user1", "password", "alice",
+            "alice@gmail.com");
+        user2 = new User("user2", "password", "bob",
+            "bob@gmail.com");
+
+        userRepository.save(user1);
+        userRepository.save(user2);
+
         question1 = new Question("title1", "contents1")
-            .writeBy(UserTest.JAVAJIGI);
+            .writeBy(user1);
         question2 = new Question("title2", "contents2")
-            .writeBy(UserTest.SANJIGI);
+            .writeBy(user2);
+
         questionRepository.save(question1);
         questionRepository.save(question2);
     }
@@ -42,6 +56,7 @@ public class QuestionTest {
     @Test
     void test_질문_저장() {
         questionRepository.deleteAll();
+        userRepository.deleteAll();
         entityManager.clear();
 
         Question actual = questionRepository.save(question1);
