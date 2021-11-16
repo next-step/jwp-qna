@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Where;
@@ -13,7 +14,8 @@ import org.hibernate.annotations.Where;
 @Embeddable
 public class QuestionAnswers {
     @Where(clause = "deleted = false")
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
     private List<Answer> answers = new ArrayList<>();
 
     protected QuestionAnswers() {
@@ -39,26 +41,8 @@ public class QuestionAnswers {
         return deleteHistories;
     }
 
-    void remove(final Answer answer) {
-        answers.remove(answer);
-    }
-
     void add(final Answer answer) {
-        validate(answer);
         answers.add(answer);
-    }
-
-    private void validate(final Answer addedAnswer) {
-        if (!answers.isEmpty()) {
-            validateSameQuestion(addedAnswer.getQuestion());
-        }
-    }
-
-    private void validateSameQuestion(final Question question) {
-        answers.stream()
-            .filter(answer -> answer.getQuestion().equals(question))
-            .findAny()
-            .orElseThrow(() -> new IllegalArgumentException("QuestionAnswers객체는 하나의 Question객체에 종속된 객체입니다."));
     }
 
     boolean contains(final Answer answer) {

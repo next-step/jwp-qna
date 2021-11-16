@@ -17,8 +17,8 @@ public class Account {
     }
 
     Account(final String userId, final String password) {
-        this.userId = Objects.requireNonNull(userId);
-        this.password = Objects.requireNonNull(password);
+        this.userId = userId;
+        this.password = password;
     }
 
     @Override

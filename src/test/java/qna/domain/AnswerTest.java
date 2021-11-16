@@ -33,16 +33,13 @@ public class AnswerTest {
     @Test
     void save() {
         User user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
-        Question question = questions.save(new Question(user, "title1", "contents1"));
-        Answer expected = new Answer(user, question, "Answers Contents1");
+        Answer expected = new Answer(user, "Answers Contents1");
 
         Answer actual = answers.save(expected);
 
         assertThat(actual.getId()).isNotNull();
         assertThat(actual.getContents()).isEqualTo(expected.getContents());
         assertThat(actual.getContents().getWriter()).isSameAs(user);
-        assertThat(actual.getQuestion()).isSameAs(question);
-        assertThat(actual.getQuestion().getAnswers().contains(actual)).isTrue();
     }
 
     @Test
@@ -89,8 +86,7 @@ public class AnswerTest {
 
     private Answer saveNewDefaultAnswer() {
         User user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
-        Question question = questions.save(new Question(user, "title1", "contents1"));
-        Answer defaultAnswer = new Answer(user, question, "Answers Contents1");
+        Answer defaultAnswer = new Answer(user, "Answers Contents1");
         return answers.save(defaultAnswer);
     }
 }

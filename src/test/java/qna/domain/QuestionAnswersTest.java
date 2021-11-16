@@ -34,8 +34,10 @@ public class QuestionAnswersTest {
     void deleteBy() {
         User user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
         Question question = questions.save(new Question(user, "title1", "contents1"));
-        Answer answer1 = answers.save(new Answer(user, question, "Answers Contents1"));
-        Answer answer2 = answers.save(new Answer(user, question, "Answers Contents2"));
+        Answer answer1 = answers.save(new Answer(user, "Answers Contents1"));
+        Answer answer2 = answers.save(new Answer(user, "Answers Contents2"));
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
 
         List<DeleteHistory> deleteHistories = question.getAnswers().deleteBy(user);
 
@@ -51,8 +53,10 @@ public class QuestionAnswersTest {
         User user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
         Question question = questions.save(new Question(user, "title1", "contents1"));
         User invalidUser = users.save(new User("minseoklim", "1234", "임민석", "mslim@slipp.net"));
-        Answer answer = answers.save(new Answer(user, question, "Answers Contents1"));
-        answers.save(new Answer(invalidUser, question, "Answers Contents2"));
+        Answer answer = answers.save(new Answer(user, "Answers Contents1"));
+        question.addAnswer(answer);
+        question.addAnswer(answers.save(new Answer(invalidUser, "Answers Contents2")));
+
 
         assertThatThrownBy(() -> question.getAnswers().deleteBy(invalidUser))
             .isInstanceOf(CannotDeleteException.class);

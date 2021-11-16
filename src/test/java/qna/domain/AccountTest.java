@@ -2,27 +2,13 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 
 public class AccountTest {
-    @ParameterizedTest
-    @DisplayName("객체 생성 시, not null인 필드에 null이 전달될 경우 예외 발생")
-    @MethodSource("provideParametersIncludingNull")
-    void createByNull(String userId, String password) {
-        assertThatNullPointerException().isThrownBy(() ->
-            new Account(userId, password)
-        );
-    }
-
-    private static Stream<Arguments> provideParametersIncludingNull() {
-        return Stream.of(
-            Arguments.of(null, "password"),
-            Arguments.of("javajigi", null)
-        );
+    @Test
+    @DisplayName("동등성 검사 테스트. userId만 같으면 동등")
+    void equals() {
+        assertThat(new Account("javajigi", "password")).isEqualTo(new Account("javajigi", "1q2w3e4r!"));
     }
 }

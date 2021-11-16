@@ -22,39 +22,24 @@ public class Answer extends BaseTimeEntity {
 
     private boolean deleted = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Question question;
-
     @Embedded
     private Contents contents;
 
     protected Answer() {
     }
 
-    public Answer(final User writer, final Question question, final String contents) {
-        this(null, writer, question, contents);
+    public Answer(final User writer, final String contents) {
+        this(null, writer, contents);
     }
 
-    public Answer(final Long id, final User writer, final Question question, final String contents) {
+    public Answer(final Long id, final User writer, final String contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
 
-        toQuestion(question);
         this.contents = new Contents(contents, writer);
-    }
-
-    void toQuestion(final Question question) {
-        if (this.question != null) {
-            this.question.getAnswers().remove(this);
-        }
-        this.question = question;
-        question.getAnswers().add(this);
     }
 
     DeleteHistory deleteBy(final User loginUser) {
@@ -82,16 +67,11 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public Question getQuestion() {
-        return question;
-    }
-
     @Override
     public String toString() {
         return "Answer{" +
             "id=" + id +
             ", writerId=" + contents.getWriter().getId() +
-            ", questionId=" + question.getId() +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';

@@ -3,14 +3,10 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.NoSuchElementException;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -71,22 +67,5 @@ public class UserTest {
     private User saveNewDefaultUser() {
         User defaultUser = new User("javajigi", "password", "name", "javajigi@slipp.net");
         return users.save(defaultUser);
-    }
-
-    @ParameterizedTest
-    @DisplayName("객체 생성 시, not null인 필드에 null이 전달될 경우 예외 발생")
-    @MethodSource("provideParametersIncludingNull")
-    void createByNull(String userId, String password, String name, String email) {
-        assertThatNullPointerException().isThrownBy(() ->
-            new User(userId, password, name, email)
-        );
-    }
-
-    private static Stream<Arguments> provideParametersIncludingNull() {
-        return Stream.of(
-            Arguments.of(null, "password", "name", "javajigi@slipp.net"),
-            Arguments.of("javajigi", null, "name", "javajigi@slipp.net"),
-            Arguments.of("javajigi", "password", null, "javajigi@slipp.net")
-        );
     }
 }

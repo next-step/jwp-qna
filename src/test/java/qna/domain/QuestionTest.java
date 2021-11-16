@@ -6,6 +6,9 @@ import static qna.domain.ContentType.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +29,9 @@ public class QuestionTest {
 
     @Autowired
     private AnswerRepository answers;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @AfterEach
     void tearDown() {
@@ -72,20 +78,18 @@ public class QuestionTest {
     void addAnswer() {
         Question question = saveNewDefaultQuestion();
         User user = users.save(new User("minseoklim", "password", "임민석", "mslim@naver.com"));
-        Question oldQuestion = questions.save(new Question(user, "다른 질문", "졸립니다"));
-        Answer answer = answers.save(new Answer(user, oldQuestion, "Answers Contents1"));
+        Answer answer = answers.save(new Answer(user, "Answers Contents1"));
         question.addAnswer(answer);
 
         assertThat(question.getAnswers().contains(answer)).isTrue();
-        assertThat(answer.getQuestion()).isEqualTo(question);
-        assertThat(answer.getQuestion()).isNotEqualTo(oldQuestion);
     }
 
     @Test
     void deleteBy() {
         Question question = saveNewDefaultQuestion();
         User writer = question.getContents().getWriter();
-        Answer answer = answers.save(new Answer(writer, question, "이제는 잘 시간입니다"));
+        Answer answer = answers.save(new Answer(writer, "이제는 잘 시간입니다"));
+        question.addAnswer(answer);
 
         List<DeleteHistory> deleteHistories = question.deleteBy(writer);
 
@@ -111,9 +115,10 @@ public class QuestionTest {
     void deleteQuestionHavingAnswersFromOthers() {
         Question question = saveNewDefaultQuestion();
         User writer = question.getContents().getWriter();
-        Answer answer = answers.save(new Answer(writer, question, "이제는 잘 시간입니다"));
+        Answer answer = answers.save(new Answer(writer, "이제는 잘 시간입니다"));
+        question.addAnswer(answer);
         User other = users.save(new User("minseoklim", "1234", "임민석", "mslim@slipp.net"));
-        answers.save(new Answer(other, question, "이제는 잘 시간입니다"));
+        question.addAnswer(answers.save(new Answer(other, "이제는 잘 시간입니다")));
 
         assertThatThrownBy(() -> question.deleteBy(writer))
             .isInstanceOf(CannotDeleteException.class);
@@ -124,13 +129,5 @@ public class QuestionTest {
         User user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
         Question defaultQuestion = new Question(user, "title1", "contents1");
         return questions.save(defaultQuestion);
-    }
-
-    @Test
-    @DisplayName("객체 생성 시, not null인 필드에 null이 전달될 경우 예외 발생")
-    void createByNull() {
-        assertThatNullPointerException().isThrownBy(() ->
-            new Question(UserTest.JAVAJIGI, null, "contents1")
-        );
     }
 }
