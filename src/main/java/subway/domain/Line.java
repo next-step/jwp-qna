@@ -49,17 +49,16 @@ public class Line {
     }
 
     public List<Station> getStations() {
-        System.out.println(stations.toString());
         return stations;
+    }
+
+    public void addStation(Station station) {
+        stations.add(station);
+        station.setLine(this);
     }
 
     public void setStations(List<Station> stations) {
         this.stations = stations;
-    }
-
-    public void addStation(Station station) {
-        station.setLine(this);
-        stations.add(station);
     }
 
     @Override

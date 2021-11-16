@@ -2,13 +2,13 @@ package subway.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.TestPropertySource;
 
 @DataJpaTest
-@TestPropertySource(locations = "classpath:subway/application.properties")
 public class LineRepositoryTest {
 
     @Autowired
@@ -18,27 +18,39 @@ public class LineRepositoryTest {
     @Autowired
     private StationRepository stations;
 
+    Station STATION;
+    Line LINE;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        STATION = new Station("교대역");
+        LINE = lines.save(new Line("3호선"));
+        STATION.setLine(LINE);
+        stations.save(STATION);
+    }
+
     @Test
     void saveWithLine() {
-        Station expect = new Station("잠실역");
-        expect.setLine(lines.save(new Line("2호선"))); // 영속상태여야 한다.
-        Station actual = stations.save(expect);
-        stations.flush(); // commit
+        Station expected = new Station("잠실역");
+        expected.setLine(lines.save(new Line("2호선")));
+        Station actual = stations.save(expected);
+        stations.flush();
     }
 
     @Test
     void findByNameWithLine() {
         Station actual = stations.findByName("교대역");
+
         assertThat(actual).isNotNull();
         assertThat(actual.getLine().getName()).isEqualTo("3호선");
     }
 
-//    @Test
-//    void removeLine() {
-//        Station station = stations.findByName("교대역");
-//        station.setLine(null);
-//        stations.flush();
-//    }
+    @Test
+    void removeLine() {
+        Station station = stations.findByName("교대역");
+        station.removeLine();
+        stations.flush();
+    }
 
     @Test
     void findById() {

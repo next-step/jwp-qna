@@ -1,5 +1,6 @@
 package subway.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,11 +22,37 @@ public class LineStation {
     @JoinColumn(name = "line_id")
     private Line line;
 
-//    @OneToOne(mappedBy = "lineStation") // (1)
-//    private Station station; // (2)
-
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "station_id")
     private Station station;
 
+    protected LineStation() {
+    }
+
+    public LineStation(Line line, Station station) {
+        this.line = line;
+        this.station = station;
+        station.addLineStation(this);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Line getLine() {
+        return line;
+    }
+
+    public Station getStation() {
+        return station;
+    }
+
+    @Override
+    public String toString() {
+        return "LineStation{" +
+            "id=" + id +
+            ", line=" + line.getId() +
+            ", station=" + station.getId() +
+            '}';
+    }
 }

@@ -8,17 +8,16 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class MemberRepositoryTest {
 
     @Autowired
-    private MemberRepository members;
+    MemberRepository members;
 
     @Autowired
-    private FavoriteRepository favorites;
+    FavoriteRepository favorites;
 
     @Test
     void save() {
-        Member expected = new Member("test");
+        Member expected = new Member("jason");
         expected.addFavorite(favorites.save(new Favorite()));
         Member actual = members.save(expected);
-        members.flush(); // transaction commit
+        members.flush(); // favorite insert -> member insert -> favorite update
     }
-
 }
