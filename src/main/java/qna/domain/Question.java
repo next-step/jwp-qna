@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -43,7 +44,7 @@ public class Question extends BaseTimeEntity {
     public Question(final Long id, final User writer, final String title, final String contents) {
         this.id = id;
         this.contents = contents;
-        this.title = title;
+        this.title = Objects.requireNonNull(title);
         this.writer = writer;
     }
 

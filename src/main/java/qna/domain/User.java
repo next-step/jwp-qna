@@ -35,9 +35,9 @@ public class User extends BaseTimeEntity {
 
     public User(final Long id, final String userId, final String password, final String name, final String email) {
         this.id = id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
+        this.userId = Objects.requireNonNull(userId);
+        this.password = Objects.requireNonNull(password);
+        this.name = Objects.requireNonNull(name);
         this.email = email;
     }
 

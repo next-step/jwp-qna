@@ -125,4 +125,12 @@ public class QuestionTest {
         Question defaultQuestion = new Question(user, "title1", "contents1");
         return questions.save(defaultQuestion);
     }
+
+    @Test
+    @DisplayName("객체 생성 시, not null인 필드에 null이 전달될 경우 예외 발생")
+    void createByNull() {
+        assertThatNullPointerException().isThrownBy(() ->
+            new Question(UserTest.JAVAJIGI, null, "contents1")
+        );
+    }
 }
