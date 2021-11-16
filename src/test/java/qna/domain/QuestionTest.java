@@ -76,4 +76,16 @@ public class QuestionTest {
                 new Question("안녕하세요 질문이있습니다.", "미가입자도 질문 가능한가요?").writeBy(guest);
             }).withMessage(UnAuthorizedException.GUEST_USER_NOT_QUESTION);
     }
+
+    @Test
+    @DisplayName("질문 삭제 리턴 값 DeleteHistory 검증")
+    void adeleted() {
+        // given
+        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+
+        // when
+        // then
+        assertThat(question.delete(UserTest.JAVAJIGI)).contains(DeleteHistory.OfQuestion(question));
+    }
+
 }

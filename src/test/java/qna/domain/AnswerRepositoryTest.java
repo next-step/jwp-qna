@@ -117,10 +117,20 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("자신이 작성한 답변 삭제 성공")
-    void deleted_다른사람_답변_삭제_성공() {
+    void deleted_자신이_작성한_답변_삭제_성공() {
         // given
         // when
         // then
         ANSWER.delete(ANSWER.getWriter());
+    }
+
+
+    @Test
+    @DisplayName("답변 삭제 리턴 DeleteHistory 검증")
+    void adeleted() {
+        // given
+        // when
+        // then
+        assertThat(ANSWER.delete(ANSWER.getWriter())).isEqualTo(DeleteHistory.OfAnswer(ANSWER));
     }
 }
