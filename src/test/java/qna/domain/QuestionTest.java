@@ -34,8 +34,7 @@ class QuestionTest {
     @Test
     void save_확인() {
         // given
-        User user = userRepository.save(UserFixture.ID가_없는_사용자());
-        Question question = QuestionFixture.create("title", "content", user);
+        Question question = QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문();
 
         // when
         Question actual = questionRepository.save(question);
@@ -48,8 +47,7 @@ class QuestionTest {
     @Test
     void findById_확인() {
         // given
-        User user = userRepository.save(UserFixture.ID가_없는_사용자());
-        Question question = QuestionFixture.create("title", "contents", user);
+        Question question = QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문();
 
         // when
         Question savedQuestion = questionRepository.save(question);
@@ -65,8 +63,7 @@ class QuestionTest {
     @Test
     void update_확인() {
         // given
-        User user = userRepository.save(UserFixture.ID가_없는_사용자());
-        Question question = QuestionFixture.create("title", "contents", user);
+        Question question = QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문();
 
         // when
         Question savedQuestion = questionRepository.save(question);
@@ -93,11 +90,10 @@ class QuestionTest {
         @Test
         void 소유자의_question만_존재() throws CannotDeleteException {
             // given
-            User user = userRepository.save(UserFixture.ID가_없는_사용자());
-            Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
+            Question question = questionRepository.save(QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문());
 
             // when
-            List<DeleteHistory> deleteHistories = question.delete(user);
+            List<DeleteHistory> deleteHistories = question.delete(question.getWriter());
 
             // then
             assertAll(
@@ -108,7 +104,7 @@ class QuestionTest {
                     () -> assertThat(deleteHistories.get(0).getContentId())
                             .isEqualTo(question.getId()),
                     () -> assertThat(deleteHistories.get(0).getDeletedBy())
-                            .isEqualTo(user),
+                            .isEqualTo(question.getWriter()),
                     () -> verifyQuestionDeleteStatus(question.getId(), true)
             );
         }
@@ -117,13 +113,12 @@ class QuestionTest {
         @Test
         void 소유자의_question과_Answer만_존재() throws CannotDeleteException {
             // given
-            User user = userRepository.save(UserFixture.ID가_없는_사용자());
-            Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
-            Answer answer = answerRepository.save(AnswerFixture.create(user, question, "Answer Contents"));
+            Question question = questionRepository.save(QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문());
+            Answer answer = answerRepository.save(AnswerFixture.create(question.getWriter(), question, "Answer Contents"));
             question.addAnswer(answer);
 
             // when
-            List<DeleteHistory> deleteHistories = question.delete(user);
+            List<DeleteHistory> deleteHistories = question.delete(question.getWriter());
 
             // then
             assertAll(
@@ -134,13 +129,13 @@ class QuestionTest {
                     () -> assertThat(deleteHistories.get(0).getContentId())
                             .isEqualTo(question.getId()),
                     () -> assertThat(deleteHistories.get(0).getDeletedBy())
-                            .isEqualTo(user),
+                            .isEqualTo(question.getWriter()),
                     () -> assertThat(deleteHistories.get(1).getContentType())
                             .isEqualTo(ContentType.ANSWER),
                     () -> assertThat(deleteHistories.get(1).getContentId())
                             .isEqualTo(answer.getId()),
                     () -> assertThat(deleteHistories.get(1).getDeletedBy())
-                            .isEqualTo(user),
+                            .isEqualTo(question.getWriter()),
                     () -> verifyDeletedStatus(question.getId(), answer.getId(), true)
             );
         }
@@ -149,9 +144,8 @@ class QuestionTest {
         @Test
         void 다른_사용자의_Answer가_존재() {
             // given
-            User user = userRepository.save(UserFixture.ID가_없는_사용자());
             User otherUser = userRepository.save(UserFixture.ID가_없는_다른_사용자());
-            Question question = questionRepository.save(QuestionFixture.create("title", "contents", user));
+            Question question = questionRepository.save(QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문());
             Answer answer = answerRepository.save(AnswerFixture.create(otherUser, question, "Answer Contents"));
             question.addAnswer(answer);
 

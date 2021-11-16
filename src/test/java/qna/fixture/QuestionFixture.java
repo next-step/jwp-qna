@@ -1,18 +1,17 @@
 package qna.fixture;
 
 import qna.domain.Question;
-import qna.domain.User;
 
 public class QuestionFixture {
     private QuestionFixture() {
         throw new UnsupportedOperationException();
     }
 
-    public static Question create(String title, String contents, User user) {
-        return create(null, title, contents, user);
+    public static Question ID가_없는_사용자의_질문ID가_없는_질문() {
+        return new Question(null, "title", "contents").writeBy(UserFixture.ID가_없는_사용자());
     }
 
-    public static Question create(Long id, String title, String contents, User user) {
-        return new Question(id, title, contents).writeBy(user);
+    public static Question ID가_없는_사용자의_질문ID가_있는_질문() {
+        return new Question(1L, "title", "contents").writeBy(UserFixture.ID가_없는_사용자());
     }
 }
