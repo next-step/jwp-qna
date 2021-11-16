@@ -48,8 +48,6 @@ public class Question extends BaseEntity{
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
     protected Question() {
