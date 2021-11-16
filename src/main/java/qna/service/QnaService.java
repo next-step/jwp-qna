@@ -13,12 +13,14 @@ import java.util.List;
 
 @Service
 public class QnaService {
+
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
-    private QuestionRepository questionRepository;
-    private DeleteHistoryService deleteHistoryService;
+    private final QuestionRepository questionRepository;
+    private final DeleteHistoryService deleteHistoryService;
 
-    public QnaService(QuestionRepository questionRepository, DeleteHistoryService deleteHistoryService) {
+    public QnaService(QuestionRepository questionRepository,
+        DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;
         this.deleteHistoryService = deleteHistoryService;
     }

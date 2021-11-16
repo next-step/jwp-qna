@@ -9,6 +9,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class Email implements Serializable {
+
     private static final Pattern emailPattern = Pattern.compile(
         "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$");
 
@@ -32,9 +33,5 @@ public class Email implements Serializable {
 
     public String getValue() {
         return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 }
