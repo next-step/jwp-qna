@@ -35,6 +35,7 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "deletedBy")
     private List<DeleteHistory> deleteHistories;
+
     protected User() {
     }
 
@@ -139,7 +140,7 @@ public class User extends BaseEntity {
         return this.questions;
     }
 
-    public void addQuestion(Question question){
+    public void addQuestion(Question question) {
         question.writeBy(this);
     }
 
@@ -147,7 +148,7 @@ public class User extends BaseEntity {
         return this.deleteHistories;
     }
 
-    public void addDeleteHistory(DeleteHistory deleteHistory){
+    public void addDeleteHistory(DeleteHistory deleteHistory) {
         deleteHistory.deletedBy(this);
     }
 

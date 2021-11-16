@@ -51,8 +51,8 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public void writerBy(User writer){
-        if(this.writer != null){
+    public void writerBy(User writer) {
+        if (this.writer != null) {
             this.writer.getAnswers().remove(this);
         }
         this.writer = writer;
@@ -60,7 +60,7 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        if(this.question != null){
+        if (this.question != null) {
             this.question.getAnswers().remove(this);
         }
         this.question = question;

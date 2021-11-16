@@ -44,8 +44,8 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public void toWriter(User writer){
-        if(this.writer != null){
+    public void toWriter(User writer) {
+        if (this.writer != null) {
             this.writer.getQuestions().remove(this);
         }
         this.writer = writer;

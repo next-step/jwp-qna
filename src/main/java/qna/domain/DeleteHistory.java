@@ -32,8 +32,8 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    public void deletedBy(User writer){
-        if(this.deletedBy != null){
+    public void deletedBy(User writer) {
+        if (this.deletedBy != null) {
             this.deletedBy.getDeleteHistories().remove(this);
         }
         this.deletedBy = writer;
