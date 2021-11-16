@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,6 +16,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  *     create table answer
@@ -29,19 +33,12 @@ import javax.persistence.ManyToOne;
  *             primary key (id)
  *           )
  */
-
+@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Answer {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class Answer extends BaseEntity {
 
 	@Lob
 	private String contents;
-
-	@Column(nullable = false)
-	private LocalDateTime createdAt;
 
 	@Column(nullable = false)
 	private boolean deleted;
@@ -49,8 +46,6 @@ public class Answer {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "question_id")
 	private Question question;
-
-	private LocalDateTime updatedAt;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "writer_id")
@@ -77,8 +72,6 @@ public class Answer {
 		this.writer = writer;
 		this.question = question;
 		this.contents = contents;
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = LocalDateTime.now();
 	}
 
 	public boolean isOwner(User writer) {

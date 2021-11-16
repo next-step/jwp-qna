@@ -25,27 +25,20 @@ import javax.persistence.ManyToOne;
  * )
  */
 @Entity
-public class DeleteHistory {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class DeleteHistory extends BaseEntity{
     private Long contentId;
 
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
-    private LocalDateTime createDate;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deletedById")
     private User writer;
 
-    public DeleteHistory(ContentType contentType, Long contentId, User writer, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User writer) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.writer = writer;
-        this.createDate = createDate;
     }
 
     protected DeleteHistory(){
@@ -85,7 +78,7 @@ public class DeleteHistory {
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
                 ", deletedById=" + writer.getId() +
-                ", createDate=" + createDate +
+                ", createDate=" + createdAt +
                 '}';
     }
 }

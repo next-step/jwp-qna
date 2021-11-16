@@ -26,24 +26,15 @@ import javax.persistence.ManyToOne;
  * )
  */
 @Entity
-public class Question {
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
-
+public class Question extends BaseEntity{
     @Lob
     private String contents;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private boolean deleted;
 
     @Column(length = 100, nullable = false)
     private String title;
-
-    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writerId")
