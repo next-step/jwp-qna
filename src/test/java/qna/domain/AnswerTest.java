@@ -17,7 +17,19 @@ public class AnswerTest {
     private AnswerRepository answers;
 
     @Test
+    void instantiate() {
+        assertThat(A1.getId()).isNull();
+        assertThat(A1.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+        assertThat(A1.getQuestionId()).isEqualTo(QuestionTest.Q1.getId());
+        assertThat(A1.getContents()).isEqualTo("Answers Contents1");
+        assertThat(A1.isDeleted()).isFalse();
+        assertThat(A1.getCreatedAt()).isNull();
+        assertThat(A1.getUpdatedAt()).isNull();
+    }
+
+    @Test
     void save() {
+        LocalDateTime now = LocalDateTime.now();
         final Answer actual = answers.save(A1);
         assertThat(actual).isNotNull();
         assertThat(actual.getId()).isNotNull();
@@ -25,7 +37,8 @@ public class AnswerTest {
         assertThat(actual.getQuestionId()).isEqualTo(A1.getQuestionId());
         assertThat(actual.getContents()).isEqualTo(A1.getContents());
         assertThat(actual.isDeleted()).isEqualTo(A1.isDeleted());
-        assertThat(actual.getUpdatedAt()).isEqualTo(A1.getUpdatedAt());
+        assertThat(actual.getCreatedAt()).isAfterOrEqualTo(now);
+        assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(now);
     }
 
     @Test
@@ -40,6 +53,7 @@ public class AnswerTest {
 
     @Test
     void update() {
+        final LocalDateTime now = LocalDateTime.now();
         final Answer answer = answers.save(A1);
         String content = "Updated Content";
 
@@ -47,6 +61,7 @@ public class AnswerTest {
 
         final Answer actual = answers.findById(answer.getId()).get();
         assertThat(actual.getContents()).isEqualTo(content);
+        assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(now);
     }
 
     @Test
