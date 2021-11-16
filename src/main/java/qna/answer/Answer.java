@@ -13,6 +13,10 @@ import java.util.Objects;
 public class Answer extends BaseEntity {
     private static final String CAN_NOT_DELETE_OTHER_ANSWER = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User user;
@@ -45,6 +49,10 @@ public class Answer extends BaseEntity {
         }
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Question getQuestion() {
         return question;
     }
@@ -67,7 +75,7 @@ public class Answer extends BaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         Answer answer = (Answer) o;
         return deleted == answer.deleted
-                && Objects.equals(getId(), answer.getId())
+                && Objects.equals(id, answer.id)
                 && Objects.equals(user, answer.user)
                 && Objects.equals(contents, answer.contents)
                 && Objects.equals(question, answer.question);
@@ -75,13 +83,13 @@ public class Answer extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), user, contents, deleted, question);
+        return Objects.hash(id, user, contents, deleted, question);
     }
 
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", user=" + user +
                 ", question=" + question +
                 ", contents='" + contents + '\'' +

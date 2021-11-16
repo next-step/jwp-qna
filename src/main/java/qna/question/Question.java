@@ -14,6 +14,10 @@ public class Question extends BaseEntity{
     private static final String CAN_NOT_DELETE = "질문을 삭제할 권한이 없습니다.";
     private static final String QUESTION_IS_REQUIRED = "질문은 필수로 입력 해야 합니다.";
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User user;
@@ -57,6 +61,10 @@ public class Question extends BaseEntity{
         answers.throwExceptionNotDeletableAnswers(loginUser);
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public User getUser() {
         return user;
     }
@@ -90,7 +98,7 @@ public class Question extends BaseEntity{
         if (o == null || getClass() != o.getClass()) return false;
         Question question = (Question) o;
         return deleted == question.deleted
-                && Objects.equals(getId(), question.getId())
+                && Objects.equals(id, question.id)
                 && Objects.equals(user, question.user)
                 && Objects.equals(contents, question.contents)
                 && Objects.equals(title, question.title)
@@ -99,13 +107,13 @@ public class Question extends BaseEntity{
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), user, contents, deleted, title, answers);
+        return Objects.hash(id, user, contents, deleted, title, answers);
     }
 
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", user=" + user +
