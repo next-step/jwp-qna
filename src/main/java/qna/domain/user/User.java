@@ -46,9 +46,9 @@ public class User extends BaseTimeEntity {
         this.email = email;
     }
 
-    public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException();
+    public void update(User target) {
+        if (!matchUserId(target.userId)) {
+            throw new UnAuthorizedException(String.format("유저아이디가 다릅니다. this.userId :: %s, target.userId :: %s", this.userId, target.userId));
         }
 
         if (!matchPassword(target.password)) {
@@ -98,24 +98,6 @@ public class User extends BaseTimeEntity {
 
     public String getEmail() {
         return email;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        User user = (User) o;
-
-        if (id != null ? !id.equals(user.id) : user.id != null) return false;
-        return userId != null ? userId.equals(user.userId) : user.userId == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        return result;
     }
 
     @Override
