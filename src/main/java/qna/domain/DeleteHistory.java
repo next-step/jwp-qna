@@ -19,6 +19,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "delete_history")
 public class DeleteHistory {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,7 +41,8 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedBy,
+        LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
@@ -48,11 +50,13 @@ public class DeleteHistory {
     }
 
     public static DeleteHistory OfQuestion(Question question) {
-        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(),
+            LocalDateTime.now());
     }
 
     public static DeleteHistory OfAnswer(Answer answer) {
-        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(),
+            LocalDateTime.now());
     }
 
     public boolean isContentType(ContentType contentType) {
@@ -80,11 +84,13 @@ public class DeleteHistory {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        DeleteHistory that = (DeleteHistory)o;
+        }
+        DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id)
             && contentType == that.contentType
             && Objects.equals(contentId, that.contentId)

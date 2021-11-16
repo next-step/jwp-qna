@@ -6,12 +6,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 public class DeleteHistoryTest {
-    DeleteHistory ANSWER_HISTORY = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
-    DeleteHistory QUESTION_HISTORY = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI,
-        LocalDateTime.now());
+
+    DeleteHistory ANSWER_HISTORY = DeleteHistory.OfAnswer(AnswerTest.A1);
+    DeleteHistory QUESTION_HISTORY = DeleteHistory.OfQuestion(QuestionTest.Q1);
 
     @Test
     void contentType_ENUM_일치_검증() {
