@@ -9,19 +9,16 @@ import org.junit.jupiter.api.Test;
 
 public class AnswersTest extends QnATest {
 
-
-
     @Test
     void 단건_저장_확인() {
         // given
-        User user = new User(USER_A,PASSWORD,USER_A,USER_A_EMAIL);
+        User user = new User(USER_A, PASSWORD, USER_A, USER_A_EMAIL);
         Question question = new Question(TITLE_1, CONTENTS_1).writeBy(user);
         Answer firstAnswer = new Answer(user, question, CONTENTS_1);
 
         // when
         Answers expectedAnswers = new Answers();
         expectedAnswers.addAnswer(firstAnswer);
-
 
         // then
         assertThat(expectedAnswers.equals(new Answers(firstAnswer))).isTrue();
@@ -30,7 +27,7 @@ public class AnswersTest extends QnATest {
     @Test
     void 다건_저장_확인() {
         // given
-        User user  = new User(USER_A,PASSWORD,USER_A,USER_A_EMAIL);
+        User user = new User(USER_A, PASSWORD, USER_A, USER_A_EMAIL);
         Question question = new Question(TITLE_1, CONTENTS_1).writeBy(user);
         Answer firstAnswer = new Answer(user, question, CONTENTS_1);
         Answer secondAnswer = new Answer(user, question, CONTENTS_2);
