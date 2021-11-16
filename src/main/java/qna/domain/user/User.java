@@ -4,6 +4,8 @@ import org.springframework.util.StringUtils;
 import qna.UnAuthorizedException;
 import qna.domain.BaseTimeEntity;
 import qna.domain.vo.Name;
+import qna.domain.vo.Password;
+import qna.domain.vo.UserId;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -25,10 +27,10 @@ public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 20)
-    private String userId;
-    @Column(nullable = false, length = 20)
-    private String password;
+    @Embedded
+    private UserId userId;
+    @Embedded
+    private Password password;
     @Embedded
     private Name name;
     @Column(length = 50)
@@ -43,8 +45,8 @@ public class User extends BaseTimeEntity {
 
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
-        this.userId = userId;
-        this.password = password;
+        this.userId = UserId.of(userId);
+        this.password = Password.of(password);
         this.name = Name.of(name);
         this.email = email;
     }
@@ -62,11 +64,11 @@ public class User extends BaseTimeEntity {
         this.email = target.email;
     }
 
-    public boolean matchUserId(String userId) {
+    public boolean matchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
+    public boolean matchPassword(Password targetPassword) {
         return this.password.equals(targetPassword);
     }
 
@@ -99,11 +101,11 @@ public class User extends BaseTimeEntity {
     }
 
     public String getUserId() {
-        return userId;
+        return userId.getUserId();
     }
 
     public String getPassword() {
-        return password;
+        return password.getPassword();
     }
 
     public String getName() {
