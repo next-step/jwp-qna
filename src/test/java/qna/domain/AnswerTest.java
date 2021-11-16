@@ -1,16 +1,17 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 public class AnswerTest {
@@ -129,16 +130,24 @@ public class AnswerTest {
     }
 
     @Test
-    void test_답변_삭제() {
-        answer1.setDeleted(true);
-
-        List<Answer> answers = answerRepository.findAll();
+    void test_동일_작성자_답변_삭제() throws CannotDeleteException {
+        DeleteHistory deleteHistory = answer1.answerDelete(answer1.getWriter());
 
         assertAll(
-            () -> assertThat(answers).isNotNull(),
-            () -> assertThat(answers).hasSize(2),
-            () -> assertThat(answers.get(0).isDeleted()).isTrue(),
-            () -> assertThat(answers.get(1).isDeleted()).isFalse()
+            () -> assertThat(answer1.isDeleted()).isTrue(),
+            () -> assertThat(deleteHistory.getContentId()).isEqualTo(answer1.getId())
+        );
+    }
+
+    @Test
+    void test_다른_작성자_답변_삭제시도시_예외() {
+        User anotherWriter = answer2.getWriter();
+
+        assertAll(
+            () -> assertThat(answer1.getWriter()).isNotEqualTo(anotherWriter),
+            () -> assertThatThrownBy(() -> answer1.answerDelete(anotherWriter))
+                .isInstanceOf(CannotDeleteException.class),
+            () -> assertThat(answer1.isDeleted()).isFalse()
         );
     }
 
