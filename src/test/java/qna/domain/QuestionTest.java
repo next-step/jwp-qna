@@ -29,8 +29,8 @@ public class QuestionTest {
     @Test
     public void 질문_저장() {
         //given
-        User write = userRepository.save(TestUserFactory.create("donkey"));
-        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
         Long savedId = actual.getId();
 
         //when
@@ -43,8 +43,8 @@ public class QuestionTest {
     @Test
     public void 질문_저장_후_질문불러오기() {
         //given
-        User write = userRepository.save(TestUserFactory.create("donkey"));
-        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
 
         //when
         List<Question> questionList = questionRepository.findAll();
@@ -62,8 +62,8 @@ public class QuestionTest {
     @Test
     public void 질문_저장_후_삭제() {
         //given
-        User write = userRepository.save(TestUserFactory.create("donkey"));
-        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
 
         //when
         actual.setDeleted(true);
@@ -75,8 +75,8 @@ public class QuestionTest {
     @Test
     public void 질문한_사람이_로그인_사용자가_아닌경우엔_삭제할_수_없다() {
         //given
-        User write = userRepository.save(TestUserFactory.create("donkey"));
-        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
 
         //when
         ThrowableAssert.ThrowingCallable throwingCallable = () -> actual.delete(TestUserFactory.create("donkey2"));

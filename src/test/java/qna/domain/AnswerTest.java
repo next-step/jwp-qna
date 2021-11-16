@@ -29,9 +29,9 @@ public class AnswerTest {
     @Test
     public void 답변저장() {
         //given
-        User write = userRepository.save(TestUserFactory.create("donkey"));
-        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", write));
-        Answer actual = answerRepository.save(TestAnswerFactory.create(write, "content"));
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
+        Answer actual = answerRepository.save(TestAnswerFactory.create(writer, "content"));
         question.addAnswer(actual);
 
         Long savedId = actual.getId();
@@ -46,9 +46,9 @@ public class AnswerTest {
     @Test
     public void 답변저장_후_답변불러오기() {
         //given
-        User write = userRepository.save(TestUserFactory.create("donkey"));
-        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", write));
-        Answer actual = answerRepository.save(TestAnswerFactory.create(write, "content"));
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
+        Answer actual = answerRepository.save(TestAnswerFactory.create(writer, "content"));
         question.addAnswer(actual);
 
         //when
@@ -66,9 +66,9 @@ public class AnswerTest {
     @Test
     public void 답변저장_후_삭제() {
         //given
-        User write = userRepository.save(TestUserFactory.create("donkey"));
-        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", write));
-        Answer actual = answerRepository.save(TestAnswerFactory.create(write, "content"));
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
+        Answer actual = answerRepository.save(TestAnswerFactory.create(writer, "content"));
         question.addAnswer(actual);
 
         //when
@@ -81,10 +81,10 @@ public class AnswerTest {
     @Test
     public void 같은_내용이_포함되는_답변목록_조회() {
         //given
-        User write = userRepository.save(TestUserFactory.create("donkey"));
-        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", write));
-        Answer answers1 = answerRepository.save(TestAnswerFactory.create(write, "Answers"));
-        Answer answers2 = answerRepository.save(TestAnswerFactory.create(write, "Answers"));
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
+        Answer answers1 = answerRepository.save(TestAnswerFactory.create(writer, "Answers"));
+        Answer answers2 = answerRepository.save(TestAnswerFactory.create(writer, "Answers"));
         question.addAnswer(answers1);
         question.addAnswer(answers2);
 
