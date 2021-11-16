@@ -1,16 +1,34 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
+@Entity
+public class Answer extends BaseEntity {
 
-public class Answer {
-    private Long id;
-    private Long writerId;
-    private Long questionId;
+    @Column
+    @Lob
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column
+    private Long questionId;
+
+    @Column
+    private Long writerId;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -32,20 +50,15 @@ public class Answer {
         this.contents = contents;
     }
 
+    protected Answer() {
+    }
+
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
         this.questionId = question.getId();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getWriterId() {
@@ -83,11 +96,10 @@ public class Answer {
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+            "contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            ", questionId=" + questionId +
+            ", writerId=" + writerId +
+            '}';
     }
 }
