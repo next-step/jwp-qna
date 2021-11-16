@@ -1,6 +1,15 @@
 package qna.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -18,7 +27,7 @@ public class DeleteHistory {
     @Column(name = "content_id")
     private Long contentId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id")
     private User deletedByUser;
 
@@ -56,16 +65,16 @@ public class DeleteHistory {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(contentId, that.contentId) && Objects.equals(deletedByUser, that.deletedByUser) && Objects.equals(createDate, that.createDate);
+        final DeleteHistory that = (DeleteHistory) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedByUser, createDate);
+        return Objects.hash(id);
     }
 
     @Override
@@ -74,6 +83,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
+                ", deletedByUser=" + deletedByUser +
                 ", createDate=" + createDate +
                 '}';
     }

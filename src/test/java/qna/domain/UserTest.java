@@ -46,8 +46,8 @@ public class UserTest {
             assertThat(findByUser.getPassword(), is(savedUser.getPassword()));
             assertThat(findByUser.getName(), is(savedUser.getName()));
             assertThat(findByUser.getEmail(), is(savedUser.getEmail()));
-            assertTrue(findByUser.getCreatedDate().isAfter(now));
-            assertTrue(findByUser.getModifiedDate().isAfter(now));
+            assertTrue(findByUser.getCreatedDate().isEqual(now) || findByUser.getCreatedDate().isAfter(now));
+            assertTrue(findByUser.getModifiedDate().isEqual(now) || findByUser.getModifiedDate().isAfter(now));
         });
     }
 }

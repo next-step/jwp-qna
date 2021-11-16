@@ -47,7 +47,7 @@ public class QuestionTest {
         //then
         Question question = questions.get(0);
         assertAll(() -> {
-            assertThat(question.getId(), is(notNullValue()));
+            assertThat(question.getId(), is(savedQuestion.getId()));
             assertThat(question.getTitle(), is(savedQuestion.getTitle()));
             assertThat(question.getContents(), is(savedQuestion.getContents()));
             assertThat(question.getWriter(), is(savedQuestion.getWriter()));

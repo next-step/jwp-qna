@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.UnAuthorizedException;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -19,7 +21,7 @@ public class Question extends BaseTimeEntity {
     @Column(name = "contents")
     private String contents;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
 
@@ -52,12 +54,15 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public void delete(User loginUser) {
+        isOwner(loginUser);
+        this.deleted = true;
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+    public void isOwner(User loginUser) {
+        if (!this.writer.equals(loginUser)) {
+            throw new UnAuthorizedException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -72,16 +77,8 @@ public class Question extends BaseTimeEntity {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public User getWriter() {
@@ -92,21 +89,17 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Question question = (Question) o;
-        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer, question.writer);
+        final Question question = (Question) o;
+        return Objects.equals(id, question.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writer, deleted);
+        return Objects.hash(id);
     }
 
     @Override
@@ -115,6 +108,7 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }
