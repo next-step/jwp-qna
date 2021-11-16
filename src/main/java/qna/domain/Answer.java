@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -9,13 +8,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.Table;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column
     @Lob
@@ -53,6 +54,10 @@ public class Answer extends BaseEntity {
     protected Answer() {
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
     }
@@ -65,24 +70,12 @@ public class Answer extends BaseEntity {
         return writerId;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
     public Long getQuestionId() {
         return questionId;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
