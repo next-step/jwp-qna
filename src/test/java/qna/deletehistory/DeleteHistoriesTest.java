@@ -20,7 +20,7 @@ class DeleteHistoriesTest {
         question.addAnswer(A1);
         question.addAnswer(A2);
         return Stream.of(
-                Arguments.of(new DeleteHistories(question))
+                Arguments.of(DeleteHistories.fromDeleteHistoriesByQuestion(question))
         );
     }
 
@@ -34,7 +34,7 @@ class DeleteHistoriesTest {
         actual.addAnswer(A1);
         actual.addAnswer(A2);
         //then
-        assertThat(new DeleteHistories(actual)).isEqualTo(expected);
+        assertThat(DeleteHistories.fromDeleteHistoriesByQuestion(actual)).isEqualTo(expected);
     }
 
 }

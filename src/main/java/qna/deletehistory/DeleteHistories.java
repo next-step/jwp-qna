@@ -1,6 +1,7 @@
 package qna.deletehistory;
 
 import qna.question.Question;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -8,15 +9,15 @@ import java.util.Objects;
 public class DeleteHistories {
     private final List<DeleteHistory> deleteHistories;
 
-    public DeleteHistories(Question question) {
-        this.deleteHistories = createDeleteHistoriesByQuestion(question);
+    private DeleteHistories(List<DeleteHistory> deleteHistories) {
+        this.deleteHistories = deleteHistories;
     }
 
-    private List<DeleteHistory> createDeleteHistoriesByQuestion(Question question) {
+    public static DeleteHistories fromDeleteHistoriesByQuestion(Question question) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(DeleteHistory.fromQuestion(question));
-        deleteHistories.addAll(question.getAnswers().createDeleteHistories());
-        return deleteHistories;
+        deleteHistories.addAll(question.createAnswersDeleteHistories());
+        return new DeleteHistories(deleteHistories);
     }
 
     public List<DeleteHistory> getDeleteHistories() {

@@ -37,7 +37,9 @@ public class AnswerRepositoryTest extends PreExecutionTest {
     @Test
     @DisplayName("question id로 deleted가 false인 answer 검색")
     public void findByQuestionIdAndDeletedFalseTest() {
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestion().getId());
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(
+                savedAnswer.getQuestion()
+                        .getId());
         assertThat(answers).containsExactly(savedAnswer);
     }
 

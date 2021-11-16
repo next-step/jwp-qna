@@ -1,11 +1,15 @@
 package qna.question;
 
+import qna.deletehistory.DeleteHistories;
+import qna.deletehistory.DeleteHistory;
 import qna.exception.CannotDeleteException;
 import qna.answer.Answer;
 import qna.domain.BaseEntity;
 import qna.user.User;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -74,15 +78,24 @@ public class Question extends BaseEntity{
         return deleted;
     }
 
-    public void delete(User loginUser) {
+    public DeleteHistories delete(User loginUser) {
         throwExceptionNotDeletableUser(loginUser);
         deleteAnswers(loginUser);
+        changeDeleted();
+        return DeleteHistories.fromDeleteHistoriesByQuestion(this);
+    }
+
+    private void changeDeleted(){
         deleted = true;
     }
 
     public void deleteAnswers(User loginUser) {
         throwExceptionNotDeletableAnswersInQuestion(loginUser);
         answers.delete();
+    }
+
+    public List<DeleteHistory> createAnswersDeleteHistories(){
+        return answers.createDeleteHistories();
     }
 
     @Override

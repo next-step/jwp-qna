@@ -13,7 +13,6 @@ public class Title {
     private String title;
 
     public Title(final String title) {
-        Objects.requireNonNull(title);
         this.title = title;
         validateTitle();
     }
@@ -22,7 +21,7 @@ public class Title {
     }
 
     private void validateTitle() {
-        if (isInvalidTitleLength()) {
+        if (Objects.isNull(title) || isInvalidTitleLength()) {
             throw new IllegalArgumentException(INVALID_TITLE_MESSAGE);
         }
     }
