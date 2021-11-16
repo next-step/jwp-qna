@@ -1,12 +1,17 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.NotFoundException;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
 
 @DataJpaTest
 public class AnswerTest {
@@ -22,22 +27,41 @@ public class AnswerTest {
     @Autowired
     UserRepository userRepository;
 
+    public User javajigi;
+    public User sanjigi;
+
+    public Question questionJavajigi;
+    @BeforeEach
+    void setUp() {
+        javajigi = userRepository.save(UserTest.JAVAJIGI);
+        sanjigi = userRepository.save(UserTest.SANJIGI);
+        questionJavajigi = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi));
+    }
+
     @Test
     void save() {
-        final Long id = answerRepository.save(A1).getId();
-        assertThat(id).isEqualTo(1);
+        final Answer answer = answerRepository.save(new Answer(sanjigi, questionJavajigi, "Answers Contents1"));
+        assertThat(answer.getWriter()).isEqualTo(sanjigi);
     }
 
     @Test
     public void findById() {
-        final Answer answer = answerRepository.findById(answerRepository.save(A1).getId())
+        final Answer expected = answerRepository.save(new Answer(javajigi, questionJavajigi, "Answers Contents1"));
+        final Answer answer = answerRepository.findById(expected.getId())
                 .orElseThrow(NotFoundException::new);
-        assertThat(answer.getWriterId()).isEqualTo(1L);
+        assertThat(expected).isEqualTo(answer);
+    }
+
+    @Test
+    @DisplayName("질문에 대한 답변 조회")
+    public void getAnswersWithQuestion() {
+        final Answer answer = answerRepository.save(new Answer(javajigi, questionJavajigi, "Answers Contents1"));
+        assertThat(questionJavajigi.getAnswers()).hasSize(1);
     }
 
     @Test
     void findByIdAndDeletedFalse() {
-        final Answer answer = answerRepository.save(A1);
+        final Answer answer = answerRepository.save(new Answer(javajigi, questionJavajigi, "Answers Contents1"));
         answer.setDeleted(true);
         assertThatThrownBy(() -> answerRepository.findByIdAndDeletedFalse(answer.getId())
                 .orElseThrow(NotFoundException::new))
@@ -46,9 +70,8 @@ public class AnswerTest {
 
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        final Question question = questionRepository.save(QuestionTest.Q1);
-        final Answer answer = answerRepository.save(new Answer(UserTest.SANJIGI, question, "answer 111"));
+        final Answer answer = answerRepository.save(new Answer(sanjigi, questionJavajigi, "answer 111"));
         answer.setDeleted(true);
-        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).hasSize(0);
+        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(questionJavajigi.getId())).hasSize(0);
     }
 }

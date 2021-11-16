@@ -1,6 +1,8 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -16,7 +18,12 @@ public class Question extends BaseEntity {
 
     @Column(nullable = false, length = 100)
     private String title;
-    private Long writerId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answer;
 
     protected Question() {
     }
@@ -29,15 +36,24 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answer = new ArrayList<>();
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        toWriter(writer);
         return this;
     }
 
+    public void toWriter(User writer){
+        if(this.writer != null){
+            this.writer.getQuestions().remove(this);
+        }
+        this.writer = writer;
+        this.writer.getQuestions().add(this);
+    }
+
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -68,14 +84,6 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -90,8 +98,16 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public List<Answer> getAnswers() {
+        return this.answer;
+    }
+
+    public User getWriter() {
+        return this.writer;
     }
 }
