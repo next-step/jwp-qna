@@ -1,7 +1,8 @@
 package qna.domain;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,14 +14,14 @@ import javax.persistence.OneToMany;
 public class Answers {
 
 	@OneToMany(mappedBy = "question")
-	private final Set<Answer> answerSet;
+	private final List<Answer> answerList;
 
 	public Answers() {
-		this.answerSet = new HashSet<>();
+		this.answerList = new ArrayList<>();
 	}
 
 	private Answers(Collection<Answer> answers) {
-		this.answerSet = new HashSet<>(answers);
+		this.answerList = new ArrayList<>(answers);
 	}
 
 	public static Answers of(Collection<Answer> answers) {
@@ -36,32 +37,32 @@ public class Answers {
 
 		Answers answers1 = (Answers)o;
 
-		return Objects.equals(answerSet, answers1.answerSet);
+		return Objects.equals(answerList, answers1.answerList);
 	}
 
 	@Override
 	public int hashCode() {
-		return answerSet.hashCode();
+		return answerList.hashCode();
 	}
 
 	public boolean containsAllSameWriter(User user) {
-		return answerSet.stream()
+		return answerList.stream()
 			.map(Answer::getWriter)
 			.allMatch(writer -> writer.equals(user));
 	}
 
 	public Set<DeleteHistory> deleteAll() {
-		return answerSet.stream()
+		return answerList.stream()
 			.map(Answer::delete).collect(Collectors.toSet());
 	}
 
 	public Answers addAll(Collection<Answer> answers) {
-		answerSet.addAll(answers);
+		answerList.addAll(answers);
 		return this;
 	}
 
 	public Answers add(Answer answer) {
-		this.answerSet.add(answer);
+		this.answerList.add(answer);
 		return this;
 	}
 }
