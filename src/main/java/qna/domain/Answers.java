@@ -16,4 +16,8 @@ public class Answers {
     public void addAnswer(Answer answer) {
         answers.add(answer);
     }
+
+    public void removeAnswer(Answer answer) {
+        answers.remove(answer);
+    }
 }
