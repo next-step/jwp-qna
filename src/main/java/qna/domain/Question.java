@@ -53,8 +53,7 @@ public class Question extends BaseTimeEntity {
     }
 
     private void checkAuthority(User loginUser) {
-        User writer = contents.getWriter();
-        if (!writer.equalsAccount(loginUser)) {
+        if (!contents.isWrittenBy(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
     }

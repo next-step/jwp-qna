@@ -21,6 +21,10 @@ public class Contents {
         this.writer = writer;
     }
 
+    public boolean isWrittenBy(final User loginUser) {
+        return writer.equalsAccount(loginUser);
+    }
+
     public String getContents() {
         return contents;
     }

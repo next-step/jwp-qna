@@ -44,23 +44,21 @@ public class QuestionAnswers {
     }
 
     void add(final Answer answer) {
+        validate(answer);
         answers.add(answer);
-        validate();
     }
 
-    private void validate() {
+    private void validate(final Answer addedAnswer) {
         if (!answers.isEmpty()) {
-            final Question question = answers.get(0).getQuestion();
-            validateSameQuestion(question);
+            validateSameQuestion(addedAnswer.getQuestion());
         }
     }
 
     private void validateSameQuestion(final Question question) {
-        final boolean isAllSameQuestion = answers.stream()
-            .allMatch(answer -> answer.getQuestion().equals(question));
-        if (!isAllSameQuestion) {
-            throw new IllegalArgumentException("QuestionAnswers객체는 하나의 Question객체에 종속된 객체입니다.");
-        }
+        answers.stream()
+            .filter(answer -> answer.getQuestion().equals(question))
+            .findAny()
+            .orElseThrow(() -> new IllegalArgumentException("QuestionAnswers객체는 하나의 Question객체에 종속된 객체입니다."));
     }
 
     boolean contains(final Answer answer) {
