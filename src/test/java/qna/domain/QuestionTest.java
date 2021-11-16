@@ -2,6 +2,8 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,5 +61,18 @@ public class QuestionTest {
         questionRepository.flush();
         final Question found = questionRepository.findById(saved.getId()).orElseGet(() -> null);
         assertThat(found).isNull();
+    }
+
+    @Test
+    @DisplayName("질문 삭제하기 로직")
+    void deleteQuestion() {
+        Question question1 = new Question(1L,"t1","c1").writeBy(UserTest.JAVAJIGI);
+        Answer answer1 = new Answer(1L, UserTest.JAVAJIGI, question1, "answer c1");
+        Answer answer2 = new Answer(2L, UserTest.JAVAJIGI, question1, "answer c2");
+        Answer answer3 = new Answer(3L, UserTest.JAVAJIGI, question1, "answer c3");
+        assertThatCode(()->{
+            List<DeleteHistory> deletedList = question1.delete(question1.getWriter());
+            assertThat(deletedList).hasSize(4);
+        }).doesNotThrowAnyException();
     }
 }
