@@ -9,8 +9,11 @@ import org.junit.jupiter.api.Test;
 import qna.common.exception.UnAuthorizedException;
 
 public class UserTest {
-    public static final User JAVAJIGI = new User("javajigi", "password", "javajigi", new Email("javajigi@slipp.net"));
-    public static final User SANJIGI = new User("sanjigi", "password", "sanjigi", new Email("sanjigi@slipp.net"));
+
+    public static final User JAVAJIGI = new User("javajigi", "password", "javajigi",
+        new Email("javajigi@slipp.net"));
+    public static final User SANJIGI = new User("sanjigi", "password", "sanjigi",
+        new Email("sanjigi@slipp.net"));
 
     @Test
     void 기본데이터_Not_Null_검증() {
@@ -48,20 +51,7 @@ public class UserTest {
             .isThrownBy(() -> {
                 // when
                 JAVAJIGI.update(guestUser, JAVAJIGI);
-            }).withMessage(UnAuthorizedException.UNAUTHORIZED_EXCEPTION_USER_ID_NULL_MESSAGE);
-    }
-
-    @Test
-    @DisplayName("User update() 메소드 password 같지 않을 경우 예외 발생 체크")
-    void update_matchUserId_password_MISSMATCH_exception() {
-        // given
-        User targetUserAndMissMatchPW = new User("javajigi", "change", "javajigi", new Email("javajigi@slipp.net"));
-
-        assertThatExceptionOfType(UnAuthorizedException.class) // then
-            .isThrownBy(() -> {
-                // when
-                JAVAJIGI.update(JAVAJIGI, targetUserAndMissMatchPW);
-            }).withMessage(UnAuthorizedException.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_MESSAGE);
+            }).withMessage(UnAuthorizedException.UNAUTHORIZED_EXCEPTION_USER_ID_NOT_SAME_MESSAGE);
     }
 
     @Test

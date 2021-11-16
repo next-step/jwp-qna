@@ -56,6 +56,23 @@ public class QuestionRepositoryTest {
         assertThat(actual).isEqualTo(expect);
     }
 
+
+    @Test
+    @DisplayName("User update() 메소드 password 같지 않을 경우 예외 발생 체크")
+    void update_matchUserId_password_MISSMATCH_exception() {
+        // given
+        User targetUserAndMissMatchPW = users.save(new User("javajigi", "change", "javajigi",
+            new Email("javajigi@slipp.net")));
+
+        assertThatExceptionOfType(UnAuthorizedException.class) // then
+            .isThrownBy(() -> {
+                // when
+                USER.update(USER, targetUserAndMissMatchPW);
+            })
+            .withMessage(
+                UnAuthorizedException.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_MESSAGE);
+    }
+
     @Test
     @DisplayName("질문 삭제 후 해당 Question 조회결과없음 검증")
     void findByIdAndDeletedFalse_false() {
