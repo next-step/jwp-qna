@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,11 +21,8 @@ public class User extends BaseTimeEntity {
     @Column(length = 20, nullable = false)
     private String name;
 
-    @Column(length = 20, nullable = false)
-    private String password;
-
-    @Column(length = 20, nullable = false, unique = true)
-    private String userId;
+    @Embedded
+    private Account account;
 
     protected User() {
     }
@@ -35,10 +33,16 @@ public class User extends BaseTimeEntity {
 
     public User(final Long id, final String userId, final String password, final String name, final String email) {
         this.id = id;
-        this.userId = Objects.requireNonNull(userId);
-        this.password = Objects.requireNonNull(password);
+        this.account = new Account(userId, password);
         this.name = Objects.requireNonNull(name);
         this.email = email;
+    }
+
+    public boolean equalsAccount(final User target) {
+        if (Objects.isNull(target)) {
+            return false;
+        }
+        return account.equals(target.getAccount());
     }
 
     public boolean equalsNameAndEmail(final User target) {
@@ -62,20 +66,15 @@ public class User extends BaseTimeEntity {
         return name;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public String getUserId() {
-        return userId;
+    public Account getAccount() {
+        return account;
     }
 
     @Override
     public String toString() {
         return "User{" +
             "id=" + id +
-            ", userId='" + userId + '\'' +
-            ", password='" + password + '\'' +
+            ", account='" + account + '\'' +
             ", name='" + name + '\'' +
             ", email='" + email + '\'' +
             '}';

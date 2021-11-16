@@ -34,8 +34,7 @@ public class UserTest {
         User actual = users.save(expected);
 
         assertThat(actual.getId()).isNotNull();
-        assertThat(actual.getUserId()).isEqualTo(expected.getUserId());
-        assertThat(actual.getPassword()).isEqualTo(expected.getPassword());
+        assertThat(actual.getAccount()).isEqualTo(expected.getAccount());
         assertThat(actual.equalsNameAndEmail(expected)).isTrue();
     }
 
@@ -64,7 +63,7 @@ public class UserTest {
     void findByUserId() {
         User expected = saveNewDefaultUser();
 
-        User actual = users.findByUserId(expected.getUserId()).get();
+        User actual = users.findByAccount(expected.getAccount()).get();
 
         assertThat(actual == expected).isTrue();
     }
