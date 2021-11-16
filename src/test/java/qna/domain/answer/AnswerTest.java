@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.QuestionTest;
 import qna.domain.UserTest;
+import qna.domain.user.User;
 import qna.domain.user.UserRepository;
 
 import java.util.Arrays;
@@ -70,6 +71,27 @@ public class AnswerTest {
             assertFalse(foundAnswers.contains(A4));
             assertThat(foundAnswers).containsAll(Arrays.asList(A1, A2));
         });
+    }
+
+    @Test
+    @DisplayName("answer 에 있는 user 의 상태가 변경되었을때 DB도 변경되는지 확인")
+    void updateWithUser() {
+        // given
+        final Answer savedAnswer = answerRepository.save(A1);
+        final Answer answer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId()).get();
+        User newUser = new User(1L, "javajigi", "password", "newName", "newEmail@email.com");
+
+        // when
+        answer.updateWriter(newUser);
+        answerRepository.flush();
+        answer.userClear();
+        answerRepository.flush();
+
+        // then
+        assertThat(answerRepository.findByIdAndDeletedFalse(savedAnswer.getId()).get().getWriter()).isNull();
+        final User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
+        assertThat(javajigi.getName()).isEqualTo("newName");
+        assertThat(javajigi.getEmail()).isEqualTo("newEmail@email.com");
     }
 
     @AfterAll
