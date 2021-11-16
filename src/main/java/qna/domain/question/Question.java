@@ -27,8 +27,7 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @Embedded
-    private Deleted deleted = new Deleted();
+    private boolean deleted = false;
 
     @Embedded
     private Answers answers = new Answers();
@@ -50,7 +49,7 @@ public class Question extends BaseTimeEntity {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        deleted.setTrue();
+        this.deleted = true;
         answers.changeAnswerState(loginUser);
     }
 
@@ -64,7 +63,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public boolean isDeleted() {
-        return deleted.isDeleted();
+        return deleted;
     }
 
     public Long getId() {

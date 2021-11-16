@@ -30,8 +30,7 @@ public class Answer extends BaseTimeEntity {
     @Embedded
     private Contents contents;
 
-    @Embedded
-    private Deleted deleted = new Deleted();
+    private boolean deleted = false;
 
     protected Answer() {
     }
@@ -58,7 +57,7 @@ public class Answer extends BaseTimeEntity {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
-        deleted.setTrue();
+        this.deleted = true;
     }
 
     public boolean isOwner(User writer) {
@@ -66,7 +65,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public boolean isDeleted() {
-        return deleted.isDeleted();
+        return deleted;
     }
 
     public void toQuestion(Question question) {
