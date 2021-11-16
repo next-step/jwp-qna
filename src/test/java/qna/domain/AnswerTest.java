@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,22 +17,31 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@EnableJpaAuditing
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Autowired
     private AnswerRepository answerRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     private Answer answer;
+    private Question question;
+    private User user;
+
     private LocalDateTime now;
 
     @BeforeEach
     void setUp() {
         now = LocalDateTime.now();
-        answer = answerRepository.save(A1);
+        user = userRepository.save(UserTest.JAVAJIGI);
+        question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
+        answer = answerRepository.save(new Answer(user, question, "Answers Contents1"));
     }
 
     @DisplayName("answer 생성")
@@ -42,17 +50,15 @@ public class AnswerTest {
         assertAll(
                 () -> assertThat(answer.getId()).isNotNull(),
                 () -> assertThat(answer.getContents()).isEqualTo("Answers Contents1"),
-                () -> assertThat(answer.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
-                () -> assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
-                () -> assertThat(answer.getCreatedAt()).isAfter(now),
-                () -> assertThat(answer.getUpdatedAt()).isAfter(now)
+                () -> assertThat(answer.getWriter()).isEqualTo(user),
+                () -> assertThat(answer.getQuestion()).isEqualTo(question)
         );
     }
 
     @DisplayName("question id 기준으로 삭제되지않은 answer 목록 찾기")
     @Test
     void findByQuestionIdAndDeletedFalseTest() {
-        List<Answer> noneDeletedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        List<Answer> noneDeletedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
         assertThat(noneDeletedAnswers.size()).isEqualTo(1);
         Answer answerFromRepository = noneDeletedAnswers.get(0);
         assertEquals(answerFromRepository, answer);
@@ -62,7 +68,7 @@ public class AnswerTest {
     @Test
     void findByQuestionIdAndDeletedTrueTest() {
         answer.setDeleted(true);
-        List<Answer> noneDeletedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        List<Answer> noneDeletedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
         assertThat(noneDeletedAnswers.size()).isZero();
     }
 
@@ -102,8 +108,39 @@ public class AnswerTest {
         assertThat(answerRepository.findAll().size()).isZero();
     }
 
+    @DisplayName("answer save with question 추가")
+    @Test
+    void saveQuestionWithAnswerTest() {
+        answer.changeQuestion(question);
+        Question questionFromRepo = questionRepository.findById(question.getId())
+                .orElseThrow(NoSuchElementException::new);
+        assertAll(
+                () -> assertThat(questionFromRepo.getContents()).isEqualTo("contents1"),
+                () -> assertThat(questionFromRepo.getAnswers().size()).isEqualTo(1),
+                () -> assertThat(questionFromRepo.getAnswers().get(0)).isEqualTo(answer),
+                () -> assertThat(questionFromRepo.getCreatedAt()).isAfter(now),
+                () -> assertThat(questionFromRepo.getUpdatedAt()).isAfter(now)
+        );
+    }
+
+    @DisplayName("answer remove with question 삭제")
+    @Test
+    void removeQuestionWithAnswerTest() {
+        answer.removeQuestion();
+        Question questionFromRepo = questionRepository.findById(question.getId())
+                .orElseThrow(NoSuchElementException::new);
+        assertAll(
+                () -> assertThat(questionFromRepo.getContents()).isEqualTo("contents1"),
+                () -> assertThat(questionFromRepo.getAnswers().size()).isZero(),
+                () -> assertThat(questionFromRepo.getCreatedAt()).isAfter(now),
+                () -> assertThat(questionFromRepo.getUpdatedAt()).isAfter(now)
+        );
+    }
+
     @AfterEach
     void beforeFinish() {
         answerRepository.flush();
+        questionRepository.flush();
+        userRepository.flush();
     }
 }

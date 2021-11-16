@@ -4,10 +4,14 @@ import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -31,6 +35,9 @@ public class User extends BaseEntity {
     @Column(length = 50)
     private String email;
 
+    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
+    private List<Question> questions = new ArrayList<>();
+
     protected User() {
     }
 
@@ -44,6 +51,11 @@ public class User extends BaseEntity {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public void addQuestion(Question question) {
+        questions.add(question);
+        question.setWriter(this);
     }
 
     public void update(User loginUser, User target) {
@@ -67,15 +79,6 @@ public class User extends BaseEntity {
         return this.password.equals(targetPassword);
     }
 
-    public boolean equalsNameAndEmail(User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
-
-        return name.equals(target.name) &&
-                email.equals(target.email);
-    }
-
     public boolean isGuestUser() {
         return false;
     }
@@ -94,6 +97,28 @@ public class User extends BaseEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) &&
+                Objects.equals(userId, user.userId) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(name, user.name) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(questions, user.questions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email, questions);
     }
 
     @Override

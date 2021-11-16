@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -15,7 +14,6 @@ import java.util.NoSuchElementException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@EnableJpaAuditing
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 public class UserTest {
@@ -25,13 +23,21 @@ public class UserTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
     private User user;
+
+    private Question question;
+
     private LocalDateTime now;
 
     @BeforeEach
     void setup() {
         now = LocalDateTime.now();
         user = userRepository.save(JAVAJIGI);
+        question = questionRepository.save(new Question("ex title", "ex contents"));
     }
 
     @DisplayName("user 생성")
@@ -66,6 +72,20 @@ public class UserTest {
         assertThat(userRepository.findAll().size()).isEqualTo(1);
         userRepository.delete(user);
         assertThat(userRepository.findAll().size()).isZero();
+    }
+
+    @DisplayName("user question add 테스트")
+    @Test
+    void removeQuestionWithAnswerTest() {
+        user.addQuestion(question);
+        Question questionFromRepo = questionRepository.findById(question.getId())
+                .orElseThrow(NoSuchElementException::new);
+        assertAll(
+                () -> assertThat(questionFromRepo.getContents()).isEqualTo("ex contents"),
+                () -> assertThat(questionFromRepo.getWriter()).isEqualTo(user),
+                () -> assertThat(questionFromRepo.getCreatedAt()).isAfter(now),
+                () -> assertThat(questionFromRepo.getUpdatedAt()).isAfter(now)
+        );
     }
 
     @AfterEach
