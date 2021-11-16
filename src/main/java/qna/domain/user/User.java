@@ -1,9 +1,12 @@
 package qna.domain.user;
 
+import org.springframework.util.StringUtils;
 import qna.UnAuthorizedException;
 import qna.domain.BaseTimeEntity;
+import qna.domain.vo.Name;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,8 +29,8 @@ public class User extends BaseTimeEntity {
     private String userId;
     @Column(nullable = false, length = 20)
     private String password;
-    @Column(nullable = false, length = 20)
-    private String name;
+    @Embedded
+    private Name name;
     @Column(length = 50)
     private String email;
 
@@ -42,7 +45,7 @@ public class User extends BaseTimeEntity {
         this.id = id;
         this.userId = userId;
         this.password = password;
-        this.name = name;
+        this.name = Name.of(name);
         this.email = email;
     }
 
@@ -72,7 +75,10 @@ public class User extends BaseTimeEntity {
     }
 
     public boolean matchName(String name) {
-        return this.name.equals(name);
+        if (!StringUtils.hasText(name)) {
+            return false;
+        }
+        return this.name.equals(Name.of(name));
     }
 
     public boolean equalsNameAndEmail(User target) {
@@ -101,7 +107,7 @@ public class User extends BaseTimeEntity {
     }
 
     public String getName() {
-        return name;
+        return name.getName();
     }
 
     public String getEmail() {
