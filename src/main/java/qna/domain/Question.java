@@ -24,6 +24,7 @@ import qna.common.exception.UnAuthorizedException;
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,10 +41,10 @@ public class Question extends BaseEntity {
     private User writer;
 
     @Embedded
-    private final Answers answers = new Answers();
+    private Answers answers = new Answers();
 
-    @Column(name = "deleted", nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted = new Deleted();
 
     protected Question() {
     }
@@ -65,10 +66,9 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>(answers.delete(loginUser));
-        deleteHistories.add(DeleteHistory.OfQuestion(this));
+        List<DeleteHistory> deleteHistories = answers.delete(loginUser);
+        deleteHistories.add(deleted.deleteOf(this));
 
-        this.deleted = true;
         return deleteHistories;
     }
 
@@ -81,7 +81,7 @@ public class Question extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public Long getId() {
@@ -93,7 +93,7 @@ public class Question extends BaseEntity {
     }
 
     public List<Answer> getAnswers() {
-        return Collections.unmodifiableList(answers.values());
+        return Collections.unmodifiableList(answers.getAnswers());
     }
 
     private void validCanWritten(User writer) {
@@ -119,11 +119,13 @@ public class Question extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        Question question = (Question)o;
+        }
+        Question question = (Question) o;
         return deleted == question.deleted
             && Objects.equals(id, question.id)
             && Objects.equals(title, question.title)

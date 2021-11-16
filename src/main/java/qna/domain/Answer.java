@@ -1,5 +1,6 @@
 package qna.domain;
 
+import javax.persistence.Embedded;
 import qna.common.exception.CannotDeleteException;
 import qna.common.exception.NotFoundException;
 import qna.common.exception.UnAuthorizedException;
@@ -21,6 +22,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,8 +39,8 @@ public class Answer extends BaseEntity {
     @Column(name = "contents")
     private String contents;
 
-    @Column(name = "deleted", nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private final Deleted deleted = new Deleted();
 
     protected Answer() {
     }
@@ -56,9 +58,7 @@ public class Answer extends BaseEntity {
             throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
         }
 
-        this.deleted = true;
-
-        return DeleteHistory.OfAnswer(this);
+        return deleted.deleteOf(this);
     }
 
     public boolean isOwner(User writer) {
@@ -66,7 +66,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public Long getId() {
@@ -104,11 +104,13 @@ public class Answer extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        Answer answer = (Answer)o;
+        }
+        Answer answer = (Answer) o;
         return deleted == answer.deleted
             && Objects.equals(id, answer.id)
             && Objects.equals(writer, answer.writer)
