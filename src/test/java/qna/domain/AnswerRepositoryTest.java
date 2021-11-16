@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ class AnswerRepositoryTest {
     void setUp() {
         questionWriter = new User("questionWriter", "password", "lsh", "lsh@mail.com");
         answerWriter = new User("answerWriter", "password", "lsh", "lsh@mail.com");
-        question = new Question("title", "contents");
+        question = new Question("title", "contents", questionWriter);
         answer = new Answer(answerWriter, question, "contents");
     }
 
@@ -72,15 +73,14 @@ class AnswerRepositoryTest {
 
         actual.setDeleted(true);
 
-        assertThatThrownBy(() ->
-                answers.findByIdAndDeletedFalse(actual.getId()).orElseThrow(NotFoundException::new))
+        assertThatThrownBy(() -> answers.findByIdAndDeletedFalse(actual.getId())
+                .orElseThrow(NotFoundException::new))
                 .isInstanceOf(NotFoundException.class);
     }
 
     private Answer initSaved(Answer answer) {
         users.save(questionWriter);
         users.save(answerWriter);
-        question.writeBy(questionWriter);
         questions.save(question);
         return answers.save(answer);
     }
