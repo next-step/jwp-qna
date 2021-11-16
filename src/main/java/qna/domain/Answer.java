@@ -71,40 +71,20 @@ public class Answer extends BaseTime {
 		this.question = question;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+	public boolean isDeleted() {
+		return deleted;
 	}
 
 	public Question getQuestion() {
 		return question;
 	}
 
-	public void setQuestion(Question question) {
-		this.question = question;
-	}
-
 	public User getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
-	}
-
 	public String getContents() {
 		return contents;
-	}
-
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
-	public boolean isDeleted() {
-		return deleted;
 	}
 
 	public void setDeleted(boolean deleted) {
