@@ -15,7 +15,7 @@ import java.util.List;
 @Embeddable
 public class Answers {
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "question")
     private final List<Answer> answers = new ArrayList<>();
 
     public List<DeleteHistory> deleteAnswer(User loginUser) throws CannotDeleteException {
