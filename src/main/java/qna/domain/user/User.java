@@ -59,13 +59,18 @@ public class User extends BaseTimeEntity {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    public boolean matchUserId(String userId) {
         return this.userId.equals(userId);
     }
 
     public boolean matchPassword(String targetPassword) {
         return this.password.equals(targetPassword);
     }
+
+    public boolean matchEmail(String email) {
+        return this.email.equals(email);
+    }
+
 
     public boolean equalsNameAndEmail(User target) {
         if (Objects.isNull(target)) {
@@ -109,6 +114,10 @@ public class User extends BaseTimeEntity {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    public boolean matchName(String name) {
+        return this.name.equals(name);
     }
 
     private static class GuestUser extends User {
