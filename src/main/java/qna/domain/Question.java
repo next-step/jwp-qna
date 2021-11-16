@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 /**
  * create table question
@@ -25,12 +26,12 @@ public class Question extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "clob")
+    @Lob
     private String contents;
 
     private boolean deleted = false;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String title;
 
     private Long writerId;
