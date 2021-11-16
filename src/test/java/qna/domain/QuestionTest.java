@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QuestionTest {
 
-    public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
-    public static final Question Q3 = new Question(3L, "title3", "contents3", true).writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q3 = new Question("title3", "contents3", true).writeBy(UserTest.SANJIGI);
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -56,7 +56,7 @@ public class QuestionTest {
     @Test
     @DisplayName("삭제되지 않은 Question을 아이디를 통해 찾을 수 있다")
     void findByIdAndDeletedFalse() {
-        final Optional<Question> questionOptional = questionRepository.findByIdAndDeletedFalse(Q1.getId());
+        final Optional<Question> questionOptional = questionRepository.findById(Q1.getId());
         assertAll(() -> {
             assertTrue(questionOptional.isPresent());
             assertEquals(questionOptional.get(), Q1);
@@ -66,13 +66,27 @@ public class QuestionTest {
     @Test
     @DisplayName("삭제되지 않은 Question를 Question의 아이디를 통해 찾을 수 있다")
     void findByDeletedFalse() {
-        final List<Question> foundQuestions = questionRepository.findByDeletedFalse();
+        final List<Question> foundQuestions = questionRepository.findAll();
         assertAll(() -> {
             assertTrue(foundQuestions.contains(Q1));
             assertTrue(foundQuestions.contains(Q2));
             assertFalse(foundQuestions.contains(Q3));
             assertThat(foundQuestions).containsAll(Arrays.asList(Q1, Q2));
         });
+    }
+
+    @Test
+    @DisplayName("삭제 된 Question 은 찾을 수 없다.")
+    void remove() {
+        // given
+        final Question question = createQuestion("title", "content", UserTest.JAVAJIGI);
+        final Question savedQuestion = questionRepository.saveAndFlush(question);
+        // when
+        questionRepository.delete(savedQuestion);
+        questionRepository.flush();
+        // then
+        final Optional<Question> deletedQuestion = questionRepository.findById(savedQuestion.getId());
+        assertThat(deletedQuestion.isPresent()).isFalse();
     }
 
     @AfterAll
