@@ -32,4 +32,12 @@ public class Answers {
     public void add(Answer answer) {
         this.answers.add(answer);
     }
+
+    public int size() {
+        return this.answers.size();
+    }
+
+    public Answer get(int index) {
+        return answers.get(index);
+    }
 }

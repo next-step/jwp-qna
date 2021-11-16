@@ -97,20 +97,25 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("삭제 된 Question 은 찾을 수 없다.")
+    @DisplayName("Question 을 삭제 하면 삭제 기록과 삭제된 Question 을 조회 할 수 없다.")
     void delete() throws CannotDeleteException {
         // given
         final User writer = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
         final Question question = QuestionTestFactory.create("title", "content", writer);
         final Answer answer = AnswerTestFactory.create(writer, question, "Answer Content");
+        final Answer answer2 = AnswerTestFactory.create(writer, question, "Answer Content2");
         question.addAnswer(answer);
+        question.addAnswer(answer2);
         final Question savedQuestion = questionRepository.save(question);
+        final Answer savedAnswer1 = savedQuestion.getAnswers().get(0);
+        final Answer savedAnswer2 = savedQuestion.getAnswers().get(1);
         // when
         final List<DeleteHistory> deleteHistories = savedQuestion.deleteByUser(writer);
         // then
         assertAll(() -> {
             assertThat(deleteHistories).contains(DeleteHistory.ofQuestion(savedQuestion.getId(), writer));
-            assertThat(deleteHistories).contains(DeleteHistory.ofAnswer(answer.getId(), writer));
+            assertThat(deleteHistories).contains(DeleteHistory.ofAnswer(savedAnswer1.getId(), writer));
+            assertThat(deleteHistories).contains(DeleteHistory.ofAnswer(savedAnswer2.getId(), writer));
             assertFalse(questionRepository.existsById(savedQuestion.getId()));
         });
     }
