@@ -26,8 +26,7 @@
     - 해당 ID의 Answer을 삭제한다
         - soft delete, 삭제이력을 생성한다
 - DeleteHistory
-    - 전달받은 Answer들의 삭제이력을 생성한다
-    - 전달받은 Question의 삭제이력을 생성한다
+    - 삭제이력을 생성한다
 
 ### 기능 요구사항
 
