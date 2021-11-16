@@ -20,8 +20,7 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("delete history 저장 성공")
     public void saveDeleteHistorySuccess() {
         User javajigi = userRepository.save(UserTest.JAVAJIGI);
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L)
-            .deleteBy(javajigi);
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, javajigi);
 
         DeleteHistory save = deleteHistoryRepository.save(deleteHistory);
 

@@ -10,9 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
 import qna.domain.common.BaseTime;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseTime {
@@ -39,19 +39,7 @@ public class Answer extends BaseTime {
     }
 
     public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
-
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
         writerBy(writer);
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
         toQuestion(question);
         this.contents = contents;
     }
@@ -62,6 +50,9 @@ public class Answer extends BaseTime {
      * @param writer
      */
     public Answer writerBy(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
         this.writer = writer;
         return this;
     }
@@ -76,8 +67,13 @@ public class Answer extends BaseTime {
      * @param question
      */
     public void toQuestion(Question question) {
-        this.question = question;
-        question.addAnswer(this);
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
+        if (this.question != question) {
+            this.question = question;
+            question.addAnswer(this);
+        }
     }
 
     public Long getId() {
@@ -102,6 +98,24 @@ public class Answer extends BaseTime {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Answer answer = (Answer) o;
+        return Objects.equals(id, answer.id) && Objects.equals(writer, answer.writer) && Objects
+            .equals(question, answer.question);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, writer, question, contents, deleted);
     }
 
     @Override

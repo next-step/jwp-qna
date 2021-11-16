@@ -1,4 +1,4 @@
-package qna;
+package qna.exception;
 
 public class UnAuthorizedException extends RuntimeException {
 
@@ -23,5 +23,9 @@ public class UnAuthorizedException extends RuntimeException {
 
     public UnAuthorizedException(Throwable cause) {
         super(cause);
+    }
+
+    public UnAuthorizedException(ErrorMessages errorMessages) {
+        super(errorMessages.getValues());
     }
 }

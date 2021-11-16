@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -14,8 +15,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import qna.UnAuthorizedException;
 import qna.domain.common.BaseTime;
+import qna.exception.CannotDeleteException;
+import qna.exception.ErrorMessages;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 public class Question extends BaseTime {
@@ -37,24 +40,15 @@ public class Question extends BaseTime {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answerList = new ArrayList<>();
+    @Embedded
+    private AnswerList answerList = new AnswerList();
 
     protected Question() {
     }
 
     public Question(String title, String contents, User writer) {
-        this(null, title, contents, writer);
-    }
-
-    public Question(Long id, String title, String contents, User writer) {
-        this.id = id;
         this.title = title;
         this.contents = contents;
-
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
         writeBy(writer);
     }
 
@@ -65,6 +59,9 @@ public class Question extends BaseTime {
      * @return
      */
     public Question writeBy(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
         this.writer = writer;
         return this;
     }
@@ -79,15 +76,10 @@ public class Question extends BaseTime {
      * @param answer
      */
     public void addAnswer(Answer answer) {
-        this.answerList.add(answer);
-    }
-
-    public boolean equalsId(Question other) {
-        if (Objects.isNull(other)) {
-            return false;
+        if (!this.answerList.contains(answer)) {
+            this.answerList.add(answer);
+            answer.toQuestion(this);
         }
-
-        return this.id == other.getId();
     }
 
     public Long getId() {
@@ -112,6 +104,38 @@ public class Question extends BaseTime {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public DeleteHistoryList deleteQuestion(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(ErrorMessages.OTHER_USER_CANNOT_DELETE);
+        }
+        setDeleted(true);
+        return getDeleteHistoryList(loginUser);
+    }
+
+    private DeleteHistoryList getDeleteHistoryList(User loginUser) throws CannotDeleteException {
+        DeleteHistoryList deleteHistoryList = new DeleteHistoryList(
+            new DeleteHistory(ContentType.QUESTION, id, writer));
+        answerList.deleteAnswers(loginUser, deleteHistoryList);
+        return deleteHistoryList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Question question = (Question) o;
+        return Objects.equals(id, question.id) && Objects.equals(writer, question.getWriter());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writer, deleted, answerList);
     }
 
     @Override
