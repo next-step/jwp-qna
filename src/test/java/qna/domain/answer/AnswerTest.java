@@ -1,15 +1,15 @@
 package qna.domain.answer;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.domain.QuestionTest;
-import qna.domain.UserTest;
+import qna.domain.QuestionTestFactory;
+import qna.domain.UserTestFactory;
+import qna.domain.question.Question;
+import qna.domain.question.QuestionRepository;
 import qna.domain.user.User;
 import qna.domain.user.UserRepository;
 
@@ -22,54 +22,75 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AnswerTest {
-
-    public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-    public static final Answer A3 = new Answer(3L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents3", true);
-    public static final Answer A4 = new Answer(4L, UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents4");
 
     @Autowired
     private AnswerRepository answerRepository;
     @Autowired
     private UserRepository userRepository;
-
-    @BeforeAll
-    private void setUp() {
-        userRepository.saveAll(Arrays.asList(UserTest.JAVAJIGI, UserTest.SANJIGI));
-        answerRepository.saveAll(Arrays.asList(A1, A2, A3, A4));
-    }
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Test
     @DisplayName("Answer 를 저장 할 경우 저장된 객체와 저장 후 객체가 일치하다")
     void save() {
-        final Answer savedAnswer = answerRepository.save(A3);
-        assertEquals(savedAnswer, A3);
+        // given
+        final User questionWriter = userRepository.save(UserTestFactory.create("testuser2", "testuser222@test.com"));
+        final Question question = questionRepository.save(QuestionTestFactory.create(questionWriter));
+        final User answerWriter = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
+        final Answer answer = AnswerTestFactory.create(answerWriter, question, "Answer Content");
+        // when
+        final Answer savedAnswer = answerRepository.save(answer);
+        // then
+        assertTrue(savedAnswer.matchContent("Answer Content"));
+        assertTrue(savedAnswer.getWriter().equalsNameAndEmail(answerWriter));
+        assertEquals(savedAnswer.getContents(), "Answer Content");
+        assertEquals(savedAnswer.getContents(), "Answer Content");
     }
 
     @Test
     @DisplayName("삭제되지 않은 Answer 를 아이디를 통해 찾을 수 있다")
-    void findByIdAndDeletedFalse() {
-        final Answer savedAnswer = answerRepository.save(A1);
-        final Optional<Answer> answerOptional = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
+    void findById() {
+        // given
+        final User questionWriter = userRepository.save(UserTestFactory.create("testuser2", "testuser222@test.com"));
+        final Question question = questionRepository.save(QuestionTestFactory.create(questionWriter));
+        final User answerWriter = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
+        final Answer answer = AnswerTestFactory.create(answerWriter, question, "Answer Content");
+        // when
+        final Answer savedAnswer = answerRepository.save(answer);
+
+        final Optional<Answer> answerOptional = answerRepository.findById(savedAnswer.getId());
         assertAll(() -> {
             assertTrue(answerOptional.isPresent());
-            assertEquals(answerOptional.get(), A1);
+            assertEquals(answerOptional.get(), savedAnswer);
         });
     }
 
     @Test
     @DisplayName("삭제되지 않은 Answer 를 Question 의 아이디를 통해 찾을 수 있다")
-    void findByQuestionIdAndDeletedFalse() {
-        final List<Answer> foundAnswers = answerRepository.findByQuestion_IdAndDeletedFalse(A1.getQuestionId());
-
+    void findByQuestionId() {
+        // given
+        final User questionWriter = userRepository.save(UserTestFactory.create("testuser2", "testuser222@test.com"));
+        final Question question = questionRepository.save(QuestionTestFactory.create(questionWriter));
+        final User answerWriter = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
+        final Answer notDeletedAnswer1 = AnswerTestFactory.create(answerWriter, question, "Answer Content");
+        final Answer notDeletedAnswer2 = AnswerTestFactory.create(answerWriter, question, "Answer Content2");
+        final Answer deletedAnswer = AnswerTestFactory.create(answerWriter, question, "Answer Content3", true);
+        answerRepository.saveAll(
+                Arrays.asList(
+                        notDeletedAnswer1,
+                        notDeletedAnswer2,
+                        deletedAnswer
+                )
+        );
+        // when
+        final List<Answer> foundAnswers = answerRepository.findByQuestionId(question.getId());
+        // then
         assertAll(() -> {
-            assertTrue(foundAnswers.contains(A1));
-            assertTrue(foundAnswers.contains(A2));
-            assertFalse(foundAnswers.contains(A3));
-            assertFalse(foundAnswers.contains(A4));
-            assertThat(foundAnswers).containsAll(Arrays.asList(A1, A2));
+            assertTrue(foundAnswers.contains(notDeletedAnswer1));
+            assertTrue(foundAnswers.contains(notDeletedAnswer2));
+            assertFalse(foundAnswers.contains(deletedAnswer));
+            assertThat(foundAnswers).containsAll(Arrays.asList(notDeletedAnswer1, notDeletedAnswer2));
         });
     }
 
@@ -77,27 +98,27 @@ public class AnswerTest {
     @DisplayName("answer 에 있는 user 의 상태가 변경되었을때 DB도 변경되는지 확인")
     void updateWithUser() {
         // given
-        final Answer savedAnswer = answerRepository.save(A1);
-        final Answer answer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId()).get();
-        User newUser = new User(1L, "javajigi", "password", "newName", "newEmail@email.com");
-
+        final User questionWriter = userRepository.save(UserTestFactory.create("testuser2", "testuser222@test.com"));
+        final Question question = questionRepository.save(QuestionTestFactory.create(questionWriter));
+        final User answerWriter = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
+        final Answer savedAnswer = answerRepository.save(AnswerTestFactory.create(answerWriter, question, "Answer Content"));
+        final Answer answer = answerRepository.findById(savedAnswer.getId()).get();
+        final User newUser = UserTestFactory.create(answerWriter.getId(), answerWriter.getUserId(), "newEmail@email.com");
         // when
         answer.updateWriter(newUser);
         answerRepository.flush();
         answer.userClear();
         answerRepository.flush();
-
         // then
-        assertThat(answerRepository.findByIdAndDeletedFalse(savedAnswer.getId()).get().getWriter()).isNull();
-        final User javajigi = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
-        assertThat(javajigi.getName()).isEqualTo("newName");
-        assertThat(javajigi.getEmail()).isEqualTo("newEmail@email.com");
+        assertThat(answerRepository.findById(savedAnswer.getId()).get().getWriter()).isNull();
+        final User foundUser = userRepository.findByUserId(answerWriter.getUserId()).get();
+        assertThat(foundUser.matchEmail("newEmail@email.com")).isTrue();
     }
 
-    @AfterAll
+    @AfterEach
     void clear() {
         answerRepository.deleteAllInBatch();
+        questionRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
     }
-
-
 }
