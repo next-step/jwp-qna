@@ -62,6 +62,8 @@ public class Question extends BaseTimeEntity {
 
     public void delete(User loginUser) throws CannotDeleteException {
         validateOwner(loginUser);
+        answers.delete(loginUser);
+        this.deleted = true;
     }
 
     private void validateOwner(User loginUser) throws CannotDeleteException {

@@ -86,4 +86,18 @@ public class QuestionTest {
                 .isThrownBy(throwingCallable);
     }
 
+    @Test
+    public void 답변자이_없는_경우_삭제할_수_없다() throws CannotDeleteException {
+        //given
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
+        question.delete(writer);
+
+        //when
+        Question deletedQuestion = questionRepository.findByIdAndDeletedTrue(question.getId()).orElse(null);
+
+        //then
+        assertThat(deletedQuestion).isNotNull();
+    }
+
 }

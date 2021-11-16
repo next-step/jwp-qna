@@ -53,6 +53,10 @@ public class Answer extends BaseTimeEntity {
         return this.writer.equals(writer);
     }
 
+    public void delete() {
+        this.deleted = true;
+    }
+
     public Long getId() {
         return id;
     }
@@ -102,4 +106,5 @@ public class Answer extends BaseTimeEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }

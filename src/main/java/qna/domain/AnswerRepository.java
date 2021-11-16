@@ -8,4 +8,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
     List<Answer> findByContentsContains(String contents);
 
+    List<Answer> findByDeletedTrue();
+
 }
