@@ -1,11 +1,11 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Embeddable
 public class Answers {
@@ -37,16 +37,28 @@ public class Answers {
         return answers.size();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Answers answers1 = (Answers) o;
-        return Objects.equals(answers, answers1.answers);
+    public void deleteAll(User principal) throws CannotDeleteException {
+        for (Answer answer : answers) {
+            throwExceptionWhenHasAnotherWriter(principal, answer);
+        }
+        for (Answer answer : answers) {
+            answer.delete(principal);
+        }
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(answers);
+    private void throwExceptionWhenHasAnotherWriter(User principal, Answer answer) throws CannotDeleteException {
+        if (!answer.isOwner(principal)) {
+            throw new CannotDeleteException("작성자가 다른 답변이 포함되어 있습니다");
+        }
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public List<Answer> getDeletedAnswers() {
+        return answers.stream()
+                .filter(Answer::isDeleted)
+                .collect(Collectors.toList());
     }
 }
