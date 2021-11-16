@@ -50,9 +50,16 @@ public class QnaService {
         question.setDeleted(true);
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter(), LocalDateTime.now()));
         for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+            DeleteHistory deleteHistory = answerDelete(answer);
+            deleteHistories.add(deleteHistory);
         }
         deleteHistoryService.saveAll(deleteHistories);
+    }
+
+    private DeleteHistory answerDelete(Answer answer) {
+        answer.setDeleted(true);
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, answer.getId(),
+            answer.getWriter(), LocalDateTime.now());
+        return deleteHistory;
     }
 }
