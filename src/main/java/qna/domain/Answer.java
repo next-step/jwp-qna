@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.omg.CORBA.PRIVATE_MEMBER;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -51,6 +53,17 @@ public class Answer extends BaseTime {
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
+    }
+
+    public boolean canDelete(User writer) {
+        return isOwner(writer);
+    }
+
+    public void delete(User writer) throws CannotDeleteException {
+        if(!canDelete(writer)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.deleted = true;
     }
 
     public void toQuestion(Question question) {
