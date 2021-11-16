@@ -1,72 +1,52 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static qna.domain.UserTest.*;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.annotation.Rollback;
 
-@DataJpaTest
-public class UserRepositoryTest {
+public class UserRepositoryTest extends QnATest {
 
-	@Autowired
-	private UserRepository userRepository;
+    @Test
+    @DisplayName("유저 이메일이 변경되는지 확인")
+    void give_User_when_changeEmail_then_changedEqualsEmail() {
+        // given
+        User user = createUser();
 
-	@BeforeEach
-	void setUp() {
-		// given
-		userRepository.save(JAVAJIGI);
-		userRepository.save(SANJIGI);
-	}
+        // when
+        final String updateEmail = "seunghoo@naver.com";
+        user.setEmail(updateEmail);
 
-	@Test
-	@DisplayName("유저 이메일이 변경되는지 확인")
-	void give_User_when_changeEmail_then_changedEqualsEmail() {
+        User expectedUser = userRepository.findById(user.getId()).get();
 
-		Optional<User> byUserId = userRepository.findByUserId(JAVAJIGI.getUserId());
-		User expectedUser = byUserId.get();
+        // then
+        Assertions.assertThat(expectedUser.getEmail()).isEqualTo(user.getEmail());
+    }
 
-		// when
-		final String updateEmail = "seunghoo@naver.com";
-		expectedUser.setEmail(updateEmail);
+    @Test
+    @DisplayName("이름으로 조회시 데이터가 조회 되는지 확인")
+    void when_findUserName_then_sameUserName() {
+        // given
+        User user = createUser();
 
-		// then
-		Assertions.assertThat(expectedUser.getEmail()).isEqualTo(updateEmail);
-	}
+        // when
+        User expectedUser = userRepository.findByName(user.getName()).get();
 
-	@Test
-	@DisplayName("이름으로 조회시 데이터가 조회 되는지 확인")
-	void when_findUserName_then_sameUserName() {
+        // then
+        Assertions.assertThat(expectedUser.getName()).isEqualTo(user.getName());
+    }
 
-		// when
-		User expectedUser = userRepository.findByName(JAVAJIGI.getName()).get();
+    @Test
+    @DisplayName("유저 비밀번호를 변경시 변경되는지 확인")
+    void given_user_whenChangePassword_then_isTrue() {
 
-		// then
-		Assertions.assertThat(expectedUser.getName()).isEqualTo(JAVAJIGI.getName());
-	}
+        User user = createUser();
+        String changePassword = "changePassword";
 
-	@Test
-	@DisplayName("유저 비밀번호를 변경시 변경되는지 확인")
-	void given_user_whenChangePassword_then_isTrue() {
+        // when
+        user.setPassword(changePassword);
+        User expectedUser = userRepository.findByUserId(user.getUserId()).get();
 
-		User user = userRepository.findByName(JAVAJIGI.getName()).get();
-		String changePassword = "changePassword";
-
-		// when
-		user.setPassword(changePassword);
-		User expectedUser = userRepository.findByUserId(user.getUserId()).get();
-
-		// then
-		Assertions.assertThat(expectedUser.getPassword().equals(changePassword)).isTrue();
-	}
+        // then
+        Assertions.assertThat(expectedUser.getPassword().equals(changePassword)).isTrue();
+    }
 }
