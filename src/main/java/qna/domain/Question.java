@@ -1,10 +1,27 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(length = 100, nullable = false)
     private String title;
+    @Column(columnDefinition = "longtext")
     private String contents;
     private Long writerId;
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
     private boolean deleted = false;
 
     public Question(String title, String contents) {
@@ -79,5 +96,26 @@ public class Question {
                 ", writerId=" + writerId +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Question question = (Question)o;
+        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
+            question.title) && Objects.equals(contents, question.contents) && Objects.equals(writerId,
+            question.writerId) && Objects.equals(createdAt, question.createdAt) && Objects.equals(
+            updatedAt, question.updatedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writerId, createdAt, updatedAt, deleted);
+    }
+
+    protected Question() {
     }
 }
