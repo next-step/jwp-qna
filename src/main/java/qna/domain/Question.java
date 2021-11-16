@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -42,13 +43,16 @@ public class Question extends BaseTimeEntity {
     }
 
     public List<DeleteHistory> deleteBy(final User loginUser) {
-        checkAuthority(loginUser);
-
-        final List<DeleteHistory> deleteHistories = answers.deleteBy(loginUser);
-
-        this.deleted = true;
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser));
+        final List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(deleteQuestionBy(loginUser));
+        deleteHistories.addAll(answers.deleteBy(loginUser));
         return deleteHistories;
+    }
+
+    private DeleteHistory deleteQuestionBy(final User loginUser) {
+        checkAuthority(loginUser);
+        this.deleted = true;
+        return new DeleteHistory(ContentType.QUESTION, id, loginUser);
     }
 
     private void checkAuthority(User loginUser) {

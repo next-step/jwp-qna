@@ -5,6 +5,9 @@ import static qna.domain.ContentType.*;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,9 @@ public class QuestionAnswersTest {
 
     @Autowired
     private QuestionRepository questions;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @AfterEach
     void tearDown() {
@@ -53,13 +59,15 @@ public class QuestionAnswersTest {
         User user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
         Question question = questions.save(new Question(user, "title1", "contents1"));
         User invalidUser = users.save(new User("minseoklim", "1234", "임민석", "mslim@slipp.net"));
-        Answer answer = answers.save(new Answer(user, "Answers Contents1"));
+        Answer answer = answers.save(new Answer(invalidUser, "Answers Contents1"));
         question.addAnswer(answer);
-        question.addAnswer(answers.save(new Answer(invalidUser, "Answers Contents2")));
-
+        question.addAnswer(answers.save(new Answer(user, "Answers Contents2")));
 
         assertThatThrownBy(() -> question.getAnswers().deleteBy(invalidUser))
             .isInstanceOf(CannotDeleteException.class);
-        assertThat(answer.isDeleted()).isFalse();
+
+        entityManager.clear();
+        Answer refreshedAnswer = answers.findById(answer.getId()).get();
+        assertThat(refreshedAnswer.isDeleted()).isFalse();
     }
 }

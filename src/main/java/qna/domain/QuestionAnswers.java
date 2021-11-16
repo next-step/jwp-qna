@@ -22,19 +22,8 @@ public class QuestionAnswers {
     }
 
     List<DeleteHistory> deleteBy(final User loginUser) {
-        checkAuthorities(loginUser);
-        return deleteAnswersBy(loginUser);
-    }
-
-    private void checkAuthorities(final User loginUser) {
-        for (Answer answer : answers) {
-            answer.checkAuthority(loginUser);
-        }
-    }
-
-    private List<DeleteHistory> deleteAnswersBy(final User loginUser) {
         final List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : answers) {
+        for (final Answer answer : answers) {
             DeleteHistory history = answer.deleteBy(loginUser);
             deleteHistories.add(history);
         }
