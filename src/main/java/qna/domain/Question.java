@@ -1,18 +1,17 @@
 package qna.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
-import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -31,38 +30,45 @@ public class Question extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
-    @Where(clause = "deleted = false")
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private final QuestionAnswers answers = new QuestionAnswers();
 
     protected Question() {
     }
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    public Question(final User writer, final String title, final String contents) {
+        this(null, writer, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(final Long id, final User writer, final String title, final String contents) {
         this.id = id;
-        this.title = title;
         this.contents = contents;
-    }
-
-    public Question writeBy(User writer) {
-        if (this.writer != null) {
-            this.writer.getQuestions().remove(this);
-        }
+        this.title = title;
         this.writer = writer;
-        writer.getQuestions().add(this);
-        return this;
     }
 
-    public boolean isOwner(User writer) {
+    public List<DeleteHistory> deleteBy(final User loginUser) {
+        checkAuthority(loginUser);
+
+        final List<DeleteHistory> deleteHistories = answers.deleteBy(loginUser);
+
+        this.deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser));
+        return deleteHistories;
+    }
+
+    private void checkAuthority(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private boolean isOwner(final User loginUser) {
         String writerUserId = this.writer.getUserId();
-        return writerUserId.equals(writer.getUserId());
+        return writerUserId.equals(loginUser.getUserId());
     }
 
-    public void addAnswer(Answer answer) {
+    public void addAnswer(final Answer answer) {
         answer.toQuestion(this);
     }
 
@@ -86,16 +92,8 @@ public class Question extends BaseTimeEntity {
         return writer;
     }
 
-    public List<Answer> getAnswers() {
+    public QuestionAnswers getAnswers() {
         return answers;
-    }
-
-    void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public void delete() {
-        this.deleted = true;
     }
 
     @Override

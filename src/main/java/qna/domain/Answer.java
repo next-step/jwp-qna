@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -33,11 +34,11 @@ public class Answer extends BaseTimeEntity {
     protected Answer() {
     }
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer(final User writer, final Question question, final String contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(final Long id, final User writer, final Question question, final String contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -47,20 +48,12 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        writeBy(writer);
+        this.writer = writer;
         toQuestion(question);
         this.contents = contents;
     }
 
-    private void writeBy(User writer) {
-        if (this.writer != null) {
-            this.writer.getAnswers().remove(this);
-        }
-        this.writer = writer;
-        writer.getAnswers().add(this);
-    }
-
-    public void toQuestion(Question question) {
+    void toQuestion(final Question question) {
         if (this.question != null) {
             this.question.getAnswers().remove(this);
         }
@@ -68,9 +61,22 @@ public class Answer extends BaseTimeEntity {
         question.getAnswers().add(this);
     }
 
-    public boolean isOwner(User writer) {
+    DeleteHistory deleteBy(final User loginUser) {
+        checkAuthority(loginUser);
+        this.deleted = true;
+
+        return new DeleteHistory(ContentType.ANSWER, id, loginUser);
+    }
+
+    void checkAuthority(final User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private boolean isOwner(final User loginUser) {
         String writerUserId = this.writer.getUserId();
-        return writerUserId.equals(writer.getUserId());
+        return writerUserId.equals(loginUser.getUserId());
     }
 
     public Long getId() {
@@ -91,14 +97,6 @@ public class Answer extends BaseTimeEntity {
 
     public User getWriter() {
         return writer;
-    }
-
-    void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public void delete() {
-        this.deleted = true;
     }
 
     @Override

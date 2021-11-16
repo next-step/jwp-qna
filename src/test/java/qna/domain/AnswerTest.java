@@ -2,7 +2,6 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.AfterEach;
@@ -11,38 +10,39 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
+
 @DataJpaTest
 public class AnswerTest {
     @Autowired
-    private AnswerRepository answerRepository;
+    private AnswerRepository answers;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository users;
 
     @Autowired
-    private QuestionRepository questionRepository;
+    private QuestionRepository questions;
 
     @AfterEach
     void tearDown() {
-        answerRepository.deleteAll();
-        questionRepository.deleteAll();
-        userRepository.deleteAll();
+        answers.deleteAll();
+        questions.deleteAll();
+        users.deleteAll();
     }
 
     @Test
     void save() {
-        User user = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
-        Question question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
+        User user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        Question question = questions.save(new Question(user, "title1", "contents1"));
         Answer expected = new Answer(user, question, "Answers Contents1");
 
-        Answer actual = answerRepository.save(expected);
+        Answer actual = answers.save(expected);
 
         assertThat(actual.getId()).isNotNull();
         assertThat(actual.getContents()).isEqualTo(expected.getContents());
         assertThat(actual.getWriter()).isSameAs(user);
         assertThat(actual.getQuestion()).isSameAs(question);
-        assertThat(actual.getQuestion().getAnswers()).contains(actual);
-        assertThat(actual.getWriter().getAnswers()).contains(actual);
+        assertThat(actual.getQuestion().getAnswers().contains(actual)).isTrue();
     }
 
     @Test
@@ -50,57 +50,47 @@ public class AnswerTest {
     void identity() {
         Answer expected = saveNewDefaultAnswer();
 
-        Answer actual = answerRepository.findById(expected.getId()).get();
+        Answer actual = answers.findById(expected.getId()).get();
 
         assertThat(actual).isSameAs(expected);
-    }
-
-    @Test
-    @DisplayName("JPA 변경감지로 인한 업데이트 기능 테스트")
-    void update() {
-        Answer expected = saveNewDefaultAnswer();
-        expected.setContents("하고 싶은대로 하면서 살면 된다.");
-
-        Answer actual = answerRepository.findById(expected.getId()).get();
-
-        assertThat(actual.getContents()).isEqualTo(expected.getContents());
     }
 
     @Test
     @DisplayName("ID로 삭제 후, 조회가 되지 않는지 테스트")
     void delete() {
         Answer expected = saveNewDefaultAnswer();
-        answerRepository.deleteById(expected.getId());
+        answers.deleteById(expected.getId());
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(
-            () -> answerRepository.findById(expected.getId()).get()
+            () -> answers.findById(expected.getId()).get()
         );
     }
 
     @Test
-    void findByQuestionIdAndDeletedFalse() {
-        Answer expected = saveNewDefaultAnswer();
+    void deleteBy() {
+        Answer answer = saveNewDefaultAnswer();
+        User writer = answer.getWriter();
 
-        List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(expected.getQuestion());
+        DeleteHistory deleteHistory = answer.deleteBy(writer);
 
-        assertThat(answers).isNotEmpty();
+        assertThat(deleteHistory).isEqualTo(new DeleteHistory(ContentType.ANSWER, answer.getId(), writer));
+        assertThat(answer.isDeleted()).isTrue();
     }
 
     @Test
-    @DisplayName("저장한 객체에 대해 soft delete를 한 후, findByIdAndDeletedFalse함수로 조회하면 나오지 않는지 테스트")
-    void findByIdAndDeletedFalse() {
-        Answer saved = saveNewDefaultAnswer();
-        saved.delete();
+    @DisplayName("답변자와 로그인 유저가 다를 때 예외 발생")
+    void deleteByInvalidUser() {
+        Answer answer = saveNewDefaultAnswer();
+        User invalidUser = users.save(new User("minseoklim", "1234", "임민석", "mslim@slipp.net"));
 
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(
-            () -> answerRepository.findByIdAndDeletedFalse(saved.getId()).get()
-        );
+        assertThatThrownBy(() -> answer.deleteBy(invalidUser))
+            .isInstanceOf(CannotDeleteException.class);
     }
 
     private Answer saveNewDefaultAnswer() {
-        User user = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
-        Question question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
+        User user = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        Question question = questions.save(new Question(user, "title1", "contents1"));
         Answer defaultAnswer = new Answer(user, question, "Answers Contents1");
-        return answerRepository.save(defaultAnswer);
+        return answers.save(defaultAnswer);
     }
 }
