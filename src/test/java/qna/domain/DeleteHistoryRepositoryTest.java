@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -20,7 +22,7 @@ public class DeleteHistoryRepositoryTest {
     @Test
     void testSave() {
         User writer = users.save(new User("userId", "password", "name", "email"));
-        DeleteHistory deleteHistory = DeleteHistory.of(1L, writer);
+        DeleteHistory deleteHistory = DeleteHistory.of(ContentType.ANSWER, 1L, writer, LocalDateTime.now());
         DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
         assertAll(
                 () -> assertThat(savedDeleteHistory.getId()).isNotNull(),

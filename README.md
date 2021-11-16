@@ -161,4 +161,4 @@ alter table question
   - [X] 답변이 있다면 모든 답변자가 질문자와 동일해야 한다
   - [X] 위 조건에 맞게 답변 모두 삭제한다
   - [X] DeleteHistory에 삭제 이력을 남긴다
-- [ ] QnaService 리팩토링
+- [X] QnaService 리팩토링

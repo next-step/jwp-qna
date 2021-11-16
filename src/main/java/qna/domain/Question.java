@@ -4,6 +4,7 @@ import qna.CannotDeleteException;
 import qna.ForbiddenException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,9 +27,6 @@ public class Question extends BaseEntity {
 
     @Embedded
     private Answers answers = new Answers();
-
-    @OneToOne(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private QuestionDeleteHistory questionDeleteHistory;
 
     protected Question() {
     }
@@ -79,13 +77,15 @@ public class Question extends BaseEntity {
         addAnswer(Answer.of(writer, this, contents));
     }
 
-    public void delete(User principal) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User principal) throws CannotDeleteException {
         if (!isOwner(principal)) {
             throw new CannotDeleteException("질문 작성자만 삭제할 수 있습니다");
         }
-        answers.deleteAll(writer);
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(this));
+        deleteHistories.addAll(answers.deleteAll(writer));
         this.deleted = true;
-        this.questionDeleteHistory = new QuestionDeleteHistory(this);
+        return deleteHistories;
     }
 
     public String getTitle() {
@@ -106,10 +106,6 @@ public class Question extends BaseEntity {
 
     public List<Answer> getAnswers() {
         return answers.getAnswers();
-    }
-
-    public QuestionDeleteHistory getQuestionDeleteHistory() {
-        return questionDeleteHistory;
     }
 
     @Override

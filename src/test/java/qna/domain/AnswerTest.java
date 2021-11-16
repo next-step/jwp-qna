@@ -85,10 +85,10 @@ public class AnswerTest {
         @DisplayName("답변을 삭제하면 삭제 기록을 생성한다")
         @Test
         void whenDeleteAnswerThenCrateDeleteHistory() throws CannotDeleteException {
-            answer.delete(UserTest.JAVAJIGI);
-            AnswerDeleteHistory deleteHistory = answer.getAnswerDeleteHistory();
+            DeleteHistory deleteHistory = answer.delete(UserTest.JAVAJIGI);
             assertAll(
-                    () -> assertThat(deleteHistory.getAnswer()).isEqualTo(answer),
+                    () -> assertThat(deleteHistory.getContentId()).isEqualTo(answer.getId()),
+                    () -> assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER),
                     () -> assertThat(deleteHistory.getDeletedBy()).isEqualTo(answer.getWriter())
             );
         }

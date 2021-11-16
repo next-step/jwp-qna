@@ -7,6 +7,10 @@ import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 import qna.ForbiddenException;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -96,7 +100,7 @@ public class QuestionTest {
 
         @DisplayName("질문자와 다른 답변자가 있다면 오류를 던진다")
         @Test
-        void givenAnswersWhenDeleteQuestionThenThrowException() throws CannotDeleteException {
+        void givenAnswersWhenDeleteQuestionThenThrowException() {
             addAnswerWithDifferentWriter(USER1, USER2);
             assertThatThrownBy(() -> question.delete(USER1))
                     .isInstanceOf(CannotDeleteException.class);
@@ -104,7 +108,7 @@ public class QuestionTest {
 
         @DisplayName("질문자와 다른 답변자가 있다면 삭제되지 않는다")
         @Test
-        void givenAnswersWhenDeleteQuestionThenDoNotDeleted() throws CannotDeleteException {
+        void givenAnswersWhenDeleteQuestionThenDoNotDeleted() {
             addAnswerWithDifferentWriter(USER1, USER2);
             assertThat(question.isDeleted()).isFalse();
         }
@@ -113,12 +117,10 @@ public class QuestionTest {
         @Test
         void whenDeleteAnswerThenCrateDeleteHistory() throws CannotDeleteException {
             addAnswerWithSameWriter(USER1);
-            question.delete(USER1);
-            QuestionDeleteHistory deleteHistory = question.getQuestionDeleteHistory();
-            assertAll(
-                    () -> assertThat(deleteHistory.getQuestion()).isEqualTo(question),
-                    () -> assertThat(deleteHistory.getDeletedBy()).isEqualTo(question.getWriter())
-            );
+            List<DeleteHistory> deleteHistories = question.delete(USER1);
+            assertThat(deleteHistories).hasSize(4);
+            assertThat(deleteHistories).contains(
+                    DeleteHistory.of(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
         }
 
         private void addAnswerWithSameWriter(User user) {

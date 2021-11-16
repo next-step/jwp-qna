@@ -38,13 +38,15 @@ public class Answers {
         return answers.size();
     }
 
-    public void deleteAll(User principal) throws CannotDeleteException {
+    public List<DeleteHistory> deleteAll(User principal) throws CannotDeleteException {
+        List<DeleteHistory> result = new ArrayList<>();
         for (Answer answer : answers) {
             throwExceptionWhenHasAnotherWriter(principal, answer);
         }
         for (Answer answer : answers) {
-            answer.delete(principal);
+            result.add(answer.delete(principal));
         }
+        return result;
     }
 
     private void throwExceptionWhenHasAnotherWriter(User principal, Answer answer) throws CannotDeleteException {
