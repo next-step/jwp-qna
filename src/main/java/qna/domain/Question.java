@@ -52,17 +52,8 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     public Question writeBy(User writer) {
-        if (!Objects.isNull(this.writer)) {
-            this.writer.getQuestions().remove(this);
-        }
-
-        setWriter(writer);
-        writer.getQuestions().add(this);
+        this.writer = writer;
         return this;
     }
 

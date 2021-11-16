@@ -35,9 +35,6 @@ public class User extends BaseEntity {
     @Column(length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
-    private List<Question> questions = new ArrayList<>();
-
     protected User() {
     }
 
@@ -51,11 +48,6 @@ public class User extends BaseEntity {
         this.password = password;
         this.name = name;
         this.email = email;
-    }
-
-    public void addQuestion(Question question) {
-        questions.add(question);
-        question.setWriter(this);
     }
 
     public void update(User loginUser, User target) {
@@ -99,10 +91,6 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
-    public List<Question> getQuestions() {
-        return questions;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -113,7 +101,7 @@ public class User extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email, questions);
+        return Objects.hash(id, userId, password, name, email);
     }
 
     private static class GuestUser extends User {
