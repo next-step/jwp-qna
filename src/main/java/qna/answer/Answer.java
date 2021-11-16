@@ -1,7 +1,7 @@
 package qna.answer;
 
-import qna.exception.CannotDeleteException;
 import qna.domain.BaseEntity;
+import qna.exception.CannotDeleteException;
 import qna.question.Question;
 import qna.user.User;
 
