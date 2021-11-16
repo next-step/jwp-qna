@@ -67,15 +67,9 @@ public class Answer extends BaseTimeEntity {
         this.question = question;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public void delete(User loginUser) {
         isOwner(loginUser);
-        try {
-            question.isOwner(loginUser);
-            this.deleted = true;
-        }catch (CannotDeleteException e) {
-            question.deleteCancel();
-            throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
-        }
+        this.deleted = true;
     }
 
     public Long getId() {
