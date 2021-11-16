@@ -17,16 +17,19 @@ import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @SQLDelete(sql = "UPDATE Question SET deleted = true WHERE id=?")
-//@FilterDef(name = "deletedQuestionFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
-//@Filter(name = "deletedQuestionFilter", condition = "deleted = :isDeleted")
 @Where(clause = "deleted=false")
+@Table(indexes = {
+        @Index(name = "question_deleted_index", columnList = "deleted"),
+})
 public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
