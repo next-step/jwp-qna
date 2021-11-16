@@ -119,7 +119,7 @@ public class User extends BaseEntity {
             ", userId='" + userId + '\'' +
             ", password='" + password + '\'' +
             ", name='" + name + '\'' +
-            ", email='" + email.getValue() + '\'' +
+            ", email='" + email.getEmail() + '\'' +
             '}';
     }
 

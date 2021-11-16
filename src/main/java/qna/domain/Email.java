@@ -14,14 +14,14 @@ public class Email implements Serializable {
         "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$");
 
     @Column(name = "email", length = 50)
-    private String value;
+    private String email;
 
     protected Email() {
     }
 
-    public Email(String value) {
-        validEmail(value);
-        this.value = value;
+    public Email(String email) {
+        validEmail(email);
+        this.email = email;
     }
 
     public void validEmail(String email) {
@@ -31,7 +31,7 @@ public class Email implements Serializable {
         }
     }
 
-    public String getValue() {
-        return value;
+    public String getEmail() {
+        return email;
     }
 }
