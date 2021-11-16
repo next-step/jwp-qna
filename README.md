@@ -21,8 +21,10 @@
 
 
 ### 궁금한 사항
-- cascade 옵션 중 detach 를 사용하는 때는 언제일까?
-- sort delete 와 hard delete 는 언제 사용하는 것 일까?
-- @Where 절로 AndDeletedFalse 를 전부 붙이지 않아서 좋긴 하지만, 만약 Deleted 가 True 를불러와야 하는 특정 케이스가 있다면 어떻게 해야할까?
-- 테스트 픽스처가 어렵네요.. static 변수를 두는 것 이 맞을지 고민입니다. 
+- cascade 옵션 중 detach 를 사용하신 경험이 있으시다면 언제인지 알 수 있을 까요?
+- sort delete 와 hard delete 는 언제 사용하는 것 일까요? 
+  - sort delete 를 쓰는 경우 데이터가 방대해질 때 속도 개선이 필요한데 JPA 에서는 어떤 방식으로 개선할 수 있나요?
+- @Where 절로 AndDeletedFalse 를 전부 붙이지 않아서 좋긴 하지만, 만약 Deleted 가 True 를 불러와야 하는 특정 케이스가 있다면 어떻게 해야할지 고민입니다. ㅠㅠ
+- 테스트 픽스처가 어렵네요.. 이번엔 TestFactory 클래스를 만들어서 해보았는데 피드백 부탁드립니다. ㅠㅠ 
 - Answer 나 Question 에서 User 의 변경을 주고 싶지 않을 때 어떻게 해야 할까요?
+- 혹시, @FilterDef 를 사용해보신 경험이 있으시다면 언제인지 알 수 있을까요?
