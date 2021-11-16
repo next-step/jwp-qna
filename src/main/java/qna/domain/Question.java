@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
