@@ -2,30 +2,52 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Objects;
 
+@Entity
+@Table(name = "user")
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
+    @Column(name = "create_at", nullable = false)
+    private LocalDateTime createAt;
+
+    @Column(length = 50)
     private String email;
 
-    private User() {
-    }
+    @Column(length = 20, nullable = false)
+    private String name;
+
+    @Column(length = 20, nullable = false)
+    private String password;
+
+    @Column
+    private LocalDateTime updateAt;
+
+    @Column(name = "user_id", length = 20, unique = true)
+    private String userId;
+
+    // Arguments가 없는 Default Constructor 생성
+    protected User() {}
 
     public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
+        this(null, userId, password, name, email, LocalDateTime.now());
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
+    public User(Long id, String userId, String password, String name, String email, LocalDateTime createAt) {
         this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
+        this.createAt = createAt;
     }
 
     public void update(User loginUser, User target) {

@@ -1,14 +1,30 @@
 package qna.domain;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "delete_history")
 public class DeleteHistory {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private ContentType contentType;
+
+    @Column(name = "content_id")
     private Long contentId;
-    private Long deletedById;
+
+    @Column(name = "content_type", columnDefinition = "varchar(225)")
+    private ContentType contentType;
+
+    @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
+
+    @Column(name = "deleted_by_id")
+    private Long deletedById;
+
+    // Arguments가 없는 Default Constructor 생성
+    protected DeleteHistory() {}
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
