@@ -1,8 +1,10 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.ForbiddenException;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -74,8 +76,16 @@ public class Question extends BaseEntity {
         answers.add(answer);
     }
 
-    public void removeAnswer(Answer answer) {
-        answers.remove(answer);
+    public void addAnswer(User writer, String contents) {
+        addAnswer(Answer.of(writer, this, contents));
+    }
+
+    public void delete(User principal) throws CannotDeleteException {
+        if (!isOwner(principal)) {
+            throw new CannotDeleteException("질문 작성자만 삭제할 수 있습니다");
+        }
+        answers.deleteAll(writer);
+        this.deleted = true;
     }
 
     public String getTitle() {
@@ -94,12 +104,8 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public Answers getAnswers() {
-        return answers;
+    public List<Answer> getAnswers() {
+        return answers.getAnswers();
     }
 
     @Override

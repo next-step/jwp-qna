@@ -8,6 +8,8 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -69,7 +71,7 @@ public class AnswerTest {
         @Test
         void testRemoveAnswerInQuestion() throws CannotDeleteException {
             answer.delete(UserTest.JAVAJIGI);
-            Answers answers = Q1.getAnswers();
+            List<Answer> answers = Q1.getAnswers();
             assertThat(answers.contains(answer)).isFalse();
         }
 

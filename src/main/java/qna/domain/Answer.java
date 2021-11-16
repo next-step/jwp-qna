@@ -65,7 +65,6 @@ public class Answer extends BaseEntity {
             throw new CannotDeleteException("답변 작성자만 삭제할 수 있습니다");
         }
         this.deleted = true;
-        question.removeAnswer(this);
         this.answerDeleteHistory = new AnswerDeleteHistory(this);
     }
 

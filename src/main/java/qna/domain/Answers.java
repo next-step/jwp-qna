@@ -53,7 +53,9 @@ public class Answers {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.stream()
+                .filter(answer -> !answer.isDeleted())
+                .collect(Collectors.toList());
     }
 
     public List<Answer> getDeletedAnswers() {
