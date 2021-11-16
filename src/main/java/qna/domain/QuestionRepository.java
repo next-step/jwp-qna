@@ -11,7 +11,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
 	Optional<Question> findByIdAndDeletedFalse(Long id);
 
-/*	@EntityGraph(attributePaths = "answers")*/
 	Optional<Question> findByTitle(String title);
 
 	List<Question> findByAnswersIn(List<Answer> answers);
