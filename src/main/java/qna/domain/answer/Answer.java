@@ -1,5 +1,7 @@
 package qna.domain.answer;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.BaseTimeEntity;
@@ -7,6 +9,7 @@ import qna.domain.question.Question;
 import qna.domain.user.User;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -16,11 +19,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "answer")
+@SQLDelete(sql = "UPDATE Answer SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +36,9 @@ public class Answer extends BaseTimeEntity {
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
+
+    @Column(name = "question_id", insertable = false, updatable = false)
+    private Long questionId;
 
     @Lob
     private String contents;
@@ -62,8 +68,8 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public Answer(Long id, User writer, Question question, String contents, boolean deleted) {
-        this(id, writer, question, contents);
+    public Answer(User writer, Question question, String contents, boolean deleted) {
+        this(writer, question, contents);
         this.deleted = deleted;
     }
 
@@ -84,7 +90,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public Long getQuestionId() {
-        return question.getId();
+        return this.questionId;
     }
 
     public Question getQuestion() {
@@ -111,6 +117,25 @@ public class Answer extends BaseTimeEntity {
         this.writer.update(target);
     }
 
+    public boolean matchContent(String content) {
+        return this.contents.equals(content);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Answer answer = (Answer) o;
+
+        return id != null ? id.equals(answer.id) : answer.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
@@ -121,4 +146,5 @@ public class Answer extends BaseTimeEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
