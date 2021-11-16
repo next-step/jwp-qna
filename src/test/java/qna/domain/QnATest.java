@@ -28,33 +28,31 @@ public class QnATest {
 
     @PersistenceContext
     EntityManager entityManager;
-
+    protected static final String USER_A = "userA";
+    protected static final String USER_A_EMAIL = "userA@gmail.com";
+    protected static final String USER_B = "userB";
+    protected static final String USER_B_EMAIL = "userB@gmail.com";
+    protected static final String PASSWORD = "password";
     protected static final String TITLE_1 = "title1";
     protected static final String TITLE_2 = "title2";
-    protected static final String CONTENTS = "contents";
-    protected static final String ANSWER = "답글";
+    protected static final String CONTENTS_1 = "contents1";
+    protected static final String CONTENTS_2 = "contents2";
+    protected static final String ANSWER_1 = "답글1";
+    protected static final String ANSWER_2 = "답글2";
 
-    protected Question createQuestions(User user, String title) {
-        return questionRepository.save(new Question(title, CONTENTS).writeBy(user));
+    protected Question createQuestion(User user, String title, String content) {
+        return questionRepository.save(new Question(title, content).writeBy(user));
     }
 
-    protected List<Question> createQuestions(User user, String... titles) {
-        List<Question> questions = stream(titles)
-            .map(title -> new Question(title, CONTENTS).writeBy(user))
-            .collect(toList());
-        return questionRepository.saveAll(questions);
+    protected Answer createAnswer(User writer, Question question,String answerContent) {
+        return answerRepository.save(new Answer(writer, question, answerContent));
     }
 
-    protected List<Answer> createAnswers(User writer, Question question) {
-        return answerRepository.saveAll(asList(
-            new Answer(writer, question, CONTENTS),
-            new Answer(writer, question, CONTENTS)
-        ));
+    protected User createUser(String id, String password, String userName, String email) {
+        return userRepository.save(new User(id, password, userName, email));
+    }
+    protected User createUser() {
+        return userRepository.save(new User(USER_A, PASSWORD, USER_A, USER_A));
     }
 
-    protected List<User> createUsers() {
-        return userRepository.saveAll(asList(
-            new User("userId1", "password", "userName2", "userName1@gmail.com"),
-            new User("userId2", "password", "userName2", "userName2@gmail.com")));
-    }
 }
