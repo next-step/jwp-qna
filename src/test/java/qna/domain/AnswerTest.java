@@ -1,84 +1,102 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import javax.persistence.EntityManager;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
+@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 public class AnswerTest {
-  public static final User JAVAJIGI = UserTest.JAVAJIGI;
-  public static final Answer A1 = new Answer(JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-  public static final Answer A2 = new Answer(JAVAJIGI, QuestionTest.Q1, "Answers Contents2");
-  public static final Answer A3 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents3");
-
   @Autowired
   private AnswerRepository answerRepository;
   @Autowired
-  private EntityManager entityManager;
+  private UserRepository userRepository;
+  @Autowired
+  private QuestionRepository questionRepository;
 
-  @AfterEach
-  void tearDown() {
-    answerRepository.deleteAll();
-    entityManager
-      .createNativeQuery("alter table answer alter column `id` restart with 1")
-      .executeUpdate();
-  }
-
+  @DisplayName("답변을 저장한다.")
   @Test
   void save() {
-    Answer savedAnswer = answerRepository.save(A1);
-    assertThat(savedAnswer.getId()).isEqualTo(A1.getId());
+    User questionWriter = UserFactory.create("test_question_pro", "pass", "test", "dev22@gmail.com");
+    User answerWriter = UserFactory.create("wonjune", "pass", "june", "dev@gmail.com");
+    Question question = QuestionFactory.create("test question", "contents").writeBy(questionWriter);
+
+    Answer answer = AnswerFactory.create(answerWriter, question, "test contents");
+
+    Answer actual = answerRepository.save(answer);
+
+    assertAll(
+      () -> assertThat(actual.getId()).isNotNull(),
+      () -> assertThat(actual.getContents()).isEqualTo(answer.getContents()),
+      () -> assertThat(actual.getQuestion()).isEqualTo(answer.getQuestion()),
+      () -> assertThat(actual.getWriter()).isEqualTo(answer.getWriter()));
   }
 
+  @DisplayName("답변을 삭제한다.")
   @Test
-  void deleteById() {
-    answerRepository.save(A1);
+  void delete() {
+    User questionWriter = UserFactory.create("test_question_pro", "pass", "test", "dev22@gmail.com");
+    User answerWriter = UserFactory.create("wonjune", "pass", "june", "dev@gmail.com");
+    Question question = QuestionFactory.create("test question", "contents").writeBy(questionWriter);
 
-    answerRepository.delete(A1);
+    Answer answer = AnswerFactory.create(answerWriter, question, "test contents");
+    answerRepository.save(answer);
 
-    assertThat(answerRepository.findById(1L).isPresent()).isFalse();
+    answerRepository.delete(answer);
+    assertThat(answerRepository.findById(answer.getId()).isPresent()).isFalse();
   }
 
+  @DisplayName("답변의 내용을 수정한다.")
   @Test
   void updateContentsById() {
-    answerRepository.save(A1);
-    answerRepository.save(A2);
-    answerRepository.save(A3);
+    User questionWriter = UserFactory.create("test_question_pro", "pass", "test", "dev22@gmail.com");
+    User answerWriter = UserFactory.create("wonjune", "pass", "june", "dev@gmail.com");
+    Question question = QuestionFactory.create("test question", "contents").writeBy(questionWriter);
 
-    int updateCount = answerRepository.updateContentsById(A3.getId(), "TEST");
+    Answer answer = AnswerFactory.create(answerWriter, question, "test contents");
+    answerRepository.save(answer);
+    String updateContents = "updated contents";
 
-    assertThat(updateCount).isEqualTo(1);
+    answer.setContents(updateContents);
+
+    assertThat(answerRepository.findById(answer.getId()).map(Answer::getContents).get()).isEqualTo(updateContents);
   }
 
+  @DisplayName("ID로 답변을 찾는다.")
   @Test
   void findById() {
-    answerRepository.save(A1);
-    Answer actual = answerRepository.save(A2);
+    User questionWriter = UserFactory.create("test_question_pro", "pass", "test", "dev22@gmail.com");
+    User answerWriter = UserFactory.create("wonjune", "pass", "june", "dev@gmail.com");
+    Question question = QuestionFactory.create("test question", "contents").writeBy(questionWriter);
 
-    Optional<Answer> expected = answerRepository.findById(2L);
+    Answer answer = AnswerFactory.create(answerWriter, question, "test contents");
+    answerRepository.save(answer);
 
-    assertThat(actual).isEqualTo(expected.orElseThrow(NullPointerException::new));
+    Answer actual = answerRepository.findById(answer.getId()).orElse(null);
+
+    assertThat(actual).isEqualTo(answer);
   }
 
+  @DisplayName("답변을 작성자 ID로 찾는다.")
   @Test
   void findAnswersByWriterId() {
-    answerRepository.save(A1);
-    answerRepository.save(A2);
-    answerRepository.save(A3);
-    List<Answer> answers = answerRepository.findByWriterId(UserTest.JAVAJIGI.getId());
+    User questionWriter = UserFactory.create("test_question_pro", "pass", "test", "dev22@gmail.com");
+    User answerWriter = UserFactory.create("wonjune", "pass", "june", "dev@gmail.com");
+    Question question = QuestionFactory.create("test question", "contents").writeBy(questionWriter);
 
-    assertThat(answers.stream().map(Answer::getWriterId).collect(Collectors.toList()))
-      .contains(JAVAJIGI.getId());
+    Answer answer = AnswerFactory.create(answerWriter, question, "test contents");
+    userRepository.save(answerWriter);
+    userRepository.save(questionWriter);
+    questionRepository.save(question);
+    answerRepository.save(answer);
+
+    assertThat(answerRepository.findByWriterId(answerWriter.getId()).get(0)).isEqualTo(answer);
   }
 }
