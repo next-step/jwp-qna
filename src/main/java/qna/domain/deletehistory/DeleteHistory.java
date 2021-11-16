@@ -1,9 +1,13 @@
 package qna.domain.deletehistory;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.domain.user.User;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -17,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,16 +32,25 @@ public class DeleteHistory {
     @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedByUser;
-    private LocalDateTime createDate = LocalDateTime.now();
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createDate;
 
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
-        this.createDate = createDate;
+    }
+
+    public static DeleteHistory ofQuestion(Long contentId, User writer) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, writer);
+    }
+
+    public static DeleteHistory ofAnswer(Long contentId, User writer) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, writer);
     }
 
     @Override

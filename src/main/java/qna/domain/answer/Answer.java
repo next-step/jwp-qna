@@ -2,9 +2,11 @@ package qna.domain.answer;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.BaseTimeEntity;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.question.Question;
 import qna.domain.user.User;
 
@@ -74,11 +76,43 @@ public class Answer extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
+        if (this.question != null) {
+            this.getQuestion().getAnswers().remove(this);
+        }
         this.question = question;
+        question.getAnswers().add(this);
+    }
+
+    private DeleteHistory delete() {
+        this.deleted = true;
+        return DeleteHistory.ofAnswer(this.id, this.writer);
+    }
+
+    public void userClear() {
+        this.writer = null;
+    }
+
+    public void updateWriter(User target) {
+        this.writer.update(target);
+    }
+
+    public boolean matchContent(String content) {
+        return this.contents.equals(content);
+    }
+
+    public DeleteHistory deleteByUser(User loginUser) throws CannotDeleteException {
+        validateByUser(loginUser);
+        return delete();
+    }
+
+    private void validateByUser(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -103,22 +137,6 @@ public class Answer extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void delete() {
-        this.deleted = true;
-    }
-
-    public void userClear() {
-        this.writer = null;
-    }
-
-    public void updateWriter(User target) {
-        this.writer.update(target);
-    }
-
-    public boolean matchContent(String content) {
-        return this.contents.equals(content);
     }
 
     @Override
@@ -146,5 +164,4 @@ public class Answer extends BaseTimeEntity {
                 ", deleted=" + deleted +
                 '}';
     }
-
 }

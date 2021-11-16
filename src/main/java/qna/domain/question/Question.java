@@ -2,10 +2,13 @@ package qna.domain.question;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.domain.BaseTimeEntity;
 import qna.domain.answer.Answer;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.user.User;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,6 +18,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @SQLDelete(sql = "UPDATE Question SET deleted = true WHERE id=?")
@@ -32,6 +38,8 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
     private boolean deleted = Boolean.FALSE;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question")
+    private final List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -51,13 +59,40 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
+    public List<DeleteHistory> deleteByUser(User loginUser) throws CannotDeleteException {
+        validateDeleteByUser(loginUser);
+        final List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(delete());
+        deleteHistories.addAll(deleteAnswer(loginUser));
+        return deleteHistories;
+    }
+
+    private DeleteHistory delete() {
+        this.deleted = true;
+        return DeleteHistory.ofQuestion(this.id, this.writer);
+    }
+
+    private void validateDeleteByUser(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private List<DeleteHistory> deleteAnswer(User loginUser) throws CannotDeleteException {
+        final List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.deleteByUser(loginUser));
+        }
+        return deleteHistories;
+    }
+
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.equals(writer);
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -84,8 +119,8 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void delete() {
-        this.deleted = true;
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override
@@ -102,7 +137,9 @@ public class Question extends BaseTimeEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Question question = (Question) o;
 

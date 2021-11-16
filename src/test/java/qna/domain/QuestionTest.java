@@ -6,7 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
+import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
+import qna.domain.answer.AnswerTestFactory;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.question.Question;
 import qna.domain.question.QuestionRepository;
 import qna.domain.user.User;
@@ -15,6 +19,7 @@ import qna.domain.user.UserRepository;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -93,15 +98,21 @@ public class QuestionTest {
 
     @Test
     @DisplayName("삭제 된 Question 은 찾을 수 없다.")
-    void delete() {
+    void delete() throws CannotDeleteException {
         // given
-        final User questionWriter = userRepository.save(UserTestFactory.create("testuser2", "testuser222@test.com"));
-        final Question question = QuestionTestFactory.create("title", "content", questionWriter);
+        final User writer = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
+        final Question question = QuestionTestFactory.create("title", "content", writer);
+        final Answer answer = AnswerTestFactory.create(writer, question, "Answer Content");
+        question.addAnswer(answer);
         final Question savedQuestion = questionRepository.save(question);
         // when
-        questionRepository.delete(savedQuestion);
+        final List<DeleteHistory> deleteHistories = savedQuestion.deleteByUser(writer);
         // then
-        assertFalse(questionRepository.existsById(savedQuestion.getId()));
+        assertAll(() -> {
+            assertThat(deleteHistories).contains(DeleteHistory.ofQuestion(savedQuestion.getId(), writer));
+            assertThat(deleteHistories).contains(DeleteHistory.ofAnswer(answer.getId(), writer));
+            assertFalse(questionRepository.existsById(savedQuestion.getId()));
+        });
     }
 
     @AfterEach

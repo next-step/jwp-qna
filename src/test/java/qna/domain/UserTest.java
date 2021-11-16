@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserTest {
-    public static final User JAVAJIGI = UserTestFactory.create("javajigi", "javajigi@slipp.net");
-    public static final User SANJIGI = UserTestFactory.create("sanjigi", "sanjigi@slipp.net");
+    public static final User JAVAJIGI = UserTestFactory.create(1L, "javajigi", "javajigi@slipp.net");
+    public static final User SANJIGI = UserTestFactory.create(2L, "sanjigi", "sanjigi@slipp.net");
 
     @Autowired
     private UserRepository userRepository;

@@ -43,7 +43,7 @@ class DeleteHistoryTest {
         final Answer savedAnswer = answerRepository.save(AnswerTestFactory.create(answerWriter, question, "Answer Content"));
         final User deletedUser = userRepository.save(UserTestFactory.create("doyoung", "doyoung@qna.test"));
         // given
-        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, savedAnswer.getId(), deletedUser, LocalDateTime.now());
+        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, savedAnswer.getId(), deletedUser);
         // when
         final DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
         // then
