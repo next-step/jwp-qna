@@ -15,6 +15,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 class DeleteHistoryTest {
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
     @Autowired
@@ -23,11 +26,22 @@ class DeleteHistoryTest {
     private DeleteHistory history1;
     private DeleteHistory history2;
 
+    private User user1;
+    private User user2;
+
     @BeforeEach
     void setUp() {
-        history1 = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI,
+        user1 = new User("user1", "password", "alice",
+            "alice@gmail.com");
+        user2 = new User("user2", "password", "bob",
+            "bob@gmail.com");
+
+        userRepository.save(user1);
+        userRepository.save(user2);
+
+        history1 = new DeleteHistory(ContentType.QUESTION, 1L, user1,
             LocalDateTime.now());
-        history2 = new DeleteHistory(ContentType.ANSWER, 2L, UserTest.SANJIGI,
+        history2 = new DeleteHistory(ContentType.ANSWER, 2L, user2,
             LocalDateTime.now());
 
         deleteHistoryRepository.save(history1);

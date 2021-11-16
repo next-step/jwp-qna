@@ -120,6 +120,32 @@ public class User extends BaseEntity {
         return questions;
     }
 
+    public void addDeleteHistory(DeleteHistory deleteHistory) {
+        deleteHistories.add(deleteHistory);
+        deleteHistory.toDeleter(this);
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return userId.equals(user.userId) && name.equals(user.name) && email.equals(user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, name, email);
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -129,15 +155,6 @@ public class User extends BaseEntity {
             ", name='" + name + '\'' +
             ", email='" + email + '\'' +
             '}';
-    }
-
-    public void addDeleteHistory(DeleteHistory deleteHistory) {
-        deleteHistories.add(deleteHistory);
-        deleteHistory.toDeleter(this);
-    }
-
-    public List<DeleteHistory> getDeleteHistories() {
-        return null;
     }
 
     private static class GuestUser extends User {
