@@ -16,21 +16,37 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class AnswerTest {
 
     @Autowired
-    private AnswerRepository answerRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private EntityManager entityManager;
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
+
+    private User user1;
+    private User user2;
 
     private Answer answer1;
     private Answer answer2;
 
     @BeforeEach
     void setUp() {
-        Question question = new Question("title1", "contents1")
-            .writeBy(UserTest.JAVAJIGI);
+        user1 = new User("user1", "password", "alice",
+            "alice@gmail.com");
+        user2 = new User("user2", "password", "bob",
+            "bob@gmail.com");
 
-        answer1 = new Answer(UserTest.JAVAJIGI, question, "Answers Contents1");
-        answer2 = new Answer(UserTest.SANJIGI, question, "Answers Contents2");
+        userRepository.save(user1);
+        userRepository.save(user2);
+
+        Question question = new Question("title1", "contents1")
+            .writeBy(user1);
+
+        questionRepository.save(question);
+
+        answer1 = new Answer(user1, question, "Answers Contents1");
+        answer2 = new Answer(user2, question, "Answers Contents2");
 
         answerRepository.save(answer1);
         answerRepository.save(answer2);
@@ -39,12 +55,12 @@ public class AnswerTest {
     @AfterEach
     void tearDown() {
         answerRepository.deleteAll();
+        questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
     void test_답변_저장() {
-        answerRepository.deleteAll();
-        entityManager.clear();
         Answer actual = answerRepository.save(answer1);
 
         assertAll(
