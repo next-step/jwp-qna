@@ -50,8 +50,8 @@ public class User extends BaseTimeEntity {
             return false;
         }
 
-        return name.equals(target.name) &&
-            email.equals(target.email);
+        return name.equals(target.name)
+            && email.equals(target.email);
     }
 
     public Long getId() {
