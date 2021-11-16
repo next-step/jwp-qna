@@ -64,11 +64,11 @@ public class User extends BaseTimeEntity {
         this.email = target.email;
     }
 
-    public boolean matchUserId(UserId userId) {
+    private boolean matchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(Password targetPassword) {
+    private boolean matchPassword(Password targetPassword) {
         return this.password.equals(targetPassword);
     }
 
@@ -102,18 +102,6 @@ public class User extends BaseTimeEntity {
 
     public String getUserId() {
         return userId.getUserId();
-    }
-
-    public String getPassword() {
-        return password.getPassword();
-    }
-
-    public String getName() {
-        return name.getName();
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     @Override

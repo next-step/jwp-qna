@@ -76,7 +76,7 @@ public class Answer extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
