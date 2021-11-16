@@ -28,14 +28,16 @@ public class Question extends BaseTimeEntity {
     @Column(name="deleted", nullable = false)
     private boolean deleted = false;
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    public Question(String title, String contents, User writer) {
+
+        this(null, title, contents, writer);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, String title, String contents, User writer) {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.writer = writer;
         this.answers = new Answers();
     }
 
@@ -43,12 +45,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.setQuestion(this);
-        answers.addAnswer(answer);
+        return this.writer.equals(writer);
     }
 
     public Long getId() {
@@ -85,13 +82,9 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writer.getId() +
+                ", answers=" + answers +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
-    }
-
-    public Question writeBy(User writer) {
-        this.writer = writer;
-        return this;
     }
 }
