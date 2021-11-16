@@ -5,11 +5,12 @@ import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 import qna.domain.BaseTimeEntity;
 import qna.domain.answer.Answer;
+import qna.domain.answer.Answers;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.user.User;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -18,7 +19,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +38,9 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
     private boolean deleted = Boolean.FALSE;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question")
-    private final List<Answer> answers = new ArrayList<>();
+
+    @Embedded
+    private final Answers answers = new Answers();
 
     protected Question() {
     }
@@ -63,7 +64,7 @@ public class Question extends BaseTimeEntity {
         validateDeleteByUser(loginUser);
         final List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(delete());
-        deleteHistories.addAll(deleteAnswer(loginUser));
+        deleteHistories.addAll(answers.deleteAnswer(loginUser));
         return deleteHistories;
     }
 
@@ -78,13 +79,6 @@ public class Question extends BaseTimeEntity {
         }
     }
 
-    private List<DeleteHistory> deleteAnswer(User loginUser) throws CannotDeleteException {
-        final List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.deleteByUser(loginUser));
-        }
-        return deleteHistories;
-    }
 
     public Question writeBy(User writer) {
         this.writer = writer;
@@ -97,6 +91,11 @@ public class Question extends BaseTimeEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+    }
+
+
+    public void removeAnswer(Answer answer) {
+        this.answers.remove(answer);
     }
 
     public Long getId() {
@@ -119,7 +118,7 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -150,4 +149,5 @@ public class Question extends BaseTimeEntity {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
 }
