@@ -47,13 +47,13 @@ public class Question extends BaseEntity{
         return question;
     }
 
-    public void throwExceptionNotDeletableUser(final User loginUser) throws CannotDeleteException {
+    public void throwExceptionNotDeletableUser(final User loginUser) {
         if (!this.user.equals(loginUser)) {
             throw new CannotDeleteException(CAN_NOT_DELETE);
         }
     }
 
-    public void throwExceptionNotDeletableAnswersInQuestion(final User loginUser) throws CannotDeleteException {
+    public void throwExceptionNotDeletableAnswersInQuestion(final User loginUser) {
         answers.throwExceptionNotDeletableAnswers(loginUser);
     }
 
@@ -73,13 +73,13 @@ public class Question extends BaseEntity{
         return deleted;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public void delete(User loginUser) {
         throwExceptionNotDeletableUser(loginUser);
         deleteAnswers(loginUser);
         deleted = true;
     }
 
-    public void deleteAnswers(User loginUser) throws CannotDeleteException {
+    public void deleteAnswers(User loginUser) {
         throwExceptionNotDeletableAnswersInQuestion(loginUser);
         answers.delete();
     }

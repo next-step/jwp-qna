@@ -68,7 +68,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("질문 삭제 상태로 변경")
-    public void deleteQuestionTest() throws CannotDeleteException {
+    public void deleteQuestionTest() {
         //given
         Question actual = new Question("title2", "contents2", SANJIGI);
         assertThat(actual.isDeleted()).isFalse();
@@ -104,7 +104,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("질문에 달린 답변 삭제 상태로 변경")
-    public void deleteAnswersInQuestionTest() throws CannotDeleteException {
+    public void deleteAnswersInQuestionTest() {
         //given
         Question actual = new Question("title2", "contents2", SANJIGI);
         Answers expected = new Answers(Arrays.asList(A2));

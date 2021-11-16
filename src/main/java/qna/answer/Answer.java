@@ -39,7 +39,7 @@ public class Answer extends BaseEntity {
     protected Answer() {
     }
 
-    public void throwExceptionNotDeletableUser(final User loginUser) throws CannotDeleteException {
+    public void throwExceptionNotDeletableUser(final User loginUser){
         if (!this.user.equals(loginUser)) {
             throw new CannotDeleteException(CAN_NOT_DELETE_OTHER_ANSWER);
         }

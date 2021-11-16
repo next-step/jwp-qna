@@ -34,7 +34,7 @@ public class Answers {
         }
     }
 
-    public void throwExceptionNotDeletableAnswers(final User loginUser) throws CannotDeleteException {
+    public void throwExceptionNotDeletableAnswers(final User loginUser) {
         for (Answer answer : answers) {
             answer.throwExceptionNotDeletableUser(loginUser);
         }

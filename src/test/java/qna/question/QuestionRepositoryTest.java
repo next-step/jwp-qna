@@ -64,7 +64,7 @@ public class QuestionRepositoryTest extends PreExecutionTest {
 
     @Test
     @DisplayName("question에 delete를 true로 수정")
-    public void updateQuestionDeletedTrue() throws CannotDeleteException {
+    public void updateQuestionDeletedTrue() {
         savedQuestion.delete(savedUser);
 
         Optional<Question> oQuestion = questionRepository.findById(savedQuestion.getId());
