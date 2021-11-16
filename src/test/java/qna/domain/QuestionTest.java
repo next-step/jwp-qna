@@ -2,6 +2,7 @@ package qna.domain;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -32,8 +33,8 @@ public class QuestionTest {
         questionRepository.deleteAll();
     }
 
-    @Test
-    void findById() {
+    @DisplayName("주어진 ID에 해당하는 질문을 리턴한다.")
+    void 주어진_ID에_해당하는_질문을_리턴한다() {
         // given
         Question question = questionRepository.findAll().get(0);
 
@@ -45,7 +46,8 @@ public class QuestionTest {
     }
 
     @Test
-    void update() {
+    @DisplayName("질문 내용을 수정한다.")
+    void 질문_내용을_수정한다() {
         // given
         Question question = questionRepository.findAll().get(0);
         String newContents = "Update Contents";
@@ -59,7 +61,8 @@ public class QuestionTest {
     }
 
     @Test
-    void remove() {
+    @DisplayName("모든 질문을 삭제한다.")
+    void 모든_질문을_삭제한다() {
         // given
         List<Question> prevResult = questionRepository.findAll();
         assertThat(prevResult.size()).isGreaterThan(0);
@@ -70,5 +73,28 @@ public class QuestionTest {
         // then
         List<Question> result = questionRepository.findAll();
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("삭제되지 않은 질문 목록을 리턴한다.")
+    void 삭제되지_않은_질문_목록을_리턴한다() {
+        // when
+        List<Question> result = questionRepository.findByDeletedFalse();
+
+        // then
+        assertThat(result.size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("주어진 ID에 해당하는 삭제되지 않은 질문을 리턴한다.")
+    void 주어진_ID에_해당하는_삭제되지_않은_질문을_리턴한다() {
+        // given
+        Question question = questionRepository.findAll().get(0);
+
+        // when
+        Question result = questionRepository.findByIdAndDeletedFalse(question.getId()).get();
+
+        // then
+        assertThat(result).isEqualTo(question);
     }
 }
