@@ -39,10 +39,11 @@ public class DeleteHistory{
     }
 
     public DeleteHistory(final Long id, final ContentType contentType, final Long contentId, final User deletedByUser) {
+        Objects.requireNonNull(deletedByUser);
         this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedByUser = User.getOrElseThrow(deletedByUser);
+        this.deletedByUser = deletedByUser;
     }
 
     public static DeleteHistory fromAnswer(Answer answer){

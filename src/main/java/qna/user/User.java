@@ -10,7 +10,6 @@ import java.util.Objects;
 @Table(name = "user")
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
-    private static final String USER_IS_REQUIRED = "사용자는 필수로 입력해야 합니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,13 +41,6 @@ public class User extends BaseEntity {
         this.password = new Password(password);
         this.name = new Name(name);
         this.email = new Email(email);
-    }
-
-    public static User getOrElseThrow(User user){
-        if(Objects.isNull(user)){
-            throw new IllegalArgumentException(USER_IS_REQUIRED);
-        }
-        return user;
     }
 
     public void update(User loginUser, User target) {

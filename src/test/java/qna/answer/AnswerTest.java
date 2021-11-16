@@ -23,13 +23,13 @@ public class AnswerTest {
     @Test
     @DisplayName("답변 생성 실패 - null user")
     public void createAnswerTest_nullUser() {
-        assertThatThrownBy(() -> new Answer(null, QuestionTest.Q1, "Answers Contents")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new Answer(null, QuestionTest.Q1, "Answers Contents")).isInstanceOf(NullPointerException.class);
     }
 
     @Test
     @DisplayName("답변 생성 실패 - null question")
     public void createAnswerTest_nullQuestion() {
-        assertThatThrownBy(() -> new Answer(UserTest.JAVAJIGI, null, "Answers Contents")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new Answer(UserTest.JAVAJIGI, null, "Answers Contents")).isInstanceOf(NullPointerException.class);
     }
 
     @Test

@@ -22,6 +22,6 @@ public class DeleteHistoryTest {
     @DisplayName("삭제 이력 생성 실패 - null user")
     public void createDeleteHistoryTest_nullUser() {
         assertThatThrownBy(() -> new DeleteHistory(ContentType.ANSWER, 1L, null))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NullPointerException.class);
     }
 }

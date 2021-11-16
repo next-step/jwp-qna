@@ -12,7 +12,6 @@ import java.util.Objects;
 @Table(name = "question")
 public class Question extends BaseEntity{
     private static final String CAN_NOT_DELETE = "질문을 삭제할 권한이 없습니다.";
-    private static final String QUESTION_IS_REQUIRED = "질문은 필수로 입력 해야 합니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,19 +35,13 @@ public class Question extends BaseEntity{
     private final Answers answers = new Answers();
 
     public Question(final String title, final String contents, final User user) {
+        Objects.requireNonNull(user);
         this.title = new Title(title);
         this.contents = contents;
-        this.user = User.getOrElseThrow(user);
+        this.user = user;
     }
 
     protected Question() {
-    }
-
-    public static Question getOrElseThrow(Question question){
-        if(Objects.isNull(question)){
-            throw new IllegalArgumentException(QUESTION_IS_REQUIRED);
-        }
-        return question;
     }
 
     public void throwExceptionNotDeletableUser(final User loginUser) {

@@ -33,8 +33,10 @@ public class Answer extends BaseEntity {
     private Question question;
 
     public Answer(final User user, final Question question, final String contents) {
-        this.user = User.getOrElseThrow(user);
-        this.question = Question.getOrElseThrow(question);
+        Objects.requireNonNull(user);
+        Objects.requireNonNull(question);
+        this.user = user;
+        this.question = question;
         this.contents = contents;
 
         question.addAnswer(this);
