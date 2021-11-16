@@ -10,12 +10,9 @@ import qna.NotFoundException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.UserRepositoryTest.JAVAJIGI;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserRepositoryTest.SANJIGI);
 
     private User questionWriter;
     private Question question;
@@ -29,7 +26,7 @@ public class QuestionRepositoryTest {
     @BeforeEach
     void setUp() {
         questionWriter = new User("questionWriter", "password", "lsh", "lsh@mail.com");
-        question = new Question("title", "contents");
+        question = new Question("title", "contents", questionWriter);
     }
 
     @Test
@@ -76,7 +73,7 @@ public class QuestionRepositoryTest {
     }
 
     private Question userSave(User questionWriter) {
-        question.writeBy(users.save(questionWriter));
+        users.save(questionWriter);
         return questions.save(question);
     }
 }
