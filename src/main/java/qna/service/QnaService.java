@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.*;
 
@@ -32,27 +31,30 @@ public class QnaService {
                 .orElseThrow(NotFoundException::new);
     }
 
+    @Transactional(readOnly = true)
+    public List<Answer> findAnswerByQuestionId(Long questionId) {
+        return answerRepository.findByQuestionIdAndDeletedFalse(questionId);
+    }
+
     @Transactional
-    public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
+    public void deleteQuestion(User loginUser, Long questionId) {
         Question question = findQuestionById(questionId);
         question.delete(loginUser);
 
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
+        List<Answer> answers = findAnswerByQuestionId(questionId);
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter(), LocalDateTime.now()));
 
-        for (Answer answer : answers) {
-            answer.delete(loginUser);
+        if (!answers.isEmpty()) {
+            answersDelete(loginUser, answers, deleteHistories);
         }
 
-        if (question.isDeleted()) {
-            List<DeleteHistory> deleteHistories = new ArrayList<>();
-            deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter(), LocalDateTime.now()));
-            addAnswerDeleteHistory(answers, deleteHistories);
-            deleteHistoryService.saveAll(deleteHistories);
-        }
+        deleteHistoryService.saveAll(deleteHistories);
     }
 
-    private void addAnswerDeleteHistory(final List<Answer> answers, final List<DeleteHistory> deleteHistories) {
+    private void answersDelete(final User loginUser, final List<Answer> answers, final List<DeleteHistory> deleteHistories) {
         for (Answer answer : answers) {
+            answer.delete(loginUser);
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
         }
     }
