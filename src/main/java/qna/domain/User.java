@@ -22,10 +22,10 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 20)
     private String password;
 
-    @Column(unique = true, length = 20)
+    @Column(unique = true, nullable = false, length = 20)
     private String userId;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
