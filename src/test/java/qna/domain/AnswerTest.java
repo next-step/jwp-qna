@@ -1,8 +1,10 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,69 +17,58 @@ public class AnswerTest {
     @Autowired
     private AnswerRepository answers;
 
+    @DisplayName("A1 Answer 정보 저장 및 데이터 확인")
     @Test
-    void save() {
+    void saveAnswer() {
         final Answer actual = answers.save(A1);
-        assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getContents()).isEqualTo(A1.getContents()),
-            () -> assertThat(actual.getQuestionId()).isEqualTo(A1.getQuestionId())
-        );
+
+        Long writerId = actual.getWriterId();
+        Long questionId = actual.getQuestionId();
+
+        assertThat(writerId).isEqualTo(A1.getWriterId());
+        assertThat(questionId).isEqualTo(A1.getQuestionId());
     }
 
+    @DisplayName("writer_id로 데이터 조회")
     @Test
     void findByWriterId() {
-        final Answer user1 = answers.save(A1);
-        final Answer user2 = answers.findByWriterId(UserTest.JAVAJIGI.getId());
-        assertAll(
-            () -> assertThat(user2.getId()).isEqualTo(user1.getId()),
-            () -> assertThat(user2.getContents()).isEqualTo(user1.getContents()),
-            () -> assertThat(user2.getQuestionId()).isEqualTo(user1.getQuestionId()),
-            () -> assertThat(user2.getWriterId()).isEqualTo(user1.getWriterId()),
-            () -> assertThat(user2).isEqualTo(user1),
-            () -> assertThat(user2).isSameAs(user1)
-        );
+        final Answer standard = answers.save(A1);
+        final Answer target = answers.findByWriterId(UserTest.JAVAJIGI.getId());
+
+        Long standardWriterId = standard.getWriterId();
+        Long targetWriterId = target.getWriterId();
+
+        assertThat(standardWriterId).isEqualTo(targetWriterId);
     }
 
+    @DisplayName("QuestionId로 데이터 조회")
     @Test
     void findByQuestionId() {
-        final Answer user1 = answers.save(A1);
-        final Answer user2 = answers.findByQuestionId(QuestionTest.Q1.getId());
-        assertAll(
-            () -> assertThat(user2.getId()).isEqualTo(user1.getId()),
-            () -> assertThat(user2.getContents()).isEqualTo(user1.getContents()),
-            () -> assertThat(user2.getQuestionId()).isEqualTo(user1.getQuestionId()),
-            () -> assertThat(user2.getWriterId()).isEqualTo(user1.getWriterId()),
-            () -> assertThat(user2).isEqualTo(user1),
-            () -> assertThat(user2).isSameAs(user1)
-        );
+        final Answer standard = answers.save(A1);
+        final List<Answer> target = answers.findByQuestionId(QuestionTest.Q1.getId());
+
+        assertThat(target).contains(standard);
     }
 
+    @DisplayName("Id 와 Deleted 값이 fasle 인 값 찾기")
     @Test
     void findByIdAndDeletedFalse() {
-        final Answer user1 = answers.save(A2);
-        final Answer user2 = answers.findByIdAndDeletedFalse(A2.getId()).get();
-        assertAll(
-            () -> assertThat(user2.getId()).isEqualTo(user1.getId()),
-            () -> assertThat(user2.getContents()).isEqualTo(user1.getContents()),
-            () -> assertThat(user2.getQuestionId()).isEqualTo(user1.getQuestionId()),
-            () -> assertThat(user2.getWriterId()).isEqualTo(user1.getWriterId()),
-            () -> assertThat(user2).isEqualTo(user1),
-            () -> assertThat(user2).isSameAs(user1)
-        );
+        answers.save(A2);
+        final Answer target = answers.findByIdAndDeletedFalse(A2.getId()).get();
+
+        boolean targetDeleted = target.isDeleted();
+
+        assertThat(targetDeleted).isFalse();
     }
 
+    @DisplayName("Contents 값 'ents1' Like 찾기")
     @Test
     void findByContentsLike() {
-        final Answer user1 = answers.save(A1);
-        final Answer user2 = answers.findByContentsLike("%Contents1%");
-        assertAll(
-            () -> assertThat(user2.getId()).isEqualTo(user1.getId()),
-            () -> assertThat(user2.getContents()).isEqualTo(user1.getContents()),
-            () -> assertThat(user2.getQuestionId()).isEqualTo(user1.getQuestionId()),
-            () -> assertThat(user2.getWriterId()).isEqualTo(user1.getWriterId()),
-            () -> assertThat(user2).isEqualTo(user1),
-            () -> assertThat(user2).isSameAs(user1)
-        );
+        answers.save(A1);
+        final Answer target = answers.findByContentsLike("%ents1%");
+
+        String targetContents = target.getContents();
+
+        assertThat(targetContents).contains("ents1");
     }
 }

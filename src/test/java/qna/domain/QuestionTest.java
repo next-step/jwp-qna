@@ -1,10 +1,10 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -17,51 +17,47 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questions;
 
+    @DisplayName("Question 저장 및 데이터 확인")
     @Test
-    void save() {
+    void saveQuestion() {
         final Question actual = questions.save(Q1);
-        assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getContents()).isEqualTo(Q1.getContents()),
-            () -> assertThat(actual.getTitle()).isEqualTo(Q1.getTitle()),
-            () -> assertThat(actual.getWriterId()).isEqualTo(Q1.getWriterId())
-        );
+
+        Long writerId = actual.getWriterId();
+
+        assertThat(writerId).isEqualTo(Q1.getWriterId());
     }
 
+    @DisplayName("writer_id로 Question 정보 찾기")
     @Test
     void findByWriterId() {
-        final Question question1 = questions.save(Q1);
-        final Question question2 = questions.findByWriterId(UserTest.JAVAJIGI.getId());
-        assertAll(
-            () -> assertThat(question2.getId()).isEqualTo(question1.getId()),
-            () -> assertThat(question2.getContents()).isEqualTo(question1.getContents()),
-            () -> assertThat(question2.getWriterId()).isEqualTo(question1.getWriterId()),
-            () -> assertThat(question2.getTitle()).isEqualTo(question1.getTitle()),
-            () -> assertThat(question2).isEqualTo(question1),
-            () -> assertThat(question2).isSameAs(question1)
-        );
+        final Question standard = questions.save(Q1);
+        final Question target = questions.findByWriterId(UserTest.JAVAJIGI.getId());
+
+        Long standardWriterId = standard.getWriterId();
+        Long targetWriterId = target.getWriterId();
+
+        assertThat(standardWriterId).isEqualTo(targetWriterId);
     }
 
+    @DisplayName("Question Title 정보 Like로 찾기")
     @Test
     void findByTitleLike() {
-        final Question question1 = questions.save(Q1);
-        final Question question2 = questions.findByTitleLike("%1");
-        assertAll(
-            () -> assertThat(question2.getId()).isEqualTo(question1.getId()),
-            () -> assertThat(question2.getContents()).isEqualTo(question1.getContents()),
-            () -> assertThat(question2.getWriterId()).isEqualTo(question1.getWriterId()),
-            () -> assertThat(question2.getTitle()).isEqualTo(question1.getTitle()),
-            () -> assertThat(question2).isEqualTo(question1),
-            () -> assertThat(question2).isSameAs(question1)
-        );
+        questions.save(Q1);
+        final Question target = questions.findByTitleLike("%1");
+
+        String targetTitle = target.getTitle();
+
+        assertThat(targetTitle).contains("1");
     }
 
+    @DisplayName("Question 정보 중 deleted false 인 값 찾기")
     @Test
     void findByDeletedFalse() {
-        final Question question1 = questions.save(Q1);
-        final Question question2 = questions.save(Q2);
+        questions.save(Q1);
+        questions.save(Q2);
+
         List<Question> questionList = questions.findByDeletedFalse();
 
-        assertThat(questionList).contains(question1, question2);
+        assertThat(questionList).contains(Q1, Q2);
     }
 }

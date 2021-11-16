@@ -12,7 +12,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
     Answer findByWriterId(Long id);
 
-    Answer findByQuestionId(Long id);
+    List<Answer> findByQuestionId(Long id);
 
     Answer findByContentsLike(String contents);
 }
