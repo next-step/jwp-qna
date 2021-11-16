@@ -25,6 +25,9 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "writer_id", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
+    @OneToOne(mappedBy = "answer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private AnswerDeleteHistory answerDeleteHistory;
+
     protected Answer() {
     }
 
@@ -57,6 +60,19 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
+    public void delete(User principal) throws CannotDeleteException {
+        if (!isOwner(principal)) {
+            throw new CannotDeleteException("답변 작성자만 삭제할 수 있습니다");
+        }
+        this.deleted = true;
+        question.removeAnswer(this);
+        this.answerDeleteHistory = new AnswerDeleteHistory(this);
+    }
+
+    public boolean hasSameQuestion(Question question) {
+        return this.question == question;
+    }
+
     public Question getQuestion() {
         return question;
     }
@@ -77,16 +93,8 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public boolean hasSameQuestion(Question question) {
-        return this.question == question;
-    }
-
-    public void delete(User principal) throws CannotDeleteException {
-        if (!isOwner(principal)) {
-            throw new CannotDeleteException("답변 작성자만 삭제할 수 있습니다");
-        }
-        this.deleted = true;
-        question.removeAnswer(this);
+    public AnswerDeleteHistory getAnswerDeleteHistory() {
+        return answerDeleteHistory;
     }
 
     @Override
@@ -95,11 +103,11 @@ public class Answer extends BaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Answer answer = (Answer) o;
-        return deleted == answer.deleted && Objects.equals(contents, answer.contents) && Objects.equals(question, answer.question) && Objects.equals(writer, answer.writer);
+        return deleted == answer.deleted && Objects.equals(contents, answer.contents) && Objects.equals(question, answer.question) && Objects.equals(writer, answer.writer) && Objects.equals(answerDeleteHistory, answer.answerDeleteHistory);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), contents, deleted, question, writer);
+        return Objects.hash(super.hashCode(), contents, deleted, question, writer, answerDeleteHistory);
     }
 }

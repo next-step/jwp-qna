@@ -80,15 +80,15 @@ public class AnswerTest {
                     .isInstanceOf(CannotDeleteException.class);
         }
 
+        @DisplayName("답변을 삭제하면 삭제 기록을 생성한다")
         @Test
-        void name() throws CannotDeleteException {
-//            answer.delete(UserTest.JAVAJIGI);
-//            DeleteHistory deleteHistory = answer.getDeleteHistory();
-//            assertAll(
-//                    () -> assertThat(deleteHistory.getContentId()).isEqualTo(answer.getId()),
-//                    () -> assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER),
-//                    () -> assertThat(deleteHistory.getDeletedBy()).isEqualTo(answer.getWriter())
-//            );
+        void whenDeleteAnswerThenCrateDeleteHistory() throws CannotDeleteException {
+            answer.delete(UserTest.JAVAJIGI);
+            AnswerDeleteHistory deleteHistory = answer.getAnswerDeleteHistory();
+            assertAll(
+                    () -> assertThat(deleteHistory.getAnswer()).isEqualTo(answer),
+                    () -> assertThat(deleteHistory.getDeletedBy()).isEqualTo(answer.getWriter())
+            );
         }
     }
 }

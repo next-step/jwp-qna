@@ -20,7 +20,6 @@ public class DeleteHistoryTest {
         User deletedBy = new User("userId", "password", "name", "email");
         DeleteHistory deleteHistory = DeleteHistory.of(contentType, contentId, deletedBy, LocalDateTime.now());
         assertAll(
-            () -> assertThat(deleteHistory.getContentType()).isEqualTo(contentType),
             () -> assertThat(deleteHistory.getContentId()).isEqualTo(contentId),
             () -> assertThat(deleteHistory.getDeletedBy()).isEqualTo(deletedBy),
             () -> assertThat(deleteHistory.getCreateDate()).isCloseTo(LocalDateTime.now(), within(1, ChronoUnit.SECONDS))
