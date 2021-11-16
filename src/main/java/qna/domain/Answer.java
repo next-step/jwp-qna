@@ -3,20 +3,44 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Objects;
 
+@Entity
+@Table(name = "answer")
 public class Answer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+
+    @Lob
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
 
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "question_id")
+    private Long questionId;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "writer_id")
+    private Long writerId;
+    
+    // Arguments가 없는 Default Constructor 생성
+    protected Answer() {}
+
     public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+        this(null, writer, question, contents, LocalDateTime.now());
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, String contents, LocalDateTime createdAt) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -30,6 +54,7 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
+        this.createdAt = createdAt;
     }
 
     public boolean isOwner(User writer) {

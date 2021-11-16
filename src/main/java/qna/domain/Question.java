@@ -1,20 +1,48 @@
 package qna.domain;
 
+import net.bytebuddy.asm.Advice;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
+
+@Entity
+@Table(name = "question")
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Lob
     private String contents;
-    private Long writerId;
+
+    @Column(name = "created_at",nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
     private boolean deleted = false;
 
+    @Column(length = 100, nullable = false)
+    private String title;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "writer_id")
+    private Long writerId;
+
+    // Arguments가 없는 Default Constructor 생성
+    protected Question() {}
+
     public Question(String title, String contents) {
-        this(null, title, contents);
+        this(null, title, contents, LocalDateTime.now());
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, String title, String contents, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.createdAt = createdAt;
     }
 
     public Question writeBy(User writer) {
