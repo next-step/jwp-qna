@@ -36,7 +36,7 @@ public class User extends BaseEntity {
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
+    private User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
     }
 
@@ -46,6 +46,10 @@ public class User extends BaseEntity {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public static User of(String userId, String password, String name, String email) {
+        return new User(userId, password, name, email);
     }
 
     public void update(User loginUser, User target) {

@@ -8,7 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Objects;
 
@@ -21,16 +24,17 @@ public class Answer extends BaseEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @OneToOne
+    @JoinColumn(name = "writer_id")
+    private User writer;
 
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     @Lob
     @Column(name = "contents")
     private String contents;
-
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
@@ -38,7 +42,7 @@ public class Answer extends BaseEntity {
     protected Answer() {
     }
 
-    public Answer(User writer, Question question, String contents) {
+    private Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
 
@@ -53,17 +57,21 @@ public class Answer extends BaseEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
+    public static Answer of(User writer, Question question, String contents) {
+        return new Answer(writer, question, contents);
+    }
+
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -74,20 +82,20 @@ public class Answer extends BaseEntity {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return this.writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return this.question;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public String getContents() {
@@ -110,8 +118,8 @@ public class Answer extends BaseEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writerId=" + getWriter().getId() +
+                ", questionId=" + getQuestion().getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
