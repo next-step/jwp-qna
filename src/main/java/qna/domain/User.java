@@ -13,14 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-public class User {
+public class User extends BaseEntity{
     public static final GuestUser GUEST_USER = new GuestUser();
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(length = 50)
     private String email;
@@ -31,14 +25,10 @@ public class User {
     @Column(nullable = false, length = 20)
     private String password;
 
-    @Column
-    private LocalDateTime updatedAt = LocalDateTime.now();
-
     @Column(nullable = false, unique = true, length = 20)
     private String userId;
 
     protected User() {
-
     }
 
     public User(String userId, String password, String name, String email) {
@@ -87,14 +77,6 @@ public class User {
         return false;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
     }
@@ -130,11 +112,10 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-            "id=" + id +
-            ", userId='" + userId + '\'' +
-            ", password='" + password + '\'' +
+            "email='" + email + '\'' +
             ", name='" + name + '\'' +
-            ", email='" + email + '\'' +
+            ", password='" + password + '\'' +
+            ", userId='" + userId + '\'' +
             '}';
     }
 

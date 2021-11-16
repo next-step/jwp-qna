@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,29 +9,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.Table;
 
 @Entity
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Question extends BaseEntity{
 
     @Column
     @Lob
     private String contents;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = false)
     private boolean deleted = false;
 
     @Column(nullable = false, length = 100)
     private String title;
-
-    @Column
-    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Column
     private Long writerId;
@@ -59,14 +50,6 @@ public class Question {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -104,13 +87,26 @@ public class Question {
     @Override
     public String toString() {
         return "Question{" +
-            "id=" + id +
-            ", contents='" + contents + '\'' +
-            ", createdAt=" + createdAt +
+            "contents='" + contents + '\'' +
             ", deleted=" + deleted +
             ", title='" + title + '\'' +
-            ", updatedAt=" + updatedAt +
             ", writerId=" + writerId +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Question question = (Question)o;
+        return deleted == question.deleted && Objects.equals(contents, question.contents)
+            && Objects.equals(title, question.title) && Objects.equals(writerId, question.writerId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(contents, deleted, title, writerId);
     }
 }

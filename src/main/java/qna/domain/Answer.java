@@ -15,26 +15,17 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
-public class Answer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Answer extends BaseEntity {
 
     @Column
     @Lob
     private String contents;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = false)
     private boolean deleted = false;
 
     @Column
     private Long questionId;
-
-    @Column
-    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Column
     private Long writerId;
@@ -60,7 +51,6 @@ public class Answer {
     }
 
     protected Answer() {
-
     }
 
     public boolean isOwner(User writer) {
@@ -69,14 +59,6 @@ public class Answer {
 
     public void toQuestion(Question question) {
         this.questionId = question.getId();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getWriterId() {
@@ -114,12 +96,9 @@ public class Answer {
     @Override
     public String toString() {
         return "Answer{" +
-            "id=" + id +
-            ", contents='" + contents + '\'' +
-            ", createdAt=" + createdAt +
+            "contents='" + contents + '\'' +
             ", deleted=" + deleted +
             ", questionId=" + questionId +
-            ", updatedAt=" + updatedAt +
             ", writerId=" + writerId +
             '}';
     }
