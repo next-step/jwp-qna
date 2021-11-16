@@ -1,8 +1,12 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -12,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends AuditEntity {
@@ -33,6 +39,9 @@ public class Question extends AuditEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
+
+	@Embedded
+	private Answers answers = new Answers();
 
 	protected Question() {
 	}
@@ -59,6 +68,12 @@ public class Question extends AuditEntity {
 
 	public void addAnswer(Answer answer) {
 		answer.toQuestion(this);
+		this.answers.add(answer);
+	}
+
+	public Question addAnswers(List<Answer> answers) {
+		this.answers.addAll(answers);
+		return this;
 	}
 
 	public Long getId() {
@@ -107,5 +122,25 @@ public class Question extends AuditEntity {
 	@Override
 	public int hashCode() {
 		return id != null ? id.hashCode() : 0;
+	}
+
+	public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+		if (!isOwner(user)) {
+			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+		}
+
+		if (!this.answers.containsAllSameWriter(user)) {
+			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+		}
+
+		this.deleted = true;
+
+		DeleteHistory questionDeleteHistory = new DeleteHistory(
+			ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
+
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		deleteHistories.add(questionDeleteHistory);
+		deleteHistories.addAll(this.answers.deleteAll());
+		return deleteHistories;
 	}
 }
