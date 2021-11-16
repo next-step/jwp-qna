@@ -2,7 +2,7 @@ package qna.domain;
 
 import java.util.Objects;
 
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,16 +20,13 @@ public class Answer extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "clob")
-    private String contents;
-
     private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User writer;
+    @Embedded
+    private Contents contents;
 
     protected Answer() {
     }
@@ -48,9 +45,8 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writer = writer;
         toQuestion(question);
-        this.contents = contents;
+        this.contents = new Contents(contents, writer);
     }
 
     void toQuestion(final Question question) {
@@ -69,6 +65,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     void checkAuthority(final User loginUser) {
+        User writer = contents.getWriter();
         if (!writer.equalsAccount(loginUser)) {
             throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
         }
@@ -78,7 +75,7 @@ public class Answer extends BaseTimeEntity {
         return id;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
@@ -90,15 +87,11 @@ public class Answer extends BaseTimeEntity {
         return question;
     }
 
-    public User getWriter() {
-        return writer;
-    }
-
     @Override
     public String toString() {
         return "Answer{" +
             "id=" + id +
-            ", writerId=" + writer.getId() +
+            ", writerId=" + contents.getWriter().getId() +
             ", questionId=" + question.getId() +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +

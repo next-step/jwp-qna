@@ -20,16 +20,13 @@ public class Question extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "clob")
-    private String contents;
-
     private boolean deleted = false;
 
     @Column(length = 100, nullable = false)
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User writer;
+    @Embedded
+    private Contents contents;
 
     @Embedded
     private final QuestionAnswers answers = new QuestionAnswers();
@@ -43,9 +40,8 @@ public class Question extends BaseTimeEntity {
 
     public Question(final Long id, final User writer, final String title, final String contents) {
         this.id = id;
-        this.contents = contents;
+        this.contents = new Contents(contents, writer);
         this.title = Objects.requireNonNull(title);
-        this.writer = writer;
     }
 
     public List<DeleteHistory> deleteBy(final User loginUser) {
@@ -59,6 +55,7 @@ public class Question extends BaseTimeEntity {
     }
 
     private void checkAuthority(User loginUser) {
+        User writer = contents.getWriter();
         if (!writer.equalsAccount(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
@@ -72,7 +69,7 @@ public class Question extends BaseTimeEntity {
         return id;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
@@ -82,10 +79,6 @@ public class Question extends BaseTimeEntity {
 
     public String getTitle() {
         return title;
-    }
-
-    public User getWriter() {
-        return writer;
     }
 
     public QuestionAnswers getAnswers() {
@@ -98,7 +91,6 @@ public class Question extends BaseTimeEntity {
             "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", writerId=" + writer.getId() +
             ", deleted=" + deleted +
             '}';
     }

@@ -44,7 +44,7 @@ public class QuestionTest {
         assertThat(actual.getId()).isNotNull();
         assertThat(actual.getTitle()).isEqualTo(expected.getTitle());
         assertThat(actual.getContents()).isEqualTo(expected.getContents());
-        assertThat(actual.getWriter()).isSameAs(user);
+        assertThat(actual.getContents().getWriter()).isSameAs(user);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class QuestionTest {
     @Test
     void deleteBy() {
         Question question = saveNewDefaultQuestion();
-        User writer = question.getWriter();
+        User writer = question.getContents().getWriter();
         Answer answer = answers.save(new Answer(writer, question, "이제는 잘 시간입니다"));
 
         List<DeleteHistory> deleteHistories = question.deleteBy(writer);
@@ -110,7 +110,7 @@ public class QuestionTest {
     @DisplayName("로그인 유저가 아닌 다른 유저가 작성한 답변이 있을 경우 예외 발생")
     void deleteQuestionHavingAnswersFromOthers() {
         Question question = saveNewDefaultQuestion();
-        User writer = question.getWriter();
+        User writer = question.getContents().getWriter();
         Answer answer = answers.save(new Answer(writer, question, "이제는 잘 시간입니다"));
         User other = users.save(new User("minseoklim", "1234", "임민석", "mslim@slipp.net"));
         answers.save(new Answer(other, question, "이제는 잘 시간입니다"));

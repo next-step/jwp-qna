@@ -40,7 +40,7 @@ public class AnswerTest {
 
         assertThat(actual.getId()).isNotNull();
         assertThat(actual.getContents()).isEqualTo(expected.getContents());
-        assertThat(actual.getWriter()).isSameAs(user);
+        assertThat(actual.getContents().getWriter()).isSameAs(user);
         assertThat(actual.getQuestion()).isSameAs(question);
         assertThat(actual.getQuestion().getAnswers().contains(actual)).isTrue();
     }
@@ -69,7 +69,7 @@ public class AnswerTest {
     @Test
     void deleteBy() {
         Answer answer = saveNewDefaultAnswer();
-        User writer = answer.getWriter();
+        User writer = answer.getContents().getWriter();
 
         DeleteHistory deleteHistory = answer.deleteBy(writer);
 
