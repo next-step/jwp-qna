@@ -66,7 +66,10 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
-        question.getAnswers().add(this);
+
+        if (!question.getAnswers().contains(this)) {
+            question.getAnswers().add(this);
+        }
     }
 
     public User getWriter() {
