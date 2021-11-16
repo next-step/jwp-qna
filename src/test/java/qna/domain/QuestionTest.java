@@ -60,13 +60,13 @@ public class QuestionTest {
     }
 
     @Test
-    public void 질문_저장_후_삭제() {
+    public void 질문_저장_후_삭제() throws CannotDeleteException {
         //given
         User writer = userRepository.save(TestUserFactory.create("donkey"));
         Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
 
         //when
-        actual.setDeleted(true);
+        actual.delete(writer);
 
         //then
         assertThat(actual.isDeleted()).isTrue();
