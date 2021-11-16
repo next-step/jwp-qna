@@ -69,15 +69,12 @@ public class DeleteHistory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id)
-                && contentType == that.contentType
-                && Objects.equals(contentId, that.contentId)
-                && Objects.equals(deletedByUser, that.deletedByUser);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedByUser, createDate);
+        return Objects.hash(id);
     }
 
     @Override

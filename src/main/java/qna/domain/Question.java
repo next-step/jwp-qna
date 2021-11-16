@@ -98,16 +98,12 @@ public class Question extends BaseTimeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final Question question = (Question) o;
-        return deleted == question.deleted
-                && Objects.equals(id, question.id)
-                && Objects.equals(title, question.title)
-                && Objects.equals(contents, question.contents)
-                && Objects.equals(writer, question.writer);
+        return Objects.equals(id, question.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writer, deleted);
+        return Objects.hash(id);
     }
 
     @Override
