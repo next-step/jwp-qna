@@ -1,13 +1,12 @@
 package qna.domain;
 
-import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -16,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import qna.ErrorMessage;
@@ -40,8 +38,8 @@ public class Question extends BaseTime {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(fetch = LAZY, mappedBy = "question", cascade = ALL)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private final Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -73,7 +71,15 @@ public class Question extends BaseTime {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-        this.answers.add(answer);
+        this.answers.addAnswer(answer);
+    }
+
+    public void addAnswers(List<Answer> answers) {
+        this.answers.addAnswers(answers, this);
+    }
+
+    public Answers getAnswers() {
+        return answers;
     }
 
     public Long getId() {
@@ -86,10 +92,6 @@ public class Question extends BaseTime {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
     }
 
     public boolean equalsTitleAndContentsAndNotDeleted(Question question) {
@@ -125,4 +127,5 @@ public class Question extends BaseTime {
             ", deleted=" + deleted +
             '}';
     }
+
 }

@@ -37,6 +37,7 @@ public class QnATest {
     protected static final String TITLE_2 = "title2";
     protected static final String CONTENTS_1 = "contents1";
     protected static final String CONTENTS_2 = "contents2";
+    protected static final String CONTENTS_3 = "contents3";
     protected static final String ANSWER_1 = "답글1";
     protected static final String ANSWER_2 = "답글2";
 

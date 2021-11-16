@@ -1,5 +1,6 @@
 package qna.domain;
 
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -42,6 +43,44 @@ public class QuestionRepositoryTest extends QnATest {
         assertThat(expectedQuestion.get(0)).isNotEqualTo(question);
     }
 
+    @Test
+    void 컨텐츠에서_답변_여러개_등록_확인() {
+
+        // given
+        User user = createUser();
+        Question question = new Question(TITLE_1, CONTENTS_1);
+        Answer firstAnswer = new Answer(user, question, CONTENTS_1);
+        Answer secondAnswer = new Answer(user, question, CONTENTS_2);
+        question.addAnswer(firstAnswer);
+        question.addAnswer(secondAnswer);
+
+        // when
+        Question saveQuestion = questionRepository.save(question);
+
+        // then
+        assertThat(saveQuestion).isEqualTo(question);
+
+    }
+
+    @Test
+    void 컨텐츠에서_답변_여러개_등록을_리스트로_확인() {
+
+        // given
+        User user = createUser();
+        Question question = new Question(TITLE_1, CONTENTS_1);
+        Answer firstAnswer = new Answer(user, question, CONTENTS_1);
+        Answer secondAnswer = new Answer(user, question, CONTENTS_2);
+        question.addAnswers(asList(firstAnswer,secondAnswer));
+
+        // when
+        Question saveQuestion = questionRepository.save(question);
+
+        // then
+        assertThat(saveQuestion).isEqualTo(question);
+
+    }
+
+
 
 
 /*	@Test
@@ -58,7 +97,5 @@ public class QuestionRepositoryTest extends QnATest {
         // then
 		assertThat(answers1.size()).isEqualTo(answers.size());
 	}*/
-
-
 
 }

@@ -48,7 +48,6 @@ public class Answer extends BaseTime {
 	}
 
 	public Answer(Long id, User writer, Question question, String contents) {
-		this.id = id;
 
 		if (Objects.isNull(writer)) {
 			throw new UnAuthorizedException(USER_IS_NOT_NULL);
@@ -58,6 +57,7 @@ public class Answer extends BaseTime {
 			throw new QuestionNotFoundException(QUESTION_NOT_FOUND);
 		}
 
+		this.id = id;
 		this.user = writer;
 		this.question = question;
 		this.contents = contents;
@@ -89,6 +89,23 @@ public class Answer extends BaseTime {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Answer answer = (Answer)o;
+		return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents,
+			answer.contents) && Objects.equals(question, answer.question) && Objects.equals(user,
+			answer.user);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, contents, deleted, question, user);
 	}
 
 	@Override
