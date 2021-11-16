@@ -111,7 +111,7 @@ public class Question extends BaseEntity {
             '}';
     }
 
-    public List<DeleteHistory> questionDelete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }

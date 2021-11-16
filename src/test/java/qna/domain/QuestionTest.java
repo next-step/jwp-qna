@@ -143,7 +143,7 @@ public class QuestionTest {
 
     @Test
     void test_동일_작성자_질문_삭제() throws CannotDeleteException {
-        List<DeleteHistory> deleteHistory = question1.questionDelete(question1.getWriter());
+        List<DeleteHistory> deleteHistory = question1.delete(question1.getWriter());
 
         assertAll(
             () -> assertThat(question1.isDeleted()).isTrue(),
@@ -158,7 +158,7 @@ public class QuestionTest {
 
         assertAll(
             () -> assertThat(question1.getWriter()).isNotEqualTo(anotherWriter),
-            () -> assertThatThrownBy(() -> question1.questionDelete(anotherWriter))
+            () -> assertThatThrownBy(() -> question1.delete(anotherWriter))
                 .isInstanceOf(CannotDeleteException.class),
             () -> assertThat(question1.isDeleted()).isFalse()
         );
