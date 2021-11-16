@@ -2,6 +2,7 @@ package qna.domain.question;
 
 import qna.domain.BaseTimeEntity;
 import qna.domain.answer.Answer;
+import qna.domain.answer.Answers;
 import qna.domain.user.User;
 import qna.exception.CannotDeleteException;
 
@@ -45,12 +46,12 @@ public class Question extends BaseTimeEntity {
         return new Question(title, contents, writer);
     }
 
-    public void changeDeleteState(User loginUser) throws CannotDeleteException {
+    public void delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         this.deleted = true;
-        answers.changeAnswerState(loginUser);
+        answers.delete(loginUser);
     }
 
     public boolean isOwner(User writer) {

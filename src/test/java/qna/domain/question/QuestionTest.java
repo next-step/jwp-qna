@@ -22,12 +22,12 @@ class QuestionTest {
 
     @Test
     @DisplayName("질문을 삭제하면 상태를 삭제 상태로 변경한다.")
-    void changeDeleteState() throws CannotDeleteException {
+    void deleteQuestion() throws CannotDeleteException {
         //given
         Question question = Question.create("title1", "contents1", javajigi);
 
         //when
-        question.changeDeleteState(javajigi);
+        question.delete(javajigi);
 
         //then
         assertThat(question.isDeleted()).isTrue();
@@ -40,7 +40,7 @@ class QuestionTest {
 
         //when //then
         assertThrows(CannotDeleteException.class,
-                () -> question.changeDeleteState(sanjigi));
+                () -> question.delete(sanjigi));
     }
 
     @Test
@@ -55,7 +55,7 @@ class QuestionTest {
 
         //then
         assertThrows(CannotDeleteException.class,
-                () -> question.changeDeleteState(sanjigi));
+                () -> question.delete(sanjigi));
     }
 
     @Test
@@ -67,7 +67,7 @@ class QuestionTest {
         question.addAnswer(Answer.create(question, javajigi, "Answers Contents2"));
 
         //when
-        question.changeDeleteState(javajigi);
+        question.delete(javajigi);
 
         //then
         assertThat(question.isDeleted()).isTrue();

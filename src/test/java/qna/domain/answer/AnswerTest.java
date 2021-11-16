@@ -21,14 +21,14 @@ class AnswerTest {
     }
 
     @Test
-    @DisplayName("질문자와 답변자가 다른 경우 답변을 삭제할 수 없다.")
-    void changeDeleteState() throws CannotDeleteException {
+    @DisplayName("질문자와 답변자가 같은 경우 답변을 삭제할 수 있다.")
+    void deleteAnswer() throws CannotDeleteException {
         //given
         Question question = Question.create("title1", "contents1", javajigi);
         Answer answer = Answer.create(question, javajigi, "Answers Contents1");
 
         //when
-        answer.changeDeleteState(javajigi);
+        answer.delete(javajigi);
 
         //then
         assertThat(answer.isDeleted()).isTrue();
@@ -36,13 +36,13 @@ class AnswerTest {
 
     @Test
     @DisplayName("질문자와 답변자가 다른 경우 답변을 삭제할 수 없다.")
-    void validateAnswer() throws CannotDeleteException {
+    void validateDeletable() {
         //given
         Question question = Question.create("title1", "contents1", javajigi);
         Answer answer = Answer.create(question, sanjigi, "Answers Contents1");
 
         //when //then
         assertThrows(CannotDeleteException.class,
-                () -> answer.changeDeleteState(javajigi));
+                () -> answer.delete(javajigi));
     }
 }

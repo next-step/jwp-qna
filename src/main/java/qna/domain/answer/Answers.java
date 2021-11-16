@@ -1,6 +1,5 @@
-package qna.domain.question;
+package qna.domain.answer;
 
-import qna.domain.answer.Answer;
 import qna.domain.user.User;
 import qna.exception.CannotDeleteException;
 
@@ -15,7 +14,7 @@ public class Answers {
     @OneToMany(mappedBy = "question")
     private List<Answer> answers;
 
-    protected Answers() {
+    public Answers() {
         this.answers = new ArrayList<>();
     }
 
@@ -23,9 +22,9 @@ public class Answers {
         answers.add(answer);
     }
 
-    public void changeAnswerState(User loginUser) throws CannotDeleteException {
+    public void delete(User loginUser) throws CannotDeleteException {
         for (Answer answer : answers) {
-            answer.changeDeleteState(loginUser);
+            answer.delete(loginUser);
         }
     }
 
