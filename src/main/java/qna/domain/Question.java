@@ -59,13 +59,9 @@ public class Question extends BaseTimeEntity {
         this.deleted = true;
     }
 
-    public void deleteCancel() {
-        this.deleted =false;
-    }
-
-    public void isOwner(User loginUser) throws CannotDeleteException {
+    public void isOwner(User loginUser) {
         if (!this.writer.equals(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new UnAuthorizedException("질문을 삭제할 권한이 없습니다.");
         }
     }
 
