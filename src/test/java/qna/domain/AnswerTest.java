@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
-import qna.fixture.AnswerFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
@@ -35,7 +34,7 @@ class AnswerTest {
         // given
         User user = userRepository.save(UserFixture.ID가_없는_사용자());
         Question question = questionRepository.save(QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문());
-        Answer answer = AnswerFixture.create(user, question, "Answers Contents");
+        Answer answer = new Answer(user, question, "Answers Contents");
 
         // when
         Answer result = answerRepository.save(answer);
@@ -50,7 +49,7 @@ class AnswerTest {
         // given
         User user = userRepository.save(UserFixture.ID가_없는_사용자());
         Question question = questionRepository.save(QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문());
-        Answer answer = AnswerFixture.create(user, question, "Answers Contents");
+        Answer answer = new Answer(user, question, "Answers Contents");
 
         // when
         Answer savedAnswer = answerRepository.save(answer);
@@ -68,7 +67,7 @@ class AnswerTest {
         // given
         User user = userRepository.save(UserFixture.ID가_없는_사용자());
         Question question = questionRepository.save(QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문());
-        Answer answer = AnswerFixture.create(user, question, "Answers Contents");
+        Answer answer = new Answer(user, question, "Answers Contents");
 
         // when
         Answer savedAnswer = answerRepository.save(answer);
@@ -95,7 +94,7 @@ class AnswerTest {
             // given
             User user = userRepository.save(UserFixture.ID가_없는_사용자());
             Question question = questionRepository.save(QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문());
-            Answer answer = answerRepository.save(AnswerFixture.create(user, question, "Answers Contents"));
+            Answer answer = answerRepository.save(new Answer(user, question, "Answers Contents"));
 
             // when
             DeleteHistory deleteHistory = answer.delete(user);
@@ -118,7 +117,7 @@ class AnswerTest {
             User user = userRepository.save(UserFixture.ID가_없는_사용자());
             User otherUser = userRepository.save(UserFixture.ID가_없는_다른_사용자());
             Question question = questionRepository.save(QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문());
-            Answer answer = answerRepository.save(AnswerFixture.create(user, question, "Answers Contents"));
+            Answer answer = answerRepository.save(new Answer(user, question, "Answers Contents"));
 
             // when
             ThrowableAssert.ThrowingCallable throwingCallable = () -> answer.delete(otherUser);

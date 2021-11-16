@@ -39,6 +39,10 @@ public class Answer extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    public Answer(User writer, Question question, String contents) {
+        this(null, writer, question, contents);
+    }
+
     public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 

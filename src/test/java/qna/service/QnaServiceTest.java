@@ -13,8 +13,6 @@ import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.User;
-import qna.fixture.AnswerFixture;
-import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
 import java.util.Arrays;
@@ -40,9 +38,11 @@ class QnaServiceTest {
     @DisplayName("delete 성공")
     @Test
     void delete_성공() throws Exception {
-        Question question = QuestionFixture.ID가_없는_사용자의_질문ID가_있는_질문();
-        User user = question.getWriter();
-        Answer answer = AnswerFixture.create(1L, user, question, "Answers Contents");
+        User user = UserFixture.ID가_있는_사용자();
+        Question question = new Question(1L, "title", "contents")
+                .writeBy(user);
+        Answer answer = new Answer(1L, user, question, "Answer Contents");
+
         question.addAnswer(answer);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId()))
@@ -62,10 +62,12 @@ class QnaServiceTest {
     @DisplayName("delete 다른 사람이 쓴 글")
     @Test
     void delete_다른_사람이_쓴_글() {
-        Question question = QuestionFixture.ID가_없는_사용자의_질문ID가_있는_질문();
-        User user = question.getWriter();
+        User user = UserFixture.ID가_있는_사용자();
         User otherUser = UserFixture.ID가_있는_다른_사용자();
-        Answer answer = AnswerFixture.create(1L, user, question, "Answers Contents");
+        Question question = new Question(1L, "title", "contents")
+                .writeBy(user);
+        Answer answer = new Answer(1L, user, question, "Answer Contents");
+
         question.addAnswer(answer);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId()))
@@ -78,9 +80,11 @@ class QnaServiceTest {
     @DisplayName("delete 성공 질문자 답변자 같음")
     @Test
     void delete_성공_질문자_답변자_같음() throws Exception {
-        Question question = QuestionFixture.ID가_없는_사용자의_질문ID가_있는_질문();
-        User user = question.getWriter();
-        Answer answer = AnswerFixture.create(1L, user, question, "Answers Contents");
+        User user = UserFixture.ID가_있는_사용자();
+        Question question = new Question(1L, "title", "contents")
+                .writeBy(user);
+        Answer answer = new Answer(1L, user, question, "Answer Contents");
+
         question.addAnswer(answer);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId()))
@@ -99,13 +103,12 @@ class QnaServiceTest {
     @DisplayName("delete 답변 중 다른 사람이 쓴 글")
     @Test
     void delete_답변_중_다른_사람이_쓴_글() {
-        Question question = QuestionFixture.ID가_없는_사용자의_질문ID가_있는_질문();
+        User user = UserFixture.ID가_있는_사용자();
+        Question question = new Question(1L, "title", "contents")
+                .writeBy(user);
+        Answer answer1 = new Answer(1L, user, question, "Answer Contents");
+        Answer answer2 = new Answer(2L, UserFixture.ID가_있는_다른_사용자(), question, "Answer Contents");
 
-        User user = question.getWriter();
-        User otherUser = UserFixture.ID가_있는_다른_사용자();
-
-        Answer answer1 = AnswerFixture.create(1L, user, question, "Answers Contents1");
-        Answer answer2 = AnswerFixture.create(2L, otherUser, question, "Answers Contents2");
         question.addAnswer(answer1);
         question.addAnswer(answer2);
 

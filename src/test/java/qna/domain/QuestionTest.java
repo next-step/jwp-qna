@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
-import qna.fixture.AnswerFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
@@ -114,7 +113,8 @@ class QuestionTest {
         void 소유자의_question과_Answer만_존재() throws CannotDeleteException {
             // given
             Question question = questionRepository.save(QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문());
-            Answer answer = answerRepository.save(AnswerFixture.create(question.getWriter(), question, "Answer Contents"));
+            Answer answer = answerRepository.save(new Answer(question.getWriter(), question, "Answers Contents"));
+
             question.addAnswer(answer);
 
             // when
@@ -146,7 +146,8 @@ class QuestionTest {
             // given
             User otherUser = userRepository.save(UserFixture.ID가_없는_다른_사용자());
             Question question = questionRepository.save(QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문());
-            Answer answer = answerRepository.save(AnswerFixture.create(otherUser, question, "Answer Contents"));
+            Answer answer = answerRepository.save(new Answer(otherUser, question, "Answers Contents"));
+
             question.addAnswer(answer);
 
             // when
