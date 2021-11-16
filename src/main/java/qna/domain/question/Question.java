@@ -8,6 +8,7 @@ import qna.domain.answer.Answer;
 import qna.domain.answer.Answers;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.user.User;
+import qna.domain.vo.Contents;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -17,7 +18,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +32,8 @@ public class Question extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
@@ -52,7 +52,7 @@ public class Question extends BaseTimeEntity {
     public Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
-        this.contents = contents;
+        this.contents = Contents.of(contents);
     }
 
     public Question(String title, String contents, boolean deleted) {
@@ -107,7 +107,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public String getContents() {
-        return contents;
+        return contents.getValue();
     }
 
     public User getWriter() {

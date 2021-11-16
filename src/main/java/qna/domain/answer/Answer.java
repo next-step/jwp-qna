@@ -9,9 +9,11 @@ import qna.domain.BaseTimeEntity;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.question.Question;
 import qna.domain.user.User;
+import qna.domain.vo.Contents;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -19,7 +21,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import java.util.Objects;
 
@@ -42,10 +43,10 @@ public class Answer extends BaseTimeEntity {
     @Column(name = "question_id", insertable = false, updatable = false)
     private Long questionId;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    private boolean deleted = false;
+    private boolean deleted = Boolean.FALSE;
 
     protected Answer() {
     }
@@ -67,7 +68,7 @@ public class Answer extends BaseTimeEntity {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
+        this.contents = Contents.of(contents);
     }
 
     public Answer(User writer, Question question, String contents, boolean deleted) {
@@ -101,7 +102,10 @@ public class Answer extends BaseTimeEntity {
     }
 
     public boolean matchContent(String content) {
-        return this.contents.equals(content);
+        if (content == null || content.isEmpty()) {
+            return false;
+        }
+        return this.contents.equals(Contents.of(content));
     }
 
     public DeleteHistory deleteByUser(User loginUser) throws CannotDeleteException {
@@ -132,7 +136,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public String getContents() {
-        return contents;
+        return contents.getValue();
     }
 
     public boolean isDeleted() {
