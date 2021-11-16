@@ -11,11 +11,13 @@ import org.junit.jupiter.api.Test;
 import qna.common.exception.UnAuthorizedException;
 
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+
+    public static final Question Q1 = new Question("title1", "contents1").writeBy(
+        UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Test
-    @DisplayName("delete(삭제) 메소드 호출시 delete 값을 true 로 변경")
+    @DisplayName("자신의 질문 삭제, (답변 없음)")
     void deleted() {
         // given
         Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);

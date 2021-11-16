@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.common.exception.CannotDeleteException;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
@@ -29,7 +30,8 @@ public class QuestionRepositoryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        USER = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
+        USER = users.save(
+            new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
         QUESTION = new Question("title1", "contents1").writeBy(USER);
     }
 
@@ -101,5 +103,63 @@ public class QuestionRepositoryTest {
             () -> assertThat(deletedQ1.isDeleted()).isTrue(),
             () -> assertThat(deletedQ1.getAnswers().get(0).isDeleted()).isTrue()
         );
+    }
+
+
+    @Test
+    @DisplayName("자신의 질문 삭제, - 답변없는 질문")
+    void deleted_자신의_질문_삭제_성공() {
+        // given
+        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+
+        // when
+        question.delete(UserTest.JAVAJIGI);
+
+        // then
+        assertThat(question.isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("다른 사람 질문 삭제하기, 실패")
+    void deleted_다른_사람_질문_삭제하기_실패() {
+        // given
+        questions.save(QUESTION);
+
+        // when
+        // then
+        assertThatThrownBy(() -> {
+            // when
+            QUESTION.delete(UserTest.SANJIGI);
+        })// then
+            .isInstanceOf(CannotDeleteException.class);
+    }
+
+
+    @Test
+    @DisplayName("자신의 질문 삭제, - 질문자가 답변한 답변만 있는 케이스")
+    void deleted_자신의_질문_답변_삭제_성공() {
+        // given
+        new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1");
+        new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents2");
+        questions.save(QUESTION);
+
+        // when
+        // then
+        QUESTION.delete(QUESTION.getWriter());
+    }
+
+    @Test
+    @DisplayName("자신의 질문 삭제, - 다른 유저 답변이 있는 케이스")
+    void deleted_자신의_질문_삭제_실패() {
+        // given
+        new Answer(UserTest.JAVAJIGI, QUESTION, "Answers Contents1");
+        new Answer(UserTest.SANJIGI, QUESTION, "Answers Contents2");
+        questions.save(QUESTION);
+
+        assertThatThrownBy(() -> {
+            // when
+            QUESTION.delete(QUESTION.getWriter());
+        })// then
+            .isInstanceOf(CannotDeleteException.class);
     }
 }

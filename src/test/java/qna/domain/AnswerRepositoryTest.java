@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import qna.common.exception.CannotDeleteException;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -37,7 +38,8 @@ public class AnswerRepositoryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        USER = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
+        USER = users.save(
+            new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
         QUESTION = questions.save(new Question("title1", "contents1").writeBy(USER));
         ANSWER = new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1");
     }
@@ -99,5 +101,26 @@ public class AnswerRepositoryTest {
             () -> assertThat(questionExpect).isFalse(),
             () -> assertThat(writerExpect).isFalse()
         );
+    }
+
+    @Test
+    @DisplayName("다른사람이 작성한 답변 삭제 실패")
+    void deleted_다른사람_답변_삭제_실패() {
+        // given
+
+        assertThatThrownBy(() -> {
+            // when
+            ANSWER.delete(UserTest.SANJIGI);
+        })// then
+            .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    @DisplayName("자신이 작성한 답변 삭제 성공")
+    void deleted_다른사람_답변_삭제_성공() {
+        // given
+        // when
+        // then
+        ANSWER.delete(ANSWER.getWriter());
     }
 }
