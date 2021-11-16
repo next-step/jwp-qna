@@ -18,10 +18,6 @@ public class Answers {
     protected Answers() {
     }
 
-    public Answers(List<Answer> answers) {
-        this.answers = answers;
-    }
-
     public void add(Answer answer) {
         answers.add(answer);
     }
@@ -55,9 +51,10 @@ public class Answers {
         return answerDeleteHistories;
     }
 
-    public void delete() {
+    public void delete(User writer) {
+        validateAnswer(writer);
         for (Answer answer : answers) {
-            answer.setDeleted(true);
+            answer.delete();
         }
     }
 }

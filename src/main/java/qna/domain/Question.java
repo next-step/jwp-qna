@@ -66,25 +66,10 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
 
     public boolean isDeleted() {
         return deleted;
@@ -109,11 +94,11 @@ public class Question extends BaseEntity {
         return this.writer;
     }
 
-    public void delete(User user) {
+    public DeleteHistories delete(User user) {
         validateQuestion(user);
-        answers.validateAnswer(writer);
         deleted = true;
-        answers.delete();
+        answers.delete(user);
+        return new DeleteHistories(this);
     }
 
     private void validateQuestion(User user) {

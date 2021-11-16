@@ -73,7 +73,7 @@ public class QuestionRepositoryTest {
         Question q1 = questions.save(new Question("title1", "contents1").writeBy(user));
 
         //when
-        q1.addAnswer(answers.save(new Answer(user, q1, "Answers Contents1")));
+        answers.save(new Answer(user, q1, "Answers Contents1"));
         Question actual = questions.save(q1);
         Answers answers = actual.getAnswers();
 

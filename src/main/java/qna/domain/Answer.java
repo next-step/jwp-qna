@@ -46,6 +46,7 @@ public class Answer extends BaseEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+        question.addAnswer(this);
     }
 
     protected Answer() {
@@ -64,16 +65,8 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
@@ -105,5 +98,9 @@ public class Answer extends BaseEntity {
         }
         this.question = question;
         question.getAnswers().add(this);
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 }
