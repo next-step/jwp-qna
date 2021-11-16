@@ -17,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import qna.ErrorMessage;
@@ -39,7 +38,7 @@ public class Question extends BaseTime {
 
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
-	private User writerId;
+	private User writer;
 
 	@OneToMany(mappedBy = "question", cascade = ALL)
 	private List<Answer> answers = new ArrayList();
@@ -64,12 +63,12 @@ public class Question extends BaseTime {
 		if (Objects.isNull(writer)) {
 			throw new UnAuthorizedException(ErrorMessage.USER_IS_NOT_NULL);
 		}
-		this.writerId = writer;
+		this.writer = writer;
 		return this;
 	}
 
 	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer);
+		return this.writer.equals(writer);
 	}
 
 	public void addAnswer(Answer answer) {
@@ -126,7 +125,7 @@ public class Question extends BaseTime {
 			"id=" + id +
 			", title='" + title + '\'' +
 			", contents='" + contents + '\'' +
-			", writerId=" + writerId +
+			", writer=" + writer +
 			", deleted=" + deleted +
 			'}';
 	}
