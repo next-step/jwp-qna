@@ -72,4 +72,18 @@ public class AnswerTest {
         final Answer found = answerRepository.findById(saved.getId()).orElseThrow(() -> new RuntimeException("테스트실패"));
         assertThat(found.getQuestion()).isEqualTo(saved.getQuestion());
     }
+
+    @Test
+    @DisplayName("답변 삭제하기 로직")
+    void deleteAnswer() {
+        Question question1 = new Question(1L,"t1","c1").writeBy(UserTest.JAVAJIGI);
+        Answer answer1 = new Answer(1L, UserTest.JAVAJIGI, question1, "answer c1");
+        assertThatCode(()->{
+            DeleteHistory deleted = answer1.delete(answer1.getWriter());
+            assertThat(answer1).extracting("deleted").isEqualTo(true);
+            assertThat(deleted).extracting("contentId").isEqualTo(answer1.getId());
+            assertThat(deleted.getContentType()).isEqualTo(ContentType.ANSWER);
+        }).doesNotThrowAnyException();
+
+    }
 }
