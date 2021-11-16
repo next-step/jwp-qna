@@ -109,26 +109,11 @@ public class Answer extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Answer answer = (Answer) o;
-        return deleted == answer.deleted &&
-                Objects.equals(id, answer.id) &&
-                Objects.equals(writer, answer.writer) &&
-                Objects.equals(question, answer.question) &&
-                Objects.equals(contents, answer.contents);
+        return Objects.equals(id, answer.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, writer, question, contents, deleted);
-    }
-
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writer.getId() +
-                ", question=" + question.getId() +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
     }
 }
