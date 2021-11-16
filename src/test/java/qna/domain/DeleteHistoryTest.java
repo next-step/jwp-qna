@@ -13,11 +13,6 @@ import qna.TypeNotFoundException;
 import qna.UnAuthorizedException;
 
 public class DeleteHistoryTest {
-	public static DeleteHistory DELETE_HISTORY1 = new DeleteHistory(ContentType.QUESTION, Q1,
-		JAVAJIGI,
-		LocalDateTime.now());
-	DeleteHistory DELETE_HISTORY2 = new DeleteHistory(ContentType.ANSWER, Q2, JAVAJIGI,
-		LocalDateTime.now().plusMinutes(10));
 
 	@Test
 	void ContentType_Null이면_예외() {
