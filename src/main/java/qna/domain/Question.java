@@ -4,7 +4,9 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "question")
@@ -42,19 +44,19 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public DeleteHistories delete(User loginUser, LocalDateTime localDateTime, DeleteHistories deleteHistories) {
-        deleteQuestion(loginUser, localDateTime, deleteHistories);
-        deleteHistories.getDeleteHistories().addAll(
-            answers.delete(loginUser, localDateTime)
-                .getDeleteHistories()
+    public DeleteHistories delete(User loginUser, LocalDateTime localDateTime) {
+        return DeleteHistories.from(
+            Stream.of(Collections.singletonList(deleteQuestion(loginUser, localDateTime)),
+                    answers.delete(loginUser, localDateTime).getDeleteHistories())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList())
         );
-        return deleteHistories;
     }
 
-    private void deleteQuestion(User loginUser, LocalDateTime localDateTime, DeleteHistories deleteHistories) {
+    private DeleteHistory deleteQuestion(User loginUser, LocalDateTime localDateTime) {
         validate(loginUser);
         deleted = true;
-        deleteHistories.add(DeleteHistory.questionDeleteHistoryOf(id, loginUser, localDateTime));
+        return DeleteHistory.questionDeleteHistoryOf(id, loginUser, localDateTime);
     }
 
     private void validate(User loginUser) {
