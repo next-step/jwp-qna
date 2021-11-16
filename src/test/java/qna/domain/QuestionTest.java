@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 import qna.fixture.AnswerFixture;
-import qna.fixture.DeleteHistoryFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
@@ -103,8 +102,13 @@ class QuestionTest {
             // then
             assertAll(
                     () -> assertThat(deleteHistories)
-                            .hasSize(1)
-                            .contains(DeleteHistoryFixture.create(ContentType.QUESTION, question.getId(), question.getWriter())),
+                            .hasSize(1),
+                    () -> assertThat(deleteHistories.get(0).getContentType())
+                            .isEqualTo(ContentType.QUESTION),
+                    () -> assertThat(deleteHistories.get(0).getContentId())
+                            .isEqualTo(question.getId()),
+                    () -> assertThat(deleteHistories.get(0).getDeletedBy())
+                            .isEqualTo(user),
                     () -> verifyQuestionDeleteStatus(question.getId(), true)
             );
         }
@@ -124,11 +128,19 @@ class QuestionTest {
             // then
             assertAll(
                     () -> assertThat(deleteHistories)
-                            .hasSize(2)
-                            .contains(
-                                    DeleteHistoryFixture.create(ContentType.QUESTION, question.getId(), question.getWriter()),
-                                    DeleteHistoryFixture.create(ContentType.ANSWER, answer.getId(), answer.getWriter())
-                            ),
+                            .hasSize(2),
+                    () -> assertThat(deleteHistories.get(0).getContentType())
+                            .isEqualTo(ContentType.QUESTION),
+                    () -> assertThat(deleteHistories.get(0).getContentId())
+                            .isEqualTo(question.getId()),
+                    () -> assertThat(deleteHistories.get(0).getDeletedBy())
+                            .isEqualTo(user),
+                    () -> assertThat(deleteHistories.get(1).getContentType())
+                            .isEqualTo(ContentType.ANSWER),
+                    () -> assertThat(deleteHistories.get(1).getContentId())
+                            .isEqualTo(answer.getId()),
+                    () -> assertThat(deleteHistories.get(1).getDeletedBy())
+                            .isEqualTo(user),
                     () -> verifyDeletedStatus(question.getId(), answer.getId(), true)
             );
         }

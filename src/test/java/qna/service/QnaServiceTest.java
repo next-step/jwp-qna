@@ -14,7 +14,6 @@ import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.User;
 import qna.fixture.AnswerFixture;
-import qna.fixture.DeleteHistoryFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
@@ -119,8 +118,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories(Question question, Answer answer) {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                DeleteHistoryFixture.create(ContentType.QUESTION, question.getId(), question.getWriter()),
-                DeleteHistoryFixture.create(ContentType.ANSWER, answer.getId(), answer.getWriter())
+                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()),
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter())
         );
 
         verify(deleteHistoryService)
