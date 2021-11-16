@@ -94,4 +94,6 @@ class QnaServiceTest {
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }
+
+
 }
