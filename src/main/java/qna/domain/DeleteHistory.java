@@ -71,6 +71,6 @@ public class DeleteHistory {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedBy);
+        return Objects.hash(id);
     }
 }

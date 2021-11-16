@@ -114,6 +114,6 @@ public class Answer extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, writer, question, contents, deleted);
+        return Objects.hash(id);
     }
 }
