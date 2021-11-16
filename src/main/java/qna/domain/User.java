@@ -119,10 +119,10 @@ public class User extends BaseTimeEntity {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 

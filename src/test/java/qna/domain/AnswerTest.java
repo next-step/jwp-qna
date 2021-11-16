@@ -25,11 +25,21 @@ public class AnswerTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
-        Question question = questionRepository.save(QuestionTest.Q1);
-        A1.setQuestionId(question.getId());
-        A2.setQuestionId(question.getId());
+        User javajigi = userRepository.save(UserTest.JAVAJIGI);
+        User sanjigi = userRepository.save(UserTest.SANJIGI);
+
+        Question question = QuestionTest.Q1.writeBy(javajigi);
+        Question savedQuestion = questionRepository.save(question);
+
+        A1.setWriter(javajigi);
+        A2.setWriter(sanjigi);
+        A1.setQuestion(savedQuestion);
+        A2.setQuestion(savedQuestion);
 
         answerRepository.save(A1);
         answerRepository.save(A2);
@@ -39,6 +49,7 @@ public class AnswerTest {
     void clean() {
         answerRepository.deleteAll();
         questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test

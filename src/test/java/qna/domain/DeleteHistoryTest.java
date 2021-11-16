@@ -17,14 +17,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class DeleteHistoryTest {
 
-    public static final DeleteHistory D1 = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
-    public static final DeleteHistory D2 = new DeleteHistory(ContentType.ANSWER, 2L, 2L, LocalDateTime.now());
+    public static final DeleteHistory D1 = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
+    public static final DeleteHistory D2 = new DeleteHistory(ContentType.ANSWER, 2L, UserTest.SANJIGI, LocalDateTime.now());
 
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
+        User javajigi = userRepository.save(UserTest.JAVAJIGI);
+        User sanjigi = userRepository.save(UserTest.SANJIGI);
+
+        D1.setDeletedBy(javajigi);
+        D2.setDeletedBy(sanjigi);
+
         deleteHistoryRepository.save(D1);
         deleteHistoryRepository.save(D2);
     }
@@ -32,6 +41,7 @@ class DeleteHistoryTest {
     @AfterEach
     void clean() {
         deleteHistoryRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test

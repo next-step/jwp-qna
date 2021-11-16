@@ -22,8 +22,17 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
+        User javajigi = userRepository.save(UserTest.JAVAJIGI);
+        User sanjigi = userRepository.save(UserTest.SANJIGI);
+
+        Q1.writeBy(javajigi);
+        Q2.writeBy(sanjigi);
+
         questionRepository.save(Q1);
         questionRepository.save(Q2);
     }
@@ -31,6 +40,7 @@ public class QuestionTest {
     @AfterEach
     void clean() {
         questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @DisplayName("주어진 ID에 해당하는 질문을 리턴한다.")
