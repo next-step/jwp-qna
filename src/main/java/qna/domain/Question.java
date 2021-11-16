@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -113,7 +112,7 @@ public class Question extends BaseEntity {
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
             ", writerId=" + writer +
-            ", deleted=" + deleted +
+            ", deleted=" + deleted.isDeleted() +
             '}';
     }
 

@@ -47,6 +47,7 @@ public class Answer extends BaseEntity {
 
     public Answer(User writer, Question question, String contents) {
         validCanWritten(writer, question);
+        question.addAnswer(this);
 
         this.writer = writer;
         this.question = question;
@@ -98,7 +99,7 @@ public class Answer extends BaseEntity {
             ", writerId=" + writer.getId() +
             ", questionId=" + question.getId() +
             ", contents='" + contents + '\'' +
-            ", deleted=" + deleted +
+            ", deleted=" + deleted.isDeleted() +
             '}';
     }
 

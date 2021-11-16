@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -27,4 +28,20 @@ public class Deleted implements Serializable {
         return deleted;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Deleted deleted1 = (Deleted) o;
+        return deleted == deleted1.deleted;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(deleted);
+    }
 }

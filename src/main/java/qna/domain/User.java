@@ -15,6 +15,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "user")
 public class User extends BaseEntity {
+
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -45,11 +46,13 @@ public class User extends BaseEntity {
 
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException(UnAuthorizedException.UNAUTHORIZED_EXCEPTION_USER_ID_NULL_MESSAGE);
+            throw new UnAuthorizedException(
+                UnAuthorizedException.UNAUTHORIZED_EXCEPTION_USER_ID_NULL_MESSAGE);
         }
 
         if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException(UnAuthorizedException.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_MESSAGE);
+            throw new UnAuthorizedException(
+                UnAuthorizedException.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_MESSAGE);
         }
 
         this.name = target.name;
@@ -71,6 +74,10 @@ public class User extends BaseEntity {
 
     public void changeUserId(String changeUserId) {
         this.userId = changeUserId;
+    }
+
+    public boolean isMine(User writer) {
+        return this.equals(writer);
     }
 
     public Long getId() {
@@ -97,11 +104,8 @@ public class User extends BaseEntity {
         return this.password.equals(targetPassword);
     }
 
-    public boolean isMine(User writer) {
-        return this.equals(writer);
-    }
-
     private static class GuestUser extends User {
+
         @Override
         public boolean isGuestUser() {
             return true;
@@ -121,11 +125,13 @@ public class User extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        User user = (User)o;
+        }
+        User user = (User) o;
         return Objects.equals(id, user.id)
             && Objects.equals(userId, user.userId)
             && Objects.equals(password, user.password)

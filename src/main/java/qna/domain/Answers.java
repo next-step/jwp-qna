@@ -27,6 +27,10 @@ public class Answers implements Serializable {
     }
 
     public void add(Answer answer) {
+        if (Objects.nonNull(answers)) {
+            answers.remove(answer);
+        }
+        
         answers.add(answer);
     }
 
