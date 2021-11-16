@@ -1,6 +1,6 @@
 package qna.domain;
 
-import qna.CannotDeleteException;
+import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -54,7 +54,7 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public void delete(User loginUser) {
         isOwner(loginUser);
         this.deleted = true;
     }
