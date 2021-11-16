@@ -40,6 +40,7 @@ public class Answers {
 
     public List<DeleteHistory> deleteAll(User principal) throws CannotDeleteException {
         List<DeleteHistory> result = new ArrayList<>();
+        // rollback 구현 없이 정합성 확인 후 작업을 하기 위해 두번 순회함
         for (Answer answer : answers) {
             throwExceptionWhenHasAnotherWriter(principal, answer);
         }
