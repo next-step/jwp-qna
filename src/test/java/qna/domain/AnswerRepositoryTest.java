@@ -28,7 +28,7 @@ public class AnswerRepositoryTest extends QnATest {
     }
 
     @Test
-    void 여러건을_저장할때_리스트에_데이터를_담는경우_동일한_객체라도_모두_저장된다() {
+    void 여러건을_저장할때_동일한_객체라도_모두_저장된다() {
         User user = createUser();
         Question question = createQuestion(user, TITLE_1, CONTENTS_1);
         createAnswer(user, question, ANSWER_1);
