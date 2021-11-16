@@ -1,13 +1,16 @@
 package qna.domain;
 
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
+import qna.CannotDeleteException;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -70,19 +73,17 @@ public class QuestionTest {
     }
 
     @Test
-    public void 제목에_같은_단어가_포함되는_질문_목록_조회() {
+    public void 질문한_사람이_로그인_사용자가_아닌경우엔_삭제할_수_없다() {
         //given
         User write = userRepository.save(TestUserFactory.create("donkey"));
-        questionRepository.save(TestQuestionFactory.create("title", "content", write));
-        questionRepository.save(TestQuestionFactory.create("title", "content", write));
-
-        String title = "title";
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
 
         //when
-        List<Question> expected = questionRepository.findByTitleContains(title);
+        ThrowableAssert.ThrowingCallable throwingCallable = () -> actual.delete(TestUserFactory.create("donkey2"));
 
         //then
-        assertThat(2).isEqualTo(expected.size());
+        assertThatExceptionOfType(CannotDeleteException.class)
+                .isThrownBy(throwingCallable);
     }
 
 }
