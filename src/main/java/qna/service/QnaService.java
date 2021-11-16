@@ -34,7 +34,7 @@ public class QnaService {
 
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {
-        return questionRepository.findByIdAndDeletedFalse(id)
+        return questionRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -53,7 +53,7 @@ public class QnaService {
         }
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.delete(true);
+        question.delete();
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter(), LocalDateTime.now()));
         for (Answer answer : answers) {
             answer.delete();

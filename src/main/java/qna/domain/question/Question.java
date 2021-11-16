@@ -1,10 +1,11 @@
 package qna.domain.question;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import qna.domain.BaseTimeEntity;
 import qna.domain.answer.Answer;
 import qna.domain.user.User;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,6 +17,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
+@SQLDelete(sql = "UPDATE Question SET deleted = true WHERE id=?")
+//@FilterDef(name = "deletedQuestionFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
+//@Filter(name = "deletedQuestionFilter", condition = "deleted = :isDeleted")
+@Where(clause = "deleted=false")
 public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +28,10 @@ public class Question extends BaseTimeEntity {
     private String title;
     @Column(columnDefinition = "longtext")
     private String contents;
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-    private boolean deleted = false;
+    private boolean deleted = Boolean.FALSE;
 
     protected Question() {
     }
@@ -41,8 +46,8 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public Question(Long id, String title, String contents, boolean deleted) {
-        this(id, title, contents);
+    public Question(String title, String contents, boolean deleted) {
+        this(title, contents);
         this.deleted = deleted;
     }
 
@@ -79,8 +84,8 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void delete(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
     }
 
     @Override
