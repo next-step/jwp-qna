@@ -29,89 +29,89 @@ import qna.domain.UserTest;
 
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
-	@Mock
-	private QuestionRepository questionRepository;
+    @Mock
+    private QuestionRepository questionRepository;
 
-	@Mock
-	private AnswerRepository answerRepository;
+    @Mock
+    private AnswerRepository answerRepository;
 
-	@Mock
-	private DeleteHistoryService deleteHistoryService;
+    @Mock
+    private DeleteHistoryService deleteHistoryService;
 
-	@InjectMocks
-	private QnaService qnaService;
+    @InjectMocks
+    private QnaService qnaService;
 
-	private Question question;
-	private Answer answer;
+    private Question question;
+    private Answer answer;
 
-	@BeforeEach
-	public void setUp() throws Exception {
-		question = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
-		answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
-		question.addAnswer(answer);
-	}
+    @BeforeEach
+    public void setUp() throws Exception {
+        question = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
+        answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
+        question.addAnswer(answer);
+    }
 
-	@Test
-	public void delete_성공() throws Exception {
-		when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-		when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
+    @Test
+    public void delete_성공() throws Exception {
+        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
-		assertThat(question.isDeleted()).isFalse();
-		qnaService.deleteQuestion(JAVAJIGI, question);
+        assertThat(question.isDeleted()).isFalse();
+        qnaService.deleteQuestion(JAVAJIGI, question);
 
-		assertThat(question.isDeleted()).isTrue();
-		verifyDeleteHistories();
-	}
+        assertThat(question.isDeleted()).isTrue();
+        verifyDeleteHistories();
+    }
 
-	@Test
-	public void delete_다른_사람이_쓴_글() throws Exception {
-		when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+    @Test
+    public void delete_다른_사람이_쓴_글() throws Exception {
+        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-		assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.SANJIGI, question))
-			.isInstanceOf(CannotDeleteException.class);
-	}
+        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.SANJIGI, question))
+            .isInstanceOf(CannotDeleteException.class);
+    }
 
-	@Test
-	public void delete_성공_질문자_답변자_같음() throws Exception {
-		when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-		when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
+    @Test
+    public void delete_성공_질문자_답변자_같음() throws Exception {
+        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
-		qnaService.deleteQuestion(JAVAJIGI, question);
+        qnaService.deleteQuestion(JAVAJIGI, question);
 
-		assertThat(question.isDeleted()).isTrue();
-		assertThat(answer.isDeleted()).isTrue();
-		verifyDeleteHistories();
-	}
+        assertThat(question.isDeleted()).isTrue();
+        assertThat(answer.isDeleted()).isTrue();
+        verifyDeleteHistories();
+    }
 
-	@Test
-	public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-		Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
-		question.addAnswer(answer2);
+    @Test
+    public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
+        Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
+        question.addAnswer(answer2);
 
-		when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-		when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(
-			Arrays.asList(answer, answer2));
+        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(
+            Arrays.asList(answer, answer2));
 
-		assertThatThrownBy(() -> qnaService.deleteQuestion(JAVAJIGI, question))
-			.isInstanceOf(CannotDeleteException.class);
-	}
+        assertThatThrownBy(() -> qnaService.deleteQuestion(JAVAJIGI, question))
+            .isInstanceOf(CannotDeleteException.class);
+    }
 
-	private void verifyDeleteHistories() {
-		List<DeleteHistory> deleteHistories = Arrays.asList(
-			new DeleteHistory(ContentType.QUESTION, question, answer.getUser(), LocalDateTime.now()),
-			new DeleteHistory(ContentType.ANSWER, answer.getQuestion(), answer.getUser(), LocalDateTime.now())
-		);
-		verify(deleteHistoryService).saveAll(deleteHistories);
-	}
+    private void verifyDeleteHistories() {
+        List<DeleteHistory> deleteHistories = Arrays.asList(
+            new DeleteHistory(ContentType.QUESTION, question, answer.getUser(), LocalDateTime.now()),
+            new DeleteHistory(ContentType.ANSWER, answer.getQuestion(), answer.getUser(), LocalDateTime.now())
+        );
+        verify(deleteHistoryService).saveAll(deleteHistories);
+    }
 
-	@Test
-	void 새로운_글_추가() {
-		Question question = new Question("how to write Question","free coding").writeBy(JAVAJIGI);
+    @Test
+    void 새로운_글_추가() {
+        Question question = new Question("how to write Question", "free coding").writeBy(JAVAJIGI);
 
-		when(questionRepository.save(question)).thenReturn(question);
+        when(questionRepository.save(question)).thenReturn(question);
 
-		Question save = questionRepository.save(question);
+        Question save = questionRepository.save(question);
 
-		Assertions.assertThat(save).isEqualTo(question);
-	}
+        Assertions.assertThat(save).isEqualTo(question);
+    }
 }

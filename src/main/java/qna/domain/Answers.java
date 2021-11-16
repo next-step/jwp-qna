@@ -16,42 +16,42 @@ import javax.persistence.OneToMany;
 @Embeddable
 public class Answers implements Serializable {
 
-	@OneToMany(fetch = LAZY, mappedBy = "question", cascade = ALL)
-	private List<Answer> answers = new ArrayList<>();
+    @OneToMany(fetch = LAZY, mappedBy = "question", cascade = ALL)
+    private List<Answer> answers = new ArrayList<>();
 
-	public Answers(List<Answer> answers) {
-		this.answers = answers;
-	}
+    public Answers(List<Answer> answers) {
+        this.answers = answers;
+    }
 
-	public Answers(Answer... answers) {
-		this.answers = Arrays.stream(answers).collect(toList());
-	}
+    public Answers(Answer... answers) {
+        this.answers = Arrays.stream(answers).collect(toList());
+    }
 
-	public Answers() {
-	}
+    public Answers() {
+    }
 
-	public void addAnswer(Answer answer) {
-		this.answers.add(answer);
-	}
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
+    }
 
-	public void addAnswers(List<Answer> answers, Question question) {
-		this.answers = answers.stream()
-			.peek(answer -> answer.toQuestion(question))
-			.collect(toList());
-	}
+    public void addAnswers(List<Answer> answers, Question question) {
+        this.answers = answers.stream()
+            .peek(answer -> answer.toQuestion(question))
+            .collect(toList());
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Answers answers1 = (Answers)o;
-		return Objects.equals(answers, answers1.answers);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Answers answers1 = (Answers)o;
+        return Objects.equals(answers, answers1.answers);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(answers);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(answers);
+    }
 }

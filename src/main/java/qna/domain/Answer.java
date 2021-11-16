@@ -21,101 +21,101 @@ import qna.UnAuthorizedException;
 @Entity
 public class Answer extends BaseTime {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Lob
-	@Column
-	private String contents;
+    @Lob
+    @Column
+    private String contents;
 
-	@Column(nullable = false)
-	private boolean deleted = false;
+    @Column(nullable = false)
+    private boolean deleted = false;
 
-	@ManyToOne(fetch = LAZY)
-	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-	private Question question;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
-	@ManyToOne(fetch = LAZY)
-	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
-	private User user;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User user;
 
-	protected Answer() {
-	}
+    protected Answer() {
+    }
 
-	public Answer(User writer, Question question, String contents) {
-		this(null, writer, question, contents);
-	}
+    public Answer(User writer, Question question, String contents) {
+        this(null, writer, question, contents);
+    }
 
-	public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, String contents) {
 
-		if (Objects.isNull(writer)) {
-			throw new UnAuthorizedException(USER_IS_NOT_NULL);
-		}
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException(USER_IS_NOT_NULL);
+        }
 
-		if (Objects.isNull(question)) {
-			throw new QuestionNotFoundException(QUESTION_NOT_FOUND);
-		}
+        if (Objects.isNull(question)) {
+            throw new QuestionNotFoundException(QUESTION_NOT_FOUND);
+        }
 
-		this.id = id;
-		this.user = writer;
-		this.question = question;
-		this.contents = contents;
-	}
+        this.id = id;
+        this.user = writer;
+        this.question = question;
+        this.contents = contents;
+    }
 
-	public boolean isOwner(User writer) {
-		return this.user.equals(writer);
-	}
+    public boolean isOwner(User writer) {
+        return this.user.equals(writer);
+    }
 
-	public void toQuestion(Question question) {
-		this.question = question;
-	}
+    public void toQuestion(Question question) {
+        this.question = question;
+    }
 
-	public boolean isDeleted() {
-		return deleted;
-	}
+    public boolean isDeleted() {
+        return deleted;
+    }
 
-	public Question getQuestion() {
-		return question;
-	}
+    public Question getQuestion() {
+        return question;
+    }
 
-	public User getUser() {
-		return user;
-	}
+    public User getUser() {
+        return user;
+    }
 
-	public String getContents() {
-		return contents;
-	}
+    public String getContents() {
+        return contents;
+    }
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Answer answer = (Answer)o;
-		return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents,
-			answer.contents) && Objects.equals(question, answer.question) && Objects.equals(user,
-			answer.user);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Answer answer = (Answer)o;
+        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents,
+            answer.contents) && Objects.equals(question, answer.question) && Objects.equals(user,
+            answer.user);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, contents, deleted, question, user);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contents, deleted, question, user);
+    }
 
-	@Override
-	public String toString() {
-		return "Answer{" +
-			"id=" + id +
-			", contents='" + contents + '\'' +
-			", deleted=" + deleted +
-			", question=" + question +
-			", user=" + user +
-			'}';
-	}
+    @Override
+    public String toString() {
+        return "Answer{" +
+            "id=" + id +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            ", question=" + question +
+            ", user=" + user +
+            '}';
+    }
 }

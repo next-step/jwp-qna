@@ -14,25 +14,25 @@ import qna.UnAuthorizedException;
 
 public class DeleteHistoryTest {
 
-	@Test
-	void ContentType_Null이면_예외() {
-		Assertions.assertThatThrownBy(() -> {
-				new DeleteHistory(null, Q1, JAVAJIGI, LocalDateTime.now());
-			}).isInstanceOf(TypeNotFoundException.class)
-			.hasMessageContaining("");
-	}
+    @Test
+    void ContentType_Null이면_예외() {
+        Assertions.assertThatThrownBy(() -> {
+                new DeleteHistory(null, Q1, JAVAJIGI, LocalDateTime.now());
+            }).isInstanceOf(TypeNotFoundException.class)
+            .hasMessageContaining("");
+    }
 
-	@Test
-	void contentId가_Null이면_예외() {
-		Assertions.assertThatThrownBy(() -> {
-			new DeleteHistory(ContentType.QUESTION, null, JAVAJIGI, LocalDateTime.now());
-		}).isInstanceOf(QuestionNotFoundException.class);
-	}
+    @Test
+    void contentId가_Null이면_예외() {
+        Assertions.assertThatThrownBy(() -> {
+            new DeleteHistory(ContentType.QUESTION, null, JAVAJIGI, LocalDateTime.now());
+        }).isInstanceOf(QuestionNotFoundException.class);
+    }
 
-	@Test
-	void deletedById가_Null이면_예외() {
-		Assertions.assertThatThrownBy(() -> {
-			new DeleteHistory(ContentType.QUESTION, Q1, null, LocalDateTime.now());
-		}).isInstanceOf(UnAuthorizedException.class);
-	}
+    @Test
+    void deletedById가_Null이면_예외() {
+        Assertions.assertThatThrownBy(() -> {
+            new DeleteHistory(ContentType.QUESTION, Q1, null, LocalDateTime.now());
+        }).isInstanceOf(UnAuthorizedException.class);
+    }
 }

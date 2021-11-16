@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,71 +24,71 @@ import qna.UnAuthorizedException;
 @Table(name = "delete_history")
 public class DeleteHistory {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@OneToOne
-	@JoinColumn(name = "contend_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_question"))
-	private Question question;
+    @OneToOne
+    @JoinColumn(name = "contend_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_question"))
+    private Question question;
 
-	@Column(name = "content_type")
-	@Enumerated(EnumType.STRING)
-	private ContentType contentType;
+    @Column(name = "content_type")
+    @Enumerated(EnumType.STRING)
+    private ContentType contentType;
 
-	@Column(name = "create_date", updatable = false)
-	private LocalDateTime createDate = LocalDateTime.now();
+    @Column(name = "create_date", updatable = false)
+    private LocalDateTime createDate = LocalDateTime.now();
 
-	@ManyToOne
-	@JoinColumn(name = "delete_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
-	private User deleteByUser;
+    @ManyToOne
+    @JoinColumn(name = "delete_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deleteByUser;
 
-	public DeleteHistory(ContentType contentType, Question question, User deleteByUser, LocalDateTime createDate) {
-		if (Objects.isNull(contentType)) {
-			throw new TypeNotFoundException();
-		}
+    public DeleteHistory(ContentType contentType, Question question, User deleteByUser, LocalDateTime createDate) {
+        if (Objects.isNull(contentType)) {
+            throw new TypeNotFoundException();
+        }
 
-		if (Objects.isNull(question)) {
-			throw new QuestionNotFoundException();
-		}
+        if (Objects.isNull(question)) {
+            throw new QuestionNotFoundException();
+        }
 
-		if (Objects.isNull(deleteByUser)) {
-			throw new UnAuthorizedException();
-		}
+        if (Objects.isNull(deleteByUser)) {
+            throw new UnAuthorizedException();
+        }
 
-		this.contentType = contentType;
-		this.question = question;
-		this.deleteByUser = deleteByUser;
-		this.createDate = createDate;
-	}
+        this.contentType = contentType;
+        this.question = question;
+        this.deleteByUser = deleteByUser;
+        this.createDate = createDate;
+    }
 
-	protected DeleteHistory() {
-	}
+    protected DeleteHistory() {
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		DeleteHistory that = (DeleteHistory)o;
-		return Objects.equals(id, that.id) &&
-			contentType == that.contentType &&
-			Objects.equals(question, that.question) &&
-			Objects.equals(deleteByUser, that.deleteByUser);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        DeleteHistory that = (DeleteHistory)o;
+        return Objects.equals(id, that.id) &&
+            contentType == that.contentType &&
+            Objects.equals(question, that.question) &&
+            Objects.equals(deleteByUser, that.deleteByUser);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, contentType, question, deleteByUser);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contentType, question, deleteByUser);
+    }
 
-	@Override
-	public String toString() {
-		return "DeleteHistory{" +
-			"id=" + id +
-			", contentType=" + contentType +
-			", createDate=" + createDate +
-			'}';
-	}
+    @Override
+    public String toString() {
+        return "DeleteHistory{" +
+            "id=" + id +
+            ", contentType=" + contentType +
+            ", createDate=" + createDate +
+            '}';
+    }
 }
