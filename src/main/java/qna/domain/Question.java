@@ -1,7 +1,6 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,13 +12,9 @@ public class Question extends BaseEntity{
     private String title;
     @Lob
     private String contents;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writerId")
-    private User writer;
+    private Long writerId;
     @Column(nullable = false)
     private boolean deleted = false;
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    List<Answer> answers = new ArrayList<>();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -35,12 +30,16 @@ public class Question extends BaseEntity{
     }
 
     public Question writeBy(User writer) {
-        this.writer = writer;
+        this.writerId = writer.getId();
         return this;
     }
 
+    public void addAnswer(Answer answer) {
+        answer.toQuestion(this);
+    }
+
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writerId.equals(writer.getId());
     }
 
     public Long getId() {
@@ -55,14 +54,6 @@ public class Question extends BaseEntity{
         this.contents = contents;
     }
 
-    public User getWriter() {
-        return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -71,13 +62,8 @@ public class Question extends BaseEntity{
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
-    public void addAnswer(Answer answer) {
-        this.answers.add(answer);
-        answer.setQuestion(this);
+    public Long getWriterId() {
+        return writerId;
     }
 
     @Override
@@ -86,7 +72,7 @@ public class Question extends BaseEntity{
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writer=" + writer +
+                ", writerId=" + writerId +
                 ", deleted=" + deleted +
                 '}';
     }

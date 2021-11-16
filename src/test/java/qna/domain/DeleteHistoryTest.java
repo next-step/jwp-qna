@@ -33,7 +33,7 @@ public class DeleteHistoryTest {
         question1 = new Question("title1", "contents1").writeBy(user1);
         userRepository.save(user1);
         Question savedQuestion = questionRepository.save(question1);
-        deleteHistory = new DeleteHistory(ContentType.QUESTION, savedQuestion.getId(), user1, LocalDateTime.now());
+        deleteHistory = new DeleteHistory(ContentType.QUESTION, savedQuestion.getId(), user1.getId(), LocalDateTime.now());
         savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
     }
 
@@ -49,15 +49,6 @@ public class DeleteHistoryTest {
     void 검색() {
         DeleteHistory foundDeleteHistory = deleteHistoryRepository.findById(savedDeleteHistory.getId()).get();
         assertThat(foundDeleteHistory).isEqualTo(deleteHistory);
-    }
-
-    @Test
-    void 연관관계_유저() {
-        user1.addDeleteHistory(savedDeleteHistory);
-        em.flush();
-        em.clear();
-        DeleteHistory foundDeleteHistory = deleteHistoryRepository.findById(savedDeleteHistory.getId()).get();
-        assertThat(foundDeleteHistory.getDeletedByUser().getId()).isEqualTo(user1.getId());
     }
 
     @Test

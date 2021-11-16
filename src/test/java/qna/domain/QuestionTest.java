@@ -52,38 +52,6 @@ public class QuestionTest {
     }
 
     @Test
-    void 연관관계_유저() {
-        em.flush();
-        em.clear();
-        User foundUser = userRepository.findById(user1.getId()).get();
-        assertAll(
-                () -> assertThat(question1.getWriter()).isEqualTo(user1),
-                () -> assertThat(foundUser.getQuestions().get(0).getId()).isEqualTo(question1.getId())
-        );
-    }
-
-    @Test
-    void 연관관계_답변() {
-        Answer savedAnswer = answerRepository.save(answer1);
-        question1.addAnswer(savedAnswer);
-        em.flush();
-        em.clear();
-        Answer foundAnswer = answerRepository.findById(savedAnswer.getId()).get();
-        assertAll(
-                () -> assertThat(foundAnswer.getQuestion().getId()).isEqualTo(question1.getId()),
-                () -> assertThat(question1.getAnswers().get(0).getId()).isEqualTo(foundAnswer.getId())
-        );
-    }
-
-    @Test
-    void cascadeTest() {
-        Answer savedAnswer = answerRepository.save(answer1);
-        question1.addAnswer(savedAnswer);
-        questionRepository.delete(question1);
-        assertThat(answerRepository.findById(savedAnswer.getId()).isPresent()).isFalse();
-    }
-
-    @Test
     void 수정() {
         question1.setContents("컨텐츠 수정");
         questionRepository.flush();

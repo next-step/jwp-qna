@@ -50,26 +50,6 @@ public class AnswerTest {
     }
 
     @Test
-    void 연관관계_유저() {
-        user1.addAnswer(answer1);
-        userRepository.save(user1);
-        assertAll(
-                () -> assertThat(savedAnswer.getWriter()).isEqualTo(user1),
-                () -> assertThat(user1.getAnswers().get(0)).isEqualTo(savedAnswer)
-        );
-    }
-
-    @Test
-    void 연관관계_질문() {
-        Question savedQuestion = questionRepository.save(question1);
-        savedQuestion.addAnswer(answer1);
-        assertAll(
-                () -> assertThat(savedAnswer.getQuestion()).isEqualTo(savedQuestion),
-                () -> assertThat(savedQuestion.getAnswers().get(0)).isEqualTo(savedAnswer)
-        );
-    }
-
-    @Test
     void 검색_없을경우() {
         answer1.setDeleted(true);
         userRepository.save(user1);
@@ -79,14 +59,13 @@ public class AnswerTest {
 
     @Test
     void 수정() {
-        userRepository.save(user1);
         User savedUser2 = userRepository.save(user2);
-        questionRepository.save(question1);
-        savedAnswer.setWriter(user2);
+        savedAnswer.setWriterId(user2.getId());
         answerRepository.flush();
         em.clear();
         savedUser2 = userRepository.findById(savedUser2.getId()).get();
-        assertThat(savedUser2.getAnswers().get(0).getId()).isEqualTo(savedAnswer.getId());
+        Answer foundAnswer = answerRepository.findById(savedAnswer.getId()).get();
+        assertThat(savedUser2.getId()).isEqualTo(foundAnswer.getWriterId());
     }
 
     @Test
