@@ -11,7 +11,7 @@ import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "question", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Answer> values;
 
     protected Answers() {
