@@ -1,7 +1,5 @@
 package qna.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
@@ -13,8 +11,6 @@ import qna.domain.User;
 
 @Service
 public class QnaService {
-    private static final Logger log = LoggerFactory.getLogger(QnaService.class);
-
     private final QuestionRepository questionRepository;
     private final DeleteHistoryService deleteHistoryService;
 
