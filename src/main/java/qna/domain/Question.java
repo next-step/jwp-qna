@@ -1,6 +1,9 @@
 package qna.domain;
 
+import java.util.List;
+
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -8,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+import qna.ForbiddenException;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -24,6 +29,9 @@ public class Question extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @Embedded
+    private Answers answers = new Answers();
 
     private boolean deleted = false;
 
@@ -50,7 +58,10 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        if (!answer.isFrom(this)) {
+            throw new ForbiddenException();
+        }
+        this.answers.add(answer);
     }
 
     public Long getId() {
@@ -89,6 +100,10 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
+    public Answers getAnswers() {
+        return answers;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Question{");
@@ -96,6 +111,7 @@ public class Question extends BaseTimeEntity {
         sb.append(", title='").append(title).append('\'');
         sb.append(", contents='").append(contents).append('\'');
         sb.append(", writer=").append(writer);
+        sb.append(", answers=").append(answers);
         sb.append(", deleted=").append(deleted);
         sb.append('}');
         return sb.toString();

@@ -24,9 +24,13 @@ class QuestionRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AnswerRepository answerRepository;
+
     private User user;
     private Question question;
     private LocalDateTime startTime;
+    private Answer answer;
 
     @BeforeEach
     void setUp() {
@@ -34,7 +38,11 @@ class QuestionRepositoryTest {
         user = new User("userId", "password", "name", "email");
         userRepository.save(user);
 
-        question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        question = new Question("title", "contents").writeBy(user);
+        question = questionRepository.save(question);
+
+        answer = new Answer(user, question, "answer1");
+        answer = answerRepository.save(answer);
     }
 
     @DisplayName("질문 저장")
@@ -47,6 +55,7 @@ class QuestionRepositoryTest {
             () -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
             () -> assertThat(actual.getWriter()).isEqualTo(question.getWriter()),
+            () -> assertThat(actual.getAnswers()).isEqualTo(question.getAnswers()),
             () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
             () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
         );
@@ -79,6 +88,7 @@ class QuestionRepositoryTest {
             () -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
             () -> assertThat(actual.getWriter()).isEqualTo(question.getWriter()),
+            () -> assertThat(actual.getAnswers()).isEqualTo(question.getAnswers()),
             () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
             () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
         );
@@ -105,6 +115,7 @@ class QuestionRepositoryTest {
             () -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
             () -> assertThat(actual.getWriter()).isEqualTo(question.getWriter()),
+            () -> assertThat(actual.getAnswers()).isEqualTo(question.getAnswers()),
             () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
             () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
         );

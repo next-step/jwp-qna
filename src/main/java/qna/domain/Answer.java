@@ -50,6 +50,7 @@ public class Answer extends BaseTimeEntity {
 
         this.writer = writer;
         this.question = question;
+        question.addAnswer(this);
         this.contents = contents;
     }
 
@@ -60,8 +61,8 @@ public class Answer extends BaseTimeEntity {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
-        this.question = question;
+    public boolean isFrom(Question question) {
+        return this.question.equals(question);
     }
 
     public Long getId() {
@@ -101,7 +102,7 @@ public class Answer extends BaseTimeEntity {
         return "Answer{" +
             "id=" + id +
             ", writer=" + writer +
-            ", question=" + question +
+            ", questionId=" + question.getId() +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';
