@@ -1,5 +1,7 @@
 package subway.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,9 +17,15 @@ public class MemberRepositoryTest {
 
     @Test
     void save() {
+        // given
         Member expected = new Member("jason");
+
+        // when
         expected.addFavorite(favorites.save(new Favorite()));
         Member actual = members.save(expected);
-        members.flush(); // favorite insert -> member insert -> favorite update
+        members.flush();
+
+        // then
+        assertThat(actual.getId()).isNotNull();
     }
 }

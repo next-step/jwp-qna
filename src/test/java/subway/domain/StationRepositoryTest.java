@@ -3,6 +3,7 @@ package subway.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -19,15 +20,23 @@ public class StationRepositoryTest {
     @Autowired
     private LineRepository lines;
 
+    Line LINE1;
+    Line LINE2;
+
+    @BeforeEach
+    void setUp() {
+        LINE1 = lines.save(new Line("2호선"));
+        LINE2 = lines.save(new Line("3호선"));
+    }
+
     @Test
     void save() {
         // given
         String stationName = "잠실역";
 
         // when
-        Station station = new Station(stationName);
+        Station station = new Station(stationName, LINE1);
         Station actual = stations.save(station);
-
         stations.flush();
 
         // then
@@ -43,19 +52,21 @@ public class StationRepositoryTest {
         String stationName = "잠실역";
 
         // when
-        Station actual = stations.save(new Station(stationName));
+        Station actual = stations.save(new Station(stationName, LINE1));
         Station expect = stations.findByName(actual.getName());
 
         // then
-        assertThat(actual.getId()).isEqualTo(expect.getId());
-        assertThat(actual).isEqualTo(expect);
-        assertThat(actual).isSameAs(expect);
+        assertAll(
+            () -> assertThat(actual.getId()).isEqualTo(expect.getId()),
+            () -> assertThat(actual).isEqualTo(expect),
+            () -> assertThat(actual).isSameAs(expect)
+        );
     }
 
     @Test
     void update() {
         // given
-        Station station1 = stations.save(new Station("잠실역"));
+        Station station1 = stations.save(new Station("잠실역", LINE1));
 
         // when
         station1.changeName("몽촌토성역");
@@ -64,20 +75,6 @@ public class StationRepositoryTest {
 
         // then
         assertThat(station2).isNull();
-    }
-
-    @Test
-    void setLine() {
-        // given
-        Station station1 = stations.save(new Station("잠실역"));
-        Line line = lines.save(new Line("3호선"));
-
-        // when
-        station1.setLine(line);
-        Station actual = stations.findByName(station1.getName());
-
-        // then
-        assertThat(actual.getLine().getName()).isEqualTo("3호선");
     }
 
 }

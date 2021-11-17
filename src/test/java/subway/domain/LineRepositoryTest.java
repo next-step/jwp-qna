@@ -6,14 +6,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.TestPropertySource;
 
 @DataJpaTest
 public class LineRepositoryTest {
 
     @Autowired
     private LineRepository lines;
-
 
     @Autowired
     private StationRepository stations;
@@ -23,46 +21,43 @@ public class LineRepositoryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        STATION = new Station("교대역");
         LINE = lines.save(new Line("3호선"));
-        STATION.setLine(LINE);
-        stations.save(STATION);
+        STATION = new Station("교대역", LINE);
     }
 
     @Test
-    void saveWithLine() {
-        Station expected = new Station("잠실역");
-        expected.setLine(lines.save(new Line("2호선")));
-        Station actual = stations.save(expected);
-        stations.flush();
+    void findById() {
+        // given
+        // when
+        Line actual = lines.findByName("3호선");
+
+        // then
+        assertThat(actual.getStations()).hasSize(1);
     }
 
     @Test
     void findByNameWithLine() {
+        // given
+        stations.save(STATION);
+
+        // when
         Station actual = stations.findByName("교대역");
 
-        assertThat(actual).isNotNull();
+        // then
         assertThat(actual.getLine().getName()).isEqualTo("3호선");
     }
 
     @Test
     void removeLine() {
+        // given
+        stations.save(STATION);
         Station station = stations.findByName("교대역");
+
+        // when
         station.removeLine();
-        stations.flush();
+
+        // then
+        assertThat(station.getLine()).isNull();
     }
 
-    @Test
-    void findById() {
-        Line line = lines.findByName("3호선");
-        assertThat(line.getStations()).hasSize(1);
-    }
-
-    @Test
-    void save() {
-        Line expected = new Line("2호선");
-        expected.addStation(stations.save(new Station("잠실역")));
-        lines.save(expected);
-        lines.flush();
-    }
 }

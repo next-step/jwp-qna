@@ -1,7 +1,6 @@
 package subway.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,26 +20,14 @@ public class LineStationRepositoryTest {
 
     @Test
     void saveWithLineStation() {
+        // given
         Line line = lines.save(new Line("2호선"));
-        Station station = stations.save(new Station("잠실역"));
+        Station station = stations.save(new Station("잠실역", line));
+
+        // when
         LineStation lineStation = lineStations.save(new LineStation(line, station));
 
+        // then
+        assertThat(lineStation.getId()).isNotNull();
     }
-
-    @Test
-    void test() {
-        Line line = lines.save(new Line("2호선"));
-        Station station = new Station("잠실역", line);
-        LineStation lineStation = lineStations.save(new LineStation(line, station));
-
-        Station actualStation = stations.findByName("잠실역");
-        LineStation actualLineStation = actualStation.getLineStation();
-
-        assertAll(
-            () -> assertThat(actualStation.getName()).isEqualTo("잠실역"),
-            () -> assertThat(actualLineStation.getStation().getId()).isEqualTo(
-                actualStation.getId())
-        );
-    }
-
 }
