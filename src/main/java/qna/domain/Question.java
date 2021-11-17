@@ -2,13 +2,17 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "question")
 @Entity
@@ -28,6 +32,9 @@ public class Question extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "writer_id")
     private User writer;
+
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    private final List<Answer> answers = new ArrayList<>();
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
@@ -92,6 +99,10 @@ public class Question extends BaseEntity {
 
     public void setWriter(User writer) {
         this.writer = writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public boolean isDeleted() {
