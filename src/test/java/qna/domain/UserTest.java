@@ -20,7 +20,7 @@ public class UserTest {
     @Test
     @DisplayName("회원가입 : 사용자 정보 등록")
     void signUp() {
-        User actual = userRepository.save(new User(3L, "inmookjeong", "password", "inmookjeong", "jeonginmook@gmail.com"));
+        User actual = userRepository.save(new User("inmookjeong", "password", "inmookjeong", "jeonginmook@gmail.com"));
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getId()).isEqualTo(3L),
