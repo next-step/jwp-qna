@@ -24,6 +24,11 @@ public class Answers {
         this.answers.forEach(answer -> answer.delete(writer));
     }
 
+    public boolean isDeletedAll() {
+        return this.answers.stream()
+            .allMatch(Answer::isDeleted);
+    }
+
     public List<Answer> toList() {
         return Collections.unmodifiableList(new ArrayList<>(this.answers));
     }

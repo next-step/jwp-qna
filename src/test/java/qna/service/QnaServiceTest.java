@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.domain.Answer;
-import qna.domain.AnswerRepository;
+import qna.domain.Answers;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
@@ -51,6 +51,9 @@ class QnaServiceTest {
         qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
+        assertThat(question.getAnswers()).isNotNull()
+            .extracting(Answers::isDeletedAll).isEqualTo(true);
+
         verifyDeleteHistories();
     }
 
