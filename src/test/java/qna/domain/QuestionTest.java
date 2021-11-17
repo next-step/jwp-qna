@@ -98,7 +98,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("Question 을 삭제 하면 삭제 기록과 삭제된 Question 을 조회 할 수 없다.")
-    void delete() throws CannotDeleteException {
+    void delete() {
         // given
         final User writer = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
         final Question question = QuestionTestFactory.create("title", "content", writer);
