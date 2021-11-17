@@ -17,7 +17,7 @@ import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends BaseTimeEntity implements SavingDeleteHistory {
+public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -74,8 +74,7 @@ public class Answer extends BaseTimeEntity implements SavingDeleteHistory {
         return toDeleteHistory();
     }
 
-    @Override
-    public DeleteHistory toDeleteHistory() {
+    private DeleteHistory toDeleteHistory() {
         if (deleted) {
             return new DeleteHistory(ContentType.ANSWER, id, writer);
         }

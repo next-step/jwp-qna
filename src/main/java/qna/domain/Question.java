@@ -16,7 +16,7 @@ import qna.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
-public class Question extends BaseTimeEntity implements SavingDeleteHistory {
+public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -83,8 +83,7 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
         return DeleteHistories.from(deleteHistoryList);
     }
 
-    @Override
-    public DeleteHistory toDeleteHistory() {
+    private DeleteHistory toDeleteHistory() {
         if (deleted) {
             return new DeleteHistory(ContentType.QUESTION, id, writer);
         }
