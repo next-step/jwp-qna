@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
+
 @DataJpaTest
 public class AnswerTest {
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
@@ -27,6 +29,8 @@ public class AnswerTest {
         A1.getWriter().setId(null);
         final User user = userRepository.save(A1.getWriter());
         A1.setWriter(user);
+        QuestionTest.Q1.setWriter(user);
+        QuestionTest.Q1.setId(null);
         final Question question = questionRepository.save(QuestionTest.Q1);
         A1.setQuestion(question);
     }
@@ -74,7 +78,7 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("답변 삭제하기 로직")
+    @DisplayName("답변 삭제하기 로직(성공)")
     void deleteAnswer() {
         Question question1 = new Question(1L,"t1","c1").writeBy(UserTest.JAVAJIGI);
         Answer answer1 = new Answer(1L, UserTest.JAVAJIGI, question1, "answer c1");
@@ -84,6 +88,15 @@ public class AnswerTest {
             assertThat(deleted).extracting("contentId").isEqualTo(answer1.getId());
             assertThat(deleted.getContentType()).isEqualTo(ContentType.ANSWER);
         }).doesNotThrowAnyException();
+    }
 
+    @Test
+    @DisplayName("답변 삭제하기 로직(실패-작성자가 다를경우")
+    void deleteAnswerFail() {
+        Question question1 = new Question(1L,"t1","c1").writeBy(UserTest.JAVAJIGI);
+        Answer answer1 = new Answer(1L, UserTest.JAVAJIGI, question1, "answer c1");
+        assertThatThrownBy(()->{
+            answer1.delete(UserTest.SANJIGI);
+        }).isInstanceOf(CannotDeleteException.class);
     }
 }
