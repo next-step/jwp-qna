@@ -92,3 +92,8 @@
 해결방법
 1. DTO로 만든 후 toString [DTO로 만들기](https://friends-aihaja.tistory.com/entry/5-%EC%96%91%EB%B0%A9%ED%96%A5-%EC%97%B0%EA%B4%80%EA%B4%80%EA%B3%84%EC%99%80-%EC%97%B0%EA%B4%80%EA%B4%80%EA%B3%84-%EC%A3%BC%EC%9D%B8)
 2. ToStringBuilder 패키지 이용하기 [ToStringBuilder 패키지 이용하기](https://yellowh.tistory.com/135)
+
+### CascadeType.ALL -> orphanRemoval true 했는데도 불구하고 repository 에서 delete 시도 시 쿼리 발생 안하는 이유
+
+- 연관 관계 매핑이 되어 있는 상황에서 find를 하기 때문에 find 시 다시 persist가 된다. 이는 dirty checking, lazy에 의해 delete 를 발생시키지 않아도 되게한다.
+ [원인 설명](https://stackoverflow.com/questions/63030917/spring-jpa-repository-delete-method-doesnt-work)
