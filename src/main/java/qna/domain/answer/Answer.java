@@ -88,7 +88,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
-        if (this.question != null) {
+        if (this.question != null && !this.question.equals(question)) {
             this.getQuestion().removeAnswer(this);
         }
         this.question = question;

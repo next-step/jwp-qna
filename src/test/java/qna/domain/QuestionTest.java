@@ -10,6 +10,7 @@ import qna.CannotDeleteException;
 import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
 import qna.domain.answer.AnswerTestFactory;
+import qna.domain.answer.Answers;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.question.Question;
 import qna.domain.question.QuestionRepository;
@@ -48,6 +49,26 @@ public class QuestionTest {
         final Question savedQuestion = questionRepository.save(question);
         // then
         assertEquals(savedQuestion, question);
+    }
+
+    @Test
+    @DisplayName("Question 등록시 Answers 도 같이 저장 할 수 있다.")
+    void saveWithAnswers() {
+        // given
+        final User writer = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
+        final Question question = QuestionTestFactory.create("title", "content", writer);
+        final Answer answer = AnswerTestFactory.create(writer, question, "Answer Content");
+        final Answer answer2 = AnswerTestFactory.create(writer, question, "Answer Content2");
+        question.addAnswer(answer);
+        question.addAnswer(answer2);
+        // then
+        final Question savedQuestion = questionRepository.save(question);
+        final Answers savedQuestionAnswers = savedQuestion.getAnswers();
+        assertAll(() -> {
+            assertTrue(savedQuestionAnswers.get(0).matchContent("Answer Content"));
+            assertTrue(savedQuestionAnswers.get(1).matchContent("Answer Content2"));
+        });
+
     }
 
     @Test

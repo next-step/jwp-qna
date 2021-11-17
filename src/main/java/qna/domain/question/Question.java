@@ -103,7 +103,6 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
         answer.toQuestion(this);
     }
 
