@@ -2,7 +2,7 @@ package qna.domain;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import qna.CannotDeleteException;
+import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -61,21 +61,21 @@ public class Question extends BaseTimeEntity {
         answers.add(answer);
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
-        validateOwner(loginUser);
+    public List<DeleteHistory> delete(User loginUser) {
+        validateLoginUser(loginUser);
         List<DeleteHistory> deleteHistories = answers.delete(loginUser);
         this.deleted = true;
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, loginUser));
         return deleteHistories;
     }
 
-    private void validateOwner(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+    private void validateLoginUser(User loginUser) {
+        if (!isSameUser(loginUser)) {
+            throw new UnAuthorizedException("질문을 삭제할 권한이 없습니다.");
         }
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isSameUser(User writer) {
         return this.writer.equals(writer);
     }
 

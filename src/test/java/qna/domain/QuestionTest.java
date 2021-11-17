@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
-import qna.CannotDeleteException;
+import qna.UnAuthorizedException;
 
 import java.util.List;
 
@@ -60,7 +60,7 @@ public class QuestionTest {
     }
 
     @Test
-    public void 질문_저장_후_삭제() throws CannotDeleteException {
+    public void 질문_저장_후_삭제() {
         //given
         User writer = userRepository.save(TestUserFactory.create("donkey"));
         Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
@@ -76,18 +76,19 @@ public class QuestionTest {
     public void 질문한_사람이_로그인_사용자가_아닌경우엔_삭제할_수_없다() {
         //given
         User writer = userRepository.save(TestUserFactory.create("donkey"));
+        User otherWriter = userRepository.save(TestUserFactory.create("donkey2"));
         Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
 
         //when
-        ThrowableAssert.ThrowingCallable throwingCallable = () -> actual.delete(TestUserFactory.create("donkey2"));
+        ThrowableAssert.ThrowingCallable throwingCallable = () -> actual.delete(otherWriter);
 
         //then
-        assertThatExceptionOfType(CannotDeleteException.class)
+        assertThatExceptionOfType(UnAuthorizedException.class)
                 .isThrownBy(throwingCallable);
     }
 
     @Test
-    public void 답변자이_없는_경우_삭제할_수_없다() throws CannotDeleteException {
+    public void 답변이_없는_경우_삭제할_수_있다() {
         //given
         User writer = userRepository.save(TestUserFactory.create("donkey"));
         Question question = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
