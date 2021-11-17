@@ -16,19 +16,20 @@ public class Answer extends BaseTimeEntity{
     private Long writerId;
     private Long questionId;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    private boolean deleted;
+    @Embedded
+    private Deleted deleted = Deleted.FALSE;
 
-    public Answer() {
+    protected Answer() {
     }
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer(User writer, Question question, Contents contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, Contents contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -76,20 +77,20 @@ public class Answer extends BaseTimeEntity{
         this.questionId = questionId;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void setContents(Contents contents) {
         this.contents = contents;
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        this.deleted.setDeleted(deleted);
     }
 
     @Override
