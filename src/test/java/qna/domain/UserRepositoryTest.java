@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -45,8 +47,8 @@ public class UserRepositoryTest {
 
         userRepository.delete(save);
         userRepository.flush();
-        User result = userRepository.findByUserId("javajigi").orElseGet(() -> null);
+        Optional<User> result = userRepository.findByUserId("javajigi");
 
-        assertThat(result).isNull();
+        assertThat(result).isEmpty();
     }
 }
