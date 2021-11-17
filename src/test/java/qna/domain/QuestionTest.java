@@ -22,9 +22,9 @@ public class QuestionTest {
     void saveQuestion() {
         final Question actual = questions.save(Q1);
 
-        Long writerId = actual.getWriterId();
+        User writerId = actual.getWriter();
 
-        assertThat(writerId).isEqualTo(Q1.getWriterId());
+        assertThat(writerId).isEqualTo(Q1.getWriter());
     }
 
     @DisplayName("writer_id로 Question 정보 찾기")
@@ -33,10 +33,10 @@ public class QuestionTest {
         final Question standard = questions.save(Q1);
         final Question target = questions.findByWriterId(UserTest.JAVAJIGI.getId());
 
-        Long standardWriterId = standard.getWriterId();
-        Long targetWriterId = target.getWriterId();
+        User standardWriter = standard.getWriter();
+        User targetWriter = target.getWriter();
 
-        assertThat(standardWriterId).isEqualTo(targetWriterId);
+        assertThat(standardWriter).isEqualTo(targetWriter);
     }
 
     @DisplayName("Question Title 정보 Like로 찾기")

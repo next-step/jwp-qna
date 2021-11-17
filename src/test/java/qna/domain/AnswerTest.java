@@ -22,11 +22,11 @@ public class AnswerTest {
     void saveAnswer() {
         final Answer actual = answers.save(A1);
 
-        Long writerId = actual.getWriterId();
-        Long questionId = actual.getQuestionId();
+        User writer = actual.getWriter();
+        Question question = actual.getQuestion();
 
-        assertThat(writerId).isEqualTo(A1.getWriterId());
-        assertThat(questionId).isEqualTo(A1.getQuestionId());
+        assertThat(writer).isEqualTo(A1.getWriter());
+        assertThat(question).isEqualTo(A1.getQuestion());
     }
 
     @DisplayName("writer_id로 데이터 조회")
@@ -35,10 +35,10 @@ public class AnswerTest {
         final Answer standard = answers.save(A1);
         final Answer target = answers.findByWriterId(UserTest.JAVAJIGI.getId());
 
-        Long standardWriterId = standard.getWriterId();
-        Long targetWriterId = target.getWriterId();
+        User standardWriter = standard.getWriter();
+        User targetWriter = target.getWriter();
 
-        assertThat(standardWriterId).isEqualTo(targetWriterId);
+        assertThat(standardWriter).isEqualTo(targetWriter);
     }
 
     @DisplayName("QuestionId로 데이터 조회")
