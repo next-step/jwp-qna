@@ -3,10 +3,8 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,10 +50,10 @@ public class AnswersTest {
 		Answers answers = Answers.of(Arrays.asList(a1, a2));
 		DeleteHistory h1 = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
 		DeleteHistory h2 = new DeleteHistory(ContentType.ANSWER, 2L, UserTest.SANJIGI, LocalDateTime.now());
-		List<DeleteHistory> expected = new ArrayList<>(Arrays.asList(h1, h2));
+		DeleteHistories expected = DeleteHistories.of(Arrays.asList(h1, h2));
 
 		// when
-		List<DeleteHistory> result = answers.deleteAll();
+		DeleteHistories result = answers.deleteAll();
 
 		// then
 		assertThat(result).isEqualTo(expected);

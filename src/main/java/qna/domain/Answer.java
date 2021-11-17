@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import qna.NotFoundException;
@@ -24,12 +23,11 @@ public class Answer extends AuditEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Lob
 	@Column
-	private String contents;
+	private Contents contents;
 
 	@Column(nullable = false)
-	private boolean deleted = false;
+	private Deleted deleted = Deleted.ofFalse();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -51,7 +49,7 @@ public class Answer extends AuditEntity {
 		validateInit(writer, question);
 		this.writer = writer;
 		this.question = question;
-		this.contents = contents;
+		this.contents = new Contents(contents);
 	}
 
 	private void validateInit(User writer, Question question) {
@@ -81,11 +79,11 @@ public class Answer extends AuditEntity {
 	}
 
 	public boolean isDeleted() {
-		return deleted;
+		return deleted.toBoolean();
 	}
 
 	public boolean isSameContents(String contents) {
-		return Objects.equals(this.contents, contents);
+		return Objects.equals(this.contents, new Contents(contents));
 	}
 
 	@Override
@@ -117,12 +115,12 @@ public class Answer extends AuditEntity {
 	}
 
 	public DeleteHistory delete() {
-		this.deleted = true;
+		this.deleted = Deleted.ofTure();
 		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
 	}
 
 	public Answer updateContents(String updateContents) {
-		this.contents = updateContents;
+		this.contents = new Contents(updateContents);
 		return this;
 	}
 }

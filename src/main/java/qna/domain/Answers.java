@@ -36,9 +36,10 @@ public class Answers {
 			.allMatch(answer -> answer.isOwner(user));
 	}
 
-	public List<DeleteHistory> deleteAll() {
-		return answerList.stream()
+	public DeleteHistories deleteAll() {
+		List<DeleteHistory> list = answerList.stream()
 			.map(Answer::delete).collect(Collectors.toList());
+		return DeleteHistories.of(list);
 	}
 
 	public Answers addAll(Collection<Answer> answers) {

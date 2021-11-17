@@ -20,7 +20,7 @@ public class User extends AuditEntity {
 	private Long id;
 
 	@Column(length = 50)
-	private String email;
+	private Email email;
 
 	@Column(length = 20, nullable = false)
 	private String name;
@@ -43,7 +43,7 @@ public class User extends AuditEntity {
 		this.userId = userId;
 		this.password = password;
 		this.name = name;
-		this.email = email;
+		this.email = Email.of(email);
 	}
 
 	public void update(User loginUser, User target) {

@@ -1,7 +1,6 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import qna.CannotDeleteException;
@@ -26,15 +24,14 @@ public class Question extends AuditEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Lob
 	@Column
-	private String contents;
+	private Contents contents;
 
 	@Column(nullable = false)
-	private boolean deleted = false;
+	private Deleted deleted = Deleted.ofFalse();
 
 	@Column(length = 100, nullable = false)
-	private String title;
+	private Title title;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -52,27 +49,26 @@ public class Question extends AuditEntity {
 
 	public Question(Long id, String title, String contents) {
 		this.id = id;
-		this.title = title;
-		this.contents = contents;
+		this.title = Title.of(title);
+		this.contents = new Contents(contents);
 	}
 
 	public Question(Long id, String title, String contents, boolean deleted) {
 		this.id = id;
-		this.title = title;
-		this.contents = contents;
-		this.deleted = deleted;
+		this.title = Title.of(title);
+		this.contents = new Contents(contents);
+		this.deleted = Deleted.of(deleted);
 	}
 
 	public List<DeleteHistory> delete(User user) throws CannotDeleteException {
 		validateDelete(user);
-		this.deleted = true;
-		List<DeleteHistory> deleteHistories = new ArrayList<>();
-		deleteHistories.add(createDeleteHistory());
-		deleteHistories.addAll(this.answers.deleteAll());
-		return deleteHistories;
+		this.deleted = Deleted.ofTure();
+		return DeleteHistories.of(createDeleteHistory())
+			.combine(this.answers.deleteAll())
+			.toList();
 	}
 
-	private DeleteHistory createDeleteHistory() {
+	public DeleteHistory createDeleteHistory() {
 		return new DeleteHistory(
 			ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
 	}
@@ -115,7 +111,7 @@ public class Question extends AuditEntity {
 	}
 
 	public boolean isDeleted() {
-		return deleted;
+		return deleted.toBoolean();
 	}
 
 	@Override
