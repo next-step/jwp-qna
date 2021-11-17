@@ -25,11 +25,13 @@ public class User extends BaseEntity {
     protected User() {
     }
 
+    @Deprecated
     public User(String userId, String password, String name, Email email) {
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+        this.userData = new UserData(userId, password, name, email);
+    }
+
+    public User(UserData userData) {
+        this.userData = userData;
     }
 
     public void update(User loginUser, User target) {
