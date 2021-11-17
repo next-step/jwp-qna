@@ -72,4 +72,8 @@ public class DeleteHistory {
                 ", createDate=" + createDate +
                 '}';
     }
+
+    public void setDeletedBy(User deletedById) {
+        this.deletedById = deletedById;
+    }
 }

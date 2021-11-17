@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 public class DeleteHistoryTest {
 
-    public static final DeleteHistory D1 = new DeleteHistory(ContentType.QUESTION, UserTest.JAVAJIGI.getId(), UserTest.SANJIGI.getId(), LocalDateTime.now());
+    public static final DeleteHistory D1 = new DeleteHistory(ContentType.QUESTION, UserTest.JAVAJIGI.getId(), UserTest.SANJIGI, LocalDateTime.now());
 
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+
+    @BeforeEach
+    void setup() {
+        UserTest.JAVAJIGI.setId(null);
+        final User user = userRepository.save(UserTest.JAVAJIGI);
+        D1.setDeletedBy(user);
+    }
 
     @DisplayName("Create 및 ID 생성 테스트")
     @Test

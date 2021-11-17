@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,16 @@ public class QuestionTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @BeforeEach
+    void setup() {
+        Q1.getWriter().setId(null);
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Q1.setWriter(user);
+    }
 
     @DisplayName("Create 및 ID 생성 테스트")
     @Test
