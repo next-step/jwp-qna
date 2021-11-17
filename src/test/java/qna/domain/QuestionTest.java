@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
@@ -45,5 +46,14 @@ public class QuestionTest {
     void deleteByUser() throws CannotDeleteException {
         Q1.delete(UserTest.JAVAJIGI);
         assertThat(Q1.isDeleted()).isTrue();
+    }
+
+    @DisplayName("사용자와 질문이 다른 User인 경우 삭제할때 에러")
+    @Test
+    void deleteByUserError() {
+        assertThatThrownBy(()->{
+            Q1.delete(new User("lsm", "password", "이승민","test@test.com"));
+        }).isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("질문을 삭제할 권한이 없습니다.");
     }
 }
