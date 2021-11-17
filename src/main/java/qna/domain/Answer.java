@@ -33,8 +33,10 @@ public class Answer extends BaseEntity {
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
+
     @Lob
     private String contents;
+
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
