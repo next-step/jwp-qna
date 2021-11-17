@@ -1,14 +1,14 @@
 package qna.user;
 
-import qna.UnAuthorizedException;
-import qna.domain.DateTimeEntity;
+import qna.exception.UnAuthorizedException;
+import qna.domain.BaseEntity;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User extends DateTimeEntity {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id

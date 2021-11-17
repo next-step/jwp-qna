@@ -26,4 +26,6 @@
   - [X] Question
   - [X] User
     - [X] 필드 객체로 관리
-  
+
+### 3단계
+- [X] `deleteQuestion` 메서드 리팩터링

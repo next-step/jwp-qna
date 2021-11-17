@@ -1,22 +1,23 @@
 package qna.question;
 
-import qna.CannotDeleteException;
-import qna.action.NullCheckAction;
+import qna.deletehistory.DeleteHistories;
+import qna.deletehistory.DeleteHistory;
+import qna.exception.CannotDeleteException;
 import qna.answer.Answer;
-import qna.domain.DateTimeEntity;
+import qna.domain.BaseEntity;
 import qna.user.User;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "question")
-public class Question extends DateTimeEntity implements NullCheckAction {
+public class Question extends BaseEntity{
+    private static final String CAN_NOT_DELETE = "질문을 삭제할 권한이 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,12 +38,7 @@ public class Question extends DateTimeEntity implements NullCheckAction {
     private final Answers answers = new Answers();
 
     public Question(final String title, final String contents, final User user) {
-        this(null, title, contents, user);
-    }
-
-    public Question(final Long id, final String title, final String contents, final User user) {
-        throwExceptionIsNullObject(user);
-        this.id = id;
+        Objects.requireNonNull(user);
         this.title = new Title(title);
         this.contents = contents;
         this.user = user;
@@ -51,14 +47,13 @@ public class Question extends DateTimeEntity implements NullCheckAction {
     protected Question() {
     }
 
-
-    public void throwExceptionNotDeletableUser(final User loginUser) throws CannotDeleteException {
+    public void throwExceptionNotDeletableUser(final User loginUser) {
         if (!this.user.equals(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(CAN_NOT_DELETE);
         }
     }
 
-    public void throwExceptionNotDeletableAnswersInQuestion(final User loginUser) throws CannotDeleteException {
+    public void throwExceptionNotDeletableAnswersInQuestion(final User loginUser) {
         answers.throwExceptionNotDeletableAnswers(loginUser);
     }
 
@@ -71,23 +66,35 @@ public class Question extends DateTimeEntity implements NullCheckAction {
     }
 
     public void addAnswer(Answer answer) {
-        this.answers.addAnswer(answer);
+        this.answers.add(answer);
     }
 
-    public List<Answer> getAnswers() {
-        return new ArrayList<>(answers.getAnswers());
+    public Answers getAnswers() {
+        return answers;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void deleteQuestion() {
-        this.deleted = true;
+    public DeleteHistories delete(User loginUser) {
+        throwExceptionNotDeletableUser(loginUser);
+        deleteAnswers(loginUser);
+        changeDeleted();
+        return DeleteHistories.fromDeleteHistoriesByQuestion(this);
     }
 
-    public void deleteAnswers() {
-        answers.changeDeletedAnswer();
+    private void changeDeleted(){
+        deleted = true;
+    }
+
+    public void deleteAnswers(User loginUser) {
+        throwExceptionNotDeletableAnswersInQuestion(loginUser);
+        answers.delete();
+    }
+
+    public List<DeleteHistory> createAnswersDeleteHistories(){
+        return answers.createDeleteHistories();
     }
 
     @Override

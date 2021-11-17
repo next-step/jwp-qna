@@ -1,8 +1,7 @@
 package qna.answer;
 
-import qna.CannotDeleteException;
-import qna.action.NullCheckAction;
-import qna.domain.DateTimeEntity;
+import qna.domain.BaseEntity;
+import qna.exception.CannotDeleteException;
 import qna.question.Question;
 import qna.user.User;
 
@@ -11,10 +10,11 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends DateTimeEntity implements NullCheckAction {
+public class Answer extends BaseEntity {
+    private static final String CAN_NOT_DELETE_OTHER_ANSWER = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,13 +33,8 @@ public class Answer extends DateTimeEntity implements NullCheckAction {
     private Question question;
 
     public Answer(final User user, final Question question, final String contents) {
-        this(null, user, question, contents);
-    }
-
-    public Answer(final Long id, final User user, final Question question, final String contents) {
-        throwExceptionIsNullObject(user);
-        throwExceptionIsNullObject(question);
-        this.id = id;
+        Objects.requireNonNull(user);
+        Objects.requireNonNull(question);
         this.user = user;
         this.question = question;
         this.contents = contents;
@@ -50,9 +45,9 @@ public class Answer extends DateTimeEntity implements NullCheckAction {
     protected Answer() {
     }
 
-    public void throwExceptionNotDeletableUser(final User loginUser) throws CannotDeleteException {
+    public void throwExceptionNotDeletableUser(final User loginUser){
         if (!this.user.equals(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(CAN_NOT_DELETE_OTHER_ANSWER);
         }
     }
 
@@ -72,7 +67,7 @@ public class Answer extends DateTimeEntity implements NullCheckAction {
         return deleted;
     }
 
-    public void deleteAnswer() {
+    public void delete() {
         this.deleted = true;
     }
 
@@ -96,7 +91,7 @@ public class Answer extends DateTimeEntity implements NullCheckAction {
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", user=" + user +
                 ", question=" + question +
                 ", contents='" + contents + '\'' +

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import qna.CannotDeleteException;
+import qna.exception.CannotDeleteException;
 import qna.answer.Answer;
 import qna.deletehistory.DeleteHistory;
 import qna.deletehistory.DeleteHistoryRepository;
@@ -36,8 +36,8 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = new Question(1L, "title1", "contents1", JAVAJIGI);
-        answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
+        question = new Question("title1", "contents1", JAVAJIGI);
+        answer = new Answer(JAVAJIGI, question, "Answers Contents1");
     }
 
     @Test
@@ -66,7 +66,7 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
+        Answer answer2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
         question.addAnswer(answer2);
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question))
@@ -75,8 +75,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getUser()),
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getUser())
+                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getUser()),
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getUser())
         );
         verify(deleteHistoryRepository).saveAll(deleteHistories);
     }

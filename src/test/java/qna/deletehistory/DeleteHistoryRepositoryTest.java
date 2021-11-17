@@ -24,8 +24,8 @@ public class DeleteHistoryRepositoryTest extends PreExecutionTest {
 
     @BeforeEach
     private void beforeEach() {
-        answerSavedDeleteHistory = deleteHistoryRepository.save(new DeleteHistory(1L, ContentType.ANSWER, savedAnswer.getId(), savedUser));
-        questionSavedDeleteHistory = deleteHistoryRepository.save(new DeleteHistory(2L, ContentType.QUESTION, savedQuestion.getId(), savedUser));
+        answerSavedDeleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, savedAnswer.getId(), savedUser));
+        questionSavedDeleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.QUESTION, savedQuestion.getId(), savedUser));
     }
 
     @Test

@@ -15,7 +15,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static qna.user.UserTest.JAVAJIGI;
 
 @DataJpaTest
 public class QuestionRepositoryTest extends PreExecutionTest {
@@ -65,7 +64,7 @@ public class QuestionRepositoryTest extends PreExecutionTest {
     @Test
     @DisplayName("question에 delete를 true로 수정")
     public void updateQuestionDeletedTrue() {
-        savedQuestion.deleteQuestion();
+        savedQuestion.delete(savedUser);
 
         Optional<Question> oQuestion = questionRepository.findById(savedQuestion.getId());
 

@@ -1,7 +1,8 @@
 package qna.deletehistory;
 
-import qna.action.NullCheckAction;
+import qna.answer.Answer;
 import qna.domain.ContentType;
+import qna.question.Question;
 import qna.user.User;
 
 import javax.persistence.*;
@@ -10,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "delete_history")
-public class DeleteHistory implements NullCheckAction {
+public class DeleteHistory{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -28,7 +29,7 @@ public class DeleteHistory implements NullCheckAction {
     private User deletedByUser;
 
     @Column(name = "created_date")
-    private LocalDateTime createdDate = LocalDateTime.now();
+    private final LocalDateTime createdDate = LocalDateTime.now();
 
     protected DeleteHistory() {
     }
@@ -38,11 +39,19 @@ public class DeleteHistory implements NullCheckAction {
     }
 
     public DeleteHistory(final Long id, final ContentType contentType, final Long contentId, final User deletedByUser) {
-        throwExceptionIsNullObject(deletedByUser);
+        Objects.requireNonNull(deletedByUser);
         this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
+    }
+
+    public static DeleteHistory fromAnswer(Answer answer){
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getUser());
+    }
+
+    public static DeleteHistory fromQuestion(Question question){
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getUser());
     }
 
     public Long getId() {
