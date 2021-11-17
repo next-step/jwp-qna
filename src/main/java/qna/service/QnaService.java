@@ -10,6 +10,7 @@ import qna.common.exception.NotFoundException;
 import qna.domain.*;
 
 import java.util.List;
+import qna.domain.repository.QuestionRepository;
 
 @Service
 public class QnaService {

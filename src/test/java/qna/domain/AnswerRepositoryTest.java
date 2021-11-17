@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.common.exception.CannotDeleteException;
+import qna.domain.repository.AnswerRepository;
+import qna.domain.repository.QuestionRepository;
+import qna.domain.repository.UserRepository;
 
 @DataJpaTest
 public class AnswerRepositoryTest {

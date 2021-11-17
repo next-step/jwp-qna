@@ -12,6 +12,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.repository.AnswerRepository;
+import qna.domain.repository.DeleteHistoryRepository;
+import qna.domain.repository.QuestionRepository;
+import qna.domain.repository.UserRepository;
 
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
