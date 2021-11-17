@@ -29,15 +29,8 @@ import javax.persistence.Id;
  */
 
 @Entity
-public class User {
+public class User extends BaseEntity {
 	public static final GuestUser GUEST_USER = new GuestUser();
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
-	@Column(nullable = false)
-	private LocalDateTime createdAt;
 
 	@Column(length = 50)
 	private String email;
@@ -47,8 +40,6 @@ public class User {
 
 	@Column(length = 20, nullable = false)
 	private String password;
-
-	private LocalDateTime updatedAt;
 
 	@Column(length = 20, nullable = false, unique = true)
 	private String userId;
@@ -61,8 +52,6 @@ public class User {
 		this.password = password;
 		this.name = name;
 		this.email = email;
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = LocalDateTime.now();
 	}
 
 	public void update(User loginUser, User target) {

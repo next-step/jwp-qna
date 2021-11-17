@@ -8,10 +8,17 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  *     create table answer
@@ -26,28 +33,23 @@ import javax.persistence.Lob;
  *             primary key (id)
  *           )
  */
-
+@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Answer {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class Answer extends BaseEntity {
 
 	@Lob
 	private String contents;
 
 	@Column(nullable = false)
-	private LocalDateTime createdAt;
-
-	@Column(nullable = false)
 	private boolean deleted;
 
-	private Long questionId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "question_id")
+	private Question question;
 
-	private LocalDateTime updatedAt;
-
-	private Long writerId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "writer_id")
+	private User writer;
 
 	protected Answer() {
 	}
@@ -67,19 +69,17 @@ public class Answer {
 			throw new NotFoundException();
 		}
 
-		this.writerId = writer.getId();
-		this.questionId = question.getId();
+		this.writer = writer;
+		this.question = question;
 		this.contents = contents;
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = LocalDateTime.now();
 	}
 
 	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
+		return this.writer.equals(writer);
 	}
 
 	public void toQuestion(Question question) {
-		this.questionId = question.getId();
+		this.question = question;
 	}
 
 	public Long getId() {
@@ -88,22 +88,6 @@ public class Answer {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Long getWriterId() {
-		return writerId;
-	}
-
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
-	}
-
-	public Long getQuestionId() {
-		return questionId;
-	}
-
-	public void setQuestionId(Long questionId) {
-		this.questionId = questionId;
 	}
 
 	public String getContents() {
@@ -122,12 +106,28 @@ public class Answer {
 		this.deleted = deleted;
 	}
 
+	public Question getQuestion() {
+		return question;
+	}
+
+	public User getWriter() {
+		return writer;
+	}
+
+	public void setQuestion(Question question) {
+		this.question = question;
+	}
+
+	public void setWriter(User writer) {
+		this.writer = writer;
+	}
+
 	@Override
 	public String toString() {
 		return "Answer{" +
 			"id=" + id +
-			", writerId=" + writerId +
-			", questionId=" + questionId +
+			", writerId=" + writer.getId() +
+			", questionId=" + question.getId() +
 			", contents='" + contents + '\'' +
 			", deleted=" + deleted +
 			'}';
@@ -140,14 +140,11 @@ public class Answer {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		Answer answer = (Answer)o;
-		return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents,
-			answer.contents) && Objects.equals(createdAt, answer.createdAt) && Objects.equals(
-			questionId, answer.questionId) && Objects.equals(updatedAt, answer.updatedAt)
-			&& Objects.equals(writerId, answer.writerId);
+		return Objects.equals(id, answer.id);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, contents, createdAt, deleted, questionId, updatedAt, writerId);
+		return Objects.hash(id);
 	}
 }
