@@ -143,7 +143,7 @@ public class AnswerTest {
         // given
         final User writer = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
         final User anonymous = userRepository.save(UserTestFactory.create("anonymous", "anonymous@test.com"));
-        final Question question = QuestionTestFactory.create("title", "content", writer);
+        final Question question = questionRepository.save(QuestionTestFactory.create("title", "content", writer));
         final Answer answer = answerRepository.save(AnswerTestFactory.create(writer, question, "Answer Content"));
         // then
         assertThatExceptionOfType(CannotDeleteException.class)

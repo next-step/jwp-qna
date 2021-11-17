@@ -74,7 +74,7 @@ class AnswersTest {
                     // when
                     answers.deleteAnswer(anonymous);
                 })
-                .withMessageMatching("질문을 삭제할 권한이 없습니다.");
+                .withMessageMatching("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 
     }
 }
