@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.qna;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +20,10 @@ import javax.persistence.Table;
 import qna.common.exception.CannotDeleteException;
 import qna.common.exception.InvalidParamException;
 import qna.common.exception.UnAuthorizedException;
+import qna.domain.BaseEntity;
+import qna.domain.deleteHistory.ContentType;
+import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.user.User;
 
 @Entity
 @Table(name = "question")
@@ -43,8 +47,8 @@ public class Question extends BaseEntity {
     @Embedded
     private final Answers answers = new Answers();
 
-    @Embedded
-    private final Deleted deleted = new Deleted();
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = Boolean.FALSE;
 
     protected Question() {
     }
@@ -67,8 +71,9 @@ public class Question extends BaseEntity {
         }
 
         List<DeleteHistory> deleteHistories = answers.delete(loginUser);
-        deleteHistories.add(deleted.deleteOf(this));
+        deleteHistories.add(DeleteHistory.OfQuestion(this, loginUser));
 
+        this.deleted = true;
         return deleteHistories;
     }
 
@@ -81,7 +86,7 @@ public class Question extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted.isDeleted();
+        return deleted;
     }
 
     public Long getId() {
@@ -113,7 +118,7 @@ public class Question extends BaseEntity {
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
             ", writerId=" + writer.getId() +
-            ", deleted=" + deleted.isDeleted() +
+            ", deleted=" + deleted +
             '}';
     }
 

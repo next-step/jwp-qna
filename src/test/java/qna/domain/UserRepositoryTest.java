@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import qna.domain.repository.UserRepository;
+import qna.domain.user.UserRepository;
+import qna.domain.user.Email;
+import qna.domain.user.User;
 
 @DataJpaTest
 public class UserRepositoryTest {

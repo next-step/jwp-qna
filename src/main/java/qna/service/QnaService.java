@@ -7,10 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import qna.common.exception.CannotDeleteException;
 import qna.common.exception.NotFoundException;
-import qna.domain.*;
 
 import java.util.List;
-import qna.domain.repository.QuestionRepository;
+import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.qna.Question;
+import qna.domain.qna.QuestionRepository;
+import qna.domain.user.User;
 
 @Service
 public class QnaService {

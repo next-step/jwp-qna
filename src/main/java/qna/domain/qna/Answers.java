@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.qna;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,6 +12,8 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 import qna.common.exception.CannotDeleteException;
+import qna.domain.user.User;
+import qna.domain.deleteHistory.DeleteHistory;
 
 @Embeddable
 public class Answers implements Serializable {
@@ -30,7 +32,7 @@ public class Answers implements Serializable {
         if (Objects.nonNull(answers)) {
             answers.remove(answer);
         }
-        
+
         answers.add(answer);
     }
 

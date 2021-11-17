@@ -1,6 +1,5 @@
-package qna.domain;
+package qna.domain.qna;
 
-import javax.persistence.Embedded;
 import qna.common.exception.CannotDeleteException;
 import qna.common.exception.NotFoundException;
 import qna.common.exception.UnAuthorizedException;
@@ -18,6 +17,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.domain.BaseEntity;
+import qna.domain.deleteHistory.ContentType;
+import qna.domain.user.User;
+import qna.domain.deleteHistory.DeleteHistory;
 
 @Entity
 @Table(name = "answer")
@@ -39,8 +42,8 @@ public class Answer extends BaseEntity {
     @Column(name = "contents")
     private String contents;
 
-    @Embedded
-    private final Deleted deleted = new Deleted();
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = Boolean.FALSE;
 
     protected Answer() {
     }
@@ -59,7 +62,8 @@ public class Answer extends BaseEntity {
             throw new CannotDeleteException(ContentType.ANSWER);
         }
 
-        return deleted.deleteOf(this);
+        this.deleted = true;
+        return DeleteHistory.OfAnswer(this, loginUser);
     }
 
     public boolean isOwner(User writer) {
@@ -67,7 +71,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted.isDeleted();
+        return deleted;
     }
 
     public Long getId() {
@@ -99,7 +103,7 @@ public class Answer extends BaseEntity {
             ", writerId=" + writer.getId() +
             ", questionId=" + question.getId() +
             ", contents='" + contents + '\'' +
-            ", deleted=" + deleted.isDeleted() +
+            ", deleted=" + deleted +
             '}';
     }
 

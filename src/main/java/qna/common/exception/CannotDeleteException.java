@@ -1,6 +1,6 @@
 package qna.common.exception;
 
-import qna.domain.ContentType;
+import qna.domain.deleteHistory.ContentType;
 
 public class CannotDeleteException extends BaseException {
 

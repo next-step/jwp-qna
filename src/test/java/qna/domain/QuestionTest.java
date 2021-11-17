@@ -9,6 +9,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import qna.common.exception.UnAuthorizedException;
+import qna.domain.qna.Answer;
+import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.qna.Question;
+import qna.domain.user.User;
 
 public class QuestionTest {
 
@@ -85,7 +89,8 @@ public class QuestionTest {
 
         // when
         // then
-        assertThat(question.delete(UserTest.JAVAJIGI)).contains(DeleteHistory.OfQuestion(question));
+        assertThat(question.delete(UserTest.JAVAJIGI)).contains(
+            DeleteHistory.OfQuestion(question, UserTest.JAVAJIGI));
     }
 
 }

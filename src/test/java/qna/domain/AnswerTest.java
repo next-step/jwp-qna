@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import qna.common.exception.CannotDeleteException;
 import qna.common.exception.NotFoundException;
 import qna.common.exception.UnAuthorizedException;
+import qna.domain.qna.Answer;
+import qna.domain.user.User;
 
 public class AnswerTest {
 

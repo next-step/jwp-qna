@@ -1,11 +1,10 @@
-package qna.domain;
+package qna.domain.user;
 
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import qna.common.exception.InvalidParamException;
-import qna.common.exception.UnAuthorizedException;
 
 @Embeddable
 public class UserData {

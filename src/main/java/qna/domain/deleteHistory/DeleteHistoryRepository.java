@@ -1,17 +1,15 @@
-package qna.domain.repository;
+package qna.domain.deleteHistory;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import qna.domain.ContentType;
-import qna.domain.DeleteHistory;
 
 public interface DeleteHistoryRepository extends JpaRepository<DeleteHistory, Long> {
 
     @Query(value = "select * from delete_history where content_type = :#{#type?.name()}", nativeQuery = true)
-    List<DeleteHistory> findByContentType(@Param("type") ContentType type);
+    List<DeleteHistory> findByDeleteContentDataContentType(@Param("type") ContentType type);
 
-    List<DeleteHistory> findByContentIdAndContentType(Long questionId, ContentType contentType);
+    List<DeleteHistory> findByDeleteContentData(DeleteContentData deleteContentData);
 }

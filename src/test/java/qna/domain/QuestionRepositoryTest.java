@@ -10,10 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.common.exception.CannotDeleteException;
-import qna.common.exception.UnAuthorizedException;
-import qna.domain.repository.AnswerRepository;
-import qna.domain.repository.QuestionRepository;
-import qna.domain.repository.UserRepository;
+import qna.domain.qna.Answer;
+import qna.domain.qna.Question;
+import qna.domain.qna.AnswerRepository;
+import qna.domain.qna.QuestionRepository;
+import qna.domain.user.UserRepository;
+import qna.domain.user.Email;
+import qna.domain.user.User;
 
 @DataJpaTest
 public class QuestionRepositoryTest {

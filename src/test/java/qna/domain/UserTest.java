@@ -7,6 +7,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import qna.common.exception.UnAuthorizedException;
+import qna.domain.user.Email;
+import qna.domain.user.User;
+import qna.domain.user.UserAuth;
+import qna.domain.user.UserData;
 
 public class UserTest {
 

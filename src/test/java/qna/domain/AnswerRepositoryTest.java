@@ -13,9 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.common.exception.CannotDeleteException;
-import qna.domain.repository.AnswerRepository;
-import qna.domain.repository.QuestionRepository;
-import qna.domain.repository.UserRepository;
+import qna.domain.qna.Answer;
+import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.qna.Question;
+import qna.domain.qna.AnswerRepository;
+import qna.domain.qna.QuestionRepository;
+import qna.domain.user.UserRepository;
+import qna.domain.user.Email;
+import qna.domain.user.User;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -130,10 +135,11 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("답변 삭제 리턴 DeleteHistory 검증")
-    void adeleted() {
+    void deleted() {
         // given
         // when
         // then
-        assertThat(ANSWER.delete(ANSWER.getWriter())).isEqualTo(DeleteHistory.OfAnswer(ANSWER));
+        assertThat(ANSWER.delete(ANSWER.getWriter())).isEqualTo(
+            DeleteHistory.OfAnswer(ANSWER, ANSWER.getWriter()));
     }
 }

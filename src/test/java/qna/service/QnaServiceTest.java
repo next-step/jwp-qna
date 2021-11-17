@@ -13,8 +13,11 @@ import qna.domain.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import qna.domain.repository.AnswerRepository;
-import qna.domain.repository.QuestionRepository;
+import qna.domain.qna.Answer;
+import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.qna.Question;
+import qna.domain.qna.AnswerRepository;
+import qna.domain.qna.QuestionRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -93,8 +96,9 @@ class QnaServiceTest {
     }
 
     private void verifyDeleteHistories() {
-        List<DeleteHistory> deleteHistories = Arrays.asList(DeleteHistory.OfAnswer(answer),
-            DeleteHistory.OfQuestion(question));
+        List<DeleteHistory> deleteHistories = Arrays.asList(
+            DeleteHistory.OfAnswer(answer, UserTest.JAVAJIGI),
+            DeleteHistory.OfQuestion(question, UserTest.JAVAJIGI));
 
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.user;
 
 import java.util.Objects;
 import javax.persistence.Column;

@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.user;
 
 import java.util.Objects;
 
@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import qna.domain.BaseEntity;
 
 @Entity
 @Table(name = "user")

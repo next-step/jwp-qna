@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.user;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;
@@ -28,7 +28,7 @@ public class Email implements Serializable {
 
     public void validEmail(String email) {
         Matcher matcher = emailPattern.matcher(email);
-        
+
         if (!matcher.matches()) {
             throw new InvalidParamException("이메일 형식이 아닙니다.");
         }
