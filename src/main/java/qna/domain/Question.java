@@ -63,13 +63,18 @@ public class Question extends AbstractIdEntity {
         this.answers.add(answer);
     }
 
-    public void deleteBy(User writer) {
+    public DeleteHistories deleteByWriterAndThenCallbackDeleteHistories(User writer) {
         if (!isOwner(writer)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
         this.answers.deleteAllBy(writer);
         this.deleted = true;
+
+        return new DeleteHistories.Builder()
+            .addQuestion(this)
+            .addAnswers(this.answers)
+            .build();
     }
 
     public Long getId() {
