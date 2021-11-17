@@ -104,8 +104,10 @@ public class AnswerTest {
     @Test
     void removeAnswerTest() {
         assertThat(answerRepository.findAll().size()).isEqualTo(1);
-//        answerRepository.delete(answer);
-        question.removeAnswer(answer);
+        Answer actual = answerRepository.findAll().get(0);
+//        answerRepository.delete(actual);
+        question.removeAnswer(actual);
+        assertThat(answer).isSameAs(actual);
         assertThat(answerRepository.findAll().size()).isZero();
     }
 
