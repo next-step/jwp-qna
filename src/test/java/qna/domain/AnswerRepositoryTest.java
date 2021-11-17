@@ -39,8 +39,8 @@ public class AnswerRepositoryTest {
         assertAll(
             () -> assertThat(actual).isNotNull(),
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getWriterId()).isNotNull(),
-            () -> assertThat(actual.getQuestionId()).isNotNull(),
+            () -> assertThat(actual.getWriter()).isNotNull(),
+            () -> assertThat(actual.getQuestion()).isNotNull(),
             () -> assertThat(actual.getContents()).isNotNull()
         );
     }
@@ -59,7 +59,7 @@ public class AnswerRepositoryTest {
         // when
         answerRepository.save(answer);
         final List<Answer> actual =
-            answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestionId());
+            answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestion().getId());
 
         // then
         assertThat(actual).hasSize(1);
