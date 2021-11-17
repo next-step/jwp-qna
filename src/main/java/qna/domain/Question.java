@@ -25,12 +25,15 @@ public class Question extends AuditEntity {
 	private Long id;
 
 	@Column
+	@Embedded
 	private Contents contents;
 
 	@Column(nullable = false)
+	@Embedded
 	private Deleted deleted = Deleted.ofFalse();
 
-	@Column(length = 100, nullable = false)
+	@Embedded
+	@Column(length = Title.MAX_LENGTH, nullable = false)
 	private Title title;
 
 	@ManyToOne(fetch = FetchType.LAZY)

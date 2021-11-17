@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,17 +20,21 @@ public class User extends AuditEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(length = 50)
+	@Embedded
+	@Column(length = Email.MAX_LENGTH)
 	private Email email;
 
-	@Column(length = 20, nullable = false)
-	private String name;
+	@Embedded
+	@Column(length = UserName.MAX_LENGTH, nullable = false)
+	private UserName name;
 
-	@Column(length = 20, nullable = false)
-	private String password;
+	@Embedded
+	@Column(length = Password.MAX_LENGTH, nullable = false)
+	private Password password;
 
-	@Column(length = 20, unique = true, nullable = false)
-	private String userId;
+	@Embedded
+	@Column(length = UserId.MAX_LENGTH, unique = true, nullable = false)
+	private UserId userId;
 
 	protected User() {
 	}
@@ -40,9 +45,9 @@ public class User extends AuditEntity {
 
 	public User(Long id, String userId, String password, String name, String email) {
 		this.id = id;
-		this.userId = userId;
-		this.password = password;
-		this.name = name;
+		this.userId = UserId.of(userId);
+		this.password = Password.of(password);
+		this.name = UserName.of(name);
 		this.email = Email.of(email);
 	}
 
@@ -62,11 +67,11 @@ public class User extends AuditEntity {
 		}
 	}
 
-	private boolean matchUserId(String userId) {
+	private boolean matchUserId(UserId userId) {
 		return this.userId.equals(userId);
 	}
 
-	public boolean matchPassword(String targetPassword) {
+	public boolean matchPassword(Password targetPassword) {
 		return this.password.equals(targetPassword);
 	}
 
@@ -87,8 +92,8 @@ public class User extends AuditEntity {
 		return id;
 	}
 
-	public String getUserId() {
-		return userId;
+	public UserId getUserId() {
+		return this.userId;
 	}
 
 	@Override

@@ -23,7 +23,7 @@ public class DeleteHistory {
 	private Long id;
 
 	@Column
-	private Long contentId;
+	private ContentId contentId;
 
 	@Column
 	@Enumerated(EnumType.STRING)
@@ -42,6 +42,13 @@ public class DeleteHistory {
 
 	public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
 		this.contentType = contentType;
+		this.contentId = ContentId.of(contentId);
+		this.deletedBy = deletedBy;
+		this.createDate = createDate;
+	}
+
+	public DeleteHistory(ContentType contentType, ContentId contentId, User deletedBy, LocalDateTime createDate) {
+		this.contentType = contentType;
 		this.contentId = contentId;
 		this.deletedBy = deletedBy;
 		this.createDate = createDate;
@@ -50,7 +57,7 @@ public class DeleteHistory {
 	public DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedBy) {
 		this.id = id;
 		this.contentType = contentType;
-		this.contentId = contentId;
+		this.contentId = ContentId.of(contentId);
 		this.deletedBy = deletedBy;
 	}
 

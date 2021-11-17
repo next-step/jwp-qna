@@ -7,15 +7,15 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Title {
 
-	private String text;
+	private String title;
 
-	private static final int MAX_LENGTH = 100;
+	public static final int MAX_LENGTH = 100;
 
 	protected Title() {
 	}
 
-	private Title(String text) {
-		this.text = text;
+	private Title(String title) {
+		this.title = title;
 	}
 
 	public static Title of(String text) {
@@ -35,16 +35,16 @@ public class Title {
 
 		Title title = (Title)o;
 
-		return Objects.equals(text, title.text);
+		return Objects.equals(this.title, title.title);
 	}
 
 	@Override
 	public int hashCode() {
-		return text != null ? text.hashCode() : 0;
+		return title != null ? title.hashCode() : 0;
 	}
 
 	public String toString() {
-		return this.text;
+		return this.title;
 	}
 
 }

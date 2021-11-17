@@ -5,13 +5,13 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Deleted {
 
-	private boolean deletedBool;
+	private boolean deleted;
 
 	protected Deleted() {
 	}
 
-	private Deleted(boolean deletedBool) {
-		this.deletedBool = deletedBool;
+	private Deleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 	public static Deleted of(boolean deleted) {
@@ -35,16 +35,16 @@ public class Deleted {
 
 		Deleted deleted1 = (Deleted)o;
 
-		return deletedBool == deleted1.deletedBool;
+		return deleted == deleted1.deleted;
 	}
 
 	@Override
 	public int hashCode() {
-		return (deletedBool ? 1 : 0);
+		return (deleted ? 1 : 0);
 	}
 
 	public boolean toBoolean() {
-		return this.deletedBool;
+		return this.deleted;
 	}
 
 }

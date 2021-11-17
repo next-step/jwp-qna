@@ -9,13 +9,13 @@ import javax.persistence.Lob;
 public class Contents {
 
 	@Lob
-	private String content;
+	private String contents;
 
 	protected Contents() {
 	}
 
-	public Contents(String content) {
-		this.content = content;
+	public Contents(String contents) {
+		this.contents = contents;
 	}
 
 	@Override
@@ -27,12 +27,12 @@ public class Contents {
 
 		Contents contents = (Contents)o;
 
-		return Objects.equals(content, contents.content);
+		return Objects.equals(this.contents, contents.contents);
 	}
 
 	@Override
 	public int hashCode() {
-		return content != null ? content.hashCode() : 0;
+		return contents != null ? contents.hashCode() : 0;
 	}
-	
+
 }

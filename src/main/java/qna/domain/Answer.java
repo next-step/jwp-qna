@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -24,9 +25,11 @@ public class Answer extends AuditEntity {
 	private Long id;
 
 	@Column
+	@Embedded
 	private Contents contents;
 
 	@Column(nullable = false)
+	@Embedded
 	private Deleted deleted = Deleted.ofFalse();
 
 	@ManyToOne(fetch = FetchType.LAZY)

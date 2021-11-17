@@ -9,16 +9,16 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Email {
 
-	private static final int MAX_LENGTH = 50;
+	public static final int MAX_LENGTH = 50;
 	private static final Pattern EMAIL_REGEX_PATTERN = Pattern.compile("^(.+)@(.+)$");
 
-	private String emailText;
+	private String email;
 
 	protected Email() {
 	}
 
-	private Email(String emailText) {
-		this.emailText = emailText;
+	private Email(String email) {
+		this.email = email;
 	}
 
 	public static Email of(String email) {
@@ -45,11 +45,11 @@ public class Email {
 
 		Email email1 = (Email)o;
 
-		return Objects.equals(emailText, email1.emailText);
+		return Objects.equals(email, email1.email);
 	}
 
 	@Override
 	public int hashCode() {
-		return emailText != null ? emailText.hashCode() : 0;
+		return email != null ? email.hashCode() : 0;
 	}
 }

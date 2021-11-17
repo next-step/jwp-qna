@@ -16,9 +16,8 @@ public class TitleTest {
 			text.append("1234567890");
 		}
 
-		String finalText = text.toString();
 		// when, then
-		assertThatThrownBy(() -> Title.of(finalText))
+		assertThatThrownBy(() -> Title.of(text.toString()))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
