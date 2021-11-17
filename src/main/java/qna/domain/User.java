@@ -1,10 +1,7 @@
 package qna.domain;
 
-import qna.common.exception.UnAuthorizedException;
-
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,17 +19,8 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", unique = true, length = 20, nullable = false)
-    private String userId;
-
-    @Column(name = "password", length = 20, nullable = false)
-    private String password;
-
-    @Column(name = "name", length = 20, nullable = false)
-    private String name;
-
     @Embedded
-    private Email email;
+    private UserData userData;
 
     protected User() {
     }
@@ -45,39 +33,23 @@ public class User extends BaseEntity {
     }
 
     public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException(
-                UnAuthorizedException.UNAUTHORIZED_EXCEPTION_USER_ID_NOT_SAME_MESSAGE);
-        }
-
-        if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException(
-                UnAuthorizedException.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_MESSAGE);
-        }
-
-        this.name = target.name;
-        this.email = target.email;
+        userData.update(loginUser, target);
     }
 
     public boolean equalsNameAndEmail(User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
-
-        return name.equals(target.name) &&
-            email.equals(target.email);
-    }
-
-    public boolean isGuestUser() {
-        return false;
+        return userData.equalsNameAndEmail(target);
     }
 
     public void changeUserId(String changeUserId) {
-        this.userId = changeUserId;
+        userData.changeUserId(changeUserId);
     }
 
     public boolean isMine(User writer) {
         return this.equals(writer);
+    }
+
+    public boolean isGuestUser() {
+        return false;
     }
 
     public Long getId() {
@@ -85,23 +57,19 @@ public class User extends BaseEntity {
     }
 
     public String getUserId() {
-        return userId;
+        return userData.getUserId();
     }
 
     public String getPassword() {
-        return password;
+        return userData.getPassword();
     }
 
     public String getName() {
-        return name;
+        return userData.getName();
     }
 
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
-    }
-
-    private boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
+    public Email getEmail() {
+        return userData.getEmail();
     }
 
     private static class GuestUser extends User {
@@ -116,10 +84,7 @@ public class User extends BaseEntity {
     public String toString() {
         return "User{" +
             "id=" + id +
-            ", userId='" + userId + '\'' +
-            ", password='" + password + '\'' +
-            ", name='" + name + '\'' +
-            ", email='" + email.getEmail() + '\'' +
+            ", userData=" + userData +
             '}';
     }
 
@@ -133,14 +98,11 @@ public class User extends BaseEntity {
         }
         User user = (User) o;
         return Objects.equals(id, user.id)
-            && Objects.equals(userId, user.userId)
-            && Objects.equals(password, user.password)
-            && Objects.equals(name, user.name)
-            && Objects.equals(email, user.email);
+            && Objects.equals(userData, user.userData);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email);
+        return Objects.hash(id, userData);
     }
 }
