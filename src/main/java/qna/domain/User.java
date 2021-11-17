@@ -2,24 +2,13 @@ package qna.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class User {
+public class User extends BaseEntity {
 
     public static final GuestUser GUEST_USER = new GuestUser();
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(name = "email", length = 50)
     private String email;
@@ -29,9 +18,6 @@ public class User {
 
     @Column(name = "password", nullable = false, length = 20)
     private String password;
-
-    @Embedded
-    private TimeAudit timeAudit = new TimeAudit();
 
     @Column(name = "user_id", unique = true, nullable = false, length = 20)
     private String userId;
@@ -44,7 +30,7 @@ public class User {
     }
 
     public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
+        super(id);
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -86,49 +72,29 @@ public class User {
     }
 
     public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        return super.getId();
     }
 
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @Override
     public String toString() {
         return "User{" +
-            "id=" + id +
+            "id=" + getId() +
             ", userId='" + userId + '\'' +
             ", password='" + password + '\'' +
             ", name='" + name + '\'' +

@@ -1,22 +1,11 @@
 package qna.domain;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Question {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Question extends BaseEntity {
 
     @Column(name = "contents")
     @Lob
@@ -31,9 +20,6 @@ public class Question {
     @Column(name = "writer_id")
     private Long writerId;
 
-    @Embedded
-    private TimeAudit timeAudit = new TimeAudit();
-
     protected Question() {
     }
 
@@ -42,7 +28,7 @@ public class Question {
     }
 
     public Question(Long id, String title, String contents) {
-        this.id = id;
+        super(id);
         this.title = title;
         this.contents = contents;
     }
@@ -61,35 +47,19 @@ public class Question {
     }
 
     public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        return super.getId();
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public boolean isDeleted() {
@@ -103,7 +73,7 @@ public class Question {
     @Override
     public String toString() {
         return "Question{" +
-            "id=" + id +
+            "id=" + getId() +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
             ", writerId=" + writerId +

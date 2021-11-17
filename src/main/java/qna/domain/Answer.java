@@ -2,24 +2,13 @@ package qna.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Answer {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Answer extends BaseEntity {
 
     @Column(name = "contents")
     @Lob
@@ -34,9 +23,6 @@ public class Answer {
     @Column(name = "writer_id")
     private Long writerId;
 
-    @Embedded
-    private TimeAudit timeAudit = new TimeAudit();
-
     protected Answer() {
     }
 
@@ -45,7 +31,7 @@ public class Answer {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+        super(id);
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -69,35 +55,19 @@ public class Answer {
     }
 
     public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        return super.getId();
     }
 
     public Long getWriterId() {
         return writerId;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
     public Long getQuestionId() {
         return questionId;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
@@ -111,7 +81,7 @@ public class Answer {
     @Override
     public String toString() {
         return "Answer{" +
-            "id=" + id +
+            "id=" + getId() +
             ", writerId=" + writerId +
             ", questionId=" + questionId +
             ", contents='" + contents + '\'' +
