@@ -12,7 +12,7 @@ import java.util.Date;
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "question")
-public class Question {
+public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,17 +21,10 @@ public class Question {
     private String contents;
 
     @Column(nullable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
     private boolean deleted = false;
 
     @Column(length = 100, nullable = false)
     private String title;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     @Column(name = "writer_id")
     private Long writerId;

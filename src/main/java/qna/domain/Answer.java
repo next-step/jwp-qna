@@ -13,7 +13,7 @@ import java.util.Objects;
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "answer")
-public class Answer {
+public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,15 +24,8 @@ public class Answer {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column(nullable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;
-
     @Column(name = "question_id")
     private Long questionId;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     @Column(name = "writer_id")
     private Long writerId;

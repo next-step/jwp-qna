@@ -13,16 +13,12 @@ import java.util.Objects;
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    @CreatedDate
-    private LocalDateTime createAt;
 
     @Column(length = 50)
     private String email;
@@ -32,9 +28,6 @@ public class User {
 
     @Column(length = 20, nullable = false)
     private String password;
-
-    @LastModifiedDate
-    private LocalDateTime updateAt;
 
     @Column(name = "user_id", length = 20, nullable = false, unique = true)
     private String userId;
