@@ -30,10 +30,14 @@ public class QuestionTest {
     @DisplayName("질문 삭제 시 답변도 삭제해야함.")
     @Test
     void deleteWithAnswer() {
-        Q1.addAnswer(AnswerTest.A1);
+        final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        final Answer A2 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents2");
+        Q1.addAnswer(A1);
+        Q1.addAnswer(A2);
+
         Q1.delete();
 
-        assertThat(AnswerTest.A1.isDeleted()).isTrue();
-
+        assertThat(A1.isDeleted()).isTrue();
+        assertThat(A2.isDeleted()).isTrue();
     }
 }

@@ -53,7 +53,7 @@ public class Question extends BaseTimeEntity {
 
     private List<Answer> nonDeletedAnswers() {
         return answers.stream()
-                .filter(item -> item.isDeleted())
+                .filter(item -> !item.isDeleted())
                 .collect(Collectors.toList());
     }
 
@@ -62,9 +62,10 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if (!answers.contains(answer)) {
-            answers.add(answer);
+        if (answers.contains(answer)) {
+            return;
         }
+        answers.add(answer);
     }
 
     public Long getId() {
@@ -106,9 +107,7 @@ public class Question extends BaseTimeEntity {
     public DeleteHistory delete() {
         deleted = true;
         Answers nonDeletedAnswers =new Answers(nonDeletedAnswers());
-
-
-
+        nonDeletedAnswers.delete();
         return new DeleteHistory(ContentType.QUESTION, id, writer);
     }
 }
