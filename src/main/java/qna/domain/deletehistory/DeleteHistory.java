@@ -79,4 +79,16 @@ public class DeleteHistory {
                 ", createDate=" + createDate +
                 '}';
     }
+
+    public boolean matchContentId(Long id) {
+        return this.contentId.compareTo(id) == 0;
+    }
+
+    public boolean matchContentType(ContentType contentType) {
+        return this.contentType == contentType;
+    }
+
+    public boolean matchDeletedUser(User deletedByUser) {
+        return this.deletedByUser.equals(deletedByUser);
+    }
 }

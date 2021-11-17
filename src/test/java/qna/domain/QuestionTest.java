@@ -10,6 +10,7 @@ import qna.CannotDeleteException;
 import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
 import qna.domain.answer.AnswerTestFactory;
+import qna.domain.deletehistory.ContentType;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.question.Question;
 import qna.domain.question.QuestionRepository;
@@ -119,6 +120,7 @@ public class QuestionTest {
             assertFalse(questionRepository.existsById(savedQuestion.getId()));
         });
     }
+
 
     @AfterEach
     void clear() {

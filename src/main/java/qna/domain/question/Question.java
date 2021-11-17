@@ -43,7 +43,7 @@ public class Question extends BaseTimeEntity {
     private boolean deleted = Boolean.FALSE;
 
     @Embedded
-    private final Answers answers = new Answers();
+    private final Answers answers = Answers.of();
 
     protected Question() {
     }
@@ -63,7 +63,7 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
-    public List<DeleteHistory> deleteByUser(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleteByUser(User loginUser) {
         validateDeleteByUser(loginUser);
         final List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(delete());
@@ -76,7 +76,7 @@ public class Question extends BaseTimeEntity {
         return DeleteHistory.ofQuestion(this.id, this.writer);
     }
 
-    private void validateDeleteByUser(User loginUser) throws CannotDeleteException {
+    private void validateDeleteByUser(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }

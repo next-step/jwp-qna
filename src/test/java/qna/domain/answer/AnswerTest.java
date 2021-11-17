@@ -8,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.QuestionTestFactory;
 import qna.domain.UserTestFactory;
+import qna.domain.deletehistory.ContentType;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.question.Question;
 import qna.domain.question.QuestionRepository;
 import qna.domain.user.User;
@@ -113,6 +115,24 @@ public class AnswerTest {
         assertThat(answerRepository.findById(savedAnswer.getId()).get().getWriter()).isNull();
         final User foundUser = userRepository.findByUserId(answerWriter.getUserId()).get();
         assertThat(foundUser.matchEmail("newEmail@email.com")).isTrue();
+    }
+
+    @Test
+    @DisplayName("자신이 쓴 답변을 삭제하고 삭제 기록을 반환 받을 수 있다.")
+    void deleteByUser() {
+        // given
+        final User writer = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
+        final Question question = questionRepository.save(QuestionTestFactory.create("title", "content", writer));
+        final Answer answer = AnswerTestFactory.create(writer, question, "Answer Content");
+        answerRepository.save(answer);
+        // when
+        final DeleteHistory deleteHistory = answer.deleteByUser(writer);
+        // then
+        assertAll(() -> {
+            assertTrue(deleteHistory.matchContentId(answer.getId()));
+            assertTrue(deleteHistory.matchContentType(ContentType.ANSWER));
+            assertTrue(deleteHistory.matchDeletedUser(writer));
+        });
     }
 
     @AfterEach
