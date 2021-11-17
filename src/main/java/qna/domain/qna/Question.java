@@ -135,8 +135,7 @@ public class Question extends BaseEntity {
             && Objects.equals(id, question.id)
             && Objects.equals(title, question.title)
             && Objects.equals(contents, question.contents)
-            && Objects.equals(writer, question.writer)
-            && Objects.equals(answers, question.answers);
+            && Objects.equals(writer, question.writer);
     }
 
     @Override

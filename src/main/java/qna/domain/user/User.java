@@ -56,7 +56,6 @@ public class User extends BaseEntity {
         return false;
     }
 
-
     public Long getId() {
         return id;
     }
@@ -72,7 +71,6 @@ public class User extends BaseEntity {
     public String getPassword() {
         return userAuth.getPassword();
     }
-
 
     public UserData getUserData() {
         return userData;
@@ -104,7 +102,8 @@ public class User extends BaseEntity {
             return false;
         }
         User user = (User) o;
-        return Objects.equals(id, user.id);
+        return Objects.equals(id, user.id) && Objects.equals(userAuth.getUserId(),
+            user.userAuth.getUserId());
     }
 
     @Override
