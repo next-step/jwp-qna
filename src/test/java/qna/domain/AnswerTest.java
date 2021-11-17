@@ -4,10 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -28,10 +30,12 @@ public class AnswerTest {
 
     @BeforeEach
     void init() {
+        // given
         user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
         user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
         question1 = new Question("title1", "contents1").writeBy(user1);
         answer1 = new Answer(user1, question1, "Answers Contents1");
+        userRepository.save(user1);
         savedAnswer = answerRepository.save(answer1);
     }
 
@@ -52,7 +56,6 @@ public class AnswerTest {
     @Test
     void 연관관계_유저_조회() {
         user1.addAnswer(answer1);
-        userRepository.save(user1);
         assertAll(
                 () -> assertThat(savedAnswer.getWriter()).isEqualTo(user1),
                 () -> assertThat(user1.getAnswers().get(0)).isEqualTo(savedAnswer)
@@ -72,14 +75,12 @@ public class AnswerTest {
     @Test
     void 검색_없을경우() {
         answer1.setDeleted(true);
-        userRepository.save(user1);
         questionRepository.save(question1);
         assertThat(answerRepository.findByIdAndDeletedFalse(answer1.getId()).isPresent()).isFalse();
     }
 
     @Test
     void 수정() {
-        userRepository.save(user1);
         User savedUser2 = userRepository.save(user2);
         questionRepository.save(question1);
         savedAnswer.setWriter(user2);
@@ -93,5 +94,28 @@ public class AnswerTest {
     void 삭제() {
         answerRepository.delete(savedAnswer);
         assertThat(answerRepository.findById(savedAnswer.getId())).isEmpty();
+    }
+
+    @Test
+    void 답변삭제() {
+        // when
+        DeleteHistory deleteHistory = answer1.deleteRelatedAnswerAndCreateDeleteHistory(user1);
+
+        // then
+        assertAll(
+                () -> assertThat(answer1.isDeleted()).isTrue(),
+                () -> assertThat(deleteHistory.getContentId()).isEqualTo(answer1.getId())
+        );
+    }
+
+    @Test
+    void 답변삭제_작성자_다를경우() {
+        //given
+        userRepository.save(user2);
+
+        // when, then
+        assertThatThrownBy(() ->
+                answer1.deleteRelatedAnswerAndCreateDeleteHistory(user2))
+                .isInstanceOf(CannotDeleteException.class);
     }
 }
