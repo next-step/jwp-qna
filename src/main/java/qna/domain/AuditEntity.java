@@ -21,4 +21,5 @@ public abstract class AuditEntity {
 	@Column
 	@UpdateTimestamp
 	protected LocalDateTime updatedAt;
+	
 }

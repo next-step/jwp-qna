@@ -1,7 +1,5 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -9,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 import qna.UnAuthorizedException;
 
@@ -34,12 +31,6 @@ public class User extends AuditEntity {
 	@Column(length = 20, unique = true, nullable = false)
 	private String userId;
 
-	@OneToMany(mappedBy = "writer")
-	private final List<Answer> answers = new ArrayList<>();
-
-	@OneToMany(mappedBy = "writer")
-	private final List<Question> questions = new ArrayList<>();
-
 	protected User() {
 	}
 
@@ -56,6 +47,12 @@ public class User extends AuditEntity {
 	}
 
 	public void update(User loginUser, User target) {
+		validateUpdate(loginUser, target);
+		this.name = target.name;
+		this.email = target.email;
+	}
+
+	private void validateUpdate(User loginUser, User target) {
 		if (!matchUserId(loginUser.userId)) {
 			throw new UnAuthorizedException();
 		}
@@ -63,9 +60,6 @@ public class User extends AuditEntity {
 		if (!matchPassword(target.password)) {
 			throw new UnAuthorizedException();
 		}
-
-		this.name = target.name;
-		this.email = target.email;
 	}
 
 	private boolean matchUserId(String userId) {
@@ -95,28 +89,6 @@ public class User extends AuditEntity {
 
 	public String getUserId() {
 		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public void addAnswer(Answer answer) {
-		this.answers.add(answer);
-		answer.setWriter(this);
-	}
-
-	protected List<Answer> getAnswers() {
-		return this.answers;
-	}
-
-	public void addQuestion(Question question) {
-		this.questions.add(question);
-		question.setWriter(this);
-	}
-
-	protected List<Question> getQuestions() {
-		return this.questions;
 	}
 
 	@Override

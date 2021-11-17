@@ -41,7 +41,7 @@ public class Question extends AuditEntity {
 	private User writer;
 
 	@Embedded
-	private Answers answers = new Answers();
+	private final Answers answers = Answers.of();
 
 	protected Question() {
 	}
@@ -56,9 +56,39 @@ public class Question extends AuditEntity {
 		this.contents = contents;
 	}
 
+	public Question(Long id, String title, String contents, boolean deleted) {
+		this.id = id;
+		this.title = title;
+		this.contents = contents;
+		this.deleted = deleted;
+	}
+
+	public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+		validateDelete(user);
+		this.deleted = true;
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		deleteHistories.add(createDeleteHistory());
+		deleteHistories.addAll(this.answers.deleteAll());
+		return deleteHistories;
+	}
+
+	private DeleteHistory createDeleteHistory() {
+		return new DeleteHistory(
+			ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
+	}
+
+	private void validateDelete(User user) throws CannotDeleteException {
+		if (!isOwner(user)) {
+			throw new CannotDeleteException(ErrorCode.DELETE_QUESTION_FORBIDDEN.getMessage());
+		}
+
+		if (!this.answers.isAllSameWriter(user)) {
+			throw new CannotDeleteException(ErrorCode.DELETE_QUESTION_OTHER_WRITER_ANSWER.getMessage());
+		}
+	}
+
 	public Question writeBy(User writer) {
 		this.writer = writer;
-		writer.getQuestions().add(this);
 		return this;
 	}
 
@@ -84,16 +114,8 @@ public class Question extends AuditEntity {
 		return writer;
 	}
 
-	protected void setWriter(User writer) {
-		this.writer = writer;
-	}
-
 	public boolean isDeleted() {
 		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
 	}
 
 	@Override
@@ -124,23 +146,4 @@ public class Question extends AuditEntity {
 		return id != null ? id.hashCode() : 0;
 	}
 
-	public List<DeleteHistory> delete(User user) throws CannotDeleteException {
-		if (!isOwner(user)) {
-			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-		}
-
-		if (!this.answers.containsAllSameWriter(user)) {
-			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-		}
-
-		this.deleted = true;
-
-		DeleteHistory questionDeleteHistory = new DeleteHistory(
-			ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
-
-		List<DeleteHistory> deleteHistories = new ArrayList<>();
-		deleteHistories.add(questionDeleteHistory);
-		deleteHistories.addAll(this.answers.deleteAll());
-		return deleteHistories;
-	}
 }

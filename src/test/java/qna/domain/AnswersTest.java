@@ -3,10 +3,10 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ public class AnswersTest {
 		Answers answers = Answers.of(Arrays.asList(a1, a2));
 
 		// when
-		boolean result = answers.containsAllSameWriter(UserTest.JAVAJIGI);
+		boolean result = answers.isAllSameWriter(UserTest.JAVAJIGI);
 
 		// then
 		assertThat(result).isFalse();
@@ -52,10 +52,10 @@ public class AnswersTest {
 		Answers answers = Answers.of(Arrays.asList(a1, a2));
 		DeleteHistory h1 = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
 		DeleteHistory h2 = new DeleteHistory(ContentType.ANSWER, 2L, UserTest.SANJIGI, LocalDateTime.now());
-		Set<DeleteHistory> expected = new HashSet<>(Arrays.asList(h1, h2));
+		List<DeleteHistory> expected = new ArrayList<>(Arrays.asList(h1, h2));
 
 		// when
-		Set<DeleteHistory> result = answers.deleteAll();
+		List<DeleteHistory> result = answers.deleteAll();
 
 		// then
 		assertThat(result).isEqualTo(expected);
@@ -70,7 +70,7 @@ public class AnswersTest {
 		Answers expected = Answers.of(Arrays.asList(a1, a2));
 
 		// when
-		Answers answers = new Answers().addAll(Arrays.asList(a1, a2));
+		Answers answers = Answers.of().addAll(Arrays.asList(a1, a2));
 
 		// then
 		assertThat(answers).isEqualTo(expected);
@@ -84,7 +84,7 @@ public class AnswersTest {
 		Answers expected = Answers.of(Collections.singletonList(a1));
 
 		// when
-		Answers answers = new Answers().add(a1);
+		Answers answers = Answers.of().add(a1);
 
 		// then
 		assertThat(answers).isEqualTo(expected);

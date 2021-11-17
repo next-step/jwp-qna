@@ -48,7 +48,13 @@ public class Answer extends AuditEntity {
 
 	public Answer(Long id, User writer, Question question, String contents) {
 		this.id = id;
+		validateInit(writer, question);
+		this.writer = writer;
+		this.question = question;
+		this.contents = contents;
+	}
 
+	private void validateInit(User writer, Question question) {
 		if (Objects.isNull(writer)) {
 			throw new UnAuthorizedException();
 		}
@@ -56,20 +62,10 @@ public class Answer extends AuditEntity {
 		if (Objects.isNull(question)) {
 			throw new NotFoundException();
 		}
-
-		this.writer = writer;
-		this.question = question;
-		this.contents = contents;
 	}
 
 	public boolean isOwner(User writer) {
 		return this.writer.equals(writer);
-	}
-
-	public Answer writerBy(User writer) {
-		this.writer = writer;
-		writer.getAnswers().add(this);
-		return this;
 	}
 
 	public void toQuestion(Question question) {
@@ -84,32 +80,12 @@ public class Answer extends AuditEntity {
 		return writer;
 	}
 
-	protected void setWriter(User writer) {
-		this.writer = writer;
-	}
-
-	public Question getQuestion() {
-		return question;
-	}
-
-	public void setQuestion(Question question) {
-		this.question = question;
-	}
-
-	public String getContents() {
-		return contents;
-	}
-
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
 	public boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+	public boolean isSameContents(String contents) {
+		return Objects.equals(this.contents, contents);
 	}
 
 	@Override
@@ -143,5 +119,10 @@ public class Answer extends AuditEntity {
 	public DeleteHistory delete() {
 		this.deleted = true;
 		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+	}
+
+	public Answer updateContents(String updateContents) {
+		this.contents = updateContents;
+		return this;
 	}
 }
