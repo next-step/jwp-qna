@@ -16,9 +16,8 @@ import qna.domain.question.QuestionRepository;
 import qna.domain.user.User;
 import qna.domain.user.UserRepository;
 
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -42,11 +41,30 @@ class DeleteHistoryTest {
         final User answerWriter = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
         final Answer savedAnswer = answerRepository.save(AnswerTestFactory.create(answerWriter, question, "Answer Content"));
         final User deletedUser = userRepository.save(UserTestFactory.create("doyoung", "doyoung@qna.test"));
-        // given
         final DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, savedAnswer.getId(), deletedUser);
         // when
         final DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
         // then
         assertEquals(savedDeleteHistory, deleteHistory);
+    }
+
+    @Test
+    void ofQuestion() {
+        // given
+        final User questionWriter = userRepository.save(UserTestFactory.create("testuser2", "testuser222@test.com"));
+        // when
+        final DeleteHistory history = DeleteHistory.ofQuestion(1L, questionWriter);
+        // then
+        assertTrue(history.isQuestionType());
+    }
+
+    @Test
+    void ofAnswer() {
+        // given
+        final User questionWriter = userRepository.save(UserTestFactory.create("testuser2", "testuser222@test.com"));
+        // when
+        final DeleteHistory history = DeleteHistory.ofAnswer(1L, questionWriter);
+        // then
+        assertTrue(history.isAnswerType());
     }
 }

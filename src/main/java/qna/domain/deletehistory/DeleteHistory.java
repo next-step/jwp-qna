@@ -107,4 +107,12 @@ public class DeleteHistory {
     public boolean matchDeletedUser(User deletedByUser) {
         return this.deletedByUser.equals(deletedByUser);
     }
+
+    public boolean isQuestionType() {
+        return this.contentType == ContentType.QUESTION;
+    }
+
+    public boolean isAnswerType() {
+        return this.contentType == ContentType.ANSWER;
+    }
 }
