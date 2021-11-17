@@ -12,7 +12,7 @@ public class Answer extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writerId")
+    @JoinColumn(name = "writer_Id")
     private User writer;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "questionId")
