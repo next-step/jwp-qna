@@ -20,33 +20,34 @@ public class User extends BaseEntity {
     private Long id;
 
     @Embedded
+    private UserAuth userAuth;
+
+    @Embedded
     private UserData userData;
 
     protected User() {
     }
 
-    @Deprecated
-    public User(String userId, String password, String name, Email email) {
-        this.userData = new UserData(userId, password, name, email);
-    }
-
-    public User(UserData userData) {
+    public User(UserAuth userAuth, UserData userData) {
+        this.userAuth = userAuth;
         this.userData = userData;
     }
 
-    public void update(User loginUser, User target) {
-        userData.update(loginUser, target);
-    }
+    public void update(User loginUser, User changeUser) {
+        this.userAuth.updateValid(loginUser, changeUser);
 
-    public boolean equalsNameAndEmail(User target) {
-        return userData.equalsNameAndEmail(target);
+        this.userData.update(changeUser.getUserData());
     }
 
     public void changeUserId(String changeUserId) {
-        userData.changeUserId(changeUserId);
+        this.userAuth.changeUserId(changeUserId);
     }
 
-    public boolean isMine(User writer) {
+    public boolean equalsNameAndEmail(User target) {
+        return userData.equalsNameAndEmail(target.getUserData());
+    }
+
+    public boolean isMe(User writer) {
         return this.equals(writer);
     }
 
@@ -54,24 +55,26 @@ public class User extends BaseEntity {
         return false;
     }
 
+
     public Long getId() {
         return id;
-    }
-
-    public String getUserId() {
-        return userData.getUserId();
-    }
-
-    public String getPassword() {
-        return userData.getPassword();
     }
 
     public String getName() {
         return userData.getName();
     }
 
-    public Email getEmail() {
-        return userData.getEmail();
+    public String getUserId() {
+        return userAuth.getUserId();
+    }
+
+    public String getPassword() {
+        return userAuth.getPassword();
+    }
+
+
+    public UserData getUserData() {
+        return userData;
     }
 
     private static class GuestUser extends User {
@@ -86,6 +89,7 @@ public class User extends BaseEntity {
     public String toString() {
         return "User{" +
             "id=" + id +
+            ", userAuth=" + userAuth +
             ", userData=" + userData +
             '}';
     }
@@ -100,11 +104,12 @@ public class User extends BaseEntity {
         }
         User user = (User) o;
         return Objects.equals(id, user.id)
+            && Objects.equals(userAuth, user.userAuth)
             && Objects.equals(userData, user.userData);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userData);
+        return Objects.hash(id, userAuth, userData);
     }
 }

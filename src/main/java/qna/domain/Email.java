@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import qna.common.exception.InvalidParamException;
 
 @Embeddable
 public class Email implements Serializable {
@@ -21,13 +22,15 @@ public class Email implements Serializable {
 
     public Email(String email) {
         validEmail(email);
+
         this.email = email;
     }
 
     public void validEmail(String email) {
         Matcher matcher = emailPattern.matcher(email);
+        
         if (!matcher.matches()) {
-            throw new RuntimeException("이메일 형식이 아닙니다.");
+            throw new InvalidParamException("이메일 형식이 아닙니다.");
         }
     }
 

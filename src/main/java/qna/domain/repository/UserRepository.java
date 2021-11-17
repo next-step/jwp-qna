@@ -8,9 +8,9 @@ import qna.domain.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByUserDataUserId(String userId);
+    Optional<User> findByUserAuthUserId(String userId);
 
     List<User> findByUserDataName(String name);
 
-    long countByUserDataUserId(String userId);
+    long countByUserAuthUserId(String userId);
 }
