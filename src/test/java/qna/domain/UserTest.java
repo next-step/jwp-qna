@@ -10,9 +10,9 @@ import qna.common.exception.UnAuthorizedException;
 
 public class UserTest {
 
-    public static final User JAVAJIGI = new User("javajigi", "password", "javajigi",
+    public static final User JAVAJIGI = createUserDataString("javajigi", "password", "javajigi",
         new Email("javajigi@slipp.net"));
-    public static final User SANJIGI = new User("sanjigi", "password", "sanjigi",
+    public static final User SANJIGI = createUserDataString("sanjigi", "password", "sanjigi",
         new Email("sanjigi@slipp.net"));
 
     @Test
@@ -31,8 +31,9 @@ public class UserTest {
         // given
         String changeName = "changeName";
         Email changeEmail = new Email("changeEmail@email.co.kr");
-        User actual = new User("wooobo", "password", "myname", new Email("taeHwa@email.com"));
-        User expect = new User("wooobo", "password", changeName, changeEmail);
+        User actual = createUserDataString("wooobo", "password", "myname",
+            new Email("taeHwa@email.com"));
+        User expect = createUserDataString("wooobo", "password", changeName, changeEmail);
 
         // when
         actual.update(actual, expect);
@@ -45,12 +46,11 @@ public class UserTest {
     @DisplayName("User update() 메소드 userId Null 예외 발생 체크")
     void update_matchUserId_userId_NULL_exception() {
         // given
-        User guestUser = User.GUEST_USER;
 
         assertThatExceptionOfType(UnAuthorizedException.class) // then
             .isThrownBy(() -> {
                 // when
-                JAVAJIGI.update(guestUser, JAVAJIGI);
+                JAVAJIGI.update(SANJIGI, JAVAJIGI);
             }).withMessage(UnAuthorizedException.UNAUTHORIZED_EXCEPTION_USER_ID_NOT_SAME_MESSAGE);
     }
 
@@ -73,8 +73,14 @@ public class UserTest {
         assertThatExceptionOfType(RuntimeException.class) // then
             .isThrownBy(() -> {
                 // when
-                new User("javajigi", "change", "javajigi", new Email("javajigi"));
+                UserTest.createUserDataString("javajigi", "change", "javajigi",
+                    new Email("javajigi"));
             });
     }
 
+
+    public static User createUserDataString(String userId, String password, String name,
+        Email email) {
+        return new User(new UserData(userId, password, name, email));
+    }
 }

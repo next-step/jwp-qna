@@ -26,8 +26,8 @@ public class DeletedTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        USER = users.save(
-            new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
+        USER = users.save(UserTest.createUserDataString("answerJavajigi", "password", "javajigi",
+            new Email("javajigi@slipp.net")));
         QUESTION = new Question("title1", "contents1").writeBy(USER);
     }
 

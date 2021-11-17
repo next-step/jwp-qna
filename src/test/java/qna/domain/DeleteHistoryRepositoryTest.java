@@ -36,7 +36,8 @@ public class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        USER = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
+        USER = users.save(UserTest.createUserDataString("answerJavajigi", "password", "javajigi",
+            new Email("javajigi@slipp.net")));
         QUESTION = questions.save(new Question("title1", "contents1").writeBy(USER));
         ANSWER = answers.save(new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1"));
 
@@ -89,9 +90,11 @@ public class DeleteHistoryRepositoryTest {
         DeleteHistory answerDeleteHistory = deleteHistories.save(ANSWER_HISTORY);
 
         // when
-        List<DeleteHistory> questionDeleteHistories = deleteHistories.findByContentIdAndContentType(QUESTION.getId(),
+        List<DeleteHistory> questionDeleteHistories = deleteHistories.findByContentIdAndContentType(
+            QUESTION.getId(),
             questionDeleteHistory.getContentType());
-        List<DeleteHistory> answerDeleteHistories = deleteHistories.findByContentIdAndContentType(ANSWER.getId(),
+        List<DeleteHistory> answerDeleteHistories = deleteHistories.findByContentIdAndContentType(
+            ANSWER.getId(),
             answerDeleteHistory.getContentType());
 
         // then

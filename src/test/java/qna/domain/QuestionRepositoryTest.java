@@ -31,8 +31,8 @@ public class QuestionRepositoryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        USER = users.save(
-            new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
+        USER = users.save(UserTest.createUserDataString("answerJavajigi", "password", "javajigi",
+            new Email("javajigi@slipp.net")));
         QUESTION = new Question("title1", "contents1").writeBy(USER);
     }
 
@@ -62,8 +62,9 @@ public class QuestionRepositoryTest {
     @DisplayName("User update() 메소드 password 같지 않을 경우 예외 발생 체크")
     void update_matchUserId_password_MISSMATCH_exception() {
         // given
-        User targetUserAndMissMatchPW = users.save(new User("javajigi", "change", "javajigi",
-            new Email("javajigi@slipp.net")));
+        User targetUserAndMissMatchPW = users.save(
+            UserTest.createUserDataString("javajigi", "change", "javajigi",
+                new Email("javajigi@slipp.net")));
 
         assertThatExceptionOfType(UnAuthorizedException.class) // then
             .isThrownBy(() -> {

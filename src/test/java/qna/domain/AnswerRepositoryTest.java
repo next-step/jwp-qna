@@ -38,8 +38,8 @@ public class AnswerRepositoryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        USER = users.save(
-            new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
+        USER = users.save(UserTest.createUserDataString("answerJavajigi", "password", "javajigi",
+            new Email("javajigi@slipp.net")));
         QUESTION = questions.save(new Question("title1", "contents1").writeBy(USER));
         ANSWER = new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1");
     }
