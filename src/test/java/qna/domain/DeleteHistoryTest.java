@@ -52,10 +52,8 @@ public class DeleteHistoryTest {
     }
 
     @Test
-    void 연관관계_유저() {
+    void 연관관계_유저_조회() {
         user1.addDeleteHistory(savedDeleteHistory);
-        em.flush();
-        em.clear();
         DeleteHistory foundDeleteHistory = deleteHistoryRepository.findById(savedDeleteHistory.getId()).get();
         assertThat(foundDeleteHistory.getDeletedByUser().getId()).isEqualTo(user1.getId());
     }
