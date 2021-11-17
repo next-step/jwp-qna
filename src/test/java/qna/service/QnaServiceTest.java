@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.domain.Answer;
-import qna.domain.AnswerRepository;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
@@ -34,9 +33,6 @@ class QnaServiceTest {
     private QuestionRepository questionRepository;
 
     @Mock
-    private AnswerRepository answerRepository;
-
-    @Mock
     private DeleteHistoryService deleteHistoryService;
 
     @InjectMocks
@@ -49,7 +45,6 @@ class QnaServiceTest {
     public void setUp() {
         question = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
         answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
-        question.addAnswer(answer);
     }
 
     @Test
@@ -88,9 +83,7 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() {
-        Answer answer2 = new Answer(2L, SANJIGI, TestDummy.QUESTION1,
-            "Answers Contents1");
-        question.addAnswer(answer2);
+        Answer answer2 = new Answer(2L, SANJIGI, question, "Answers Contents1");
 
         when(questionRepository.findByIdAndDeletedFalseWithAnswers(question.getId())).thenReturn(
             Optional.of(question));

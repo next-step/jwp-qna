@@ -16,8 +16,6 @@ public class QuestionTest {
         Question question = new Question(2L, "title", "contents");
         Answer answer = new Answer(1L, new User(), question, null);
 
-        question.addAnswer(answer);
-
         assertAll(
             () -> assertThat(answer.getQuestion().getId()).isEqualTo(question.getId()),
             () -> assertThat(question.getAnswers().getValues().size()).isEqualTo(1),
@@ -60,9 +58,6 @@ public class QuestionTest {
         Answer answer1 = new Answer(100L, writer, question, "answer1");
         Answer answer2 = new Answer(101L, writer, question, "answer2");
 
-        question.addAnswer(answer1);
-        question.addAnswer(answer2);
-
         // when
         DeleteHistories result = question.deleteWithAnswers(writer);
 
@@ -87,9 +82,6 @@ public class QuestionTest {
         Answer answer1 = new Answer(100L, writer, question, "answer1");
         Answer answer2 = new Answer(101L, writer, question, "answer2");
         answer2.delete(writer);
-
-        question.addAnswer(answer1);
-        question.addAnswer(answer2);
 
         // when
         DeleteHistories result = question.deleteWithAnswers(writer);

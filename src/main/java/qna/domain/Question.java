@@ -51,7 +51,7 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
         this.contents = Contents.from(contents);
     }
 
-    public void addAnswer(Answer answer) {
+    void addAnswer(Answer answer) {
         this.answers.add(answer);
         if (answer.getQuestion() != this) {
             answer.setQuestion(this);

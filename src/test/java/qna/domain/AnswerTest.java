@@ -16,8 +16,6 @@ public class AnswerTest {
         Question question = new Question(2L, "title", "contents");
         Answer answer = new Answer(1L, new User(), question, null);
 
-        answer.setQuestion(question);
-
         assertAll(
             () -> assertThat(answer.getQuestion().getId()).isEqualTo(question.getId()),
             () -> assertThat(question.getAnswers().getValues().size()).isEqualTo(1),

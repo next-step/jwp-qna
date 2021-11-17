@@ -58,6 +58,7 @@ public class Answer extends BaseTimeEntity implements SavingDeleteHistory {
         this.writer = writer;
         this.question = question;
         this.contents = Contents.from(contents);
+        question.addAnswer(this);
     }
 
     public boolean isOwner(User writer) {
@@ -106,7 +107,7 @@ public class Answer extends BaseTimeEntity implements SavingDeleteHistory {
         return question;
     }
 
-    public void setQuestion(Question question) {
+    void setQuestion(Question question) {
         if (Objects.nonNull(this.question)) {
             this.question.getAnswers().remove(this);
         }
