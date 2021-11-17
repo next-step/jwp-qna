@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -120,6 +121,26 @@ public class QuestionTest {
         });
     }
 
+    @Test
+    @DisplayName("자신이 작성한 Answer 가 아니면 삭제시 예외가 발생한다.")
+    void deleteWithCanNotDeleteException() {
+        // given
+        final User writer = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
+        final User anonymous = userRepository.save(UserTestFactory.create("anonymous", "anonymous@test.com"));
+        final Question question = QuestionTestFactory.create("title", "content", writer);
+        final Answer answer = AnswerTestFactory.create(writer, question, "Answer Content");
+        final Answer answer2 = AnswerTestFactory.create(anonymous, question, "Answer Content2");
+        question.addAnswer(answer);
+        question.addAnswer(answer2);
+        final Question savedQuestion = questionRepository.save(question);
+        // then
+        assertThatExceptionOfType(CannotDeleteException.class)
+                .isThrownBy(() -> {
+                    // when
+                    savedQuestion.deleteByUser(writer);
+                })
+                .withMessageMatching("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
 
     @AfterEach
     void clear() {

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.domain.QuestionTestFactory;
 import qna.domain.UserTestFactory;
 import qna.domain.deletehistory.ContentType;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -134,6 +136,24 @@ public class AnswerTest {
             assertTrue(deleteHistory.matchDeletedUser(writer));
         });
     }
+
+    @Test
+    @DisplayName("자신이 작성한 Answer 가 아니면 삭제시 예외가 발생한다.")
+    void deleteWithCanNotDeleteException() {
+        // given
+        final User writer = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
+        final User anonymous = userRepository.save(UserTestFactory.create("anonymous", "anonymous@test.com"));
+        final Question question = QuestionTestFactory.create("title", "content", writer);
+        final Answer answer = answerRepository.save(AnswerTestFactory.create(writer, question, "Answer Content"));
+        // then
+        assertThatExceptionOfType(CannotDeleteException.class)
+                .isThrownBy(() -> {
+                    // when
+                    answer.deleteByUser(anonymous);
+                })
+                .withMessageMatching("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
+
 
     @AfterEach
     void clear() {
