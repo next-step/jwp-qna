@@ -105,10 +105,6 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Title getTitle() {
         return title;
     }
@@ -121,7 +117,7 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
         return writer;
     }
 
-    public void setWriter(User writer) {
+    void setWriter(User writer) {
         this.writer = writer;
     }
 
@@ -129,7 +125,7 @@ public class Question extends BaseTimeEntity implements SavingDeleteHistory {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    private void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 

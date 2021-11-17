@@ -57,10 +57,6 @@ public class User extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public UserId getUserId() {
         return userId;
     }
@@ -71,10 +67,6 @@ public class User extends BaseTimeEntity {
 
     public Name getName() {
         return name;
-    }
-
-    public void setName(Name name) {
-        this.name = name;
     }
 
     public Email getEmail() {
