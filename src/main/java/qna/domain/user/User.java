@@ -57,7 +57,7 @@ public class User extends BaseTimeEntity {
         }
 
         if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException("비밀번호가 일치 하지 않습니다.");
         }
 
         this.name = target.name;
