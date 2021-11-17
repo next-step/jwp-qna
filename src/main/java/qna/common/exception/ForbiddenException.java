@@ -1,6 +1,7 @@
 package qna.common.exception;
 
-public class ForbiddenException extends RuntimeException {
+public class ForbiddenException extends BaseException {
+
     public ForbiddenException() {
     }
 
