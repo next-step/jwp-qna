@@ -1,11 +1,15 @@
 package qna.domain;
 
 import net.bytebuddy.asm.Advice;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "question")
 public class Question {
@@ -16,7 +20,8 @@ public class Question {
     @Lob
     private String contents;
 
-    @Column(name = "created_at",nullable = false)
+    @Column(nullable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
@@ -25,7 +30,7 @@ public class Question {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Column(name = "writer_id")
@@ -35,14 +40,13 @@ public class Question {
     protected Question() {}
 
     public Question(String title, String contents) {
-        this(null, title, contents, LocalDateTime.now());
+        this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents, LocalDateTime createdAt) {
+    public Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.createdAt = createdAt;
     }
 
     public Question writeBy(User writer) {

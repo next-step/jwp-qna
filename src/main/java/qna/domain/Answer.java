@@ -1,13 +1,16 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Objects;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "answer")
 public class Answer {
@@ -21,13 +24,14 @@ public class Answer {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(nullable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @Column(name = "question_id")
     private Long questionId;
 
-    @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Column(name = "writer_id")
@@ -37,10 +41,10 @@ public class Answer {
     protected Answer() {}
 
     public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents, LocalDateTime.now());
+        this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents, LocalDateTime createdAt) {
+    public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -54,7 +58,6 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
-        this.createdAt = createdAt;
     }
 
     public boolean isOwner(User writer) {

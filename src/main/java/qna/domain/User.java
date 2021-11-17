@@ -1,5 +1,8 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
@@ -7,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "user")
 public class User {
@@ -16,7 +20,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "create_at", nullable = false)
+    @Column(nullable = false)
+    @CreatedDate
     private LocalDateTime createAt;
 
     @Column(length = 50)
@@ -28,7 +33,7 @@ public class User {
     @Column(length = 20, nullable = false)
     private String password;
 
-    @Column
+    @LastModifiedDate
     private LocalDateTime updateAt;
 
     @Column(name = "user_id", length = 20, nullable = false, unique = true)
@@ -38,16 +43,15 @@ public class User {
     protected User() {}
 
     public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email, LocalDateTime.now());
+        this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, String email, LocalDateTime createAt) {
+    public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
-        this.createAt = createAt;
     }
 
     public void update(User loginUser, User target) {
