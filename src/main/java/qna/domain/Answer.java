@@ -1,14 +1,17 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseEntity {
+    private static final String ANSWER_ERROR_MESSAGE = "답변을 삭제할 권한이 없습니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -100,7 +103,15 @@ public class Answer extends BaseEntity {
         question.getAnswers().add(this);
     }
 
-    public void delete() {
+    public DeleteHistory delete(User writer, LocalDateTime localDateTime) {
+        validateAnswer(writer);
         this.deleted = true;
+        return DeleteHistory.answerDeleteHistoryOf(id, writer, localDateTime);
+    }
+
+    private void validateAnswer(User writer) {
+        if(!isOwner(writer)) {
+            throw new CannotDeleteException(ANSWER_ERROR_MESSAGE);
+        }
     }
 }

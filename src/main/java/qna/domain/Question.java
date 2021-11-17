@@ -3,6 +3,10 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "question")
@@ -94,11 +98,15 @@ public class Question extends BaseEntity {
         return this.writer;
     }
 
-    public DeleteHistories delete(User user) {
+    public DeleteHistories delete(User user, LocalDateTime localDateTime) {
         validateQuestion(user);
         deleted = true;
-        answers.delete(user);
-        return new DeleteHistories(this);
+        return DeleteHistories.fromDeleteHistories(
+                Stream.of(
+                                Collections.singletonList(DeleteHistory.questionDeleteHistoryOf(id, user, localDateTime)),
+                                answers.delete(user, localDateTime).getDeleteHistories()
+                        ).flatMap(deleteHistories -> deleteHistories.stream())
+                        .collect(Collectors.toList()));
     }
 
     private void validateQuestion(User user) {

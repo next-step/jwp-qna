@@ -7,6 +7,7 @@ import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Embeddable
 public class Answers {
@@ -42,19 +43,11 @@ public class Answers {
         return answers.size();
     }
 
-    public List<DeleteHistory> createDeleteHistories() {
-        List<DeleteHistory> answerDeleteHistories = new ArrayList<>();
-        for (Answer answer : answers) {
-            answerDeleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(),
-                    LocalDateTime.now()));
-        }
-        return answerDeleteHistories;
-    }
-
-    public void delete(User writer) {
+    public DeleteHistories delete(User writer, LocalDateTime localDateTime) {
         validateAnswer(writer);
-        for (Answer answer : answers) {
-            answer.delete();
-        }
+        return new DeleteHistories(answers.stream()
+                .map(answer -> answer.delete(writer, localDateTime))
+                .collect(Collectors.toList())
+        );
     }
 }

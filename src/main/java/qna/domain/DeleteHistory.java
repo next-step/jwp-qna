@@ -36,6 +36,18 @@ public class DeleteHistory {
 
     }
 
+    public static DeleteHistory questionDeleteHistoryOf(Long contentId, User deletedById, LocalDateTime localDateTime) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deletedById, localDateTime);
+    }
+
+    public static DeleteHistory answerDeleteHistoryOf(Long contentId, User deletedById, LocalDateTime localDateTime) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deletedById, localDateTime);
+    }
+
+    public boolean isSameDate(LocalDateTime localDateTime) {
+        return createDate.isEqual(localDateTime);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
