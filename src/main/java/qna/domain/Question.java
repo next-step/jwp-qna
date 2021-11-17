@@ -1,8 +1,12 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.ForbiddenException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "question")
@@ -25,10 +29,6 @@ public class Question extends BaseEntity {
     private Answers answers = new Answers();
 
     protected Question() {
-    }
-
-    private Question(String title, String contents, User writer) {
-        this(null, title, contents, writer);
     }
 
     private Question(Long id, String title, String contents, User writer) {
@@ -73,6 +73,21 @@ public class Question extends BaseEntity {
         answers.add(answer);
     }
 
+    public void addAnswer(User writer, String contents) {
+        addAnswer(Answer.of(writer, this, contents));
+    }
+
+    public List<DeleteHistory> delete(User principal) throws CannotDeleteException {
+        if (!isOwner(principal)) {
+            throw new CannotDeleteException("질문 작성자만 삭제할 수 있습니다");
+        }
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(this));
+        deleteHistories.addAll(answers.deleteAll(writer));
+        this.deleted = true;
+        return deleteHistories;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -89,11 +104,21 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public List<Answer> getAnswers() {
+        return answers.getAnswers();
     }
 
-    public Answers getAnswers() {
-        return answers;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Question question = (Question) o;
+        return deleted == question.deleted && Objects.equals(contents, question.contents) && Objects.equals(title, question.title) && Objects.equals(writer, question.writer) && Objects.equals(answers, question.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), contents, deleted, title, writer, answers);
     }
 }

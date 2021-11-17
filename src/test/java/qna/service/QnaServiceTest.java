@@ -6,6 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import qna.CannotDeleteException;
 import qna.domain.*;
 
@@ -20,6 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class QnaServiceTest {
     @Mock
     private QuestionRepository questionRepository;
@@ -77,8 +80,7 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Question question1 = Question.of("title1", "contents1", UserTest.JAVAJIGI);
-        Answer answer2 = Answer.of(2L, UserTest.SANJIGI, question1, "Answers Contents1");
+        Answer answer2 = Answer.of(2L, UserTest.SANJIGI, question, "Answers Contents1");
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));

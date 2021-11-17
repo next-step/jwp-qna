@@ -1,12 +1,14 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -23,7 +25,6 @@ public class AnswerTest {
                 () -> assertThat(answer.getWriter()).isEqualTo(UserTest.JAVAJIGI),
                 () -> assertThat(answer.getQuestion()).isEqualTo(Q1),
                 () -> assertThat(answer.getContents()).isEqualTo(contents),
-                () -> assertThat(answer.getCreatedAt()).isCloseTo(LocalDateTime.now(), within(1, ChronoUnit.SECONDS)),
                 () -> assertThat(answer.getUpdatedAt()).isNull()
         );
     }
@@ -47,5 +48,49 @@ public class AnswerTest {
     void hasSameQuestion() {
         Answer answer = Answer.of(UserTest.JAVAJIGI, Q1, "Answers Contents1");
         assertThat(answer.hasSameQuestion(Q1)).isTrue();
+    }
+
+    @DisplayName("답변을 삭제한다")
+    @Nested
+    class TestDelete {
+        private Answer answer;
+
+        @BeforeEach
+        void setUp() {
+            answer = Answer.of(UserTest.JAVAJIGI, Q1, "Answers Contents1");
+        }
+
+        @DisplayName("삭제여부가 참이 된다")
+        @Test
+        void testDelete() throws CannotDeleteException {
+            answer.delete(UserTest.JAVAJIGI);
+            assertThat(answer.isDeleted()).isTrue();
+        }
+
+        @DisplayName("질문에 포함된 답변이 삭제된다")
+        @Test
+        void testRemoveAnswerInQuestion() throws CannotDeleteException {
+            answer.delete(UserTest.JAVAJIGI);
+            List<Answer> answers = Q1.getAnswers();
+            assertThat(answers.contains(answer)).isFalse();
+        }
+
+        @DisplayName("답변자와 동일한 사람만 삭제할 수 있다")
+        @Test
+        void givenOtherWriterThenThrowException() {
+            assertThatThrownBy(() -> answer.delete(UserTest.SANJIGI))
+                    .isInstanceOf(CannotDeleteException.class);
+        }
+
+        @DisplayName("답변을 삭제하면 삭제 기록을 생성한다")
+        @Test
+        void whenDeleteAnswerThenCrateDeleteHistory() throws CannotDeleteException {
+            DeleteHistory deleteHistory = answer.delete(UserTest.JAVAJIGI);
+            assertAll(
+                    () -> assertThat(deleteHistory.getContentId()).isEqualTo(answer.getId()),
+                    () -> assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER),
+                    () -> assertThat(deleteHistory.getDeletedBy()).isEqualTo(answer.getWriter())
+            );
+        }
     }
 }

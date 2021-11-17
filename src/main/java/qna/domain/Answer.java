@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -56,6 +57,18 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
+    public DeleteHistory delete(User principal) throws CannotDeleteException {
+        if (!isOwner(principal)) {
+            throw new CannotDeleteException("답변 작성자만 삭제할 수 있습니다");
+        }
+        this.deleted = true;
+        return new DeleteHistory(this);
+    }
+
+    public boolean hasSameQuestion(Question question) {
+        return this.question.equals(question);
+    }
+
     public Question getQuestion() {
         return question;
     }
@@ -72,11 +85,17 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Answer answer = (Answer) o;
+        return deleted == answer.deleted && Objects.equals(contents, answer.contents) && Objects.equals(question, answer.question) && Objects.equals(writer, answer.writer);
     }
 
-    public boolean hasSameQuestion(Question question) {
-        return this.question == question;
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), contents, deleted, question, writer);
     }
 }
