@@ -131,6 +131,9 @@ JPA 엔티티 매핑에 대해 학습하기
     - 자신의 답변 삭제 성공 테스트
 - [X] 질문,답변 삭제, 삭제히 DeleteHistory 남기기
 - [X] QnaServiceTest 테스트 모두 통과하기
-- [X] Delete 삭제 도메인 분리
+- [X] Delete 삭제 도메인으로 분리
 - [X] stream() 으로 코드 개선할 수 있는 부분 계선하기
-- [ ] JPA Hands-On 푸쉬하기
+- [X] JPA Hands-On 푸쉬하기
+- [X] User 기본정보 UserData 로 분리
+- [X] User 로그인 데이터 UserAuth 로 분리
+- [X] Exception 공통 BaseException 추가
