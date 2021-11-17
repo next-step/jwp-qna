@@ -1,7 +1,12 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
-import java.util.Objects;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "question")
@@ -23,6 +28,9 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
+    @Embedded
+    private Answers answers = new Answers();
+
     protected Question() {
     }
 
@@ -36,6 +44,27 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
+    public DeleteHistories delete(User loginUser, LocalDateTime localDateTime) {
+        return DeleteHistories.from(
+            Stream.of(Collections.singletonList(deleteQuestion(loginUser, localDateTime)),
+                    answers.delete(loginUser, localDateTime).getDeleteHistories())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList())
+        );
+    }
+
+    private DeleteHistory deleteQuestion(User loginUser, LocalDateTime localDateTime) {
+        validate(loginUser);
+        deleted = true;
+        return DeleteHistory.questionDeleteHistoryOf(id, loginUser, localDateTime);
+    }
+
+    private void validate(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
@@ -47,46 +76,27 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -95,15 +105,17 @@ public class Question extends BaseEntity {
             "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", writer=" + writer +
+            ", writer.id=" + writer.getId() +
             ", deleted=" + deleted +
             '}';
     }
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         final Question question = (Question) o;
         return id.equals(question.id);
     }
