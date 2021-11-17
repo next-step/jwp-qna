@@ -103,7 +103,8 @@ public class Question extends BaseTimeEntity {
                 '}';
     }
 
-    public void delete() {
+    public DeleteHistory delete() {
         deleted = true;
+        return new DeleteHistory(ContentType.QUESTION, id, writer);
     }
 }
