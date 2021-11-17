@@ -79,15 +79,4 @@ public class Question extends BaseEntity{
         this.answers.add(answer);
         answer.setQuestion(this);
     }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writer=" + writer +
-                ", deleted=" + deleted +
-                '}';
-    }
 }

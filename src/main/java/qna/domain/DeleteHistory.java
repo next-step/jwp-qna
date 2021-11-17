@@ -51,15 +51,4 @@ public class DeleteHistory {
     public int hashCode() {
         return Objects.hash(id, contentType, contentId, deletedByUser, createDate);
     }
-
-    @Override
-    public String toString() {
-        return "DeleteHistory{" +
-                "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", deledtedUser=" + deletedByUser +
-                ", createDate=" + createDate +
-                '}';
-    }
 }
