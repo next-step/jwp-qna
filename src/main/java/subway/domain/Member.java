@@ -41,6 +41,7 @@ public class Member {
     }
 
     public void addFavorite(Favorite favorite) {
+        this.favorites.remove(favorite);
         this.favorites.add(favorite);
     }
 

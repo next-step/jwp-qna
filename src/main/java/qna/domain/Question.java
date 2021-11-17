@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import qna.common.exception.CannotDeleteException;
+import qna.common.exception.InvalidParamException;
 import qna.common.exception.UnAuthorizedException;
 
 @Entity
@@ -40,10 +41,10 @@ public class Question extends BaseEntity {
     private User writer;
 
     @Embedded
-    private Answers answers = new Answers();
+    private final Answers answers = new Answers();
 
     @Embedded
-    private Deleted deleted = new Deleted();
+    private final Deleted deleted = new Deleted();
 
     protected Question() {
     }
@@ -72,7 +73,7 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.isMine(writer);
+        return this.writer.isMe(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -96,8 +97,8 @@ public class Question extends BaseEntity {
     }
 
     private void validCanWritten(User writer) {
-        if (writer == null) {
-            throw new UnAuthorizedException();
+        if (Objects.isNull(writer)) {
+            throw new InvalidParamException();
         }
 
         if (writer.isGuestUser()) {
@@ -111,7 +112,7 @@ public class Question extends BaseEntity {
             "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", writerId=" + writer +
+            ", writerId=" + writer.getId() +
             ", deleted=" + deleted.isDeleted() +
             '}';
     }

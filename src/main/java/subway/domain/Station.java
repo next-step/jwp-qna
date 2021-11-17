@@ -1,6 +1,5 @@
 package subway.domain;
 
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,17 +26,13 @@ public class Station {
     private Line line;
 
     @OneToOne(mappedBy = "station")
-//    @JoinColumn(name = "line_station_id")
     private LineStation lineStation;
 
     protected Station() {
     }
 
-    public Station(String name) {
-        this.name = name;
-    }
-
     public Station(String name, Line line) {
+        line.addStation(this);
         this.name = name;
         this.line = line;
     }
@@ -52,18 +47,6 @@ public class Station {
 
     public Line getLine() {
         return line;
-    }
-
-    public LineStation getLineStation() {
-        return lineStation;
-    }
-
-    public void setLine(Line line) {
-        if (Objects.nonNull(this.line)) {
-            this.line.getStations().remove(this);
-        }
-        this.line = line;
-        line.getStations().add(this);
     }
 
     public void removeLine() {

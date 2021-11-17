@@ -1,6 +1,7 @@
 package subway.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -23,7 +24,7 @@ public class Line {
     private String name;
 
     @OneToMany(mappedBy = "line")
-    private List<Station> stations = new ArrayList<>();
+    private final List<Station> stations = new ArrayList<>();
 
     protected Line() {
     }
@@ -32,33 +33,21 @@ public class Line {
         this.name = name;
     }
 
-    public Long getId() {
-        return id;
+    public void addStation(Station station) {
+        stations.remove(station);
+        stations.add(station);
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public List<Station> getStations() {
-        return stations;
-    }
-
-    public void addStation(Station station) {
-        stations.add(station);
-        station.setLine(this);
-    }
-
-    public void setStations(List<Station> stations) {
-        this.stations = stations;
+        return Collections.unmodifiableList(stations);
     }
 
     @Override

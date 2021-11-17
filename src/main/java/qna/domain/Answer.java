@@ -63,7 +63,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.isMine(writer);
+        return this.writer.isMe(writer);
     }
 
     public boolean isDeleted() {

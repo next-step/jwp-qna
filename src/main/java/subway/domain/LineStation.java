@@ -39,14 +39,6 @@ public class LineStation {
         return id;
     }
 
-    public Line getLine() {
-        return line;
-    }
-
-    public Station getStation() {
-        return station;
-    }
-
     @Override
     public String toString() {
         return "LineStation{" +
