@@ -106,4 +106,8 @@ public class Answer extends BaseTimeEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
+    public void delete() {
+        deleted = true;
+    }
 }
