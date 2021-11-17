@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import org.springframework.util.StringUtils;
 
 @Embeddable
 public class Password {
@@ -14,11 +15,20 @@ public class Password {
     }
 
     private Password(String value) {
+        validate(value);
         this.value = value;
     }
 
     public static Password from(String value) {
         return new Password(value);
+    }
+
+    private void validate(String value) {
+        if (StringUtils.hasText(value)) {
+            return;
+        }
+
+        throw new IllegalArgumentException("비밀번호는 널 또는 공백일 수 없습니다.");
     }
 
     @Override
