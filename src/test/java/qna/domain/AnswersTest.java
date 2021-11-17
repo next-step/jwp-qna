@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
-import qna.CannotDeleteException;
+import qna.UnAuthorizedException;
 
 import java.util.List;
 
@@ -40,12 +40,12 @@ class AnswersTest {
         ThrowableAssert.ThrowingCallable throwingCallable = () -> answers.delete(writer);
 
         //then
-        AssertionsForClassTypes.assertThatExceptionOfType(CannotDeleteException.class)
+        AssertionsForClassTypes.assertThatExceptionOfType(UnAuthorizedException.class)
                 .isThrownBy(throwingCallable);
     }
 
     @Test
-    public void 질문자와_답변자가_같은_경우_답변을_삭제할_수_있다() throws CannotDeleteException {
+    public void 질문자와_답변자가_같은_경우_답변을_삭제할_수_있다() {
         //given
         User writer = userRepository.save(TestUserFactory.create("donkey"));
         Question question = questionRepository.save(TestQuestionFactory.create("title", "content", writer));

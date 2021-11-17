@@ -49,12 +49,20 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public DeleteHistory delete(User loginUser) {
+        validateLoginUser(loginUser);
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, this.id, loginUser);
     }
 
-    public void delete() {
-        this.deleted = true;
+    private void validateLoginUser(User loginUser) {
+        if(!isSameUser(loginUser)) {
+            throw new UnAuthorizedException("질문자와 답변자가 다른 경우 답변을 삭제할 수 없습니다.");
+        }
+    }
+
+    private boolean isSameUser(User writer) {
+        return this.writer.equals(writer);
     }
 
     public Long getId() {

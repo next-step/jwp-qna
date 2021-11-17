@@ -2,7 +2,6 @@ package qna.domain;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import qna.CannotDeleteException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -24,24 +23,12 @@ public class Answers {
         answers.add(answer);
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
-        validateOwner(loginUser);
+    public List<DeleteHistory> delete(User loginUser) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : answers) {
-            answer.delete();
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), loginUser));
+            deleteHistories.add(answer.delete(loginUser));
         }
         return deleteHistories;
-    }
-
-    private void validateOwner(User loginUser) throws CannotDeleteException {
-        if(!isEntireAnswersOwner(loginUser)) {
-            throw new CannotDeleteException("질문자와 답변자가 다른 경우 답변을 삭제할 수 없습니다.");
-        }
-    }
-
-    private boolean isEntireAnswersOwner(User loginUser) {
-        return answers.stream().allMatch(answer -> answer.isOwner(loginUser));
     }
 
 }
