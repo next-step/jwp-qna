@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -14,38 +13,54 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DataJpaTest
 public class AnswerTest {
 
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
     @DisplayName("save 테스트")
     @Test
     void save() {
+        // given
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question question = questionRepository.save(QuestionTest.Q1.writeBy(user));
+        Answer answer = Answer.of(user, question, "Answers Contents1");
+
         // when
-        Answer newAnswer = answerRepository.save(A1);
+        Answer newAnswer = answerRepository.save(answer);
 
         // then
         assertAll(
                 () -> assertThat(newAnswer.getId()).isNotNull()
-                , () -> assertThat(newAnswer.getWriterId()).isEqualTo(A1.getWriterId())
-                , () -> assertThat(newAnswer.getQuestionId()).isEqualTo(A1.getQuestionId())
-                , () -> assertThat(newAnswer.getContents()).isEqualTo(A1.getContents())
+                , () -> assertThat(newAnswer.getWriter().getId()).isNotNull()
+                , () -> assertThat(newAnswer.getQuestion().getId()).isNotNull()
+                , () -> assertThat(newAnswer).isEqualTo(answer)
         );
     }
 
     @DisplayName("findByIdAndDeletedFalse 테스트")
     @Test
     void findByIdAndDeletedFalse() {
+        // given
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question question = questionRepository.save(QuestionTest.Q1.writeBy(user));
+        Answer answer = Answer.of(user, question, "Answers Contents1");
+        Answer newAnswer = answerRepository.save(answer);
+
         // when
-        Answer newAnswer = answerRepository.save(A1);
-        Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(newAnswer.getId());
+        Answer findAnswer = answerRepository.findByIdAndDeletedFalse(newAnswer.getId()).get();
 
         // then
         assertAll(
-                () -> assertThat(optionalAnswer.get()).isNotNull()
-                , () -> assertThat(optionalAnswer.get()).isEqualTo(newAnswer)
+                () -> assertThat(findAnswer).isNotNull()
+                , () -> assertThat(findAnswer.getWriter().getId()).isNotNull()
+                , () -> assertThat(findAnswer.getQuestion().getId()).isNotNull()
+                , () -> assertThat(findAnswer).isEqualTo(newAnswer)
+                , () -> assertThat(findAnswer.isDeleted()).isFalse()
         );
     }
 
@@ -53,18 +68,21 @@ public class AnswerTest {
     @Test
     void findByQuestionIdAndDeletedFalse() {
         // given
-        Answer answer1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-        Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents2");
+        User user1 = userRepository.save(UserTest.JAVAJIGI);
+        User user2 = userRepository.save(UserTest.SANJIGI);
+        Question question1 = questionRepository.save(QuestionTest.Q1.writeBy(user1));
+        Question question2 = questionRepository.save(QuestionTest.Q2.writeBy(user2));
+        Answer newAnswer1 = answerRepository.save(Answer.of(user1, question1, "Answers Contents1"));
+        Answer newAnswer2 = answerRepository.save(Answer.of(user2, question2, "Answers Contents2"));
 
         // when
-        Answer newAnswer1 = answerRepository.save(answer1);
-        Answer newAnswer2 = answerRepository.save(answer2);
-        List<Answer> newAnswers = answerRepository.findByQuestionIdAndDeletedFalse(newAnswer1.getQuestionId());
+        List<Answer> newAnswers = answerRepository.findByQuestionIdAndDeletedFalse(newAnswer1.getQuestion().getId());
 
         // then
         assertAll(
                 () -> assertThat(newAnswers).hasSize(1)
                 , () -> assertThat(newAnswers).containsExactly(newAnswer1)
+                , () -> assertThat(newAnswers.get(0).isDeleted()).isFalse()
         );
     }
 }
