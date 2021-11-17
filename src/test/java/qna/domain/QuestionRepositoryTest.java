@@ -30,7 +30,8 @@ public class QuestionRepositoryTest {
     @Test
     void findByContentsContainingTest() {
         final User javajigi = users.save(UserTest.JAVAJIGI);
-        final String expected = questions.save(QuestionTest.Q1.writeBy(javajigi)).getContents();;
+        final String expected = questions.save(QuestionTest.Q1.writeBy(javajigi)).getContents();
+        ;
 
         final String actual = questions.findByContentsContaining(expected).getContents();
         assertThat(actual).isEqualTo(expected);
