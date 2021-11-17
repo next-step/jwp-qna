@@ -26,6 +26,9 @@ class QnaServiceTest {
     private QuestionRepository questionRepository;
 
     @Mock
+    private AnswerRepository answerRepository;
+
+    @Mock
     private DeleteHistoryService deleteHistoryService;
 
     @InjectMocks
@@ -47,7 +50,9 @@ class QnaServiceTest {
 
         assertThat(question.isDeleted()).isFalse();
         qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
+        final List<Answer> leftAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
+        assertThat(leftAnswers.size()).isZero();
         assertThat(question.isDeleted()).isTrue();
         verifyDeleteHistories();
     }
@@ -75,7 +80,7 @@ class QnaServiceTest {
 
     @DisplayName("delete question answer에 다른 사람이 쓴 글 실패")
     @Test
-    public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
+    public void delete_답변_중_다른_사람이_쓴_글() {
         Answer answer2 = new Answer(UserTest.SANJIGI, question, "Answers Contents1");
         question.addAnswer(answer2);
 
