@@ -40,7 +40,7 @@ public class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        USER = users.save(UserTest.createUserDataString("answerJavajigi", "password", "javajigi",
+        USER = users.save(UserTest.createUser("answerJavajigi", "password", "javajigi",
             new Email("javajigi@slipp.net")));
         QUESTION = questions.save(new Question("title1", "contents1").writeBy(USER));
         ANSWER = answers.save(new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1"));

@@ -30,20 +30,8 @@ public class UserRepositoryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        USER1 = UserTest.createUserDataString(USERID, PASSWORD, NAME, EMAIL);
-        USER2 = UserTest.createUserDataString(USERID2, PASSWORD, NAME, EMAIL);
-    }
-
-    @Test
-    @DisplayName("save 후 DB 조회 동일성 검증")
-    void findByUserId() {
-        // given
-        // when
-        User actual = users.save(USER1);
-        User expect = users.findByUserDataUserId(USER1.getUserId()).get();
-
-        // then
-        assertThat(actual).isSameAs(expect);
+        USER1 = UserTest.createUser(USERID, PASSWORD, NAME, EMAIL);
+        USER2 = UserTest.createUser(USERID2, PASSWORD, NAME, EMAIL);
     }
 
     @Test
@@ -69,7 +57,7 @@ public class UserRepositoryTest {
 
         // when
         USER1.changeUserId("user_id 변경");
-        User expect = users.findByUserDataUserId(USER1.getUserId()).get();
+        User expect = users.findByUserAuthUserId(USER1.getUserId()).get();
 
         // then
         assertThat(USER1).isEqualTo(expect);
@@ -112,7 +100,7 @@ public class UserRepositoryTest {
         users.save(USER1);
 
         // when
-        Long actual = users.countByUserDataUserId(USER1.getUserId());
+        Long actual = users.countByUserAuthUserId(USER1.getUserId());
 
         // then
         assertThat(actual).isGreaterThan(0);

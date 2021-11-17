@@ -3,7 +3,6 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +32,7 @@ public class QuestionRepositoryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        USER = users.save(UserTest.createUserDataString("answerJavajigi", "password", "javajigi",
+        USER = users.save(UserTest.createUser("answerJavajigi", "password", "javajigi",
             new Email("javajigi@slipp.net")));
         QUESTION = new Question("title1", "contents1").writeBy(USER);
     }
@@ -59,35 +58,17 @@ public class QuestionRepositoryTest {
         assertThat(actual).isEqualTo(expect);
     }
 
-
-    @Test
-    @DisplayName("User update() 메소드 password 같지 않을 경우 예외 발생 체크")
-    void update_matchUserId_password_MISSMATCH_exception() {
-        // given
-        User targetUserAndMissMatchPW = users.save(
-            UserTest.createUserDataString("javajigi", "change", "javajigi",
-                new Email("javajigi@slipp.net")));
-
-        assertThatExceptionOfType(UnAuthorizedException.class) // then
-            .isThrownBy(() -> {
-                // when
-                USER.update(USER, targetUserAndMissMatchPW);
-            })
-            .withMessage(
-                UnAuthorizedException.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_MESSAGE);
-    }
-
     @Test
     @DisplayName("질문 삭제 후 해당 Question 조회결과없음 검증")
     void findByIdAndDeletedFalse_false() {
         // given
         // when
-        questions.save(QUESTION);
-        QUESTION.delete(QUESTION.getWriter());
-        Optional<Question> actual = questions.findByIdAndDeletedFalse(QUESTION.getId());
+        Question actual = questions.save(QUESTION);
+        actual.delete(actual.getWriter());
+        Optional<Question> expect = questions.findByIdAndDeletedFalse(actual.getId());
 
         // then
-        assertThat(actual.isPresent()).isFalse();
+        assertThat(expect.isPresent()).isFalse();
     }
 
     @Test
@@ -96,30 +77,29 @@ public class QuestionRepositoryTest {
         // given
         Answer expect = new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1");
         QUESTION.addAnswer(expect);
-        questions.save(QUESTION);
+        Question question = questions.save(QUESTION);
 
         // when
-        Question findQuestion = questions.findByIdAndDeletedFalse(QUESTION.getId()).get();
-        List<Answer> actual = findQuestion.getAnswers();
+        Question actual = questions.findById(question.getId()).get();
 
         // then
-        assertThat(actual).contains(expect);
+        assertThat(actual.getAnswers()).contains(expect);
     }
 
     @Test
     @DisplayName("delete 메소드 호출시 연관 답변도 delete 되는지 확인")
     void deleted_and_answer_delete() {
         // given
-        Question savedQ1 = questions.save(QUESTION);
-        Answer answer1 = new Answer(savedQ1.getWriter(), savedQ1, "Answers Contents2");
-        savedQ1.addAnswer(answer1);
+        Question saveQuestion = questions.save(QUESTION);
+        Answer answer1 = new Answer(saveQuestion.getWriter(), saveQuestion, "Answers Contents2");
+        saveQuestion.addAnswer(answer1);
 
         // when
-        savedQ1.delete(USER);
+        saveQuestion.delete(USER);
         questions.flush();
 
         //then
-        Question deletedQ1 = questions.findById(savedQ1.getId()).get();
+        Question deletedQ1 = questions.findById(saveQuestion.getId()).get();
         assertAll(
             () -> assertThat(deletedQ1.isDeleted()).isTrue(),
             () -> assertThat(deletedQ1.getAnswers().get(0).isDeleted()).isTrue()

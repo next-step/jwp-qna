@@ -11,14 +11,21 @@ import qna.common.exception.NotFoundException;
 import qna.common.exception.UnAuthorizedException;
 
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+
+    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1,
+        "Answers Contents1");
+    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1,
+        "Answers Contents2");
 
     @Test
     @DisplayName("Answer 의 deleted 컬럼의 default 값은 false입니다.")
     void deleted_기본값_false() {
+        // when
+        boolean expect = new Answer(UserTest.SANJIGI, QuestionTest.Q1,
+            "Answers Contents2").isDeleted();
+
         // then
-        assertThat(new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2").isDeleted()).isFalse();
+        assertThat(expect).isFalse();
     }
 
     @Test
@@ -60,7 +67,7 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("writer(작성자)가 없으면 예외 발생")
+    @DisplayName("저장시 writer(작성자)가 없으면 예외 발생")
     void exception_create_User_null() {
         assertThatExceptionOfType(UnAuthorizedException.class) // then
             .isThrownBy(() -> {
@@ -70,7 +77,7 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("question(질문)이 없으면 예외 발생")
+    @DisplayName("저장시 question(질문)이 없으면 예외 발생")
     void exception_create_Question_null() {
         assertThatExceptionOfType(NotFoundException.class) // then
             .isThrownBy(() -> {

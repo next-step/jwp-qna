@@ -41,7 +41,7 @@ public class AnswerRepositoryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        USER = users.save(UserTest.createUserDataString("answerJavajigi", "password", "javajigi",
+        USER = users.save(UserTest.createUser("answerJavajigi", "password", "javajigi",
             new Email("javajigi@slipp.net")));
         QUESTION = questions.save(new Question("title1", "contents1").writeBy(USER));
         ANSWER = new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1");
@@ -71,14 +71,14 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("remove 처리 후 findByIdAndDeletedFalse 메소드 조회 미포함 체크 ")
+    @DisplayName("remove 처리 후 isDeleted true(삭제됨) 체크 ")
     void deleted_findByIdAndDeletedFalse() {
         // given
-        Answer expect = answers.save(ANSWER);
-        expect.delete(USER);
+        Answer savedAnswer = answers.save(ANSWER);
+        savedAnswer.delete(USER);
 
         // when
-        Answer answer = answers.findById(expect.getId()).get();
+        Answer expect = answers.findById(savedAnswer.getId()).get();
 
         // then
         assertAll(

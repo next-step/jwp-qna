@@ -10,9 +10,9 @@ import qna.common.exception.UnAuthorizedException;
 
 public class UserTest {
 
-    public static final User JAVAJIGI = createUserDataString("javajigi", "password", "javajigi",
+    public static final User JAVAJIGI = createUser("javajigi", "password", "javajigi",
         new Email("javajigi@slipp.net"));
-    public static final User SANJIGI = createUserDataString("sanjigi", "password", "sanjigi",
+    public static final User SANJIGI = createUser("sanjigi", "password", "sanjigi",
         new Email("sanjigi@slipp.net"));
 
     @Test
@@ -26,14 +26,13 @@ public class UserTest {
     }
 
     @Test
-    @DisplayName("name 과 이메일 업데이트 후 equalsNameAndEmail 메소드로 변경 확인")
+    @DisplayName("name 과 email 업데이트 후 equalsNameAndEmail 메소드로 변경 확인")
     void update() {
         // given
-        String changeName = "changeName";
-        Email changeEmail = new Email("changeEmail@email.co.kr");
-        User actual = createUserDataString("wooobo", "password", "myname",
+        User actual = createUser("wooobo", "password", "myname",
             new Email("taeHwa@email.com"));
-        User expect = createUserDataString("wooobo", "password", changeName, changeEmail);
+        User expect = createUser("wooobo", "password", "changeName",
+            new Email("changeEmail@email.co.kr"));
 
         // when
         actual.update(actual, expect);
@@ -55,6 +54,23 @@ public class UserTest {
     }
 
     @Test
+    @DisplayName("User update() 메소드 password 같지 않을 경우 예외 발생 체크")
+    void update_matchUserId_password_MISSMATCH_exception() {
+        // given
+        User targetUserAndMissMatchPW = UserTest.createUser("javajigi", "change",
+            "javajigi",
+            new Email("javajigi@slipp.net"));
+
+        assertThatExceptionOfType(UnAuthorizedException.class) // then
+            .isThrownBy(() -> {
+                // when
+                JAVAJIGI.update(JAVAJIGI, targetUserAndMissMatchPW);
+            })
+            .withMessage(UnAuthorizedException.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_MESSAGE);
+    }
+
+
+    @Test
     @DisplayName("GUEST_USER 는 isGuestUser 가 true 입니다")
     void isGuestUser() {
         // given
@@ -73,14 +89,13 @@ public class UserTest {
         assertThatExceptionOfType(RuntimeException.class) // then
             .isThrownBy(() -> {
                 // when
-                UserTest.createUserDataString("javajigi", "change", "javajigi",
+                UserTest.createUser("javajigi", "change", "javajigi",
                     new Email("javajigi"));
             });
     }
 
 
-    public static User createUserDataString(String userId, String password, String name,
-        Email email) {
-        return new User(new UserData(userId, password, name, email));
+    public static User createUser(String userId, String password, String name, Email email) {
+        return new User(new UserAuth(userId, password), new UserData(name, email));
     }
 }

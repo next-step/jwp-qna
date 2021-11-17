@@ -29,7 +29,7 @@ public class DeletedTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        USER = users.save(UserTest.createUserDataString("answerJavajigi", "password", "javajigi",
+        USER = users.save(UserTest.createUser("answerJavajigi", "password", "javajigi",
             new Email("javajigi@slipp.net")));
         QUESTION = new Question("title1", "contents1").writeBy(USER);
     }
@@ -51,7 +51,7 @@ public class DeletedTest {
     @Test
     @DisplayName("답변 삭제, DeleteHistory 도메인 검증")
     void deleteOf_answer() {
-        Question saveQuestion = questions.save(QUESTION);
+        questions.save(QUESTION);
         Answer saveAnswer = new Answer(USER, QUESTION, "Answers Contents1");
 
         questions.flush();
