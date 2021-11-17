@@ -122,7 +122,7 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("자신이 작성한 Answer 가 아니면 삭제시 예외가 발생한다.")
+    @DisplayName("자신이 작성한 Question 이 아니면 삭제시 예외가 발생한다.")
     void deleteWithCanNotDeleteException() {
         // given
         final User writer = userRepository.save(UserTestFactory.create("testuser1", "testuser111@test.com"));
