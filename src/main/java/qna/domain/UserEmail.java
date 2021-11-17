@@ -1,8 +1,10 @@
 package qna.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class UserEmail {
     @Column(length = 50)
     private String email;
