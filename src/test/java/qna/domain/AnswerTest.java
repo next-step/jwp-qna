@@ -104,7 +104,8 @@ public class AnswerTest {
     @Test
     void removeAnswerTest() {
         assertThat(answerRepository.findAll().size()).isEqualTo(1);
-        answerRepository.delete(answer);
+//        answerRepository.delete(answer);
+        question.removeAnswer(answer);
         assertThat(answerRepository.findAll().size()).isZero();
     }
 
@@ -117,9 +118,7 @@ public class AnswerTest {
         assertAll(
                 () -> assertThat(questionFromRepo.getContents()).isEqualTo("contents1"),
                 () -> assertThat(questionFromRepo.getAnswers().size()).isEqualTo(1),
-                () -> assertThat(questionFromRepo.getAnswers().get(0)).isEqualTo(answer),
-                () -> assertThat(questionFromRepo.getCreatedAt()).isAfter(now),
-                () -> assertThat(questionFromRepo.getUpdatedAt()).isAfter(now)
+                () -> assertThat(questionFromRepo.getAnswers().get(0)).isEqualTo(answer)
         );
     }
 
@@ -131,9 +130,7 @@ public class AnswerTest {
                 .orElseThrow(NoSuchElementException::new);
         assertAll(
                 () -> assertThat(questionFromRepo.getContents()).isEqualTo("contents1"),
-                () -> assertThat(questionFromRepo.getAnswers().size()).isZero(),
-                () -> assertThat(questionFromRepo.getCreatedAt()).isAfter(now),
-                () -> assertThat(questionFromRepo.getUpdatedAt()).isAfter(now)
+                () -> assertThat(questionFromRepo.getAnswers().size()).isZero()
         );
     }
 

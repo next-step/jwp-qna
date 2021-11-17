@@ -45,9 +45,7 @@ public class UserTest {
     void saveUserTest() {
         assertAll(
                 () -> assertThat(user.getId()).isNotNull(),
-                () -> assertThat(user.getEmail()).isEqualTo("javajigi@slipp.net"),
-                () -> assertThat(user.getCreatedAt()).isAfter(now),
-                () -> assertThat(user.getUpdatedAt()).isAfter(now)
+                () -> assertThat(user.getEmail()).isEqualTo("javajigi@slipp.net")
         );
     }
 
