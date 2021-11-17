@@ -4,10 +4,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.fixture.DeleteHistoryFixture;
+import qna.fixture.UserFixture;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DisplayName("DeleteHistory 테스트")
@@ -22,8 +25,8 @@ class DeleteHistoryTest {
     @Test
     void save_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        DeleteHistory deleteHistory = DeleteHistoryTestFactory.create(ContentType.ANSWER, 1L, user);
+        User user = userRepository.save(UserFixture.ID가_없는_사용자());
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, user);
 
         // when
         DeleteHistory actual = deleteHistoryRepository.save(deleteHistory);
@@ -37,8 +40,7 @@ class DeleteHistoryTest {
     @Test
     void findById_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        DeleteHistory question = DeleteHistoryTestFactory.create(ContentType.ANSWER, 1L, user);
+        DeleteHistory question = DeleteHistoryFixture.ID가_없는_사용자의_질문_삭제_히스토리();
 
         // when
         DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(question);
@@ -54,8 +56,7 @@ class DeleteHistoryTest {
     @Test
     void update_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        DeleteHistory question = DeleteHistoryTestFactory.create(ContentType.ANSWER, 1L, user);
+        DeleteHistory question = DeleteHistoryFixture.ID가_없는_사용자의_답변_삭제_히스토리();
 
         // when
         DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(question);
@@ -64,10 +65,11 @@ class DeleteHistoryTest {
         Optional<DeleteHistory> actual = deleteHistoryRepository.findById(savedDeleteHistory.getId());
 
         // then
-        assertThat(actual)
-                .isPresent();
-
-        assertThat(actual.get().getContentType())
-                .isEqualTo(ContentType.QUESTION);
+        assertAll(
+                () -> assertThat(actual)
+                        .isPresent(),
+                () -> assertThat(actual.get().getContentType())
+                        .isEqualTo(ContentType.QUESTION)
+        );
     }
 }

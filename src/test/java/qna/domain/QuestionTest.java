@@ -1,13 +1,21 @@
 package qna.domain;
 
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
+import qna.fixture.QuestionFixture;
+import qna.fixture.UserFixture;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DisplayName("Question 테스트")
@@ -18,12 +26,14 @@ class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private AnswerRepository answerRepository;
+
     @DisplayName("Save 확인")
     @Test
     void save_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        Question question = QuestionTestFactory.create("title", "content", user);
+        Question question = QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문();
 
         // when
         Question actual = questionRepository.save(question);
@@ -36,8 +46,7 @@ class QuestionTest {
     @Test
     void findById_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        Question question = QuestionTestFactory.create("title", "contents", user);
+        Question question = QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문();
 
         // when
         Question savedQuestion = questionRepository.save(question);
@@ -53,8 +62,7 @@ class QuestionTest {
     @Test
     void update_확인() {
         // given
-        User user = userRepository.save(UserTestFactory.create("user"));
-        Question question = QuestionTestFactory.create("title", "contents", user);
+        Question question = QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문();
 
         // when
         Question savedQuestion = questionRepository.save(question);
@@ -64,13 +72,123 @@ class QuestionTest {
         Optional<Question> actual = questionRepository.findById(savedQuestion.getId());
 
         // then
-        assertThat(actual)
-                .isPresent();
+        assertAll(
+                () -> assertThat(actual)
+                        .isPresent(),
+                () -> assertThat(actual.get().getTitle())
+                        .isEqualTo("title2"),
+                () -> assertThat(actual.get().getContents())
+                        .isEqualTo("contents2")
+        );
+    }
 
-        assertThat(actual.get().getTitle())
-                .isEqualTo("title2");
+    @DisplayName("delete 테스트")
+    @Nested
+    class delete {
+        @DisplayName("소유자의_question만 존재")
+        @Test
+        void 소유자의_question만_존재() throws CannotDeleteException {
+            // given
+            Question question = questionRepository.save(QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문());
 
-        assertThat(actual.get().getContents())
-                .isEqualTo("contents2");
+            // when
+            List<DeleteHistory> deleteHistories = question.delete(question.getWriter());
+
+            // then
+            assertAll(
+                    () -> assertThat(deleteHistories)
+                            .hasSize(1),
+                    () -> assertThat(deleteHistories.get(0).getContentType())
+                            .isEqualTo(ContentType.QUESTION),
+                    () -> assertThat(deleteHistories.get(0).getContentId())
+                            .isEqualTo(question.getId()),
+                    () -> assertThat(deleteHistories.get(0).getDeletedBy())
+                            .isEqualTo(question.getWriter()),
+                    () -> verifyQuestionDeleteStatus(question.getId(), true)
+            );
+        }
+
+        @DisplayName("소유자의_question과 Answer만 존재")
+        @Test
+        void 소유자의_question과_Answer만_존재() throws CannotDeleteException {
+            // given
+            Question question = questionRepository.save(QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문());
+            Answer answer = answerRepository.save(new Answer(question.getWriter(), question, "Answers Contents"));
+
+            question.addAnswer(answer);
+
+            // when
+            List<DeleteHistory> deleteHistories = question.delete(question.getWriter());
+
+            // then
+            assertAll(
+                    () -> assertThat(deleteHistories)
+                            .hasSize(2),
+                    () -> assertThat(deleteHistories.get(0).getContentType())
+                            .isEqualTo(ContentType.QUESTION),
+                    () -> assertThat(deleteHistories.get(0).getContentId())
+                            .isEqualTo(question.getId()),
+                    () -> assertThat(deleteHistories.get(0).getDeletedBy())
+                            .isEqualTo(question.getWriter()),
+                    () -> assertThat(deleteHistories.get(1).getContentType())
+                            .isEqualTo(ContentType.ANSWER),
+                    () -> assertThat(deleteHistories.get(1).getContentId())
+                            .isEqualTo(answer.getId()),
+                    () -> assertThat(deleteHistories.get(1).getDeletedBy())
+                            .isEqualTo(question.getWriter()),
+                    () -> verifyDeletedStatus(question.getId(), answer.getId(), true)
+            );
+        }
+
+        @DisplayName("다른 사용자의 Answer가 존재")
+        @Test
+        void 다른_사용자의_Answer가_존재() {
+            // given
+            User otherUser = userRepository.save(UserFixture.ID가_없는_다른_사용자());
+            Question question = questionRepository.save(QuestionFixture.ID가_없는_사용자의_질문ID가_없는_질문());
+            Answer answer = answerRepository.save(new Answer(otherUser, question, "Answers Contents"));
+
+            question.addAnswer(answer);
+
+            // when
+            ThrowableAssert.ThrowingCallable throwingCallable = () -> question.delete(otherUser);
+
+            // then
+            assertAll(
+                    () -> assertThatThrownBy(throwingCallable)
+                            .isInstanceOf(CannotDeleteException.class),
+                    () -> verifyDeletedStatus(question.getId(), answer.getId(), false)
+            );
+        }
+
+        private void verifyDeletedStatus(Long questionId, Long answerId, boolean deleteStatus) {
+            if (questionId != null) {
+                verifyQuestionDeleteStatus(questionId, deleteStatus);
+            }
+
+            if (answerId != null) {
+                verifyAnswerDeleteStatus(answerId, deleteStatus);
+            }
+        }
+
+        private void verifyQuestionDeleteStatus(Long questionId, boolean deleteStatus) {
+            Optional<Question> actual = questionRepository.findById(questionId);
+
+            assertThat(actual)
+                    .isPresent();
+
+            assertThat(actual.get().isDeleted())
+                    .isEqualTo(deleteStatus);
+        }
+
+        private void verifyAnswerDeleteStatus(Long answerId, boolean deleteStatus) {
+            Optional<Answer> actual = answerRepository.findById(answerId);
+
+            assertThat(actual)
+                    .isPresent();
+
+            assertThat(actual.get().isDeleted())
+                    .isEqualTo(deleteStatus);
+        }
     }
 }

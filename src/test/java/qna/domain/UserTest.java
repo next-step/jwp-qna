@@ -4,10 +4,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.fixture.UserFixture;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DisplayName("User 테스트")
@@ -19,7 +21,7 @@ class UserTest {
     @Test
     void save_확인() {
         // given
-        User user = UserTestFactory.create("user");
+        User user = new User("user", "password", "name", "email");
 
         // when
         User actual = userRepository.save(user);
@@ -33,7 +35,7 @@ class UserTest {
     @Test
     void findById_확인() {
         // given
-        User savedUser = userRepository.save(UserTestFactory.create("user"));
+        User savedUser = userRepository.save(UserFixture.ID가_없는_사용자());
 
         // when
         Optional<User> actual = userRepository.findById(savedUser.getId());
@@ -48,7 +50,7 @@ class UserTest {
     @Test
     void update_확인() {
         // given
-        User savedUser = userRepository.save(UserTestFactory.create("user"));
+        User savedUser = userRepository.save(UserFixture.ID가_없는_사용자());
 
         // when
         savedUser.setUserId("user2");
@@ -56,10 +58,11 @@ class UserTest {
         Optional<User> actual = userRepository.findById(savedUser.getId());
 
         // then
-        assertThat(actual)
-                .isPresent();
-
-        assertThat(actual.get().getUserId())
-                .isEqualTo("user2");
+        assertAll(
+                () -> assertThat(actual)
+                        .isPresent(),
+                () -> assertThat(actual.get().getUserId())
+                        .isEqualTo("user2")
+        );
     }
 }
