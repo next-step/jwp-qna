@@ -18,7 +18,7 @@ public class Question extends BaseTimeEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
