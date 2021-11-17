@@ -17,13 +17,14 @@ public class DeleteHistory {
     @Column(name = "content_id")
     private Long contentId;
 
-    @Column(name = "delete_by_id")
-    private Long deletedById;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedById;
 
     @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
