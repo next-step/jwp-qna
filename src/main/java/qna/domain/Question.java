@@ -18,7 +18,7 @@ public class Question extends BaseEntity{
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     List<Answer> answers = new ArrayList<>();
 
     public Question(String title, String contents) {
