@@ -31,7 +31,7 @@ public class QuestionTest {
                 () -> assertThat(savedQuestion.getId()).isNotNull(),
                 () -> assertThat(savedQuestion.getTitle()).isEqualTo(Q1.getTitle()),
                 () -> assertThat(savedQuestion.getContents()).isEqualTo(Q1.getContents()),
-                () -> assertThat(savedQuestion.getWriterId()).isNotNull()
+                () -> assertThat(savedQuestion.getWriter()).isNotNull()
         );
     }
 

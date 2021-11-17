@@ -1,16 +1,19 @@
 package qna.domain;
 
+import org.omg.CORBA.PRIVATE_MEMBER;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseTime {
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
 
@@ -53,6 +56,22 @@ public class Answer extends BaseTime {
         return this.writer.equals(writer);
     }
 
+    public boolean canDelete(User writer) {
+        return isOwner(writer);
+    }
+
+    public DeleteHistory delete(User writer) throws CannotDeleteException {
+        if(!canDelete(writer)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.deleted = true;
+        return recordDeleteHistory();
+    }
+
+    private DeleteHistory recordDeleteHistory() {
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+    }
+
     public void toQuestion(Question question) {
         this.question = question;
     }
@@ -91,6 +110,10 @@ public class Answer extends BaseTime {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public boolean isNotDeleted() {
+        return !deleted;
     }
 
     public void setDeleted(boolean deleted) {
