@@ -1,4 +1,4 @@
-package subway.domain;
+package subway.domain.line;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import subway.domain.station.Station;
 
 @Entity
 @Table(name = "line_station")

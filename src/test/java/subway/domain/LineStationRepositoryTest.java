@@ -5,6 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import subway.domain.line.Line;
+import subway.domain.line.LineRepository;
+import subway.domain.line.LineStation;
+import subway.domain.line.LineStationRepository;
+import subway.domain.station.StationRepository;
+import subway.domain.station.Station;
 
 @DataJpaTest
 public class LineStationRepositoryTest {

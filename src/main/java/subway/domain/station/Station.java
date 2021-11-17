@@ -1,4 +1,4 @@
-package subway.domain;
+package subway.domain.station;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import subway.domain.line.Line;
+import subway.domain.line.LineStation;
 
 @Entity
 @Table(name = "station")

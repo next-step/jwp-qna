@@ -1,4 +1,4 @@
-package subway.domain;
+package subway.domain.member;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +16,7 @@ public class Favorite {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    protected Favorite() {
+    public Favorite() {
     }
 
     public void delete() {
