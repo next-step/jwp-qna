@@ -2,6 +2,7 @@ package qna.domain.deletehistory;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import qna.UnAuthorizedException;
 import qna.domain.user.User;
 
 import javax.persistence.CascadeType;
@@ -40,9 +41,24 @@ public class DeleteHistory {
     }
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
+        validate(contentType, contentId, deletedByUser);
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
+    }
+
+    private void validate(ContentType contentType, Long contentId, User deletedByUser) {
+        if (Objects.isNull(deletedByUser)) {
+            throw new UnAuthorizedException();
+        }
+
+        if (contentId == 0) {
+            throw new IllegalArgumentException("삭제한 컨텐츠 아이디가 있어야 합니다.");
+        }
+
+        if (contentType == null) {
+            throw new IllegalArgumentException("컨텐츠 타입이 존재해야 합니다.");
+        }
     }
 
     public static DeleteHistory ofQuestion(Long contentId, User writer) {

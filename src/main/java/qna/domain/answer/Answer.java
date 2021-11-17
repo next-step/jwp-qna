@@ -61,8 +61,14 @@ public class Answer extends BaseTimeEntity {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
+        validate(writer, question);
         this.id = id;
+        this.writer = writer;
+        this.question = question;
+        this.contents = Contents.of(contents);
+    }
 
+    private void validate(User writer, Question question) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -70,10 +76,6 @@ public class Answer extends BaseTimeEntity {
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
-
-        this.writer = writer;
-        this.question = question;
-        this.contents = Contents.of(contents);
     }
 
     public Answer(User writer, Question question, String contents, boolean deleted) {

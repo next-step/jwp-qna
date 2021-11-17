@@ -23,6 +23,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @SQLDelete(sql = "UPDATE Question SET deleted = true WHERE id=?")
@@ -37,9 +38,11 @@ public class Question extends BaseTimeEntity {
     private String title;
     @Embedded
     private Contents contents;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
     private boolean deleted = Boolean.FALSE;
 
     @Embedded
@@ -53,9 +56,16 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question(Long id, String title, String contents) {
+        validateTitle(title);
         this.id = id;
         this.title = title;
         this.contents = Contents.of(contents);
+    }
+
+    private void validateTitle(String title) {
+        if (Objects.isNull(title) || title.isEmpty()) {
+            throw new IllegalArgumentException("타이틀이 존재 하지 않습니다.");
+        }
     }
 
     public Question(String title, String contents, boolean deleted) {
