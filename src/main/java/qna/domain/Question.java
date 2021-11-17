@@ -51,7 +51,7 @@ public class Question extends BaseTimeEntity {
         return answers;
     }
 
-    private List<Answer> nonDeletedAnswers() {
+    public List<Answer> nonDeletedAnswers() {
         return answers.stream()
                 .filter(item -> !item.isDeleted())
                 .collect(Collectors.toList());
@@ -61,11 +61,10 @@ public class Question extends BaseTimeEntity {
         return this.writer.matchId(writer.getId());
     }
 
-    public void addAnswer(Answer answer) {
-        if (answers.contains(answer)) {
-            return;
+    void addAnswer(Answer answer) {
+        if (!answers.contains(answer)) {
+            answers.add(answer);
         }
-        answers.add(answer);
     }
 
     public Long getId() {

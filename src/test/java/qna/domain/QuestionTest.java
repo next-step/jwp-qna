@@ -40,4 +40,10 @@ public class QuestionTest {
         assertThat(A1.isDeleted()).isTrue();
         assertThat(A2.isDeleted()).isTrue();
     }
+
+    @DisplayName("로그인 사용자와 질문이 같은 User인 경우 삭제가능")
+    @Test
+    void deleteByUser() {
+
+    }
 }
