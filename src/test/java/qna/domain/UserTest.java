@@ -27,4 +27,17 @@ public class UserTest {
                 () -> assertThat(actual.getUserId()).isEqualTo("inmookjeong")
         );
     }
+
+    @Test
+    @DisplayName("회원정보 수정")
+    void update() {
+        User inmookjeong = userRepository.save(new User("inmookjeong", "password", "inmookjeong", "jeonginmook@gmail.com"));
+        inmookjeong.setName("mook");
+        User actual = userRepository.save(inmookjeong);
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getId()).isEqualTo(3L),
+                () -> assertThat(actual.getName()).isEqualTo("mook")
+        );
+    }
 }
