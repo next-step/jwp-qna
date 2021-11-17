@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -17,7 +18,9 @@ public class AnswerTest {
     @Test
     void save() {
         Answer actual = answerRepository.save(A1);
-        assertThat(actual).isNotNull();
-        assertThat(actual.getId()).isEqualTo(A1.getId());
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getId()).isEqualTo(A1.getId())
+        );
     }
 }
