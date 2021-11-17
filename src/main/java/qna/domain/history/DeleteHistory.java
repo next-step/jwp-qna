@@ -1,8 +1,9 @@
-package qna.domain;
+package qna.domain.history;
 
-import lombok.Builder;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import qna.domain.answer.Answer;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,10 +11,8 @@ import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.PROTECTED;
 
 @Entity
-@NoArgsConstructor(access = PROTECTED)
 public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -33,11 +32,21 @@ public class DeleteHistory {
     @Column(updatable = false)
     private LocalDateTime createDate;
 
-    @Builder
+    protected DeleteHistory() {
+    }
+
     private DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
+    }
+
+    public static DeleteHistory createBy(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter());
+    }
+
+    public static DeleteHistory createBy(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter());
     }
 
     @Override
