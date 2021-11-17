@@ -2,7 +2,7 @@ package qna.domain;
 
 import qna.CannotDeleteException;
 
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -10,9 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,21 +24,21 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String title;
+    @Embedded
+    private QuestionTitle title;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private final Deleted deleted = new Deleted();
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private final Answers answers = new Answers();
 
     protected Question() {
     }
@@ -51,8 +49,8 @@ public class Question extends BaseEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
-        this.contents = contents;
+        this.title = new QuestionTitle(title);
+        this.contents = new Contents(contents);
     }
 
     public Question writeBy(User writer) {
@@ -65,11 +63,11 @@ public class Question extends BaseEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.getAnswers();
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
+        answers.addAnswer(answer);
         answer.setQuestion(this);
     }
 
@@ -86,11 +84,11 @@ public class Question extends BaseEntity {
     }
 
     public String getContents() {
-        return contents;
+        return contents.getContents();
     }
 
     public void setContents(String contents) {
-        this.contents = contents;
+        this.contents.setContents(contents);
     }
 
     public User getWriter() {
@@ -98,11 +96,11 @@ public class Question extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.getDeleted();
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        this.deleted.setDeleted(deleted);
     }
 
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
@@ -125,9 +123,7 @@ public class Question extends BaseEntity {
     }
 
     private void deleteAnswers(User loginUser, List<DeleteHistory> deleteHistories) throws CannotDeleteException {
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.delete(loginUser));
-        }
+        deleteHistories.addAll(answers.deleteAnswers(loginUser));
     }
 
     @Override
@@ -141,5 +137,9 @@ public class Question extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public String getTitle() {
+        return title.getTitle();
     }
 }

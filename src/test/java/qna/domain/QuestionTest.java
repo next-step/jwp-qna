@@ -48,6 +48,7 @@ public class QuestionTest {
                 .orElseThrow(NoSuchElementException::new);
         assertAll(
                 () -> assertThat(actual.getWriter()).isEqualTo(user),
+                () -> assertThat(actual.getTitle()).isEqualTo("title1"),
                 () -> assertThat(actual.getContents()).isEqualTo("contents1")
         );
     }
