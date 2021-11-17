@@ -2,9 +2,6 @@ package qna.domain;
 
 import static qna.ErrorMessage.*;
 
-import qna.ErrorMessage;
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -12,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import qna.UnAuthorizedException;
 
 @Entity
 public class User extends BaseTime {
@@ -24,7 +23,7 @@ public class User extends BaseTime {
     @Column(name = "user_id", length = 20, nullable = false, unique = true)
     private String userId;
 
-    @Column(length= 50, nullable = false)
+    @Column(length = 50, nullable = false)
     private String email;
 
     @Column(length = 20, nullable = false)

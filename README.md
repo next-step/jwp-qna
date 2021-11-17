@@ -155,6 +155,141 @@ spring.jpa.show-sql=true
 2. `객체`에 ID값을 넣었다고 해서 저장시 해당번호로 저장되지 않는다.
    - 넣은 값을 실행하고 싶다면 `GeneratedValue` 삭제
    - 이유는 아래의 전략에 따라서 @Id 값을 할당한다.
-      
+   
 
+# Step2. 연관관계 맵핑 
+
+## 1. CaseCadeType
+|type|설명|
+|:---:|:---:|
+|ALL|상위 엔터티에서 하위 엔터티로 모든 작업을 전파|
+|PERSIST|하위 엔티티까지 영속성 전달(설정된 곳에서 저장이 일어나면 하위엔티티까지 저장)|
+|MERGE|하위 엔티티까지 병합 작업을 지속(테이블을 조회후 업데이트)|
+|REMOVE|하위 엔티티까지 제거 작업을 지속|
+|REFRESH|데이터베이스로부터 인스턴스 값을 다시 읽어 오기(새로고침)
+|DETACH|영속성 컨텍스트에서 엔티티 제거|
+
+
+## 1. 무엇인 문제였는가?
+
+1. 처음 `AnswerRepositoryTest`에 2가지의 테스트 케이스를 작성했다.
+2. 아래 테스트케이스를 보면 정상적으로 작동할 것 같지만 `전체테스트`와`개별로 테스트`했을 때의 결과 값이 달랐다 .
+3. `여러건을_저장할때_동일한_객체라면_동일한객체는_변경이_없다면_INSERT되지_않는다` 함수에서 
+   - 단위로 테스트시 2건, 전체로 테스트시 3건이이었다.
+```java
+public class AnswerRepositoryTest {
+
+   @Autowired
+   AnswerRepository answerRepository;
+
+   @Autowired
+   QuestionRepository questionRepository;
+
+   @Autowired
+   UserRepository userRepository;
+	
+   @BeforeEach
+   void setUp {
+      userRepository.save(JAVAJIGI);
+      userRepository.save(SANJIGI);
+      questionRepository.save(asList(Q1,Q2));
+   }
+   
+   @Test
+   @DisplayName("기대값을 3건을 예상했지만 결과는 2건이다.")
+   void 여러건을_저장할때_동일한_객체라면_동일한객체는_변경이_없다면_INSERT되지_않는다() {
+
+      answerRepository.save(A1);
+      answerRepository.save(A2);
+      answerRepository.save(A1);
+
+      List<Answer> expected = answerRepository.findAll();
+      Assertions.assertThat(expected.size()).isEqualTo(2);
+   }
+	
+}
+```
+
+## 원인은 무엇인가?
+### 전체 테스트 테스트케이스가 하나만 존재하는 경우
+```java
+   
+   public class AnswerRepositoryTest {
+      @Test
+      @DisplayName("기대값을 3건을 예상했지만 결과는 2건이다.")
+      void 여러건을_저장할때_동일한_객체라면_동일한객체는_변경이_없다면_INSERT되지_않는다() {
+      
+         answerRepository.save(A1);
+         answerRepository.save(A2);
+         answerRepository.save(A1);
+      
+         List<Answer> expected = answerRepository.findAll();
+         Assertions.assertThat(expected.size()).isEqualTo(2);
+      }
+   }
+```
+
+아래와 같이 두객체는 공유하고 있습니다. 
+
+![하나만가지고실행했을 때](src/main/resources/img/하나만가지고%20실행했을%20때%20.png)
+
+
+### 전체테스트 케이스가 두개가 있는경우 
+
+```java
+
+public class AnswerRepositoryTest {
+     @Test
+     void 입력된정보와_저장된정보가_동일한가() {
+
+        // when
+        answerRepository.save(A1);
+     }
+	
+	
+     @Test
+     @DisplayName("기대값을 3건을 예상했지만 결과는 2건이다.")
+     void 여러건을_저장할때_동일한_객체라면_동일한객체는_변경이_없다면_INSERT되지_않는다() {
+
+         answerRepository.save(A1);
+         answerRepository.save(A2);
+         answerRepository.save(A1);
+         
+         List<Answer> expected = answerRepository.findAll();
+         Assertions.assertThat(expected.size()).isEqualTo(2);
+   }
+}
+```
+
+아래와 같이 두 클래스는 각자의 해쉬코드를 가지게 됩니다.
+![하나만가지고실행했을 때](src/main/resources/img/두개를%20가지고%20실행했을%20때%20.png)
+
+
+#### 해결방법은 무엇인가? 
+- 처음 한개를 가지고 테스틑 했을 때는 두 객체간의 관계는 같은 주소값을 바라보고 있었습니다.
+- 하지만 `answerRepository.save(A1);`를 하기 위한 테스트 케이스를 하나 더 추가하면서 각자만의 주소값을 가지게 되었습니다.
+- 아직은 해결하지 못함 ..
+
+
+### 2. Answer는 영속성 컨텍스트가 되지 않았는데 왜 저장이 되는가? 
+   - `new Answer`는 영속성 컨텍스트화 되지 않은 상태인데 어떻게 해서 저장이 되는가
+```java
+    User javajigi = userRepository.save(JAVAJIGI);
+    Question question = new Question(null, "title1", "contents1").writeBy(javajigi);
+    question.addAnswer(new Answer(null, javajigi, question, "Answers Contents1"));
+    questions = questionRepository.saveAll(asList(question));
+```
+   - `new Answer`는 `caseCade`를 통해 저장이 되는 방식이다. 
+   - 기존에 `caseCade`를 설정하지 않아 `new Answer`가 저장되기를 바랬지만, 실제 DB에는 저장되지 않았다.
+   -  아래와 같이 `caseCade를 설정후 해당 값을 넣어주면 AnswerRepository를 사용 하지 않아도 아래의 엔티티까지 저장`된다.
+```java
+
+    @OneToMany(mappedBy = "question", cascade = ALL)
+    private List<Answer> answers = new ArrayList();
+
+    public void addAnswer(Answer answer) {
+        answer.toQuestion(this);
+        answers.add(answer);
+    }
+```
 

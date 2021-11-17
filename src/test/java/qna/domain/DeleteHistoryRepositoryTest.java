@@ -1,6 +1,6 @@
 package qna.domain;
 
-import static qna.domain.DeleteHistoryTest.*;
+import java.time.LocalDateTime;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,12 +10,26 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
 
-	@Autowired
-	private DeleteHistoryRepository deleteHistoryRepository;
+    @Autowired
+    private DeleteHistoryRepository deleteHistoryRepository;
 
-	@Test
-	void 저장된객체와_리턴하는객체는_동일하다() {
-		DeleteHistory save = deleteHistoryRepository.save(DELETE_HISTORY1);
-		Assertions.assertThat(save.equals(DELETE_HISTORY1)).isTrue();
-	}
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Test
+    void 엔티티맵핑_확인() {
+        // given
+        User javajigi = userRepository.save(UserTest.JAVAJIGI);
+        Question question = new Question("how to write name", "free");
+        questionRepository.save(question);
+
+        // when
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question, javajigi, LocalDateTime.now());
+        DeleteHistory expected = deleteHistoryRepository.save(deleteHistory);
+
+        Assertions.assertThat(expected.equals(deleteHistory)).isTrue();
+    }
 }

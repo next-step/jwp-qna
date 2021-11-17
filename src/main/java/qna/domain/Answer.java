@@ -1,15 +1,19 @@
 package qna.domain;
 
+import static javax.persistence.FetchType.*;
 import static qna.ErrorMessage.*;
 
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 import qna.QuestionNotFoundException;
 import qna.UnAuthorizedException;
@@ -28,11 +32,13 @@ public class Answer extends BaseTime {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User user;
 
     protected Answer() {
     }
@@ -42,7 +48,6 @@ public class Answer extends BaseTime {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException(USER_IS_NOT_NULL);
@@ -52,55 +57,34 @@ public class Answer extends BaseTime {
             throw new QuestionNotFoundException(QUESTION_NOT_FOUND);
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.id = id;
+        this.user = writer;
+        this.question = question;
         this.contents = contents;
     }
 
-
-
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.user.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
+        this.question = question;
     }
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public String getContents() {
+        return contents;
     }
 
     public void setDeleted(boolean deleted) {
@@ -108,13 +92,30 @@ public class Answer extends BaseTime {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Answer answer = (Answer)o;
+        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents,
+            answer.contents) && Objects.equals(question, answer.question) && Objects.equals(user,
+            answer.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contents, deleted, question, user);
+    }
+
+    @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            ", question=" + question +
+            ", user=" + user +
+            '}';
     }
 }
