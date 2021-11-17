@@ -1,32 +1,52 @@
 package qna.domain.question;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.domain.BaseTimeEntity;
 import qna.domain.answer.Answer;
+import qna.domain.answer.Answers;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.user.User;
+import qna.domain.vo.Contents;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
+@SQLDelete(sql = "UPDATE Question SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
+@Table(indexes = {
+        @Index(name = "question_deleted_index", columnList = "deleted"),
+})
 public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    @Column(columnDefinition = "longtext")
-    private String contents;
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @Embedded
+    private Contents contents;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-    private boolean deleted = false;
+
+    private boolean deleted = Boolean.FALSE;
+
+    @Embedded
+    private final Answers answers = Answers.of();
 
     protected Question() {
     }
@@ -36,43 +56,62 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question(Long id, String title, String contents) {
+        validateTitle(title);
         this.id = id;
         this.title = title;
-        this.contents = contents;
+        this.contents = Contents.of(contents);
     }
 
-    public Question(Long id, String title, String contents, boolean deleted) {
-        this(id, title, contents);
+    private void validateTitle(String title) {
+        if (Objects.isNull(title) || title.isEmpty()) {
+            throw new IllegalArgumentException("타이틀이 존재 하지 않습니다.");
+        }
+    }
+
+    public Question(String title, String contents, boolean deleted) {
+        this(title, contents);
         this.deleted = deleted;
     }
+
+    public List<DeleteHistory> deleteByUser(User loginUser) {
+        validateDeleteByUser(loginUser);
+        final List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(delete());
+        deleteHistories.addAll(answers.deleteAnswer(loginUser));
+        return deleteHistories;
+    }
+
+    private DeleteHistory delete() {
+        this.deleted = true;
+        return DeleteHistory.ofQuestion(this.id, this.writer);
+    }
+
+    private void validateDeleteByUser(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
 
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.equals(writer);
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
     }
 
+    public void removeAnswer(Answer answer) {
+        this.answers.remove(answer);
+    }
+
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
     }
 
     public User getWriter() {
@@ -83,8 +122,8 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public Answers getAnswers() {
+        return answers;
     }
 
     @Override
@@ -101,7 +140,9 @@ public class Question extends BaseTimeEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Question question = (Question) o;
 
@@ -112,4 +153,5 @@ public class Question extends BaseTimeEntity {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
 }

@@ -1,43 +1,57 @@
 package qna.domain.answer;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.BaseTimeEntity;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.question.Question;
 import qna.domain.user.User;
+import qna.domain.vo.Contents;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "answer")
+@SQLDelete(sql = "UPDATE Answer SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
+@Table(indexes = {
+        @Index(name = "answer_deleted_index", columnList = "deleted"),
+})
 public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    @Column(name = "question_id", insertable = false, updatable = false)
+    private Long questionId;
 
-    private boolean deleted = false;
+    @Embedded
+    private Contents contents;
+
+    private boolean deleted = Boolean.FALSE;
 
     protected Answer() {
     }
@@ -47,8 +61,14 @@ public class Answer extends BaseTimeEntity {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
+        validate(writer, question);
         this.id = id;
+        this.writer = writer;
+        this.question = question;
+        this.contents = Contents.of(contents);
+    }
 
+    private void validate(User writer, Question question) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -56,31 +76,58 @@ public class Answer extends BaseTimeEntity {
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
-
-        this.writer = writer;
-        this.question = question;
-        this.contents = contents;
     }
 
-    public Answer(Long id, User writer, Question question, String contents, boolean deleted) {
-        this(id, writer, question, contents);
+    public Answer(User writer, Question question, String contents, boolean deleted) {
+        this(writer, question, contents);
         this.deleted = deleted;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
+        if (this.question != null && !this.question.equals(question)) {
+            this.getQuestion().removeAnswer(this);
+        }
         this.question = question;
+        question.getAnswers().add(this);
+    }
+
+    private DeleteHistory delete() {
+        this.deleted = true;
+        return DeleteHistory.ofAnswer(this.id, this.writer);
+    }
+
+    public void userClear() {
+        this.writer = null;
+    }
+
+    public void updateWriter(User target) {
+        this.writer.update(target);
+    }
+
+    public boolean matchContent(String content) {
+        if (content == null || content.isEmpty()) {
+            return false;
+        }
+        return this.contents.equals(Contents.of(content));
+    }
+
+    public DeleteHistory deleteByUser(User loginUser) {
+        validateByUser(loginUser);
+        return delete();
+    }
+
+    private void validateByUser(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public User getWriter() {
@@ -88,7 +135,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public Long getQuestionId() {
-        return question.getId();
+        return this.questionId;
     }
 
     public Question getQuestion() {
@@ -96,15 +143,11 @@ public class Answer extends BaseTimeEntity {
     }
 
     public String getContents() {
-        return contents;
+        return contents.getValue();
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -126,8 +169,8 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writer.getId() +
-                ", questionId=" + question.getId() +
+                ", writerId=" + (Objects.isNull(writer) ? null : writer.getId()) +
+                ", questionId=" + (Objects.isNull(question) ? null : question.getId()) +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
