@@ -26,7 +26,7 @@ public class User extends BaseTimeEntity {
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -119,10 +119,10 @@ public class User extends BaseTimeEntity {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 
