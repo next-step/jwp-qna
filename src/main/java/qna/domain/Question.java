@@ -4,7 +4,6 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,8 +21,7 @@ public class Question extends BaseEntity{
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    List<Answer> answers = new ArrayList<>();
+    AnswersRelatedQuestion answersRelatedQuestion = new AnswersRelatedQuestion();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -76,11 +74,11 @@ public class Question extends BaseEntity{
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answersRelatedQuestion.getValue();
     }
 
     public void addAnswer(Answer answer) {
-        this.answers.add(answer);
+        this.answersRelatedQuestion.add(answer);
         answer.setQuestion(this);
     }
 
@@ -88,9 +86,7 @@ public class Question extends BaseEntity{
         validateWriter(loginUser);
         List<DeleteHistory> deleteHistories = new LinkedList<>();
 
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.deleteRelatedAnswerAndCreateDeleteHistory(loginUser));
-        }
+        deleteHistories.addAll(answersRelatedQuestion.deleteRelatedAnswersAndCreateDeleteHistories(loginUser));
 
         this.deleted = true;
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
