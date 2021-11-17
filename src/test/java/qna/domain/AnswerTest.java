@@ -7,10 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -134,6 +136,23 @@ public class AnswerTest {
                 () -> assertThat(questionFromRepo.getContents()).isEqualTo("contents1"),
                 () -> assertThat(questionFromRepo.getAnswers().size()).isZero()
         );
+    }
+
+    @DisplayName("answer delete with user 테스트")
+    @Test
+    void removeAnswerWithUserTest() throws CannotDeleteException {
+        assertThat(answerRepository.findAll().size()).isEqualTo(1);
+        answer.delete(user);
+        assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId())).isEqualTo(Optional.empty());
+    }
+
+    @DisplayName("answer delete with other user exception 테스트")
+    @Test
+    void removeAnswerWithOtherUserExceptionTest() {
+        assertThatThrownBy(() -> {
+            final User otherUser = userRepository.save(UserTest.LEWISSEO);
+            answer.delete(otherUser);
+        }).isInstanceOf(CannotDeleteException.class);
     }
 
     @AfterEach
