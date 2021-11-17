@@ -12,17 +12,27 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
     private Long contentId;
-    private Long deletedById;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id")
+    private User deletedByUser;
     private LocalDateTime createDate;
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedByUserId, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedByUserId;
+        this.deletedByUser = deletedByUser;
         this.createDate = createDate;
     }
 
     protected DeleteHistory() {
+    }
+
+    public User getDeletedByUser() {
+        return deletedByUser;
+    }
+
+    public void setDeletedByUser(User deletedByUser) {
+        this.deletedByUser = deletedByUser;
     }
 
     public Long getId() {
@@ -34,12 +44,12 @@ public class DeleteHistory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(getId(), that.getId()) && contentType == that.contentType && Objects.equals(contentId, that.contentId) && Objects.equals(deletedById, that.deletedById) && Objects.equals(createDate, that.createDate);
+        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(contentId, that.contentId) && Objects.equals(getDeletedByUser(), that.getDeletedByUser()) && Objects.equals(createDate, that.createDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), contentType, contentId, deletedById, createDate);
+        return Objects.hash(id, contentType, contentId, deletedByUser, createDate);
     }
 
     @Override
@@ -48,7 +58,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deledtedUser=" + deletedByUser +
                 ", createDate=" + createDate +
                 '}';
     }
