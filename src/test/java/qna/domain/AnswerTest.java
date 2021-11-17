@@ -16,4 +16,13 @@ public class AnswerTest {
 
         assertThat(A1.isDeleted()).isTrue();
     }
+
+    @DisplayName("답변 삭제 시 DeleteHistory에 이력정보객체 생성.")
+    @Test
+    void deleteHistoryToAnswer() {
+        DeleteHistory deleteHistory = A1.delete();
+
+        assertThat(deleteHistory).isNotNull();
+        assertThat(deleteHistory).isEqualTo(new DeleteHistory(ContentType.ANSWER, A1.getId(), UserTest.JAVAJIGI));
+    }
 }

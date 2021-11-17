@@ -51,7 +51,7 @@ public class Question extends BaseTimeEntity {
         return answers;
     }
 
-    public List<Answer> getDeletedFalse(){
+    public List<Answer> getDeletedFalse() {
         return answers.stream()
                 .filter(item -> item.isDeleted())
                 .collect(Collectors.toList());
@@ -62,7 +62,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if(!answers.contains(answer)){
+        if (!answers.contains(answer)) {
             answers.add(answer);
         }
     }
