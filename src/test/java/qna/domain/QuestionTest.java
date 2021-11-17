@@ -123,31 +123,6 @@ public class QuestionTest {
         assertThatThrownBy(() -> question.deleteBy(writer))
             .isInstanceOf(CannotDeleteException.class);
 
-        /*
-            Question객체와 첫번째 Answer객체는 로그인 유저가 작성한 것이기 때문에 유효성 검사를 통과했고, 두번째 Answer 객체만 다른 유저가 작성
-            한 것이므로, 앞의 2객체의 deleted 필드는 이미 true로 변경되었기 때문에 혹시 삭제가 되면 어떡하지?라는 마음으로 테스트 코드를 작성했습니다.
-
-            처음엔 아래와 같은 코드를 추가했는데 테스트가 실패하길래 '아 객체 상태는 이미 바뀌어서 어떻게 안되는 구나. 그래도 DB에는 안날라가겠지'라고
-            생각했습니다.
-            assertThat(question.isDeleted()).isFalse();
-            assertThat(answer.isDeleted()).isFalse();
-
-            그래서 아래와 같은 코드를 추가했는데 또 실패했습니다. 근데 지금 생각해보니 하나의 Transaction안에서 영속성 컨텍스트를 공유하다보니 어차피
-            똑같은 게 나오는 거였습니다.
-            Question refreshedQuestion = questions.findById(question.getId()).get();
-            Answer refreshedAnswer = answers.findById(answer.getId()).get();
-            assertThat(refreshedQuestion.isDeleted()).isFalse();
-            assertThat(refreshedAnswer.isDeleted()).isFalse();
-
-            제가 의문인 건, 저 2가지 코드 중 하나를 테스트 코드에 추가하면 콘솔에 업데이트 쿼리가 찍힌다는 겁니다;; 익셉션이 발생한 범위 밖에서 엔티티
-            객체가 다시 참조되면서 익셉션과 관련 없다고 JPA가 판단하는 걸까요? 만약 그렇다고 한다면 실제 코드에서는 상관 없을 것 같네요. 엔티티가
-            익셉션 범위 밖에 있는 있을 일은 없을테니까요.(catch하지 않고 throw하는 게 맞다고 생각해서입니다.)
-        */
-
-        // 아래 주석을 풀어보시면 update 쿼리를 확인하실 수 있습니다.
-        // assertThat(question.isDeleted()).isFalse();
-        // assertThat(answer.isDeleted()).isFalse();
-
         entityManager.clear();
         Question refreshedQuestion = questions.findById(question.getId()).get();
         Answer refreshedAnswer = answers.findById(answer.getId()).get();
