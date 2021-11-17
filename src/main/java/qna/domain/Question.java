@@ -14,7 +14,7 @@ public class Question extends BaseEntity{
     @Lob
     private String contents;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writerId")
+    @JoinColumn(name = "writer_Id")
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
