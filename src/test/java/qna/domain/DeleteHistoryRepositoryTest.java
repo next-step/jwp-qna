@@ -16,6 +16,7 @@ import qna.domain.deleteHistory.DeleteContentData;
 import qna.domain.qna.Answer;
 import qna.domain.deleteHistory.DeleteHistory;
 import qna.domain.deleteHistory.ContentType;
+import qna.domain.qna.Contents;
 import qna.domain.qna.Question;
 import qna.domain.qna.AnswerRepository;
 import qna.domain.deleteHistory.DeleteHistoryRepository;
@@ -44,13 +45,14 @@ public class DeleteHistoryRepositoryTest {
     Answer ANSWER;
     DeleteHistory ANSWER_HISTORY;
     DeleteHistory QUESTION_HISTORY;
+    Contents CONTENTS = Contents.of("Answers Contents1");
 
     @BeforeEach
     public void setUp() {
         USER = users.save(UserTest.createUser("answerJavajigi", "password", "javajigi",
             new Email("javajigi@slipp.net")));
         QUESTION = questions.save(new Question("title1", "contents1").writeBy(USER));
-        ANSWER = answers.save(new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1"));
+        ANSWER = answers.save(new Answer(QUESTION.getWriter(), QUESTION, CONTENTS));
 
         ANSWER_HISTORY = DeleteHistory.OfQuestion(QUESTION, QUESTION.getWriter());
         QUESTION_HISTORY = DeleteHistory.OfAnswer(ANSWER, ANSWER.getWriter());

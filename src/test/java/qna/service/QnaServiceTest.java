@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import qna.domain.qna.Answer;
 import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.qna.Contents;
 import qna.domain.qna.Question;
 import qna.domain.qna.AnswerRepository;
 import qna.domain.qna.QuestionRepository;
@@ -45,7 +46,7 @@ class QnaServiceTest {
     @BeforeEach
     public void setUp() throws Exception {
         question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-        answer = new Answer(UserTest.JAVAJIGI, question, "Answers Contents1");
+        answer = new Answer(UserTest.JAVAJIGI, question, Contents.of("Answers Contents1"));
         question.addAnswer(answer);
     }
 
@@ -85,7 +86,8 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Answer answer2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
+        Answer answer2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1,
+            Contents.of("Answers Contents1"));
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(

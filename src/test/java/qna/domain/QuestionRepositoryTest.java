@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.common.exception.CannotDeleteException;
 import qna.domain.qna.Answer;
+import qna.domain.qna.Contents;
 import qna.domain.qna.Question;
 import qna.domain.qna.AnswerRepository;
 import qna.domain.qna.QuestionRepository;
@@ -30,8 +31,9 @@ public class QuestionRepositoryTest {
     @Autowired
     UserRepository users;
 
-    private Question QUESTION;
-    private User USER;
+    Question QUESTION;
+    User USER;
+    Contents CONTENTS = Contents.of("Answers Contents1");
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -78,7 +80,7 @@ public class QuestionRepositoryTest {
     @DisplayName("getAnswers 메소드를 통해 답변 목록 확인")
     void getAnswers() {
         // given
-        Answer expect = new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1");
+        Answer expect = new Answer(QUESTION.getWriter(), QUESTION, CONTENTS);
         QUESTION.addAnswer(expect);
         Question question = questions.save(QUESTION);
 
@@ -94,7 +96,7 @@ public class QuestionRepositoryTest {
     void deleted_and_answer_delete() {
         // given
         Question saveQuestion = questions.save(QUESTION);
-        Answer answer1 = new Answer(saveQuestion.getWriter(), saveQuestion, "Answers Contents2");
+        Answer answer1 = new Answer(saveQuestion.getWriter(), saveQuestion, CONTENTS);
         saveQuestion.addAnswer(answer1);
 
         // when
@@ -143,8 +145,8 @@ public class QuestionRepositoryTest {
     @DisplayName("자신의 질문 삭제, - 질문자가 답변한 답변만 있는 케이스")
     void deleted_자신의_질문_답변_삭제_성공() {
         // given
-        new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1");
-        new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents2");
+        new Answer(QUESTION.getWriter(), QUESTION, CONTENTS);
+        new Answer(QUESTION.getWriter(), QUESTION, CONTENTS);
         questions.save(QUESTION);
 
         // when
@@ -156,8 +158,8 @@ public class QuestionRepositoryTest {
     @DisplayName("자신의 질문 삭제, - 다른 유저 답변이 있는 케이스")
     void deleted_자신의_질문_삭제_실패() {
         // given
-        new Answer(UserTest.JAVAJIGI, QUESTION, "Answers Contents1");
-        new Answer(UserTest.SANJIGI, QUESTION, "Answers Contents2");
+        new Answer(UserTest.JAVAJIGI, QUESTION, CONTENTS);
+        new Answer(UserTest.SANJIGI, QUESTION, CONTENTS);
         questions.save(QUESTION);
 
         assertThatThrownBy(() -> {

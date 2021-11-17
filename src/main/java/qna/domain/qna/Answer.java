@@ -1,5 +1,6 @@
 package qna.domain.qna;
 
+import javax.persistence.Embedded;
 import qna.common.exception.CannotDeleteException;
 import qna.common.exception.NotFoundException;
 import qna.common.exception.UnAuthorizedException;
@@ -14,7 +15,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import qna.domain.BaseEntity;
@@ -38,9 +38,8 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    @Column(name = "contents")
-    private String contents;
+    @Embedded
+    Contents contents;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = Boolean.FALSE;
@@ -48,7 +47,7 @@ public class Answer extends BaseEntity {
     protected Answer() {
     }
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer(User writer, Question question, Contents contents) {
         validCanWritten(writer, question);
         question.addAnswer(this);
 
@@ -102,7 +101,7 @@ public class Answer extends BaseEntity {
             "id=" + id +
             ", writerId=" + writer.getId() +
             ", questionId=" + question.getId() +
-            ", contents='" + contents + '\'' +
+            ", contents='" + contents.getContents() + '\'' +
             ", deleted=" + deleted +
             '}';
     }

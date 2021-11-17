@@ -13,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -33,12 +32,8 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", length = 100, nullable = false)
-    private String title;
-
-    @Lob
-    @Column(name = "contents")
-    private String contents;
+    @Embedded
+    private QuestionPost questionPost;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"), nullable = false)
@@ -54,9 +49,9 @@ public class Question extends BaseEntity {
     }
 
     public Question(String title, String contents) {
-        this.title = title;
-        this.contents = contents;
+        this.questionPost = QuestionPost.of(title, contents);
     }
+
 
     public Question writeBy(User writer) {
         validCanWritten(writer);
@@ -115,9 +110,9 @@ public class Question extends BaseEntity {
     public String toString() {
         return "Question{" +
             "id=" + id +
-            ", title='" + title + '\'' +
-            ", contents='" + contents + '\'' +
-            ", writerId=" + writer.getId() +
+            ", questionPost=" + questionPost +
+            ", writer=" + writer +
+            ", answers=" + answers +
             ", deleted=" + deleted +
             '}';
     }
@@ -133,13 +128,13 @@ public class Question extends BaseEntity {
         Question question = (Question) o;
         return deleted == question.deleted
             && Objects.equals(id, question.id)
-            && Objects.equals(title, question.title)
-            && Objects.equals(contents, question.contents)
-            && Objects.equals(writer, question.writer);
+            && Objects.equals(questionPost, question.questionPost)
+            && Objects.equals(writer, question.writer)
+            && Objects.equals(answers, question.answers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writer, answers, deleted);
+        return Objects.hash(id, questionPost, writer, answers, deleted);
     }
 }

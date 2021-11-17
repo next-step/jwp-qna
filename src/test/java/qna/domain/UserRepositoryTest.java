@@ -27,8 +27,8 @@ public class UserRepositoryTest {
     @Autowired
     UserRepository users;
 
-    private User USER1;
-    private User USER2;
+    User USER1;
+    User USER2;
 
     @BeforeEach
     public void setUp() throws Exception {

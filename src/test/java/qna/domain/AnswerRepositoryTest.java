@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.common.exception.CannotDeleteException;
 import qna.domain.qna.Answer;
 import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.qna.Contents;
 import qna.domain.qna.Question;
 import qna.domain.qna.AnswerRepository;
 import qna.domain.qna.QuestionRepository;
@@ -43,13 +44,14 @@ public class AnswerRepositoryTest {
     Question QUESTION;
     Answer ANSWER;
     User USER;
+    Contents CONTENTS = Contents.of("Answers Contents1");
 
     @BeforeEach
     public void setUp() throws Exception {
         USER = users.save(UserTest.createUser("answerJavajigi", "password", "javajigi",
             new Email("javajigi@slipp.net")));
         QUESTION = questions.save(new Question("title1", "contents1").writeBy(USER));
-        ANSWER = new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1");
+        ANSWER = new Answer(QUESTION.getWriter(), QUESTION, CONTENTS);
     }
 
     @Test

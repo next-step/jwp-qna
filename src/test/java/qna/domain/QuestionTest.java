@@ -11,12 +11,13 @@ import org.junit.jupiter.api.Test;
 import qna.common.exception.UnAuthorizedException;
 import qna.domain.qna.Answer;
 import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.qna.Contents;
 import qna.domain.qna.Question;
 import qna.domain.user.User;
 
 public class QuestionTest {
 
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(
+    public static final Question Q1 = new Question("title1", "Answers Contents1").writeBy(
         UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
@@ -46,7 +47,7 @@ public class QuestionTest {
     void addAnswer() {
         // given
         Question question = Q1;
-        Answer expect = new Answer(UserTest.SANJIGI, question, "답변내용");
+        Answer expect = new Answer(UserTest.SANJIGI, question, Contents.of("답변내용"));
 
         // when
         question.addAnswer(expect);
