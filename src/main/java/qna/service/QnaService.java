@@ -27,18 +27,22 @@ public class QnaService {
     }
 
     @Transactional(readOnly = true)
-    public Question findQuestionById(Long id) {
+    Question findQuestionById(Long id) {
         return questionRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(NotFoundException::new);
     }
 
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
+        //서비스레이어에 딱 3줄로 나눌수 있다. 객체들로 책임이 분산될수 있다.
+
         Question question = findQuestionById(questionId);
+
         if (!question.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
+        //일급콜렉션을 만들어서 answers에서 물어본다.
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
         for (Answer answer : answers) {
             if (!answer.isOwner(loginUser)) {

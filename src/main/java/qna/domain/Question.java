@@ -3,6 +3,7 @@ package qna.domain;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "question")
@@ -50,36 +51,32 @@ public class Question extends BaseTimeEntity {
         return answers;
     }
 
+    public List<Answer> getDeletedFalse(){
+        return answers.stream()
+                .filter(item -> item.isDeleted())
+                .collect(Collectors.toList());
+    }
+
     public boolean isOwner(User writer) {
         return this.writer.matchId(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
+        if(!answers.contains(answer)){
+            answers.add(answer);
+        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public User getWriter() {
@@ -104,5 +101,9 @@ public class Question extends BaseTimeEntity {
                 ", writerId=" + this.writer.getId() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public void delete() {
+        deleted = true;
     }
 }
