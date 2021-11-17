@@ -4,7 +4,7 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -12,11 +12,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -34,11 +32,11 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private final Deleted deleted = new Deleted();
 
     protected Answer() {
     }
@@ -54,7 +52,7 @@ public class Answer extends BaseEntity {
 
         this.writer = writer;
         changeQuestion(question);
-        this.contents = contents;
+        this.contents = new Contents(contents);
     }
 
     public boolean isOwner(User writer) {
@@ -92,19 +90,19 @@ public class Answer extends BaseEntity {
     }
 
     public String getContents() {
-        return contents;
+        return contents.getContents();
     }
 
     public void setContents(String contents) {
-        this.contents = contents;
+        this.contents.setContents(contents);
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.getDeleted();
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        this.deleted.setDeleted(deleted);
     }
 
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
