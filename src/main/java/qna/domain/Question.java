@@ -51,7 +51,7 @@ public class Question extends BaseTimeEntity {
         return answers;
     }
 
-    public List<Answer> getDeletedFalse() {
+    private List<Answer> nonDeletedAnswers() {
         return answers.stream()
                 .filter(item -> item.isDeleted())
                 .collect(Collectors.toList());
@@ -105,6 +105,10 @@ public class Question extends BaseTimeEntity {
 
     public DeleteHistory delete() {
         deleted = true;
+        Answers nonDeletedAnswers =new Answers(nonDeletedAnswers());
+
+
+
         return new DeleteHistory(ContentType.QUESTION, id, writer);
     }
 }

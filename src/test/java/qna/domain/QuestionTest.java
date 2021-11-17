@@ -26,4 +26,14 @@ public class QuestionTest {
         assertThat(deleteHistory).isEqualTo(new DeleteHistory(ContentType.QUESTION, Q1.getId(), UserTest.JAVAJIGI));
 
     }
+
+    @DisplayName("질문 삭제 시 답변도 삭제해야함.")
+    @Test
+    void deleteWithAnswer() {
+        Q1.addAnswer(AnswerTest.A1);
+        Q1.delete();
+
+        assertThat(AnswerTest.A1.isDeleted()).isTrue();
+
+    }
 }
