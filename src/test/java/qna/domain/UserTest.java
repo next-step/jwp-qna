@@ -52,7 +52,7 @@ public class UserTest {
     @DisplayName("user userId로 찾기")
     @Test
     void findUserByIdTest() {
-        assertThat(userRepository.findByUserId("javajigi")).isNotNull();
+        assertThat(userRepository.findByUserId(new UserId("javajigi"))).isNotNull();
     }
 
     @DisplayName("user 수정")
