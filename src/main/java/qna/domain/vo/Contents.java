@@ -46,4 +46,11 @@ public class Contents {
     public int hashCode() {
         return contents != null ? contents.hashCode() : 0;
     }
+
+    @Override
+    public String toString() {
+        return "Contents{" +
+                "contents='" + contents + '\'' +
+                '}';
+    }
 }
