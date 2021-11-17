@@ -12,9 +12,13 @@ public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questions;
 
+    @Autowired
+    private UserRepository users;
+
     @Test
     void save() {
-        final Question expected = QuestionTest.Q1;
+        final User javajigi = users.save(UserTest.JAVAJIGI);
+        final Question expected = QuestionTest.Q1.writeBy(javajigi);
         final Question actual = questions.save(expected);
 
         assertAll(
@@ -25,9 +29,10 @@ public class QuestionRepositoryTest {
 
     @Test
     void findByContentsContainingTest() {
-        String expected = QuestionTest.Q1.getContents();
-        questions.save(QuestionTest.Q1);
-        String actual = questions.findByContentsContaining(expected).getContents();
+        final User javajigi = users.save(UserTest.JAVAJIGI);
+        final String expected = questions.save(QuestionTest.Q1.writeBy(javajigi)).getContents();;
+
+        final String actual = questions.findByContentsContaining(expected).getContents();
         assertThat(actual).isEqualTo(expected);
     }
 

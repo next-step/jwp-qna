@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +10,15 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
-public class AnswerRepositoryTest {
+class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answers;
+
     @Autowired
     private QuestionRepository questions;
+
+    @Autowired
+    private UserRepository users;
 
     @Test
     void test() {
@@ -21,7 +26,12 @@ public class AnswerRepositoryTest {
 
     @Test
     void save() {
+        final User javajigi = users.save(UserTest.JAVAJIGI);
+        final Question q1 = questions.save(QuestionTest.Q1.writeBy(javajigi));
         final Answer expected = AnswerTest.A1;
+
+        expected.setQuestion(q1);
+        expected.setWriter(javajigi);
         final Answer actual = answers.save(expected);
 
         assertAll(
@@ -32,17 +42,37 @@ public class AnswerRepositoryTest {
 
     @Test
     void findByContentsContainingTest() {
-        String expected = AnswerTest.A1.getContents();
-        answers.save(new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, expected));
-        String actual = answers.findByContentsContaining(expected).getContents();
-        assertThat(actual).isEqualTo(expected);
+        // given
+        final User javajigi = users.save(UserTest.JAVAJIGI);
+        final Question q1 = questions.save(QuestionTest.Q1.writeBy(javajigi));
+        final Answer a1 = AnswerTest.A1;
+        a1.setQuestion(q1);
+        a1.setWriter(javajigi);
+
+        final Answer expected = answers.save(a1);
+
+        final String expectedSContents = a1.getContents();
+
+        // when
+        String actual = answers.findByContentsContaining(expectedSContents).getContents();
+
+        // then
+        assertThat(actual).isEqualTo(expected.getContents());
     }
 
     @Test
     void getQuestionTest() {
-        answers.save(AnswerTest.A1);
-        Answer A1 = answers.findByContentsContaining(AnswerTest.A1.getContents());
+        // given
+        final User javajigi = users.save(UserTest.JAVAJIGI);
+        final Question q1 = questions.save(QuestionTest.Q1.writeBy(javajigi));
+        AnswerTest.A1.setWriter(javajigi);
+        AnswerTest.A1.setQuestion(q1);
+        final Answer a1 = answers.save(AnswerTest.A1);
 
-        assertThat(A1.getQuestion()).isEqualTo(QuestionTest.Q1);
+        // when
+        Answer answer = answers.findByContentsContaining(a1.getContents());
+
+        // then
+        assertThat(answer.getQuestion()).isEqualTo(q1);
     }
 }
