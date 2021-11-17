@@ -7,6 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,10 +15,11 @@ import java.util.stream.Collectors;
 @Embeddable
 public class Answers {
 
+    @OrderBy(value = "deleted DESC")
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "question")
     private final List<Answer> answers = new ArrayList<>();
 
-    private Answers() {
+    protected Answers() {
     }
 
     private Answers(List<Answer> answers) {
