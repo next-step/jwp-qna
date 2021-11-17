@@ -31,7 +31,7 @@ public class User {
     @Column
     private LocalDateTime updateAt;
 
-    @Column(name = "user_id", length = 20, unique = true)
+    @Column(name = "user_id", length = 20, nullable = false, unique = true)
     private String userId;
 
     // Arguments가 없는 Default Constructor 생성
