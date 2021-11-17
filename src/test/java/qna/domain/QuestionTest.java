@@ -52,7 +52,7 @@ public class QuestionTest {
     }
 
     @Test
-    void 연관관계_유저() {
+    void 연관관계_유저_조회() {
         em.flush();
         em.clear();
         User foundUser = userRepository.findById(user1.getId()).get();
@@ -63,7 +63,7 @@ public class QuestionTest {
     }
 
     @Test
-    void 연관관계_답변() {
+    void 연관관계_답변_조회() {
         Answer savedAnswer = answerRepository.save(answer1);
         question1.addAnswer(savedAnswer);
         em.flush();

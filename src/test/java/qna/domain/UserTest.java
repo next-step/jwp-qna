@@ -55,7 +55,7 @@ public class UserTest {
     }
 
     @Test
-    void 연관관계_답변() {
+    void 연관관계_답변_조회() {
         questionRepository.save(question1);
         Answer savedAnswer = answerRepository.save(answer1);
         user1.addAnswer(savedAnswer);
@@ -66,7 +66,7 @@ public class UserTest {
     }
 
     @Test
-    void 연관관계_질문() {
+    void 연관관계_질문_조회() {
         Question savedQuestion = questionRepository.save(question1);
         user1.addAQuestion(savedQuestion);
         em.flush();
@@ -76,7 +76,7 @@ public class UserTest {
     }
 
     @Test
-    void 연관관계_삭제히스토리() {
+    void 연관관계_삭제히스토리_조회() {
         Question savedQuestion = questionRepository.save(question1);
         DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.QUESTION, savedQuestion.getId(), user1, LocalDateTime.now()));
         user1.addDeleteHistory(savedDeleteHistory);

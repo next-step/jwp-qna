@@ -50,7 +50,7 @@ public class AnswerTest {
     }
 
     @Test
-    void 연관관계_유저() {
+    void 연관관계_유저_조회() {
         user1.addAnswer(answer1);
         userRepository.save(user1);
         assertAll(
@@ -60,7 +60,7 @@ public class AnswerTest {
     }
 
     @Test
-    void 연관관계_질문() {
+    void 연관관계_질문_조회() {
         Question savedQuestion = questionRepository.save(question1);
         savedQuestion.addAnswer(answer1);
         assertAll(
