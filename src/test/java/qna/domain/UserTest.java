@@ -16,22 +16,21 @@ public class UserTest {
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository users;
 
     @AfterEach
     void tearDown() {
-        userRepository.deleteAll();
+        users.deleteAll();
     }
 
     @Test
     void save() {
         User expected = new User("javajigi", "password", "name", "javajigi@slipp.net");
 
-        User actual = userRepository.save(expected);
+        User actual = users.save(expected);
 
         assertThat(actual.getId()).isNotNull();
-        assertThat(actual.getUserId()).isEqualTo(expected.getUserId());
-        assertThat(actual.getPassword()).isEqualTo(expected.getPassword());
+        assertThat(actual.getAccount()).isEqualTo(expected.getAccount());
         assertThat(actual.equalsNameAndEmail(expected)).isTrue();
     }
 
@@ -40,31 +39,19 @@ public class UserTest {
     void identity() {
         User expected = saveNewDefaultUser();
 
-        User actual = userRepository.findById(expected.getId()).get();
+        User actual = users.findById(expected.getId()).get();
 
         assertThat(actual == expected).isTrue();
-    }
-
-    @Test
-    @DisplayName("JPA 변경감지로 인한 업데이트 기능 테스트")
-    void update() {
-        User expected = saveNewDefaultUser();
-        expected.setName("임민석");
-        expected.setEmail("minseoklim@slipp.net");
-
-        User actual = userRepository.findById(expected.getId()).get();
-
-        assertThat(actual.equalsNameAndEmail(expected)).isTrue();
     }
 
     @Test
     @DisplayName("ID로 삭제 후, 조회가 되지 않는지 테스트")
     void delete() {
         User expected = saveNewDefaultUser();
-        userRepository.deleteById(expected.getId());
+        users.deleteById(expected.getId());
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(
-            () -> userRepository.findById(expected.getId()).get()
+            () -> users.findById(expected.getId()).get()
         );
     }
 
@@ -72,13 +59,13 @@ public class UserTest {
     void findByUserId() {
         User expected = saveNewDefaultUser();
 
-        User actual = userRepository.findByUserId(expected.getUserId()).get();
+        User actual = users.findByAccount(expected.getAccount()).get();
 
         assertThat(actual == expected).isTrue();
     }
 
     private User saveNewDefaultUser() {
         User defaultUser = new User("javajigi", "password", "name", "javajigi@slipp.net");
-        return userRepository.save(defaultUser);
+        return users.save(defaultUser);
     }
 }
