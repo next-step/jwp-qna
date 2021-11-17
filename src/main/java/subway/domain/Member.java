@@ -1,6 +1,7 @@
 package subway.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import org.hibernate.annotations.Where;
 
 @Entity
 public class Member {
@@ -18,16 +20,36 @@ public class Member {
 
     private String name;
 
-    @OneToMany // (1) 때로는 정답일때가 있다.
-    @JoinColumn(name = "member_id")
-    // (2) -> OneToMany 에서는  Favorite 테이블에 member_id 컬럼이 생성된다, favorite 는 연관관계를 알지 못하는 단점이 있다.
-    private List<Favorite> favorites = new ArrayList<>(); // (3)
+    @OneToMany
+    @JoinColumn(name = "member_id", updatable = false)
+    @Where(clause = "deleted = false")
+    private final List<Favorite> favorites = new ArrayList<>();
+
+    protected Member() {
+    }
 
     public Member(String name) {
         this.name = name;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public void addFavorite(Favorite favorite) {
-        favorites.add(favorite);
+        this.favorites.add(favorite);
+    }
+
+    public List<Favorite> getFavorites() {
+        return Collections.unmodifiableList(favorites);
+    }
+
+    public void removeFavorite(Favorite removeFavorite) {
+        this.favorites.remove(removeFavorite);
+        removeFavorite.delete();
     }
 }
