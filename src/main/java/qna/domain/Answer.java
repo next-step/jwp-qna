@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -114,7 +113,7 @@ public class Answer extends BaseEntity {
 
     private DeleteHistory deleteAnswer() {
         this.deleted.delete();
-        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+        return DeleteHistory.ofAnswer(id, writer);
     }
 
     @Override

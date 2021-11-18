@@ -111,7 +111,7 @@ public class Question extends BaseEntity {
 
     private void deleteQuestion(List<DeleteHistory> deleteHistories) {
         this.deleted.delete();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.add(DeleteHistory.ofQuestion(id, writer));
     }
 
     private void deleteAnswers(User loginUser, List<DeleteHistory> deleteHistories) throws CannotDeleteException {

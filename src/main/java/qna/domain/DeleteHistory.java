@@ -22,18 +22,19 @@ public class DeleteHistory {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private ContentType contentType;
+    private final ContentType contentType;
 
     @Embedded
-    private DeleteHistoryContentId contentId;
+    private final DeleteHistoryContentId contentId;
 
     @ManyToOne
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
-    private User deletedBy;
+    private final User deletedBy;
 
     private LocalDateTime createDate = LocalDateTime.now();
 
-    protected DeleteHistory() {
+    protected DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
+        this(contentType, contentId, deletedBy, LocalDateTime.now());
     }
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
@@ -41,6 +42,14 @@ public class DeleteHistory {
         this.contentId = new DeleteHistoryContentId(contentId);
         this.deletedBy = deletedBy;
         this.createDate = createDate;
+    }
+
+    public static DeleteHistory ofQuestion(Long contentId, User deletedBy) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deletedBy);
+    }
+
+    public static DeleteHistory ofAnswer(Long contentId, User deletedBy) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deletedBy);
     }
 
     public Long getId() {
