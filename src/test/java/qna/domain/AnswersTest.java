@@ -11,14 +11,14 @@ import org.junit.jupiter.api.Test;
 
 import qna.CannotDeleteException;
 
-public class AnswersTest extends QnATest {
+public class AnswersTest {
 
     @Test
     void 단건_저장_확인() {
         // given
-        User user = new User(USER_A, PASSWORD, USER_A, USER_A_EMAIL);
-        Question question = new Question(TITLE_1, CONTENTS_1).writeBy(user);
-        Answer firstAnswer = new Answer(user, question, CONTENTS_1);
+        User user = new User("seunghoona", "password", "username", "email");
+        Question question = new Question("title", "content").writeBy(user);
+        Answer firstAnswer = new Answer(user, question, "answer");
 
         // when
         Answers expectedAnswers = new Answers();
@@ -31,11 +31,11 @@ public class AnswersTest extends QnATest {
     @Test
     void 다건_저장_확인() {
         // given
-        User user = new User(USER_A, PASSWORD, USER_A, USER_A_EMAIL);
-        Question question = new Question(TITLE_1, CONTENTS_1).writeBy(user);
-        Answer firstAnswer = new Answer(user, question, CONTENTS_1);
-        Answer secondAnswer = new Answer(user, question, CONTENTS_2);
-        Answer thirdAnswer = new Answer(user, question, CONTENTS_3);
+        User user = new User("seunghoona", "password", "username", "email");
+        Question question = new Question("title", "content").writeBy(user);
+        Answer firstAnswer = new Answer(user, question, "answer");
+        Answer secondAnswer = new Answer(user, question, "answer");
+        Answer thirdAnswer = new Answer(user, question, "answer");
         List<Answer> answers = asList(firstAnswer, secondAnswer, thirdAnswer);
 
         // when

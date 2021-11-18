@@ -1,20 +1,39 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.*;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-public class AnswerRepositoryTest extends QnATest {
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = NONE)
+public class AnswerRepositoryTest {
+
+    @Autowired
+    protected QuestionRepository questionRepository;
+
+    @Autowired
+    protected UserRepository userRepository;
+
+    @Autowired
+    protected AnswerRepository answerRepository;
 
     @Test
     void 삭제되지_않은_대상건중_한건을_true변경시_제외한_대상건만_조회() {
+
         //given
-        User user = createUser();
-        Question question = createQuestion(user, TITLE_1, CONTENTS_1);
-        createAnswer(user, question, ANSWER_1);
-        createAnswer(user, question, ANSWER_2);
+        User user = new User("seunghoona", "password", "username", "email");
+        userRepository.save(user);
+
+        Question question = new Question("title", "content").writeBy(user);
+        question.addAnswer(new Answer(user, question, "answer"));
+        question.addAnswer(new Answer(user, question, "answer"));
+        questionRepository.save(question);
 
         // when
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
@@ -29,13 +48,21 @@ public class AnswerRepositoryTest extends QnATest {
 
     @Test
     void 여러건을_저장할때_동일한_객체라도_모두_저장된다() {
-        User user = createUser();
-        Question question = createQuestion(user, TITLE_1, CONTENTS_1);
-        createAnswer(user, question, ANSWER_1);
-        createAnswer(user, question, ANSWER_1);
-        createAnswer(user, question, ANSWER_2);
+        // given
+        User user = new User("seunghoona", "password", "username", "email");
+        userRepository.save(user);
 
+        Question question = new Question("title", "content").writeBy(user);
+        question.addAnswer(new Answer(user, question, "answer"));
+        question.addAnswer(new Answer(user, question, "answer"));
+        question.addAnswer(new Answer(user, question, "answer"));
+        questionRepository.save(question);
+
+
+        // when
         List<Answer> findAnswer = answerRepository.findAll();
+
+        // then
         assertThat(findAnswer.size()).isEqualTo(3);
     }
 

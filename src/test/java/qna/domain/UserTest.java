@@ -30,19 +30,17 @@ public class UserTest {
 
         String name = "seunghoona";
         User user = new User(3L, name, "password", name, "seunghoona@gmail.com");
-        Assertions.assertThatThrownBy(() -> {
-                // when
-                JAVAJIGI.update(user, SANJIGI);
-            }).isInstanceOf(UnAuthorizedException.class)
-            .hasMessage(UN_AUTHORITY);
+        assertThatThrownBy(() -> JAVAJIGI.update(user, SANJIGI))
+                  .isInstanceOf(UnAuthorizedException.class)
+                  .hasMessage(UN_AUTHORITY);
     }
 
     @Test
     @DisplayName("User1 에서 User2로 변경했을 때 email,name SANJIGI 동일")
     void given_User_then_matchPassword() {
         // then
-        Assertions.assertThat(JAVAJIGI.matchPassword("password")).isTrue();
-        Assertions.assertThat(JAVAJIGI.matchPassword("notMatchPassword")).isFalse();
+        assertThat(JAVAJIGI.matchPassword("password")).isTrue();
+        assertThat(JAVAJIGI.matchPassword("notMatchPassword")).isFalse();
     }
 
 }
