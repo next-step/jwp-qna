@@ -2,24 +2,19 @@ package qna.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import javax.persistence.ManyToOne;
+import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Answer {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Where(clause = "deleted = false")
+public class Answer extends BaseEntity {
 
     @Column(name = "contents")
     @Lob
@@ -28,14 +23,19 @@ public class Answer {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+        name = "question_id",
+        foreignKey = @ForeignKey(name = "fk_answer_to_question")
+    )
+    private Question question;
 
-    @Column(name = "writer_id")
-    private Long writerId;
-
-    @Embedded
-    private TimeAudit timeAudit = new TimeAudit();
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+        name = "writer_id",
+        foreignKey = @ForeignKey(name = "fk_answer_writer")
+    )
+    private User writer;
 
     protected Answer() {
     }
@@ -45,7 +45,7 @@ public class Answer {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+        super(id);
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -55,49 +55,33 @@ public class Answer {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
-        return id;
+        return super.getId();
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public User getWriter() {
+        return writer;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
@@ -111,9 +95,9 @@ public class Answer {
     @Override
     public String toString() {
         return "Answer{" +
-            "id=" + id +
-            ", writerId=" + writerId +
-            ", questionId=" + questionId +
+            "id=" + getId() +
+            ", writerId=" + writer.getId() +
+            ", questionId=" + question.getId() +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';

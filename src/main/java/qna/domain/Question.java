@@ -1,22 +1,17 @@
 package qna.domain;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import javax.persistence.ManyToOne;
+import org.hibernate.annotations.Where;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Question {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Where(clause = "deleted = false")
+public class Question extends BaseEntity {
 
     @Column(name = "contents")
     @Lob
@@ -28,32 +23,29 @@ public class Question {
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
-    @Column(name = "writer_id")
-    private Long writerId;
-
-    @Embedded
-    private TimeAudit timeAudit = new TimeAudit();
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+        name = "writer_id",
+        foreignKey = @ForeignKey(name = "fk_question_writer")
+    )
+    private User writer;
 
     protected Question() {
     }
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    public Question(String title, String contents, User writer) {
+        this(null, title, contents, writer);
     }
 
-    public Question(Long id, String title, String contents) {
-        this.id = id;
+    public Question(Long id, String title, String contents, User writer) {
+        super(id);
         this.title = title;
         this.contents = contents;
-    }
-
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
+        this.writer = writer;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equalsNameAndEmail(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -61,35 +53,19 @@ public class Question {
     }
 
     public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        return super.getId();
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -103,10 +79,10 @@ public class Question {
     @Override
     public String toString() {
         return "Question{" +
-            "id=" + id +
+            "id=" + getId() +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", writerId=" + writerId +
+            ", writerId=" + writer.getId() +
             ", deleted=" + deleted +
             '}';
     }

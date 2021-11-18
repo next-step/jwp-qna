@@ -28,7 +28,7 @@ public class AnswerRepositoryTest {
             TestUserFactory.create("javajigi", "password", "name", "javajigi@slipp.net")
         );
         final Question question = questionRepository.save(
-            TestQuestionFactory.create("title1", "contents1").writeBy(writer)
+            TestQuestionFactory.create("title1", "contents1", writer)
         );
         final Answer expected = TestAnswerFactory.create(writer, question, "Answers Contents1");
 
@@ -39,46 +39,61 @@ public class AnswerRepositoryTest {
         assertAll(
             () -> assertThat(actual).isNotNull(),
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getWriterId()).isNotNull(),
-            () -> assertThat(actual.getQuestionId()).isNotNull(),
+            () -> assertThat(actual.getWriter()).isNotNull(),
+            () -> assertThat(actual.getQuestion()).isNotNull(),
             () -> assertThat(actual.getContents()).isNotNull()
         );
     }
 
     @Test
-    void findByQuestionIdAndDeletedFalse() {
+    void equals() {
         // given
         final User writer = userRepository.save(
             TestUserFactory.create("javajigi", "password", "name", "javajigi@slipp.net")
         );
         final Question question = questionRepository.save(
-            TestQuestionFactory.create("title1", "contents1").writeBy(writer)
+            TestQuestionFactory.create("title1", "contents1", writer)
+        );
+        final Answer answer1 = TestAnswerFactory.create(1L, writer, question, "Answers Contents1");
+        final Answer answer2 = TestAnswerFactory.create(1L, writer, question, "Answers Contents1");
+
+        // then
+        assertThat(answer1).isEqualTo(answer2);
+    }
+
+    @Test
+    void findByQuestionId() {
+        // given
+        final User writer = userRepository.save(
+            TestUserFactory.create("javajigi", "password", "name", "javajigi@slipp.net")
+        );
+        final Question question = questionRepository.save(
+            TestQuestionFactory.create("title1", "contents1", writer)
         );
         final Answer answer = TestAnswerFactory.create(writer, question, "Answers Contents1");
 
         // when
         answerRepository.save(answer);
-        final List<Answer> actual =
-            answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestionId());
+        final List<Answer> actual = answerRepository.findByQuestionId(answer.getQuestion().getId());
 
         // then
         assertThat(actual).hasSize(1);
     }
 
     @Test
-    void findByIdAndDeletedFalse() {
+    void findById() {
         // given
         final User writer = userRepository.save(
             TestUserFactory.create("javajigi", "password", "name", "javajigi@slipp.net")
         );
         final Question question = questionRepository.save(
-            TestQuestionFactory.create("title1", "contents1").writeBy(writer)
+            TestQuestionFactory.create("title1", "contents1", writer)
         );
         final Answer answer = TestAnswerFactory.create(writer, question, "Answers Contents1");
 
         // when
         answerRepository.save(answer);
-        final Answer actual = answerRepository.findByIdAndDeletedFalse(answer.getId())
+        final Answer actual = answerRepository.findById(answer.getId())
             .orElseThrow(NoSuchElementException::new);
 
         // then

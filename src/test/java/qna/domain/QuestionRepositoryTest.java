@@ -15,10 +15,18 @@ public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     void save() {
         // given
-        final Question expected = TestQuestionFactory.create("title1", "contents1");
+        final User writer = userRepository.save(
+            TestUserFactory.create(
+                "javajigi", "password", "name", "javajigi@slipp.net"
+            )
+        );
+        final Question expected = TestQuestionFactory.create("title1", "contents1", writer);
 
         // when
         final Question actual = questionRepository.save(expected);
@@ -33,26 +41,51 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    void findByDeletedFalse() {
+    void equals() {
         // given
-        final Question question = TestQuestionFactory.create("title1", "contents1");
+        final User writer = userRepository.save(
+            TestUserFactory.create(
+                "javajigi", "password", "name", "javajigi@slipp.net"
+            )
+        );
+        final Question question1 = TestQuestionFactory.create(1L, "title1", "contents1", writer);
+        final Question question2 = TestQuestionFactory.create(1L, "title2", "contents2", writer);
+
+        // then
+        assertThat(question1).isEqualTo(question2);
+    }
+
+    @Test
+    void findAll() {
+        // given
+        final User writer = userRepository.save(
+            TestUserFactory.create(
+                "javajigi", "password", "name", "javajigi@slipp.net"
+            )
+        );
+        final Question question = TestQuestionFactory.create("title1", "contents1", writer);
 
         // when
         questionRepository.save(question);
-        final List<Question> actual = questionRepository.findByDeletedFalse();
+        final List<Question> actual = questionRepository.findAll();
 
         // then
         assertThat(actual).hasSize(1);
     }
 
     @Test
-    void findByIdAndDeletedFalse() {
+    void findById() {
         // given
-        final Question question = TestQuestionFactory.create("title1", "contents1");
+        final User writer = userRepository.save(
+            TestUserFactory.create(
+                "javajigi", "password", "name", "javajigi@slipp.net"
+            )
+        );
+        final Question question = TestQuestionFactory.create("title1", "contents1", writer);
 
         // when
         questionRepository.save(question);
-        final Question actual = questionRepository.findByIdAndDeletedFalse(question.getId())
+        final Question actual = questionRepository.findById(question.getId())
             .orElseThrow(NoSuchElementException::new);
 
         // then

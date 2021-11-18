@@ -25,8 +25,20 @@ public class UserRepositoryTest {
             () -> assertThat(actual.getUserId()).isNotNull(),
             () -> assertThat(actual.getPassword()).isNotNull(),
             () -> assertThat(actual.getName()).isNotNull(),
-            () -> assertThat(actual.getEmail()).isNotNull()
+            () -> assertThat(actual.getEmail()).isNotNull(),
+            () -> assertThat(actual).isEqualTo(expected)
         );
+    }
+
+    @Test
+    void equals() {
+        final User user1 = TestUserFactory.create(
+            1L, "userId1", "password1", "name1", "1@slipp.net"
+        );
+        final User user2 = TestUserFactory.create(
+            1L, "userId2", "password2", "name2", "2@slipp.net"
+        );
+        assertThat(user1).isEqualTo(user2);
     }
 
     @Test
