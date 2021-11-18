@@ -17,7 +17,8 @@ import qna.CannotDeleteException;
 @DataJpaTest
 public class QuestionTest {
 
-    @Autowired UserRepository userRepository;
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -143,12 +144,13 @@ public class QuestionTest {
 
     @Test
     void test_동일_작성자_질문_삭제() throws CannotDeleteException {
-        List<DeleteHistory> deleteHistory = question1.delete(question1.getWriter());
+        DeleteHistories deleteHistories = question1.delete(question1.getWriter());
 
         assertAll(
             () -> assertThat(question1.isDeleted()).isTrue(),
-            () -> assertThat(deleteHistory).hasSizeGreaterThanOrEqualTo(1),
-            () -> assertThat(deleteHistory.get(0).getContentId()).isEqualTo(question1.getId())
+            () -> assertThat(deleteHistories.size()).isGreaterThanOrEqualTo(1),
+            () -> assertThat(deleteHistories.deleteHistories().get(0).getContentId()).isEqualTo(
+                question1.getId())
         );
     }
 

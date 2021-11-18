@@ -2,7 +2,6 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -114,30 +113,30 @@ public class Question extends BaseEntity {
             '}';
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
         setDeleted(true);
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(),
-            getWriter(), LocalDateTime.now()));
+        DeleteHistory questionDeleteHistory = new DeleteHistory(ContentType.QUESTION, getId(),
+            getWriter(), LocalDateTime.now());
+        DeleteHistories answerDeleteHistories = deleteAnswers(loginUser);
 
-        List<DeleteHistory> answerDeleteHistories = deleteAnswers(loginUser);
-        deleteHistories.addAll(answerDeleteHistories);
+        DeleteHistories deleteHistories = DeleteHistories.of(questionDeleteHistory,
+            answerDeleteHistories);
 
         return deleteHistories;
     }
 
-    private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
+    private DeleteHistories deleteAnswers(User loginUser) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
         for (Answer answer : answers) {
             deleteHistories.add(answer.delete(loginUser));
         }
 
-        return Collections.unmodifiableList(deleteHistories);
+        return DeleteHistories.from(deleteHistories);
     }
 }
