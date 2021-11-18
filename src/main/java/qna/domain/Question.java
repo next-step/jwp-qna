@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.CannotDeleteException;
-import qna.service.QnaService;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -119,13 +119,25 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
         setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(), getWriter(), LocalDateTime.now()));
-        for (Answer answer : answers) {
-            DeleteHistory deleteHistory = answer.delete(loginUser);
-            deleteHistories.add(deleteHistory);
-        }
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(),
+            getWriter(), LocalDateTime.now()));
+
+        List<DeleteHistory> answerDeleteHistories = deleteAnswers(loginUser);
+        deleteHistories.addAll(answerDeleteHistories);
+
         return deleteHistories;
+    }
+
+    private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(loginUser));
+        }
+
+        return Collections.unmodifiableList(deleteHistories);
     }
 }
