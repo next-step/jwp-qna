@@ -59,27 +59,23 @@ public class Question extends BaseEntity{
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
     }
 
+    public void delete() {
+        this.deleted = true;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
@@ -92,14 +88,6 @@ public class Question extends BaseEntity{
 
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
     }
 
     public void setDeleted(boolean deleted) {
@@ -116,4 +104,6 @@ public class Question extends BaseEntity{
                 ", deleted=" + deleted +
                 '}';
     }
+
+
 }

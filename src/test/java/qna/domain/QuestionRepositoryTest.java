@@ -63,8 +63,8 @@ class QuestionRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("Question 삭제 테스트")
-	public void QuestionRepositoryDeleteTest() {
+	@DisplayName("Question hard delete 테스트")
+	public void QuestionRepositoryHardDeleteTest() {
 		//given
 		Question savedOne = questionRepository.save(QuestionTest.Q1.writeBy(user));
 		Question savedTwo = questionRepository.save(QuestionTest.Q1.writeBy(otherUser));
@@ -74,4 +74,17 @@ class QuestionRepositoryTest {
 		assertThat(questionRepository.findAll()).hasSize(1);
 		assertThat(questionRepository.findAll()).contains(savedTwo);
 	}
+
+	@Test
+	@DisplayName("Question soft delete 테스트")
+	public void QuestionRepositorySoftDeleteTest() {
+		//given
+		Question savedOne = questionRepository.save(QuestionTest.Q1.writeBy(user));
+		//when
+		savedOne.delete();
+		//then
+		assertThat(savedOne.isDeleted()).isTrue();
+	}
+
+
 }
