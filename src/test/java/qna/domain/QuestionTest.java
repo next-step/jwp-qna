@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,15 @@ public class QuestionTest {
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Autowired
+    private UserRepository users;
+    @Autowired
     private QuestionRepository questions;
+
+    @BeforeEach
+    void setUp() {
+        users.save(UserTest.SANJIGI);
+        users.save(UserTest.JAVAJIGI);
+    }
 
     @DisplayName("Question 저장 및 데이터 확인")
     @Test
@@ -53,11 +62,11 @@ public class QuestionTest {
     @DisplayName("Question 정보 중 deleted false 인 값 찾기")
     @Test
     void findByDeletedFalse() {
-        questions.save(Q1);
-        questions.save(Q2);
+        Question firstQuestion = questions.save(Q1);
+        Question secondQuestion = questions.save(Q2);
 
         List<Question> questionList = questions.findByDeletedFalse();
 
-        assertThat(questionList).contains(Q1, Q2);
+        assertThat(questionList).contains(firstQuestion, secondQuestion);
     }
 }
