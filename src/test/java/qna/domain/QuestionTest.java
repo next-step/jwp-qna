@@ -13,7 +13,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("Question soft delete 성공(질문자 일치 및 답변자 없음) 테스트")
-    public void QuestionRepositorySoftDeleteTest() throws Exception {
+    public void QuestionSoftDeleteTest() throws Exception {
         //given
         //when
         Q1.delete(UserTest.JAVAJIGI);
@@ -23,7 +23,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("Question soft delete 실패(질문자 불일치) 테스트")
-    public void QuestionRepositorySoftDeleteNotSameUserTest() {
+    public void QuestionSoftDeleteNotSameUserTest() {
         assertThatThrownBy(() -> Q1.delete(UserTest.SANJIGI))
             .isInstanceOf(CannotDeleteException.class)
             .hasMessage("질문을 삭제할 권한이 없습니다.");
@@ -32,7 +32,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("Question soft delete 성공(답변자 있음) 테스트")
-    public void QuestionRepositorySoftDeleteSameAnswerUserSuccessTest() throws CannotDeleteException {
+    public void QuestionSoftDeleteSameAnswerUserSuccessTest() throws CannotDeleteException {
         //given
         Q1.addAnswer(AnswerTest.A1);
         //when
@@ -43,7 +43,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("Question soft delete 실패(답변자 있음) 테스트")
-    public void QuestionRepositorySoftDeleteSameAnswerUserFailTest() throws CannotDeleteException {
+    public void QuestionSoftDeleteSameAnswerUserFailTest()  {
         //given
         //when
         Q1.addAnswer(AnswerTest.A2);
@@ -51,5 +51,16 @@ public class QuestionTest {
         assertThatThrownBy(() -> Q1.delete(UserTest.JAVAJIGI))
             .isInstanceOf(CannotDeleteException.class)
             .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("Question And Answer soft delete 성공(질문 삭제시 답변도 삭제) 테스트")
+    public void QuestionAndAnswerSoftDeleteSuccessTest() throws CannotDeleteException {
+        //given
+        Q1.addAnswer(AnswerTest.A1);
+        //when
+        Q1.delete(UserTest.JAVAJIGI);
+        //then
+        assertThat(AnswerTest.A1.isDeleted()).isTrue();
     }
 }

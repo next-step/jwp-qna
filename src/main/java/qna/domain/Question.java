@@ -78,7 +78,16 @@ public class Question extends BaseEntity {
 			validateAnswerUser(loginUser, answer);
 		}
 
+		deleteAnswers();
+
+
 		this.deleted = true;
+	}
+
+	private void deleteAnswers() {
+		for (Answer answer : answers) {
+			answer.delete();
+		}
 	}
 
 	private void validateQuestionUser(User loginUser) throws CannotDeleteException {

@@ -82,12 +82,16 @@ public class Answer extends BaseEntity {
 		this.question = question;
 	}
 
-	public Long getId() {
-		return id;
+	public void delete() {
+		this.deleted = true;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public String getContents() {
@@ -98,28 +102,8 @@ public class Answer extends BaseEntity {
 		this.contents = contents;
 	}
 
-	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
-
-	public Question getQuestion() {
-		return question;
-	}
-
 	public User getWriter() {
 		return writer;
-	}
-
-	public void setQuestion(Question question) {
-		this.question = question;
-	}
-
-	public void setWriter(User writer) {
-		this.writer = writer;
 	}
 
 	@Override
