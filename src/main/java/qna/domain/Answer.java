@@ -8,10 +8,12 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
+@Where(clause = "deleted = false")
 public class Answer extends BaseEntity {
 
     @Column(name = "contents")

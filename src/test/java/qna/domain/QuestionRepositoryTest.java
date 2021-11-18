@@ -56,7 +56,7 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    void findByDeletedFalse() {
+    void findAll() {
         // given
         final User writer = userRepository.save(
             TestUserFactory.create(
@@ -67,14 +67,14 @@ public class QuestionRepositoryTest {
 
         // when
         questionRepository.save(question);
-        final List<Question> actual = questionRepository.findByDeletedFalse();
+        final List<Question> actual = questionRepository.findAll();
 
         // then
         assertThat(actual).hasSize(1);
     }
 
     @Test
-    void findByIdAndDeletedFalse() {
+    void findById() {
         // given
         final User writer = userRepository.save(
             TestUserFactory.create(
@@ -85,7 +85,7 @@ public class QuestionRepositoryTest {
 
         // when
         questionRepository.save(question);
-        final Question actual = questionRepository.findByIdAndDeletedFalse(question.getId())
+        final Question actual = questionRepository.findById(question.getId())
             .orElseThrow(NoSuchElementException::new);
 
         // then
