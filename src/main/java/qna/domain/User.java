@@ -145,13 +145,15 @@ public class User extends BaseEntity {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
+		if (!super.equals(o))
+			return false;
 		User user = (User)o;
 		return Objects.equals(userId, user.userId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(userId);
+		return Objects.hash(super.hashCode(), userId);
 	}
 
 	private static class GuestUser extends User {
