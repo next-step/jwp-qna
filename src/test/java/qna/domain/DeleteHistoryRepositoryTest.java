@@ -8,15 +8,21 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistories;
 
+    @Autowired
+    private UserRepository users;
+
     @Test
     void save() {
-        final DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+        final User javajigi = users.save(JAVAJIGI);
+        final DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, javajigi, LocalDateTime.now());
+        expected.setDeletedBy(javajigi);
         final DeleteHistory actual = deleteHistories.save(expected);
 
         assertAll(
@@ -27,9 +33,9 @@ class DeleteHistoryRepositoryTest {
 
     @Test
     void findByContentsContainingTest() {
-        Long expected = 1L;
-        deleteHistories.save(new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now()));
-        Long actual = deleteHistories.findByContentId(expected).getContentId();
+        final Long expected = 1L;
+        deleteHistories.save(new DeleteHistory(ContentType.QUESTION, expected, users.save(JAVAJIGI), LocalDateTime.now()));
+        final Long actual = deleteHistories.findByContentId(expected).getContentId();
         assertThat(actual).isEqualTo(expected);
     }
 

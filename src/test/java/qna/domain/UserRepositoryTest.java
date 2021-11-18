@@ -25,9 +25,9 @@ public class UserRepositoryTest {
 
     @Test
     void findByUserIdTest() {
-        String expected = UserTest.JAVAJIGI.getUserId();
+        final String expected = UserTest.JAVAJIGI.getUserId();
         users.save(UserTest.JAVAJIGI);
-        String actual = users.findByUserId(expected).get().getUserId();
+        final String actual = users.findByUserId(expected).get().getUserId();
         assertThat(actual).isEqualTo(expected);
     }
 
