@@ -1,16 +1,13 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+
+import qna.CannotDeleteException;
 
 /**
  * create table question
@@ -66,8 +63,15 @@ public class Question extends BaseEntity{
         answer.toQuestion(this);
     }
 
-    public void delete() {
+    public void delete(User loginUser) throws CannotDeleteException{
+        validateUser(loginUser);
         this.deleted = true;
+    }
+
+    private void validateUser(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public boolean isDeleted() {

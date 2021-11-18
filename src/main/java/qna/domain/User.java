@@ -146,15 +146,12 @@ public class User extends BaseEntity {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		User user = (User)o;
-		return Objects.equals(id, user.id) && Objects.equals(createdAt, user.createdAt)
-			&& Objects.equals(email, user.email) && Objects.equals(name, user.name)
-			&& Objects.equals(password, user.password) && Objects.equals(updatedAt, user.updatedAt)
-			&& Objects.equals(userId, user.userId);
+		return Objects.equals(userId, user.userId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, createdAt, email, name, password, updatedAt, userId);
+		return Objects.hash(userId);
 	}
 
 	private static class GuestUser extends User {

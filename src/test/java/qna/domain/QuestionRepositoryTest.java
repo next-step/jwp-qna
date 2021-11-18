@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
+
 @DataJpaTest
 class QuestionRepositoryTest {
 	@Autowired
@@ -76,15 +78,27 @@ class QuestionRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("Question soft delete 테스트")
-	public void QuestionRepositorySoftDeleteTest() {
+	@DisplayName("Question soft delete 성공 테스트")
+	public void QuestionRepositorySoftDeleteTest() throws Exception {
 		//given
 		Question savedOne = questionRepository.save(QuestionTest.Q1.writeBy(user));
 		//when
-		savedOne.delete();
+		savedOne.delete(user);
 		//then
 		assertThat(savedOne.isDeleted()).isTrue();
 	}
 
+	@Test
+	@DisplayName("Question soft delete 실패 (유저 불일치) 테스트")
+	public void QuestionRepositorySoftDeleteNotSameUserTest(){
+		//given
+		//when
+		Question savedOne = questionRepository.save(QuestionTest.Q1.writeBy(user));
+		//then
+		assertThatThrownBy(() -> savedOne.delete(otherUser))
+			.isInstanceOf(CannotDeleteException.class)
+			.hasMessage("질문을 삭제할 권한이 없습니다.");
+
+	}
 
 }
