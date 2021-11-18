@@ -127,7 +127,7 @@ public class QuestionTest {
         save(question);
 
         // when
-        List<DeleteHistory> deleteHistories = question.delete(user);
+        List<DeleteHistory> deleteHistories = question.delete(user).getValue();
 
         // then
         assertAll(

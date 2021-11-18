@@ -61,10 +61,6 @@ public class Question extends BaseEntity{
         return writer;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -78,12 +74,11 @@ public class Question extends BaseEntity{
         answer.setQuestion(this);
     }
 
-    public List<DeleteHistory> delete(User loginUser) {
+    public DeleteHistories delete(User loginUser) {
         validateWriter(loginUser);
-        List<DeleteHistory> deleteHistories = new LinkedList<>();
         LocalDateTime deletedTime = LocalDateTime.now();
 
-        deleteHistories.addAll(answers.delete(loginUser, deletedTime));
+        DeleteHistories deleteHistories = answers.delete(loginUser, deletedTime);
 
         this.deleted = true;
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, deletedTime));

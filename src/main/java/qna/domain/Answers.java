@@ -24,8 +24,8 @@ public class Answers {
         answers.add(answer);
     }
 
-    public List<DeleteHistory> delete(User loginUser, LocalDateTime deletedTime) {
-        List<DeleteHistory> deleteHistories = new LinkedList<>();
+    public DeleteHistories delete(User loginUser, LocalDateTime deletedTime) {
+        DeleteHistories deleteHistories = new DeleteHistories();
 
         for (Answer answer : answers) {
             deleteHistories.add(answer.delete(loginUser, deletedTime));
