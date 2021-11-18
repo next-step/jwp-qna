@@ -58,7 +58,7 @@ public class UserTest {
     @DisplayName("user 수정")
     @Test
     void userUpdateTest() {
-        user.setEmail("change_mail@slipp.net");
+        user.changeEmail("change_mail@slipp.net");
         User userFromRepository = userRepository.findById(user.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertThat(userFromRepository.getEmail()).isEqualTo("change_mail@slipp.net");

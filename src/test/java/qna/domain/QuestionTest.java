@@ -74,8 +74,8 @@ public class QuestionTest {
 
     @DisplayName("삭제한 question 찾기")
     @Test
-    void findByIdAndDeletedTrueTest() {
-        question.setDeleted(true);
+    void findByIdAndDeletedTrueTest() throws CannotDeleteException {
+        question.delete(user);
         assertThatThrownBy(() -> {
             questionRepository.findByIdAndDeletedFalse(question.getId())
                     .orElseThrow(NoSuchElementException::new);
@@ -85,7 +85,7 @@ public class QuestionTest {
     @DisplayName("question 수정")
     @Test
     void updateQuestionTest() {
-        question.setContents("Changed Contents");
+        question.changeContents("Changed Contents");
         Question questionFromRepository = questionRepository.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertThat(questionFromRepository.getContents()).isEqualTo("Changed Contents");

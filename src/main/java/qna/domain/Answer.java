@@ -93,16 +93,12 @@ public class Answer extends BaseEntity {
         return contents.getContents();
     }
 
-    public void setContents(String contents) {
-        this.contents.setContents(contents);
+    public void changeContents(String contents) {
+        this.contents.changeContents(contents);
     }
 
     public boolean isDeleted() {
         return deleted.getDeleted();
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted.setDeleted(deleted);
     }
 
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
@@ -117,7 +113,7 @@ public class Answer extends BaseEntity {
     }
 
     private DeleteHistory deleteAnswer() {
-        setDeleted(true);
+        this.deleted.delete();
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 

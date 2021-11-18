@@ -20,7 +20,7 @@ public class Contents {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void changeContents(String contents) {
         this.contents = contents;
     }
 

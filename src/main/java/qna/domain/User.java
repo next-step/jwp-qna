@@ -67,8 +67,8 @@ public class User extends BaseEntity {
         return email.getEmail();
     }
 
-    public void setEmail(String email) {
-        this.email.setEmail(email);
+    public void changeEmail(String email) {
+        this.email.changeEmail(email);
     }
 
     @Override

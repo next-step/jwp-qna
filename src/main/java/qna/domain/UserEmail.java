@@ -20,7 +20,7 @@ public class UserEmail {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void changeEmail(String email) {
         this.email = email;
     }
 

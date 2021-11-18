@@ -68,8 +68,8 @@ public class AnswerTest {
 
     @DisplayName("question id 기준으로 삭제된 answer 목록 확인")
     @Test
-    void findByQuestionIdAndDeletedTrueTest() {
-        answer.setDeleted(true);
+    void findByQuestionIdAndDeletedTrueTest() throws CannotDeleteException {
+        answer.delete(user);
         List<Answer> noneDeletedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
         assertThat(noneDeletedAnswers.size()).isZero();
     }
@@ -85,8 +85,8 @@ public class AnswerTest {
 
     @DisplayName("삭제한 answer 확인")
     @Test
-    void findByIdAndDeletedTrueTest() {
-        answer.setDeleted(true);
+    void findByIdAndDeletedTrueTest() throws CannotDeleteException {
+        answer.delete(user);
         assertThatThrownBy(() -> {
             answerRepository.findByIdAndDeletedFalse(answer.getId())
                     .orElseThrow(NoSuchElementException::new);
@@ -96,7 +96,7 @@ public class AnswerTest {
     @DisplayName("answer 수정")
     @Test
     void updateAnswerTest() {
-        answer.setContents("Changed Contents1");
+        answer.changeContents("Changed Contents1");
         Answer answerFromRepository = answerRepository.findById(answer.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertThat(answerFromRepository.getContents()).isEqualTo("Changed Contents1");

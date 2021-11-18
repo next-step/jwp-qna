@@ -16,8 +16,8 @@ public class Deleted {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        deleted = true;
     }
 
     @Override
