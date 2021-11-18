@@ -109,13 +109,17 @@ public class Answer extends BaseEntity {
     }
 
     public DeleteHistory delete(final User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
+        validateOwner(loginUser);
 
         setDeleted(true);
         DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, getId(),
             getWriter(), LocalDateTime.now());
         return deleteHistory;
+    }
+
+    private void validateOwner(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변은 삭제할 수 없습니다.");
+        }
     }
 }
