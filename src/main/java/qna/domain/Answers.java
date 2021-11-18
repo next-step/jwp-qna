@@ -8,11 +8,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Embeddable
-public class AnswersRelatedQuestion {
+public class Answers {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     List<Answer> answers = new ArrayList<>();
 
-    public AnswersRelatedQuestion() {
+    public Answers() {
     }
 
     public List<Answer> getValue() {
@@ -27,7 +27,7 @@ public class AnswersRelatedQuestion {
         List<DeleteHistory> deleteHistories = new LinkedList<>();
 
         for (Answer answer : answers) {
-            deleteHistories.add(answer.deleteRelatedAnswerAndCreateDeleteHistory(loginUser));
+            deleteHistories.add(answer.delete(loginUser));
         }
         return deleteHistories;
     }
