@@ -31,10 +31,6 @@ public class DeleteHistory {
         return deletedByUser;
     }
 
-    public void setDeletedByUser(User deletedByUser) {
-        this.deletedByUser = deletedByUser;
-    }
-
     public Long getId() {
         return id;
     }
