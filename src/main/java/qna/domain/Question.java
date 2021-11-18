@@ -1,23 +1,28 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.CannotDeleteException;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class Question extends AbstractIdEntity {
     @Lob
     private String contents;
 
-    @Column(nullable = false)
-    private final LocalDateTime createdAt = LocalDateTime.now();
+    @CreatedDate
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -75,6 +80,19 @@ public class Question extends AbstractIdEntity {
             .addQuestion(this)
             .addAnswers(this.answers)
             .build();
+    }
+
+    public void change(final String contents, final String title) {
+        this.contents = contents;
+        this.title = title;
+    }
+
+    public boolean isUpdated() {
+        if (Objects.isNull(createdAt)) {
+            throw new IllegalStateException("질문 등록일이 없습니다. 질문 정보 변조가 의심됩니다.");
+        }
+
+        return Objects.equals(createdAt, updatedAt);
     }
 
     public Long getId() {

@@ -65,6 +65,23 @@ public class QuestionTest {
     }
 
     @Test
+    void jpaAuditing() {
+        //given
+        final User user = 유저등록(UserTest.JAVAJIGI);
+
+        assertDoesNotThrow(() -> {
+            //when then - @CreatedDate 테스트
+            final Question question = questionRepository.save(Q1.writeBy(user));
+
+            //when
+            question.change("내용변경", "제목변경");
+
+            //then - @LastModifiedDate 테스트
+            assertThat(question.isUpdated()).isTrue();
+        });
+    }
+
+    @Test
     void findByIdAndDeletedFalse() {
         //given
         final User javajigi = 유저등록(UserTest.JAVAJIGI);

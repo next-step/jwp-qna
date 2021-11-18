@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 
 @Embeddable
 public class Answers {
 
+    @OneToMany
     private final Set<Answer> answers = new HashSet<>();
 
     protected Answers() {
