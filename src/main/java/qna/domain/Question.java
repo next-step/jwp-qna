@@ -1,12 +1,18 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity {
+    private static final String QUESTION_ERROR_MESSAGE = "질문을 삭제할 권한이 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,8 +31,8 @@ public class Question extends BaseEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -38,7 +44,7 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -57,32 +63,17 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answers.add(answer);
-        answer.toQuestion(this);
+        answer.setQuestion(this);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
 
     public boolean isDeleted() {
         return deleted;
@@ -105,5 +96,22 @@ public class Question extends BaseEntity {
 
     public User getWriter() {
         return this.writer;
+    }
+
+    public DeleteHistories delete(User user, LocalDateTime localDateTime) {
+        validateQuestion(user);
+        deleted = true;
+        return DeleteHistories.fromDeleteHistories(
+                Stream.of(
+                                Collections.singletonList(DeleteHistory.questionDeleteHistoryOf(id, user, localDateTime)),
+                                answers.delete(user, localDateTime).getDeleteHistories()
+                        ).flatMap(deleteHistories -> deleteHistories.stream())
+                        .collect(Collectors.toList()));
+    }
+
+    private void validateQuestion(User user) {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException(QUESTION_ERROR_MESSAGE);
+        }
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.User;
+import qna.domain.UserTest;
 
 import javax.persistence.EntityManager;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = users.save(UserRepositoryTest.JAVAJIGI);
+        user = users.save(UserTest.JAVAJIGI);
         users.save(user);
         question = new Question("title1", "contents1").writeBy(user);
         questions.save(question);
@@ -56,16 +57,17 @@ public class AnswerRepositoryTest {
     @DisplayName("Answer deleted=false 경우 테스트")
     @Test
     void findByIdAndDeletedFalse() {
+        //given
         Answer a1 = answers.save(new Answer(user, question, "contents1"));
         Answer a2 = answers.save(new Answer(user, question, "contents2"));
 
+        //when
         a2.setDeleted(true);
-
         answers.save(a2);
-
         Optional<Answer> a1Result = answers.findByIdAndDeletedFalse(a1.getId());
         Optional<Answer> a2Result = answers.findByIdAndDeletedFalse(a2.getId());
 
+        //then
         assertAll(
                 () -> assertThat(a1Result).isNotEmpty(),
                 () -> assertThat(a2Result).isEmpty()

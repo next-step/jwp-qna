@@ -36,15 +36,28 @@ public class DeleteHistory {
 
     }
 
+    public static DeleteHistory questionDeleteHistoryOf(Long contentId, User deletedById, LocalDateTime localDateTime) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deletedById, localDateTime);
+    }
+
+    public static DeleteHistory answerDeleteHistoryOf(Long contentId, User deletedById, LocalDateTime localDateTime) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deletedById, localDateTime);
+    }
+
+    public boolean isSameDate(LocalDateTime localDateTime) {
+        return createDate.isEqual(localDateTime);
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedBy, that.deletedBy);
+        return Objects.equals(id, that.id);
     }
 
     @Override

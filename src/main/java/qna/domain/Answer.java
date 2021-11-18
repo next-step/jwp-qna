@@ -1,14 +1,17 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseEntity {
+    private static final String ANSWER_ERROR_MESSAGE = "답변을 삭제할 권한이 없습니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,6 +49,7 @@ public class Answer extends BaseEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+        question.addAnswer(this);
     }
 
     protected Answer() {
@@ -64,16 +68,8 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
@@ -99,6 +95,23 @@ public class Answer extends BaseEntity {
         return this.writer;
     }
 
-    public void addUser(User save) {
+    public void setQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().remove(this);
+        }
+        this.question = question;
+        question.getAnswers().add(this);
+    }
+
+    public DeleteHistory delete(User writer, LocalDateTime localDateTime) {
+        validateAnswer(writer);
+        this.deleted = true;
+        return DeleteHistory.answerDeleteHistoryOf(id, writer, localDateTime);
+    }
+
+    private void validateAnswer(User writer) {
+        if(!isOwner(writer)) {
+            throw new CannotDeleteException(ANSWER_ERROR_MESSAGE);
+        }
     }
 }

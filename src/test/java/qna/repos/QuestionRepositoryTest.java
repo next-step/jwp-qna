@@ -5,9 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.domain.Answer;
-import qna.domain.Question;
-import qna.domain.User;
+import qna.domain.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserRepositoryTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserRepositoryTest.SANJIGI);
 
     @Autowired
     private QuestionRepository questions;
@@ -33,7 +29,7 @@ public class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = users.save(UserRepositoryTest.JAVAJIGI);
+        user = users.save(UserTest.JAVAJIGI);
         users.save(user);
     }
 
@@ -51,17 +47,18 @@ public class QuestionRepositoryTest {
     @DisplayName("Question deleted=false 경우 테스트")
     @Test
     void findByIdAndDeletedFalse() {
+        //given
         Question q1 = questions.save(new Question("title1", "contents1").writeBy(user));
         Question q2 = questions.save(new Question("title2", "contents2").writeBy(user));
 
+        //when
         q2.setDeleted(true);
-
         questions.save(q2);
-
         Optional<Question> a1Result = questions.findByIdAndDeletedFalse(q1.getId());
         Optional<Question> a2Result = questions.findByIdAndDeletedFalse(q2.getId());
         List<Question> result = questions.findByDeletedFalse();
 
+        //then
         assertAll(
                 () -> assertThat(a1Result).isNotEmpty(),
                 () -> assertThat(a2Result).isEmpty(),
@@ -72,10 +69,15 @@ public class QuestionRepositoryTest {
     @DisplayName("Question Answer 연관관계 테스트")
     @Test
     void saveQuestionAndAnswer() {
+        //given
         Question q1 = questions.save(new Question("title1", "contents1").writeBy(user));
-        q1.addAnswer(answers.save(new Answer(user, q1, "Answers Contents1")));
+
+        //when
+        answers.save(new Answer(user, q1, "Answers Contents1"));
         Question actual = questions.save(q1);
-        List<Answer> answers = actual.getAnswers();
-        assertThat(answers).hasSize(1);
+        Answers answers = actual.getAnswers();
+
+        //then
+        assertThat(answers.getSize()).isEqualTo(1);
     }
 }

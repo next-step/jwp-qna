@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.User;
+import qna.domain.UserTest;
 
 import java.util.Optional;
 
@@ -13,17 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class UserRepositoryTest {
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-
     @Autowired
     private UserRepository repository;
 
     @DisplayName("User 저장 테스트")
     @Test
     void save() {
-        User expected = JAVAJIGI;
-        User actual = repository.save(JAVAJIGI);
+        User expected = UserTest.JAVAJIGI;
+        User actual = repository.save(UserTest.JAVAJIGI);
 
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
@@ -34,13 +32,15 @@ public class UserRepositoryTest {
     @DisplayName("User Id 테스트")
     @Test
     void findByUserId() {
-        User user = repository.save(JAVAJIGI);
-
+        //given
+        User user = repository.save(UserTest.JAVAJIGI);
         repository.save(user);
 
+        //when
         Optional<User> userResult = repository.findByUserId(user.getUserId());
-        Optional<User> user2Result = repository.findByUserId(SANJIGI.getUserId());
+        Optional<User> user2Result = repository.findByUserId(UserTest.SANJIGI.getUserId());
 
+        //then
         assertAll(
                 () -> assertThat(userResult).isNotEmpty(),
                 () -> assertThat(user2Result).isEmpty()
