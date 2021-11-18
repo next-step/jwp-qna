@@ -39,10 +39,6 @@ public class DeleteHistory {
         return id;
     }
 
-    public ContentType getContentType() {
-        return contentType;
-    }
-
     public Long getContentId() {
         return contentId;
     }

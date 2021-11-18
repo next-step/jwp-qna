@@ -108,7 +108,7 @@ public class QuestionTest {
         answerRepository.save(answer1);
 
         // when
-        List<DeleteHistory> deleteHistories = question1.deleteAndCreateDeleteHistory(user1);
+        List<DeleteHistory> deleteHistories = question1.delete(user1);
 
         // then
         assertAll(
@@ -134,7 +134,7 @@ public class QuestionTest {
 
         // when, then
         assertThatThrownBy(() ->
-                question1.deleteAndCreateDeleteHistory(user2)).isInstanceOf(CannotDeleteException.class);
+                question1.delete(user2)).isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
@@ -148,6 +148,6 @@ public class QuestionTest {
 
         // when, then
         assertThatThrownBy(() ->
-                question1.deleteAndCreateDeleteHistory(user1)).isInstanceOf(CannotDeleteException.class);
+                question1.delete(user1)).isInstanceOf(CannotDeleteException.class);
     }
 }

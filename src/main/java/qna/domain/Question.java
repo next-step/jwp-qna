@@ -69,10 +69,6 @@ public class Question extends BaseEntity{
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public List<Answer> getAnswers() {
         return answersRelatedQuestion.getValue();
     }
@@ -82,11 +78,11 @@ public class Question extends BaseEntity{
         answer.setQuestion(this);
     }
 
-    public List<DeleteHistory> deleteAndCreateDeleteHistory(User loginUser) {
+    public List<DeleteHistory> delete(User loginUser) {
         validateWriter(loginUser);
         List<DeleteHistory> deleteHistories = new LinkedList<>();
 
-        deleteHistories.addAll(answersRelatedQuestion.deleteRelatedAnswersAndCreateDeleteHistories(loginUser));
+        deleteHistories.addAll(answersRelatedQuestion.delete(loginUser));
 
         this.deleted = true;
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));

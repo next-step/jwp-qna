@@ -23,7 +23,7 @@ public class AnswersRelatedQuestion {
         answers.add(answer);
     }
 
-    public List<DeleteHistory> deleteRelatedAnswersAndCreateDeleteHistories(User loginUser) {
+    public List<DeleteHistory> delete(User loginUser) {
         List<DeleteHistory> deleteHistories = new LinkedList<>();
 
         for (Answer answer : answers) {
