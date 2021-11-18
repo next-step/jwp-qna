@@ -12,6 +12,8 @@ import java.util.Objects;
 @Entity
 public class Answer extends BaseEntity {
 
+    protected static final String EXIST_OTHER_ANSWERS = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -107,10 +109,9 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
-    // TODO: 단위 테스트
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(EXIST_OTHER_ANSWERS);
         }
         setDeleted(true);
         return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());

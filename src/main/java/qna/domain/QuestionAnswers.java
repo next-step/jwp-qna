@@ -13,7 +13,10 @@ public class QuestionAnswers {
         this.answers = answers;
     }
 
-    // TODO: 단위 테스트
+    protected List<Answer> getAnswers() {
+        return answers;
+    }
+
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : answers) {
