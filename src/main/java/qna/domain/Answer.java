@@ -71,19 +71,11 @@ public class Answer extends BaseEntity{
         this.question = question;
     }
 
-    public String getContents() {
-        return contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public DeleteHistory deleteRelatedAnswerAndCreateDeleteHistory(User loginUser) {
+    public DeleteHistory delete(User loginUser) {
         validateWriterUser(loginUser);
         return deleteAndCreateDeleteHistory();
     }
