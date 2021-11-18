@@ -2,6 +2,7 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 
 import java.util.Arrays;
 
@@ -19,7 +20,7 @@ public class AnswersTest {
 
     @DisplayName("답변들을 삭제 상태로 변경시켜준다.")
     @Test
-    void delete() {
+    void delete() throws CannotDeleteException {
         Answers answers = new Answers(Arrays.asList(AnswerTest.A1, AnswerTest.A2));
 
         answers.delete();
@@ -27,4 +28,5 @@ public class AnswersTest {
         assertThat(answers.getAnswerGroup().get(0).isDeleted()).isTrue();
         assertThat(answers.getAnswerGroup().get(1).isDeleted()).isTrue();
     }
+
 }
