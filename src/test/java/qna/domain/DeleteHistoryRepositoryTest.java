@@ -1,12 +1,10 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.time.LocalDateTime;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
@@ -19,8 +17,7 @@ public class DeleteHistoryRepositoryTest {
     @Test
     void save() {
         User savedUser = userRepository.save(TestDummy.USER_SANJIGI);
-        final LocalDateTime dateTime = LocalDateTime.of(2021, 11, 9, 0, 0, 0);
-        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, savedUser, dateTime);
+        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, savedUser);
 
         final DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
 
