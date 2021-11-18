@@ -2,6 +2,8 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +56,7 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("Question And Answer soft delete 성공(질문 삭제시 답변도 삭제) 테스트")
+    @DisplayName("Question And Answer soft delete (질문 삭제시 답변도 삭제) 테스트")
     public void QuestionAndAnswerSoftDeleteSuccessTest() throws CannotDeleteException {
         //given
         Q1.addAnswer(AnswerTest.A1);
@@ -62,5 +64,18 @@ public class QuestionTest {
         Q1.delete(UserTest.JAVAJIGI);
         //then
         assertThat(AnswerTest.A1.isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("DeleteHistory 생성 테스트")
+    public void createDeleteHistoryTest() throws CannotDeleteException {
+        //given
+        Q1.addAnswer(AnswerTest.A1);
+        //when
+        List<DeleteHistory> deleteHistoryList = Q1.delete(UserTest.JAVAJIGI);
+        //then
+        assertThat(deleteHistoryList).hasSize(2);
+
+
     }
 }

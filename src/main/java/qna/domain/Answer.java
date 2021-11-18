@@ -82,8 +82,9 @@ public class Answer extends BaseEntity {
 		this.question = question;
 	}
 
-	public void delete() {
+	public DeleteHistory delete() {
 		this.deleted = true;
+		return new DeleteHistory(ContentType.ANSWER, id, writer);
 	}
 
 	public boolean isDeleted() {
