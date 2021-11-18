@@ -81,7 +81,6 @@ public class QuestionRepositoryTest {
     void getAnswers() {
         // given
         Answer expect = new Answer(QUESTION.getWriter(), QUESTION, CONTENTS);
-        QUESTION.addAnswer(expect);
         Question question = questions.save(QUESTION);
 
         // when
@@ -96,8 +95,7 @@ public class QuestionRepositoryTest {
     void deleted_and_answer_delete() {
         // given
         Question saveQuestion = questions.save(QUESTION);
-        Answer answer1 = new Answer(saveQuestion.getWriter(), saveQuestion, CONTENTS);
-        saveQuestion.addAnswer(answer1);
+        new Answer(saveQuestion.getWriter(), saveQuestion, CONTENTS);
 
         // when
         saveQuestion.delete(USER);

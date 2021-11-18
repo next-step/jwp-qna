@@ -18,7 +18,7 @@ import qna.domain.deleteHistory.DeleteHistory;
 @Embeddable
 public class Answers implements Serializable {
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = false)
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = false)
     private List<Answer> answers = new ArrayList<>();
 
     protected Answers() {
