@@ -21,12 +21,6 @@ public class User extends BaseEntity{
     @Column(nullable = false, updatable = false)
     private String name;
     private String email;
-    @OneToMany(mappedBy = "writer")
-    private List<Answer> answers = new ArrayList<>();
-    @OneToMany(mappedBy = "writer")
-    private List<Question> questions = new ArrayList<>();
-    @OneToMany(mappedBy = "deletedByUser")
-    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected User() {
     }
@@ -91,33 +85,6 @@ public class User extends BaseEntity{
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public void addAnswer(Answer answer) {
-        this.answers.add(answer);
-        answer.setWriter(this);
-    }
-
-    public void addAQuestion(Question question) {
-        this.questions.add(question);
-        question.setWriter(this);
-    }
-
-    public void addDeleteHistory(DeleteHistory deleteHistory) {
-        this.deleteHistories.add(deleteHistory);
-        deleteHistory.setDeletedByUser(this);
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
-    public List<Question> getQuestions() {
-        return questions;
-    }
-
-    public List<DeleteHistory> getDeleteHistories() {
-        return deleteHistories;
     }
 
     private static class GuestUser extends User {

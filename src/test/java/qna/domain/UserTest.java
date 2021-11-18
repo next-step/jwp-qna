@@ -54,44 +54,6 @@ public class UserTest {
     }
 
     @Test
-    void 연관관계_답변_조회() {
-        // given
-        Answer answer = TestAnswerFactory.create();
-        answerRepository.save(answer);
-
-        // when
-        user.addAnswer(answer);
-
-        // then
-        assertThat(user.getAnswers().get(0).getId()).isEqualTo(answer.getId());
-    }
-
-    @Test
-    void 연관관계_질문_조회() {
-        // given
-        Question question = questionRepository.save(TestQuestionFactory.create());
-
-        // when
-        user.addAQuestion(question);
-
-        // then
-        assertThat(user.getQuestions().get(0).getId()).isEqualTo(question.getId());
-    }
-
-    @Test
-    void 연관관계_삭제히스토리_조회() {
-        // given
-        Question question = questionRepository.save(TestQuestionFactory.create());
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(TestDeleteHistoryFactory.create(ContentType.QUESTION, question.getId(), user));
-
-        // when
-        user.addDeleteHistory(deleteHistory);
-
-        // then
-        assertThat(user.getDeleteHistories().get(0).getId()).isEqualTo(deleteHistory.getId());
-    }
-
-    @Test
     void 수정() {
         // when
         user.setEmail("test@gmail.com");
