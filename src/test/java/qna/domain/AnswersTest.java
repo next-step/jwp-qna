@@ -22,9 +22,12 @@ public class AnswersTest {
     @DisplayName("답변들을 삭제 상태로 변경시켜준다.")
     @Test
     void delete() throws CannotDeleteException {
-        Answers answers = new Answers(Arrays.asList(AnswerTest.A1, AnswerTest.A2));
+        final User user = new User(1L,"lsm", "password", "이승민", "test@test.com");
+        final Answer A1 = new Answer(1L, user, QuestionTest.Q1, "Answers Contents1");
+        final Answer A2 = new Answer(2L, user, QuestionTest.Q1, "Answers Contents2");
+        Answers answers = new Answers(Arrays.asList(A1, A2));
 
-        answers.delete(UserTest.JAVAJIGI);
+        answers.delete(user);
 
         assertThat(answers.getAnswerGroup().get(0).isDeleted()).isTrue();
         assertThat(answers.getAnswerGroup().get(1).isDeleted()).isTrue();

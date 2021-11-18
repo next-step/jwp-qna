@@ -28,8 +28,8 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = Answers.of();
 
     protected Question() {
     }
@@ -50,13 +50,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
-    }
-
-    public List<Answer> nonDeletedAnswers() {
-        return answers.stream()
-                .filter(item -> !item.isDeleted())
-                .collect(Collectors.toList());
+        return answers.getAnswerGroup();
     }
 
     public boolean isOwner(User writer) {
@@ -89,11 +83,6 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-
     @Override
     public String toString() {
         return "Question{" +
@@ -110,8 +99,7 @@ public class Question extends BaseTimeEntity {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         deleted = true;
-        Answers nonDeletedAnswers = new Answers(nonDeletedAnswers());
-        nonDeletedAnswers.delete(loginUser);
+        answers.delete(loginUser);
         return new DeleteHistory(ContentType.QUESTION, id, writer);
     }
 }

@@ -97,3 +97,6 @@ QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 
 ## 공부해야되는 내용
 * Optional 객체
 * @LastModifiedDate 어노테이션
+* @Embedded 
+  * https://velog.io/@conatuseus/JPA-%EC%9E%84%EB%B2%A0%EB%94%94%EB%93%9C-%ED%83%80%EC%9E%85embedded-type-8ak3ygq8wo
+  * 새로운 값 타입을 직접 정의해서 사용할수 있다.
