@@ -1,21 +1,36 @@
 package qna.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import qna.ForbiddenException;
 
 @Entity
 public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(length = 100, nullable = false)
     private String title;
+
     @Column(columnDefinition = "longtext")
     private String contents;
-    private Long writerId;
+
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+
+    @Embedded
+    private Answers answers = new Answers();
+
     private boolean deleted = false;
 
     public Question(String title, String contents) {
@@ -32,16 +47,19 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        if (!answer.isFrom(this)) {
+            throw new ForbiddenException();
+        }
+        this.answers.add(answer);
     }
 
     public Long getId() {
@@ -68,12 +86,8 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -84,14 +98,20 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
+    public Answers getAnswers() {
+        return answers;
+    }
+
     @Override
     public String toString() {
-        return "Question{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", contents='" + contents + '\'' +
-            ", writerId=" + writerId +
-            ", deleted=" + deleted +
-            '}';
+        final StringBuilder sb = new StringBuilder("Question{");
+        sb.append("id=").append(id);
+        sb.append(", title='").append(title).append('\'');
+        sb.append(", contents='").append(contents).append('\'');
+        sb.append(", writer=").append(writer);
+        sb.append(", answers=").append(answers);
+        sb.append(", deleted=").append(deleted);
+        sb.append('}');
+        return sb.toString();
     }
 }
