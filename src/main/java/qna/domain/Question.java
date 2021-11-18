@@ -1,17 +1,34 @@
 package qna.domain;
 
-public class Question {
-    private Long id;
-    private String title;
-    private String contents;
-    private Long writerId;
-    private boolean deleted = false;
+import javax.persistence.*;
 
-    public Question(String title, String contents) {
+@Entity
+public class Question extends BaseTimeEntity{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String title;
+
+
+    @Embedded
+    private Contents contents;
+
+    private Long writerId;
+
+    @Embedded
+    private Deleted deleted = Deleted.FALSE;
+
+    public Question() {
+    }
+
+    public Question(String title, Contents contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, String title, Contents contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -46,11 +63,11 @@ public class Question {
         this.title = title;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void setContents(Contents contents) {
         this.contents = contents;
     }
 
@@ -63,11 +80,11 @@ public class Question {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        this.deleted.setDeleted(deleted);
     }
 
     @Override
