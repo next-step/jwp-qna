@@ -28,8 +28,8 @@ class QuestionRepositoryTest {
 
 	@BeforeEach
 	public void setUp() {
-		user = userRepository.save(UserTest.JAVAJIGI);
-		otherUser = userRepository.save(UserTest.SANJIGI);
+		user = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+		otherUser = userRepository.save(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
 	}
 
 	@Test

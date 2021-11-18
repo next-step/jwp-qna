@@ -69,9 +69,14 @@ public class Answer extends BaseEntity {
 			throw new NotFoundException();
 		}
 
-		this.writer = writer;
+		setWriter(writer);
 		this.contents = contents;
 		this.question = question;
+	}
+
+	private void setWriter(User writer) {
+		this.writer = writer;
+		writer.addAnswer(this);
 	}
 
 	public boolean isOwner(User writer) {

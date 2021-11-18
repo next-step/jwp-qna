@@ -27,12 +27,12 @@ class AnswerRepositoryTest {
 
 	@BeforeEach
 	public void setUp() {
-		user = userRepository.save(UserTest.JAVAJIGI);
-		question = questionRepository.save(QuestionTest.Q1.writeBy(user));
+		user = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+		question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
 		answer = new Answer(user, question, "answer contents");
 
-		otherUser = userRepository.save(UserTest.SANJIGI);
-		otherQuestion = questionRepository.save(QuestionTest.Q2.writeBy(otherUser));
+		otherUser = userRepository.save(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
+		otherQuestion = questionRepository.save(new Question("title2", "contents2").writeBy(otherUser));
 		otherAnswer = new Answer(otherUser, otherQuestion, "otherAnswer contents");
 
 	}
