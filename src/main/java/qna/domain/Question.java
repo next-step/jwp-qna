@@ -79,6 +79,10 @@ public class Question extends BaseEntity {
         return writer;
     }
 
+    public String getContents() {
+        return contents;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

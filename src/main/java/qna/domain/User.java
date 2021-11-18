@@ -88,6 +88,14 @@ public class User extends BaseEntity {
         return password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     private static class GuestUser extends User {
         @Override
         public boolean isGuestUser() {
