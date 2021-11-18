@@ -76,9 +76,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if (!this.answers.contains(answer)) {
-            this.answers.add(answer);
-        }
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
 
