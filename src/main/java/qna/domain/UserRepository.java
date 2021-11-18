@@ -27,4 +27,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return
      */
     long countByName(String userName);
+
+    /**
+     * userId를 통해 사용자 정보 삭제 - 회원 탈퇴
+     * @param userId
+     */
+    void deleteByUserId(String userId);
 }

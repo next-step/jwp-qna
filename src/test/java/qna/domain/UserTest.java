@@ -10,8 +10,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -125,5 +127,13 @@ public class UserTest {
     void findUserByName(String name, String userId) {
         User user = userRepository.findByName(name).get();
         assertThat(user.getUserId()).isEqualTo(userId);
+    }
+
+    @Test
+    @DisplayName("회원탈퇴 : 회원정보 삭제")
+    void leave() {
+        userRepository.deleteByUserId("inmookjeong");
+        assertThatThrownBy(() -> userRepository.findByUserId("inmookjeong").get())
+                .isInstanceOf(NoSuchElementException.class);
     }
 }
