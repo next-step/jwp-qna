@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DataJpaTest
 public class UserTest {
     // data.sql을 통해 Insert 자동화
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "javaj", "javajigi@slipp.net");
+    public static final User SANJIGI = new User(2L, "sanjigi", "password", "sanj", "sanjigi@slipp.net");
 
     @Autowired
     private UserRepository userRepository;
@@ -86,7 +86,6 @@ public class UserTest {
     void getUsers(int index, String userId) {
         String orderByColumn = "id";
         List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, orderByColumn));
-        System.out.println("users : " + users.toString());
         assertAll(
                 () -> assertThat(users.size()).isEqualTo(3L),
                 () -> assertThat(users.get(index).getUserId()).isEqualTo(userId)
@@ -106,7 +105,25 @@ public class UserTest {
     @DisplayName("입력한 userId를 통해 사용자 조회")
     void findUserByUserId(String userId, Long id) {
         User user = userRepository.findByUserId(userId).get();
-        System.out.println("users : " + user.toString());
-        assertThat(user.getId()).isEqualTo(id);
+        assertAll(
+                () -> assertThat(user).isNotNull(),
+                () -> assertThat(user.getId()).isEqualTo(id)
+        );
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"javaj:1", "sanj:1", "inmookjeong:1", "pobi:0"}, delimiter = ':')
+    @DisplayName("입력한 사용자 이름 가지고 있는 사용자 수 조회")
+    void countUserByName(String name, int count) {
+        long foundCount = userRepository.countByName(name);
+        assertThat(foundCount).isEqualTo(count);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"javaj:javajigi", "sanj:sanjigi", "inmookjeong:inmookjeong"}, delimiter = ':')
+    @DisplayName("입력한 사용자 이름을 통해 사용자 조회")
+    void findUserByName(String name, String userId) {
+        User user = userRepository.findByName(name).get();
+        assertThat(user.getUserId()).isEqualTo(userId);
     }
 }

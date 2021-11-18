@@ -13,4 +13,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return
      */
     long countByUserId(String userId);
+
+    /**
+     * 사용자 이름을 통한 User 조회
+     * @param userName
+     * @return
+     */
+    Optional<User> findByName(String userName);
+
+    /**
+     * 사용자 이름을 통해 조회된 User 수 가져오기
+     * @param userName
+     * @return
+     */
+    long countByName(String userName);
 }
