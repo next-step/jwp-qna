@@ -16,6 +16,7 @@ public class QuestionTest {
     void setUp() {
         question = new Question();
         question.writeBy(UserRepositoryTest.JAVAJIGI);
+        question.addAnswer(new Answer(1L, UserRepositoryTest.JAVAJIGI, question, "Answers Contents1"));
     }
 
     @Test
@@ -39,6 +40,19 @@ public class QuestionTest {
 
         // when, then
         assertThatThrownBy(() -> question.delete(UserRepositoryTest.SANJIGI))
-                .isInstanceOf(CannotDeleteException.class);
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("질문을 삭제할 권한이 없습니다.");
+    }
+
+    @Test
+    @DisplayName("다른 사람이 쓴 답변이 존재할 경우 실패한다.")
+    void delete_다른_사람이_쓴_답변_존재() {
+        // given
+        question.addAnswer(new Answer(2L, UserRepositoryTest.SANJIGI, question, "Answers Contents2"));
+
+        // when, then
+        assertThatThrownBy(() -> question.delete(UserRepositoryTest.JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }

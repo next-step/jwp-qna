@@ -24,6 +24,9 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
+    @Embedded
+    private Answers answers = new Answers();
+
     protected Question() {
 
     }
@@ -39,10 +42,8 @@ public class Question extends BaseTimeEntity {
     }
 
     public void delete(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-        this.deleted = true;
+        deleteQuestion(loginUser);
+        deleteAnswers(loginUser);
     }
 
     public Question writeBy(User writer) {
@@ -51,7 +52,19 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.add(answer);
         answer.toQuestion(this);
+    }
+
+    private void deleteQuestion(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.deleted = true;
+    }
+
+    private void deleteAnswers(User loginUser) throws CannotDeleteException {
+        this.answers.delete(loginUser);
     }
 
     private boolean isOwner(User writer) {
@@ -94,6 +107,10 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
+    public Answers getAnswers() {
+        return answers;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -102,6 +119,7 @@ public class Question extends BaseTimeEntity {
                 ", deleted=" + deleted +
                 ", title='" + title + '\'' +
                 ", writer=" + writer +
+                ", answers=" + answers +
                 '}';
     }
 }
