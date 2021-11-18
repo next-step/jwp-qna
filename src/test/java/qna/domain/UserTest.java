@@ -29,15 +29,32 @@ public class UserTest {
     }
 
     @Test
-    @DisplayName("회원정보 수정")
+    @DisplayName("회원정보 수정 : 회원 이름, 이메일")
     void update() {
         User actual = userRepository.save(new User("inmookjeong", "password", "inmookjeong", "jeonginmook@gmail.com"));
         actual.setName("mook");
+        actual.setEmail("jeonginmook2@gmail.com");
         actual.update(actual, actual);
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getId()).isEqualTo(3L),
-                () -> assertThat(actual.getName()).isEqualTo("mook")
+                () -> assertThat(actual.getName()).isEqualTo("mook"),
+                () -> assertThat(actual.getEmail()).isEqualTo("jeonginmook2@gmail.com")
+        );
+    }
+
+    @Test
+    @DisplayName("회원정보 수정 : 회원 패스워드")
+    void updatePassword() {
+        User inmookjeong = userRepository.save(new User("inmookjeong", "password", "inmookjeong", "jeonginmook@gmail.com"));
+        if(inmookjeong.matchPassword("password")) {
+            inmookjeong.setPassword("newPassword");
+        }
+        inmookjeong.update(inmookjeong, inmookjeong);
+        assertAll(
+                () -> assertThat(inmookjeong).isNotNull(),
+                () -> assertThat(inmookjeong.getId()).isEqualTo(3L),
+                () -> assertThat(inmookjeong.getPassword()).isEqualTo("newPassword")
         );
     }
 }
