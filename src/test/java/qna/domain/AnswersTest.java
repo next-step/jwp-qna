@@ -5,12 +5,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AnswersTest {
 
-    private final User user = new User(1L,"lsm", "password", "이승민", "test@test.com");
+    private final User user = new User(1L, "lsm", "password", "이승민", "test@test.com");
     private final Answer A1 = new Answer(1L, user, QuestionTest.Q1, "Answers Contents1");
     private final Answer A2 = new Answer(2L, user, QuestionTest.Q1, "Answers Contents2");
     private final Answers answers = Answers.of();
@@ -53,5 +55,14 @@ public class AnswersTest {
             answers.delete(new User("lsm", "password", "이승민", "test@test.com"));
         }).isInstanceOf(CannotDeleteException.class)
                 .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
+
+    @DisplayName("답변List 삭제시 DeleteHistory List 생성 기능")
+    @Test
+    void createDeleteHistorys() throws CannotDeleteException{
+        List<DeleteHistory> deleteHistorys = answers.delete(A1.getWriter());
+
+        assertThat(deleteHistorys.size()).isEqualTo(2);
+        assertThat(deleteHistorys.get(0).getContentType()).isEqualTo(ContentType.ANSWER);
     }
 }

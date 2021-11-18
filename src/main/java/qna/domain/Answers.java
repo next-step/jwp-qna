@@ -18,10 +18,6 @@ public class Answers {
     protected Answers() {
     }
 
-    public Answers(List<Answer> answerGroup) {
-        this.answers.addAll(answerGroup);
-    }
-
     public static Answers of() {
         return new Answers();
     }
@@ -36,10 +32,12 @@ public class Answers {
                 .collect(Collectors.toList());
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> result = new ArrayList<>();
         for (Answer answer : nonDeletedAnswers()) {
-            answer.delete(loginUser);
+            result.add(answer.delete(loginUser));
         }
+        return result;
     }
 
     public List<Answer> getAnswerGroup() {

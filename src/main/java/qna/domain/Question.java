@@ -94,12 +94,15 @@ public class Question extends BaseTimeEntity {
                 '}';
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
+        List<DeleteHistory> result = new ArrayList<>();
         deleted = true;
-        answers.delete(loginUser);
-        return new DeleteHistory(ContentType.QUESTION, id, writer);
+        result.add(new DeleteHistory(ContentType.QUESTION, id, writer));
+        result.addAll(answers.delete(loginUser));
+        return result;
     }
 }

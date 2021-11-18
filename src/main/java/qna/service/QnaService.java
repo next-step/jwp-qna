@@ -34,19 +34,8 @@ public class QnaService {
 
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
-        //서비스레이어에 딱 3줄로 나눌수 있다. 객체들로 책임이 분산될수 있다.
         Question question = findQuestionById(questionId);
-
-        question.delete(loginUser);
-
-        //일급콜렉션을 만들어서 answers에서 물어본다.
-        List<Answer> answers = question.getAnswers();
-
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter(), LocalDateTime.now()));
-        for (Answer answer : answers) {
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
+        List<DeleteHistory> deleteHistories = question.delete(loginUser);
         deleteHistoryService.saveAll(deleteHistories);
     }
 }
