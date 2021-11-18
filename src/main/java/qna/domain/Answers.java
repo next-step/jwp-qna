@@ -13,7 +13,7 @@ public class Answers {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     List<Answer> answers = new ArrayList<>();
 
-    public Answers() {
+    protected Answers() {
     }
 
     public List<Answer> getValue() {
