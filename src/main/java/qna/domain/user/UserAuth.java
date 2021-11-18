@@ -19,19 +19,20 @@ public class UserAuth {
     }
 
     public UserAuth(String userId, String password) {
+        valid(userId, password);
+
         this.userId = userId;
         this.password = password;
-        valid();
     }
 
 
-    public void updateValid(User loginUser, User changeUser) {
-        if (!matchUserId(loginUser.getUserId())) {
+    public void updateValid(UserAuth loginUserAuth, UserAuth changeUserAuth) {
+        if (!matchUserId(loginUserAuth.userId)) {
             throw new UnAuthorizedException(
                 UnAuthorizedException.UNAUTHORIZED_EXCEPTION_USER_ID_NOT_SAME_MESSAGE);
         }
 
-        if (!matchPassword(changeUser.getPassword())) {
+        if (!matchPassword(changeUserAuth.password)) {
             throw new UnAuthorizedException(
                 UnAuthorizedException.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_MESSAGE);
         }
@@ -45,11 +46,7 @@ public class UserAuth {
         return userId;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    private void valid() {
+    private void valid(String userId, String password) {
         if (Objects.isNull(userId) || Objects.isNull(password)) {
             throw new InvalidParamException("모든 값이 존재해야 합니다.");
         }

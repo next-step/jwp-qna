@@ -23,7 +23,6 @@ public class UserTest {
     void 기본데이터_Not_Null_검증() {
         // then
         assertAll(
-            () -> assertThat(JAVAJIGI.getPassword()).isNotNull(),
             () -> assertThat(JAVAJIGI.getUserId()).isNotNull(),
             () -> assertThat(JAVAJIGI.getName()).isNotNull()
         );

@@ -51,7 +51,7 @@ public class DeleteHistoryRepositoryTest {
     public void setUp() {
         USER = users.save(UserTest.createUser("answerJavajigi", "password", "javajigi",
             new Email("javajigi@slipp.net")));
-        QUESTION = questions.save(new Question("title1", "contents1").writeBy(USER));
+        QUESTION = questions.save(new Question(QuestionPostTest.QUESTION_POST1).writeBy(USER));
         ANSWER = answers.save(new Answer(QUESTION.getWriter(), QUESTION, CONTENTS));
 
         ANSWER_HISTORY = DeleteHistory.OfQuestion(QUESTION, QUESTION.getWriter());

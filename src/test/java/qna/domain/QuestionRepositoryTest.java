@@ -39,7 +39,7 @@ public class QuestionRepositoryTest {
     public void setUp() throws Exception {
         USER = users.save(UserTest.createUser("answerJavajigi", "password", "javajigi",
             new Email("javajigi@slipp.net")));
-        QUESTION = new Question("title1", "contents1").writeBy(USER);
+        QUESTION = new Question(QuestionPostTest.QUESTION_POST1).writeBy(USER);
     }
 
     @Test
@@ -116,7 +116,8 @@ public class QuestionRepositoryTest {
     @DisplayName("자신의 질문 삭제, - 답변없는 질문")
     void deleted_자신의_질문_삭제_성공() {
         // given
-        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Question question = new Question(QuestionPostTest.QUESTION_POST1).writeBy(
+            UserTest.JAVAJIGI);
 
         // when
         question.delete(UserTest.JAVAJIGI);

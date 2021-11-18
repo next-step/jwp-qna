@@ -50,7 +50,7 @@ public class AnswerRepositoryTest {
     public void setUp() throws Exception {
         USER = users.save(UserTest.createUser("answerJavajigi", "password", "javajigi",
             new Email("javajigi@slipp.net")));
-        QUESTION = questions.save(new Question("title1", "contents1").writeBy(USER));
+        QUESTION = questions.save(new Question(QuestionPostTest.QUESTION_POST1).writeBy(USER));
         ANSWER = new Answer(QUESTION.getWriter(), QUESTION, CONTENTS);
     }
 

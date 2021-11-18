@@ -32,12 +32,12 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Embedded
-    private QuestionPost questionPost;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"), nullable = false)
     private User writer;
+
+    @Embedded
+    private QuestionPost questionPost;
 
     @Embedded
     private final Answers answers = new Answers();
@@ -48,8 +48,8 @@ public class Question extends BaseEntity {
     protected Question() {
     }
 
-    public Question(String title, String contents) {
-        this.questionPost = QuestionPost.of(title, contents);
+    public Question(QuestionPost questionPost) {
+        this.questionPost = questionPost;
     }
 
 

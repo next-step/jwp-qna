@@ -11,6 +11,9 @@ import qna.domain.qna.QuestionPost;
 
 public class QuestionPostTest {
 
+    public static final QuestionPost QUESTION_POST1 = QuestionPost.of("title1", "contents1");
+    public static final QuestionPost QUESTION_POST2 = QuestionPost.of("title2", "contents2");
+
     @Test
     @DisplayName("정상 생성 후 제목,내용 검증")
     void create() {

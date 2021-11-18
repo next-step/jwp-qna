@@ -45,7 +45,7 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        question = new Question(QuestionPostTest.QUESTION_POST1).writeBy(UserTest.JAVAJIGI);
         answer = new Answer(UserTest.JAVAJIGI, question, Contents.of("Answers Contents1"));
         question.addAnswer(answer);
     }

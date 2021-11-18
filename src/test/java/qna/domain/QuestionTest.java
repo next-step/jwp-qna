@@ -13,19 +13,22 @@ import qna.domain.qna.Answer;
 import qna.domain.deleteHistory.DeleteHistory;
 import qna.domain.qna.Contents;
 import qna.domain.qna.Question;
+import qna.domain.qna.QuestionPost;
 import qna.domain.user.User;
 
 public class QuestionTest {
 
-    public static final Question Q1 = new Question("title1", "Answers Contents1").writeBy(
+    public static final Question Q1 = new Question(QuestionPostTest.QUESTION_POST1).writeBy(
         UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q2 = new Question(QuestionPostTest.QUESTION_POST2).writeBy(
+        UserTest.SANJIGI);
 
     @Test
     @DisplayName("자신의 질문 삭제, (답변 없음)")
     void deleted() {
         // given
-        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Question question = new Question(QuestionPostTest.QUESTION_POST1).writeBy(
+            UserTest.JAVAJIGI);
 
         // when
         question.delete(UserTest.JAVAJIGI);
@@ -78,7 +81,7 @@ public class QuestionTest {
         assertThatExceptionOfType(UnAuthorizedException.class) // then
             .isThrownBy(() -> {
                 // when
-                new Question("안녕하세요 질문이있습니다.", "미가입자도 질문 가능한가요?").writeBy(guest);
+                new Question(QuestionPost.of("안녕하세요 질문이있습니다.", "미가입자도 질문 가능한가요?")).writeBy(guest);
             }).withMessage(UnAuthorizedException.GUEST_USER_NOT_QUESTION);
     }
 
@@ -86,7 +89,8 @@ public class QuestionTest {
     @DisplayName("질문 삭제 리턴 값 DeleteHistory 검증")
     void adeleted() {
         // given
-        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Question question = new Question(QuestionPostTest.QUESTION_POST1).writeBy(
+            UserTest.JAVAJIGI);
 
         // when
         // then

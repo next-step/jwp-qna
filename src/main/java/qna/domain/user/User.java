@@ -35,7 +35,7 @@ public class User extends BaseEntity {
     }
 
     public void update(User loginUser, User changeUser) {
-        this.userAuth.updateValid(loginUser, changeUser);
+        this.userAuth.updateValid(loginUser.getUserAuth(), changeUser.getUserAuth());
 
         this.userData.update(changeUser.getUserData());
     }
@@ -60,20 +60,20 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public String getName() {
-        return userData.getName();
+    public UserAuth getUserAuth() {
+        return userAuth;
+    }
+
+    public UserData getUserData() {
+        return userData;
     }
 
     public String getUserId() {
         return userAuth.getUserId();
     }
 
-    public String getPassword() {
-        return userAuth.getPassword();
-    }
-
-    public UserData getUserData() {
-        return userData;
+    public String getName() {
+        return userData.getName();
     }
 
     private static class GuestUser extends User {
