@@ -1,13 +1,11 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @EntityListeners(AuditingEntityListener.class)
@@ -31,6 +29,9 @@ public class User extends BaseEntity {
 
     @Column(name = "user_id", length = 20, nullable = false, unique = true)
     private String userId;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<Answer>();
 
     // Arguments가 없는 Default Constructor 생성
     protected User() {}

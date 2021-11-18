@@ -1,13 +1,10 @@
 package qna.domain;
 
-import net.bytebuddy.asm.Advice;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -28,6 +25,9 @@ public class Question extends BaseEntity {
 
     @Column(name = "writer_id")
     private Long writerId;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<Answer>();
 
     // Arguments가 없는 Default Constructor 생성
     protected Question() {}
@@ -105,4 +105,5 @@ public class Question extends BaseEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
