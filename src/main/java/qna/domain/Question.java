@@ -23,8 +23,9 @@ public class Question extends BaseEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<Answer>();
@@ -43,12 +44,12 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -80,11 +81,7 @@ public class Question extends BaseEntity {
     }
 
     public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+        return writer.getId();
     }
 
     public boolean isDeleted() {
@@ -101,7 +98,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + this.writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
