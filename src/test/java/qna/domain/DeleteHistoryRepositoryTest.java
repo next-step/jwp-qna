@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
-public class DeleteHistoryTest {
+public class DeleteHistoryRepositoryTest {
 
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
@@ -36,14 +36,11 @@ public class DeleteHistoryTest {
         deleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.QUESTION, question.getId(), user, LocalDateTime.now()));
     }
 
-    @DisplayName("deleteHistory 생성")
+    @DisplayName("deleteHistory 삭제")
     @Test
-    void saveDeleteHistoryTest() {
-        assertAll(
-                () -> assertThat(deleteHistory.getId()).isNotNull(),
-                () -> assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.QUESTION),
-                () -> assertThat(deleteHistory.getContentId()).isEqualTo(question.getId()),
-                () -> assertThat(deleteHistory.getDeletedBy()).isEqualTo(user)
-        );
+    void removeDeleteHistoryTest() {
+        assertThat(deleteHistoryRepository.findAll().size()).isEqualTo(1);
+        deleteHistoryRepository.delete(deleteHistory);
+        assertThat(deleteHistoryRepository.findAll().size()).isZero();
     }
 }

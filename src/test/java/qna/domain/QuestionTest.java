@@ -10,14 +10,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
@@ -55,33 +52,6 @@ public class QuestionTest {
         );
     }
 
-    @DisplayName("삭제되지 않은 question 목록 찾기")
-    @Test
-    void findByDeletedFalseTest() {
-        List<Question> noneDeletedQuestions = questionRepository.findByDeletedFalse();
-        assertThat(noneDeletedQuestions.size()).isEqualTo(1);
-        Question question = noneDeletedQuestions.get(0);
-        assertEquals(question, this.question);
-    }
-
-    @DisplayName("삭제되지 않은 question 하나 찾기")
-    @Test
-    void findByIdAndDeletedFalseTest() {
-        Question question = questionRepository.findByIdAndDeletedFalse(this.question.getId())
-                .orElseThrow(NoSuchElementException::new);
-        assertEquals(question, this.question);
-    }
-
-    @DisplayName("삭제한 question 찾기")
-    @Test
-    void findByIdAndDeletedTrueTest() throws CannotDeleteException {
-        question.delete(user);
-        assertThatThrownBy(() -> {
-            questionRepository.findByIdAndDeletedFalse(question.getId())
-                    .orElseThrow(NoSuchElementException::new);
-        }).isInstanceOf(NoSuchElementException.class);
-    }
-
     @DisplayName("question 수정")
     @Test
     void updateQuestionTest() {
@@ -89,14 +59,6 @@ public class QuestionTest {
         Question questionFromRepository = questionRepository.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertThat(questionFromRepository.getContents()).isEqualTo("Changed Contents");
-    }
-
-    @DisplayName("question 삭제")
-    @Test
-    void removeQuestionTest() {
-        assertThat(questionRepository.findAll().size()).isEqualTo(1);
-        questionRepository.delete(question);
-        assertThat(questionRepository.findAll().size()).isZero();
     }
 
     @DisplayName("question save with answer 추가")
@@ -128,15 +90,7 @@ public class QuestionTest {
         );
     }
 
-    @DisplayName("question delete with user 테스트")
-    @Test
-    void removeQuestionWithUserTest() throws CannotDeleteException {
-        assertThat(questionRepository.findAll().size()).isEqualTo(1);
-        question.delete(user);
-        assertThat(questionRepository.findByIdAndDeletedFalse(question.getId())).isEqualTo(Optional.empty());
-    }
-
-    @DisplayName("question delete with user exception 테스트")
+    @DisplayName("validate owner exception")
     @Test
     void removeQuestionWithUserExceptionTest() {
         assertThatThrownBy(() -> {
@@ -147,6 +101,8 @@ public class QuestionTest {
 
     @AfterEach
     void beforeFinish() {
+        answerRepository.flush();
         questionRepository.flush();
+        userRepository.flush();
     }
 }
