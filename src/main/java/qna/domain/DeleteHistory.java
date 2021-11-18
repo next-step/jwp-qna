@@ -18,14 +18,26 @@ public class DeleteHistory {
 
     @CreationTimestamp
     private LocalDateTime createDate = LocalDateTime.now();
-    private Long deletedById;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User deletedBy;
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    protected DeleteHistory() {
+    }
+
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        deletedBy(deletedBy);
         this.createDate = createDate;
+    }
+
+    public void deletedBy(User writer) {
+        if (this.deletedBy != null) {
+            this.deletedBy.getDeleteHistories().remove(this);
+        }
+        this.deletedBy = writer;
+        this.deletedBy.getDeleteHistories().add(this);
     }
 
     @Override
@@ -36,12 +48,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, deletedBy);
     }
 
     @Override
@@ -50,7 +62,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + deletedBy.getId() +
                 ", createDate=" + createDate +
                 '}';
     }
