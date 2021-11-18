@@ -12,7 +12,7 @@ import java.util.List;
 @Embeddable
 public class Answers {
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
 
     protected Answers() {
@@ -23,10 +23,12 @@ public class Answers {
         this.answers.add(answer);
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : this.answers) {
-            answer.delete(loginUser);
+            deleteHistories.add(answer.delete(loginUser));
         }
+        return deleteHistories;
     }
 
     public List<Answer> getAnswers() {

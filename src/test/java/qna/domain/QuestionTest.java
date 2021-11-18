@@ -5,18 +5,30 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class QuestionTest {
 
     private Question question;
+    private List<DeleteHistory> deleteHistories;
 
     @BeforeEach
     void setUp() {
         question = new Question();
         question.writeBy(UserRepositoryTest.JAVAJIGI);
-        question.addAnswer(new Answer(1L, UserRepositoryTest.JAVAJIGI, question, "Answers Contents1"));
+
+        Answer answer = new Answer(1L, UserRepositoryTest.JAVAJIGI, question, "Answers Contents1");
+        question.addAnswer(answer);
+
+        deleteHistories = Arrays.asList(
+                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
+        );
     }
 
     @Test
@@ -26,10 +38,11 @@ public class QuestionTest {
         assertThat(question.isDeleted()).isFalse();
 
         // when
-        question.delete(UserRepositoryTest.JAVAJIGI);
+        List<DeleteHistory> result = question.delete(UserRepositoryTest.JAVAJIGI);
 
         // then
         assertThat(question.isDeleted()).isTrue();
+        assertThat(result).isEqualTo(deleteHistories);
     }
 
     @Test
