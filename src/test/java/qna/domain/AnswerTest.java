@@ -39,10 +39,9 @@ public class AnswerTest {
     @DisplayName("답변 등록자가 삭제하려는 사람과 다를때 에러")
     @Test
     void deleteAnswerByUserError() throws CannotDeleteException {
-        assertThatThrownBy(()->{
-            A1.delete(new User("lsm", "password", "이승민","test@test.com"));
+        assertThatThrownBy(() -> {
+            A1.delete(new User("lsm", "password", "이승민", "test@test.com"));
         }).isInstanceOf(CannotDeleteException.class)
                 .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-
     }
 }

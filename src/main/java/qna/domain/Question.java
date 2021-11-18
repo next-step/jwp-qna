@@ -111,7 +111,7 @@ public class Question extends BaseTimeEntity {
         }
         deleted = true;
         Answers nonDeletedAnswers = new Answers(nonDeletedAnswers());
-        nonDeletedAnswers.delete();
+        nonDeletedAnswers.delete(loginUser);
         return new DeleteHistory(ContentType.QUESTION, id, writer);
     }
 }

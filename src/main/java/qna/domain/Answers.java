@@ -17,9 +17,9 @@ public class Answers {
         return answers.size();
     }
 
-    public void delete() throws CannotDeleteException {
+    public void delete(User loginUser) throws CannotDeleteException {
         for (Answer answer : answers) {
-            answer.delete(null);//TODO
+            answer.delete(loginUser);
         }
     }
 
