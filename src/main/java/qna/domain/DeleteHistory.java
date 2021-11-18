@@ -11,6 +11,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "delete_history")
 public class DeleteHistory {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,8 +25,9 @@ public class DeleteHistory {
     @CreatedDate
     private LocalDateTime createDate = LocalDateTime.now();
 
-    @Column(name = "deleted_by_id")
-    private Long deletedById;
+    @ManyToOne
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deleteUser;    // User의 mappedBy와 일치해야 함.
 
     // Arguments가 없는 Default Constructor 생성
     protected DeleteHistory() {}
@@ -33,7 +35,7 @@ public class DeleteHistory {
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deleteUser.setId(deletedById);
         this.createDate = createDate;
     }
 
@@ -45,12 +47,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(this.deleteUser.getId(), that.deleteUser.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, this.deleteUser.getId());
     }
 
     @Override
@@ -59,7 +61,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + this.deleteUser.getId() +
                 ", createDate=" + createDate +
                 '}';
     }

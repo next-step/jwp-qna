@@ -33,6 +33,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "writer")
     private List<Answer> answers = new ArrayList<Answer>();
 
+    @OneToMany(mappedBy = "deleteUser")
+    private List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
+
     // Arguments가 없는 Default Constructor 생성
     protected User() {}
 
