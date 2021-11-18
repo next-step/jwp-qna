@@ -60,6 +60,21 @@ public class User extends BaseEntity {
         this.email = target.email;
     }
 
+    /**
+     * User Password 변경
+     * @param loginUser
+     * @param newPassword
+     */
+    public void updatePassword(User loginUser, String newPassword) {
+        if (!matchUserId(loginUser.userId)) {
+            throw new UnAuthorizedException();
+        }
+
+        if (!matchPassword(newPassword)) {
+            this.password = newPassword;
+        }
+    }
+
     private boolean matchUserId(String userId) {
         return this.userId.equals(userId);
     }

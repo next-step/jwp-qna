@@ -47,10 +47,7 @@ public class UserTest {
     @DisplayName("회원정보 수정 : 회원 패스워드")
     void updatePassword() {
         User inmookjeong = userRepository.save(new User("inmookjeong", "password", "inmookjeong", "jeonginmook@gmail.com"));
-        if(inmookjeong.matchPassword("password")) {
-            inmookjeong.setPassword("newPassword");
-        }
-        inmookjeong.update(inmookjeong, inmookjeong);
+        inmookjeong.updatePassword(inmookjeong, "newPassword");
         assertAll(
                 () -> assertThat(inmookjeong).isNotNull(),
                 () -> assertThat(inmookjeong.getId()).isEqualTo(3L),
