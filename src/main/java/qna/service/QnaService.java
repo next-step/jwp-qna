@@ -44,9 +44,9 @@ public class QnaService {
         Question findQuestion = findQuestionById(question.getId());
         DeleteHistory deleteQuestion = findQuestion.delete(loginUser);
 
-        Answers answers = findQuestion.getAnswers();
-        Answers excludeDeleteTrueAnswers = answers.excludeDeleteTrueAnswers();
-        List<DeleteHistory> deleteAnswers = excludeDeleteTrueAnswers.delete(loginUser);
+        List<DeleteHistory> deleteAnswers = findQuestion.getAnswers()
+                                                        .excludeDeleteTrueAnswers()
+                                                        .delete(loginUser);
 
         DeleteHistoryCombiner deleteHistoryCombiner = new DeleteHistoryCombiner();
         deleteHistoryCombiner.add(deleteQuestion);
