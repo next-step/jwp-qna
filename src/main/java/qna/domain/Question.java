@@ -82,7 +82,6 @@ public class Question extends BaseEntity {
 		List<DeleteHistory> deleteHistories = deleteAnswers();
 		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer));
 		return deleteHistories;
-
 	}
 
 	private List<DeleteHistory> deleteAnswers() {

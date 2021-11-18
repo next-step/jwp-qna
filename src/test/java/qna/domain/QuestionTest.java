@@ -75,7 +75,5 @@ public class QuestionTest {
         List<DeleteHistory> deleteHistoryList = Q1.delete(UserTest.JAVAJIGI);
         //then
         assertThat(deleteHistoryList).hasSize(2);
-
-
     }
 }
