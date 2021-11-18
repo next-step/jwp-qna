@@ -97,7 +97,7 @@ public class QuestionRepositoryTest {
 
         Answer answer1 = new Answer(user1, question, "answer");
         Answer answer2 = new Answer(user1, question, "answer2");
-        answer2.delete(user1);
+        answer2.delete(user1, LocalDateTime.now());
 
         Long savedId = questionRepository.save(question).getId();
 

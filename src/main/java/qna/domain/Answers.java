@@ -2,6 +2,7 @@ package qna.domain;
 
 import static java.util.stream.Collectors.toList;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -31,10 +32,10 @@ public class Answers {
             .collect(toList()));
     }
 
-    public List<DeleteHistory> deleteAll(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleteAll(User loginUser, LocalDateTime deleteTime) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : values) {
-            deleteHistories.add(answer.delete(loginUser));
+            deleteHistories.add(answer.delete(loginUser, deleteTime));
         }
 
         return deleteHistories;

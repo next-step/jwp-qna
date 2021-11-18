@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -95,8 +96,10 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-            new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()),
-            new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter())
+            new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(),
+                LocalDateTime.now()),
+            new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(),
+                LocalDateTime.now())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

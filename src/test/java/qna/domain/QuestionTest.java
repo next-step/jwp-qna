@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
@@ -30,7 +31,7 @@ public class QuestionTest {
         Question question = new Question("title", "contents");
         question.setWriter(writer);
 
-        question.delete(writer);
+        question.delete(writer, LocalDateTime.now());
 
         assertThat(question.isDeleted()).isTrue();
     }
@@ -44,7 +45,7 @@ public class QuestionTest {
         User other = new User(2L, "2", "password", "user2", "test2@email.com");
 
         assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(
-                () -> TestDummy.QUESTION1.delete(other))
+                () -> TestDummy.QUESTION1.delete(other, LocalDateTime.now()))
             .withMessage("질문을 삭제할 권한이 없습니다.");
     }
 
@@ -81,7 +82,7 @@ public class QuestionTest {
 
         Answer answer1 = new Answer(100L, writer, question, "answer1");
         Answer answer2 = new Answer(101L, writer, question, "answer2");
-        answer2.delete(writer);
+        answer2.delete(writer, LocalDateTime.now());
 
         // when
         DeleteHistories result = question.deleteWithAnswers(writer);

@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -66,26 +67,27 @@ public class Question extends BaseTimeEntity {
         return answers.notDeletedAnswers();
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser, LocalDateTime deleteTime) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         setDeleted(true);
 
-        return toDeleteHistory();
+        return toDeleteHistory(deleteTime);
     }
 
     public DeleteHistories deleteWithAnswers(User loginUser) throws CannotDeleteException {
         List<DeleteHistory> deleteHistoryList = new ArrayList<>();
-        deleteHistoryList.add(delete(loginUser));
-        deleteHistoryList.addAll(notDeletedAnswers().deleteAll(loginUser));
+        LocalDateTime deleteTime = LocalDateTime.now();
+        deleteHistoryList.add(delete(loginUser, deleteTime));
+        deleteHistoryList.addAll(notDeletedAnswers().deleteAll(loginUser, deleteTime));
 
         return DeleteHistories.from(deleteHistoryList);
     }
 
-    private DeleteHistory toDeleteHistory() {
+    private DeleteHistory toDeleteHistory(LocalDateTime deleteTime) {
         if (deleted) {
-            return new DeleteHistory(ContentType.QUESTION, id, writer);
+            return new DeleteHistory(ContentType.QUESTION, id, writer, deleteTime);
         }
 
         throw new IllegalStateException("삭제시에만 기록을 남길 수 있습니다.");
