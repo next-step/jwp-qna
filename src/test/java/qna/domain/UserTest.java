@@ -31,9 +31,9 @@ public class UserTest {
     @Test
     @DisplayName("회원정보 수정")
     void update() {
-        User inmookjeong = userRepository.save(new User("inmookjeong", "password", "inmookjeong", "jeonginmook@gmail.com"));
-        inmookjeong.setName("mook");
-        User actual = userRepository.save(inmookjeong);
+        User actual = userRepository.save(new User("inmookjeong", "password", "inmookjeong", "jeonginmook@gmail.com"));
+        actual.setName("mook");
+        actual.update(actual, actual);
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getId()).isEqualTo(3L),
