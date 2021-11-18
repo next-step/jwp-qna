@@ -1,17 +1,23 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 @Entity
-public class Question extends BaseEntity{
+public class Question extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column
     @Lob
@@ -23,8 +29,9 @@ public class Question extends BaseEntity{
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     protected Question() {
     }
@@ -40,40 +47,24 @@ public class Question extends BaseEntity{
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answer.setQuestion(this);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public boolean isDeleted() {
@@ -84,14 +75,8 @@ public class Question extends BaseEntity{
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-            "contents='" + contents + '\'' +
-            ", deleted=" + deleted +
-            ", title='" + title + '\'' +
-            ", writerId=" + writerId +
-            '}';
+    public User getWriter() {
+        return writer;
     }
 
     @Override
@@ -101,12 +86,13 @@ public class Question extends BaseEntity{
         if (o == null || getClass() != o.getClass())
             return false;
         Question question = (Question)o;
-        return deleted == question.deleted && Objects.equals(contents, question.contents)
-            && Objects.equals(title, question.title) && Objects.equals(writerId, question.writerId);
+        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(
+            contents, question.contents) && Objects.equals(title, question.title) && Objects.equals(
+            writer, question.writer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(contents, deleted, title, writerId);
+        return Objects.hash(id, contents, deleted, title, writer);
     }
 }

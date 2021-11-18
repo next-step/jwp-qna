@@ -1,9 +1,9 @@
 package qna.domain;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
     List<Answer> findByQuestionIdAndDeletedFalse(Long questionId);
@@ -12,7 +12,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
     Answer findByWriterId(Long id);
 
-    List<Answer> findByQuestionId(Long id);
+    List<Answer> findByQuestion(Question question);
 
     Answer findByContentsLike(String contents);
 }

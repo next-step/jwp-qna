@@ -31,7 +31,7 @@ public class UserTest {
     @Test
     void findByUserId() {
         final User standard = users.save(JAVAJIGI);
-        final User target = users.findByUserId(JAVAJIGI.getUserId()).get();
+        final User target = users.findByUserId(standard.getUserId()).get();
 
         String standardUserId = standard.getUserId();
         String targetUserId = target.getUserId();
@@ -43,7 +43,7 @@ public class UserTest {
     @Test
     void findByUserIdAndPassword() {
         final User standard = users.save(JAVAJIGI);
-        final User target = users.findByUserIdAndPassword(JAVAJIGI.getUserId(), JAVAJIGI.getPassword());
+        final User target = users.findByUserIdAndPassword(standard.getUserId(), standard.getPassword());
 
         Long standardId = standard.getId();
         Long targetId = target.getId();
