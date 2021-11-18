@@ -14,10 +14,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class QuestionTest {
+public class QuestionRepositoryTest {
 
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserRepositoryTest.JAVAJIGI);
+    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserRepositoryTest.SANJIGI);
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -27,8 +27,8 @@ public class QuestionTest {
 
     @BeforeEach
     void setUp() {
-        User javajigi = userRepository.save(UserTest.JAVAJIGI);
-        User sanjigi = userRepository.save(UserTest.SANJIGI);
+        User javajigi = userRepository.save(UserRepositoryTest.JAVAJIGI);
+        User sanjigi = userRepository.save(UserRepositoryTest.SANJIGI);
 
         Q1.writeBy(javajigi);
         Q2.writeBy(sanjigi);

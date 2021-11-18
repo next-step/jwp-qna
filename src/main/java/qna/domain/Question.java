@@ -77,10 +77,6 @@ public class Question extends BaseTimeEntity {
         return writer;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }

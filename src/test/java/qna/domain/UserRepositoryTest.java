@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UserTest {
+public class UserRepositoryTest {
 
     public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
