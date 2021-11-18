@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -79,24 +78,6 @@ public class QuestionRepositoryTest extends QnATest {
         // then
         assertThat(saveQuestion).isEqualTo(question);
 
-    }
-
-    @Test
-    void 타이틀이름으로_조회한_데이터의_답글_확인() {
-
-        // given
-        User user = createUser();
-        Question question = createQuestion(user, TITLE_1, CONTENTS_1);
-        Answer answer = new Answer(user, question, CONTENTS_1);
-        question.addAnswer(answer);
-        Question saveQuestion = questionRepository.save(question);
-
-        // when
-        Question expectedAnswer = questionRepository.findById(saveQuestion.getId()).get();
-        Answers answers = expectedAnswer.getAnswers();
-
-        // then
-        Assertions.assertThat(answers).isEqualTo(saveQuestion.getAnswers());
     }
 
 }

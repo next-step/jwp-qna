@@ -1,6 +1,8 @@
 package qna.domain;
 
+import static java.time.LocalDateTime.*;
 import static javax.persistence.FetchType.*;
+import static qna.domain.ContentType.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +19,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import qna.CannotDeleteException;
 import qna.ErrorMessage;
 import qna.UnAuthorizedException;
 
@@ -82,6 +85,14 @@ public class Question extends BaseTime {
         return answers;
     }
 
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.setDeleted(true);
+        return new DeleteHistory(QUESTION, this, loginUser, now());
+    }
+
     public Long getId() {
         return id;
     }
@@ -127,5 +138,4 @@ public class Question extends BaseTime {
             ", deleted=" + deleted +
             '}';
     }
-
 }
