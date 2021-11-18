@@ -55,23 +55,20 @@ public class DeleteHistory {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-            contentType == that.contentType &&
-            Objects.equals(contentId, that.contentId) &&
-            deletedBy.equalsNameAndEmail(that.deletedBy);
+        final DeleteHistory that = (DeleteHistory) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedBy);
+        return Objects.hash(id);
     }
 
     @Override

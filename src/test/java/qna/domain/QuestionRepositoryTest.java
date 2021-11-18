@@ -41,6 +41,21 @@ public class QuestionRepositoryTest {
     }
 
     @Test
+    void equals() {
+        // given
+        final User writer = userRepository.save(
+            TestUserFactory.create(
+                "javajigi", "password", "name", "javajigi@slipp.net"
+            )
+        );
+        final Question question1 = TestQuestionFactory.create(1L, "title1", "contents1", writer);
+        final Question question2 = TestQuestionFactory.create(1L, "title2", "contents2", writer);
+
+        // then
+        assertThat(question1).isEqualTo(question2);
+    }
+
+    @Test
     void findByDeletedFalse() {
         // given
         final User writer = userRepository.save(
