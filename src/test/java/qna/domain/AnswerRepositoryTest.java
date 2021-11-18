@@ -28,7 +28,7 @@ public class AnswerRepositoryTest {
             TestUserFactory.create("javajigi", "password", "name", "javajigi@slipp.net")
         );
         final Question question = questionRepository.save(
-            TestQuestionFactory.create("title1", "contents1").writeBy(writer)
+            TestQuestionFactory.create("title1", "contents1", writer)
         );
         final Answer expected = TestAnswerFactory.create(writer, question, "Answers Contents1");
 
@@ -52,7 +52,7 @@ public class AnswerRepositoryTest {
             TestUserFactory.create("javajigi", "password", "name", "javajigi@slipp.net")
         );
         final Question question = questionRepository.save(
-            TestQuestionFactory.create("title1", "contents1").writeBy(writer)
+            TestQuestionFactory.create("title1", "contents1", writer)
         );
         final Answer answer = TestAnswerFactory.create(writer, question, "Answers Contents1");
 
@@ -72,7 +72,7 @@ public class AnswerRepositoryTest {
             TestUserFactory.create("javajigi", "password", "name", "javajigi@slipp.net")
         );
         final Question question = questionRepository.save(
-            TestQuestionFactory.create("title1", "contents1").writeBy(writer)
+            TestQuestionFactory.create("title1", "contents1", writer)
         );
         final Answer answer = TestAnswerFactory.create(writer, question, "Answers Contents1");
 

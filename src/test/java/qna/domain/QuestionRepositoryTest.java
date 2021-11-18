@@ -15,10 +15,18 @@ public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     void save() {
         // given
-        final Question expected = TestQuestionFactory.create("title1", "contents1");
+        final User writer = userRepository.save(
+            TestUserFactory.create(
+                "javajigi", "password", "name", "javajigi@slipp.net"
+            )
+        );
+        final Question expected = TestQuestionFactory.create("title1", "contents1", writer);
 
         // when
         final Question actual = questionRepository.save(expected);
@@ -35,7 +43,12 @@ public class QuestionRepositoryTest {
     @Test
     void findByDeletedFalse() {
         // given
-        final Question question = TestQuestionFactory.create("title1", "contents1");
+        final User writer = userRepository.save(
+            TestUserFactory.create(
+                "javajigi", "password", "name", "javajigi@slipp.net"
+            )
+        );
+        final Question question = TestQuestionFactory.create("title1", "contents1", writer);
 
         // when
         questionRepository.save(question);
@@ -48,7 +61,12 @@ public class QuestionRepositoryTest {
     @Test
     void findByIdAndDeletedFalse() {
         // given
-        final Question question = TestQuestionFactory.create("title1", "contents1");
+        final User writer = userRepository.save(
+            TestUserFactory.create(
+                "javajigi", "password", "name", "javajigi@slipp.net"
+            )
+        );
+        final Question question = TestQuestionFactory.create("title1", "contents1", writer);
 
         // when
         questionRepository.save(question);
