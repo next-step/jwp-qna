@@ -21,7 +21,7 @@ public class Question extends BaseEntity{
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-    AnswersRelatedQuestion answersRelatedQuestion = new AnswersRelatedQuestion();
+    Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -70,11 +70,11 @@ public class Question extends BaseEntity{
     }
 
     public List<Answer> getAnswers() {
-        return answersRelatedQuestion.getValue();
+        return answers.getValue();
     }
 
     public void addAnswer(Answer answer) {
-        this.answersRelatedQuestion.add(answer);
+        this.answers.add(answer);
         answer.setQuestion(this);
     }
 
@@ -82,7 +82,7 @@ public class Question extends BaseEntity{
         validateWriter(loginUser);
         List<DeleteHistory> deleteHistories = new LinkedList<>();
 
-        deleteHistories.addAll(answersRelatedQuestion.delete(loginUser));
+        deleteHistories.addAll(answers.delete(loginUser));
 
         this.deleted = true;
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
