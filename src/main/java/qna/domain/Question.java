@@ -1,16 +1,9 @@
 package qna.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import qna.CannotDeleteException;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +58,15 @@ public class Question extends BaseEntity {
         return this.writer.equals(writer);
     }
 
+    // TODO: 단위 테스트
     public void addAnswer(Answer answer) {
+        if (answer == null) {
+            throw new IllegalArgumentException("answer는 null일 수 없습니다.");
+        }
+        if (answers.contains(answer)) {
+            throw new IllegalArgumentException("이미 등록된 answer입니다.");
+        }
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -105,12 +106,39 @@ public class Question extends BaseEntity {
         return answers;
     }
 
+    public QuestionAnswers getQuestionAnswers() {
+        return new QuestionAnswers(answers);
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    // TODO: 단위 테스트
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(deleteQuestion(loginUser));
+        deleteHistories.addAll(deleteAnswers(loginUser));
+        return deleteHistories;
+    }
+
+    private DeleteHistory deleteQuestion(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        setDeleted(true);
+        return new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now());
+    }
+
+    private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
+        return getQuestionAnswers().delete(loginUser);
     }
 
     @Override
