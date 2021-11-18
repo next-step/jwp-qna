@@ -1,13 +1,16 @@
 package qna.domain;
 
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
+import qna.UnAuthorizedException;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -26,8 +29,8 @@ public class QuestionTest {
     @Test
     public void 질문_저장() {
         //given
-        User write = userRepository.save(TestUserFactory.create("donkey"));
-        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
         Long savedId = actual.getId();
 
         //when
@@ -40,8 +43,8 @@ public class QuestionTest {
     @Test
     public void 질문_저장_후_질문불러오기() {
         //given
-        User write = userRepository.save(TestUserFactory.create("donkey"));
-        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
 
         //when
         List<Question> questionList = questionRepository.findAll();
@@ -59,30 +62,43 @@ public class QuestionTest {
     @Test
     public void 질문_저장_후_삭제() {
         //given
-        User write = userRepository.save(TestUserFactory.create("donkey"));
-        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", write));
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
 
         //when
-        actual.setDeleted(true);
+        actual.delete(writer);
 
         //then
         assertThat(actual.isDeleted()).isTrue();
     }
 
     @Test
-    public void 제목에_같은_단어가_포함되는_질문_목록_조회() {
+    public void 질문한_사람이_로그인_사용자가_아닌경우엔_삭제할_수_없다() {
         //given
-        User write = userRepository.save(TestUserFactory.create("donkey"));
-        questionRepository.save(TestQuestionFactory.create("title", "content", write));
-        questionRepository.save(TestQuestionFactory.create("title", "content", write));
-
-        String title = "title";
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        User otherWriter = userRepository.save(TestUserFactory.create("donkey2"));
+        Question actual = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
 
         //when
-        List<Question> expected = questionRepository.findByTitleContains(title);
+        ThrowableAssert.ThrowingCallable throwingCallable = () -> actual.delete(otherWriter);
 
         //then
-        assertThat(2).isEqualTo(expected.size());
+        assertThatExceptionOfType(UnAuthorizedException.class)
+                .isThrownBy(throwingCallable);
+    }
+
+    @Test
+    public void 답변이_없는_경우_삭제할_수_있다() {
+        //given
+        User writer = userRepository.save(TestUserFactory.create("donkey"));
+        Question question = questionRepository.save(TestQuestionFactory.create("title", "content", writer));
+        question.delete(writer);
+
+        //when
+        Question deletedQuestion = questionRepository.findByIdAndDeletedTrue(question.getId()).orElse(null);
+
+        //then
+        assertThat(deletedQuestion).isNotNull();
     }
 
 }

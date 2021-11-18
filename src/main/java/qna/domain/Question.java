@@ -2,8 +2,10 @@ package qna.domain;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -13,8 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,8 +35,8 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -57,16 +57,26 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
         answers.add(answer);
+    }
 
-        if (answer.getQuestion() != this) {
-            answer.toQuestion(this);
+    public List<DeleteHistory> delete(User loginUser) {
+        validateLoginUser(loginUser);
+        List<DeleteHistory> deleteHistories = answers.delete(loginUser);
+        this.deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, loginUser));
+        return deleteHistories;
+    }
+
+    private void validateLoginUser(User loginUser) {
+        if (!isSameUser(loginUser)) {
+            throw new UnAuthorizedException("질문을 삭제할 권한이 없습니다.");
         }
+    }
+
+    private boolean isSameUser(User writer) {
+        return this.writer.equals(writer);
     }
 
     public Long getId() {
@@ -85,7 +95,7 @@ public class Question extends BaseTimeEntity {
         return contents;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -95,10 +105,6 @@ public class Question extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
