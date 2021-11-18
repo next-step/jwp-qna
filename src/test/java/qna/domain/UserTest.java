@@ -80,14 +80,33 @@ public class UserTest {
         assertThat(count).isEqualTo(3L);
     }
 
-    @Test
+    @ParameterizedTest
+    @CsvSource(value = {"0:javajigi", "1:sanjigi", "2:inmookjeong"}, delimiter = ':')
     @DisplayName("전체 회원 목록 조회")
-    void getUsers() {
+    void getUsers(int index, String userId) {
         String orderByColumn = "id";
         List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, orderByColumn));
-        assertThat(users.size()).isEqualTo(3L);
-        assertThat(users.get(0).getUserId()).isEqualTo("javajigi");
-        assertThat(users.get(1).getUserId()).isEqualTo("sanjigi");
-        assertThat(users.get(2).getUserId()).isEqualTo("inmookjeong");
+        System.out.println("users : " + users.toString());
+        assertAll(
+                () -> assertThat(users.size()).isEqualTo(3L),
+                () -> assertThat(users.get(index).getUserId()).isEqualTo(userId)
+        );
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"javajigi:1", "sanjigi:1", "inmookjeong:1", "pobi:0"}, delimiter = ':')
+    @DisplayName("입력한 userId를 가지고 있는 사용자 수 조회")
+    void countUserByUserId(String userId, int count) {
+        long foundCount = userRepository.countByUserId(userId);
+        assertThat(foundCount).isEqualTo(count);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"javajigi:1", "sanjigi:2"}, delimiter = ':')
+    @DisplayName("입력한 userId를 통해 사용자 조회")
+    void findUserByUserId(String userId, Long id) {
+        User user = userRepository.findByUserId(userId).get();
+        System.out.println("users : " + user.toString());
+        assertThat(user.getId()).isEqualTo(id);
     }
 }
