@@ -3,7 +3,6 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -36,8 +35,8 @@ public class DeleteHistory {
     @CreatedDate
     private LocalDateTime createDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
@@ -67,14 +66,4 @@ public class DeleteHistory {
         return Objects.hash(id, contentId, contentType, createDate, deletedBy);
     }
 
-    @Override
-    public String toString() {
-        return "DeleteHistory{" +
-            "id=" + id +
-            ", contentId=" + contentId +
-            ", contentType=" + contentType +
-            ", createDate=" + createDate +
-            ", deleter=" + deletedBy +
-            '}';
-    }
 }
