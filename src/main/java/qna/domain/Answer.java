@@ -143,4 +143,19 @@ public class Answer extends BaseEntity {
         this.deleted = true;
         return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Answer answer = (Answer)o;
+        return Objects.equals(id, answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
