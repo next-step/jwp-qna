@@ -3,6 +3,8 @@ package qna.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Sort;
@@ -61,6 +63,14 @@ public class UserTest {
                 () -> assertThat(actual.getId()).isEqualTo(3L),
                 () -> assertThat(actual.getPassword()).isEqualTo("newPassword")
         );
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"javajigi:password:true", "sanjigi:password:true", "inmookjeong:unMatchPw:false"}, delimiter = ':')
+    @DisplayName("로그인 : userId를 통해 사용자를 검색 후 password가 일치하는지 확인")
+    void signIn(String userId, String password, boolean expected) {
+        User user = userRepository.findByUserId(userId).get();
+        assertThat(user.getPassword().equals(password)).isEqualTo(expected);
     }
 
     @Test
