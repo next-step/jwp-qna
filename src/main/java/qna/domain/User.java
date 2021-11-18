@@ -41,6 +41,10 @@ public class User extends BaseTimeEntity {
         this.email = email;
     }
 
+    public boolean matchId(Long id) {
+        return this.id.equals(id);
+    }
+
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.userId)) {
             throw new UnAuthorizedException();

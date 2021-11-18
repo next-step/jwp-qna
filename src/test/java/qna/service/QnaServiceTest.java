@@ -8,6 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.domain.*;
+import qna.domain.QuestionRepositoryTest;
+import qna.domain.UserRepositoryTest;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
