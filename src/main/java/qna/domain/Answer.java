@@ -75,14 +75,10 @@ public class Answer extends BaseEntity{
         return deleted;
     }
 
-    public DeleteHistory delete(User loginUser) {
+    public DeleteHistory delete(User loginUser, LocalDateTime deletedTime) {
         validateWriterUser(loginUser);
-        return deleteAndCreateDeleteHistory();
-    }
-
-    private DeleteHistory deleteAndCreateDeleteHistory() {
         deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER, id, writer, deletedTime);
     }
 
     private void validateWriterUser(User loginUser) {

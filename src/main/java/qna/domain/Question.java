@@ -81,11 +81,12 @@ public class Question extends BaseEntity{
     public List<DeleteHistory> delete(User loginUser) {
         validateWriter(loginUser);
         List<DeleteHistory> deleteHistories = new LinkedList<>();
+        LocalDateTime deletedTime = LocalDateTime.now();
 
-        deleteHistories.addAll(answers.delete(loginUser));
+        deleteHistories.addAll(answers.delete(loginUser, deletedTime));
 
         this.deleted = true;
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, deletedTime));
         return deleteHistories;
     }
 
