@@ -54,11 +54,14 @@ public class AnswerRepositoryTest {
         final Question question = questionRepository.save(
             TestQuestionFactory.create("title1", "contents1", writer)
         );
-        final Answer answer1 = TestAnswerFactory.create(1L, writer, question, "Answers Contents1");
-        final Answer answer2 = TestAnswerFactory.create(1L, writer, question, "Answers Contents1");
+        final Answer before = TestAnswerFactory.create(1L, writer, question, "Answers Contents1");
+
+        // when
+        final Answer after = answerRepository.save(before);
+        after.delete();
 
         // then
-        assertThat(answer1).isEqualTo(answer2);
+        assertThat(before).isEqualTo(after);
     }
 
     @Test

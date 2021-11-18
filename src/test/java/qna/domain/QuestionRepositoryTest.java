@@ -48,11 +48,14 @@ public class QuestionRepositoryTest {
                 "javajigi", "password", "name", "javajigi@slipp.net"
             )
         );
-        final Question question1 = TestQuestionFactory.create(1L, "title1", "contents1", writer);
-        final Question question2 = TestQuestionFactory.create(1L, "title2", "contents2", writer);
+        final Question before = TestQuestionFactory.create(1L, "title1", "contents1", writer);
+
+        // when
+        final Question after = questionRepository.save(before);
+        after.delete();
 
         // then
-        assertThat(question1).isEqualTo(question2);
+        assertThat(before).isEqualTo(after);
     }
 
     @Test

@@ -37,6 +37,13 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
+    public void changeName(final String name) {
+        if (Objects.isNull(name) || name.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        this.name = name;
+    }
+
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.userId)) {
             throw new UnAuthorizedException();

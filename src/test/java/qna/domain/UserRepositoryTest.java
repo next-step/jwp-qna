@@ -32,13 +32,12 @@ public class UserRepositoryTest {
 
     @Test
     void equals() {
-        final User user1 = TestUserFactory.create(
-            1L, "userId1", "password1", "name1", "1@slipp.net"
+        final User before = TestUserFactory.create(
+            1L, "userId", "password", "name", "email@slipp.net"
         );
-        final User user2 = TestUserFactory.create(
-            1L, "userId2", "password2", "name2", "2@slipp.net"
-        );
-        assertThat(user1).isEqualTo(user2);
+        final User after = userRepository.save(before);
+        after.changeName("another name");
+        assertThat(before).isEqualTo(after);
     }
 
     @Test
