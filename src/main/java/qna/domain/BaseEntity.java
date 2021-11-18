@@ -32,14 +32,9 @@ public abstract class BaseEntity {
 
     public BaseEntity(final Long id) {
         this.id = id;
-        this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void renewUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }
