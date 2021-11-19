@@ -106,10 +106,7 @@ public class Question extends BaseTimeEntity {
         }
     }
 
-    void existAnswer(Answer answer) {
-        if (Objects.nonNull(this)) {
-            this.answers.getAnswers().remove(answer);
-        }
+    void removeAnswer(Answer answer) {
+        this.answers.getAnswers().remove(answer);
     }
-
 }
