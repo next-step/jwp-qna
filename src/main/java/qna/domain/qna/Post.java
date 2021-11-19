@@ -9,13 +9,13 @@ import qna.common.exception.InvalidParamException;
 @Embeddable
 public class Post {
 
-    public static final int TITLE_LENGTH = 100;
+    private static final int TITLE_LENGTH = 100;
 
     @Column(name = "title", length = TITLE_LENGTH, nullable = false)
     private String title;
 
     @Embedded
-    Contents contents;
+    private Contents contents;
 
     protected Post() {
     }

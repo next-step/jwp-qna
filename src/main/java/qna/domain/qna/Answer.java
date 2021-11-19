@@ -39,7 +39,7 @@ public class Answer extends BaseEntity {
     private Question question;
 
     @Embedded
-    Contents contents;
+    private Contents contents;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = Boolean.FALSE;
