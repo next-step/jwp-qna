@@ -311,6 +311,19 @@ public class AnswerRepositoryTest {
 - 테스트 하기 쉬운코드와 하기 어려운 코드를 분리 
 
 ## 체크리스트 
-- [x] 히스토리단건과 다건을 합치는 클래스 생성 
-- [x] Question delete로직을 Question으로 이동 
-- [x] Answer관련 로직을 Answers로 이동 
+- [x] Quertion 전체를 삭제할 수 있는 메소드 추가 
+- [x] Question delete로직 Question 이동 
+- [x] QnAService Answer 로직 Answers 이동 
+
+## 무엇이 잘 못되었는가?
+
+1. 디미터 법칙 위반 
+   - `getAnswers`를 이용하여 가까운 객체가 아닌 멀리있는 `Answers`에게 간 것은 법칙을 위반했다.
+     - 같은 도메인의 내용이 같다 하여도 엄연히 객체를 넘어 다른 객체에게 조회하는 것은 위반이다.
+     - 어떻게 해결할 것인가? 
+       - 자기 자신을 제외한 메서드를 호출해서는 안된다.
+       - 메서드의 파라미터로 넘어온 객체들의 메서드 
+       - 메서드 내부에서 생성, 초기화된 객체들의 메서드 
+       - 인스턴스 변수로 가지고 있는 객체가 소유한 메서드들
+
+2. [자료구로라면 디미터 법칙이 적용되지 않는다](https://namget.tistory.com/entry/%ED%81%B4%EB%A6%B0%EC%BD%94%EB%93%9C-6%EC%9E%A5-%EA%B0%9D%EC%B2%B4%EC%99%80-%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0)
