@@ -21,6 +21,7 @@ import qna.CannotDeleteException;
 @Entity
 public class Question extends BaseEntity {
     public static final String ERROR_PERMISSION_TO_DELETE = "질문을 삭제할 권한이 없습니다.";
+    public static final boolean DELETE = true;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -62,7 +63,7 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException(ERROR_PERMISSION_TO_DELETE);
         }
 
-        setDeleted(true);
+        setDeleted(DELETE);
     }
 
     public boolean isOwner(User writer) {

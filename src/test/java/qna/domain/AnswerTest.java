@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
+
 @DataJpaTest
 public class AnswerTest {
     public static Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
@@ -26,4 +28,27 @@ public class AnswerTest {
         );
     }
 
+    @DisplayName("로그인한 사용자의 답변 삭제")
+    @Test
+    void deleteAnswer() throws CannotDeleteException {
+        User loginUser = UserTest.JAVAJIGI;
+        Answer answer = new Answer(loginUser, QuestionTest.Q1, "Answers Contents1");
+
+        answer.delete(loginUser);
+
+        assertThat(answer.isDeleted()).isTrue();
+    }
+
+    @DisplayName("답변 삭제 시 로그인한 사용자의 답변이 아닐 경우")
+    @Test
+    void invalidDeleteAnswer() {
+        assertThatExceptionOfType(CannotDeleteException.class)
+            .isThrownBy(() -> {
+                User loginUser = UserTest.JAVAJIGI;
+                User answerUser = UserTest.SANJIGI;
+                Answer answer = new Answer(answerUser, QuestionTest.Q1, "Answers Contents1");
+
+                answer.delete(loginUser);
+            }).withMessageMatching("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
 }

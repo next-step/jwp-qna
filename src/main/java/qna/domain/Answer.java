@@ -13,11 +13,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseEntity {
+    public static final String ERROR_WRITTEN_BY_SOMEONE_ELSE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+    public static final boolean DELETE = true;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -58,6 +62,14 @@ public class Answer extends BaseEntity {
     }
 
     protected Answer() {
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        if(!isOwner(loginUser)){
+            throw new CannotDeleteException(ERROR_WRITTEN_BY_SOMEONE_ELSE);
+        }
+
+        setDeleted(DELETE);
     }
 
     public Long getId() {
