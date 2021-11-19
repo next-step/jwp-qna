@@ -95,7 +95,7 @@ public class Answer extends BaseEntity {
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = this.deleted.delete();
+        this.deleted = new Deleted(deleted);
     }
 
     public User getWriter() {

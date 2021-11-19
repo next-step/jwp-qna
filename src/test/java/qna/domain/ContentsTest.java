@@ -16,4 +16,15 @@ public class ContentsTest {
 
         assertThat(result).isEqualTo(text);
     }
+
+    @DisplayName("Contents 비교")
+    @Test
+    void equalsContents() {
+        String text = "Qna test";
+
+        Contents standard = new Contents(text);
+        Contents target = new Contents(text);
+
+        assertThat(standard).isEqualTo(target);
+    }
 }

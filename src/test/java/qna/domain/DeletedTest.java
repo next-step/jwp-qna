@@ -19,12 +19,19 @@ public class DeletedTest {
     @DisplayName("삭제")
     @Test
     void delete() {
-        Deleted deleted = new Deleted();
-        deleted = deleted.delete();
+        Deleted deleted = new Deleted(true);
 
         boolean isDeleted = deleted.isDeleted();
 
         assertThat(isDeleted).isTrue();
+    }
 
+    @DisplayName("Deleted 비교")
+    @Test
+    void equalToDeleted() {
+        Deleted standard = new Deleted();
+        Deleted target = new Deleted();
+
+        assertThat(standard).isEqualTo(target);
     }
 }

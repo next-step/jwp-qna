@@ -1,10 +1,8 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -12,9 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import qna.CannotDeleteException;
 
@@ -26,15 +22,14 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted;
 
-    @Column(nullable = false, length = 100)
-    private String title;
+    @Embedded
+    private Title title;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -49,8 +44,8 @@ public class Question extends BaseEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
-        this.contents = contents;
+        this.title = new Title(title);
+        this.contents = new Contents(contents);
     }
 
     public Question writeBy(User writer) {
@@ -79,15 +74,15 @@ public class Question extends BaseEntity {
     }
 
     public String getTitle() {
-        return title;
+        return title.getTitle();
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        this.deleted = new Deleted(deleted);
     }
 
     public User getWriter() {
@@ -95,7 +90,7 @@ public class Question extends BaseEntity {
     }
 
     public String getContents() {
-        return contents;
+        return contents.getContents();
     }
 
     @Override
