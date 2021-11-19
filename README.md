@@ -97,3 +97,7 @@
 
 - 연관 관계 매핑이 되어 있는 상황에서 find를 하기 때문에 find 시 다시 persist가 된다. 이는 dirty checking, lazy에 의해 delete 를 발생시키지 않아도 되게한다.
  [원인 설명](https://stackoverflow.com/questions/63030917/spring-jpa-repository-delete-method-doesnt-work)
+  
+### final 이 없는 이유
+- JPA는 엔티티를 생성할 때 지연로딩 방식을 사용
+- 이때 프록시 객체(PersistentBag)를 생성하여 사용하기 때문에 필드 또는 클래스에 final을 사용할 수 없다.

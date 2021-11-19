@@ -22,16 +22,19 @@ public class DeleteHistory {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private final ContentType contentType;
+    private ContentType contentType;
 
     @Embedded
-    private final DeleteHistoryContentId contentId;
+    private DeleteHistoryContentId contentId;
 
     @ManyToOne
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
-    private final User deletedBy;
+    private User deletedBy;
 
     private LocalDateTime createDate = LocalDateTime.now();
+
+    protected DeleteHistory() {
+    }
 
     protected DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this(contentType, contentId, deletedBy, LocalDateTime.now());
