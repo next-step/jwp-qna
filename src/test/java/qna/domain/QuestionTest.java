@@ -21,42 +21,49 @@ public class QuestionTest {
     @DisplayName("Create 및 ID 생성 테스트")
     @Test
     void save() {
+        //when
         Q1.mappedToWriter(userRepository.save(user()));
-
         Question save = questionRepository.save(Q1);
+
+        //then
         assertThat(save.getId()).isNotNull();
     }
 
     @DisplayName("Read 테스트")
     @Test
     void read() {
+        //when
         Q1.mappedToWriter(userRepository.save(user()));
-
         Question save = questionRepository.save(Q1);
         Question found = questionRepository.findById(save.getId()).orElse(null);
+
+        //then
         assertThat(found).isEqualTo(save);
     }
 
     @DisplayName("Update 테스트")
     @Test
     void update() {
+        //when
         Q1.mappedToWriter(userRepository.save(user()));
-
         Question save = questionRepository.save(Q1);
         save.setContents("update!!");
         Question found = questionRepository.findById(save.getId()).orElseThrow(() -> new NullPointerException("테스트실패"));
+
+        //then
         assertThat(found.getContents()).isEqualTo("update!!");
     }
 
     @DisplayName("Delete 테스트")
     @Test
     void delete() {
+        //when
         Q1.mappedToWriter(userRepository.save(user()));
-
         Question save = questionRepository.save(Q1);
         questionRepository.delete(save);
-
         Question found = questionRepository.findById(save.getId()).orElse(null);
+
+        //then
         assertThat(found).isNull();
     }
 

@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.QuestionTest.question;
+import static qna.domain.QuestionTest.question2;
 import static qna.domain.UserTest.admin;
 
 @DataJpaTest
@@ -55,7 +56,7 @@ public class AnswerTest {
         A1.mappedToQuestion(questionRepository.save(question()));
         Answer save = answerRepository.save(A1);
         save.setContents("update!!");
-        //save.setQuestion(questionRepository.save(question2()));
+        //save.toQuestion(questionRepository.save(question2()));
         Answer found = answerRepository.findById(save.getId()).orElseThrow(() -> new NullPointerException("테스트실패"));
 
         //then

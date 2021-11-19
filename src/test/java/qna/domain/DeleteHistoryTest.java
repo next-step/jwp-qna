@@ -25,42 +25,50 @@ public class DeleteHistoryTest {
     @DisplayName("Create 및 ID 생성 테스트")
     @Test
     void save() {
+        //when
         D1.setDeletedBy(userRepository.save(user()));
-
         DeleteHistory save = deleteHistoryRepository.save(D1);
+
+        //then
         assertThat(save.getId()).isNotNull();
     }
 
     @DisplayName("Read 테스트")
     @Test
     void read() {
+        //when
         D1.setDeletedBy(userRepository.save(user()));
-
         DeleteHistory save = deleteHistoryRepository.save(D1);
         DeleteHistory found = deleteHistoryRepository.findById(save.getId()).orElse(null);
+
+        //then
         assertThat(found).isEqualTo(save);
     }
 
     @DisplayName("Update 테스트")
     @Test
     void update() {
+        //when
         D1.setDeletedBy(userRepository.save(user()));
-
         DeleteHistory save = deleteHistoryRepository.save(D1);
         save.setContentType(ContentType.ANSWER);
         DeleteHistory found = deleteHistoryRepository.findById(save.getId()).orElseThrow(() -> new NullPointerException("테스트실패"));
+
+        //then
         assertThat(found.getContents()).isEqualTo(ContentType.ANSWER);
     }
 
     @DisplayName("Delete 테스트")
     @Test
     void delete() {
+        //when
         D1.setDeletedBy(userRepository.save(user()));
-
         DeleteHistory save = deleteHistoryRepository.save(D1);
         deleteHistoryRepository.delete(save);
         deleteHistoryRepository.flush();
         DeleteHistory found = deleteHistoryRepository.findById(save.getId()).orElse(null);
+
+        //then
         assertThat(found).isNull();
     }
 }

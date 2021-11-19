@@ -18,34 +18,45 @@ public class UserTest {
     @DisplayName("Create 및 ID 생성 테스트")
     @Test
     void save() {
+        //when
         User save = userRepository.save(user());
+
+        //then
         assertThat(save.getId()).isNotNull();
     }
 
     @DisplayName("Read 테스트")
     @Test
     void read() {
+        //when
         User save = userRepository.save(user());
         User found = userRepository.findById(save.getId()).orElse(null);
+
+        //then
         assertThat(found).isEqualTo(save);
     }
 
     @DisplayName("Update 테스트")
     @Test
     void update() {
+        //when
         User save = userRepository.save(user());
         save.setUserId("steadyjin");
         User found = userRepository.findById(save.getId()).orElseThrow(() -> new NullPointerException("테스트실패"));
+
+        //then
         assertThat(found.getUserId()).isEqualTo("steadyjin");
     }
 
     @DisplayName("Delete 테스트")
     @Test
     void delete() {
+        //when
         User save = userRepository.save(user());
         userRepository.delete(save);
-
         User found = userRepository.findById(save.getId()).orElse(null);
+
+        //then
         assertThat(found).isNull();
     }
 
