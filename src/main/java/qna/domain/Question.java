@@ -85,7 +85,7 @@ public class Question extends BaseTime {
         return answers;
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }

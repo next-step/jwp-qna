@@ -44,7 +44,7 @@ public class Answers implements Serializable {
                               .collect(toList());
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : answers) {
             isNotOwer(loginUser, answer);
