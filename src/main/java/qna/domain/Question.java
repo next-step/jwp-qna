@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -68,7 +67,7 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answers.addAnswer(answer);
-        answer.setQuestion(this);
+        answer.toQuestion(this);
     }
 
     public void removeAnswer(Answer answer) {

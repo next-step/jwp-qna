@@ -58,7 +58,7 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public void setQuestion(Question question) {
+    public void toQuestion(Question question) {
         this.question = question;
     }
 
@@ -67,7 +67,7 @@ public class Answer extends BaseEntity {
             this.question.getAnswers().remove(this);
         }
 
-        setQuestion(question);
+        toQuestion(question);
         question.getAnswers().add(this);
     }
 
