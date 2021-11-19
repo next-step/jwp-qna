@@ -12,14 +12,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.domain.deleteHistory.DeleteContentData;
+import qna.domain.deletehistory.DeleteTarget;
 import qna.domain.qna.Answer;
-import qna.domain.deleteHistory.DeleteHistory;
-import qna.domain.deleteHistory.ContentType;
+import qna.domain.deletehistory.DeleteHistory;
+import qna.domain.deletehistory.ContentType;
 import qna.domain.qna.Contents;
 import qna.domain.qna.Question;
 import qna.domain.qna.AnswerRepository;
-import qna.domain.deleteHistory.DeleteHistoryRepository;
+import qna.domain.deletehistory.DeleteHistoryRepository;
 import qna.domain.qna.QuestionRepository;
 import qna.domain.user.UserRepository;
 import qna.domain.user.Email;
@@ -91,8 +91,8 @@ public class DeleteHistoryRepositoryTest {
         // then
         assertAll(
             () -> assertThat(
-                deleteHistories.findByDeleteContentDataContentType(QUESTION)).isNotNull(),
-            () -> assertThat(deleteHistories.findByDeleteContentDataContentType(ANSWER)).isNotNull()
+                deleteHistories.findByDeleteTargetContentType(QUESTION)).isNotNull(),
+            () -> assertThat(deleteHistories.findByDeleteTargetContentType(ANSWER)).isNotNull()
         );
     }
 
@@ -104,10 +104,10 @@ public class DeleteHistoryRepositoryTest {
         DeleteHistory answerDeleteHistory = deleteHistories.save(ANSWER_HISTORY);
 
         // when
-        List<DeleteHistory> questionDeleteHistories = deleteHistories.findByDeleteContentData(
-            DeleteContentData.of(QUESTION.getId(), questionDeleteHistory.getContentType()));
-        List<DeleteHistory> answerDeleteHistories = deleteHistories.findByDeleteContentData(
-            DeleteContentData.of(ANSWER.getId(),
+        List<DeleteHistory> questionDeleteHistories = deleteHistories.findByDeleteTarget(
+            DeleteTarget.of(QUESTION.getId(), questionDeleteHistory.getContentType()));
+        List<DeleteHistory> answerDeleteHistories = deleteHistories.findByDeleteTarget(
+            DeleteTarget.of(ANSWER.getId(),
                 answerDeleteHistory.getContentType()));
 
         // then

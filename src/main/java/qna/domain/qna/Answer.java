@@ -18,9 +18,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import qna.domain.BaseEntity;
-import qna.domain.deleteHistory.ContentType;
+import qna.domain.deletehistory.ContentType;
 import qna.domain.user.User;
-import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.deletehistory.DeleteHistory;
 
 @Entity
 @Table(name = "answer")
@@ -39,7 +39,7 @@ public class Answer extends BaseEntity {
     private Question question;
 
     @Embedded
-    Contents contents;
+    private Contents contents;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = Boolean.FALSE;

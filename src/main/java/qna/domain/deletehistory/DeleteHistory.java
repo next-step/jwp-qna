@@ -1,4 +1,4 @@
-package qna.domain.deleteHistory;
+package qna.domain.deletehistory;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -32,7 +32,7 @@ public class DeleteHistory {
     private User deletedBy;
 
     @Embedded
-    private DeleteContentData deleteContentData;
+    private DeleteTarget deleteTarget;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -41,25 +41,25 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    private DeleteHistory(DeleteContentData deleteContentData, User deletedBy,
+    private DeleteHistory(DeleteTarget deleteTarget, User deletedBy,
         LocalDateTime createDate) {
-        this.deleteContentData = deleteContentData;
+        this.deleteTarget = deleteTarget;
         this.deletedBy = deletedBy;
         this.createDate = createDate;
     }
 
     public static DeleteHistory OfQuestion(Question question, User deletedBy) {
-        DeleteContentData deleteContentData = DeleteContentData.of(question.getId(),
+        DeleteTarget deleteTarget = DeleteTarget.of(question.getId(),
             ContentType.QUESTION);
 
-        return new DeleteHistory(deleteContentData, deletedBy, LocalDateTime.now());
+        return new DeleteHistory(deleteTarget, deletedBy, LocalDateTime.now());
     }
 
     public static DeleteHistory OfAnswer(Answer answer, User deletedBy) {
-        DeleteContentData deleteContentData = DeleteContentData.of(answer.getId(),
+        DeleteTarget deleteTarget = DeleteTarget.of(answer.getId(),
             ContentType.ANSWER);
 
-        return new DeleteHistory(deleteContentData, deletedBy, LocalDateTime.now());
+        return new DeleteHistory(deleteTarget, deletedBy, LocalDateTime.now());
     }
 
     public Long getId() {
@@ -67,14 +67,14 @@ public class DeleteHistory {
     }
 
     public ContentType getContentType() {
-        return deleteContentData.getContentType();
+        return deleteTarget.getContentType();
     }
 
     @Override
     public String toString() {
         return "DeleteHistory{" +
             "id=" + id +
-            ", deleteContentData=" + deleteContentData +
+            ", deleteTarget=" + deleteTarget +
             ", deletedBy=" + deletedBy.getId() +
             ", createDate=" + createDate +
             '}';
@@ -89,12 +89,12 @@ public class DeleteHistory {
             return false;
         }
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) && Objects.equals(deleteContentData,
-            that.deleteContentData) && Objects.equals(deletedBy, that.deletedBy);
+        return Objects.equals(id, that.id) && Objects.equals(deleteTarget,
+            that.deleteTarget) && Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, deleteContentData, deletedBy);
+        return Objects.hash(id, deleteTarget, deletedBy);
     }
 }

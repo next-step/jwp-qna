@@ -17,11 +17,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import qna.common.exception.CannotDeleteException;
+import qna.common.exception.ErrorMessage;
 import qna.common.exception.InvalidParamException;
 import qna.common.exception.UnAuthorizedException;
 import qna.domain.BaseEntity;
-import qna.domain.deleteHistory.ContentType;
-import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.deletehistory.ContentType;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.user.User;
 
 @Entity
@@ -37,7 +38,7 @@ public class Question extends BaseEntity {
     private User writer;
 
     @Embedded
-    private QuestionPost questionPost;
+    private Post post;
 
     @Embedded
     private final Answers answers = new Answers();
@@ -48,8 +49,8 @@ public class Question extends BaseEntity {
     protected Question() {
     }
 
-    public Question(QuestionPost questionPost) {
-        this.questionPost = questionPost;
+    public Question(Post post) {
+        this.post = post;
     }
 
 
@@ -102,7 +103,7 @@ public class Question extends BaseEntity {
         }
 
         if (writer.isGuestUser()) {
-            throw new UnAuthorizedException(UnAuthorizedException.GUEST_USER_NOT_QUESTION);
+            throw new UnAuthorizedException(ErrorMessage.GUEST_USER_NOT_QUESTION_EXCEPTION_MESSAGE);
         }
     }
 
@@ -110,7 +111,7 @@ public class Question extends BaseEntity {
     public String toString() {
         return "Question{" +
             "id=" + id +
-            ", questionPost=" + questionPost +
+            ", post=" + post +
             ", writer=" + writer +
             ", answers=" + answers +
             ", deleted=" + deleted +
@@ -128,13 +129,13 @@ public class Question extends BaseEntity {
         Question question = (Question) o;
         return deleted == question.deleted
             && Objects.equals(id, question.id)
-            && Objects.equals(questionPost, question.questionPost)
+            && Objects.equals(post, question.post)
             && Objects.equals(writer, question.writer)
             && Objects.equals(answers, question.answers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, questionPost, writer, answers, deleted);
+        return Objects.hash(id, post, writer, answers, deleted);
     }
 }

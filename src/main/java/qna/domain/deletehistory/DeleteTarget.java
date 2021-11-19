@@ -1,4 +1,4 @@
-package qna.domain.deleteHistory;
+package qna.domain.deletehistory;
 
 import java.util.Objects;
 import javax.persistence.Column;
@@ -7,7 +7,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 @Embeddable
-public class DeleteContentData {
+public class DeleteTarget {
 
     @Column(name = "content_type")
     @Enumerated(EnumType.STRING)
@@ -16,16 +16,16 @@ public class DeleteContentData {
     @Column(name = "content_id")
     private Long contentId;
 
-    protected DeleteContentData() {
+    protected DeleteTarget() {
     }
 
-    private DeleteContentData(Long contentId, ContentType contentType) {
+    private DeleteTarget(Long contentId, ContentType contentType) {
         this.contentId = contentId;
         this.contentType = contentType;
     }
 
-    public static DeleteContentData of(Long contentId, ContentType contentType) {
-        return new DeleteContentData(contentId, contentType);
+    public static DeleteTarget of(Long contentId, ContentType contentType) {
+        return new DeleteTarget(contentId, contentType);
     }
 
     public ContentType getContentType() {
@@ -40,7 +40,7 @@ public class DeleteContentData {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DeleteContentData that = (DeleteContentData) o;
+        DeleteTarget that = (DeleteTarget) o;
         return contentType == that.contentType && Objects.equals(contentId, that.contentId);
     }
 

@@ -6,14 +6,13 @@ import java.util.List;
 import java.util.Objects;
 
 import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 import qna.common.exception.CannotDeleteException;
 import qna.domain.user.User;
-import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.deletehistory.DeleteHistory;
 
 @Embeddable
 public class Answers implements Serializable {
