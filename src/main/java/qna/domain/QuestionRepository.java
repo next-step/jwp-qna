@@ -13,4 +13,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByWriter(User writer);
 
     Long countByWriter(User writer);
+
+    List<Question> findByTitleContains(String title);
+
+    Long countByTitleContains(String title);
 }

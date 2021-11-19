@@ -62,7 +62,7 @@ public class QuestionTest {
     @ParameterizedTest
     @CsvSource(value = {"0:title1", "1:title2"}, delimiter = ':')
     @DisplayName("전체 질문 목록 조회")
-    void getQuestions(int index, String title) {
+    void findQuestions(int index, String title) {
         String orderByColumn = "id";
         List<Question> questions = questionRepository.findAll(Sort.by(Sort.Direction.ASC, orderByColumn));
         assertAll(
@@ -79,11 +79,28 @@ public class QuestionTest {
 
     @Test
     @DisplayName("작성자 ID를 통해 질문 목록 가져오기")
-    void getQuestionsByWriter() {
+    void findQuestionsByWriter() {
         List<Question> questions = questionRepository.findByWriter(UserTest.JAVAJIGI);
         assertAll(
                 () -> assertThat(questions.size()).isEqualTo(1L),
                 () -> assertThat(questions.get(0).getTitle()).isEqualTo("title1")
+        );
+    }
+
+    @Test
+    @DisplayName("작성자 ID를 통해 질문 목록 수 가져오기")
+    void countByTitleContains() {
+        assertThat(questionRepository.countByTitleContains("title")).isEqualTo(2L);
+    }
+
+    @Test
+    @DisplayName("작성자 ID를 통해 질문 목록 가져오기")
+    void findByTitleContains() {
+        List<Question> questions = questionRepository.findByTitleContains("title");
+        assertAll(
+                () -> assertThat(questions.size()).isEqualTo(2L),
+                () -> assertThat(questions.contains(question1)).isTrue(),
+                () -> assertThat(questions.contains(question2)).isTrue()
         );
     }
 
