@@ -1,9 +1,8 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -11,7 +10,6 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.CannotDeleteException;
 
@@ -32,8 +30,8 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    public Answers answers = new Answers();
 
     protected Question() {
     }
@@ -58,14 +56,11 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
-
-        if (answer.getQuestion() != this) {
-            answer.toQuestion(this);
-        }
+        answer.toQuestion(this);
+        answers.addAnswer(answer);
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -122,21 +117,11 @@ public class Question extends BaseEntity {
 
         DeleteHistory questionDeleteHistory = new DeleteHistory(ContentType.QUESTION, getId(),
             getWriter(), LocalDateTime.now());
-        DeleteHistories answerDeleteHistories = deleteAnswers(loginUser);
+        DeleteHistories answerDeleteHistories = answers.delete(loginUser);
 
         DeleteHistories deleteHistories = DeleteHistories.of(questionDeleteHistory,
             answerDeleteHistories);
 
         return deleteHistories;
-    }
-
-    private DeleteHistories deleteAnswers(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.delete(loginUser));
-        }
-
-        return DeleteHistories.from(deleteHistories);
     }
 }

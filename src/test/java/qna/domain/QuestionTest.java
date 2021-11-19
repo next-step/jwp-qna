@@ -167,6 +167,13 @@ public class QuestionTest {
     }
 
     @Test
+    void test_답변이_없으면_삭제_가능() throws CannotDeleteException {
+        questionRepository.deleteAll();
+        userRepository.deleteAll();
+        entityManager.clear();
+    }
+
+    @Test
     @DisplayName("삭제되지 않은 질문을 조회한다.")
     void test_findByDeletedFalse() {
         List<Question> questions = questionRepository.findByDeletedFalse();
