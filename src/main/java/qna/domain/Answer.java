@@ -1,10 +1,12 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.common.BaseTimeEntity;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -52,10 +54,6 @@ public class Answer extends BaseTimeEntity {
     protected Answer() {
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public Long getId() {
         return id;
     }
@@ -80,10 +78,8 @@ public class Answer extends BaseTimeEntity {
         return question;
     }
 
-    private void setQuestion(final Question question) {
-        if (Objects.nonNull(this.question)) {
-            this.question.getAnswers().removeAnswer(this);
-        }
+    void setQuestion(final Question question) {
+        this.question.existAnswer(this);
         this.question = question;
         question.getAnswers().addAnswer(this);
     }
@@ -98,4 +94,17 @@ public class Answer extends BaseTimeEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
+    public DeleteHistory deleteAnswer(User writer) throws CannotDeleteException {
+        validateAnswer(writer);
+        this.setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, this.id, writer, LocalDateTime.now());
+    }
+
+    void validateAnswer(User writer) {
+        if (!this.writer.isOwner(writer)) {
+            throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
+        }
+    }
+
 }
