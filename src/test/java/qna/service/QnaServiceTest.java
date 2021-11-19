@@ -1,11 +1,14 @@
 package qna.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 import qna.domain.*;
 
@@ -16,9 +19,11 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@DataJpaTest
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
     @Mock
@@ -29,6 +34,9 @@ class QnaServiceTest {
 
     @Mock
     private DeleteHistoryService deleteHistoryService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @InjectMocks
     private QnaService qnaService;
@@ -41,6 +49,20 @@ class QnaServiceTest {
         question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
         answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
+    }
+
+    @Test
+    @DisplayName("질문 등록")
+    void addQuestion() {
+        Question newQuestion = new Question("First Question", "This is first Question.");
+        User user = userRepository.save(new User("inmookjeong", "password", "inmookjeong", "jeonginmook@gmail.com"));
+        newQuestion.writeBy(user);
+        assertAll(
+                () -> assertThat(newQuestion).isNotNull(),
+                () -> assertThat(newQuestion.getTitle()).isEqualTo("First Question"),
+                () -> assertThat(newQuestion.getContents()).isEqualTo("This is first Question."),
+                () -> assertThat(newQuestion.getWriterId()).isEqualTo(user.getId())
+        );
     }
 
     @Test
