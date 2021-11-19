@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -12,9 +14,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
+    public static final String ERROR_PERMISSION_TO_DELETE = "질문을 삭제할 권한이 없습니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,6 +55,14 @@ public class Question extends BaseEntity {
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(ERROR_PERMISSION_TO_DELETE);
+        }
+
+        setDeleted(true);
     }
 
     public boolean isOwner(User writer) {
