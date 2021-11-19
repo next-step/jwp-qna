@@ -15,9 +15,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class UserTest {
 
     public static final User JAVAJIGI = new User(1L, UserId.from("javajigi"), Password.from("password"), Name.from("name"),
-        "javajigi@slipp.net");
+        Email.from("javajigi@slipp.net"));
     public static final User SANJIGI = new User(2L, UserId.from("sanjigi"), Password.from("password"), Name.from("name"),
-        "sanjigi@slipp.net");
+        Email.from("sanjigi@slipp.net"));
 
     private User user1;
     private User user2;
@@ -31,9 +31,9 @@ public class UserTest {
     @BeforeEach
     void setUp() {
         user1 = new User(UserId.from("user1"), Password.from("password"), Name.from("alice"),
-            "alice@gmail.com");
+            Email.from("alice@gmail.com"));
         user2 = new User(UserId.from("user2"), Password.from("password"), Name.from("bob"),
-            "bob@gmail.com");
+            Email.from("bob@gmail.com"));
 
         userRepository.save(user1);
         userRepository.save(user2);
@@ -47,7 +47,7 @@ public class UserTest {
     @Test
     void test_사용자_저장() {
         User expected = new User(UserId.from("testuser"), Password.from("password"), Name.from("홍길동"),
-            "gildong@gmail.com");
+            Email.from("gildong@gmail.com"));
 
         User actual = userRepository.save(expected);
 
@@ -104,7 +104,7 @@ public class UserTest {
 
     @Test
     void test_사용자_이메일_수정() {
-        String newEmail = "new.alice@gmail.com";
+        Email newEmail = Email.from("new.alice@gmail.com");
         user1.setEmail(newEmail);
 
         User actual = userRepository.findByUserId(user1.getUserId())
