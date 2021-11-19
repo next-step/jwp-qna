@@ -70,4 +70,21 @@ public class QuestionTest {
                 () -> assertThat(questions.get(index).getTitle()).isEqualTo(title)
         );
     }
+
+    @Test
+    @DisplayName("작성자 ID를 통해 질문 목록 수 가져오기")
+    void countByWriter() {
+        assertThat(questionRepository.countByWriter(UserTest.JAVAJIGI)).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("작성자 ID를 통해 질문 목록 가져오기")
+    void getQuestionsByWriter() {
+        List<Question> questions = questionRepository.findByWriter(UserTest.JAVAJIGI);
+        assertAll(
+                () -> assertThat(questions.size()).isEqualTo(1L),
+                () -> assertThat(questions.get(0).getTitle()).isEqualTo("title1")
+        );
+    }
+
 }
