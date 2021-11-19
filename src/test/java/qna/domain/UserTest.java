@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class UserTest {
@@ -35,10 +34,7 @@ public class UserTest {
         User savedUser = save(user);
 
         // then
-        assertAll(
-                () -> assertThat(savedUser.getId()).isNotNull(),
-                () -> assertThat(savedUser.getUserId()).isEqualTo(user.getUserId())
-        );
+        assertThat(savedUser.getId()).isNotNull();
     }
 
     @Test
@@ -51,15 +47,6 @@ public class UserTest {
 
         //then
         assertThat(foundUser).isEqualTo(savedUser);
-    }
-
-    @Test
-    void 수정() {
-        // when
-        user.setEmail("test@gmail.com");
-
-        // then
-        assertThat(user.getEmail()).isEqualTo("test@gmail.com");
     }
 
     @Test

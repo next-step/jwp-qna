@@ -36,10 +36,7 @@ public class QuestionTest {
         Question savedQuestion = save(question);
 
         // then
-        assertAll(
-                () -> assertThat(savedQuestion.getId()).isNotNull(),
-                () -> assertThat(savedQuestion.getContents()).isEqualTo(question.getContents())
-        );
+        assertThat(savedQuestion.getId()).isNotNull();
     }
 
     @Test
@@ -52,33 +49,6 @@ public class QuestionTest {
 
         // then
         assertThat(savedQuestion).isEqualTo(foundQuestion);
-    }
-
-    @Test
-    void 연관관계_유저_조회() {
-        // given
-        User user = TestUserFactory.create();
-
-        // when
-        question.writeBy(user);
-
-        //then
-        assertThat(question.getWriter()).isEqualTo(user);
-    }
-
-    @Test
-    void 연관관계_답변_조회() {
-        // given
-        Answer answer = TestAnswerFactory.create();
-
-        // when
-        question.addAnswer(answer);
-
-        // then
-        assertAll(
-                () -> assertThat(answer.getQuestion()).isEqualTo(question),
-                () -> assertThat(question.getAnswers().get(0)).isEqualTo(answer)
-        );
     }
 
     @Test
@@ -96,15 +66,6 @@ public class QuestionTest {
     }
 
     @Test
-    void 수정() {
-        // when
-        question.setContents("컨텐츠 수정");
-
-        // then
-        assertThat(question.getContents()).isEqualTo("컨텐츠 수정");
-    }
-
-    @Test
     void 삭제() {
         // given
         save(question);
@@ -119,9 +80,8 @@ public class QuestionTest {
     @Test
     void 질문삭제() {
         // given
-        Answer answer = TestAnswerFactory.create();
         User user = question.getWriter();
-        answer.setWriter(question.getWriter());
+        Answer answer = new Answer(user, question, "Answers Contents1");
         userRepository.save(user);
         question.addAnswer(answer);
         save(question);
@@ -165,10 +125,9 @@ public class QuestionTest {
         // given
         User user = question.getWriter();
         User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        Answer answer = new Answer(user2, question, "Answers Contents1");
         userRepository.save(user);
         userRepository.save(user2);
-        Answer answer = TestAnswerFactory.create();
-        answer.setWriter(user2);
         question.addAnswer(answer);
         save(question);
 

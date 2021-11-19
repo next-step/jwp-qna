@@ -74,20 +74,6 @@ public class AnswerTest {
     }
 
     @Test
-    void 수정() {
-        // given
-        User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
-        userRepository.save(user2);
-        save(answer);
-
-        // when
-        answer.setWriter(user2);
-
-        // then
-        assertThat(answer.getWriter()).isEqualTo(user2);
-    }
-
-    @Test
     void 삭제() {
         // given
         save(answer);
