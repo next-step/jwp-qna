@@ -45,12 +45,26 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("삭제시 작성자가 다르면 예외를 출력한다")
-    void deleteTest() {
+    void cannotDeleteExceptionTest() {
         final User javajigi = users.save(UserTest.JAVAJIGI);
         final Question expected = QuestionTest.Q1.writeBy(javajigi);
         final Question actual = questions.save(expected);
 
         assertThatThrownBy(() -> actual.delete(UserTest.SANJIGI))
             .isInstanceOf(CannotDeleteException.class);
+    }
+    @Test
+    @DisplayName("질문을 삭제한다")
+    void deleteTest() {
+        final User javajigi = users.save(UserTest.JAVAJIGI);
+        final Question q1 = questions.save(QuestionTest.Q1.writeBy(javajigi));
+        // given
+        q1.delete(UserTest.JAVAJIGI);
+
+        Question deleted = questions.save(q1);
+
+        // then
+        assertThat(q1.getId()).isEqualTo(deleted.getId());
+        assertThat(q1.isDeleted()).isTrue();
     }
 }

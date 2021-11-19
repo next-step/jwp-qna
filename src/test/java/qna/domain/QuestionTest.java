@@ -5,10 +5,21 @@ import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+
+    @Test
+    @DisplayName("질문을 삭제한다")
+    void deleteTest() {
+        // given, when
+        Q1.delete(UserTest.JAVAJIGI);
+
+        // then
+        assertThat(Q1.isDeleted()).isTrue();
+    }
 
     @Test
     @DisplayName("삭제시 작성자가 다르면 예외를 출력한다")
