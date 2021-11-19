@@ -34,10 +34,10 @@ public class Question extends BaseEntity {
     private User writer;
 
     @Embedded
-    private final Deleted deleted = new Deleted();
+    private Deleted deleted = new Deleted();
 
     @Embedded
-    private final Answers answers = new Answers();
+    private Answers answers = new Answers();
 
     protected Question() {
     }

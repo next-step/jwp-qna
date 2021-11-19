@@ -35,7 +35,7 @@ public class Answer extends BaseEntity {
     private Contents contents;
 
     @Embedded
-    private final Deleted deleted = new Deleted();
+    private Deleted deleted = new Deleted();
 
     protected Answer() {
     }
