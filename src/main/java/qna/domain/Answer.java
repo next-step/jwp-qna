@@ -29,8 +29,7 @@ public class Answer extends AuditEntity {
 	private Contents contents;
 
 	@Column(nullable = false)
-	@Embedded
-	private Deleted deleted = Deleted.ofFalse();
+	private boolean deleted = false;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -82,11 +81,21 @@ public class Answer extends AuditEntity {
 	}
 
 	public boolean isDeleted() {
-		return deleted.toBoolean();
+		return this.deleted;
 	}
 
 	public boolean isSameContents(String contents) {
 		return Objects.equals(this.contents, new Contents(contents));
+	}
+
+	public DeleteHistory delete() {
+		this.deleted = true;
+		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+	}
+
+	public Answer updateContents(String updateContents) {
+		this.contents = new Contents(updateContents);
+		return this;
 	}
 
 	@Override
@@ -115,15 +124,5 @@ public class Answer extends AuditEntity {
 	@Override
 	public int hashCode() {
 		return id != null ? id.hashCode() : 0;
-	}
-
-	public DeleteHistory delete() {
-		this.deleted = Deleted.ofTure();
-		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
-	}
-
-	public Answer updateContents(String updateContents) {
-		this.contents = new Contents(updateContents);
-		return this;
 	}
 }

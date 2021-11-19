@@ -29,8 +29,7 @@ public class Question extends AuditEntity {
 	private Contents contents;
 
 	@Column(nullable = false)
-	@Embedded
-	private Deleted deleted = Deleted.ofFalse();
+	private boolean deleted = false;
 
 	@Embedded
 	@Column(length = Title.MAX_LENGTH, nullable = false)
@@ -60,12 +59,12 @@ public class Question extends AuditEntity {
 		this.id = id;
 		this.title = Title.of(title);
 		this.contents = new Contents(contents);
-		this.deleted = Deleted.of(deleted);
+		this.deleted = deleted;
 	}
 
 	public List<DeleteHistory> delete(User user) throws CannotDeleteException {
 		validateDelete(user);
-		this.deleted = Deleted.ofTure();
+		this.deleted = true;
 		return DeleteHistories.of(createDeleteHistory())
 			.combine(this.answers.deleteAll())
 			.toList();
@@ -114,7 +113,7 @@ public class Question extends AuditEntity {
 	}
 
 	public boolean isDeleted() {
-		return deleted.toBoolean();
+		return this.deleted;
 	}
 
 	@Override
