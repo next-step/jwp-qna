@@ -31,9 +31,9 @@ class DeleteHistoryTest {
 
     @BeforeEach
     void setUp() {
-        user1 = new User(UserId.from("user1"), Password.from("password"), "alice",
+        user1 = new User(UserId.from("user1"), Password.from("password"), Name.from("alice"),
             "alice@gmail.com");
-        user2 = new User(UserId.from("user2"), Password.from("password"), "bob",
+        user2 = new User(UserId.from("user2"), Password.from("password"), Name.from("bob"),
             "bob@gmail.com");
 
         userRepository.save(user1);

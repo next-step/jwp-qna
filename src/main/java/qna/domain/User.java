@@ -23,8 +23,8 @@ public class User extends BaseEntity {
     @Embedded
     private Password password;
 
-    @Column(nullable = false, length = 20)
-    private String name;
+    @Embedded
+    private Name name;
 
     @Column(length = 50)
     private String email;
@@ -41,11 +41,11 @@ public class User extends BaseEntity {
     protected User() {
     }
 
-    public User(UserId userId, Password password, String name, String email) {
+    public User(UserId userId, Password password, Name name, String email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, UserId userId, Password password, String name, String email) {
+    public User(Long id, UserId userId, Password password, Name name, String email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -83,7 +83,7 @@ public class User extends BaseEntity {
         return userId;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 

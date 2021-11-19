@@ -14,9 +14,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class UserTest {
 
-    public static final User JAVAJIGI = new User(1L, UserId.from("javajigi"), Password.from("password"), "name",
+    public static final User JAVAJIGI = new User(1L, UserId.from("javajigi"), Password.from("password"), Name.from("name"),
         "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, UserId.from("sanjigi"), Password.from("password"), "name",
+    public static final User SANJIGI = new User(2L, UserId.from("sanjigi"), Password.from("password"), Name.from("name"),
         "sanjigi@slipp.net");
 
     private User user1;
@@ -30,9 +30,9 @@ public class UserTest {
 
     @BeforeEach
     void setUp() {
-        user1 = new User(UserId.from("user1"), Password.from("password"), "alice",
+        user1 = new User(UserId.from("user1"), Password.from("password"), Name.from("alice"),
             "alice@gmail.com");
-        user2 = new User(UserId.from("user2"), Password.from("password"), "bob",
+        user2 = new User(UserId.from("user2"), Password.from("password"), Name.from("bob"),
             "bob@gmail.com");
 
         userRepository.save(user1);
@@ -46,7 +46,7 @@ public class UserTest {
 
     @Test
     void test_사용자_저장() {
-        User expected = new User(UserId.from("testuser"), Password.from("password"), "홍길동",
+        User expected = new User(UserId.from("testuser"), Password.from("password"), Name.from("홍길동"),
             "gildong@gmail.com");
 
         User actual = userRepository.save(expected);
