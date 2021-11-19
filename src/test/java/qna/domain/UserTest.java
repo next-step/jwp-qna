@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import qna.common.exception.ErrorMessage;
 import qna.common.exception.UnAuthorizedException;
 import qna.domain.user.Email;
 import qna.domain.user.User;
