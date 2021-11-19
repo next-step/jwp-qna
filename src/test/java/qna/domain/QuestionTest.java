@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,7 +88,7 @@ public class QuestionTest {
         save(question);
 
         // when
-        List<DeleteHistory> deleteHistories = question.delete(user).getValue();
+        List<DeleteHistory> deleteHistories = question.delete(user, LocalDateTime.now()).getValue();
 
         // then
         assertAll(
@@ -117,7 +118,7 @@ public class QuestionTest {
 
         // when, then
         assertThatThrownBy(() ->
-                question.delete(user2)).isInstanceOf(CannotDeleteException.class);
+                question.delete(user2, LocalDateTime.now())).isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
@@ -133,7 +134,7 @@ public class QuestionTest {
 
         // when, then
         assertThatThrownBy(() ->
-                question.delete(user)).isInstanceOf(CannotDeleteException.class);
+                question.delete(user, LocalDateTime.now())).isInstanceOf(CannotDeleteException.class);
     }
 
     private Question save(Question question) {

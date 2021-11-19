@@ -62,9 +62,8 @@ public class Question extends BaseEntity{
         answer.setQuestion(this);
     }
 
-    public DeleteHistories delete(User loginUser) {
+    public DeleteHistories delete(User loginUser, LocalDateTime deletedTime) {
         validateWriter(loginUser);
-        LocalDateTime deletedTime = LocalDateTime.now();
 
         List<DeleteHistory> deleteHistories = new LinkedList<>();
         deleteHistories.addAll(answers.delete(loginUser, deletedTime).getValue());
