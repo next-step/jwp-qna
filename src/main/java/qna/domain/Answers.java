@@ -5,6 +5,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Embeddable
@@ -15,20 +16,16 @@ public class Answers {
     protected Answers() {
     }
 
-    public List<Answer> getValue() {
-        return answers;
-    }
-
     public void add(Answer answer) {
         answers.add(answer);
     }
 
     public DeleteHistories delete(User loginUser, LocalDateTime deletedTime) {
-        DeleteHistories deleteHistories = new DeleteHistories();
+        List<DeleteHistory> deleteHistories = new LinkedList<>();
 
         for (Answer answer : answers) {
             deleteHistories.add(answer.delete(loginUser, deletedTime));
         }
-        return deleteHistories;
+        return new DeleteHistories(deleteHistories);
     }
 }

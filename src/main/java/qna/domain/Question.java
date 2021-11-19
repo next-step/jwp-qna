@@ -4,6 +4,8 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity{
@@ -64,11 +66,12 @@ public class Question extends BaseEntity{
         validateWriter(loginUser);
         LocalDateTime deletedTime = LocalDateTime.now();
 
-        DeleteHistories deleteHistories = answers.delete(loginUser, deletedTime);
+        List<DeleteHistory> deleteHistories = new LinkedList<>();
+        deleteHistories.addAll(answers.delete(loginUser, deletedTime).getValue());
 
         this.deleted = true;
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, deletedTime));
-        return deleteHistories;
+        return new DeleteHistories(deleteHistories);
     }
 
     private void validateWriter(User loginUser) {
