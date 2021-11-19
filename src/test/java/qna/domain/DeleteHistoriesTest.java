@@ -30,10 +30,10 @@ class DeleteHistoriesTest {
         question.answers.addAnswer(answer2);
 
         deleteHistories = Arrays.asList(
-            new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(),
-                LocalDateTime.now()),
-            new DeleteHistory(ContentType.ANSWER, answer1.getId(), answer1.getWriter(),
-                LocalDateTime.now())
+            new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()
+            ),
+            new DeleteHistory(ContentType.ANSWER, answer1.getId(), answer1.getWriter()
+            )
         );
     }
 
@@ -47,14 +47,14 @@ class DeleteHistoriesTest {
     @Test
     void test_delete_history_와_histories_로_생성() {
         DeleteHistory questionDeleteHistory = new DeleteHistory(ContentType.QUESTION,
-            question.getId(), question.getWriter(), LocalDateTime.now());
+            question.getId(), question.getWriter());
 
         DeleteHistories answerDeleteHistories = DeleteHistories.from(
             Arrays.asList(
-                new DeleteHistory(ContentType.ANSWER, answer1.getId(), answer1.getWriter(),
-                    LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, answer2.getId(), answer2.getWriter(),
-                    LocalDateTime.now())
+                new DeleteHistory(ContentType.ANSWER, answer1.getId(), answer1.getWriter()
+                ),
+                new DeleteHistory(ContentType.ANSWER, answer2.getId(), answer2.getWriter()
+                )
             )
         );
 

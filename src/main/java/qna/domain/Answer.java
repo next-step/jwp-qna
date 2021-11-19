@@ -108,8 +108,7 @@ public class Answer extends BaseEntity {
         validateOwner(loginUser);
 
         setDeleted(true);
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, getId(),
-            getWriter(), LocalDateTime.now());
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, getId(), getWriter());
         return deleteHistory;
     }
 

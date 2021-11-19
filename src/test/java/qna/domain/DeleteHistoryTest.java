@@ -39,10 +39,10 @@ class DeleteHistoryTest {
         userRepository.save(user1);
         userRepository.save(user2);
 
-        history1 = new DeleteHistory(ContentType.QUESTION, 1L, user1,
-            LocalDateTime.now());
-        history2 = new DeleteHistory(ContentType.ANSWER, 2L, user2,
-            LocalDateTime.now());
+        history1 = new DeleteHistory(ContentType.QUESTION, 1L, user1
+        );
+        history2 = new DeleteHistory(ContentType.ANSWER, 2L, user2
+        );
 
         deleteHistoryRepository.save(history1);
         deleteHistoryRepository.save(history2);
