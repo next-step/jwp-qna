@@ -64,7 +64,13 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.question = question;
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().remove(this);
+        }
+        if (this.question != question) {
+            this.question = question;
+            question.addAnswer(this);
+        }
     }
 
     public User getWriter() {

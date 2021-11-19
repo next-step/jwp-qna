@@ -1,8 +1,11 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
+import qna.ForbiddenException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -15,6 +18,9 @@ public class Question extends BaseEntity {
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     private boolean deleted = false;
 
@@ -42,7 +48,10 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.add(answer);
+        if (answer.getQuestion() != this) {
+            answer.toQuestion(this);
+        }
     }
 
     public String getTitle() {
@@ -77,6 +86,10 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -90,6 +103,11 @@ public class Question extends BaseEntity {
     public void delete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        for (Answer answer : answers) {
+            if (!answer.isOwner(loginUser)) {
+                throw new ForbiddenException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            }
         }
         setDeleted(true);
     }
