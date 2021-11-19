@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class DeleteHistories {
@@ -12,5 +13,12 @@ public class DeleteHistories {
 
     public List<DeleteHistory> getValue() {
         return deleteHistories;
+    }
+
+    public DeleteHistories create(DeleteHistory deleteHistory) {
+        List<DeleteHistory> deleteHistories = new LinkedList<>();
+        deleteHistories.addAll(this.deleteHistories);
+        deleteHistories.add(deleteHistory);
+        return new DeleteHistories(deleteHistories);
     }
 }
