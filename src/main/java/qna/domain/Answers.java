@@ -9,6 +9,7 @@ import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
+
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
@@ -22,7 +23,7 @@ public class Answers {
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-        for (Answer answer: answers) {
+        for (Answer answer : answers) {
             deleteHistories.add(answer.delete(loginUser));
         }
 

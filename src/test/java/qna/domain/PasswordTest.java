@@ -2,12 +2,11 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.Test;
 import qna.domain.exception.IllegalPasswordException;
 import qna.domain.exception.PasswordLengthExceedException;
-import qna.domain.exception.UserIdLengthExceedException;
 
 class PasswordTest {
 

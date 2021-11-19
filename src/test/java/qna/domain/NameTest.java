@@ -5,9 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.Test;
 import qna.domain.exception.IllegalNameException;
-import qna.domain.exception.IllegalPasswordException;
 import qna.domain.exception.NameLengthExceedException;
-import qna.domain.exception.PasswordLengthExceedException;
 
 class NameTest {
 

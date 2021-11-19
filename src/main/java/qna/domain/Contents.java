@@ -6,6 +6,7 @@ import javax.persistence.Lob;
 
 @Embeddable
 public class Contents {
+
     @Lob
     private String contents;
 

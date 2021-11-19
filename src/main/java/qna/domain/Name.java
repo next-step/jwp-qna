@@ -4,9 +4,7 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import qna.domain.exception.IllegalNameException;
-import qna.domain.exception.IllegalPasswordException;
 import qna.domain.exception.NameLengthExceedException;
-import qna.domain.exception.PasswordLengthExceedException;
 
 @Embeddable
 public class Name {

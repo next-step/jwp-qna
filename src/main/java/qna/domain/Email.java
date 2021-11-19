@@ -7,6 +7,7 @@ import qna.domain.exception.EmailLengthExceedException;
 
 @Embeddable
 public class Email {
+
     private static final int LENGTH_LIMIT = 50;
 
     @Column(length = LENGTH_LIMIT)

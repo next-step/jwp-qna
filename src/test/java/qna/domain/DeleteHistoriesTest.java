@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,10 +49,8 @@ class DeleteHistoriesTest {
 
         DeleteHistories answerDeleteHistories = DeleteHistories.from(
             Arrays.asList(
-                new DeleteHistory(ContentType.ANSWER, answer1.getId(), answer1.getWriter()
-                ),
-                new DeleteHistory(ContentType.ANSWER, answer2.getId(), answer2.getWriter()
-                )
+                new DeleteHistory(ContentType.ANSWER, answer1.getId(), answer1.getWriter()),
+                new DeleteHistory(ContentType.ANSWER, answer2.getId(), answer2.getWriter())
             )
         );
 
@@ -76,7 +72,7 @@ class DeleteHistoriesTest {
     @Test
     void test_delete_histories가_null이면_예외() {
         assertThatThrownBy(() -> DeleteHistories.from(null))
-                .isInstanceOf(IllegalDeleteHistoriesException.class);
+            .isInstanceOf(IllegalDeleteHistoriesException.class);
     }
 
     @Test

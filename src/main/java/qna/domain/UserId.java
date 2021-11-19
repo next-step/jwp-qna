@@ -8,6 +8,7 @@ import qna.domain.exception.UserIdLengthExceedException;
 
 @Embeddable
 public class UserId {
+
     private static final int LENGTH_LIMIT = 20;
 
     @Column(unique = true, nullable = false, length = LENGTH_LIMIT)

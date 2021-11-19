@@ -8,6 +8,7 @@ import qna.domain.exception.PasswordLengthExceedException;
 
 @Embeddable
 public class Password {
+
     private static final int LENGTH_LIMIT = 20;
 
     @Column(nullable = false, length = LENGTH_LIMIT)
@@ -30,7 +31,7 @@ public class Password {
     }
 
     private void validateLengthNotExceed(String password) {
-        if(password.length() > LENGTH_LIMIT) {
+        if (password.length() > LENGTH_LIMIT) {
             throw new PasswordLengthExceedException(LENGTH_LIMIT);
         }
     }

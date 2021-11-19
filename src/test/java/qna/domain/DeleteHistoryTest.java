@@ -3,7 +3,6 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,10 +38,8 @@ class DeleteHistoryTest {
         userRepository.save(user1);
         userRepository.save(user2);
 
-        history1 = new DeleteHistory(ContentType.QUESTION, 1L, user1
-        );
-        history2 = new DeleteHistory(ContentType.ANSWER, 2L, user2
-        );
+        history1 = new DeleteHistory(ContentType.QUESTION, 1L, user1);
+        history2 = new DeleteHistory(ContentType.ANSWER, 2L, user2);
 
         deleteHistoryRepository.save(history1);
         deleteHistoryRepository.save(history2);
