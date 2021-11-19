@@ -125,8 +125,8 @@ public class User {
                 '}';
     }
 
-    public boolean matchId(Long id) {
-        return this.id.equals(id);
+    public boolean matchId(User user) {
+        return this.id.equals(user.getId());
     }
 
     private static class GuestUser extends User {

@@ -37,12 +37,10 @@ public class AnswerRepositoryTest {
         answer = new Answer(user, question, "Answers Contents1");
     }
     
-    @DisplayName("user, question 연관관계 설정 후 저장 검증")
+    @DisplayName("user, question 연관관계 검증")
     @Test
     void saveWithUserAndQuestion() {
-        answer.setUser(user);
         Answer result = answers.save(answer);
-        answers.flush();
 
         assertAll(
                 () -> assertThat(result.getId()).isNotNull(),

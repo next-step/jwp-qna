@@ -24,7 +24,7 @@ public class QuestionTest {
     @DisplayName("질문 삭제 시 DeleteHistory에 이력정보 생성  검증")
     @Test
     void deleteHistoryToQuestion() throws CannotDeleteException {
-        List<DeleteHistory> deleteHistorys = Q1.delete(UserTest.JAVAJIGI);
+        final List<DeleteHistory> deleteHistorys = Q1.delete(UserTest.JAVAJIGI);
 
         assertThat(deleteHistorys).isNotNull();
         assertThat(deleteHistorys.get(0)).isEqualTo(new DeleteHistory(ContentType.QUESTION, Q1.getId(), UserTest.JAVAJIGI));

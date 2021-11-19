@@ -49,12 +49,24 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public List<Answer> getAnswers() {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        List<DeleteHistory> result = new ArrayList<>();
+        deleted = true;
+        result.add(new DeleteHistory(ContentType.QUESTION, id, writer));
+        result.addAll(answers.delete(loginUser));
+        return result;
+    }
+
+    protected List<Answer> getAnswers() {
         return answers.getAnswerGroup();
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.matchId(writer.getId());
+    private boolean isOwner(User writer) {
+        return this.writer.matchId(writer);
     }
 
     void addAnswer(Answer answer) {
@@ -94,15 +106,4 @@ public class Question extends BaseTimeEntity {
                 '}';
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
-
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-        List<DeleteHistory> result = new ArrayList<>();
-        deleted = true;
-        result.add(new DeleteHistory(ContentType.QUESTION, id, writer));
-        result.addAll(answers.delete(loginUser));
-        return result;
-    }
 }

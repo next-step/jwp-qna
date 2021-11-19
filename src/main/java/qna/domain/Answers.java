@@ -22,22 +22,18 @@ public class Answers {
         return new Answers();
     }
 
-    public int size() {
-        return answers.size();
-    }
-
-    private List<Answer> nonDeletedAnswers() {
-        return answers.stream()
-                .filter(item -> !item.isDeleted())
-                .collect(Collectors.toList());
-    }
-
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         List<DeleteHistory> result = new ArrayList<>();
         for (Answer answer : nonDeletedAnswers()) {
             result.add(answer.delete(loginUser));
         }
         return result;
+    }
+
+    private List<Answer> nonDeletedAnswers() {
+        return answers.stream()
+                .filter(item -> !item.isDeleted())
+                .collect(Collectors.toList());
     }
 
     public List<Answer> getAnswerGroup() {

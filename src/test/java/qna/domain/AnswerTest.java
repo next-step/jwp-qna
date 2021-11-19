@@ -22,7 +22,7 @@ public class AnswerTest {
     @DisplayName("답변 삭제 시 DeleteHistory에 이력정보객체 생성.")
     @Test
     void deleteHistoryToAnswer() throws CannotDeleteException {
-        DeleteHistory deleteHistory = A1.delete(UserTest.JAVAJIGI);
+        final DeleteHistory deleteHistory = A1.delete(UserTest.JAVAJIGI);
 
         assertThat(deleteHistory).isNotNull();
         assertThat(deleteHistory).isEqualTo(new DeleteHistory(ContentType.ANSWER, A1.getId(), UserTest.JAVAJIGI));
