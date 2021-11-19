@@ -1,5 +1,6 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -25,5 +26,17 @@ class UserIdTest {
 
         assertThatThrownBy(() -> UserId.from(longId))
             .isInstanceOf(UserIdLengthExceedException.class);
+    }
+
+    @Test
+    void test_동일_여부_확인() {
+        UserId userId1 = UserId.from("userA");
+        UserId userId2 = UserId.from("userA");
+        UserId userId3 = UserId.from("userB");
+
+        assertAll(
+            () -> assertThat(userId1.match(userId2)).isTrue(),
+            () -> assertThat(userId1.match(userId3)).isFalse()
+        );
     }
 }

@@ -39,6 +39,10 @@ public class UserId {
         }
     }
 
+    public boolean match(final UserId userId) {
+        return equals(userId);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
