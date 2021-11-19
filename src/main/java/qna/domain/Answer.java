@@ -59,16 +59,12 @@ public class Answer extends BaseEntity{
         return writer;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public Question getQuestion() {
         return question;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
     }
 
     public boolean isDeleted() {

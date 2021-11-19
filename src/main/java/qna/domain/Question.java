@@ -4,8 +4,6 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
-import java.util.List;
 
 @Entity
 public class Question extends BaseEntity{
@@ -21,7 +19,7 @@ public class Question extends BaseEntity{
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-    Answers answers = new Answers();
+    private Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -49,24 +47,12 @@ public class Question extends BaseEntity{
         return id;
     }
 
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers.getValue();
     }
 
     public void addAnswer(Answer answer) {

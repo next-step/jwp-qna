@@ -75,18 +75,6 @@ public class User extends BaseEntity{
         return id;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     private static class GuestUser extends User {
         @Override
         public boolean isGuestUser() {
