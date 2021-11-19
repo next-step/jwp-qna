@@ -25,7 +25,7 @@ public class UserName {
 
 	private static void validate(String name) {
 		if (name.length() > MAX_LENGTH) {
-			throw new IllegalArgumentException("길이(20)를 초과하였습니다");
+			throw new IllegalArgumentException("길이(" + MAX_LENGTH + ")를 초과하였습니다");
 		}
 	}
 

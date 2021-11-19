@@ -28,7 +28,7 @@ public class Email {
 
 	private static void validateEmail(String emailText) {
 		if (emailText.length() > MAX_LENGTH) {
-			throw new IllegalArgumentException("이메일 길이는 50자 이내여야 합니다");
+			throw new IllegalArgumentException("이메일 길이는 " + MAX_LENGTH + " 자 이내여야 합니다");
 		}
 		Matcher matcher = EMAIL_REGEX_PATTERN.matcher(emailText);
 		if (!matcher.matches()) {

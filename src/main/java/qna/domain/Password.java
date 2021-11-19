@@ -29,7 +29,7 @@ public class Password {
 		}
 
 		if (passwordText.length() > 20) {
-			throw new IllegalArgumentException("길이 20 이하여야 합니다");
+			throw new IllegalArgumentException("길이 " + MAX_LENGTH + " 이하여야 합니다");
 		}
 	}
 

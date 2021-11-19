@@ -29,7 +29,7 @@ public class UserId {
 		}
 
 		if (userIdText.length() > MAX_LENGTH) {
-			throw new IllegalArgumentException("길이 20을 초과할 수 없습니다");
+			throw new IllegalArgumentException("길이 " + MAX_LENGTH + "을 초과할 수 없습니다");
 		}
 	}
 
