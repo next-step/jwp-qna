@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -21,6 +22,20 @@ public class QuestionTest {
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getTitle()).isEqualTo(Q1.getTitle())
+        );
+    }
+
+    @Test
+    @DisplayName("질문 수정 : 질문 제목, 질문 내용")
+    void update() {
+        Question question = questionRepository.save(Q1);
+        question.setTitle("첫번째 질문");
+        question.setContents("첫번째 질문 내용입니다.");
+        Question actual = questionRepository.save(question);
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getTitle()).isEqualTo("첫번째 질문"),
+                () -> assertThat(actual.getContents()).isEqualTo("첫번째 질문 내용입니다.")
         );
     }
 }
