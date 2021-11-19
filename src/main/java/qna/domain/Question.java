@@ -1,6 +1,8 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -17,6 +19,9 @@ public class Question extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -56,14 +61,6 @@ public class Question extends BaseTimeEntity {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
@@ -76,7 +73,7 @@ public class Question extends BaseTimeEntity {
         return writer;
     }
 
-    public void setWriter(User writer) {
+    public void mappedToWriter(User writer) {
         this.writer = writer;
     }
 

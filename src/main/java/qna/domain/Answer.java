@@ -69,15 +69,11 @@ public class Answer extends BaseTimeEntity {
         return writer;
     }
 
-    public void setWriter(User writer) {
+    public void mappedToWriter(User writer) {
         this.writer = writer;
     }
 
-    public Question getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(Question question) {
+    public void mappedToQuestion(Question question) {
         this.question = question;
     }
 
