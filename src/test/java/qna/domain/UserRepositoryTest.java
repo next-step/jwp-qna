@@ -25,7 +25,7 @@ public class UserRepositoryTest {
 
         // when
         final String updateEmail = "seunghoo@naver.com";
-        user.setEmail(updateEmail);
+        user.changeEmail(updateEmail);
 
         User expectedUser = userRepository.findById(user.getId()).get();
 
@@ -56,7 +56,7 @@ public class UserRepositoryTest {
         String changePassword = "changePassword";
 
         // when
-        user.setPassword(changePassword);
+        user.changePassword(changePassword);
         User expectedUser = userRepository.findByUserId(user.getUserId()).get();
 
         // then
