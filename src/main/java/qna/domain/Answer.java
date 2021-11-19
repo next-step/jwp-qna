@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +8,6 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
@@ -17,12 +15,9 @@ import qna.UnAuthorizedException;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Answer extends AbstractIdEntity {
+public class Answer extends AbstractIdWithTimeEntity {
     @Lob
     private String contents;
-
-    @Column(nullable = false)
-    private final LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -30,9 +25,6 @@ public class Answer extends AbstractIdEntity {
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
@@ -81,10 +73,6 @@ public class Answer extends AbstractIdEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return this.writer;
     }
@@ -99,14 +87,6 @@ public class Answer extends AbstractIdEntity {
 
     public void setQuestion(Question question) {
         this.question = question;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {

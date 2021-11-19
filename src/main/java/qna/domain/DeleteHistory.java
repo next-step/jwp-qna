@@ -8,12 +8,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import org.springframework.data.annotation.CreatedDate;
+import javax.persistence.Transient;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-public class DeleteHistory extends AbstractIdEntity {
+public class DeleteHistory extends AbstractIdWithTimeEntity {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
@@ -23,8 +23,8 @@ public class DeleteHistory extends AbstractIdEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
 
-    @CreatedDate
-    private LocalDateTime createDate;
+    @Transient
+    private LocalDateTime updatedAt;
 
     protected DeleteHistory() {
     }
@@ -42,7 +42,7 @@ public class DeleteHistory extends AbstractIdEntity {
             ", contentType=" + contentType +
             ", contentId=" + contentId +
             ", deleter=" + deletedBy +
-            ", createDate=" + createDate +
+            ", createDate=" + createdAt +
             '}';
     }
 }
