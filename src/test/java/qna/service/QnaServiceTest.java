@@ -29,6 +29,9 @@ class QnaServiceTest {
     private AnswerRepository answerRepository;
 
     @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private DeleteHistoryService deleteHistoryService;
 
     @InjectMocks
@@ -62,7 +65,7 @@ class QnaServiceTest {
     public void delete_다른_사람이_쓴_글() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.SANJIGI, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(userRepository.save(UserTest.SANJIGI), question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
@@ -86,7 +89,7 @@ class QnaServiceTest {
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(userRepository.save(UserTest.JAVAJIGI), question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 

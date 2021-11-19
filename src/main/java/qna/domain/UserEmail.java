@@ -6,14 +6,24 @@ import java.util.Objects;
 
 @Embeddable
 public class UserEmail {
-    @Column(length = 50)
+    public static final String MAX_USER_EMAIL_EXCEPTION_MESSAGE = "user email 최대입력 길이를 초과하였습니다.";
+    public static final int MAX_USER_EMAIL_LENGTH = 50;
+
+    @Column(length = MAX_USER_EMAIL_LENGTH)
     private String email;
 
     protected UserEmail() {
     }
 
     public UserEmail(String email) {
+        validateUserEmailLength(email);
         this.email = email;
+    }
+
+    private void validateUserEmailLength(String email) {
+        if (email.length() > MAX_USER_EMAIL_LENGTH) {
+            throw new IllegalArgumentException(MAX_USER_EMAIL_EXCEPTION_MESSAGE);
+        }
     }
 
     public String getEmail() {
@@ -21,6 +31,7 @@ public class UserEmail {
     }
 
     public void changeEmail(String email) {
+        validateUserEmailLength(email);
         this.email = email;
     }
 

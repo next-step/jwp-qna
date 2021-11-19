@@ -8,14 +8,24 @@ import java.util.Objects;
 
 @Embeddable
 public class UserId {
-    @Column(nullable = false, length = 20, unique = true)
+    public static final String MAX_USER_ID_EXCEPTION_MESSAGE = "userId 최대입력 길이를 초과하였습니다.";
+    public static final int MAX_USER_ID_LENGTH = 20;
+
+    @Column(nullable = false, length = MAX_USER_ID_LENGTH, unique = true)
     private String userId;
 
     protected UserId() {
     }
 
     public UserId(String userId) {
+        validateUserIdLength(userId);
         this.userId = userId;
+    }
+
+    private void validateUserIdLength(String userId) {
+        if (userId.length() > MAX_USER_ID_LENGTH) {
+            throw new IllegalArgumentException(MAX_USER_ID_EXCEPTION_MESSAGE);
+        }
     }
 
     public void validateMatchUserId(UserId otherUserId) {
