@@ -91,8 +91,8 @@ public class DeleteHistoryRepositoryTest {
         // then
         assertAll(
             () -> assertThat(
-                deleteHistories.findByDeleteContentDataContentType(QUESTION)).isNotNull(),
-            () -> assertThat(deleteHistories.findByDeleteContentDataContentType(ANSWER)).isNotNull()
+                deleteHistories.findByDeleteTargetContentType(QUESTION)).isNotNull(),
+            () -> assertThat(deleteHistories.findByDeleteTargetContentType(ANSWER)).isNotNull()
         );
     }
 
@@ -104,10 +104,10 @@ public class DeleteHistoryRepositoryTest {
         DeleteHistory answerDeleteHistory = deleteHistories.save(ANSWER_HISTORY);
 
         // when
-        List<DeleteHistory> questionDeleteHistories = deleteHistories.findByDeleteContentData(
-            DeleteContentData.of(QUESTION.getId(), questionDeleteHistory.getContentType()));
-        List<DeleteHistory> answerDeleteHistories = deleteHistories.findByDeleteContentData(
-            DeleteContentData.of(ANSWER.getId(),
+        List<DeleteHistory> questionDeleteHistories = deleteHistories.findByDeleteTarget(
+            DeleteTarget.of(QUESTION.getId(), questionDeleteHistory.getContentType()));
+        List<DeleteHistory> answerDeleteHistories = deleteHistories.findByDeleteTarget(
+            DeleteTarget.of(ANSWER.getId(),
                 answerDeleteHistory.getContentType()));
 
         // then
