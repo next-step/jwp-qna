@@ -31,12 +31,12 @@ public class DeleteHistory {
         return deletedByUser;
     }
 
-    public void setDeletedByUser(User deletedByUser) {
-        this.deletedByUser = deletedByUser;
-    }
-
     public Long getId() {
         return id;
+    }
+
+    public Long getContentId() {
+        return contentId;
     }
 
     @Override
@@ -50,16 +50,5 @@ public class DeleteHistory {
     @Override
     public int hashCode() {
         return Objects.hash(id, contentType, contentId, deletedByUser, createDate);
-    }
-
-    @Override
-    public String toString() {
-        return "DeleteHistory{" +
-                "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", deledtedUser=" + deletedByUser +
-                ", createDate=" + createDate +
-                '}';
     }
 }

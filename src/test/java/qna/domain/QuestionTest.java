@@ -4,10 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
-import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -20,80 +23,121 @@ public class QuestionTest {
     UserRepository userRepository;
     @Autowired
     AnswerRepository answerRepository;
-    @Autowired
-    EntityManager em;
-    User user1;
-    Question question1;
-    Answer answer1;
+
+    Question question;
 
     @BeforeEach
     void init() {
-        user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
-        question1 = new Question("title1", "contents1").writeBy(user1);
-        answer1 = new Answer(user1, question1, "Answers Contents1");
-        userRepository.save(user1);
-        questionRepository.save(question1);
+        question = TestQuestionFactory.create();
     }
 
     @Test
     void 저장() {
-        Question foundQuestion = questionRepository.findById(question1.getId()).get();
-        assertAll(
-                () -> assertThat(question1.getId()).isNotNull(),
-                () -> assertThat(question1.getContents()).isEqualTo(foundQuestion.getContents())
-        );
+        // when
+        Question savedQuestion = save(question);
+
+        // then
+        assertThat(savedQuestion.getId()).isNotNull();
     }
 
     @Test
     void 검색() {
-        Question foundQuestion = questionRepository.findById(question1.getId()).get();
-        assertThat(questionRepository.findById(question1.getId()).get())
-                .isEqualTo(foundQuestion);
-    }
+        // given
+        Question savedQuestion = save(question);
 
-    @Test
-    void 연관관계_유저() {
-        em.flush();
-        em.clear();
-        User foundUser = userRepository.findById(user1.getId()).get();
-        assertAll(
-                () -> assertThat(question1.getWriter()).isEqualTo(user1),
-                () -> assertThat(foundUser.getQuestions().get(0).getId()).isEqualTo(question1.getId())
-        );
-    }
+        // when
+        Question foundQuestion = questionRepository.findById(question.getId()).get();
 
-    @Test
-    void 연관관계_답변() {
-        Answer savedAnswer = answerRepository.save(answer1);
-        question1.addAnswer(savedAnswer);
-        em.flush();
-        em.clear();
-        Answer foundAnswer = answerRepository.findById(savedAnswer.getId()).get();
-        assertAll(
-                () -> assertThat(foundAnswer.getQuestion().getId()).isEqualTo(question1.getId()),
-                () -> assertThat(question1.getAnswers().get(0).getId()).isEqualTo(foundAnswer.getId())
-        );
+        // then
+        assertThat(savedQuestion).isEqualTo(foundQuestion);
     }
 
     @Test
     void cascadeTest() {
-        Answer savedAnswer = answerRepository.save(answer1);
-        question1.addAnswer(savedAnswer);
-        questionRepository.delete(question1);
-        assertThat(answerRepository.findById(savedAnswer.getId()).isPresent()).isFalse();
-    }
+        // given
+        Answer answer = TestAnswerFactory.create();
+        question.addAnswer(answer);
+        save(question);
 
-    @Test
-    void 수정() {
-        question1.setContents("컨텐츠 수정");
-        questionRepository.flush();
-        em.clear();
-        assertThat(questionRepository.findById(question1.getId()).get().getContents()).isEqualTo(question1.getContents());
+        // when
+        questionRepository.delete(question);
+
+        // then
+        assertThat(answerRepository.findById(answer.getId()).isPresent()).isFalse();
     }
 
     @Test
     void 삭제() {
-        questionRepository.delete(question1);
-        assertThat(questionRepository.findById(question1.getId())).isEmpty();
+        // given
+        save(question);
+
+        // when
+        questionRepository.delete(question);
+
+        // then
+        assertThat(questionRepository.findById(question.getId())).isEmpty();
+    }
+
+    @Test
+    void 질문삭제() {
+        // given
+        User user = question.getWriter();
+        Answer answer = new Answer(user, question, "Answers Contents1");
+        userRepository.save(user);
+        question.addAnswer(answer);
+        save(question);
+
+        // when
+        List<DeleteHistory> deleteHistories = question.delete(user, LocalDateTime.now()).getValue();
+
+        // then
+        assertAll(
+                () -> assertThat(question.isDeleted()).isTrue(),
+
+                () -> assertThat(deleteHistories.stream()
+                        .filter(deleteHistory -> deleteHistory.getContentId().equals(question.getId()))
+                        .findAny()
+                        .get()
+                ).isNotNull(),
+
+                () -> assertThat(deleteHistories.stream()
+                        .filter(deleteHistory -> deleteHistory.getContentId().equals(answer.getId()))
+                        .findAny()
+                        .get()
+                ).isNotNull()
+        );
+    }
+
+    @Test
+    void 질문삭제_작성자_다를경우() {
+        // given
+        User user = question.getWriter();
+        User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        userRepository.save(user);
+        userRepository.save(user2);
+
+        // when, then
+        assertThatThrownBy(() ->
+                question.delete(user2, LocalDateTime.now())).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void 질문자_답변자_다를경우() {
+        // given
+        User user = question.getWriter();
+        User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        Answer answer = new Answer(user2, question, "Answers Contents1");
+        userRepository.save(user);
+        userRepository.save(user2);
+        question.addAnswer(answer);
+        save(question);
+
+        // when, then
+        assertThatThrownBy(() ->
+                question.delete(user, LocalDateTime.now())).isInstanceOf(CannotDeleteException.class);
+    }
+
+    private Question save(Question question) {
+        return questionRepository.save(question);
     }
 }

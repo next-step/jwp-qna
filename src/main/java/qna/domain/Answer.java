@@ -1,9 +1,11 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -12,10 +14,10 @@ public class Answer extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writerId")
+    @JoinColumn(name = "writer_Id")
     private User writer;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "questionId")
+    @JoinColumn(name = "question_Id")
     private Question question;
     @Lob
     private String contents;
@@ -57,38 +59,27 @@ public class Answer extends BaseEntity{
         return writer;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public Question getQuestion() {
         return question;
     }
 
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory delete(User loginUser, LocalDateTime deletedTime) {
+        validateWriterUser(loginUser);
+        deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, deletedTime);
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writer=" + writer +
-                ", question=" + question +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+    private void validateWriterUser(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 }
