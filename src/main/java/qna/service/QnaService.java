@@ -8,19 +8,15 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.*;
 
-import java.util.List;
-
 @Service
 public class QnaService {
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
     private QuestionRepository questionRepository;
-    private AnswerRepository answerRepository;
     private DeleteHistoryService deleteHistoryService;
 
-    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
+    public QnaService(QuestionRepository questionRepository, DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;
-        this.answerRepository = answerRepository;
         this.deleteHistoryService = deleteHistoryService;
     }
 
