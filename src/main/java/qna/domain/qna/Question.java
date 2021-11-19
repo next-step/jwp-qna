@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import qna.common.exception.CannotDeleteException;
+import qna.common.exception.ErrorMessage;
 import qna.common.exception.InvalidParamException;
 import qna.common.exception.UnAuthorizedException;
 import qna.domain.BaseEntity;
@@ -102,7 +103,7 @@ public class Question extends BaseEntity {
         }
 
         if (writer.isGuestUser()) {
-            throw new UnAuthorizedException(UnAuthorizedException.GUEST_USER_NOT_QUESTION);
+            throw new UnAuthorizedException(ErrorMessage.GUEST_USER_NOT_QUESTION_EXCEPTION_MESSAGE);
         }
     }
 

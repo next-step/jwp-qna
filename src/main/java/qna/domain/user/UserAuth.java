@@ -3,6 +3,7 @@ package qna.domain.user;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import qna.common.exception.ErrorMessage;
 import qna.common.exception.InvalidParamException;
 import qna.common.exception.UnAuthorizedException;
 
@@ -29,12 +30,12 @@ public class UserAuth {
     public void updateValid(UserAuth loginUserAuth, UserAuth changeUserAuth) {
         if (!matchUserId(loginUserAuth.userId)) {
             throw new UnAuthorizedException(
-                UnAuthorizedException.UNAUTHORIZED_EXCEPTION_USER_ID_NOT_SAME_MESSAGE);
+                ErrorMessage.UNAUTHORIZED_EXCEPTION_USER_ID_NOT_SAME_EXCEPTION_MESSAGE);
         }
 
         if (!matchPassword(changeUserAuth.password)) {
             throw new UnAuthorizedException(
-                UnAuthorizedException.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_MESSAGE);
+                ErrorMessage.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_EXCEPTION_MESSAGE);
         }
     }
 

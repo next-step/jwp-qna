@@ -4,6 +4,10 @@ public class UnAuthenticationException extends BaseException {
 
     private static final long serialVersionUID = 1L;
 
+    public UnAuthenticationException(ErrorMessage errorMessage) {
+        super(errorMessage);
+    }
+
     public UnAuthenticationException() {
         super();
     }

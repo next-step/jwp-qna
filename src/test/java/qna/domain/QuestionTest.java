@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import qna.common.exception.ErrorMessage;
 import qna.common.exception.UnAuthorizedException;
 import qna.domain.qna.Answer;
 import qna.domain.deletehistory.DeleteHistory;
@@ -82,7 +83,7 @@ public class QuestionTest {
             .isThrownBy(() -> {
                 // when
                 new Question(Post.of("안녕하세요 질문이있습니다.", "미가입자도 질문 가능한가요?")).writeBy(guest);
-            }).withMessage(UnAuthorizedException.GUEST_USER_NOT_QUESTION);
+            }).withMessage(ErrorMessage.GUEST_USER_NOT_QUESTION_EXCEPTION_MESSAGE.getErrorMsg());
     }
 
     @Test

@@ -53,7 +53,8 @@ public class UserTest {
             .isThrownBy(() -> {
                 // when
                 JAVAJIGI.update(SANJIGI, JAVAJIGI);
-            }).withMessage(UnAuthorizedException.UNAUTHORIZED_EXCEPTION_USER_ID_NOT_SAME_MESSAGE);
+            }).withMessage(
+                ErrorMessage.UNAUTHORIZED_EXCEPTION_USER_ID_NOT_SAME_EXCEPTION_MESSAGE.getErrorMsg());
     }
 
     @Test
@@ -69,7 +70,8 @@ public class UserTest {
                 // when
                 JAVAJIGI.update(JAVAJIGI, targetUserAndMissMatchPW);
             })
-            .withMessage(UnAuthorizedException.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_MESSAGE);
+            .withMessage(
+                ErrorMessage.UNAUTHORIZED_EXCEPTION_MISS_MATCH_PASSWORD_EXCEPTION_MESSAGE.getErrorMsg());
     }
 
 
