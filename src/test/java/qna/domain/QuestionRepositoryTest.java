@@ -1,9 +1,12 @@
 package qna.domain;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -31,7 +34,6 @@ public class QuestionRepositoryTest {
     void findByContentsContainingTest() {
         final User javajigi = users.save(UserTest.JAVAJIGI);
         final String expected = questions.save(QuestionTest.Q1.writeBy(javajigi)).getContents();
-        ;
 
         final String actual = questions.findByContentsContaining(expected).getContents();
         assertThat(actual).isEqualTo(expected);
@@ -39,5 +41,16 @@ public class QuestionRepositoryTest {
 
     @Test
     void test() {
+    }
+
+    @Test
+    @DisplayName("삭제시 작성자가 다르면 예외를 출력한다")
+    void deleteTest() {
+        final User javajigi = users.save(UserTest.JAVAJIGI);
+        final Question expected = QuestionTest.Q1.writeBy(javajigi);
+        final Question actual = questions.save(expected);
+
+        assertThatThrownBy(() -> actual.delete(UserTest.SANJIGI))
+            .isInstanceOf(CannotDeleteException.class);
     }
 }
