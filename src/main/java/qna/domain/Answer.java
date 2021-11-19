@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -7,6 +9,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Where(clause = "deleted = false")
 public class Answer extends BaseTimeEntity {
 
     @Id
@@ -52,19 +55,23 @@ public class Answer extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.matchId(writer.getId());
     }
 
     public void toQuestion(Question question) {
         this.question = question;
     }
 
-    public Long getId() {
-        return id;
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.deleted = true;
+        return DeleteHistory.ofAnswer(this.getId(), this.getWriter());
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public User getWriter() {
@@ -83,20 +90,12 @@ public class Answer extends BaseTimeEntity {
         this.question = question;
     }
 
-    public String getContents() {
-        return contents;
-    }
-
     public void setContents(String contents) {
         this.contents = contents;
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
