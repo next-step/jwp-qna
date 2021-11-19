@@ -1,4 +1,4 @@
-package qna.domain.deleteHistory;
+package qna.domain.deletehistory;
 
 public enum ContentType {
     QUESTION("질문"), ANSWER("답변");

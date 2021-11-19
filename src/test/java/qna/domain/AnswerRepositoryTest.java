@@ -14,7 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.common.exception.CannotDeleteException;
 import qna.domain.qna.Answer;
-import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.qna.Contents;
 import qna.domain.qna.Question;
 import qna.domain.qna.AnswerRepository;

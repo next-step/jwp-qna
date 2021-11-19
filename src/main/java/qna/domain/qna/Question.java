@@ -20,8 +20,8 @@ import qna.common.exception.CannotDeleteException;
 import qna.common.exception.InvalidParamException;
 import qna.common.exception.UnAuthorizedException;
 import qna.domain.BaseEntity;
-import qna.domain.deleteHistory.ContentType;
-import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.deletehistory.ContentType;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.user.User;
 
 @Entity

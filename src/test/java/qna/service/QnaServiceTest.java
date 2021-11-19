@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import qna.domain.qna.Answer;
-import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.qna.Contents;
 import qna.domain.qna.Question;
 import qna.domain.qna.AnswerRepository;

@@ -1,4 +1,4 @@
-package qna.domain.deleteHistory;
+package qna.domain.deletehistory;
 
 import java.util.Objects;
 import javax.persistence.Column;

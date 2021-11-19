@@ -18,9 +18,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import qna.domain.BaseEntity;
-import qna.domain.deleteHistory.ContentType;
+import qna.domain.deletehistory.ContentType;
 import qna.domain.user.User;
-import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.deletehistory.DeleteHistory;
 
 @Entity
 @Table(name = "answer")

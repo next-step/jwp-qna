@@ -9,7 +9,7 @@ import qna.common.exception.CannotDeleteException;
 import qna.common.exception.NotFoundException;
 
 import java.util.List;
-import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.qna.Question;
 import qna.domain.qna.QuestionRepository;
 import qna.domain.user.User;

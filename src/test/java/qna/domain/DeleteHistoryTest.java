@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import qna.domain.deleteHistory.DeleteHistory;
-import qna.domain.deleteHistory.ContentType;
+import qna.domain.deletehistory.DeleteHistory;
+import qna.domain.deletehistory.ContentType;
 
 public class DeleteHistoryTest {
 
