@@ -2,13 +2,18 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.*;
+import static qna.domain.ContentType.*;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import qna.CannotDeleteException;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = NONE)
@@ -58,7 +63,6 @@ public class AnswerRepositoryTest {
         question.addAnswer(new Answer(user, question, "answer"));
         questionRepository.save(question);
 
-
         // when
         List<Answer> findAnswer = answerRepository.findAll();
 
@@ -66,4 +70,23 @@ public class AnswerRepositoryTest {
         assertThat(findAnswer.size()).isEqualTo(3);
     }
 
+    @Test
+    void 삭제_히스토리_생성() throws CannotDeleteException {
+        // given
+        User loginUser = new User("seunghoona", "password", "username", "email");
+        Question question = new Question("title", "contents").writeBy(loginUser);
+        question.addAnswer(new Answer(loginUser, question, "contents1"));
+        question.addAnswer(new Answer(loginUser, question, "contents2"));
+        questionRepository.save(question);
+
+        List<DeleteHistory> delete = question.delete(loginUser);
+
+        // then
+        List<DeleteHistory> deleteHistories = Arrays.asList(
+            new DeleteHistory(ANSWER, question, loginUser, LocalDateTime.now()),
+            new DeleteHistory(ANSWER, question, loginUser, LocalDateTime.now())
+        );
+
+        assertThat(delete).isEqualTo(deleteHistories);
+    }
 }

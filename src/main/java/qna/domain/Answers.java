@@ -47,7 +47,7 @@ public class Answers implements Serializable {
     public List<DeleteHistory> delete(User loginUser) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : answers) {
-            isNotOwer(loginUser, answer);
+            isNotOwner(loginUser, answer);
 
             answer.setDeleted(true);
             deleteHistories.add(new DeleteHistory(ANSWER, answer.getQuestion(), loginUser, now()));
@@ -62,7 +62,7 @@ public class Answers implements Serializable {
         return new Answers(excludeDeleteTrueAnswers);
     }
 
-    private void isNotOwer(User loginUser, Answer answer) throws CannotDeleteException {
+    private void isNotOwner(User loginUser, Answer answer) throws CannotDeleteException {
         if (!answer.isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }

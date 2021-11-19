@@ -57,8 +57,9 @@ public class AnswersTest {
         List<DeleteHistory> delete = answers.delete(user);
 
         // then
-        List<DeleteHistory> deleteHistories = asList(new DeleteHistory(ANSWER, question, user, LocalDateTime.now()),
-                                                     new DeleteHistory(ANSWER, question, user, LocalDateTime.now())
+        List<DeleteHistory> deleteHistories = asList(
+            new DeleteHistory(ANSWER, question, user, LocalDateTime.now()),
+            new DeleteHistory(ANSWER, question, user, LocalDateTime.now())
         );
 
         assertThat(delete).isEqualTo(deleteHistories);

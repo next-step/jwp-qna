@@ -4,6 +4,8 @@ import static java.time.LocalDateTime.*;
 import static javax.persistence.FetchType.*;
 import static qna.domain.ContentType.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -81,16 +83,23 @@ public class Question extends BaseTime {
         this.answers.addAnswers(answers, this);
     }
 
-    public Answers getAnswers() {
-        return answers;
+    public List<DeleteHistory> delete(User loginUser) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(deleteQuestion(loginUser));
+        deleteHistories.addAll(deleteAnswer(loginUser));
+        return Collections.unmodifiableList(deleteHistories);
     }
 
-    public DeleteHistory delete(User loginUser) {
+    public DeleteHistory deleteQuestion(User loginUser) {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        this.setDeleted(true);
+        this.deleted = true;
         return new DeleteHistory(QUESTION, this, loginUser, now());
+    }
+
+    public List<DeleteHistory> deleteAnswer(User loginUser) {
+        return this.answers.excludeDeleteTrueAnswers().delete(loginUser);
     }
 
     public Long getId() {

@@ -1,8 +1,10 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.*;
 import static qna.domain.ContentType.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -32,10 +34,10 @@ public class QuestionTest {
         Question question = new Question("title", "contents").writeBy(user);
 
         // when
-        DeleteHistory delete = question.delete(user);
+        List<DeleteHistory> delete = question.delete(user);
 
         // then
-        Assertions.assertThat(delete).isEqualTo(new DeleteHistory(QUESTION, question, user, LocalDateTime.now()));
+        assertThat(delete).isEqualTo(new DeleteHistory(QUESTION, question, user, LocalDateTime.now()));
     }
 
     @Test
@@ -46,9 +48,9 @@ public class QuestionTest {
 
         // when
         final String email = "seunghoo@naver.com";
-        user.setEmail(email);
+        user.changeEmail(email);
 
         // then
-        Assertions.assertThat(user.getEmail()).isEqualTo(email);
+        assertThat(user.getEmail()).isEqualTo(email);
     }
 }
