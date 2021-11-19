@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.Test;
+import qna.domain.exception.IllegalUserIdException;
 import qna.domain.exception.UserIdLengthExceedException;
 
 class UserIdTest {
@@ -12,9 +13,9 @@ class UserIdTest {
     void test_id가_null_이나_빈_문자열_예외() {
         assertAll(
             () -> assertThatThrownBy(() -> UserId.from(null))
-                .isInstanceOf(IllegalArgumentException.class),
+                .isInstanceOf(IllegalUserIdException.class),
             () -> assertThatThrownBy(() -> UserId.from(""))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(IllegalUserIdException.class)
         );
     }
 

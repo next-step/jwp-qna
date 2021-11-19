@@ -14,9 +14,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class UserTest {
 
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name",
+    public static final User JAVAJIGI = new User(1L, UserId.from("javajigi"), "password", "name",
         "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name",
+    public static final User SANJIGI = new User(2L, UserId.from("sanjigi"), "password", "name",
         "sanjigi@slipp.net");
 
     private User user1;
@@ -30,9 +30,9 @@ public class UserTest {
 
     @BeforeEach
     void setUp() {
-        user1 = new User("user1", "password", "alice",
+        user1 = new User(UserId.from("user1"), "password", "alice",
             "alice@gmail.com");
-        user2 = new User("user2", "password", "bob",
+        user2 = new User(UserId.from("user2"), "password", "bob",
             "bob@gmail.com");
 
         userRepository.save(user1);
@@ -46,7 +46,7 @@ public class UserTest {
 
     @Test
     void test_사용자_저장() {
-        User expected = new User("testuser", "password", "홍길동",
+        User expected = new User(UserId.from("testuser"), "password", "홍길동",
             "gildong@gmail.com");
 
         User actual = userRepository.save(expected);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.OneToMany;
@@ -16,8 +17,8 @@ public class User extends BaseEntity {
 
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    @Column(unique = true, nullable = false, length = 20)
-    private String userId;
+    @Embedded
+    private UserId userId;
 
     @Column(nullable = false, length = 20)
     private String password;
@@ -40,11 +41,11 @@ public class User extends BaseEntity {
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
+    public User(UserId userId, String password, String name, String email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
+    public User(Long id, UserId userId, String password, String name, String email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -65,7 +66,7 @@ public class User extends BaseEntity {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    private boolean matchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
@@ -86,7 +87,7 @@ public class User extends BaseEntity {
         return false;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
