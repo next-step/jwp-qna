@@ -34,10 +34,10 @@ public class QuestionTest {
         Question question = new Question("title", "contents").writeBy(user);
 
         // when
-        List<DeleteHistory> delete = question.delete(user);
+        DeleteHistory deleteHistory = question.deleteQuestion(user);
 
         // then
-        assertThat(delete).isEqualTo(new DeleteHistory(QUESTION, question, user, LocalDateTime.now()));
+        assertThat(deleteHistory).isEqualTo(new DeleteHistory(QUESTION, question, user, LocalDateTime.now()));
     }
 
     @Test

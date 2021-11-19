@@ -79,7 +79,7 @@ public class AnswerRepositoryTest {
         question.addAnswer(new Answer(loginUser, question, "contents2"));
         questionRepository.save(question);
 
-        List<DeleteHistory> delete = question.delete(loginUser);
+        List<DeleteHistory> delete = question.deleteAnswer(loginUser);
 
         // then
         List<DeleteHistory> deleteHistories = Arrays.asList(

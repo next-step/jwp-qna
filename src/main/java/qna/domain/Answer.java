@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import qna.QuestionNotFoundException;
 import qna.UnAuthorizedException;
@@ -94,11 +95,11 @@ public class Answer extends BaseTime {
         if (o == null || getClass() != o.getClass())
             return false;
         Answer answer = (Answer)o;
-        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents,
-                                                                                            answer.contents
-        ) && Objects.equals(question, answer.question) && Objects.equals(user,
-                                                                         answer.user
-        );
+        return deleted == answer.deleted &&
+            Objects.equals(id, answer.id) &&
+            Objects.equals(contents, answer.contents) &&
+            Objects.equals(question, answer.question) &&
+            Objects.equals(user, answer.user);
     }
 
     @Override
