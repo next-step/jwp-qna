@@ -22,10 +22,6 @@ import java.util.Objects;
 @Entity
 public class Answer extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
@@ -39,12 +35,12 @@ public class Answer extends BaseEntity {
 
     private boolean deleted = false;
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
+//    public Answer(User writer, Question question, String contents) {
+//        this(null, writer, question, contents);
+//    }
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+    public Answer(User writer, Question question, String contents) {
+//        this.id = id;
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -69,14 +65,6 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public User getWriter() {

@@ -4,10 +4,6 @@ import javax.persistence.*;
 
 @Entity
 public class Question extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(length = 100, nullable = false)
     private String title;
 
@@ -25,7 +21,7 @@ public class Question extends BaseEntity {
     }
 
     public Question(Long id, String title, String contents) {
-        this.id = id;
+        this.setId(id);
         this.title = title;
         this.contents = contents;
     }
@@ -45,14 +41,6 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -90,7 +78,6 @@ public class Question extends BaseEntity {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", writerId=" + writer +
