@@ -62,9 +62,11 @@
   
 
 - OneToOne 단방향에서 뒤의 one은 column 이름의 역할만 한다.
-  
+
 
 - 외래키 관리자가 아닌 쪽에서 add나 set을 하면 외래키의 관리자가 추가를 안하면 null이 들어가 연결이 되지 않는다.
+
+- [연관 관계 정리](https://jeong-pro.tistory.com/231)
   
 ### JPA 영속성 컨텍스트
 - commit 전에 원래 value로 돌아오면 snapshot과 비교를 통해 update 쿼리가 발생하지 않음(1차 캐시 안에 스냅샷과 비교)
@@ -81,3 +83,21 @@
 
 - 영속 상태가 아닌 값이 저장이나 수정과 같은 쿼리가 발생한다면 오류가 난다.
   
+### JPA Entity toString 순환 참조 현상
+
+원인
+- a <-> b 양방향 연관 관계일 때, a.toString 안에 b가 있고 b.toString 안에 a가 있을 경우 서로 계속 부르면서 overflow
+- **근본적으로 model에서 view를 부르는 것에 대해서 생각해 볼 필요가 있다.**
+
+해결방법
+1. DTO로 만든 후 toString [DTO로 만들기](https://friends-aihaja.tistory.com/entry/5-%EC%96%91%EB%B0%A9%ED%96%A5-%EC%97%B0%EA%B4%80%EA%B4%80%EA%B3%84%EC%99%80-%EC%97%B0%EA%B4%80%EA%B4%80%EA%B3%84-%EC%A3%BC%EC%9D%B8)
+2. ToStringBuilder 패키지 이용하기 [ToStringBuilder 패키지 이용하기](https://yellowh.tistory.com/135)
+
+### CascadeType.ALL -> orphanRemoval true 했는데도 불구하고 repository 에서 delete 시도 시 쿼리 발생 안하는 이유
+
+- 연관 관계 매핑이 되어 있는 상황에서 find를 하기 때문에 find 시 다시 persist가 된다. 이는 dirty checking, lazy에 의해 delete 를 발생시키지 않아도 되게한다.
+ [원인 설명](https://stackoverflow.com/questions/63030917/spring-jpa-repository-delete-method-doesnt-work)
+  
+### final 이 없는 이유
+- JPA는 엔티티를 생성할 때 지연로딩 방식을 사용
+- 이때 프록시 객체(PersistentBag)를 생성하여 사용하기 때문에 필드 또는 클래스에 final을 사용할 수 없다.

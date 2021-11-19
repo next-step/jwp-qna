@@ -7,15 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
@@ -47,6 +46,7 @@ public class AnswerTest {
     @DisplayName("answer 생성")
     @Test
     void saveAnswerTest () {
+        // then
         assertAll(
                 () -> assertThat(answer.getId()).isNotNull(),
                 () -> assertThat(answer.getContents()).isEqualTo("Answers Contents1"),
@@ -55,86 +55,59 @@ public class AnswerTest {
         );
     }
 
-    @DisplayName("question id 기준으로 삭제되지않은 answer 목록 찾기")
-    @Test
-    void findByQuestionIdAndDeletedFalseTest() {
-        List<Answer> noneDeletedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
-        assertThat(noneDeletedAnswers.size()).isEqualTo(1);
-        Answer answerFromRepository = noneDeletedAnswers.get(0);
-        assertEquals(answerFromRepository, answer);
-    }
-
-    @DisplayName("question id 기준으로 삭제된 answer 목록 확인")
-    @Test
-    void findByQuestionIdAndDeletedTrueTest() {
-        answer.setDeleted(true);
-        List<Answer> noneDeletedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
-        assertThat(noneDeletedAnswers.size()).isZero();
-    }
-
-
-    @DisplayName("삭제되지않은 answer 찾기")
-    @Test
-    void findByIdAndDeletedFalseTest() {
-        Answer answerFromRepository = answerRepository.findByIdAndDeletedFalse(answer.getId())
-                .orElseThrow(NoSuchElementException::new);
-        assertEquals(answerFromRepository, answer);
-    }
-
-    @DisplayName("삭제한 answer 확인")
-    @Test
-    void findByIdAndDeletedTrueTest() {
-        answer.setDeleted(true);
-        assertThatThrownBy(() -> {
-            answerRepository.findByIdAndDeletedFalse(answer.getId())
-                    .orElseThrow(NoSuchElementException::new);
-        }).isInstanceOf(NoSuchElementException.class);
-    }
-
     @DisplayName("answer 수정")
     @Test
     void updateAnswerTest() {
-        answer.setContents("Changed Contents1");
-        Answer answerFromRepository = answerRepository.findById(answer.getId())
+        // when
+        answer.changeContents("Changed Contents1");
+        Answer actual = answerRepository.findById(answer.getId())
                 .orElseThrow(NoSuchElementException::new);
-        assertThat(answerFromRepository.getContents()).isEqualTo("Changed Contents1");
-    }
 
-    @DisplayName("answer 삭제")
-    @Test
-    void removeAnswerTest() {
-        assertThat(answerRepository.findAll().size()).isEqualTo(1);
-        answerRepository.delete(answer);
-        assertThat(answerRepository.findAll().size()).isZero();
+        // then
+        assertThat(actual.getContents()).isEqualTo("Changed Contents1");
     }
 
     @DisplayName("answer save with question 추가")
     @Test
     void saveQuestionWithAnswerTest() {
+        // when
         answer.changeQuestion(question);
-        Question questionFromRepo = questionRepository.findById(question.getId())
+        Question actual = questionRepository.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
+
+        // then
         assertAll(
-                () -> assertThat(questionFromRepo.getContents()).isEqualTo("contents1"),
-                () -> assertThat(questionFromRepo.getAnswers().size()).isEqualTo(1),
-                () -> assertThat(questionFromRepo.getAnswers().get(0)).isEqualTo(answer),
-                () -> assertThat(questionFromRepo.getCreatedAt()).isAfter(now),
-                () -> assertThat(questionFromRepo.getUpdatedAt()).isAfter(now)
+                () -> assertThat(actual.getContents()).isEqualTo("contents1"),
+                () -> assertThat(actual.getAnswers().size()).isEqualTo(1),
+                () -> assertThat(actual.getAnswers().get(0)).isEqualTo(answer)
         );
     }
 
     @DisplayName("answer remove with question 삭제")
     @Test
     void removeQuestionWithAnswerTest() {
+        // when
         answer.removeQuestion();
-        Question questionFromRepo = questionRepository.findById(question.getId())
+        Question actual = questionRepository.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
+
+        // then
         assertAll(
-                () -> assertThat(questionFromRepo.getContents()).isEqualTo("contents1"),
-                () -> assertThat(questionFromRepo.getAnswers().size()).isZero(),
-                () -> assertThat(questionFromRepo.getCreatedAt()).isAfter(now),
-                () -> assertThat(questionFromRepo.getUpdatedAt()).isAfter(now)
+                () -> assertThat(actual.getContents()).isEqualTo("contents1"),
+                () -> assertThat(actual.getAnswers().size()).isZero()
         );
+    }
+
+    @DisplayName("validate owner exception")
+    @Test
+    void removeAnswerWithOtherUserExceptionTest() {
+        assertThatThrownBy(() -> {
+            // when
+            final User otherUser = userRepository.save(UserTest.LEWISSEO);
+            answer.delete(otherUser);
+
+            // then
+        }).isInstanceOf(CannotDeleteException.class);
     }
 
     @AfterEach

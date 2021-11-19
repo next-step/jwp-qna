@@ -1,9 +1,10 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -11,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Objects;
@@ -31,11 +31,11 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted = new Deleted();
 
     protected Answer() {
     }
@@ -50,15 +50,15 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
-        this.question = question;
-        this.contents = contents;
+        changeQuestion(question);
+        this.contents = new Contents(contents);
     }
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
-    public void setQuestion(Question question) {
+    public void toQuestion(Question question) {
         this.question = question;
     }
 
@@ -67,7 +67,7 @@ public class Answer extends BaseEntity {
             this.question.getAnswers().remove(this);
         }
 
-        setQuestion(question);
+        toQuestion(question);
         question.getAnswers().add(this);
     }
 
@@ -89,19 +89,31 @@ public class Answer extends BaseEntity {
     }
 
     public String getContents() {
-        return contents;
+        return contents.getContents();
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
+    public void changeContents(String contents) {
+        this.contents.changeContents(contents);
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.getDeleted();
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        validateOwner(loginUser);
+        return deleteAnswer();
+    }
+
+    private void validateOwner(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
+    private DeleteHistory deleteAnswer() {
+        this.deleted.delete();
+        return DeleteHistory.ofAnswer(id, writer);
     }
 
     @Override
@@ -109,26 +121,11 @@ public class Answer extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Answer answer = (Answer) o;
-        return deleted == answer.deleted &&
-                Objects.equals(id, answer.id) &&
-                Objects.equals(writer, answer.writer) &&
-                Objects.equals(question, answer.question) &&
-                Objects.equals(contents, answer.contents);
+        return Objects.equals(id, answer.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, writer, question, contents, deleted);
-    }
-
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writer.getId() +
-                ", question=" + question.getId() +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+        return Objects.hash(id);
     }
 }
