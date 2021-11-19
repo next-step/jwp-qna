@@ -10,9 +10,13 @@ class ContentsTest {
     @DisplayName("contents change")
     @Test
     void changeContents() {
+        // given
         Contents contents = new Contents("origin contents");
+
+        // when
         contents.changeContents("new contents");
 
+        // then
         assertThat(contents.getContents()).isEqualTo("new contents");
     }
 }

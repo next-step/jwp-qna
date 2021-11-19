@@ -46,6 +46,7 @@ public class AnswerTest {
     @DisplayName("answer 생성")
     @Test
     void saveAnswerTest () {
+        // then
         assertAll(
                 () -> assertThat(answer.getId()).isNotNull(),
                 () -> assertThat(answer.getContents()).isEqualTo("Answers Contents1"),
@@ -57,18 +58,24 @@ public class AnswerTest {
     @DisplayName("answer 수정")
     @Test
     void updateAnswerTest() {
+        // when
         answer.changeContents("Changed Contents1");
         Answer actual = answerRepository.findById(answer.getId())
                 .orElseThrow(NoSuchElementException::new);
+
+        // then
         assertThat(actual.getContents()).isEqualTo("Changed Contents1");
     }
 
     @DisplayName("answer save with question 추가")
     @Test
     void saveQuestionWithAnswerTest() {
+        // when
         answer.changeQuestion(question);
         Question actual = questionRepository.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
+
+        // then
         assertAll(
                 () -> assertThat(actual.getContents()).isEqualTo("contents1"),
                 () -> assertThat(actual.getAnswers().size()).isEqualTo(1),
@@ -79,9 +86,12 @@ public class AnswerTest {
     @DisplayName("answer remove with question 삭제")
     @Test
     void removeQuestionWithAnswerTest() {
+        // when
         answer.removeQuestion();
         Question actual = questionRepository.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
+
+        // then
         assertAll(
                 () -> assertThat(actual.getContents()).isEqualTo("contents1"),
                 () -> assertThat(actual.getAnswers().size()).isZero()
@@ -92,8 +102,11 @@ public class AnswerTest {
     @Test
     void removeAnswerWithOtherUserExceptionTest() {
         assertThatThrownBy(() -> {
+            // when
             final User otherUser = userRepository.save(UserTest.LEWISSEO);
             answer.delete(otherUser);
+
+            // then
         }).isInstanceOf(CannotDeleteException.class);
     }
 

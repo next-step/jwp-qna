@@ -33,6 +33,7 @@ public class UserTest {
     @DisplayName("user 생성")
     @Test
     void saveUserTest() {
+        // then
         assertAll(
                 () -> assertThat(user.getId()).isNotNull(),
                 () -> assertThat(user.getEmail()).isEqualTo("javajigi@slipp.net")
@@ -42,9 +43,12 @@ public class UserTest {
     @DisplayName("user 수정")
     @Test
     void userUpdateTest() {
+        // when
         user.changeEmail("change_mail@slipp.net");
         User userFromRepository = userRepository.findById(user.getId())
                 .orElseThrow(NoSuchElementException::new);
+
+        // then
         assertThat(userFromRepository.getEmail()).isEqualTo("change_mail@slipp.net");
     }
 

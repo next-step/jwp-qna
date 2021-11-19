@@ -32,8 +32,13 @@ public class UserRepositoryTest {
     @DisplayName("user 삭제")
     @Test
     void removeUserTest() {
+        // 기본 조건 확인
         assertThat(userRepository.findAll().size()).isEqualTo(1);
+
+        // when
         userRepository.delete(user);
+
+        // then
         assertThat(userRepository.findAll().size()).isZero();
     }
 

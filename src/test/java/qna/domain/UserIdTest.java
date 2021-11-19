@@ -13,8 +13,13 @@ class UserIdTest {
     @Test
     void validateMatchIdException() {
         assertThatThrownBy(() -> {
+            // given
             UserId userId = new UserId("wrongId");
+
+            // when
             userId.validateMatchUserId(new UserId("userId"));
+
+            // then
         }).isInstanceOf(UnAuthorizedException.class);
     }
 
@@ -22,7 +27,10 @@ class UserIdTest {
     @Test
     void getUserIdMaxLengthException() {
         assertThatThrownBy(() -> {
+            // given, when
             UserId userId = new UserId("User Id 20 글자 넘기기 20 글자 넘기기 20 글자 넘기기");
+
+            // then
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("userId 최대입력 길이를 초과하였습니다.");
     }

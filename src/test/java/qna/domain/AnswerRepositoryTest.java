@@ -49,15 +49,21 @@ public class AnswerRepositoryTest {
     @DisplayName("삭제되지않은 answer 찾기")
     @Test
     void findByIdAndDeletedFalseTest() {
+        // when
         Answer answerFromRepository = answerRepository.findByIdAndDeletedFalse(answer.getId())
                 .orElseThrow(NoSuchElementException::new);
+
+        // then
         assertEquals(answerFromRepository, answer);
     }
 
     @DisplayName("삭제한 answer 확인")
     @Test
     void findByIdAndDeletedTrueTest() throws CannotDeleteException {
+        // when
         answer.delete(user);
+
+        // then
         assertThatThrownBy(() -> {
             answerRepository.findByIdAndDeletedFalse(answer.getId())
                     .orElseThrow(NoSuchElementException::new);
@@ -67,26 +73,41 @@ public class AnswerRepositoryTest {
     @DisplayName("question id 기준으로 삭제되지않은 answer 목록 찾기")
     @Test
     void findByQuestionIdAndDeletedFalseTest() {
+        // when
         List<Answer> noneDeletedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+
+        // then1
         assertThat(noneDeletedAnswers.size()).isEqualTo(1);
+
+        // when
         Answer answerFromRepository = noneDeletedAnswers.get(0);
+
+        // then2
         assertEquals(answerFromRepository, answer);
     }
 
     @DisplayName("question id 기준으로 삭제된 answer 목록 확인")
     @Test
     void findByQuestionIdAndDeletedTrueTest() throws CannotDeleteException {
+        // when
         answer.delete(user);
         List<Answer> noneDeletedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+
+        // then
         assertThat(noneDeletedAnswers.size()).isZero();
     }
 
     @DisplayName("answer 삭제")
     @Test
     void removeAnswerTest() {
+        // 기본 조건 테스트
         assertThat(answerRepository.findAll().size()).isEqualTo(1);
+
+        // when
         Answer actual = answerRepository.findAll().get(0);
         question.removeAnswer(actual);
+
+        // then
         assertThat(answer).isSameAs(actual);
         assertThat(answerRepository.findAll().size()).isZero();
     }
@@ -94,8 +115,13 @@ public class AnswerRepositoryTest {
     @DisplayName("answer delete with user 테스트")
     @Test
     void removeAnswerWithUserTest() throws CannotDeleteException {
+        // 기본 조건 테스트
         assertThat(answerRepository.findAll().size()).isEqualTo(1);
+
+        // when
         answer.delete(user);
+
+        // then
         assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId())).isEqualTo(Optional.empty());
     }
 

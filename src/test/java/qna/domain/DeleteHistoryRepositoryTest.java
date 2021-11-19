@@ -39,8 +39,13 @@ public class DeleteHistoryRepositoryTest {
     @DisplayName("deleteHistory 삭제")
     @Test
     void removeDeleteHistoryTest() {
+        // 기본 조건 확인
         assertThat(deleteHistoryRepository.findAll().size()).isEqualTo(1);
+
+        // when
         deleteHistoryRepository.delete(deleteHistory);
+
+        // then
         assertThat(deleteHistoryRepository.findAll().size()).isZero();
     }
 }

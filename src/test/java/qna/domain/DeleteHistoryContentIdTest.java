@@ -10,8 +10,10 @@ class DeleteHistoryContentIdTest {
     @DisplayName("save deleteHistory contentId")
     @Test
     void getDeleteHistoryContentId() {
+        // given, when
         DeleteHistoryContentId deleteHistoryContentId = new DeleteHistoryContentId(2L);
 
+        // then
         assertThat(deleteHistoryContentId.getContentId()).isEqualTo(2L);
     }
 }

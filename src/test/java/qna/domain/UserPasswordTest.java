@@ -12,8 +12,13 @@ class UserPasswordTest {
     @Test
     void validateMatchPasswordException() {
         assertThatThrownBy(() -> {
+            // given
             UserPassword userPassword = new UserPassword("wrongPassword");
+
+            // when
             userPassword.validateMatchPassword(new UserPassword("password"));
+
+            // then
         }).isInstanceOf(UnAuthorizedException.class);
     }
 
@@ -21,7 +26,10 @@ class UserPasswordTest {
     @Test
     void getUserPasswordMaxLengthException() {
         assertThatThrownBy(() -> {
+            // given, when
             UserPassword userPassword = new UserPassword("User Password 20 글자 넘기기 20 글자 넘기기 20 글자 넘기기");
+
+            // then
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("userPassword 최대입력 길이를 초과하였습니다.");
     }

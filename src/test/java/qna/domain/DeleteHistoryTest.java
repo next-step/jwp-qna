@@ -39,6 +39,7 @@ public class DeleteHistoryTest {
     @DisplayName("deleteHistory 생성")
     @Test
     void saveDeleteHistoryTest() {
+        // then
         assertAll(
                 () -> assertThat(deleteHistory.getId()).isNotNull(),
                 () -> assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.QUESTION),

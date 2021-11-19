@@ -44,7 +44,10 @@ class AnswersTest {
     @DisplayName("answers 삭제")
     @Test
     void removeAnswers() throws CannotDeleteException {
+        // when
         List<DeleteHistory> deleteHistories = answers.deleteAnswers(user);
+
+        // then
         assertThat(deleteHistories.size()).isEqualTo(1);
     }
 
@@ -52,8 +55,11 @@ class AnswersTest {
     @Test
     void removeAnswersOwnerException() {
         assertThatThrownBy(() -> {
+            // when
             final User otherUser = userRepository.save(UserTest.JAVAJIGI);
             answers.deleteAnswers(otherUser);
+
+            // then
         }).isInstanceOf(CannotDeleteException.class);
     }
 

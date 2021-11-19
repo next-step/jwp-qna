@@ -10,9 +10,13 @@ class DeletedTest {
     @DisplayName("삭제 테스트")
     @Test
     void delete() {
+        // given
         Deleted deleted = new Deleted();
+
+        // when
         deleted.delete();
 
+        // then
         assertThat(deleted.getDeleted()).isTrue();
     }
 }

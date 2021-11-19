@@ -43,8 +43,11 @@ public class QuestionTest {
     @DisplayName("question 생성")
     @Test
     void saveQuestionTest() {
+        // when
         final Question actual = questionRepository.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
+
+        // then
         assertAll(
                 () -> assertThat(actual.getWriter()).isEqualTo(user),
                 () -> assertThat(actual.getTitle()).isEqualTo("title1"),
@@ -55,18 +58,26 @@ public class QuestionTest {
     @DisplayName("question 수정")
     @Test
     void updateQuestionTest() {
+        // when
         question.changeContents("Changed Contents");
         Question questionFromRepository = questionRepository.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
+
+        // then
         assertThat(questionFromRepository.getContents()).isEqualTo("Changed Contents");
     }
 
     @DisplayName("question save with answer 추가")
     @Test
     void saveQuestionWithAnswerTest() {
+        // given
         final Answer answer = answerRepository.save(new Answer(user, question, "Answers Contents1"));
+
+        // when
         Question actual = questionRepository.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
+
+        // then
         assertAll(
                 () -> assertThat(actual.getWriter()).isEqualTo(user),
                 () -> assertThat(actual.getContents()).isEqualTo("contents1"),
@@ -77,10 +88,15 @@ public class QuestionTest {
     @DisplayName("question remove with answer 삭제")
     @Test
     void removeQuestionWithAnswerTest() {
+        // given
         final Answer answer = answerRepository.save(new Answer(user, question, "Answers Contents1"));
+
+        // when
         question.removeAnswer(answer);
         Question actual = questionRepository.findById(question.getId())
                 .orElseThrow(NoSuchElementException::new);
+
+        // then
         assertAll(
                 () -> assertThat(actual.getWriter()).isEqualTo(user),
                 () -> assertThat(actual.getContents()).isEqualTo("contents1"),
@@ -94,8 +110,11 @@ public class QuestionTest {
     @Test
     void removeQuestionWithUserExceptionTest() {
         assertThatThrownBy(() -> {
+            // when
             final User otherUser = userRepository.save(UserTest.LEWISSEO);
             question.delete(otherUser);
+
+            // then
         }).isInstanceOf(CannotDeleteException.class);
     }
 

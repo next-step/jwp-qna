@@ -45,24 +45,39 @@ public class QuestionRepositoryTest {
     @DisplayName("question 삭제")
     @Test
     void removeQuestionTest() {
+        // 기본 조건 확인
         assertThat(questionRepository.findAll().size()).isEqualTo(1);
+
+        // when
         questionRepository.delete(question);
+
+        // then
         assertThat(questionRepository.findAll().size()).isZero();
     }
 
     @DisplayName("삭제되지 않은 question 목록 찾기")
     @Test
     void findByDeletedFalseTest() {
+        // when
         List<Question> noneDeletedQuestions = questionRepository.findByDeletedFalse();
+
+        // then1
         assertThat(noneDeletedQuestions.size()).isEqualTo(1);
+
+        // when
         Question question = noneDeletedQuestions.get(0);
+
+        // then2
         assertEquals(question, this.question);
     }
 
     @DisplayName("삭제한 question 찾기")
     @Test
     void findByIdAndDeletedTrueTest() throws CannotDeleteException {
+        // when
         question.delete(user);
+
+        // then
         assertThatThrownBy(() -> {
             questionRepository.findByIdAndDeletedFalse(question.getId())
                     .orElseThrow(NoSuchElementException::new);
@@ -72,16 +87,24 @@ public class QuestionRepositoryTest {
     @DisplayName("삭제되지 않은 question 하나 찾기")
     @Test
     void findByIdAndDeletedFalseTest() {
+        // when
         Question question = questionRepository.findByIdAndDeletedFalse(this.question.getId())
                 .orElseThrow(NoSuchElementException::new);
+
+        // then
         assertEquals(question, this.question);
     }
 
     @DisplayName("question delete with user 테스트")
     @Test
     void removeQuestionWithUserTest() throws CannotDeleteException {
+        // 기본 조건 확인
         assertThat(questionRepository.findAll().size()).isEqualTo(1);
+
+        // when
         question.delete(user);
+
+        // then
         assertThat(questionRepository.findByIdAndDeletedFalse(question.getId())).isEqualTo(Optional.empty());
     }
 
