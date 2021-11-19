@@ -9,6 +9,8 @@ import java.util.Collections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import qna.CannotDeleteException;
+
 public class AnswersTest {
 
 	@Test
@@ -27,23 +29,26 @@ public class AnswersTest {
 	}
 
 	@Test
-	@DisplayName("답변들이 모두 주어진 유저와 같은지 확인한다")
-	void hasAnyDifferentWriterTest() {
+	@DisplayName("답변자가 모두 같으면 답변들을 모두 삭제할 수 있다")
+	void deleteAllTest() throws CannotDeleteException {
 		// given
 		Answer a1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-		Answer a2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+		Answer a2 = new Answer(2L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents2");
 		Answers answers = Answers.of(Arrays.asList(a1, a2));
+		DeleteHistory h1 = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
+		DeleteHistory h2 = new DeleteHistory(ContentType.ANSWER, 2L, UserTest.JAVAJIGI, LocalDateTime.now());
+		DeleteHistories expected = DeleteHistories.of(Arrays.asList(h1, h2));
 
 		// when
-		boolean result = answers.isAllSameWriter(UserTest.JAVAJIGI);
+		DeleteHistories result = answers.deleteAll(UserTest.JAVAJIGI);
 
 		// then
-		assertThat(result).isFalse();
+		assertThat(result).isEqualTo(expected);
 	}
 
 	@Test
-	@DisplayName("답변들을 모두 삭제한다")
-	void deleteAllTest() {
+	@DisplayName("답변자가 모두 같지 않으면 답변을 삭제할 수 없다")
+	void deleteAllExceptionTest() throws CannotDeleteException {
 		// given
 		Answer a1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
 		Answer a2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
@@ -53,10 +58,10 @@ public class AnswersTest {
 		DeleteHistories expected = DeleteHistories.of(Arrays.asList(h1, h2));
 
 		// when
-		DeleteHistories result = answers.deleteAll();
+		assertThatThrownBy(() ->
+			answers.deleteAll(UserTest.JAVAJIGI)
+		).isInstanceOf(CannotDeleteException.class);
 
-		// then
-		assertThat(result).isEqualTo(expected);
 	}
 
 	@Test

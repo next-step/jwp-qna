@@ -66,7 +66,7 @@ public class Question extends AuditEntity {
 		validateDelete(user);
 		this.deleted = true;
 		return DeleteHistories.of(createDeleteHistory())
-			.combine(this.answers.deleteAll())
+			.combine(this.answers.deleteAll(user))
 			.toList();
 	}
 
@@ -78,10 +78,6 @@ public class Question extends AuditEntity {
 	private void validateDelete(User user) throws CannotDeleteException {
 		if (!isOwner(user)) {
 			throw new CannotDeleteException(ErrorCode.DELETE_QUESTION_FORBIDDEN.getMessage());
-		}
-
-		if (!this.answers.isAllSameWriter(user)) {
-			throw new CannotDeleteException(ErrorCode.DELETE_QUESTION_OTHER_WRITER_ANSWER.getMessage());
 		}
 	}
 

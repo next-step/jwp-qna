@@ -11,18 +11,20 @@ import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
+import qna.CannotDeleteException;
+
 @Embeddable
 public class Answers {
 
 	@OneToMany(mappedBy = "question")
-	private final List<Answer> answerList;
+	private final List<Answer> answers;
 
 	protected Answers() {
 		this(new ArrayList<>());
 	}
 
 	private Answers(Collection<Answer> answers) {
-		this.answerList = new ArrayList<>(answers);
+		this.answers = new ArrayList<>(answers);
 	}
 
 	public static Answers of(Collection<Answer> answers) {
@@ -33,24 +35,32 @@ public class Answers {
 		return new Answers();
 	}
 
-	public boolean isAllSameWriter(User user) {
-		return answerList.stream()
+	private boolean isAllSameWriter(User user) {
+		return answers.stream()
 			.allMatch(answer -> answer.isOwner(user));
 	}
 
-	public DeleteHistories deleteAll() {
-		return answerList.stream()
+	public DeleteHistories deleteAll(User user) throws CannotDeleteException {
+		validateDeleteAll(user);
+		return answers.stream()
 			.map(Answer::delete)
 			.collect(Collectors.collectingAndThen(toList(), DeleteHistories::of));
 	}
 
+	private void validateDeleteAll(User user) throws CannotDeleteException {
+		if (!isAllSameWriter(user)) {
+			throw new CannotDeleteException(
+				ErrorCode.DELETE_QUESTION_OTHER_WRITER_ANSWER.getMessage());
+		}
+	}
+
 	public Answers addAll(Collection<Answer> answers) {
-		answerList.addAll(answers);
+		this.answers.addAll(answers);
 		return this;
 	}
 
 	public Answers add(Answer answer) {
-		this.answerList.add(answer);
+		this.answers.add(answer);
 		return this;
 	}
 
@@ -63,12 +73,12 @@ public class Answers {
 
 		Answers answers1 = (Answers)o;
 
-		return Objects.equals(answerList, answers1.answerList);
+		return Objects.equals(answers, answers1.answers);
 	}
 
 	@Override
 	public int hashCode() {
-		return answerList.hashCode();
+		return answers.hashCode();
 	}
 
 }
