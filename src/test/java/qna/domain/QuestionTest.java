@@ -168,10 +168,34 @@ public class QuestionTest {
     }
 
     @Test
-    void test_답변이_없으면_삭제_가능() throws CannotDeleteException {
-        questionRepository.deleteAll();
-        userRepository.deleteAll();
-        entityManager.clear();
+    void test_답변이_없으면_삭제_가능() {
+        Question question = new Question("title1", "contents1")
+            .writeBy(user1);
+
+        assertAll(
+            () -> assertThat(question.getAnswers().size()).isEqualTo(0),
+            () -> assertThat(question.delete(user1)).isNotNull()
+        );
+    }
+
+    @Test
+    void test_질문_작성자_모든_답변_작성자_동일_할_때_삭제_가능() {
+        Question question = new Question("title1", "contents1")
+            .writeBy(user1);
+
+        Answer answer1 = new Answer(user1, question, "답변1");
+        Answer answer2 = new Answer(user1, question, "답변2");
+
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+
+        assertAll(
+            () -> assertThat(question.getAnswers().size()).isEqualTo(2),
+            () -> assertThat(question.delete(user1)).isNotNull(),
+            () -> assertThat(question.isDeleted()).isTrue(),
+            () -> assertThat(question.getAnswers().answers().stream()
+                .filter(Answer::isDeleted).count()).isEqualTo(2)
+        );
     }
 
     @Test
