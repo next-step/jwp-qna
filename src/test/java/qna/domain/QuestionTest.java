@@ -12,7 +12,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("삭제시 작성자가 다르면 예외를 출력한다")
-    void deleteTest() {
+    void cannotDeleteExceptionTest() {
         assertThatThrownBy(() -> Q1.delete(UserTest.SANJIGI))
                 .isInstanceOf(CannotDeleteException.class);
     }
