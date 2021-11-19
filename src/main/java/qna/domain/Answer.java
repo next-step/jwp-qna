@@ -2,7 +2,7 @@ package qna.domain;
 
 import java.util.Objects;
 
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import qna.CannotDeleteException;
@@ -26,12 +25,11 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -58,14 +56,14 @@ public class Answer extends BaseEntity {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
+        this.contents = new Contents(contents);
     }
 
     protected Answer() {
     }
 
     public void delete(User loginUser) throws CannotDeleteException {
-        if(!isOwner(loginUser)){
+        if (!isOwner(loginUser)) {
             throw new CannotDeleteException(ERROR_WRITTEN_BY_SOMEONE_ELSE);
         }
 
@@ -89,15 +87,15 @@ public class Answer extends BaseEntity {
     }
 
     public String getContents() {
-        return contents;
+        return contents.getContents();
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        this.deleted = this.deleted.delete();
     }
 
     public User getWriter() {
