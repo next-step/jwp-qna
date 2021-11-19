@@ -1,9 +1,15 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Sort;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,26 +22,52 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    private Question question1;
+    private Question question2;
+
+    @BeforeEach
+    void saveDefaultQuestions() {
+        question1 = questionRepository.save(Q1);
+        question2 = questionRepository.save(Q2);
+    }
+
     @Test
     void save() {
-        Question actual = questionRepository.save(Q1);
         assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getTitle()).isEqualTo(Q1.getTitle())
+                () -> assertThat(question1).isNotNull(),
+                () -> assertThat(question1.getTitle()).isEqualTo(Q1.getTitle())
         );
     }
 
     @Test
     @DisplayName("질문 수정 : 질문 제목, 질문 내용")
     void update() {
-        Question question = questionRepository.save(Q1);
-        question.setTitle("첫번째 질문");
-        question.setContents("첫번째 질문 내용입니다.");
-        Question actual = questionRepository.save(question);
+        question1.setTitle("첫번째 질문");
+        question1.setContents("첫번째 질문 내용입니다.");
+        Question actual = questionRepository.save(question1);
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getTitle()).isEqualTo("첫번째 질문"),
                 () -> assertThat(actual.getContents()).isEqualTo("첫번째 질문 내용입니다.")
+        );
+    }
+
+    @Test
+    @DisplayName("전체 질문 목록 수 조회")
+    void countQuestions() {
+        Long count = questionRepository.count();
+        assertThat(count).isEqualTo(2L);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"0:title1", "1:title2"}, delimiter = ':')
+    @DisplayName("전체 질문 목록 조회")
+    void getQuestions(int index, String title) {
+        String orderByColumn = "id";
+        List<Question> questions = questionRepository.findAll(Sort.by(Sort.Direction.ASC, orderByColumn));
+        assertAll(
+                () -> assertThat(questions.size()).isEqualTo(2L),
+                () -> assertThat(questions.get(index).getTitle()).isEqualTo(title)
         );
     }
 }
