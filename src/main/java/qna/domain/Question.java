@@ -59,7 +59,7 @@ public class Question extends AbstractIdWithTimeEntity {
         this.answers.add(answer);
     }
 
-    public DeleteHistories deleteByWriterAndThenCallbackDeleteHistories(User writer) {
+    public DeleteHistories delete(User writer) {
         if (!isOwner(writer)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
