@@ -118,14 +118,15 @@ public class AnswerTest {
 
     @Test
     void test_답변_업데이트() {
-        answer1.setContents("답변수정");
+        Contents contents = Contents.from("답변수정");
+        answer1.setContents(contents);
 
         Answer actual = answerRepository.findById(answer1.getId())
             .orElse(null);
 
         assertAll(
             () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual.getContents()).isEqualTo("답변수정")
+            () -> assertThat(actual.getContents().contents()).isEqualTo("답변수정")
         );
     }
 

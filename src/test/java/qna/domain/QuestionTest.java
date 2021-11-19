@@ -131,14 +131,15 @@ public class QuestionTest {
 
     @Test
     void test_질문_내용_수정() {
-        question1.setContents("질문내용수정");
+        Contents contents = Contents.from("질문내용수정");
+        question1.setContents(contents);
 
         Question actual = questionRepository.findById(question1.getId())
             .orElse(null);
 
         assertAll(
             () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual.getContents()).isEqualTo("질문내용수정")
+            () -> assertThat(actual.getContents().contents()).isEqualTo("질문내용수정")
         );
     }
 

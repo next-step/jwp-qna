@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -8,7 +7,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.CannotDeleteException;
@@ -20,8 +18,8 @@ public class Question extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -43,7 +41,7 @@ public class Question extends BaseEntity {
     public Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
-        this.contents = contents;
+        this.contents = Contents.from(contents);
     }
 
     public Question writeBy(User writer) {
@@ -72,11 +70,11 @@ public class Question extends BaseEntity {
         this.title = title;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void setContents(Contents contents) {
         this.contents = contents;
     }
 
