@@ -3,7 +3,6 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,15 +19,15 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+    @Embedded
+    private Title title;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
     @Embedded
-    private Answers answers = new Answers();
+    private final Answers answers = new Answers();
 
     protected Question() {
 
@@ -40,7 +39,7 @@ public class Question extends BaseTimeEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
+        this.title = new Title(title);
         this.contents = contents;
     }
 
@@ -66,7 +65,7 @@ public class Question extends BaseTimeEntity {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         this.deleted = true;
-        return new DeleteHistory(ContentType.QUESTION, this.id, this.getWriter(), LocalDateTime.now());
+        return DeleteHistory.ofQuestion(this.id, this.getWriter());
     }
 
     private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
@@ -81,22 +80,6 @@ public class Question extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
     public void setContents(String contents) {
         this.contents = contents;
     }
@@ -109,21 +92,13 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public Answers getAnswers() {
-        return answers;
-    }
-
     @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
-                ", title='" + title + '\'' +
+                ", title=" + title +
                 ", writer=" + writer +
                 ", answers=" + answers +
                 '}';

@@ -53,10 +53,10 @@ public class UserRepositoryTest {
         String newName = "박성민";
 
         // when
-        user.setName(newName);
+        user.updateName(newName);
 
         // then
-        List<User> result = userRepository.findByName(newName);
+        List<User> result = userRepository.findByName(new Name(newName));
         assertThat(result).containsExactly(user);
     }
 
@@ -80,7 +80,7 @@ public class UserRepositoryTest {
     void 주어진_사용자_ID에_해당하는_사용자를_리턴한다() {
         // given
         User user = userRepository.findAll().get(0);
-        String userId = user.getUserId();
+        UserId userId = user.getUserId();
 
         // when
         User result = userRepository.findByUserId(userId).get();

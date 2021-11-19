@@ -25,7 +25,7 @@ public class AnswerTest {
     @DisplayName("답변을 삭제한다.")
     void delete_성공() throws CannotDeleteException {
         // given
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
+        DeleteHistory deleteHistory = DeleteHistory.ofAnswer(answer.getId(), answer.getWriter());
         assertThat(answer.isDeleted()).isFalse();
 
         // when

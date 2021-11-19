@@ -48,8 +48,8 @@ class AnswersTest {
         answers.add(answer1);
         answers.add(answer2);
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.ANSWER, answer1.getId(), answer1.getWriter(), LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, answer2.getId(), answer2.getWriter(), LocalDateTime.now())
+                DeleteHistory.ofAnswer(answer1.getId(), answer1.getWriter()),
+                DeleteHistory.ofAnswer(answer2.getId(), answer2.getWriter())
         );
 
         // when

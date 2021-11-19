@@ -17,8 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class DeleteHistoryRepositoryTest {
 
-    public static final DeleteHistory D1 = new DeleteHistory(ContentType.QUESTION, 1L, UserRepositoryTest.JAVAJIGI, LocalDateTime.now());
-    public static final DeleteHistory D2 = new DeleteHistory(ContentType.ANSWER, 2L, UserRepositoryTest.SANJIGI, LocalDateTime.now());
+    public static final DeleteHistory D1 = DeleteHistory.ofQuestion(1L, UserRepositoryTest.JAVAJIGI);
+    public static final DeleteHistory D2 = DeleteHistory.ofAnswer(2L, UserRepositoryTest.SANJIGI);
 
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;

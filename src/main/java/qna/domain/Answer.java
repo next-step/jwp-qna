@@ -1,14 +1,15 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Where(clause = "deleted = false")
 public class Answer extends BaseTimeEntity {
 
     @Id
@@ -66,15 +67,11 @@ public class Answer extends BaseTimeEntity {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter(), LocalDateTime.now());
+        return DeleteHistory.ofAnswer(this.getId(), this.getWriter());
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public User getWriter() {
@@ -91,10 +88,6 @@ public class Answer extends BaseTimeEntity {
 
     public void setQuestion(Question question) {
         this.question = question;
-    }
-
-    public String getContents() {
-        return contents;
     }
 
     public void setContents(String contents) {

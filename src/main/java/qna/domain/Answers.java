@@ -7,6 +7,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Embeddable
@@ -17,6 +18,10 @@ public class Answers {
 
     protected Answers() {
 
+    }
+
+    public Answers(List<Answer> answers) {
+        this.answers = answers;
     }
 
     public void add(Answer answer) {
@@ -32,6 +37,6 @@ public class Answers {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return Collections.unmodifiableList(answers);
     }
 }
