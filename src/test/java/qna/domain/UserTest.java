@@ -3,7 +3,6 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static qna.ErrorMessage.*;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +17,7 @@ public class UserTest {
     void whenUpdateUserHavingAuthority_thenEqualsNameAndEmail_isTrue() {
 
         // when
-        JAVAJIGI.update(JAVAJIGI, SANJIGI);
+        JAVAJIGI.updateNameAndEmail(JAVAJIGI, SANJIGI);
 
         // then
         assertThat(JAVAJIGI.equalsNameAndEmail(SANJIGI)).isTrue();
@@ -30,17 +29,27 @@ public class UserTest {
 
         String name = "seunghoona";
         User user = new User(3L, name, "password", name, "seunghoona@gmail.com");
-        assertThatThrownBy(() -> JAVAJIGI.update(user, SANJIGI))
+        assertThatThrownBy(() -> JAVAJIGI.updateNameAndEmail(user, SANJIGI))
                   .isInstanceOf(UnAuthorizedException.class)
                   .hasMessage(UN_AUTHORITY);
     }
 
     @Test
-    @DisplayName("User1 에서 User2로 변경했을 때 email,name SANJIGI 동일")
+    @DisplayName("User1 에서 User2로 변경했을 때 email, name SANJIGI 동일")
     void given_User_then_matchPassword() {
         // then
         assertThat(JAVAJIGI.matchPassword("password")).isTrue();
         assertThat(JAVAJIGI.matchPassword("notMatchPassword")).isFalse();
     }
+
+    @Test
+    void 유저비밀번호가_변경되는지_확인() {
+        User user = new User("userId", "password", "seugnoona", "seungoona@gmail.com");
+        user.changePassword(user,"changePassword");
+
+        // then
+        assertThat(JAVAJIGI.matchPassword("notMatchPassword")).isFalse();
+    }
+
 
 }

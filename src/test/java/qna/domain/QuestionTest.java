@@ -40,17 +40,4 @@ public class QuestionTest {
         assertThat(deleteHistory).isEqualTo(new DeleteHistory(QUESTION, question, user, LocalDateTime.now()));
     }
 
-    @Test
-    @DisplayName("유저 이메일이 변경되는지 확인")
-    void give_User_when_changeEmail_then_changedEqualsEmail() {
-        // given
-        User user = new User("seunghoona", "password", "username", "email");
-
-        // when
-        final String email = "seunghoo@naver.com";
-        user.changeEmail(email);
-
-        // then
-        assertThat(user.getEmail()).isEqualTo(email);
-    }
 }

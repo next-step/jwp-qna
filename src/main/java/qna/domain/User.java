@@ -47,17 +47,30 @@ public class User extends BaseTime {
         this.email = email;
     }
 
-    public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException(UN_AUTHORITY);
-        }
-
-        if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException(UN_AUTHORITY);
-        }
+    public void updateNameAndEmail(User loginUser, User target) {
+        isNotMatchUserIdThrow(loginUser);
+        isNotMatchPasswordThrow(target);
 
         this.name = target.name;
         this.email = target.email;
+    }
+
+    public void changePassword(User loginUser, String changePassword) {
+        isNotMatchUserIdThrow(loginUser);
+        isNotMatchPasswordThrow(loginUser);
+        this.password = changePassword;
+    }
+
+    private void isNotMatchPasswordThrow(User target) {
+        if (!matchPassword(target.password)) {
+            throw new UnAuthorizedException(UN_AUTHORITY);
+        }
+    }
+
+    private void isNotMatchUserIdThrow(User loginUser) {
+        if (!matchUserId(loginUser.userId)) {
+            throw new UnAuthorizedException(UN_AUTHORITY);
+        }
     }
 
     private boolean matchUserId(String userId) {
@@ -79,14 +92,6 @@ public class User extends BaseTime {
 
     public boolean isGuestUser() {
         return false;
-    }
-
-    public void changeEmail(String email) {
-        this.email = email;
-    }
-
-    public void changePassword(String changePassword) {
-        this.password = changePassword;
     }
 
     public Long getId() {
