@@ -17,7 +17,20 @@ public class Answers {
         answers.add(answer);
     }
 
-    public void removeAnswer(Answer answer) {
-        answers.remove(answer);
+    public List<DeleteHistory> deleteAnswers(User writer) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for( Answer answer: answers ) {
+            deleteHistories.add(answer.deleteAnswer(writer));
+        }
+        return deleteHistories;
     }
+
+    boolean existAnswer() {
+        return answers.size() > 0;
+    }
+
+    public List<Answer> getAnswers() {
+        return this.answers;
+    }
+
 }
