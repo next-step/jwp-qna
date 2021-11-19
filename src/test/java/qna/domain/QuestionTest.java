@@ -34,9 +34,9 @@ public class QuestionTest {
 
     @BeforeEach
     void setUp() {
-        user1 = new User(UserId.from("user1"), "password", "alice",
+        user1 = new User(UserId.from("user1"), Password.from("password"), "alice",
             "alice@gmail.com");
-        user2 = new User(UserId.from("user2"), "password", "bob",
+        user2 = new User(UserId.from("user2"), Password.from("password"), "bob",
             "bob@gmail.com");
 
         userRepository.save(user1);
