@@ -104,4 +104,12 @@ public class QuestionTest {
         );
     }
 
+    @Test
+    @DisplayName("질문 삭제")
+    void deleteQuestion() {
+        question1.setDeleted(true);
+        Question actual = questionRepository.save(question1);
+        assertThat(actual.isDeleted()).isTrue();
+    }
+
 }
