@@ -37,7 +37,7 @@ public class Question extends BaseEntity {
     private User writer;
 
     @Embedded
-    private QuestionPost questionPost;
+    private Post post;
 
     @Embedded
     private final Answers answers = new Answers();
@@ -48,8 +48,8 @@ public class Question extends BaseEntity {
     protected Question() {
     }
 
-    public Question(QuestionPost questionPost) {
-        this.questionPost = questionPost;
+    public Question(Post post) {
+        this.post = post;
     }
 
 
@@ -110,7 +110,7 @@ public class Question extends BaseEntity {
     public String toString() {
         return "Question{" +
             "id=" + id +
-            ", questionPost=" + questionPost +
+            ", post=" + post +
             ", writer=" + writer +
             ", answers=" + answers +
             ", deleted=" + deleted +
@@ -128,13 +128,13 @@ public class Question extends BaseEntity {
         Question question = (Question) o;
         return deleted == question.deleted
             && Objects.equals(id, question.id)
-            && Objects.equals(questionPost, question.questionPost)
+            && Objects.equals(post, question.post)
             && Objects.equals(writer, question.writer)
             && Objects.equals(answers, question.answers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, questionPost, writer, answers, deleted);
+        return Objects.hash(id, post, writer, answers, deleted);
     }
 }

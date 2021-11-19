@@ -13,7 +13,7 @@ import qna.domain.qna.Answer;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.qna.Contents;
 import qna.domain.qna.Question;
-import qna.domain.qna.QuestionPost;
+import qna.domain.qna.Post;
 import qna.domain.user.User;
 
 public class QuestionTest {
@@ -81,7 +81,7 @@ public class QuestionTest {
         assertThatExceptionOfType(UnAuthorizedException.class) // then
             .isThrownBy(() -> {
                 // when
-                new Question(QuestionPost.of("안녕하세요 질문이있습니다.", "미가입자도 질문 가능한가요?")).writeBy(guest);
+                new Question(Post.of("안녕하세요 질문이있습니다.", "미가입자도 질문 가능한가요?")).writeBy(guest);
             }).withMessage(UnAuthorizedException.GUEST_USER_NOT_QUESTION);
     }
 

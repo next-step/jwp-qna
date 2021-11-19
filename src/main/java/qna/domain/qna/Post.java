@@ -7,7 +7,7 @@ import javax.persistence.Embedded;
 import qna.common.exception.InvalidParamException;
 
 @Embeddable
-public class QuestionPost {
+public class Post {
 
     public static final int TITLE_LENGTH = 100;
 
@@ -17,18 +17,18 @@ public class QuestionPost {
     @Embedded
     Contents contents;
 
-    protected QuestionPost() {
+    protected Post() {
     }
 
-    private QuestionPost(String title, String contents) {
+    private Post(String title, String contents) {
         valid(title);
 
         this.title = title;
         this.contents = Contents.of(contents);
     }
 
-    public static QuestionPost of(String title, String contents) {
-        return new QuestionPost(title, contents);
+    public static Post of(String title, String contents) {
+        return new Post(title, contents);
     }
 
     public String getTitle() {
@@ -65,7 +65,7 @@ public class QuestionPost {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        QuestionPost that = (QuestionPost) o;
+        Post that = (Post) o;
         return Objects.equals(title, that.title)
             && Objects.equals(contents, that.contents);
     }

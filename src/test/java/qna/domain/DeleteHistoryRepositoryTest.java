@@ -12,7 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.domain.deletehistory.DeleteContentData;
+import qna.domain.deletehistory.DeleteTarget;
 import qna.domain.qna.Answer;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.deletehistory.ContentType;
