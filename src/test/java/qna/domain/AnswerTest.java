@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -58,10 +60,21 @@ public class AnswerTest {
 
     @Test
     @DisplayName("Question Id를 통해 Answer 갯수 조회")
-    void findByQuestionIdAndDeletedFalse() {
+    void countByQuestionIdAndDeletedFalse() {
         questionRepository.save(QuestionTest.Q1);
         Long count = answerRepository.countByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
         assertThat(count).isEqualTo(2L);
+    }
+    
+    @Test
+    @DisplayName("Question Id를 통해 Answer 목록 조회")
+    void findByQuestionIdAndDeletedFalse() {
+        Question question = questionRepository.save(QuestionTest.Q1);
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+        assertAll(
+                () -> assertThat(answers).isNotNull(),
+                () -> assertThat(answers.size()).isEqualTo(2L)
+        );
     }
 
 }
