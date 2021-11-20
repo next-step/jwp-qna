@@ -10,6 +10,7 @@ import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.AnswerTest;
 import qna.domain.QuestionTest;
+import qna.domain.User;
 import qna.domain.UserTest;
 
 import static org.mockito.ArgumentMatchers.anyString;

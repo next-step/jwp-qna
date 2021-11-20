@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.DeleteHistoryRepository;
+import qna.domain.UserTest;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -23,7 +24,7 @@ public class DeleteHistoryRepositoryTest {
     public void save() {
 
         // given
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 2L, LocalDateTime.of(2021, Month.AUGUST, 1, 10, 10));
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.HONGHEE, LocalDateTime.of(2021, Month.AUGUST, 1, 10, 10));
 
         // when
         DeleteHistory result = deleteHistoryRepository.save(deleteHistory);
@@ -37,7 +38,7 @@ public class DeleteHistoryRepositoryTest {
     public void find() {
 
         // given
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 2L, LocalDateTime.of(2021, Month.AUGUST, 1, 10, 10));
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.HONGHEE, LocalDateTime.of(2021, Month.AUGUST, 1, 10, 10));
         DeleteHistory result = deleteHistoryRepository.save(deleteHistory);
 
         // when

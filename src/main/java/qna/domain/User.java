@@ -7,7 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -31,6 +35,18 @@ public class User {
 
     @Column(name = "email")
     private String email;
+
+    @OneToMany
+    @JoinColumn(name = "writer_id")
+    private List<Answer> answers = new ArrayList<>();
+
+    @OneToMany
+    @JoinColumn(name = "deleted_by_id")
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+    @OneToMany
+    @JoinColumn(name = "writer_id")
+    private List<Question> questions = new ArrayList<>();
 
     protected User() {
     }
@@ -121,15 +137,28 @@ public class User {
         this.email = email;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
+    }
+
+    public void setDeleteHistories(List<DeleteHistory> deleteHistories) {
+        this.deleteHistories = deleteHistories;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
     }
 
     private static class GuestUser extends User {
