@@ -41,6 +41,18 @@ public class QuestionTest {
     @Test
     void makeAnswerHistories() {
         assertThat(Q2.makeAnswerHistories())
-            .isEqualTo(Arrays.asList(new DeleteHistory(ContentType.ANSWER, AnswerTest.A3.getId(), AnswerTest.A3.getWriter(), LocalDateTime.now())));
+            .isEqualTo(Arrays.asList(
+                new DeleteHistory(ContentType.ANSWER, AnswerTest.A3.getId(), AnswerTest.A3.getWriter(),
+                    LocalDateTime.now())));
+    }
+
+    @DisplayName("삭제 이력들 생성")
+    @Test
+    void makeDeleteHistories() {
+        assertThat(Q2.makeDeleteHistories())
+            .isEqualTo(Arrays.asList(
+                new DeleteHistory(ContentType.ANSWER, AnswerTest.A3.getId(), AnswerTest.A3.getWriter(),
+                    LocalDateTime.now()),
+                new DeleteHistory(ContentType.QUESTION, Q2.getId(), Q2.getWriter(), LocalDateTime.now())));
     }
 }

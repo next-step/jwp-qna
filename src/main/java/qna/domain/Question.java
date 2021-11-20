@@ -131,6 +131,12 @@ public class Question extends BaseTimeEntity {
         return sb.toString();
     }
 
+    public List<DeleteHistory> makeDeleteHistories() {
+        List<DeleteHistory> deleteHistories = answers.makeDeleteHistories();
+        deleteHistories.add(makeDeleteHistory());
+        return deleteHistories;
+    }
+
     public DeleteHistory makeDeleteHistory() {
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
