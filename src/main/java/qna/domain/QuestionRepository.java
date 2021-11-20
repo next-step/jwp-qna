@@ -12,5 +12,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     Question findByWriterId(Long id);
 
-    Question findByTitleLike(String title);
+    Question findByTitleLike(Title title);
 }

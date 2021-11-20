@@ -19,45 +19,44 @@ public class AnswerRepositoryTest {
     QuestionRepository questions;
     @Autowired
     AnswerRepository answers;
-    private User firstWriter;
-    private User secondWriter;
-    private Question firstQuestion;
-    private Question secondQuestion;
-    private Answer firstAnswer;
-    private Answer secondAnswer;
+    private User javaJigi;
+    private User sanJgi;
+    private Question javaJigiQuestion;
+    private Question sanJigiQuestion;
+    private Answer javaJigiAnswer;
+    private Answer sanJigiAnswer;
 
     @BeforeEach
     void setUp() {
-        firstWriter = users.save(UserTest.JAVAJIGI);
-        secondWriter = users.save(UserTest.SANJIGI);
+        javaJigi = users.save(UserTest.JAVAJIGI);
+        sanJgi = users.save(UserTest.SANJIGI);
 
-        firstQuestion = questions.save(QuestionTest.Q1);
-        secondQuestion = questions.save(QuestionTest.Q2);
+        javaJigiQuestion = questions.save(QuestionTest.Q1);
+        sanJigiQuestion = questions.save(QuestionTest.Q2);
 
-        firstAnswer = new Answer(firstWriter, firstQuestion, "firstContents");
-        secondAnswer = new Answer(secondWriter, secondQuestion, "secondContents");
+        javaJigiAnswer = new Answer(javaJigi, javaJigiQuestion, "firstContents");
+        sanJigiAnswer = new Answer(sanJgi, sanJigiQuestion, "secondContents");
     }
 
     @DisplayName("A1 Answer 정보 저장 및 데이터 확인")
     @Test
     void saveAnswer() {
-
-        final Answer target = answers.save(firstAnswer);
+        final Answer target = answers.save(javaJigiAnswer);
 
         assertAll(
-            () -> assertThat(target.getContents()).isEqualTo(firstAnswer.getContents()),
-            () -> assertThat(target.getQuestion()).isEqualTo(firstAnswer.getQuestion()),
-            () -> assertThat(target.getWriter()).isEqualTo(firstAnswer.getWriter()),
-            () -> assertThat(target).isEqualTo(firstAnswer),
-            () -> assertThat(target).isSameAs(firstAnswer)
+            () -> assertThat(target.getContents()).isEqualTo(javaJigiAnswer.getContents()),
+            () -> assertThat(target.getQuestion()).isEqualTo(javaJigiAnswer.getQuestion()),
+            () -> assertThat(target.getWriter()).isEqualTo(javaJigiAnswer.getWriter()),
+            () -> assertThat(target).isEqualTo(javaJigiAnswer),
+            () -> assertThat(target).isSameAs(javaJigiAnswer)
         );
     }
 
     @DisplayName("writer_id로 데이터 조회")
     @Test
     void findByWriterId() {
-        final Answer standard = answers.save(firstAnswer);
-        final Answer target = answers.findByWriterId(UserTest.JAVAJIGI.getId());
+        final Answer standard = answers.save(javaJigiAnswer);
+        final Answer target = answers.findByWriterId(javaJigi.getId());
 
         User standardWriter = standard.getWriter();
         User targetWriter = target.getWriter();
@@ -68,8 +67,8 @@ public class AnswerRepositoryTest {
     @DisplayName("QuestionId로 데이터 조회")
     @Test
     void findByQuestionId() {
-        final Answer standard = answers.save(firstAnswer);
-        final List<Answer> target = answers.findByQuestion(firstAnswer.getQuestion());
+        final Answer standard = answers.save(javaJigiAnswer);
+        final List<Answer> target = answers.findByQuestion(javaJigiAnswer.getQuestion());
 
         assertThat(target).contains(standard);
     }
@@ -77,7 +76,7 @@ public class AnswerRepositoryTest {
     @DisplayName("Id 와 Deleted 값이 fasle 인 값 찾기")
     @Test
     void findByIdAndDeletedFalse() {
-        final Answer standard = answers.save(secondAnswer);
+        final Answer standard = answers.save(sanJigiAnswer);
         final Answer target = answers.findByIdAndDeletedFalse(standard.getId()).get();
 
         boolean targetDeleted = target.isDeleted();
@@ -85,11 +84,11 @@ public class AnswerRepositoryTest {
         assertThat(targetDeleted).isFalse();
     }
 
-    @DisplayName("Contents 값 'ents1' Like 찾기")
+    @DisplayName("Contents 값 'first' Like 찾기")
     @Test
     void findByContentsLike() {
-        answers.save(firstAnswer);
-        final Answer target = answers.findByContentsLike("%first%");
+        answers.save(javaJigiAnswer);
+        final Answer target = answers.findByContentsLike(new Contents("%first%"));
 
         String targetContents = target.getContents();
 

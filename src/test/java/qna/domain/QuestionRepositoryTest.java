@@ -16,31 +16,35 @@ public class QuestionRepositoryTest {
     UserRepository users;
     @Autowired
     QuestionRepository questions;
-    private User firstWriter;
-    private User secondWriter;
+
+    private User javaJigi;
+    private User sanJigi;
+    private Question javaJigiQuestion;
+    private Question sanJigiQuestion;
 
     @BeforeEach
     void setUp() {
-        firstWriter = users.save(UserTest.JAVAJIGI);
-        secondWriter = users.save(UserTest.SANJIGI);
+        javaJigi = users.save(UserTest.JAVAJIGI);
+        sanJigi = users.save(UserTest.SANJIGI);
+        javaJigiQuestion = QuestionTest.Q1;
+        sanJigiQuestion = QuestionTest.Q1;
     }
-
 
     @DisplayName("Question 저장 및 데이터 확인")
     @Test
     void saveQuestion() {
-        final Question actual = questions.save(QuestionTest.Q1);
+        final Question actual = questions.save(javaJigiQuestion);
 
         User writerId = actual.getWriter();
 
-        assertThat(writerId).isEqualTo(QuestionTest.Q1.getWriter());
+        assertThat(writerId).isEqualTo(javaJigiQuestion.getWriter());
     }
 
     @DisplayName("writer_id로 Question 정보 찾기")
     @Test
     void findByWriterId() {
-        final Question standard = questions.save(QuestionTest.Q1);
-        final Question target = questions.findByWriterId(UserTest.JAVAJIGI.getId());
+        final Question standard = questions.save(javaJigiQuestion);
+        final Question target = questions.findByWriterId(javaJigi.getId());
 
         User standardWriter = standard.getWriter();
         User targetWriter = target.getWriter();
@@ -51,8 +55,8 @@ public class QuestionRepositoryTest {
     @DisplayName("Question Title 정보 Like로 찾기")
     @Test
     void findByTitleLike() {
-        questions.save(QuestionTest.Q1);
-        final Question target = questions.findByTitleLike("%1");
+        questions.save(javaJigiQuestion);
+        final Question target = questions.findByTitleLike(new Title("%1"));
 
         String targetTitle = target.getTitle();
 
@@ -62,8 +66,8 @@ public class QuestionRepositoryTest {
     @DisplayName("Question 정보 중 deleted false 인 값 찾기")
     @Test
     void findByDeletedFalse() {
-        Question firstQuestion = questions.save(QuestionTest.Q1);
-        Question secondQuestion = questions.save(QuestionTest.Q2);
+        Question firstQuestion = questions.save(javaJigiQuestion);
+        Question secondQuestion = questions.save(sanJigiQuestion);
 
         List<Question> questionList = questions.findByDeletedFalse();
 
