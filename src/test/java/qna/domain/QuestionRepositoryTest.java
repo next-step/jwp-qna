@@ -3,12 +3,17 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
+
+import qna.CannotDeleteException;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -16,14 +21,16 @@ class QuestionRepositoryTest {
 	QuestionRepository questionRepository;
 	@Autowired
 	UserRepository userRepository;
+	@Autowired
+	AnswerRepository answerRepository;
 
 	User user;
 	User otherUser;
 
 	@BeforeEach
 	public void setUp() {
-		user = userRepository.save(UserTest.JAVAJIGI);
-		otherUser = userRepository.save(UserTest.SANJIGI);
+		user = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+		otherUser = userRepository.save(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
 	}
 
 	@Test
@@ -63,8 +70,8 @@ class QuestionRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("Question 삭제 테스트")
-	public void QuestionRepositoryDeleteTest() {
+	@DisplayName("Question hard delete 테스트")
+	public void QuestionRepositoryHardDeleteTest() {
 		//given
 		Question savedOne = questionRepository.save(QuestionTest.Q1.writeBy(user));
 		Question savedTwo = questionRepository.save(QuestionTest.Q1.writeBy(otherUser));

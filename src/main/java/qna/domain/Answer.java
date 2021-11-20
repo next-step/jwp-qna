@@ -1,23 +1,19 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
@@ -69,9 +65,14 @@ public class Answer extends BaseEntity {
 			throw new NotFoundException();
 		}
 
-		this.writer = writer;
-		this.question = question;
+		setWriter(writer);
 		this.contents = contents;
+		this.question = question;
+	}
+
+	private void setWriter(User writer) {
+		this.writer = writer;
+		writer.addAnswer(this);
 	}
 
 	public boolean isOwner(User writer) {
@@ -82,12 +83,24 @@ public class Answer extends BaseEntity {
 		this.question = question;
 	}
 
-	public Long getId() {
-		return id;
+	public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+		validateAnswer(loginUser);
+		this.deleted = true;
+		return new DeleteHistory(ContentType.ANSWER, id, writer);
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	private void validateAnswer(User loginUser) throws CannotDeleteException {
+		if (!this.isOwner(loginUser)) {
+			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+		}
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public String getContents() {
@@ -98,28 +111,8 @@ public class Answer extends BaseEntity {
 		this.contents = contents;
 	}
 
-	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
-
-	public Question getQuestion() {
-		return question;
-	}
-
 	public User getWriter() {
 		return writer;
-	}
-
-	public void setQuestion(Question question) {
-		this.question = question;
-	}
-
-	public void setWriter(User writer) {
-		this.writer = writer;
 	}
 
 	@Override
@@ -133,18 +126,4 @@ public class Answer extends BaseEntity {
 			'}';
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Answer answer = (Answer)o;
-		return Objects.equals(id, answer.id);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
 }

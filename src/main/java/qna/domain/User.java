@@ -3,6 +3,8 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -10,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  * create table user
@@ -43,6 +46,12 @@ public class User extends BaseEntity {
 
 	@Column(length = 20, nullable = false, unique = true)
 	private String userId;
+
+	@OneToMany(mappedBy = "writer")
+	List<Answer> answers = new ArrayList<>();
+
+	@OneToMany(mappedBy = "writer")
+	List<Question> questions = new ArrayList<>();
 
 	protected User() {
 	}
@@ -92,26 +101,6 @@ public class User extends BaseEntity {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -145,16 +134,23 @@ public class User extends BaseEntity {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
+		if (!super.equals(o))
+			return false;
 		User user = (User)o;
-		return Objects.equals(id, user.id) && Objects.equals(createdAt, user.createdAt)
-			&& Objects.equals(email, user.email) && Objects.equals(name, user.name)
-			&& Objects.equals(password, user.password) && Objects.equals(updatedAt, user.updatedAt)
-			&& Objects.equals(userId, user.userId);
+		return Objects.equals(userId, user.userId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, createdAt, email, name, password, updatedAt, userId);
+		return Objects.hash(super.hashCode(), userId);
+	}
+
+	public void addAnswer(Answer answer) {
+		answers.add(answer);
+	}
+
+	public void addQuestion(Question question) {
+		questions.add(question);
 	}
 
 	private static class GuestUser extends User {

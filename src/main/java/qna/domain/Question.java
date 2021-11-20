@@ -1,16 +1,18 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import qna.CannotDeleteException;
 
 /**
  * create table question
@@ -26,94 +28,114 @@ import javax.persistence.ManyToOne;
  * )
  */
 @Entity
-public class Question extends BaseEntity{
-    @Lob
-    private String contents;
+public class Question extends BaseEntity {
+	@Lob
+	private String contents;
 
-    @Column(nullable = false)
-    private boolean deleted;
+	@Column(nullable = false)
+	private boolean deleted;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+	@Column(length = 100, nullable = false)
+	private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writerId")
-    private User writer;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "writerId")
+	private User writer;
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
+	@OneToMany(mappedBy = "question")
+	private List<Answer> answers = new ArrayList<>();
 
-    public Question(Long id, String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
-    }
+	public Question(String title, String contents) {
+		this(null, title, contents);
+	}
 
-    protected Question() {
-    }
+	public Question(Long id, String title, String contents) {
+		this.id = id;
+		this.title = title;
+		this.contents = contents;
+	}
 
-    public Question writeBy(User writer) {
-        this.writer = writer;
-        return this;
-    }
+	protected Question() {
+	}
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
-    }
+	public Question writeBy(User writer) {
+		this.writer = writer;
+		writer.addQuestion(this);
+		return this;
+	}
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
+	public boolean isOwner(User writer) {
+		return this.writer.equals(writer);
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void addAnswer(Answer answer) {
+		this.answers.add(answer);
+		answer.toQuestion(this);
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+		validateQuestionUser(loginUser);
+		List<DeleteHistory> deleteHistories = deleteAnswers(loginUser);
+		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer));
+		this.deleted = true;
+		return deleteHistories;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		for (Answer answer : answers) {
+			deleteAnswer(loginUser, answer).ifPresent(deleteHistory -> deleteHistories.add(deleteHistory));
+		}
+		return deleteHistories;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	private Optional<DeleteHistory> deleteAnswer(User loginUser, Answer answer) throws
+		CannotDeleteException {
+		if (!answer.isDeleted()) {
+			return Optional.of(answer.delete(loginUser));
+		}
+		return Optional.empty();
+	}
 
-    public String getContents() {
-        return contents;
-    }
+	private void validateQuestionUser(User loginUser) throws CannotDeleteException {
+		if (!this.isOwner(loginUser)) {
+			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+		}
+	}
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
+	public boolean isDeleted() {
+		return deleted;
+	}
 
-    public User getWriter() {
-        return writer;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
+	public String getContents() {
+		return contents;
+	}
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+	public void setContents(String contents) {
+		this.contents = contents;
+	}
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+	public User getWriter() {
+		return writer;
+	}
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writer.getId() +
-                ", deleted=" + deleted +
-                '}';
-    }
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	@Override
+	public String toString() {
+		return "Question{" +
+			"id=" + id +
+			", title='" + title + '\'' +
+			", contents='" + contents + '\'' +
+			", writerId=" + writer.getId() +
+			", deleted=" + deleted +
+			'}';
+	}
+
 }
