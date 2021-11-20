@@ -16,6 +16,7 @@ import java.util.Objects;
  *         user_id varchar(20) not null,
  *         primary key (id)
  *     )
+ *
  *     alter table user
  *        add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
  */
@@ -44,11 +45,18 @@ public class User extends BaseEntity {
     }
 
     public User(Long id, String userId, String password, String name, String email) {
+        validationCheck(userId, password, name);
         this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    private void validationCheck(String userId, String password, String name) {
+        if (userId == null || userId.equals("") || password == null || password.equals("") || name == null || name.equals("")) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void update(User loginUser, User target) {

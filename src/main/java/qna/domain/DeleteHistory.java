@@ -24,7 +24,7 @@ public class DeleteHistory {
     private Long contentId;
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
     private Long deletedById;
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {

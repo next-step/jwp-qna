@@ -34,9 +34,16 @@ public class Question extends BaseEntity {
     }
 
     public Question(Long id, String title, String contents) {
+        validationCheck(title);
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    private void validationCheck(String title) {
+        if (title == null || title.equals("")) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Question writeBy(User writer) {
