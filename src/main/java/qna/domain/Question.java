@@ -1,7 +1,6 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -79,6 +78,10 @@ public class Question extends BaseTimeEntity {
         this.answers.add(answer);
     }
 
+    public void delete() {
+        deleted = true;
+    }
+
     public Long getId() {
         return id;
     }
@@ -109,10 +112,6 @@ public class Question extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public Answers getAnswers() {

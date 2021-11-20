@@ -1,6 +1,5 @@
 package qna.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.Answer;
 import qna.domain.Answers;
-import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
@@ -34,7 +32,7 @@ public class QnaService {
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {
         return questionRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(NotFoundException::new);
+            .orElseThrow(NotFoundException::new);
     }
 
     @Transactional
@@ -46,10 +44,10 @@ public class QnaService {
         answers.validateOwner(loginUser);
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.setDeleted(true);
+        question.delete();
         deleteHistories.add(question.makeDeleteHistory());
         for (Answer answer : answers.getAnswers()) {
-            answer.setDeleted(true);
+            answer.delete();
         }
 
         deleteHistories.addAll(answers.makeDeleteHistories());

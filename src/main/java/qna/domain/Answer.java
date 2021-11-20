@@ -70,6 +70,10 @@ public class Answer extends BaseTimeEntity {
         return this.question.matchId(question);
     }
 
+    public void delete() {
+        deleted = true;
+    }
+
     public Long getId() {
         return id;
     }
@@ -96,10 +100,6 @@ public class Answer extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
