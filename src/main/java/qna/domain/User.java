@@ -3,7 +3,7 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.OneToMany;
@@ -16,17 +16,17 @@ public class User extends BaseEntity {
 
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    @Column(unique = true, nullable = false, length = 20)
-    private String userId;
+    @Embedded
+    private UserId userId;
 
-    @Column(nullable = false, length = 20)
-    private String password;
+    @Embedded
+    private Password password;
 
-    @Column(nullable = false, length = 20)
-    private String name;
+    @Embedded
+    private Name name;
 
-    @Column(length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
     @OneToMany(mappedBy = "writer")
     private List<Answer> answers = new ArrayList<>();
@@ -40,11 +40,11 @@ public class User extends BaseEntity {
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
+    public User(UserId userId, Password password, Name name, Email email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
+    public User(Long id, UserId userId, Password password, Name name, Email email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -53,24 +53,16 @@ public class User extends BaseEntity {
     }
 
     public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
+        if (!userId.match(loginUser.userId)) {
             throw new UnAuthorizedException();
         }
 
-        if (!matchPassword(target.password)) {
+        if (!password.match(target.password)) {
             throw new UnAuthorizedException();
         }
 
         this.name = target.name;
         this.email = target.email;
-    }
-
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
-    }
-
-    public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
     }
 
     public boolean equalsNameAndEmail(User target) {
@@ -86,19 +78,19 @@ public class User extends BaseEntity {
         return false;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(Email email) {
         this.email = email;
     }
 
@@ -120,6 +112,32 @@ public class User extends BaseEntity {
         return questions;
     }
 
+    public void addDeleteHistory(DeleteHistory deleteHistory) {
+        deleteHistories.add(deleteHistory);
+        deleteHistory.toDeleter(this);
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return userId.equals(user.userId) && name.equals(user.name) && email.equals(user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, name, email);
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -129,15 +147,6 @@ public class User extends BaseEntity {
             ", name='" + name + '\'' +
             ", email='" + email + '\'' +
             '}';
-    }
-
-    public void addDeleteHistory(DeleteHistory deleteHistory) {
-        deleteHistories.add(deleteHistory);
-        deleteHistory.toDeleter(this);
-    }
-
-    public List<DeleteHistory> getDeleteHistories() {
-        return null;
     }
 
     private static class GuestUser extends User {

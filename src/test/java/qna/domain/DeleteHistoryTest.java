@@ -3,7 +3,6 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +14,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 class DeleteHistoryTest {
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
     @Autowired
@@ -23,12 +25,21 @@ class DeleteHistoryTest {
     private DeleteHistory history1;
     private DeleteHistory history2;
 
+    private User user1;
+    private User user2;
+
     @BeforeEach
     void setUp() {
-        history1 = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI,
-            LocalDateTime.now());
-        history2 = new DeleteHistory(ContentType.ANSWER, 2L, UserTest.SANJIGI,
-            LocalDateTime.now());
+        user1 = new User(UserId.from("user1"), Password.from("password"), Name.from("alice"),
+            Email.from("alice@gmail.com"));
+        user2 = new User(UserId.from("user2"), Password.from("password"), Name.from("bob"),
+            Email.from("bob@gmail.com"));
+
+        userRepository.save(user1);
+        userRepository.save(user2);
+
+        history1 = new DeleteHistory(ContentType.QUESTION, 1L, user1);
+        history2 = new DeleteHistory(ContentType.ANSWER, 2L, user2);
 
         deleteHistoryRepository.save(history1);
         deleteHistoryRepository.save(history2);

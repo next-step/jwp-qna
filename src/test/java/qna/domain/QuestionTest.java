@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
@@ -11,12 +12,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 public class QuestionTest {
 
-    private Question question1;
-    private Question question2;
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -24,12 +26,27 @@ public class QuestionTest {
     @Autowired
     private EntityManager entityManager;
 
+    private User user1;
+    private User user2;
+
+    private Question question1;
+    private Question question2;
+
     @BeforeEach
     void setUp() {
+        user1 = new User(UserId.from("user1"), Password.from("password"), Name.from("alice"),
+            Email.from("alice@gmail.com"));
+        user2 = new User(UserId.from("user2"), Password.from("password"), Name.from("bob"),
+            Email.from("bob@gmail.com"));
+
+        userRepository.save(user1);
+        userRepository.save(user2);
+
         question1 = new Question("title1", "contents1")
-            .writeBy(UserTest.JAVAJIGI);
+            .writeBy(user1);
         question2 = new Question("title2", "contents2")
-            .writeBy(UserTest.SANJIGI);
+            .writeBy(user2);
+
         questionRepository.save(question1);
         questionRepository.save(question2);
     }
@@ -42,6 +59,7 @@ public class QuestionTest {
     @Test
     void test_질문_저장() {
         questionRepository.deleteAll();
+        userRepository.deleteAll();
         entityManager.clear();
 
         Question actual = questionRepository.save(question1);
@@ -113,28 +131,70 @@ public class QuestionTest {
 
     @Test
     void test_질문_내용_수정() {
-        question1.setContents("질문내용수정");
+        Contents contents = Contents.from("질문내용수정");
+        question1.setContents(contents);
 
         Question actual = questionRepository.findById(question1.getId())
             .orElse(null);
 
         assertAll(
             () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual.getContents()).isEqualTo("질문내용수정")
+            () -> assertThat(actual.getContents().contents()).isEqualTo("질문내용수정")
         );
     }
 
     @Test
-    void test_질문_삭제() {
-        question1.setDeleted(true);
-
-        List<Question> questions = questionRepository.findAll();
+    void test_동일_작성자_질문_삭제() throws CannotDeleteException {
+        DeleteHistories deleteHistories = question1.delete(question1.getWriter());
 
         assertAll(
-            () -> assertThat(questions).isNotNull(),
-            () -> assertThat(questions).hasSize(2),
-            () -> assertThat(questions.get(0).isDeleted()).isTrue(),
-            () -> assertThat(questions.get(1).isDeleted()).isFalse()
+            () -> assertThat(question1.isDeleted()).isTrue(),
+            () -> assertThat(deleteHistories.size()).isGreaterThanOrEqualTo(1),
+            () -> assertThat(deleteHistories.deleteHistories().get(0).getContentId()).isEqualTo(
+                question1.getId())
+        );
+    }
+
+    @Test
+    void test_다른_작성자_질문_삭제시도시_예외() {
+        User anotherWriter = question2.getWriter();
+
+        assertAll(
+            () -> assertThat(question1.getWriter()).isNotEqualTo(anotherWriter),
+            () -> assertThatThrownBy(() -> question1.delete(anotherWriter))
+                .isInstanceOf(CannotDeleteException.class),
+            () -> assertThat(question1.isDeleted()).isFalse()
+        );
+    }
+
+    @Test
+    void test_답변이_없으면_삭제_가능() {
+        Question question = new Question("title1", "contents1")
+            .writeBy(user1);
+
+        assertAll(
+            () -> assertThat(question.getAnswers().size()).isEqualTo(0),
+            () -> assertThat(question.delete(user1)).isNotNull()
+        );
+    }
+
+    @Test
+    void test_질문_작성자_모든_답변_작성자_동일_할_때_삭제_가능() {
+        Question question = new Question("title1", "contents1")
+            .writeBy(user1);
+
+        Answer answer1 = new Answer(user1, question, "답변1");
+        Answer answer2 = new Answer(user1, question, "답변2");
+
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+
+        assertAll(
+            () -> assertThat(question.getAnswers().size()).isEqualTo(2),
+            () -> assertThat(question.delete(user1)).isNotNull(),
+            () -> assertThat(question.isDeleted()).isTrue(),
+            () -> assertThat(question.getAnswers().answers().stream()
+                .filter(Answer::isDeleted).count()).isEqualTo(2)
         );
     }
 

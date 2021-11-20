@@ -1,36 +1,53 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 public class AnswerTest {
 
     @Autowired
-    private AnswerRepository answerRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private EntityManager entityManager;
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
+
+    private User user1;
+    private User user2;
 
     private Answer answer1;
     private Answer answer2;
 
     @BeforeEach
     void setUp() {
-        Question question = new Question("title1", "contents1")
-            .writeBy(UserTest.JAVAJIGI);
+        user1 = new User(UserId.from("user1"), Password.from("password"), Name.from("alice"),
+            Email.from("alice@gmail.com"));
+        user2 = new User(UserId.from("user2"), Password.from("password"), Name.from("bob"),
+            Email.from("bob@gmail.com"));
 
-        answer1 = new Answer(UserTest.JAVAJIGI, question, "Answers Contents1");
-        answer2 = new Answer(UserTest.SANJIGI, question, "Answers Contents2");
+        userRepository.save(user1);
+        userRepository.save(user2);
+
+        Question question = new Question("title1", "contents1")
+            .writeBy(user1);
+
+        questionRepository.save(question);
+
+        answer1 = new Answer(user1, question, "Answers Contents1");
+        answer2 = new Answer(user2, question, "Answers Contents2");
 
         answerRepository.save(answer1);
         answerRepository.save(answer2);
@@ -39,12 +56,12 @@ public class AnswerTest {
     @AfterEach
     void tearDown() {
         answerRepository.deleteAll();
+        questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
     void test_답변_저장() {
-        answerRepository.deleteAll();
-        entityManager.clear();
         Answer actual = answerRepository.save(answer1);
 
         assertAll(
@@ -101,28 +118,37 @@ public class AnswerTest {
 
     @Test
     void test_답변_업데이트() {
-        answer1.setContents("답변수정");
+        Contents contents = Contents.from("답변수정");
+        answer1.setContents(contents);
 
         Answer actual = answerRepository.findById(answer1.getId())
             .orElse(null);
 
         assertAll(
             () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual.getContents()).isEqualTo("답변수정")
+            () -> assertThat(actual.getContents().contents()).isEqualTo("답변수정")
         );
     }
 
     @Test
-    void test_답변_삭제() {
-        answer1.setDeleted(true);
-
-        List<Answer> answers = answerRepository.findAll();
+    void test_동일_작성자_답변_삭제() throws CannotDeleteException {
+        DeleteHistory deleteHistory = answer1.delete(answer1.getWriter());
 
         assertAll(
-            () -> assertThat(answers).isNotNull(),
-            () -> assertThat(answers).hasSize(2),
-            () -> assertThat(answers.get(0).isDeleted()).isTrue(),
-            () -> assertThat(answers.get(1).isDeleted()).isFalse()
+            () -> assertThat(answer1.isDeleted()).isTrue(),
+            () -> assertThat(deleteHistory.getContentId()).isEqualTo(answer1.getId())
+        );
+    }
+
+    @Test
+    void test_다른_작성자_답변_삭제시도시_예외() {
+        User anotherWriter = answer2.getWriter();
+
+        assertAll(
+            () -> assertThat(answer1.getWriter()).isNotEqualTo(anotherWriter),
+            () -> assertThatThrownBy(() -> answer1.delete(anotherWriter))
+                .isInstanceOf(CannotDeleteException.class),
+            () -> assertThat(answer1.isDeleted()).isFalse()
         );
     }
 

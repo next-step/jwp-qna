@@ -1,17 +1,15 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import qna.CannotDeleteException;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -20,8 +18,8 @@ public class Question extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -30,8 +28,8 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    public Answers answers = new Answers();
 
     protected Question() {
     }
@@ -43,7 +41,7 @@ public class Question extends BaseEntity {
     public Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
-        this.contents = contents;
+        this.contents = Contents.from(contents);
     }
 
     public Question writeBy(User writer) {
@@ -57,10 +55,10 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-        answers.add(answer);
+        answers.addAnswer(answer);
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -72,11 +70,11 @@ public class Question extends BaseEntity {
         this.title = title;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void setContents(Contents contents) {
         this.contents = contents;
     }
 
@@ -106,5 +104,22 @@ public class Question extends BaseEntity {
             ", writerId=" + writer.getId() +
             ", deleted=" + deleted +
             '}';
+    }
+
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        setDeleted(true);
+
+        DeleteHistory questionDeleteHistory = new DeleteHistory(ContentType.QUESTION, getId(),
+            getWriter());
+        DeleteHistories answerDeleteHistories = answers.delete(loginUser);
+
+        DeleteHistories deleteHistories = DeleteHistories.of(questionDeleteHistory,
+            answerDeleteHistories);
+
+        return deleteHistories;
     }
 }

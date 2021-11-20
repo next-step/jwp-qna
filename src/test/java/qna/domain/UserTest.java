@@ -14,10 +14,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class UserTest {
 
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name",
-        "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name",
-        "sanjigi@slipp.net");
+    public static final User JAVAJIGI = new User(1L, UserId.from("javajigi"),
+        Password.from("password"), Name.from("name"), Email.from("javajigi@slipp.net"));
+    public static final User SANJIGI = new User(2L, UserId.from("sanjigi"),
+        Password.from("password"), Name.from("name"), Email.from("sanjigi@slipp.net"));
 
     private User user1;
     private User user2;
@@ -30,10 +30,10 @@ public class UserTest {
 
     @BeforeEach
     void setUp() {
-        user1 = new User(1L, "user1", "password", "alice",
-            "alice@gmail.com");
-        user2 = new User(2L, "user2", "password", "bob",
-            "bob@gmail.com");
+        user1 = new User(UserId.from("user1"), Password.from("password"), Name.from("alice"),
+            Email.from("alice@gmail.com"));
+        user2 = new User(UserId.from("user2"), Password.from("password"), Name.from("bob"),
+            Email.from("bob@gmail.com"));
 
         userRepository.save(user1);
         userRepository.save(user2);
@@ -46,8 +46,8 @@ public class UserTest {
 
     @Test
     void test_사용자_저장() {
-        User expected = new User("testuser", "password", "홍길동",
-            "gildong@gmail.com");
+        User expected = new User(UserId.from("testuser"), Password.from("password"),
+            Name.from("홍길동"), Email.from("gildong@gmail.com"));
 
         User actual = userRepository.save(expected);
 
@@ -104,14 +104,15 @@ public class UserTest {
 
     @Test
     void test_사용자_이메일_수정() {
+        Email newEmail = Email.from("new.alice@gmail.com");
+        user1.setEmail(newEmail);
+
         User actual = userRepository.findByUserId(user1.getUserId())
             .orElse(null);
 
-        actual.setEmail("new.alice@gmail.com");
-
         assertAll(
             () -> assertThat(actual).isNotNull(),
-            () -> assertThat(actual.getEmail()).isEqualTo("new.alice@gmail.com")
+            () -> assertThat(actual.getEmail()).isEqualTo(newEmail)
         );
     }
 }
