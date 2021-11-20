@@ -73,7 +73,7 @@ public class Station {
 //        }
 
         this.line = line;
-        line.getStations().add(this);
+//        line.getStations().add(this);
     }
 
     public Line getLine() {
