@@ -1,10 +1,7 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import qna.CannotDeleteException;
 
@@ -54,6 +50,7 @@ public class Question extends BaseEntity {
         this.title = new Title(title);
         this.contents = new Contents(contents);
         this.answers = new Answers();
+        this.deleted = new Deleted();
     }
 
     public Question writeBy(User writer) {
@@ -65,7 +62,7 @@ public class Question extends BaseEntity {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(ERROR_PERMISSION_TO_DELETE);
         }
-
+        answers.delete(loginUser);
         setDeleted(DELETE);
     }
 
