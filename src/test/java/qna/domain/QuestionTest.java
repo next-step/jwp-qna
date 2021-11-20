@@ -91,9 +91,9 @@ public class QuestionTest {
         assertThat(question.isDeleted()).isTrue();
     }
 
-    @DisplayName("delete 성공 테스트 - 답변 포함 O")
+    @DisplayName("delete 성공 테스트 - 답변 포함 O, 다른 사용자 답변 없음")
     @Test
-    void deleteWithAnswer_success() throws CannotDeleteException {
+    void deleteWithAnswer_otherAnswer_empty_success() throws CannotDeleteException {
         // given
         User user = UserTest.JAVAJIGI;
         Question question = Question.of("title1", "contents1").writeBy(user);
@@ -108,6 +108,51 @@ public class QuestionTest {
                 () -> assertThat(question.isDeleted()).isTrue()
                 , () -> assertThat(question.getAnswers().get(0).isDeleted()).isTrue()
         );
+    }
+
+    @DisplayName("delete 성공 테스트 - 답변 포함 O, 다른 사용자 답변 삭제됨")
+    @Test
+    void deleteWithAnswer_otherAnswer_deletedTrue_success() throws CannotDeleteException {
+        // given
+        User writer = UserTest.JAVAJIGI;
+        User otherUser = UserTest.SANJIGI;
+
+        Question question = Question.of("title1", "contents1").writeBy(writer);
+        Answer writerAnswer = Answer.of(writer, question, "Answers Contents1");
+        Answer otherUserAnswer = Answer.of(otherUser, question, "Answers Contents1");
+
+        question.addAnswer(writerAnswer);
+        question.addAnswer(otherUserAnswer);
+
+        // when
+        otherUserAnswer.delete(otherUser);
+        question.delete(writer);
+
+        // then
+        assertAll(
+                () -> assertThat(question.isDeleted()).isTrue()
+                , () -> assertThat(question.getAnswers().get(0).isDeleted()).isTrue()
+        );
+    }
+
+    @DisplayName("delete 성공 테스트 - 답변 포함 O, 다른 사용자 답변 삭제안됨")
+    @Test
+    void deleteWithAnswer_otherAnswer_deletedFalse_success() throws CannotDeleteException {
+        // given
+        User writer = UserTest.JAVAJIGI;
+        User otherUser = UserTest.SANJIGI;
+
+        Question question = Question.of("title1", "contents1").writeBy(writer);
+        Answer writerAnswer = Answer.of(writer, question, "Answers Contents1");
+        Answer otherUserAnswer = Answer.of(otherUser, question, "Answers Contents1");
+
+        question.addAnswer(writerAnswer);
+        question.addAnswer(otherUserAnswer);
+
+        // when & then
+        assertThatExceptionOfType(CannotDeleteException.class)
+                .isThrownBy(() -> assertThat(question.delete(writer)))
+                .withMessage(Answer.EXIST_OTHER_ANSWERS);
     }
 
     @DisplayName("delete 실패 테스트")

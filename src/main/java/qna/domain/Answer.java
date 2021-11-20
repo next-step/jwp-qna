@@ -110,7 +110,7 @@ public class Answer extends BaseEntity {
     }
 
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
+        if (!isOwner(loginUser) && !deleted) {
             throw new CannotDeleteException(EXIST_OTHER_ANSWERS);
         }
         setDeleted(true);
