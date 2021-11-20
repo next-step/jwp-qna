@@ -44,7 +44,7 @@ public class AnswersTest {
     void addAnswers() {
         answerList.add(javaJigiAnswer);
         Answers answers = new Answers(answerList);
-        answers = answers.add(sanJigiAnswer);
+        answers.add(sanJigiAnswer);
 
         boolean contains = answers.contains(sanJigiAnswer);
 

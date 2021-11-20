@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Embedded;
@@ -63,12 +64,14 @@ public class Answer extends BaseEntity {
     protected Answer() {
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(ERROR_WRITTEN_BY_SOMEONE_ELSE);
         }
 
         setDeleted(DELETE);
+
+        return new DeleteHistory(ContentType.ANSWER, loginUser.getId(), this.getWriter(), LocalDateTime.now());
     }
 
     public Long getId() {

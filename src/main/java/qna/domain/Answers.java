@@ -17,27 +17,27 @@ public class Answers {
     private final List<Answer> answers;
 
     protected Answers() {
-        this.answers = Collections.unmodifiableList(new ArrayList<>());
+        this.answers = new ArrayList<>();
     }
 
     public Answers(List<Answer> answerList) {
-        this.answers = Collections.unmodifiableList(answerList);
+        this.answers = answerList;
     }
 
     public boolean contains(Answer answer) {
         return answers.contains(answer);
     }
 
-    public Answers add(Answer answer) {
-        List<Answer> newAnswers = new ArrayList<>(this.answers);
-        newAnswers.add(answer);
-        return new Answers(newAnswers);
+    public void add(Answer answer) {
+        answers.add(answer);
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         for(Answer answer : answers){
-            answer.delete(loginUser);
+            deleteHistories.add(answer.delete(loginUser));
         }
+        return deleteHistories;
     }
 
     public boolean isAllDelete() {

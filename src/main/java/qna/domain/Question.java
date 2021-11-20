@@ -1,5 +1,8 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Embedded;
@@ -58,12 +61,18 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistorys delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(ERROR_PERMISSION_TO_DELETE);
         }
-        answers.delete(loginUser);
         setDeleted(DELETE);
+
+        DeleteHistory thisDeleteHistory =
+            new DeleteHistory(ContentType.QUESTION, loginUser.getId(), this.getWriter(), LocalDateTime.now());
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(thisDeleteHistory);
+        deleteHistories.addAll(answers.delete(loginUser));
+        return new DeleteHistorys(deleteHistories);
     }
 
     public boolean isOwner(User writer) {
@@ -72,7 +81,7 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.setQuestion(this);
-        this.answers = answers.add(answer);
+        answers.add(answer);
     }
 
     public Long getId() {
