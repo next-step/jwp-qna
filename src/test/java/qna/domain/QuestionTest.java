@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Sort;
@@ -16,11 +18,17 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class QuestionTest {
+
+    private static final Logger _log = LoggerFactory.getLogger(QuestionTest.class);
+
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
 
     private Question question1;
     private Question question2;
@@ -107,9 +115,31 @@ public class QuestionTest {
     @Test
     @DisplayName("질문 삭제")
     void deleteQuestion() {
+        _saveTempAnswer();
+        Long answerCount = answerRepository.countByQuestionIdAndDeletedFalse(question1.getId());
+        _log.info("##### Question has" + answerCount + " Answers.");
+
+        _deleteAnswerByQuestionId(question1.getId());
         question1.setDeleted(true);
         Question actual = questionRepository.save(question1);
         assertThat(actual.isDeleted()).isTrue();
+    }
+
+    /**
+     * QuestionId를 통해 Answer가 있는 경우 삭제 처리
+     * @param questionId
+     */
+    private void _deleteAnswerByQuestionId(Long questionId) {
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
+        for(Answer answer : answers) {
+            answer.setDeleted(true);
+            answerRepository.save(answer);
+        }
+        assertThat(answerRepository.countByQuestionIdAndDeletedFalse(questionId)).isEqualTo(0L);
+    }
+
+    private void _saveTempAnswer() {
+        answerRepository.save(AnswerTest.A1);
     }
 
 }
