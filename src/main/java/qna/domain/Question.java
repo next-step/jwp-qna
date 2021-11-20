@@ -7,8 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 public class Question extends BaseEntity {
-    public static final String 질문을_삭제할_권한이_없습니다 = "질문을 삭제할 권한이 없습니다.";
-    public static final String MESSAGE_NOT_AUTHENTICATED = 질문을_삭제할_권한이_없습니다;
+    public static final String MESSAGE_NOT_AUTHENTICATED = "질문을 삭제할 권한이 없습니다.";
     @Column(length = 100, nullable = false)
     private String title;
 
