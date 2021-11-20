@@ -1,5 +1,10 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -9,6 +14,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import qna.CannotDeleteException;
 
 /**
  * create table question
@@ -41,6 +49,9 @@ public class Question extends BaseEntity {
 
     private boolean deleted = false;
 
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();;
+
     protected Question() {
 
     }
@@ -61,10 +72,11 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -108,14 +120,36 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writer.getId() +
+                ", writerId=" + Optional.of(writer).orElseGet(User::new).getId() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        List<DeleteHistory> deleteHistories = new ArrayList<>(deleteAnswers(loginUser));
+        deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        return deleteHistories;
+    }
+
+    private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(loginUser));
+        }
+        return deleteHistories;
     }
 }

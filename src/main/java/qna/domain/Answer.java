@@ -1,6 +1,8 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -11,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -69,10 +72,12 @@ public class Answer extends BaseEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+
+        question.addAnswer(this);
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -101,6 +106,7 @@ public class Answer extends BaseEntity {
 
     public void setQuestion(Question question) {
         this.question = question;
+        question.addAnswer(this);
     }
 
     public String getContents() {
@@ -123,10 +129,33 @@ public class Answer extends BaseEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writer.getId() +
-                ", questionId=" + question.getId() +
+                ", writerId=" + Optional.of(writer).orElseGet(User::new).getId() +
+                ", questionId=" + Optional.of(question).orElseGet(Question::new).getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Answer answer = (Answer)o;
+        return Objects.equals(id, answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
