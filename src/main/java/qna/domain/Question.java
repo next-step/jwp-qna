@@ -1,12 +1,9 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
-import qna.ForbiddenException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -101,15 +98,15 @@ public class Question extends BaseEntity {
                 '}';
     }
 
-    public List<DeleteHistory> delete(User loginUser) {
+    public DeleteHistories delete(User loginUser) {
         validateAuthentication(loginUser);
         answers.validateNotOwnerAnswers(loginUser);
         setDeleted(true);
         return getDeleteHistories();
     }
 
-    private List<DeleteHistory> getDeleteHistories() {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+    private DeleteHistories getDeleteHistories() {
+        DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(), getWriter(), LocalDateTime.now()));
         deleteHistories.addAll(answers.getDeleteHistories());
         return deleteHistories;
