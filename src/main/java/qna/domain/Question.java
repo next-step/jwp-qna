@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -53,7 +55,15 @@ public class Question extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+        return this.writer.matchId(writer);
+    }
+
+    public boolean matchId(Question question) {
+        if (Objects.isNull(this.id)) {
+            return false;
+        }
+
+        return this.id.equals(question.id);
     }
 
     public void addAnswer(Answer answer) {

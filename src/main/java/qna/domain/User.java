@@ -58,6 +58,13 @@ public class User extends BaseTimeEntity {
         this.email = target.email;
     }
 
+    public boolean matchId(User user) {
+        if (Objects.isNull(this.id)) {
+            return false;
+        }
+        return this.id.equals(user.id);
+    }
+
     private boolean matchUserId(String userId) {
         return this.userId.equals(userId);
     }
