@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Sort;
@@ -18,12 +20,18 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class UserTest {
+    
+    private static final Logger _log = LoggerFactory.getLogger(UserTest.class);
+    
     // data.sql을 통해 Insert 자동화
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "javaj", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "sanj", "sanjigi@slipp.net");
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     User actual = null;
 
@@ -132,8 +140,30 @@ public class UserTest {
     @Test
     @DisplayName("회원탈퇴 : 회원정보 삭제")
     void leave() {
-        userRepository.deleteByUserId("inmookjeong");
-        assertThatThrownBy(() -> userRepository.findByUserId("inmookjeong").get())
+        User user = userRepository.findByUserId("javajigi").get();
+        _deleteQuestionIfExist(user);
+
+        userRepository.deleteByUserId(user.getUserId());
+        assertThatThrownBy(() -> userRepository.findByUserId(user.getUserId()).get())
                 .isInstanceOf(NoSuchElementException.class);
+    }
+
+    /**
+     * 사용자 삭제 전 Question이 있는 경우 Question들을 삭제
+     * @param writer
+     */
+    private void _deleteQuestionIfExist(User writer) {
+        _saveTempQuestion();
+        Long count = questionRepository.countByWriter(writer);
+        _log.info("##### " + writer.getUserId() + " has " + count + " questions.");
+        if(count > 0) {
+            questionRepository.deleteByWriter(writer);
+            _log.info("##### Successfully delete user's questions.");
+        }
+        assertThat(questionRepository.countByWriter(writer)).isEqualTo(0L);
+    }
+
+    private void _saveTempQuestion() {
+        questionRepository.save(QuestionTest.Q1);
     }
 }

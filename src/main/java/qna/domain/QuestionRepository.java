@@ -17,4 +17,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByTitleContains(String title);
 
     Long countByTitleContains(String title);
+
+    void deleteByWriter(User writer);
 }
