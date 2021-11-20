@@ -126,8 +126,8 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException(NO_DELETE_PERMISSION);
         }
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(deleteQuestion(loginUser));
         deleteHistories.addAll(deleteAnswers(loginUser));
+        deleteHistories.add(deleteQuestion(loginUser));
         return deleteHistories;
     }
 
