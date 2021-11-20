@@ -7,6 +7,8 @@ import java.util.Objects;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
+import qna.CannotDeleteException;
+
 @Embeddable
 public class Answers {
     @OneToMany(mappedBy = "question")
@@ -17,6 +19,18 @@ public class Answers {
     }
 
     protected Answers() {
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void validateOwner(User loginUser) {
+        for (Answer answer : answers) {
+            if (!answer.isOwner(loginUser)) {
+                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            }
+        }
     }
 
     public boolean add(Answer answer) {
