@@ -35,12 +35,7 @@ public class Answer extends BaseEntity {
 
     private boolean deleted = false;
 
-//    public Answer(User writer, Question question, String contents) {
-//        this(null, writer, question, contents);
-//    }
-
     public Answer(User writer, Question question, String contents) {
-//        this.id = id;
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();

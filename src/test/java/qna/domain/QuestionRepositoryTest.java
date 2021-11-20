@@ -55,8 +55,9 @@ public class QuestionRepositoryTest {
         final Question actual = questions.save(expected);
 
         assertThatThrownBy(() -> actual.delete(UserTest.SANJIGI))
-            .isInstanceOf(CannotDeleteException.class);
+                .isInstanceOf(CannotDeleteException.class);
     }
+
     @Test
     @DisplayName("질문을 삭제한다")
     void deleteTest() {
@@ -74,7 +75,7 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("삭제시 작성자와 다른 답변자가 있으면 예외를 출력한다")
-    void differentAnswerWriterTest(){
+    void differentAnswerWriterTest() {
         final User javajigi = users.save(UserTest.JAVAJIGI);
         final User sanjigi = users.save(UserTest.SANJIGI);
         QuestionTest.Q1.setWriter(javajigi);

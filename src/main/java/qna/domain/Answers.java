@@ -10,8 +10,13 @@ import java.util.List;
 
 @Embeddable
 public class Answers {
+    public static final String MESSAGE_NOT_OWNER = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
     @OneToMany(mappedBy = "question")
     private List<Answer> answers;
+
+    public Answers() {
+        this.answers = new ArrayList<>();
+    }
 
     public void add(Answer answer) {
         answers.add(answer);
@@ -25,7 +30,7 @@ public class Answers {
 
     private void checkNotOwnerAnswer(User loginUser, Answer answer) {
         if (!answer.isOwner(loginUser)) {
-            throw new ForbiddenException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new ForbiddenException(MESSAGE_NOT_OWNER);
         }
     }
 
@@ -40,9 +45,5 @@ public class Answers {
 
     public void remove(Answer answer) {
         answers.remove(answer);
-    }
-
-    public Answers() {
-        this.answers = new ArrayList<>();
     }
 }

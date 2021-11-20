@@ -40,7 +40,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("삭제시 작성자와 다른 답변자가 있으면 예외를 출력한다")
-    void differentAnswerWriterTest(){
+    void differentAnswerWriterTest() {
         q1.addAnswer(AnswerTest.A2);
 
         assertThatThrownBy(() -> q1.delete(UserTest.JAVAJIGI))
