@@ -1,67 +1,72 @@
-package qna.domain;
+package qna.domain.qna;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
+import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 import qna.common.exception.CannotDeleteException;
+import qna.domain.user.User;
+import qna.domain.deletehistory.DeleteHistory;
 
 @Embeddable
 public class Answers implements Serializable {
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<Answer> values = new ArrayList<>();
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = false)
+    private List<Answer> answers = new ArrayList<>();
 
     protected Answers() {
     }
 
-    public List<Answer> values() {
-        return values;
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public void add(Answer answer) {
-        values.add(answer);
+        if (Objects.nonNull(answers)) {
+            answers.remove(answer);
+        }
+
+        answers.add(answer);
     }
 
     public List<DeleteHistory> delete(User questionWriter) {
         validWrittenByQuestionWriter(questionWriter);
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : values) {
-            deleteHistories.add(answer.delete(questionWriter));
-        }
-
-        return deleteHistories;
+        return answers.stream()
+            .map(answer -> answer.delete(questionWriter))
+            .collect(Collectors.toList());
     }
 
     private void validWrittenByQuestionWriter(User questionWriter) {
-        long answersByQuestionWriterCount = values.stream()
+        long answersByQuestionWriterCount = answers.stream()
             .filter(answer -> answer.isOwner(questionWriter))
             .count();
 
-        if (answersByQuestionWriterCount != values.size()) {
+        if (answersByQuestionWriterCount != answers.size()) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        Answers answers = (Answers)o;
-        return Objects.equals(this.values, answers.values);
+        }
+        Answers answers = (Answers) o;
+        return Objects.equals(this.answers, answers.answers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(values);
+        return Objects.hash(answers);
     }
 }

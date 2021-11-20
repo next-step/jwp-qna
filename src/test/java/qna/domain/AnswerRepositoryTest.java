@@ -12,6 +12,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import qna.common.exception.CannotDeleteException;
+import qna.domain.qna.Answer;
+import qna.domain.deletehistory.DeleteHistory;
+import qna.domain.qna.Contents;
+import qna.domain.qna.Question;
+import qna.domain.qna.AnswerRepository;
+import qna.domain.qna.QuestionRepository;
+import qna.domain.user.UserRepository;
+import qna.domain.user.Email;
+import qna.domain.user.User;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -34,12 +44,14 @@ public class AnswerRepositoryTest {
     Question QUESTION;
     Answer ANSWER;
     User USER;
+    Contents CONTENTS = Contents.of("Answers Contents1");
 
     @BeforeEach
     public void setUp() throws Exception {
-        USER = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
-        QUESTION = questions.save(new Question("title1", "contents1").writeBy(USER));
-        ANSWER = new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1");
+        USER = users.save(UserTest.createUser("answerJavajigi", "password", "javajigi",
+            new Email("javajigi@slipp.net")));
+        QUESTION = questions.save(new Question(QuestionPostTest.QUESTION_POST1).writeBy(USER));
+        ANSWER = new Answer(QUESTION.getWriter(), QUESTION, CONTENTS);
     }
 
     @Test
@@ -66,14 +78,14 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("remove 처리 후 findByIdAndDeletedFalse 메소드 조회 미포함 체크 ")
+    @DisplayName("remove 처리 후 isDeleted true(삭제됨) 체크 ")
     void deleted_findByIdAndDeletedFalse() {
         // given
-        Answer expect = answers.save(ANSWER);
-        expect.delete(USER);
+        Answer savedAnswer = answers.save(ANSWER);
+        savedAnswer.delete(USER);
 
         // when
-        Answer answer = answers.findById(expect.getId()).get();
+        Answer expect = answers.findById(savedAnswer.getId()).get();
 
         // then
         assertAll(
@@ -99,5 +111,37 @@ public class AnswerRepositoryTest {
             () -> assertThat(questionExpect).isFalse(),
             () -> assertThat(writerExpect).isFalse()
         );
+    }
+
+    @Test
+    @DisplayName("다른사람이 작성한 답변 삭제 실패")
+    void deleted_다른사람_답변_삭제_실패() {
+        // given
+
+        assertThatThrownBy(() -> {
+            // when
+            ANSWER.delete(UserTest.SANJIGI);
+        })// then
+            .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    @DisplayName("자신이 작성한 답변 삭제 성공")
+    void deleted_자신이_작성한_답변_삭제_성공() {
+        // given
+        // when
+        // then
+        ANSWER.delete(ANSWER.getWriter());
+    }
+
+
+    @Test
+    @DisplayName("답변 삭제 리턴 DeleteHistory 검증")
+    void deleted() {
+        // given
+        // when
+        // then
+        assertThat(ANSWER.delete(ANSWER.getWriter())).isEqualTo(
+            DeleteHistory.OfAnswer(ANSWER, ANSWER.getWriter()));
     }
 }

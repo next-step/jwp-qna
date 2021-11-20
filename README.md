@@ -27,16 +27,16 @@ JPA 엔티티 매핑에 대해 학습하기
 - Fetch Join
     - 조회의 주체가 되는 Entity 이외에 Fetch Join 이 걸린 연관 Entity 도 함께 SELECT 하여 모두 영속화
     - 실제 질의하는 대상 Entity 와 Fetch join 이 걸려있는 Entity 를 포함한 컬럼 함께 SELECT
-    - Fetch Join 이 걸린 Entity 모두 영속화하기 때문에 FetchType 이 Lazy 인 Entity 를 참조하더라도 이미 영속성 컨텍스트에 들어있기 때문에 따로 쿼리가 실행되지 않은 채로
-      N+1문제가 해결됨
+    - Fetch Join 이 걸린 Entity 모두 영속화하기 때문에 FetchType 이 Lazy 인 Entity 를 참조하더라도 이미 영속성 컨텍스트에 들어있기 때문에
+      따로 쿼리가 실행되지 않은 채로 N+1문제가 해결됨
   > 일반 Join : join 조건을 제외하고 실제 질의하는 대상 Entity에 대한 컬럼만 SELECT
 
 
 - CascadeType 의 종류
-    - CascadeType.RESIST – 엔티티를 생성하고, 연관 엔티티를 추가하였을 때 persist() 를 수행하면 연관 엔티티도 함께 persist()가 수행된다. 만약 연관 엔티티가 DB에 등록된
-      키값을 가지고 있다면 detached entity passed to persist Exception이 발생합니다.
-    - CascadeType.MERGE – 트랜잭션이 종료되고 detach 상태에서 연관 엔티티를 추가하거나 변경된 이후에 부모 엔티티가 merge()를 수행하게 되면 변경사항이 적용됨(연관 엔티티의 추가 및
-      수정 모두 반영됨)
+    - CascadeType.RESIST – 엔티티를 생성하고, 연관 엔티티를 추가하였을 때 persist() 를 수행하면 연관 엔티티도 함께 persist()가 수행된다.
+      만약 연관 엔티티가 DB에 등록된 키값을 가지고 있다면 detached entity passed to persist Exception이 발생합니다.
+    - CascadeType.MERGE – 트랜잭션이 종료되고 detach 상태에서 연관 엔티티를 추가하거나 변경된 이후에 부모 엔티티가 merge()를 수행하게 되면
+      변경사항이 적용됨(연관 엔티티의 추가 및 수정 모두 반영됨)
     - CascadeType.REMOVE – 삭제 시 연관된 엔티티도 같이 삭제됨
     - CascadeType.DETACH – 부모 엔티티가 detach()를 수행하게 되면, 연관된 엔티티도 detach() 상태가 되어 변경사항이 반영되지 않음.
     - CascadeType.ALL – 모든 Cascade 적용
@@ -114,3 +114,26 @@ JPA 엔티티 매핑에 대해 학습하기
 - [X] Answer 삭제시 DeleteHistory 리턴
 - [X] QnaServiceTest(@Mock) 테스트 리팩토링
 - [X] Setter 제거하고 의미 있는 이름으로 메소드 만들기
+
+### 3단계 - 질문 삭제하기 리팩터링
+
+> 질문,답변 삭제 리팩토링 정책
+> - 로그인 사용자와 질문한거 사람이 같아야 삭제 가능
+> - 질문자와 답변글 모두 같은 경우 삭제 가능 (답변이 없는 경우 삭제 가능, 질문자와 답변자가 다르면 삭제 할 수 없음 )
+> - 질문 삭제시 답변글도 삭제해야 하며, 삭제 상태(deleted) 변경
+
+- [X] 질문 삭제 테스트
+    - 자신의 질문 삭제(답변없는경우) 성공 테스트
+    - 자신의 답변만 있는 자신의 질문 삭제 성공 테스트
+    - 다른 사람 답변이 있는 자신의 질문 삭제 실패 테스트
+    - 다른 사람 질문 삭제 실패 테스트
+    - 다른 사람 답변 삭제 실패 테스트
+    - 자신의 답변 삭제 성공 테스트
+- [X] 질문,답변 삭제, 삭제히 DeleteHistory 남기기
+- [X] QnaServiceTest 테스트 모두 통과하기
+- [X] Delete 삭제 도메인으로 분리
+- [X] stream() 으로 코드 개선할 수 있는 부분 계선하기
+- [X] JPA Hands-On 푸쉬하기
+- [X] User 기본정보 UserData 로 분리
+- [X] User 로그인 데이터 UserAuth 로 분리
+- [X] Exception 공통 BaseException 추가

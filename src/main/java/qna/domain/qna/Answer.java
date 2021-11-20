@@ -1,5 +1,6 @@
-package qna.domain;
+package qna.domain.qna;
 
+import javax.persistence.Embedded;
 import qna.common.exception.CannotDeleteException;
 import qna.common.exception.NotFoundException;
 import qna.common.exception.UnAuthorizedException;
@@ -14,13 +15,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.domain.BaseEntity;
+import qna.domain.deletehistory.ContentType;
+import qna.domain.user.User;
+import qna.domain.deletehistory.DeleteHistory;
 
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,18 +38,18 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    @Column(name = "contents")
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @Column(name = "deleted", nullable = false)
-    private boolean deleted = false;
+    private boolean deleted = Boolean.FALSE;
 
     protected Answer() {
     }
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer(User writer, Question question, Contents contents) {
         validCanWritten(writer, question);
+        question.addAnswer(this);
 
         this.writer = writer;
         this.question = question;
@@ -53,16 +58,15 @@ public class Answer extends BaseEntity {
 
     public DeleteHistory delete(User loginUser) {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(ContentType.ANSWER);
         }
 
         this.deleted = true;
-
-        return DeleteHistory.OfAnswer(this);
+        return DeleteHistory.OfAnswer(this, loginUser);
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.isMine(writer);
+        return this.writer.isMe(writer);
     }
 
     public boolean isDeleted() {
@@ -97,18 +101,20 @@ public class Answer extends BaseEntity {
             "id=" + id +
             ", writerId=" + writer.getId() +
             ", questionId=" + question.getId() +
-            ", contents='" + contents + '\'' +
+            ", contents='" + contents.getContents() + '\'' +
             ", deleted=" + deleted +
             '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        Answer answer = (Answer)o;
+        }
+        Answer answer = (Answer) o;
         return deleted == answer.deleted
             && Objects.equals(id, answer.id)
             && Objects.equals(writer, answer.writer)

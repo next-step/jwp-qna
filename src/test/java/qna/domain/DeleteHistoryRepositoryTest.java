@@ -12,6 +12,18 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.deletehistory.DeleteTarget;
+import qna.domain.qna.Answer;
+import qna.domain.deletehistory.DeleteHistory;
+import qna.domain.deletehistory.ContentType;
+import qna.domain.qna.Contents;
+import qna.domain.qna.Question;
+import qna.domain.qna.AnswerRepository;
+import qna.domain.deletehistory.DeleteHistoryRepository;
+import qna.domain.qna.QuestionRepository;
+import qna.domain.user.UserRepository;
+import qna.domain.user.Email;
+import qna.domain.user.User;
 
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
@@ -33,15 +45,17 @@ public class DeleteHistoryRepositoryTest {
     Answer ANSWER;
     DeleteHistory ANSWER_HISTORY;
     DeleteHistory QUESTION_HISTORY;
+    Contents CONTENTS = Contents.of("Answers Contents1");
 
     @BeforeEach
     public void setUp() {
-        USER = users.save(new User("answerJavajigi", "password", "javajigi", new Email("javajigi@slipp.net")));
-        QUESTION = questions.save(new Question("title1", "contents1").writeBy(USER));
-        ANSWER = answers.save(new Answer(QUESTION.getWriter(), QUESTION, "Answers Contents1"));
+        USER = users.save(UserTest.createUser("answerJavajigi", "password", "javajigi",
+            new Email("javajigi@slipp.net")));
+        QUESTION = questions.save(new Question(QuestionPostTest.QUESTION_POST1).writeBy(USER));
+        ANSWER = answers.save(new Answer(QUESTION.getWriter(), QUESTION, CONTENTS));
 
-        ANSWER_HISTORY = DeleteHistory.OfQuestion(QUESTION);
-        QUESTION_HISTORY = DeleteHistory.OfAnswer(ANSWER);
+        ANSWER_HISTORY = DeleteHistory.OfQuestion(QUESTION, QUESTION.getWriter());
+        QUESTION_HISTORY = DeleteHistory.OfAnswer(ANSWER, ANSWER.getWriter());
     }
 
     @Test
@@ -76,8 +90,9 @@ public class DeleteHistoryRepositoryTest {
         // when
         // then
         assertAll(
-            () -> assertThat(deleteHistories.findByContentType(QUESTION)).isNotNull(),
-            () -> assertThat(deleteHistories.findByContentType(ANSWER)).isNotNull()
+            () -> assertThat(
+                deleteHistories.findByDeleteTargetContentType(QUESTION)).isNotNull(),
+            () -> assertThat(deleteHistories.findByDeleteTargetContentType(ANSWER)).isNotNull()
         );
     }
 
@@ -89,10 +104,11 @@ public class DeleteHistoryRepositoryTest {
         DeleteHistory answerDeleteHistory = deleteHistories.save(ANSWER_HISTORY);
 
         // when
-        List<DeleteHistory> questionDeleteHistories = deleteHistories.findByContentIdAndContentType(QUESTION.getId(),
-            questionDeleteHistory.getContentType());
-        List<DeleteHistory> answerDeleteHistories = deleteHistories.findByContentIdAndContentType(ANSWER.getId(),
-            answerDeleteHistory.getContentType());
+        List<DeleteHistory> questionDeleteHistories = deleteHistories.findByDeleteTarget(
+            DeleteTarget.of(QUESTION.getId(), questionDeleteHistory.getContentType()));
+        List<DeleteHistory> answerDeleteHistories = deleteHistories.findByDeleteTarget(
+            DeleteTarget.of(ANSWER.getId(),
+                answerDeleteHistory.getContentType()));
 
         // then
         assertAll(

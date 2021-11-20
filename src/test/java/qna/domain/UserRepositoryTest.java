@@ -7,16 +7,17 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import qna.domain.user.UserRepository;
+import qna.domain.user.Email;
+import qna.domain.user.User;
 
 @DataJpaTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserRepositoryTest {
+
     private static final String USERID = "userId";
     private static final String USERID2 = "userId2";
     private static final String PASSWORD = "PASSWORD";
@@ -26,25 +27,13 @@ public class UserRepositoryTest {
     @Autowired
     UserRepository users;
 
-    private User USER1;
-    private User USER2;
+    User USER1;
+    User USER2;
 
     @BeforeEach
     public void setUp() throws Exception {
-        USER1 = new User(USERID, PASSWORD, NAME, EMAIL);
-        USER2 = new User(USERID2, PASSWORD, NAME, EMAIL);
-    }
-
-    @Test
-    @DisplayName("save 후 DB 조회 동일성 검증")
-    void findByUserId() {
-        // given
-        // when
-        User actual = users.save(USER1);
-        User expect = users.findByUserId(USER1.getUserId()).get();
-
-        // then
-        assertThat(actual).isSameAs(expect);
+        USER1 = UserTest.createUser(USERID, PASSWORD, NAME, EMAIL);
+        USER2 = UserTest.createUser(USERID2, PASSWORD, NAME, EMAIL);
     }
 
     @Test
@@ -70,7 +59,7 @@ public class UserRepositoryTest {
 
         // when
         USER1.changeUserId("user_id 변경");
-        User expect = users.findByUserId(USER1.getUserId()).get();
+        User expect = users.findByUserAuthUserId(USER1.getUserId()).get();
 
         // then
         assertThat(USER1).isEqualTo(expect);
@@ -84,7 +73,7 @@ public class UserRepositoryTest {
         users.save(USER2);
 
         // when
-        List<User> userList = users.findByName(NAME);
+        List<User> userList = users.findByUserDataName(NAME);
 
         assertAll(
             () -> assertThat(userList).contains(USER1),
@@ -113,7 +102,7 @@ public class UserRepositoryTest {
         users.save(USER1);
 
         // when
-        Long actual = users.countByUserId(USER1.getUserId());
+        Long actual = users.countByUserAuthUserId(USER1.getUserId());
 
         // then
         assertThat(actual).isGreaterThan(0);

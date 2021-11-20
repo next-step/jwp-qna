@@ -9,23 +9,32 @@ import org.junit.jupiter.api.Test;
 import qna.common.exception.CannotDeleteException;
 import qna.common.exception.NotFoundException;
 import qna.common.exception.UnAuthorizedException;
+import qna.domain.qna.Answer;
+import qna.domain.qna.Contents;
+import qna.domain.user.User;
 
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+
+    public static final Contents CONTENT = Contents.of("Answers Contents1");
+    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, CONTENT);
+    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, CONTENT);
 
     @Test
     @DisplayName("Answer 의 deleted 컬럼의 default 값은 false입니다.")
     void deleted_기본값_false() {
+        // when
+        boolean expect = new Answer(UserTest.SANJIGI, QuestionTest.Q1,
+            CONTENT).isDeleted();
+
         // then
-        assertThat(new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2").isDeleted()).isFalse();
+        assertThat(expect).isFalse();
     }
 
     @Test
     @DisplayName("답변 작성자가 답변 삭제 처리, 결과 true")
     void deleted() {
         // given
-        Answer answer = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+        Answer answer = new Answer(UserTest.SANJIGI, QuestionTest.Q1, CONTENT);
 
         // when
         answer.delete(UserTest.SANJIGI);
@@ -38,7 +47,7 @@ public class AnswerTest {
     @DisplayName("답변 작성자가 아닌 User 가 삭제 처리, 결과 false")
     void deleted_false() {
         // given
-        Answer answer = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+        Answer answer = new Answer(UserTest.SANJIGI, QuestionTest.Q1, CONTENT);
 
         assertThatExceptionOfType(CannotDeleteException.class) // then
             .isThrownBy(() -> {
@@ -60,22 +69,22 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("writer(작성자)가 없으면 예외 발생")
+    @DisplayName("저장시 writer(작성자)가 없으면 예외 발생")
     void exception_create_User_null() {
         assertThatExceptionOfType(UnAuthorizedException.class) // then
             .isThrownBy(() -> {
                 // when
-                new Answer(null, QuestionTest.Q1, "Answers Contents1");
+                new Answer(null, QuestionTest.Q1, CONTENT);
             });
     }
 
     @Test
-    @DisplayName("question(질문)이 없으면 예외 발생")
+    @DisplayName("저장시 question(질문)이 없으면 예외 발생")
     void exception_create_Question_null() {
         assertThatExceptionOfType(NotFoundException.class) // then
             .isThrownBy(() -> {
                 // when
-                new Answer(UserTest.JAVAJIGI, null, "Answers Contents1");
+                new Answer(UserTest.JAVAJIGI, null, CONTENT);
             });
     }
 
@@ -88,7 +97,7 @@ public class AnswerTest {
         assertThatExceptionOfType(UnAuthorizedException.class) // then
             .isThrownBy(() -> {
                 // when
-                new Answer(guest, QuestionTest.Q1, "Answers Contents1");
+                new Answer(guest, QuestionTest.Q1, CONTENT);
             });
     }
 }

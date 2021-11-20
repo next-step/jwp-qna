@@ -21,12 +21,4 @@ public abstract class BaseEntity {
     @LastModifiedDate
     @Column(name = "updated_at", updatable = true)
     private LocalDateTime updatedAt;
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
 }

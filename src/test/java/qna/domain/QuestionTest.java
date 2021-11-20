@@ -8,17 +8,28 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import qna.common.exception.ErrorMessage;
 import qna.common.exception.UnAuthorizedException;
+import qna.domain.qna.Answer;
+import qna.domain.deletehistory.DeleteHistory;
+import qna.domain.qna.Contents;
+import qna.domain.qna.Question;
+import qna.domain.qna.Post;
+import qna.domain.user.User;
 
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+
+    public static final Question Q1 = new Question(QuestionPostTest.QUESTION_POST1).writeBy(
+        UserTest.JAVAJIGI);
+    public static final Question Q2 = new Question(QuestionPostTest.QUESTION_POST2).writeBy(
+        UserTest.SANJIGI);
 
     @Test
-    @DisplayName("delete(삭제) 메소드 호출시 delete 값을 true 로 변경")
+    @DisplayName("자신의 질문 삭제, (답변 없음)")
     void deleted() {
         // given
-        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Question question = new Question(QuestionPostTest.QUESTION_POST1).writeBy(
+            UserTest.JAVAJIGI);
 
         // when
         question.delete(UserTest.JAVAJIGI);
@@ -40,7 +51,7 @@ public class QuestionTest {
     void addAnswer() {
         // given
         Question question = Q1;
-        Answer expect = new Answer(UserTest.SANJIGI, question, "답변내용");
+        Answer expect = new Answer(UserTest.SANJIGI, question, Contents.of("답변내용"));
 
         // when
         question.addAnswer(expect);
@@ -71,7 +82,21 @@ public class QuestionTest {
         assertThatExceptionOfType(UnAuthorizedException.class) // then
             .isThrownBy(() -> {
                 // when
-                new Question("안녕하세요 질문이있습니다.", "미가입자도 질문 가능한가요?").writeBy(guest);
-            }).withMessage(UnAuthorizedException.GUEST_USER_NOT_QUESTION);
+                new Question(Post.of("안녕하세요 질문이있습니다.", "미가입자도 질문 가능한가요?")).writeBy(guest);
+            }).withMessage(ErrorMessage.GUEST_USER_NOT_QUESTION_EXCEPTION_MESSAGE.getErrorMsg());
     }
+
+    @Test
+    @DisplayName("질문 삭제 리턴 값 DeleteHistory 검증")
+    void adeleted() {
+        // given
+        Question question = new Question(QuestionPostTest.QUESTION_POST1).writeBy(
+            UserTest.JAVAJIGI);
+
+        // when
+        // then
+        assertThat(question.delete(UserTest.JAVAJIGI)).contains(
+            DeleteHistory.OfQuestion(question, UserTest.JAVAJIGI));
+    }
+
 }
