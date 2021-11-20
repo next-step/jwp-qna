@@ -12,9 +12,6 @@ import qna.CannotDeleteException;
 
 @DataJpaTest
 public class AnswerTest {
-    public static Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents2");
-
 
     @DisplayName("Answer 값 확인")
     @Test
