@@ -33,7 +33,7 @@ public class DeleteHistory {
     private ContentType contentType;
 
     @CreatedDate
-    private LocalDateTime createDate;
+    private LocalDateTime createDate = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
@@ -49,38 +49,8 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    public DeleteHistory(Answer answer) {
-        this.contentType = ContentType.ANSWER;
-        this.contentId = answer.getId();
-        this.deleter = answer.getWriter();
-        this.createDate = LocalDateTime.now();
-    }
-
-    public DeleteHistory(Question question) {
-        this.contentType = ContentType.QUESTION;
-        this.contentId = question.getId();
-        this.deleter = question.getWriter();
-        this.createDate = LocalDateTime.now();
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public Long getContentId() {
-        return contentId;
-    }
-
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
-    public User getDeleter() {
-        return deleter;
     }
 
     @Override

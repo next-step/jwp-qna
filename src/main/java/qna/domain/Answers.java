@@ -1,48 +1,40 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    private final List<Answer> answers;
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     protected Answers() {
-        this.answers = new ArrayList<>();
     }
 
     public Answers(List<Answer> answerList) {
-        this.answers = answerList;
+        this.answers = Collections.unmodifiableList(answerList);
     }
 
-    public boolean contains(Answer answer) {
-        return answers.contains(answer);
-    }
-
-    public void add(Answer answer) {
-        answers.add(answer);
-    }
-
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for(Answer answer : answers){
-            deleteHistories.add(answer.delete(loginUser));
-        }
-        return deleteHistories;
-    }
-
-    public boolean isAllDelete() {
+    public DeleteHistorys delete(User loginUser, LocalDateTime deleteDateTime) throws CannotDeleteException {
         return this.answers.stream()
-            .allMatch(Answer::isDeleted);
+            .map(answer -> answer.delete(loginUser, deleteDateTime))
+            .collect(Collectors.collectingAndThen(
+                Collectors.toList(), DeleteHistorys::new));
+    }
+
+    public Answers append(Answer answer) {
+        return Stream.concat(Stream.of(answer), answers.stream())
+            .collect(Collectors.collectingAndThen(Collectors.toList(), Answers::new));
     }
 
     @Override

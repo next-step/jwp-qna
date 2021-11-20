@@ -8,14 +8,12 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Title {
     public static final int MAX_LENGTH = 100;
-    public static final String EMPTY = "";
     public static final String ERROR_EXCEEDED_MAX_LENGTH = "TITLE 크기를 초과했습니다.";
 
     @Column(nullable = false, length = MAX_LENGTH)
-    private final String title;
+    private String title;
 
     protected Title() {
-        this.title = EMPTY;
     }
 
     public Title(String text) {
