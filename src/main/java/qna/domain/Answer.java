@@ -57,6 +57,7 @@ public class Answer extends BaseEntity {
         this.writer = writer;
         this.question = question;
         this.contents = new Contents(contents);
+        this.deleted = new Deleted();
     }
 
     protected Answer() {

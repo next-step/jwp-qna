@@ -2,22 +2,35 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import qna.CannotDeleteException;
+
 public class AnswersTest {
+
+    private Answer javaJigiAnswer;
+    private Answer sanJigiAnswer;
+    private List<Answer> answerList;
+
+    @BeforeEach
+    void setUp() {
+        javaJigiAnswer = AnswerTest.A1;
+        sanJigiAnswer = AnswerTest.A2;
+        answerList = new ArrayList<>();
+    }
 
     @DisplayName("Answers 일급컬렉션 값 확인")
     @Test
     void containsAnswer() {
-        Answer answer = AnswerTest.A1;
-        List<Answer> answerList = Arrays.asList(answer);
+        answerList.add(javaJigiAnswer);
         Answers answers = new Answers(answerList);
 
-        boolean isContains = answers.contains(answer);
+        boolean isContains = answers.contains(javaJigiAnswer);
 
         assertThat(isContains).isTrue();
     }
@@ -25,13 +38,38 @@ public class AnswersTest {
     @DisplayName("Answer 값 추가")
     @Test
     void addAnswers() {
-        Answer answer = AnswerTest.A1;
-        List<Answer> answerList = Arrays.asList(answer);
+        answerList.add(javaJigiAnswer);
         Answers answers = new Answers(answerList);
+        answers = answers.add(sanJigiAnswer);
 
-        answers = answers.add(AnswerTest.A2);
-        boolean contains = answers.contains(AnswerTest.A2);
+        boolean contains = answers.contains(sanJigiAnswer);
 
         assertThat(contains).isTrue();
+    }
+
+    @DisplayName("Answer list 삭제 상태 변경")
+    @Test
+    void deleteAnswers() throws CannotDeleteException {
+        answerList.add(javaJigiAnswer);
+        User loginUser = UserTest.JAVAJIGI;
+        Answers answers = new Answers(answerList);
+        answers.delete(loginUser);
+
+        boolean isAllDelete = answers.isAllDelete();
+
+        assertThat(isAllDelete).isTrue();
+    }
+
+    @DisplayName("다른 사용자의 질문을 삭제할 경우")
+    @Test
+    void invalidDeleteAnswers() {
+        assertThatExceptionOfType(CannotDeleteException.class)
+            .isThrownBy(() -> {
+                User loginUser = UserTest.JAVAJIGI;
+                answerList.add(sanJigiAnswer);
+                Answers answers = new Answers(answerList);
+
+                answers.delete(loginUser);
+            }).withMessageMatching("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }
