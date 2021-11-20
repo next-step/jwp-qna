@@ -13,7 +13,7 @@ import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
-    @OneToMany(mappedBy = "answer", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
     private final List<Answer> answers;
 
     protected Answers() {

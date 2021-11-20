@@ -110,9 +110,9 @@ public class Answer extends BaseEntity {
         if (o == null || getClass() != o.getClass())
             return false;
         Answer answer = (Answer)o;
-        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents,
-            answer.contents) && Objects.equals(question, answer.question) && Objects.equals(writer,
-            answer.writer);
+        return Objects.equals(id, answer.id) && Objects.equals(contents, answer.contents)
+            && Objects.equals(deleted, answer.deleted) && Objects.equals(question, answer.question)
+            && Objects.equals(writer, answer.writer);
     }
 
     @Override
