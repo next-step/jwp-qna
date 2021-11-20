@@ -18,7 +18,7 @@ public class Answer extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,21 +42,13 @@ public class Answer extends BaseEntity {
             throw new NotFoundException();
         }
 
-        writerBy(writer);
+        this.writer = writer;
         toQuestion(question);
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
-    }
-
-    public void writerBy(User writer) {
-        if (this.writer != null) {
-            this.writer.getAnswers().remove(this);
-        }
-        this.writer = writer;
-        this.writer.getAnswers().add(this);
     }
 
     public void toQuestion(Question question) {

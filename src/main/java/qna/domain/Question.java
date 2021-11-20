@@ -40,16 +40,8 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        toWriter(writer);
-        return this;
-    }
-
-    public void toWriter(User writer) {
-        if (this.writer != null) {
-            this.writer.getQuestions().remove(this);
-        }
         this.writer = writer;
-        this.writer.getQuestions().add(this);
+        return this;
     }
 
     public boolean isOwner(User writer) {

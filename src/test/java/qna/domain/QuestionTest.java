@@ -1,10 +1,13 @@
 package qna.domain;
 
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.event.annotation.BeforeTestClass;
 import qna.NotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,38 +32,51 @@ public class QuestionTest {
     void setUp() {
         javajigi = userRepository.save(UserTest.JAVAJIGI);
         sanjigi = userRepository.save(UserTest.SANJIGI);
+        userRepository.flush();
     }
 
     @Test
     void save() {
-        final String title = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi)).getTitle();
+        final String title = questionRepository.save(QuestionFixture.질문().writeBy(javajigi)).getTitle();
+        questionRepository.flush();
         assertThat(title).isEqualTo("title1");
+
     }
 
     @Test
     void findById() {
-        final Question question = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi));
+        final Question question = questionRepository.save(QuestionFixture.질문().writeBy(javajigi));
         questionRepository.flush();
         final Question expected = questionRepository.findById(question.getId())
                 .orElseThrow(NotFoundException::new);
-        assertThat(question.getTitle()).isEqualTo("title1");
+        assertThat(question.getId()).isEqualTo(expected.getId());
     }
 
     @Test
     @DisplayName("삭제되지 않은 질문 찾기")
     void findByDeletedFalse() {
-        final Question question = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi));
+        final Question question = questionRepository.save(QuestionFixture.질문().writeBy(javajigi));
         question.setDeleted(true);
+        questionRepository.flush();
         assertThat(questionRepository.findByDeletedFalse()).hasSize(0);
     }
 
     @Test
     @DisplayName("id로 삭제되지 않은 질문 찾기")
     void findByIdAndDeletedFalse() {
-        final Question question = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi));
+        final Question question = questionRepository.save(QuestionFixture.질문().writeBy(javajigi));
         question.setDeleted(true);
+        questionRepository.flush();
         assertThatThrownBy(() -> questionRepository.findByIdAndDeletedFalse(question.getId())
                 .orElseThrow(NotFoundException::new))
                 .isInstanceOf(NotFoundException.class);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        userRepository.deleteAll();
+        questionRepository.deleteAll();
+        userRepository.flush();
+        questionRepository.flush();
     }
 }
