@@ -1,6 +1,7 @@
 package qna.repository;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -14,6 +15,7 @@ public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @DisplayName("Question 데이터 save 하는 테스트 진행")
     @Test
     public void save() {
 
@@ -31,6 +33,7 @@ public class QuestionRepositoryTest {
 
     }
 
+    @DisplayName("Question 데이터 find 하는 테스트 진행")
     @Test
     public void find() {
 
