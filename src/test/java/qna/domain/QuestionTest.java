@@ -1,9 +1,16 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.*;
+import static qna.domain.ContentType.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import qna.CannotDeleteException;
 import qna.ErrorMessage;
 import qna.UnAuthorizedException;
 
@@ -14,21 +21,23 @@ public class QuestionTest {
     @Test
     @DisplayName("유저정보가 null인 Question 생성시 예외")
     void given_userNull_then_UnAuthorizedException() {
-        Assertions.assertThatThrownBy(() -> {
-                new Question(3L, "title3", "content3").writeBy(null);
-            }).isInstanceOf(UnAuthorizedException.class)
-            .hasMessage(ErrorMessage.USER_IS_NOT_NULL);
+        Assertions.assertThatThrownBy(() -> new Question(3L, "title3", "content3").writeBy(null))
+                  .isInstanceOf(UnAuthorizedException.class)
+                  .hasMessage(ErrorMessage.USER_IS_NOT_NULL);
     }
 
     @Test
-    @DisplayName("Q1 삭제여부를 true 변경했을 때 true 확인")
-    void given_Q1_when_Change_Delete_To_true_then_isTrue() {
+    @DisplayName("삭제된 데이터 검증")
+    void given_Q1_when_Change_Delete_To_true_then_isTrue() throws CannotDeleteException {
+        // given
+        User user = new User("seunghoona", "password", "username", "email");
+        Question question = new Question("title", "contents").writeBy(user);
 
         // when
-        Q1.setDeleted(true);
+        DeleteHistory deleteHistory = question.deleteQuestion(user);
 
         // then
-        Assertions.assertThat(Q1.isDeleted()).isTrue();
+        assertThat(deleteHistory).isEqualTo(new DeleteHistory(QUESTION, question, user, LocalDateTime.now()));
     }
 
 }

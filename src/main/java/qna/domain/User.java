@@ -47,17 +47,30 @@ public class User extends BaseTime {
         this.email = email;
     }
 
-    public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException(UN_AUTHORITY);
-        }
-
-        if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException(UN_AUTHORITY);
-        }
+    public void updateNameAndEmail(User loginUser, User target) {
+        isNotMatchUserIdThrow(loginUser);
+        isNotMatchPasswordThrow(target);
 
         this.name = target.name;
         this.email = target.email;
+    }
+
+    public void changePassword(User loginUser, String changePassword) {
+        isNotMatchUserIdThrow(loginUser);
+        isNotMatchPasswordThrow(loginUser);
+        this.password = changePassword;
+    }
+
+    private void isNotMatchPasswordThrow(User target) {
+        if (!matchPassword(target.password)) {
+            throw new UnAuthorizedException(UN_AUTHORITY);
+        }
+    }
+
+    private void isNotMatchUserIdThrow(User loginUser) {
+        if (!matchUserId(loginUser.userId)) {
+            throw new UnAuthorizedException(UN_AUTHORITY);
+        }
     }
 
     private boolean matchUserId(String userId) {
@@ -85,40 +98,20 @@ public class User extends BaseTime {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public String getEmail() {
+        return email;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getUserId() {
+        return userId;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public String getPassword() {
+        return password;
     }
 
     @Override
