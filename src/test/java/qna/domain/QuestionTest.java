@@ -38,6 +38,6 @@ public class QuestionTest {
                 new DeleteHistory(ContentType.QUESTION, Q2.getId(), Q2.getWriter(), LocalDateTime.now()),
                 new DeleteHistory(ContentType.ANSWER, AnswerTest.A3.getId(), AnswerTest.A3.getWriter(),
                     LocalDateTime.now())
-                ));
+            ));
     }
 }
