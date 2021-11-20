@@ -1,7 +1,10 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import qna.CannotDeleteException;
 
@@ -35,6 +39,9 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
+    @Embedded
+    Answers answers;
+
     protected Question() {
     }
 
@@ -46,6 +53,7 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = new Title(title);
         this.contents = new Contents(contents);
+        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {
@@ -67,6 +75,7 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.setQuestion(this);
+        this.answers = answers.add(answer);
     }
 
     public Long getId() {
