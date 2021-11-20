@@ -22,7 +22,7 @@
 - [X] 질문 테이블에 질문-답변(1:N) 연관관계 매핑
 
 #### 코드리뷰 사항
-- [ ] question Lob 타입 사용
-- [ ] Answer를 조회시 항상 Question, Writer를 같이 조회해야 하는 경우가 아니라면 지연로딩 속성 추
-- [ ] entity의 경우 equals보다는 id로 같은지 비교
-- [ ] 메시지와 함께 예외상황 표시
+- [X] question Lob 타입 사용
+- [X] Answer를 조회시 항상 Question, Writer를 같이 조회해야 하는 경우가 아니라면 지연로딩 속성 추
+- [X] entity의 경우 equals보다는 id로 같은지 비교
+- [X] 메시지와 함께 예외상황 표시
