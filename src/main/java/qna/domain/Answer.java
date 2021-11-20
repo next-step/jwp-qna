@@ -53,11 +53,20 @@ public class Answer extends BaseTimeEntity {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
+    public void mappingToQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswer().remove(this);
+        }
         this.question = question;
+        if(!question.getAnswer().contains(this)) {
+            question.getAnswer().add(this);
+        }
     }
 
     public Question getQuestion() {
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
         return this.question;
     }
 
@@ -70,22 +79,24 @@ public class Answer extends BaseTimeEntity {
     }
 
     public User getWriter() {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
         return writer;
     }
 
-    public void mappedToWriter(User writer) {
+    public void mappingToWriter(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
         this.writer = writer;
-    }
-
-    public void mappedToQuestion(Question question) {
-        this.question = question;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void updateAnswerContents(String contents) {
         this.contents = contents;
     }
 

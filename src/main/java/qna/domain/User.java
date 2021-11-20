@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "user_information")
 public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
     @Id

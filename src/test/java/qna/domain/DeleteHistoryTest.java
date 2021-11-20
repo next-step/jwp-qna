@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +8,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.UserTest.user;
+import static qna.domain.UserTest.userA;
 
 @DataJpaTest
 public class DeleteHistoryTest {
 
-    public static final DeleteHistory D1 = new DeleteHistory(ContentType.QUESTION, user().getId(), user(), LocalDateTime.now());
+    public static final DeleteHistory D1 = new DeleteHistory(ContentType.QUESTION, userA().getId(), userA(), LocalDateTime.now());
 
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
@@ -26,7 +25,7 @@ public class DeleteHistoryTest {
     @Test
     void save() {
         //when
-        D1.setDeletedBy(userRepository.save(user()));
+        D1.setDeletedBy(userRepository.save(userA()));
         DeleteHistory save = deleteHistoryRepository.save(D1);
 
         //then
@@ -37,7 +36,7 @@ public class DeleteHistoryTest {
     @Test
     void read() {
         //when
-        D1.setDeletedBy(userRepository.save(user()));
+        D1.setDeletedBy(userRepository.save(userA()));
         DeleteHistory save = deleteHistoryRepository.save(D1);
         DeleteHistory found = deleteHistoryRepository.findById(save.getId()).orElse(null);
 
@@ -49,7 +48,7 @@ public class DeleteHistoryTest {
     @Test
     void update() {
         //when
-        D1.setDeletedBy(userRepository.save(user()));
+        D1.setDeletedBy(userRepository.save(userA()));
         DeleteHistory save = deleteHistoryRepository.save(D1);
         save.setContentType(ContentType.ANSWER);
         DeleteHistory found = deleteHistoryRepository.findById(save.getId()).orElseThrow(() -> new NullPointerException("테스트실패"));
@@ -62,7 +61,7 @@ public class DeleteHistoryTest {
     @Test
     void delete() {
         //when
-        D1.setDeletedBy(userRepository.save(user()));
+        D1.setDeletedBy(userRepository.save(userA()));
         DeleteHistory save = deleteHistoryRepository.save(D1);
         deleteHistoryRepository.delete(save);
         deleteHistoryRepository.flush();

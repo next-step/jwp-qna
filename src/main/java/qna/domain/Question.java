@@ -1,8 +1,11 @@
 package qna.domain;
 
+import qna.UnAuthorizedException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -26,6 +29,10 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    protected Question() {
+
+    }
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }
@@ -36,8 +43,8 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    protected Question() {
-
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     public Question writeBy(User writer) {
@@ -45,12 +52,24 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public void mappingToWriter(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
+        this.writer = writer;
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+    public User getWriter() {
+        return writer;
+    }
+
+    public void mappingToAnswer(Answer answer) {
+        answers.add(answer);
+        answer.mappingToQuestion(this);
+    }
+
+    public List<Answer> getAnswer() {
+        return answers;
     }
 
     public Long getId() {
@@ -65,16 +84,8 @@ public class Question extends BaseTimeEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void updateQuestionContents(String contents) {
         this.contents = contents;
-    }
-
-    public User getWriter() {
-        return writer;
-    }
-
-    public void mappedToWriter(User writer) {
-        this.writer = writer;
     }
 
     public boolean isDeleted() {

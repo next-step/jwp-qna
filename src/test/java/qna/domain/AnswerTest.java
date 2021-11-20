@@ -6,14 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.QuestionTest.question;
-import static qna.domain.QuestionTest.question2;
-import static qna.domain.UserTest.admin;
+import static qna.domain.QuestionTest.*;
+import static qna.domain.UserTest.userA;
+import static qna.domain.UserTest.userB;
 
 @DataJpaTest
 public class AnswerTest {
-    public static final Answer A1 = new Answer(admin(), question(), "JPA에서 엔티티를 저장할 때 연관된 모든 엔티티는 영속 상태여야 합니다.");
-
     @Autowired
     private AnswerRepository answerRepository;
 
@@ -26,55 +24,98 @@ public class AnswerTest {
     @DisplayName("Create 및 ID 생성 테스트")
     @Test
     void save() {
+        //given
+        Answer A5 = answer5();
+        A5.mappingToWriter(userRepository.save(userB()));
+        A5.mappingToQuestion(questionRepository.save(question6()));
+
         //when
-        A1.mappedToWriter(userRepository.save(admin()));
-        A1.mappedToQuestion(questionRepository.save(question()));
-        Answer save = answerRepository.save(A1);
+        Answer result = answerRepository.save(A5);
 
         //then
-        assertThat(save.getId()).isNotNull();
+        assertThat(result.getId()).isNotNull();
     }
 
     @DisplayName("Read 테스트")
     @Test
     void read() {
+        //given
+        Answer A6 = answer6();
+        A6.mappingToWriter(userRepository.save(userB()));
+        A6.mappingToQuestion(questionRepository.save(question6()));
+
         //when
-        A1.mappedToWriter(userRepository.save(admin()));
-        A1.mappedToQuestion(questionRepository.save(question()));
-        Answer save = answerRepository.save(A1);
-        Answer found = answerRepository.findById(save.getId()).orElse(null);
+        Answer save = answerRepository.save(A6);
+        Answer result = answerRepository.findById(save.getId()).orElse(null);
 
         //then
-        assertThat(found).isEqualTo(save);
+        assertThat(result).isEqualTo(save);
     }
 
     @DisplayName("Update 테스트")
     @Test
     void update() {
+        //given
+        Answer A6 = answer6();
+        A6.mappingToWriter(userRepository.save(userB()));
+        A6.mappingToQuestion(questionRepository.save(question6()));
+
         //when
-        A1.mappedToWriter(userRepository.save(admin()));
-        A1.mappedToQuestion(questionRepository.save(question()));
-        Answer save = answerRepository.save(A1);
-        save.setContents("update!!");
-        save.toQuestion(questionRepository.save(question2())); //Answer의 question을 업데이트
-        Answer found = answerRepository.findById(save.getId()).orElseThrow(() -> new NullPointerException("테스트실패"));
+        Answer save = answerRepository.save(A6);
+        save.updateAnswerContents("답변 수정!!");
+        save.mappingToQuestion(questionRepository.save(question5()));
+        Answer result = answerRepository.findById(save.getId()).orElseThrow(() -> new NullPointerException("테스트실패"));
 
         //then
-        assertThat(found.getContents()).isEqualTo("update!!");
-        assertThat(found.getQuestion().getContents()).isEqualTo(question2().getContents()); //Answer의 question이 업데이트 되었는지 확인
+        assertThat(result.getContents()).isEqualTo("답변 수정!!");
+        assertThat(result.getQuestion().getContents()).isEqualTo(question5().getContents());
+    }
+
+    @DisplayName("Update 테스트 2")
+    @Test
+    void update2() {
+        //when
+        Answer A1 = answerRepository.findById(1L).orElse(null);
+        Answer save = answerRepository.save(A1);
+        save.updateAnswerContents("답변 수정!!");
+        Answer result = answerRepository.findById(save.getId()).orElseThrow(() -> new NullPointerException("테스트실패"));
+
+        //then
+        assertThat(result.getContents()).isEqualTo("답변 수정!!");
     }
 
     @DisplayName("Delete 테스트")
     @Test
     void delete() {
+        //given
+        Answer A6 = answer6();
+        A6.mappingToWriter(userRepository.save(userB()));
+        A6.mappingToQuestion(questionRepository.save(question6()));
+
         //when
-        A1.mappedToWriter(userRepository.save(admin()));
-        A1.mappedToQuestion(questionRepository.save(question()));
-        Answer save = answerRepository.save(A1);
+        Answer save = answerRepository.save(A6);
         answerRepository.delete(save);
         Answer found = answerRepository.findById(save.getId()).orElse(null);
 
         //then
         assertThat(found).isNull();
+    }
+
+    @DisplayName("Delete 테스트 2")
+    @Test
+    void delete2() {
+        Answer A1 = answerRepository.findById(1L).orElse(null);
+        answerRepository.delete(A1);
+        Answer result = answerRepository.findById(1L).orElse(null);
+        //then
+        assertThat(result).isNull();
+    }
+
+    static Answer answer5() {
+        return new Answer(userA(), question5(), "답변5");
+    }
+
+    static Answer answer6() {
+        return new Answer(userB(), question6(), "답변6");
     }
 }
