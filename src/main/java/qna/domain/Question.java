@@ -1,7 +1,6 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 public class Question extends BaseTimeEntity{
