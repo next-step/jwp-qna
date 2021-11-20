@@ -13,7 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
-import qna.ForbiddenException;
+import qna.CannotAddException;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -68,7 +68,7 @@ public class Question extends BaseTimeEntity {
 
     public void addAnswer(Answer answer) {
         if (!answer.isFrom(this)) {
-            throw new ForbiddenException();
+            throw new CannotAddException("이 질문에 대한 답변이 아니므로 추가할 수 없습니다.");
         }
         this.answers.add(answer);
     }
