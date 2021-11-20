@@ -46,4 +46,14 @@ public class QuestionTest {
         assertThatThrownBy(() -> q1.delete(UserTest.JAVAJIGI))
                 .isInstanceOf(ForbiddenException.class);
     }
+
+    @Test
+    @DisplayName("삭제이력을 저장한다")
+    void makeDeleteHistoryTest() {
+        q1.addAnswer(AnswerTest.A1);
+
+        System.out.println(q1.delete(UserTest.JAVAJIGI));
+
+        assertThat(q1.delete(UserTest.JAVAJIGI).size()).isEqualTo(3);
+    }
 }
