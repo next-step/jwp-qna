@@ -20,8 +20,8 @@ public class Question extends BaseEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     private boolean deleted = false;
 
@@ -87,7 +87,7 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -102,21 +102,22 @@ public class Question extends BaseEntity {
     }
 
     public List<DeleteHistory> delete(User loginUser) {
+        validateAuthentication(loginUser);
+        answers.validateNotOwnerAnswers(loginUser);
+        setDeleted(true);
+        return getDeleteHistories();
+    }
+
+    private List<DeleteHistory> getDeleteHistories() {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(), getWriter(), LocalDateTime.now()));
+        deleteHistories.addAll(answers.getDeleteHistories());
+        return deleteHistories;
+    }
+
+    private void validateAuthentication(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new ForbiddenException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
-        }
-        setDeleted(true);
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(), getWriter(), LocalDateTime.now()));
-        for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
-        return deleteHistories;
     }
 }
