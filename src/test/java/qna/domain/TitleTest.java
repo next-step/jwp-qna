@@ -42,6 +42,6 @@ public class TitleTest {
                     .collect(Collectors.joining());
 
                 Title title = new Title(text);
-            }).withMessageMatching("TITLE 크기를 초과했습니다.");
+            });
     }
 }

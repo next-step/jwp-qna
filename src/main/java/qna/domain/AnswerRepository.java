@@ -12,7 +12,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
     Answer findByWriterId(Long id);
 
-    List<Answer> findByQuestion(Question question);
-
-    Answer findByContentsLike(String contents);
+    List<Answer> findByQuestionId(Long id);
 }

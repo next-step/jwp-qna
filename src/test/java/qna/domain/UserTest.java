@@ -13,17 +13,11 @@ public class UserTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
-    @DisplayName("User 값 확인")
+    @DisplayName("User 생성")
     @Test
     void init() {
-        User javaJigi = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+        User user = TestCreateFactory.createUser(1L);
 
-        assertAll(
-            () -> assertThat(javaJigi.getId()).isEqualTo(1L),
-            () -> assertThat(javaJigi.getUserId()).isEqualTo("javajigi"),
-            () -> assertThat(javaJigi.getPassword()).isEqualTo("password"),
-            () -> assertThat(javaJigi.getName()).isEqualTo("name"),
-            () -> assertThat(javaJigi.getEmail()).isEqualTo("javajigi@slipp.net")
-        );
+        assertThat(user).isNotNull();
     }
 }

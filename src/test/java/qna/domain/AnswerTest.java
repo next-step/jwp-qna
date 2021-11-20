@@ -14,36 +14,24 @@ import qna.CannotDeleteException;
 public class AnswerTest {
     public static Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents2");
-    private User javaJigi;
-    private User sanJigi;
-    private Question javaJigiQuestion;
-    private Question sanJigiQuestion;
 
-    @BeforeEach
-    void setUp() {
-        javaJigi = UserTest.JAVAJIGI;
-        sanJigi = UserTest.SANJIGI;
-        javaJigiQuestion = QuestionTest.Q1;
-        sanJigiQuestion = QuestionTest.Q2;
-    }
 
     @DisplayName("Answer 값 확인")
     @Test
     void init() {
-        Answer JavaJigiAnswer = new Answer(javaJigi, javaJigiQuestion, "Answers Contents1");
+        User user = TestCreateFactory.createUser(1L);
+        Question question = TestCreateFactory.createQuestion(user);
+        Answer answer = TestCreateFactory.createAnswer(user, question);
 
-        assertAll(
-            () -> assertThat(JavaJigiAnswer.getWriter()).isEqualTo(javaJigi),
-            () -> assertThat(JavaJigiAnswer.getQuestion()).isEqualTo(QuestionTest.Q1),
-            () -> assertThat(JavaJigiAnswer.getContents()).isEqualTo("Answers Contents1")
-        );
+        assertThat(answer.getWriter()).isEqualTo(user);
     }
 
     @DisplayName("로그인한 사용자의 답변 삭제")
     @Test
-    void deleteAnswer() throws CannotDeleteException {
-        User loginUser = UserTest.JAVAJIGI;
-        Answer answer = new Answer(loginUser, QuestionTest.Q1, "Answers Contents1");
+    void deleteAnswer() {
+        User loginUser = TestCreateFactory.createUser(1L);
+        Question question = TestCreateFactory.createQuestion(loginUser);
+        Answer answer = TestCreateFactory.createAnswer(loginUser, question);
 
         answer.delete(loginUser);
 
@@ -55,9 +43,10 @@ public class AnswerTest {
     void invalidDeleteAnswer() {
         assertThatExceptionOfType(CannotDeleteException.class)
             .isThrownBy(() -> {
-                User loginUser = UserTest.JAVAJIGI;
-                User answerUser = UserTest.SANJIGI;
-                Answer answer = new Answer(answerUser, QuestionTest.Q1, "Answers Contents1");
+                User loginUser = TestCreateFactory.createUser(1L);
+                User answerUser = TestCreateFactory.createUser(2L);
+                Question question = TestCreateFactory.createQuestion(loginUser);
+                Answer answer = TestCreateFactory.createAnswer(answerUser, question);
 
                 answer.delete(loginUser);
             }).withMessageMatching("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");

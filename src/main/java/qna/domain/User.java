@@ -84,14 +84,6 @@ public class User extends BaseEntity {
         return userId;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
     public String getName() {
         return name;
     }
