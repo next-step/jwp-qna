@@ -42,9 +42,7 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-        if (!question.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+        question.validateOwner(loginUser);
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
         for (Answer answer : answers) {

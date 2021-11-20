@@ -14,6 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import qna.CannotAddException;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -54,8 +55,10 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.matchId(writer);
+    public void validateOwner(User writer) {
+        if (!this.writer.matchId(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public boolean matchId(Question question) {
