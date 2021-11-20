@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -48,5 +49,11 @@ public class Answers {
     @Override
     public int hashCode() {
         return Objects.hash(answers);
+    }
+
+    public List<DeleteHistory> makeDeleteHistories() {
+        return answers.stream()
+            .map(Answer::makeDeleteHistory)
+            .collect(Collectors.toList());
     }
 }

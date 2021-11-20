@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,5 +35,12 @@ public class QuestionTest {
     void makeDeleteHistory() {
         assertThat(Q1.makeDeleteHistory())
             .isEqualTo(new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now()));
+    }
+
+    @DisplayName("질문에 대한 답변 삭제 이력 생성")
+    @Test
+    void makeAnswerHistories() {
+        assertThat(Q2.makeAnswerHistories())
+            .isEqualTo(Arrays.asList(new DeleteHistory(ContentType.ANSWER, AnswerTest.A3.getId(), AnswerTest.A3.getWriter(), LocalDateTime.now())));
     }
 }

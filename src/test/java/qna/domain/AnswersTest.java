@@ -2,7 +2,10 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,22 +14,14 @@ import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
 class AnswersTest {
-    private Answer answer;
-
-    @BeforeEach
-    void setUp() {
-        answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents");
-    }
-
     @DisplayName("답변 추가")
     @Test
     void add() {
         Answers answers = new Answers();
-        Answer answer = new Answer();
 
-        answers.add(answer);
+        answers.add(AnswerTest.A1);
 
-        assertThat(answers).isEqualTo(new Answers(Arrays.asList(answer)));
+        assertThat(answers).isEqualTo(new Answers(Arrays.asList(AnswerTest.A1)));
     }
 
     @DisplayName("모든 답변자가 작성자인지 확인")
@@ -37,5 +32,21 @@ class AnswersTest {
         assertThatExceptionOfType(CannotDeleteException.class)
             .isThrownBy(() -> answers.validateOwner(UserTest.JAVAJIGI))
             .withMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
+
+    @DisplayName("삭제 이력 생성")
+    @Test
+    void makeDeleteHistories() {
+        Answers answers = new Answers(Arrays.asList(AnswerTest.A1, AnswerTest.A1));
+        List<DeleteHistory> expected = new ArrayList<>();
+        expected.add(
+            new DeleteHistory(ContentType.ANSWER, AnswerTest.A1.getId(), AnswerTest.A1.getWriter(), LocalDateTime
+                .now()));
+        expected.add(new DeleteHistory(ContentType.ANSWER, AnswerTest.A1.getId(), AnswerTest.A1.getWriter(), LocalDateTime
+            .now()));
+
+        List<DeleteHistory> deleteHistories = answers.makeDeleteHistories();
+
+        assertThat(deleteHistories).isEqualTo(expected);
     }
 }

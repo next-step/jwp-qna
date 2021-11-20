@@ -1,6 +1,8 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -132,5 +134,9 @@ public class Question extends BaseTimeEntity {
 
     public DeleteHistory makeDeleteHistory() {
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+    }
+
+    public List<DeleteHistory> makeAnswerHistories() {
+        return answers.makeDeleteHistories();
     }
 }
