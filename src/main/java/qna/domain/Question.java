@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,12 +58,6 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public void validateOwner(User writer) {
-        if (!this.writer.matchId(writer)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-    }
-
     public boolean matchId(Question question) {
         if (Objects.isNull(this.id)) {
             return false;
@@ -78,8 +73,23 @@ public class Question extends BaseTimeEntity {
         this.answers.add(answer);
     }
 
-    public void delete() {
+    public List<DeleteHistory> delete(User loginUser) {
+        validateOwner(loginUser);
         deleted = true;
+        return makeDeleteHistories(loginUser);
+    }
+
+    protected void validateOwner(User writer) {
+        if (!this.writer.matchId(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    protected List<DeleteHistory> makeDeleteHistories(User loginUser) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(answers.delete(loginUser));
+        return deleteHistories;
     }
 
     public Long getId() {
@@ -129,19 +139,5 @@ public class Question extends BaseTimeEntity {
         sb.append(", deleted=").append(deleted);
         sb.append('}');
         return sb.toString();
-    }
-
-    public List<DeleteHistory> makeDeleteHistories() {
-        List<DeleteHistory> deleteHistories = answers.makeDeleteHistories();
-        deleteHistories.add(makeDeleteHistory());
-        return deleteHistories;
-    }
-
-    public DeleteHistory makeDeleteHistory() {
-        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
-    }
-
-    public List<DeleteHistory> makeAnswerHistories() {
-        return answers.makeDeleteHistories();
     }
 }

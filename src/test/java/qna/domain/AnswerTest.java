@@ -29,10 +29,10 @@ public class AnswerTest {
             .withMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 
-    @DisplayName("삭제 이력 생성")
+    @DisplayName("삭제")
     @Test
-    void makeDeleteHistory() {
-        assertThat(A1.makeDeleteHistory())
+    void delete() {
+        assertThat(A1.delete(UserTest.JAVAJIGI))
             .isEqualTo(new DeleteHistory(ContentType.ANSWER, A1.getId(), A1.getWriter(), LocalDateTime.now()));
     }
 }

@@ -20,11 +20,14 @@ public class Answers {
     protected Answers() {
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public List<DeleteHistory> delete(User loginUser) {
+        validateOwner(loginUser);
+        return answers.stream()
+            .map(answer -> answer.delete(loginUser))
+            .collect(Collectors.toList());
     }
 
-    public void validateOwner(User loginUser) {
+    protected void validateOwner(User loginUser) {
         for (Answer answer : answers) {
             answer.validateOwner(loginUser);
         }
@@ -32,6 +35,10 @@ public class Answers {
 
     public boolean add(Answer answer) {
         return answers.add(answer);
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override
@@ -49,11 +56,5 @@ public class Answers {
     @Override
     public int hashCode() {
         return Objects.hash(answers);
-    }
-
-    public List<DeleteHistory> makeDeleteHistories() {
-        return answers.stream()
-            .map(Answer::makeDeleteHistory)
-            .collect(Collectors.toList());
     }
 }

@@ -34,9 +34,9 @@ class AnswersTest {
             .withMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 
-    @DisplayName("삭제 이력 생성")
+    @DisplayName("삭제")
     @Test
-    void makeDeleteHistories() {
+    void delete() {
         Answers answers = new Answers(Arrays.asList(AnswerTest.A1, AnswerTest.A1));
         List<DeleteHistory> expected = new ArrayList<>();
         expected.add(
@@ -45,7 +45,7 @@ class AnswersTest {
         expected.add(new DeleteHistory(ContentType.ANSWER, AnswerTest.A1.getId(), AnswerTest.A1.getWriter(), LocalDateTime
             .now()));
 
-        List<DeleteHistory> deleteHistories = answers.makeDeleteHistories();
+        List<DeleteHistory> deleteHistories = answers.delete(UserTest.JAVAJIGI);
 
         assertThat(deleteHistories).isEqualTo(expected);
     }

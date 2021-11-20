@@ -30,29 +30,14 @@ public class QuestionTest {
             .withMessage("질문을 삭제할 권한이 없습니다.");
     }
 
-    @DisplayName("삭제 이력 생성")
+    @DisplayName("삭제")
     @Test
-    void makeDeleteHistory() {
-        assertThat(Q1.makeDeleteHistory())
-            .isEqualTo(new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now()));
-    }
-
-    @DisplayName("질문에 대한 답변 삭제 이력 생성")
-    @Test
-    void makeAnswerHistories() {
-        assertThat(Q2.makeAnswerHistories())
+    void delete() {
+        assertThat(Q2.delete(UserTest.SANJIGI))
             .isEqualTo(Arrays.asList(
+                new DeleteHistory(ContentType.QUESTION, Q2.getId(), Q2.getWriter(), LocalDateTime.now()),
                 new DeleteHistory(ContentType.ANSWER, AnswerTest.A3.getId(), AnswerTest.A3.getWriter(),
-                    LocalDateTime.now())));
-    }
-
-    @DisplayName("삭제 이력들 생성")
-    @Test
-    void makeDeleteHistories() {
-        assertThat(Q2.makeDeleteHistories())
-            .isEqualTo(Arrays.asList(
-                new DeleteHistory(ContentType.ANSWER, AnswerTest.A3.getId(), AnswerTest.A3.getWriter(),
-                    LocalDateTime.now()),
-                new DeleteHistory(ContentType.QUESTION, Q2.getId(), Q2.getWriter(), LocalDateTime.now())));
+                    LocalDateTime.now())
+                ));
     }
 }

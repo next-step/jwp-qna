@@ -68,7 +68,7 @@ class QuestionRepositoryTest {
     void findByDeletedFalse() {
         Question expected1 = new Question("title2", "contents2").writeBy(user);
         Question expected2 = new Question("title3", "contents3").writeBy(user);
-        question.delete();
+        question.delete(user);
         questionRepository.save(expected1);
         questionRepository.save(expected2);
         questionRepository.save(question);
@@ -97,7 +97,7 @@ class QuestionRepositoryTest {
     @DisplayName("삭제되지 않은 질문 id로 조회하여 존재하지 않는 케이스")
     @Test
     void findByIdAndDeletedFalse_notExists() {
-        question.delete();
+        question.delete(user);
         questionRepository.save(question);
 
         Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(user.getId());

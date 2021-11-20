@@ -60,18 +60,20 @@ public class Answer extends BaseTimeEntity {
     protected Answer() {
     }
 
-    protected void validateOwner(User writer) {
-        if (!this.writer.matchId(writer)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
-    }
-
     public boolean isFrom(Question question) {
         return this.question.matchId(question);
     }
 
-    public void delete() {
+    public DeleteHistory delete(User writer) {
+        validateOwner(writer);
         deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    }
+
+    protected void validateOwner(User writer) {
+        if (!this.writer.matchId(writer)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -111,9 +113,5 @@ public class Answer extends BaseTimeEntity {
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';
-    }
-
-    public DeleteHistory makeDeleteHistory() {
-        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 }

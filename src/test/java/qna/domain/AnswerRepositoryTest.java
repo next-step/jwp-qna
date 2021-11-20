@@ -29,6 +29,7 @@ class AnswerRepositoryTest {
 
     private LocalDateTime startTime;
     private User user1;
+    private User user2;
     private Question question;
     private Answer answer1;
     private Answer answer2;
@@ -38,7 +39,7 @@ class AnswerRepositoryTest {
         startTime = LocalDateTime.now();
 
         user1 = userRepository.save(new User("userId", "name", "password", "email"));
-        User user2 = userRepository.save(new User("userId2", "name", "password", "email"));
+        user2 = userRepository.save(new User("userId2", "name", "password", "email"));
         question = questionRepository.save(new Question("title", "contents").writeBy(user1));
         answer1 = answerRepository.save(new Answer(user1, question, "answer1"));
         answer2 = answerRepository.save(new Answer(user2, question, "answer2"));
@@ -63,7 +64,7 @@ class AnswerRepositoryTest {
     @DisplayName("삭제되지 않은 답변 질문 id로 조회")
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        answer1.delete();
+        answer1.delete(user1);
         answerRepository.save(answer1);
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
@@ -74,11 +75,11 @@ class AnswerRepositoryTest {
     @DisplayName("삭제되지 않은 답변 id로 조회")
     @Test
     void findByIdAndDeletedFalse() {
-        answer2.delete();
+        answer2.delete(user2);
         answerRepository.save(answer2);
 
         Answer deletedAnswer = answerRepository.save(new Answer(user1, question, "answer contents3"));
-        deletedAnswer.delete();
+        deletedAnswer.delete(user1);
 
         Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(answer1.getId());
         Optional<Answer> actualNull = answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId());
