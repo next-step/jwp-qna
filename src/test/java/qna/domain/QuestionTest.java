@@ -2,6 +2,8 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -25,5 +27,12 @@ public class QuestionTest {
                 Q1.validateOwner(UserTest.SANJIGI);
             })
             .withMessage("질문을 삭제할 권한이 없습니다.");
+    }
+
+    @DisplayName("삭제 이력 생성")
+    @Test
+    void makeDeleteHistory() {
+        assertThat(Q1.makeDeleteHistory())
+            .isEqualTo(new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now()));
     }
 }

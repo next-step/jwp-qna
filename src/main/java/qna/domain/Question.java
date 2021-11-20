@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -127,5 +128,9 @@ public class Question extends BaseTimeEntity {
         sb.append(", deleted=").append(deleted);
         sb.append('}');
         return sb.toString();
+    }
+
+    public DeleteHistory makeDeleteHistory() {
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 }
