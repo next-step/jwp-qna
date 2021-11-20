@@ -33,6 +33,7 @@ public class QuestionTest {
     @DisplayName("삭제")
     @Test
     void delete() {
+        Q2.addAnswer(AnswerTest.A3);
         assertThat(Q2.delete(UserTest.SANJIGI))
             .isEqualTo(Arrays.asList(
                 new DeleteHistory(ContentType.QUESTION, Q2.getId(), Q2.getWriter(), LocalDateTime.now()),
