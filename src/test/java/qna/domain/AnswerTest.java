@@ -56,12 +56,12 @@ public class AnswerTest {
         A1.mappedToQuestion(questionRepository.save(question()));
         Answer save = answerRepository.save(A1);
         save.setContents("update!!");
-        //save.toQuestion(questionRepository.save(question2()));
+        save.toQuestion(questionRepository.save(question2())); //Answer의 question을 업데이트
         Answer found = answerRepository.findById(save.getId()).orElseThrow(() -> new NullPointerException("테스트실패"));
 
         //then
         assertThat(found.getContents()).isEqualTo("update!!");
-        //assertThat(found.getContents()).isEqualTo("JPA에서 엔티티를 저장할 때 연관된 모든 엔티티는 영속 상태여야 합니다.");
+        assertThat(found.getQuestion().getContents()).isEqualTo(question2().getContents()); //Answer의 question이 업데이트 되었는지 확인
     }
 
     @DisplayName("Delete 테스트")
