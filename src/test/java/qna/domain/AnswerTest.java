@@ -4,10 +4,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -84,5 +86,34 @@ public class AnswerTest {
                 , () -> assertThat(newAnswers).containsExactly(newAnswer1)
                 , () -> assertThat(newAnswers.get(0).isDeleted()).isFalse()
         );
+    }
+
+    @DisplayName("delete 성공 테스트")
+    @Test
+    void delete_success() throws CannotDeleteException {
+        // given
+        User user = UserTest.JAVAJIGI;
+        Question question = Question.of("title1", "contents1").writeBy(user);
+        Answer answer = Answer.of(user, question, "Answers Contents1");
+
+        // when
+        answer.delete(user);
+
+        // then
+        assertThat(answer.isDeleted()).isTrue();
+    }
+
+    @DisplayName("delete 실패 테스트")
+    @Test
+    void delete_failure() {
+        // given
+        User user = UserTest.JAVAJIGI;
+        Question question = Question.of("title1", "contents1").writeBy(user);
+        Answer answer = Answer.of(user, question, "Answers Contents1");
+
+        // when & then
+        assertThatExceptionOfType(CannotDeleteException.class)
+                .isThrownBy(() -> answer.delete(UserTest.SANJIGI))
+                .withMessage(Answer.EXIST_OTHER_ANSWERS);
     }
 }

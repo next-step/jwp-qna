@@ -1,18 +1,19 @@
 package qna.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import qna.CannotDeleteException;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "question")
 @Entity
 public class Question extends BaseEntity {
+
+    protected static final String NO_DELETE_PERMISSION = "질문을 삭제할 권한이 없습니다.";
+    protected static final String ANSWER_CAN_NOT_BE_NULL = "answer는 null일 수 없습니다.";
+    protected static final String DUPLICATE_ANSWER = "이미 등록된 answer입니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +29,9 @@ public class Question extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "writer_id")
     private User writer;
+
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    private final List<Answer> answers = new ArrayList<>();
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
@@ -59,6 +63,13 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        if (answer == null) {
+            throw new IllegalArgumentException(ANSWER_CAN_NOT_BE_NULL);
+        }
+        if (answers.contains(answer)) {
+            throw new IllegalArgumentException(DUPLICATE_ANSWER);
+        }
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -94,12 +105,42 @@ public class Question extends BaseEntity {
         this.writer = writer;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public QuestionAnswers getQuestionAnswers() {
+        return new QuestionAnswers(answers);
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(NO_DELETE_PERMISSION);
+        }
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.addAll(deleteAnswers(loginUser));
+        deleteHistories.add(deleteQuestion(loginUser));
+        return deleteHistories;
+    }
+
+    private DeleteHistory deleteQuestion(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(NO_DELETE_PERMISSION);
+        }
+        setDeleted(true);
+        return new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now());
+    }
+
+    private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
+        return getQuestionAnswers().delete(loginUser);
     }
 
     @Override
