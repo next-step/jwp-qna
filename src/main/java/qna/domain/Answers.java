@@ -11,8 +11,6 @@ import java.util.stream.Stream;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
-import qna.CannotDeleteException;
-
 @Embeddable
 public class Answers {
     @OneToMany(mappedBy = "question")
@@ -25,7 +23,7 @@ public class Answers {
         this.answers = Collections.unmodifiableList(answerList);
     }
 
-    public DeleteHistorys delete(User loginUser, LocalDateTime deleteDateTime) throws CannotDeleteException {
+    public DeleteHistorys delete(User loginUser, LocalDateTime deleteDateTime) {
         return this.answers.stream()
             .map(answer -> answer.delete(loginUser, deleteDateTime))
             .collect(Collectors.collectingAndThen(

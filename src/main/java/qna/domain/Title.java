@@ -5,10 +5,11 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import qna.ExceedLengthExcpetion;
+
 @Embeddable
 public class Title {
     public static final int MAX_LENGTH = 100;
-    public static final String ERROR_EXCEEDED_MAX_LENGTH = "TITLE 크기를 초과했습니다.";
 
     @Column(nullable = false, length = MAX_LENGTH)
     private String title;
@@ -23,7 +24,7 @@ public class Title {
 
     private void validation(String text) {
         if(isMaxLengthExceeded(text)){
-            throw new IllegalArgumentException(ERROR_EXCEEDED_MAX_LENGTH);
+            throw new ExceedLengthExcpetion(MAX_LENGTH, text.length());
         }
     }
 

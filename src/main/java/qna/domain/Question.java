@@ -20,7 +20,7 @@ import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
-    public static final String ERROR_PERMISSION_TO_DELETE = "질문을 삭제할 권한이 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -64,16 +64,16 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public DeleteHistorys delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistorys delete(User loginUser) {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException(ERROR_PERMISSION_TO_DELETE);
+            throw new CannotDeleteException();
         }
 
         this.deleted = true;
         LocalDateTime deleteDateTime = dateTimeGenerator.generateDateTime();
 
         DeleteHistory questionDeleteHistory =
-            new DeleteHistory(ContentType.QUESTION, this.writer.getId(), this.getWriter(), deleteDateTime);
+            new DeleteHistory(ContentType.QUESTION, this.id, this.writer, deleteDateTime);
         DeleteHistorys deleteHistorys = answers.delete(loginUser, deleteDateTime);
 
         return deleteHistorys.prepend(questionDeleteHistory);

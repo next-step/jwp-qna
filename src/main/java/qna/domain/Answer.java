@@ -13,14 +13,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
-import qna.CannotDeleteException;
+import qna.CannotDeleteSomeoneElseException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseEntity {
-    public static final String ERROR_WRITTEN_BY_SOMEONE_ELSE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +40,9 @@ public class Answer extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
+
+    @Transient
+    private DateTimeGenerator dateTimeGenerator = new CurrentDateTimeGenerator();
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -64,18 +67,18 @@ public class Answer extends BaseEntity {
     protected Answer() {
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
-        return delete(loginUser, LocalDateTime.now());
+    public DeleteHistory delete(User loginUser) {
+        return delete(loginUser, dateTimeGenerator.generateDateTime());
     }
 
-    public DeleteHistory delete(User loginUser, LocalDateTime deleteDateTime) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser, LocalDateTime deleteDateTime) {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException(ERROR_WRITTEN_BY_SOMEONE_ELSE);
+            throw new CannotDeleteSomeoneElseException();
         }
 
         this.deleted = true;
 
-        return new DeleteHistory(ContentType.ANSWER, loginUser.getId(), this.getWriter(), deleteDateTime);
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, deleteDateTime);
     }
 
     public Long getId() {
