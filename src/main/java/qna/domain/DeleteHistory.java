@@ -39,6 +39,9 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deleter;
 
+    protected DeleteHistory() {
+    }
+
     public DeleteHistory(ContentType contentType, Long contentId, User deleter, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
@@ -46,12 +49,18 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    protected DeleteHistory() {
+    public DeleteHistory(Answer answer) {
+        this.contentType = ContentType.ANSWER;
+        this.contentId = answer.getId();
+        this.deleter = answer.getWriter();
+        this.createDate = LocalDateTime.now();
     }
 
-    public DeleteHistory deleteBy(User deleter) {
-        this.deleter = deleter;
-        return this;
+    public DeleteHistory(Question question) {
+        this.contentType = ContentType.QUESTION;
+        this.contentId = question.getId();
+        this.deleter = question.getWriter();
+        this.createDate = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -90,5 +99,4 @@ public class DeleteHistory {
     public int hashCode() {
         return Objects.hash(id, contentId, contentType, createDate, deleter);
     }
-
 }
