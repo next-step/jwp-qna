@@ -39,8 +39,8 @@ public class AnswerTest {
 
     @Test
     void save() {
-        final Question question = questions.save(QuestionTest.Q1);
         final User user = users.save(UserTest.JAVAJIGI);
+        final Question question = questions.save(QuestionTest.Q1.writeBy(user));
         LocalDateTime now = LocalDateTime.now();
 
         final Answer actual = answers.save(
@@ -60,7 +60,7 @@ public class AnswerTest {
     @Test
     void findByName() {
         final User user = users.save(UserTest.JAVAJIGI);
-        final Question question = questions.save(QuestionTest.Q1);
+        final Question question = questions.save(QuestionTest.Q1.writeBy(user));
 
         final Answer expected = answers.save(
                 new Answer(user, question, "Answers Contents1")
@@ -76,7 +76,7 @@ public class AnswerTest {
     void update() {
         final LocalDateTime now = LocalDateTime.now();
         final User user = users.save(UserTest.JAVAJIGI);
-        final Question question = questions.save(QuestionTest.Q1);
+        final Question question = questions.save(QuestionTest.Q1.writeBy(user));
         final Answer answer = answers.save(
                 new Answer(user, question, "Answers Contents1")
         );
@@ -92,8 +92,8 @@ public class AnswerTest {
     @Test
     void updateQuestion() {
         final User user = users.save(UserTest.JAVAJIGI);
-        final Question question1 = questions.save(QuestionTest.Q1);
-        final Question question2 = questions.save(QuestionTest.Q2);
+        final Question question1 = questions.save(QuestionTest.Q1.writeBy(user));
+        final Question question2 = questions.save(QuestionTest.Q2.writeBy(user));
         final Answer answer = answers.save(
                 new Answer(user, question1, "Answers Contents1")
         );

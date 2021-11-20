@@ -3,10 +3,12 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 public class QuestionTest {
@@ -16,9 +18,15 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questions;
 
+    @Autowired
+    private UserRepository users;
+
     @Test
     void save() {
-        final Question question = questions.save(Q1);
+        final User user = users.save(UserTest.JAVAJIGI);
+        final Question question = questions.save(
+                Q1.writeBy(user)
+        );
         assertThat(question.getId()).isNotNull();
         assertThat(question.getTitle()).isEqualTo(Q1.getTitle());
     }
@@ -31,10 +39,20 @@ public class QuestionTest {
 
     @Test
     void findByDeletedFalse() {
-        questions.save(Q1);
-        questions.save(Q2);
+        final User user1 = users.save(UserTest.JAVAJIGI);
+        final User user2 = users.save(UserTest.SANJIGI);
+        questions.save(Q1.writeBy(user1));
+        questions.save(Q2.writeBy(user2));
 
         List<Question> questions = this.questions.findByDeletedFalse();
         assertThat(questions.size()).isEqualTo(2);
+    }
+
+    @Test
+    void nullableFalse() {
+        Question question = new Question(null, "contents");
+
+        assertThatThrownBy(() -> questions.save(question))
+                .isInstanceOf(DataIntegrityViolationException.class);
     }
 }
