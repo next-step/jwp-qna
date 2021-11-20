@@ -40,11 +40,6 @@ public class AnswerTest {
                 () -> assertThat(actual.getId()).isEqualTo(A1.getId())
         );
     }
-    
-    /*
-    4. 삭제
-        - Question 삭제 시 하위에 있는 Answer도 삭제 테스트
-     */
 
     @Test
     @DisplayName("질문 수정")
@@ -77,4 +72,11 @@ public class AnswerTest {
         );
     }
 
+    @Test
+    @DisplayName("Answer ID를 통한 삭제")
+    void deleteAnswerById() {
+        Question question = questionRepository.save(QuestionTest.Q1);
+        answer1.setDeleted(true);
+        assertThat(answerRepository.countByQuestionIdAndDeletedFalse(question.getId())).isEqualTo(1L);
+    }
 }
