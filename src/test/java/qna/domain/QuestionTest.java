@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
+import javax.persistence.EntityManager;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+
+    @Autowired
+    EntityManager entityManager;
 
     @Autowired
     QuestionRepository questionRepository;
@@ -62,6 +66,27 @@ public class QuestionTest {
                 .extracting(question -> question.isOwner(javajigi), Question::isDeleted)
                 .containsExactly(new Tuple(true, false))
         );
+    }
+
+    @Test
+    void jpaAuditing() {
+        //given
+        final User user = 유저등록(UserTest.JAVAJIGI);
+
+        assertDoesNotThrow(() -> {
+            //when then - @CreatedDate 테스트
+            final Question question = questionRepository.save(Q1.writeBy(user));
+            entityManager.detach(question);
+
+            //when
+            final Question changeQuestion =
+                questionRepository.findById(question.getId()).orElseThrow(RuntimeException::new);
+            changeQuestion.change("내용변경", "제목변경");
+            entityManager.flush();
+
+            //then - @LastModifiedDate 테스트
+            assertThat(changeQuestion).isNotEqualTo(question);
+        });
     }
 
     @Test
