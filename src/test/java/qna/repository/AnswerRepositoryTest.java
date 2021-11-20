@@ -46,11 +46,8 @@ public class AnswerRepositoryTest {
         Answer saved1 = answerRepository.save(answer1);
         Answer saved2 = answerRepository.save(answer2);
 
-        Answer find1 = answerRepository.findById(saved1.getId())
-                .orElse(new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, anyString()));
-
-        Answer find2 = answerRepository.findById(saved2.getId())
-                .orElse(new Answer(UserTest.SANJIGI, QuestionTest.Q2, anyString()));
+        Answer find1 = answerRepository.findById(saved1.getId()).orElse(null);
+        Answer find2 = answerRepository.findById(saved2.getId()).orElse(null);
 
         // then
         Assertions.assertThat(saved1).isEqualTo(find1);
