@@ -17,6 +17,9 @@ public class AnswerTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
     private Answer answer1;
     private Answer answer2;
 
@@ -37,9 +40,6 @@ public class AnswerTest {
     }
     
     /*
-    1. Update : Contents 없데이터
-    2. Question을 이용한 조회 및 조회 수 가져오기
-    3. 상세 조회
     4. 삭제
         - Question 삭제 시 하위에 있는 Answer도 삭제 테스트
      */
@@ -55,4 +55,13 @@ public class AnswerTest {
                 () -> assertThat(actual.getContents()).isEqualTo(contents)
         );
     }
+
+    @Test
+    @DisplayName("Question Id를 통해 Answer 갯수 조회")
+    void findByQuestionIdAndDeletedFalse() {
+        questionRepository.save(QuestionTest.Q1);
+        Long count = answerRepository.countByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        assertThat(count).isEqualTo(2L);
+    }
+
 }
