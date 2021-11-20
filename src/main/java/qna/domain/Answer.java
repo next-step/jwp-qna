@@ -1,8 +1,10 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -10,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import qna.NotFoundException;
@@ -23,9 +24,9 @@ public class Answer extends AuditEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Lob
 	@Column
-	private String contents;
+	@Embedded
+	private Contents contents;
 
 	@Column(nullable = false)
 	private boolean deleted = false;
@@ -47,7 +48,13 @@ public class Answer extends AuditEntity {
 
 	public Answer(Long id, User writer, Question question, String contents) {
 		this.id = id;
+		validateInit(writer, question);
+		this.writer = writer;
+		this.question = question;
+		this.contents = new Contents(contents);
+	}
 
+	private void validateInit(User writer, Question question) {
 		if (Objects.isNull(writer)) {
 			throw new UnAuthorizedException();
 		}
@@ -55,20 +62,10 @@ public class Answer extends AuditEntity {
 		if (Objects.isNull(question)) {
 			throw new NotFoundException();
 		}
-
-		this.writer = writer;
-		this.question = question;
-		this.contents = contents;
 	}
 
 	public boolean isOwner(User writer) {
 		return this.writer.equals(writer);
-	}
-
-	public Answer writerBy(User writer) {
-		this.writer = writer;
-		writer.getAnswers().add(this);
-		return this;
 	}
 
 	public void toQuestion(Question question) {
@@ -83,32 +80,22 @@ public class Answer extends AuditEntity {
 		return writer;
 	}
 
-	protected void setWriter(User writer) {
-		this.writer = writer;
-	}
-
-	public Question getQuestion() {
-		return question;
-	}
-
-	public void setQuestion(Question question) {
-		this.question = question;
-	}
-
-	public String getContents() {
-		return contents;
-	}
-
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
 	public boolean isDeleted() {
-		return deleted;
+		return this.deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+	public boolean isSameContents(String contents) {
+		return Objects.equals(this.contents, new Contents(contents));
+	}
+
+	public DeleteHistory delete() {
+		this.deleted = true;
+		return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+	}
+
+	public Answer updateContents(String updateContents) {
+		this.contents = new Contents(updateContents);
+		return this;
 	}
 
 	@Override
@@ -120,5 +107,22 @@ public class Answer extends AuditEntity {
 			", contents='" + contents + '\'' +
 			", deleted=" + deleted +
 			'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		Answer answer = (Answer)o;
+
+		return Objects.equals(id, answer.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
 	}
 }

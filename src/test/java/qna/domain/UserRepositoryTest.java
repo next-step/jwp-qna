@@ -72,17 +72,5 @@ class UserRepositoryTest {
 			() -> assertThat(result).contains(user1, user2)
 		);
 	}
-
-	@Test
-	@DisplayName("유저가 작성한 질문들을 모두 조회할 수 있어야 한다")
-	void findQuestionsTest() {
-		// given
-		Question question1 = new Question("title1", "contents1").writeBy(user1);
-
-		// when
-		question1 = questions.save(question1);
-
-		// then
-		assertThat(user1.getQuestions()).contains(question1);
-	}
+	
 }

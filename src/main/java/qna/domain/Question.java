@@ -1,6 +1,11 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -8,8 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends AuditEntity {
@@ -18,19 +24,23 @@ public class Question extends AuditEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Lob
 	@Column
-	private String contents;
+	@Embedded
+	private Contents contents;
 
 	@Column(nullable = false)
 	private boolean deleted = false;
 
-	@Column(length = 100, nullable = false)
-	private String title;
+	@Embedded
+	@Column(length = Title.MAX_LENGTH, nullable = false)
+	private Title title;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
+
+	@Embedded
+	private final Answers answers = Answers.of();
 
 	protected Question() {
 	}
@@ -41,13 +51,38 @@ public class Question extends AuditEntity {
 
 	public Question(Long id, String title, String contents) {
 		this.id = id;
-		this.title = title;
-		this.contents = contents;
+		this.title = Title.of(title);
+		this.contents = new Contents(contents);
+	}
+
+	public Question(Long id, String title, String contents, boolean deleted) {
+		this.id = id;
+		this.title = Title.of(title);
+		this.contents = new Contents(contents);
+		this.deleted = deleted;
+	}
+
+	public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+		validateDelete(user);
+		this.deleted = true;
+		return DeleteHistories.of(createDeleteHistory())
+			.combine(this.answers.deleteAll(user))
+			.toList();
+	}
+
+	public DeleteHistory createDeleteHistory() {
+		return new DeleteHistory(
+			ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
+	}
+
+	private void validateDelete(User user) throws CannotDeleteException {
+		if (!isOwner(user)) {
+			throw new CannotDeleteException(ErrorCode.DELETE_QUESTION_FORBIDDEN.getMessage());
+		}
 	}
 
 	public Question writeBy(User writer) {
 		this.writer = writer;
-		writer.getQuestions().add(this);
 		return this;
 	}
 
@@ -57,6 +92,12 @@ public class Question extends AuditEntity {
 
 	public void addAnswer(Answer answer) {
 		answer.toQuestion(this);
+		this.answers.add(answer);
+	}
+
+	public Question addAnswers(List<Answer> answers) {
+		this.answers.addAll(answers);
+		return this;
 	}
 
 	public Long getId() {
@@ -67,16 +108,8 @@ public class Question extends AuditEntity {
 		return writer;
 	}
 
-	protected void setWriter(User writer) {
-		this.writer = writer;
-	}
-
 	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+		return this.deleted;
 	}
 
 	@Override
@@ -89,4 +122,22 @@ public class Question extends AuditEntity {
 			", deleted=" + deleted +
 			'}';
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		Question question = (Question)o;
+
+		return Objects.equals(id, question.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
+	}
+
 }

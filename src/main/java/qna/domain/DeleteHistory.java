@@ -16,20 +16,24 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class DeleteHistory extends AuditEntity {
+public class DeleteHistory {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column
-	private Long contentId;
+	private ContentId contentId;
 
 	@Column
 	@Enumerated(EnumType.STRING)
 	private ContentType contentType;
 
-	@JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+	@Column
+	private LocalDateTime createDate;
+
+	@JoinColumn(name = "deleted_by_id",
+		foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User deletedBy;
 
@@ -38,9 +42,23 @@ public class DeleteHistory extends AuditEntity {
 
 	public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
 		this.contentType = contentType;
+		this.contentId = ContentId.of(contentId);
+		this.deletedBy = deletedBy;
+		this.createDate = createDate;
+	}
+
+	public DeleteHistory(ContentType contentType, ContentId contentId, User deletedBy, LocalDateTime createDate) {
+		this.contentType = contentType;
 		this.contentId = contentId;
 		this.deletedBy = deletedBy;
-		this.createdAt = createDate;
+		this.createDate = createDate;
+	}
+
+	public DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedBy) {
+		this.id = id;
+		this.contentType = contentType;
+		this.contentId = ContentId.of(contentId);
+		this.deletedBy = deletedBy;
 	}
 
 	@Override
@@ -49,16 +67,25 @@ public class DeleteHistory extends AuditEntity {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
+
 		DeleteHistory that = (DeleteHistory)o;
-		return Objects.equals(id, that.id) &&
-			contentType == that.contentType &&
-			Objects.equals(contentId, that.contentId) &&
-			Objects.equals(deletedBy, that.deletedBy);
+
+		if (!Objects.equals(id, that.id))
+			return false;
+		if (!Objects.equals(contentId, that.contentId))
+			return false;
+		if (contentType != that.contentType)
+			return false;
+		return Objects.equals(deletedBy, that.deletedBy);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, contentType, contentId, deletedBy);
+		int result = id != null ? id.hashCode() : 0;
+		result = 31 * result + (contentId != null ? contentId.hashCode() : 0);
+		result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
+		result = 31 * result + (deletedBy != null ? deletedBy.hashCode() : 0);
+		return result;
 	}
 
 	@Override
@@ -68,7 +95,7 @@ public class DeleteHistory extends AuditEntity {
 			", contentType=" + contentType +
 			", contentId=" + contentId +
 			", deletedById=" + deletedBy.getId() +
-			", createDate=" + createdAt +
+			", createDate=" + createDate +
 			'}';
 	}
 }

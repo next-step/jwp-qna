@@ -36,8 +36,7 @@ class QuestionRepositoryTest {
 
 		question1 = new Question("title1", "contents1").writeBy(user1);
 		question2 = new Question("title2", "contents2").writeBy(user2);
-		deletedQuestion = new Question("title3", "contents3").writeBy(user1);
-		deletedQuestion.setDeleted(true);
+		deletedQuestion = new Question(null, "title3", "contents3", true).writeBy(user1);
 		question1 = questions.save(question1);
 		question2 = questions.save(question2);
 		deletedQuestion = questions.save(deletedQuestion);

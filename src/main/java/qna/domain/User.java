@@ -1,15 +1,13 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 import qna.UnAuthorizedException;
 
@@ -22,23 +20,21 @@ public class User extends AuditEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(length = 50)
-	private String email;
+	@Embedded
+	@Column(length = Email.MAX_LENGTH)
+	private Email email;
 
-	@Column(length = 20, nullable = false)
-	private String name;
+	@Embedded
+	@Column(length = UserName.MAX_LENGTH, nullable = false)
+	private UserName name;
 
-	@Column(length = 20, nullable = false)
-	private String password;
+	@Embedded
+	@Column(length = Password.MAX_LENGTH, nullable = false)
+	private Password password;
 
-	@Column(length = 20, unique = true, nullable = false)
-	private String userId;
-
-	@OneToMany(mappedBy = "writer")
-	private final List<Answer> answers = new ArrayList<>();
-
-	@OneToMany(mappedBy = "writer")
-	private final List<Question> questions = new ArrayList<>();
+	@Embedded
+	@Column(length = UserId.MAX_LENGTH, unique = true, nullable = false)
+	private UserId userId;
 
 	protected User() {
 	}
@@ -49,13 +45,19 @@ public class User extends AuditEntity {
 
 	public User(Long id, String userId, String password, String name, String email) {
 		this.id = id;
-		this.userId = userId;
-		this.password = password;
-		this.name = name;
-		this.email = email;
+		this.userId = UserId.of(userId);
+		this.password = Password.of(password);
+		this.name = UserName.of(name);
+		this.email = Email.of(email);
 	}
 
 	public void update(User loginUser, User target) {
+		validateUpdate(loginUser, target);
+		this.name = target.name;
+		this.email = target.email;
+	}
+
+	private void validateUpdate(User loginUser, User target) {
 		if (!matchUserId(loginUser.userId)) {
 			throw new UnAuthorizedException();
 		}
@@ -63,16 +65,13 @@ public class User extends AuditEntity {
 		if (!matchPassword(target.password)) {
 			throw new UnAuthorizedException();
 		}
-
-		this.name = target.name;
-		this.email = target.email;
 	}
 
-	private boolean matchUserId(String userId) {
+	private boolean matchUserId(UserId userId) {
 		return this.userId.equals(userId);
 	}
 
-	public boolean matchPassword(String targetPassword) {
+	public boolean matchPassword(Password targetPassword) {
 		return this.password.equals(targetPassword);
 	}
 
@@ -93,30 +92,8 @@ public class User extends AuditEntity {
 		return id;
 	}
 
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public void addAnswer(Answer answer) {
-		this.answers.add(answer);
-		answer.setWriter(this);
-	}
-
-	protected List<Answer> getAnswers() {
-		return this.answers;
-	}
-
-	public void addQuestion(Question question) {
-		this.questions.add(question);
-		question.setWriter(this);
-	}
-
-	protected List<Question> getQuestions() {
-		return this.questions;
+	public UserId getUserId() {
+		return this.userId;
 	}
 
 	@Override
@@ -135,5 +112,22 @@ public class User extends AuditEntity {
 		public boolean isGuestUser() {
 			return true;
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		User user = (User)o;
+
+		return Objects.equals(id, user.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
 	}
 }

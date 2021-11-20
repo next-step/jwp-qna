@@ -65,13 +65,13 @@ class AnswerRepositoryTest {
 	void updateTest() {
 		// given
 		String updateContents = "업데이트 된 내용입니다";
-		answer1.setContents(updateContents);
+		answer1 = answer1.updateContents(updateContents);
 
 		// when
 		answer1 = answers.save(answer1);
 
 		// then
-		assertThat(answer1.getContents()).isEqualTo(updateContents);
+		assertThat(answer1.isSameContents(updateContents)).isTrue();
 	}
 
 	@Test
