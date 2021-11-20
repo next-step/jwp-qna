@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -80,7 +81,4 @@ class QuestionRepositoryTest {
 		assertThat(questionRepository.findAll()).hasSize(1);
 		assertThat(questionRepository.findAll()).contains(savedTwo);
 	}
-
-
-
 }

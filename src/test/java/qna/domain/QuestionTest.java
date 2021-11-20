@@ -76,4 +76,17 @@ public class QuestionTest {
         //then
         assertThat(deleteHistoryList).hasSize(2);
     }
+
+    @Test
+    @DisplayName("Question delete 질문 1개 삭제 상태일 때 테스트")
+    public void deleteQuestionAnswerDeletedYnTest() throws CannotDeleteException {
+        //given
+        AnswerTest.A2.delete(UserTest.SANJIGI);
+        Q1.addAnswer(AnswerTest.A2);
+        Q1.addAnswer(AnswerTest.A1);
+        //when
+        List<DeleteHistory> deleteHistoryList = Q1.delete(UserTest.JAVAJIGI);
+        //then
+        assertThat(deleteHistoryList).hasSize(2);
+    }
 }
