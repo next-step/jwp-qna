@@ -13,12 +13,16 @@ import qna.CannotDeleteException;
 
 public class AnswersTest {
 
+    private User javaJigi;
+    private User sanJigi;
     private Answer javaJigiAnswer;
     private Answer sanJigiAnswer;
     private List<Answer> answerList;
 
     @BeforeEach
     void setUp() {
+        javaJigi = UserTest.JAVAJIGI;
+        sanJigi = UserTest.JAVAJIGI;
         javaJigiAnswer = AnswerTest.A1;
         sanJigiAnswer = AnswerTest.A2;
         answerList = new ArrayList<>();
@@ -51,9 +55,8 @@ public class AnswersTest {
     @Test
     void deleteAnswers() throws CannotDeleteException {
         answerList.add(javaJigiAnswer);
-        User loginUser = UserTest.JAVAJIGI;
         Answers answers = new Answers(answerList);
-        answers.delete(loginUser);
+        answers.delete(javaJigi);
 
         boolean isAllDelete = answers.isAllDelete();
 
@@ -65,11 +68,10 @@ public class AnswersTest {
     void invalidDeleteAnswers() {
         assertThatExceptionOfType(CannotDeleteException.class)
             .isThrownBy(() -> {
-                User loginUser = UserTest.JAVAJIGI;
                 answerList.add(sanJigiAnswer);
                 Answers answers = new Answers(answerList);
 
-                answers.delete(loginUser);
+                answers.delete(javaJigi);
             }).withMessageMatching("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }
