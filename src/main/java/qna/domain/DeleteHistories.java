@@ -7,12 +7,12 @@ import java.util.List;
 public class DeleteHistories {
     private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-    private DeleteHistories(Question question, List<Answer> answers) {
+    private DeleteHistories(Question question, Answers answers) {
         deleteQuestion(question);
         deleteAnswers(answers);
     }
 
-    public static DeleteHistories createDeletedHistories(Question question, List<Answer> answers) {
+    public static DeleteHistories createDeletedHistories(Question question, Answers answers) {
         return new DeleteHistories(question, answers);
     }
 
@@ -21,8 +21,8 @@ public class DeleteHistories {
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
     }
 
-    private void deleteAnswers(List<Answer> answers) {
-        for (Answer answer : answers) {
+    private void deleteAnswers(Answers answers) {
+        for (Answer answer : answers.getAnswers()) {
             answer.setDeleted(true);
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
         }

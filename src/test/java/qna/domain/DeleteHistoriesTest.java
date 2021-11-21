@@ -3,24 +3,40 @@ package qna.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
+import qna.NotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.AnswerTest.answer;
 import static qna.domain.QuestionTest.question;
+import static qna.domain.UserTest.userB;
 
+@DataJpaTest
 public class DeleteHistoriesTest {
+    @Autowired
+    private AnswerRepository answerRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private static Question question;
-    private static List<Answer> answers;
+    private static Answers answers;
 
     @BeforeEach
-    void setUp() {
-        question = question(5);
-        answers = new ArrayList<>();
-        answers.add(answer(5));
+    void setUp() throws CannotDeleteException {
+        Answer answer = answer(5);
+        answer.mappingToWriter(userRepository.save(userB()));
+        Question questionEntity = questionRepository.save(question(5));
+        answer.mappingToQuestion(questionEntity);
+        Answer save = answerRepository.save(answer);
+
+        question = questionRepository.findByIdAndDeletedFalse(questionEntity.getId()).orElseThrow(NotFoundException::new);
+        answers = Answers.createAnswers(answerRepository.findByQuestionIdAndDeletedFalse(save.getQuestion().getId()), save.getWriter());
     }
 
     @DisplayName("question 과 answers 를 delete 하는 정적 팩토리 메소드")
@@ -41,6 +57,6 @@ public class DeleteHistoriesTest {
     @Test
     void deleteAnswers() {
         DeleteHistories.createDeletedHistories(question, answers);
-        assertThat(answers.get(0).isDeleted()).isTrue();
+        assertThat(answers.getAnswers().get(0).isDeleted()).isTrue();
     }
 }
