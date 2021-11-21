@@ -14,7 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
-import qna.CannotDeleteSomeoneElseException;
+import qna.AnswerWrittenBySomeoneElseException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -65,7 +65,7 @@ public class Answer extends BaseEntity {
 
     public DeleteHistory delete(User loginUser, LocalDateTime deleteAt) {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteSomeoneElseException();
+            throw new AnswerWrittenBySomeoneElseException();
         }
 
         this.deleted = true;

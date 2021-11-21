@@ -15,7 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
-import qna.CannotDeleteException;
+import qna.NoPermissionDeleteQuestionException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -62,7 +62,7 @@ public class Question extends BaseEntity {
 
     public DeleteHistorys delete(User loginUser, LocalDateTime deleteAt) {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException();
+            throw new NoPermissionDeleteQuestionException();
         }
 
         this.deleted = true;

@@ -1,16 +1,14 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import qna.CannotDeleteException;
+import qna.AnswerWrittenBySomeoneElseException;
 
 @DataJpaTest
 public class AnswerTest {
@@ -22,7 +20,7 @@ public class AnswerTest {
         Question question = TestCreateFactory.createQuestion(user);
         Answer answer = TestCreateFactory.createAnswer(user, question);
 
-        assertThat(answer.getId()).isNotNull();
+        assertThat(answer).isNotNull();
     }
 
     @DisplayName("로그인한 사용자의 답변 삭제")
@@ -40,7 +38,7 @@ public class AnswerTest {
     @DisplayName("답변 삭제 시 로그인한 사용자의 답변이 아닐 경우")
     @Test
     void invalidDeleteAnswer() {
-        assertThatExceptionOfType(CannotDeleteException.class)
+        assertThatExceptionOfType(AnswerWrittenBySomeoneElseException.class)
             .isThrownBy(() -> {
                 User loginUser = TestCreateFactory.createUser(1L);
                 User answerUser = TestCreateFactory.createUser(2L);

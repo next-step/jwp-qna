@@ -8,7 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import qna.CannotDeleteException;
+import qna.AnswerWrittenBySomeoneElseException;
+import qna.NoPermissionDeleteQuestionException;
 
 @DataJpaTest
 public class QuestionTest {
@@ -39,7 +40,7 @@ public class QuestionTest {
     @DisplayName("로그인한 사용자가 다른사람의 질문을 삭제할 경우")
     @Test
     void invalidDeleteQuestion() {
-        assertThatExceptionOfType(CannotDeleteException.class)
+        assertThatExceptionOfType(NoPermissionDeleteQuestionException.class)
             .isThrownBy(() -> {
                 User loginUser = TestCreateFactory.createUser(1L);
                 User anotherUser = TestCreateFactory.createUser(2L);
@@ -51,7 +52,7 @@ public class QuestionTest {
 
     @DisplayName("로그인한 사용자의 질문, 답변 모두 삭제")
     @Test
-    void deleteQuestionContainsAnswers() throws CannotDeleteException {
+    void deleteQuestionContainsAnswers() throws NoPermissionDeleteQuestionException {
         User loginUser = TestCreateFactory.createUser(1L);
         Question loginUserQuestion = TestCreateFactory.createQuestion(loginUser);
         Answer loginUserAnswer = TestCreateFactory.createAnswer(loginUser, loginUserQuestion);
@@ -65,8 +66,8 @@ public class QuestionTest {
 
     @DisplayName("다른사용자의 답변이 포함된 질문 삭제")
     @Test
-    void invalidDeleteQuestionContainsAnotherUserAnswers() throws CannotDeleteException {
-        assertThatExceptionOfType(CannotDeleteException.class)
+    void invalidDeleteQuestionContainsAnotherUserAnswers() {
+        assertThatExceptionOfType(AnswerWrittenBySomeoneElseException.class)
             .isThrownBy(() -> {
                 User loginUser = TestCreateFactory.createUser(1L);
                 User anotherUser = TestCreateFactory.createUser(2L);

@@ -8,14 +8,14 @@ import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import qna.CannotDeleteSomeoneElseException;
+import qna.AnswerWrittenBySomeoneElseException;
 
 public class AnswersTest {
 
     @DisplayName("다른 사용자의 답변을 삭제할 경우")
     @Test
     void invalidDeleteAnswers() {
-        assertThatExceptionOfType(CannotDeleteSomeoneElseException.class)
+        assertThatExceptionOfType(AnswerWrittenBySomeoneElseException.class)
             .isThrownBy(() -> {
                 User loginUser = TestCreateFactory.createUser(1L);
                 User anotherUser = TestCreateFactory.createUser(2L);
