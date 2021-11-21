@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "question")
@@ -73,7 +72,7 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    private void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -89,14 +88,14 @@ public class Question extends BaseTimeEntity {
                 '}';
     }
 
-    public List<DeleteHistory> deleteQuestion(User writer) {
+    public List<DeleteHistory> deleteQuestion(User writer, LocalDateTime deletedTime) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         validateQuestion(writer);
         if( this.getAnswers().existAnswer() ) {
-            deleteHistories.addAll(this.answers.deleteAnswers(writer));
+            deleteHistories.addAll(this.answers.deleteAnswers(writer, deletedTime));
         }
         this.setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, deletedTime));
         return deleteHistories;
     }
 
