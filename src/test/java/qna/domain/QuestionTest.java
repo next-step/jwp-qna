@@ -4,8 +4,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.AnswerTest.answer;
 import static qna.domain.UserTest.userA;
@@ -105,6 +107,22 @@ public class QuestionTest {
         Question result = questionRepository.findById(3L).orElse(null);
         //then
         assertThat(result).isNull();
+    }
+
+    @DisplayName("질문 작성자와 로그인 유저가 다르면 CannotDeleteException 에러 발생")
+    @Test
+    void sameAsUserError() {
+        Question question = question(5).writeBy(userA());
+        assertThatThrownBy(()->
+                question.sameAsUser(userB()))
+                    .isInstanceOf(CannotDeleteException.class).hasMessage("질문을 삭제할 권한이 없습니다.");
+    }
+
+    @DisplayName("질문 작성자와 로그인 유저가 같으면 CannotDeleteException 에러 발생 안함")
+    @Test
+    void sameAsUser() throws CannotDeleteException {
+        Question question = question(5).writeBy(userA());
+        question.sameAsUser(userA());
     }
 
     static Question question(int number) {
