@@ -53,7 +53,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -92,8 +92,8 @@ public class Answer extends BaseEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writer.getId() +
-                ", questionI/d=" + question.getId() +
+                ", writerId=" + writer.toString() +
+                ", questionId=" + question.toString() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
