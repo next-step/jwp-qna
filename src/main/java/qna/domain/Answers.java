@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
+import qna.CannotDeleteException;
+
 @Embeddable
 public class Answers {
     @OneToMany(mappedBy = "question")
@@ -21,9 +23,23 @@ public class Answers {
     }
 
     public DeleteHistories delete(User loginUser) {
+        validateOwner(loginUser);
+
         return new DeleteHistories(answers.stream()
             .map(answer -> answer.delete(loginUser))
             .collect(Collectors.toList()));
+    }
+
+    protected void validateOwner(User loginUser) {
+        for (Answer answer : answers) {
+            validateOwner(answer, loginUser);
+        }
+    }
+
+    private void validateOwner(Answer answer, User loginUser) {
+        if (!answer.isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public boolean add(Answer answer) {

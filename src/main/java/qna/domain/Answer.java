@@ -13,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
-import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -65,15 +64,12 @@ public class Answer extends BaseTimeEntity {
     }
 
     public DeleteHistory delete(User writer) {
-        validateOwner(writer);
         deleted = true;
         return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
-    protected void validateOwner(User writer) {
-        if (!this.writer.matchId(writer)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
+    protected boolean isOwner(User writer) {
+        return this.writer.matchId(writer);
     }
 
     public Long getId() {
