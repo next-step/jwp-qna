@@ -78,8 +78,8 @@ public class QuestionRepositoryTest {
     void differentAnswerWriterTest() {
         final User javajigi = users.save(UserTest.JAVAJIGI);
         final User sanjigi = users.save(UserTest.SANJIGI);
-        QuestionTest.Q1.setWriter(javajigi);
         final Question q1 = questions.save(QuestionTest.Q1);
+        q1.setWriter(javajigi);
         Answer a1 = AnswerTest.A1;
         a1.setWriter(sanjigi);
         a1.setQuestion(q1);

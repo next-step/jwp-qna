@@ -4,6 +4,7 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 public class Question extends BaseEntity {
@@ -43,7 +44,7 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+        return Objects.equals(this.writer.getId(), writer.getId());
     }
 
     public void addAnswer(Answer answer) {
