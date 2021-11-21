@@ -7,7 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.AnswerTest.answer5;
+import static qna.domain.AnswerTest.answer;
 import static qna.domain.UserTest.userA;
 import static qna.domain.UserTest.userB;
 
@@ -26,12 +26,12 @@ public class QuestionTest {
     @Test
     void save() {
         //given
-        Question Q5 = question5();
-        Q5.mappingToWriter(userRepository.save(userA()));
-        Q5.mappingToAnswer(answerRepository.save(answer5()));
+        Question question = question(5);
+        question.mappingToWriter(userRepository.save(userA()));
+        question.mappingToAnswer(answerRepository.save(answer(5)));
 
         //when
-        Question result = questionRepository.save(Q5);
+        Question result = questionRepository.save(question);
 
         //then
         assertAll(
@@ -45,12 +45,12 @@ public class QuestionTest {
     @Test
     void read() {
         //given
-        Question Q5 = question5();
-        Q5.mappingToWriter(userRepository.save(userA()));
-        Q5.mappingToAnswer(answerRepository.save(answer5()));
+        Question question = question(5);
+        question.mappingToWriter(userRepository.save(userA()));
+        question.mappingToAnswer(answerRepository.save(answer(5)));
 
         //when
-        Question expected = questionRepository.save(Q5);
+        Question expected = questionRepository.save(question);
         Question result = questionRepository.findById(expected.getId()).orElse(null);
 
         //then
@@ -65,12 +65,12 @@ public class QuestionTest {
     @Test
     void update() {
         //given
-        Question Q5 = question5();
-        Q5.mappingToWriter(userRepository.save(userA()));
-        Q5.mappingToAnswer(answerRepository.save(answer5()));
+        Question question = question(5);
+        question.mappingToWriter(userRepository.save(userA()));
+        question.mappingToAnswer(answerRepository.save(answer(5)));
 
         //when
-        Question expected = questionRepository.save(Q5);
+        Question expected = questionRepository.save(question);
         expected.updateQuestionContents("질문 수정!!");
         expected.mappingToWriter(userB());
         Question result = questionRepository.findById(expected.getId()).orElseThrow(() -> new NullPointerException("테스트실패"));
@@ -84,12 +84,12 @@ public class QuestionTest {
     @Test
     void delete() {
         //given
-        Question Q5 = question5();
-        Q5.mappingToWriter(userRepository.save(userA()));
-        Q5.mappingToAnswer(answerRepository.save(answer5()));
+        Question question = question(5);
+        question.mappingToWriter(userRepository.save(userA()));
+        question.mappingToAnswer(answerRepository.save(answer(5)));
 
         //when
-        Question save = questionRepository.save(Q5);
+        Question save = questionRepository.save(question);
         questionRepository.delete(save);
         Question found = questionRepository.findById(save.getId()).orElse(null);
 
@@ -100,18 +100,14 @@ public class QuestionTest {
     @DisplayName("Delete 테스트")
     @Test
     void delete2() {
-        Question Q3 = questionRepository.findById(3L).orElse(null);
-        questionRepository.delete(Q3);
+        Question question = questionRepository.findById(3L).orElse(null);
+        questionRepository.delete(question);
         Question result = questionRepository.findById(3L).orElse(null);
         //then
         assertThat(result).isNull();
     }
 
-    static Question question5() {
-        return new Question("질문 타이틀5", "질문5");
-    }
-
-    static Question question6() {
-        return new Question("질문 타이틀6", "질문6");
+    static Question question(int number) {
+        return new Question("질문 타이틀" + number, "질문" + number);
     }
 }

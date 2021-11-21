@@ -25,12 +25,12 @@ public class AnswerTest {
     @Test
     void save() {
         //given
-        Answer A5 = answer5();
-        A5.mappingToWriter(userRepository.save(userB()));
-        A5.mappingToQuestion(questionRepository.save(question6()));
+        Answer answer = answer(5);
+        answer.mappingToWriter(userRepository.save(userB()));
+        answer.mappingToQuestion(questionRepository.save(question(6)));
 
         //when
-        Answer result = answerRepository.save(A5);
+        Answer result = answerRepository.save(answer);
 
         //then
         assertThat(result.getId()).isNotNull();
@@ -40,12 +40,12 @@ public class AnswerTest {
     @Test
     void read() {
         //given
-        Answer A6 = answer6();
-        A6.mappingToWriter(userRepository.save(userB()));
-        A6.mappingToQuestion(questionRepository.save(question6()));
+        Answer answer = answer(6);
+        answer.mappingToWriter(userRepository.save(userB()));
+        answer.mappingToQuestion(questionRepository.save(question(6)));
 
         //when
-        Answer save = answerRepository.save(A6);
+        Answer save = answerRepository.save(answer);
         Answer result = answerRepository.findById(save.getId()).orElse(null);
 
         //then
@@ -56,27 +56,27 @@ public class AnswerTest {
     @Test
     void update() {
         //given
-        Answer A6 = answer6();
-        A6.mappingToWriter(userRepository.save(userB()));
-        A6.mappingToQuestion(questionRepository.save(question6()));
+        Answer answer = answer(6);
+        answer.mappingToWriter(userRepository.save(userB()));
+        answer.mappingToQuestion(questionRepository.save(question(6)));
 
         //when
-        Answer save = answerRepository.save(A6);
+        Answer save = answerRepository.save(answer);
         save.updateAnswerContents("답변 수정!!");
-        save.mappingToQuestion(questionRepository.save(question5()));
+        save.mappingToQuestion(questionRepository.save(question(5)));
         Answer result = answerRepository.findById(save.getId()).orElseThrow(() -> new NullPointerException("테스트실패"));
 
         //then
         assertThat(result.getContents()).isEqualTo("답변 수정!!");
-        assertThat(result.getQuestion().getContents()).isEqualTo(question5().getContents());
+        assertThat(result.getQuestion().getContents()).isEqualTo(question(5).getContents());
     }
 
     @DisplayName("Update 테스트 2")
     @Test
     void update2() {
         //when
-        Answer A1 = answerRepository.findById(1L).orElse(null);
-        Answer save = answerRepository.save(A1);
+        Answer answer = answerRepository.findById(1L).orElse(null);
+        Answer save = answerRepository.save(answer);
         save.updateAnswerContents("답변 수정!!");
         Answer result = answerRepository.findById(save.getId()).orElseThrow(() -> new NullPointerException("테스트실패"));
 
@@ -88,12 +88,12 @@ public class AnswerTest {
     @Test
     void delete() {
         //given
-        Answer A6 = answer6();
-        A6.mappingToWriter(userRepository.save(userB()));
-        A6.mappingToQuestion(questionRepository.save(question6()));
+        Answer answer = answer(6);
+        answer.mappingToWriter(userRepository.save(userB()));
+        answer.mappingToQuestion(questionRepository.save(question(6)));
 
         //when
-        Answer save = answerRepository.save(A6);
+        Answer save = answerRepository.save(answer);
         answerRepository.delete(save);
         Answer found = answerRepository.findById(save.getId()).orElse(null);
 
@@ -104,18 +104,14 @@ public class AnswerTest {
     @DisplayName("Delete 테스트 2")
     @Test
     void delete2() {
-        Answer A1 = answerRepository.findById(1L).orElse(null);
-        answerRepository.delete(A1);
+        Answer answer = answerRepository.findById(1L).orElse(null);
+        answerRepository.delete(answer);
         Answer result = answerRepository.findById(1L).orElse(null);
         //then
         assertThat(result).isNull();
     }
 
-    static Answer answer5() {
-        return new Answer(userA(), question5(), "답변5");
-    }
-
-    static Answer answer6() {
-        return new Answer(userB(), question6(), "답변6");
+    static Answer answer(int number) {
+        return new Answer(userA(), question(number), "답변" + number);
     }
 }
