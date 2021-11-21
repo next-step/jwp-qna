@@ -1,6 +1,11 @@
 package qna.domain;
 
+import qna.UnAuthorizedException;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -14,11 +19,19 @@ public class Question extends BaseTimeEntity {
     @Lob
     private String contents;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    protected Question() {
+
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -30,21 +43,33 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    protected Question() {
-
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+    public void mappingToWriter(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
+        this.writer = writer;
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+    public User getWriter() {
+        return writer;
+    }
+
+    public void mappingToAnswer(Answer answer) {
+        answers.add(answer);
+        answer.mappingToQuestion(this);
+    }
+
+    public List<Answer> getAnswer() {
+        return answers;
     }
 
     public Long getId() {
@@ -55,28 +80,12 @@ public class Question extends BaseTimeEntity {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void updateQuestionContents(String contents) {
         this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public boolean isDeleted() {
@@ -93,7 +102,7 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }
