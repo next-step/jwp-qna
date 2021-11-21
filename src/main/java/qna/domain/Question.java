@@ -15,7 +15,7 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
@@ -50,7 +50,7 @@ public class Question extends BaseEntity {
     public void addAnswer(Answer answer) {
         answers.add(answer);
         if (answer.getQuestion() != this) {
-            answer.toQuestion(this);
+            answer.setQuestion(this);
         }
     }
 

@@ -22,11 +22,11 @@ import java.util.Objects;
 @Entity
 public class Answer extends BaseEntity {
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
@@ -56,17 +56,6 @@ public class Answer extends BaseEntity {
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
-    }
-
-    public void toQuestion(Question question) {
-//        if (Objects.nonNull(this.question)) {
-//            this.question.getAnswers().remove(this);
-//        }
-//        if (this.question != question) {
-//            this.question = question;
-//            question.addAnswer(this);
-//        }
-        this.question = question;
     }
 
     public User getWriter() {

@@ -77,11 +77,12 @@ public class QuestionRepositoryTest {
     @DisplayName("삭제시 작성자와 다른 답변자가 있으면 예외를 출력한다")
     void differentAnswerWriterTest() {
         final User javajigi = users.save(UserTest.JAVAJIGI);
+        final User sanjigi = users.save(UserTest.SANJIGI);
         Question q1 = QuestionTest.Q1;
         q1.setWriter(javajigi);
         Question q2 = questions.save(q1);
-        Answer a1 = AnswerTest.A1;
         Answer a2 = AnswerTest.A2;
+        a2.setWriter(sanjigi);
         q2.addAnswer(a2);
         questions.save(q2);
 
