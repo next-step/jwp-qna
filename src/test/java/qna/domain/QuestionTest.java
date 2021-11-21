@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
 public class QuestionTest {
-    public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
+    private static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+    private static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @DisplayName("작성자가 맞는지 확인")
     @Test
@@ -33,11 +33,12 @@ public class QuestionTest {
     @DisplayName("삭제")
     @Test
     void delete() {
-        Q2.addAnswer(AnswerTest.A3);
+        Answer answer = new Answer(UserTest.SANJIGI, Q2, "contents");
+
         assertThat(Q2.delete(UserTest.SANJIGI))
             .isEqualTo(new DeleteHistories(Arrays.asList(
                 new DeleteHistory(new Content(Q2), LocalDateTime.now()),
-                new DeleteHistory(new Content(AnswerTest.A3), LocalDateTime.now()))
+                new DeleteHistory(new Content(answer), LocalDateTime.now()))
             ));
     }
 }
