@@ -11,6 +11,7 @@ import qna.domain.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ class QnaServiceTest {
     @Test
     public void delete_성공() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
+        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Collections.singletonList(answer));
 
         assertThat(question.isDeleted()).isFalse();
         qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
@@ -89,8 +90,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriterId(), LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId(), LocalDateTime.now())
+                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

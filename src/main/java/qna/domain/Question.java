@@ -5,8 +5,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -23,11 +28,16 @@ public class Question {
     @Column(name = "contents", columnDefinition = "LONGTEXT")
     private String contents;
 
-    @Column(name = "writer_id")
-    private Long writerId;
-
     @Column(name = "deleted")
     private boolean deleted = false;
+
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User writer;
+
+    @OneToMany
+    @JoinColumn(name = "question_id")
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -43,15 +53,16 @@ public class Question {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -79,14 +90,6 @@ public class Question {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -95,14 +98,19 @@ public class Question {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+    public User getWriter() {
+        return writer;
+    }
+
+    public void setWriter(User writer) {
+        this.writer = writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
     }
 }

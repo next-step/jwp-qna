@@ -1,6 +1,7 @@
 package qna.repository;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -14,6 +15,7 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @DisplayName("User 데이터 save 하는 테스트 진행")
     @Test
     public void save() {
 
@@ -30,6 +32,7 @@ public class UserRepositoryTest {
         Assertions.assertThat(saved2).isEqualTo(user2);
     }
 
+    @DisplayName("User 데이터 find 하는 테스트 진행")
     @Test
     public void find() {
 

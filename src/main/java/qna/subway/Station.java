@@ -1,4 +1,5 @@
-package subway.domain;
+package qna.subway;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,40 +44,5 @@ public class Station {
 
     protected Station() {
 
-    }
-
-    protected Station(Long id, String name) {
-        this(name);
-        this.id = id;
-    }
-
-    protected Station(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void changeName(String name) {
-        this.name = name;
-    }
-
-    public void setLine(Line line) {
-
-//        if (Objects.nonNull(this.line)) {
-//            this.line.getStations().remove(this);
-//        }
-
-        this.line = line;
-//        line.getStations().add(this);
-    }
-
-    public Line getLine() {
-        return this.line;
     }
 }

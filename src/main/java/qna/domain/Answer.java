@@ -8,7 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Objects;
 
@@ -20,18 +22,20 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "writer_id")
-    private Long writerId;
-
-    @Column(name = "question_id")
-    private Long questionId;
-
     @Lob
     @Column(name = "contents", columnDefinition = "LONGTEXT")
     private String contents;
 
     @Column(name = "deleted")
     private boolean deleted = false;
+
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User writer;
+
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     protected Answer() {
     }
@@ -51,17 +55,18 @@ public class Answer {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
+        question.getAnswers().add(this);
     }
 
     public Long getId() {
@@ -70,22 +75,6 @@ public class Answer {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
     }
 
     public String getContents() {
@@ -104,14 +93,30 @@ public class Answer {
         this.deleted = deleted;
     }
 
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
+    public User getWriter() {
+        return writer;
+    }
+
+    public void setWriter(User writer) {
+        this.writer = writer;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
+                ", writer=" + writer +
+                ", question=" + question +
                 '}';
     }
 }
