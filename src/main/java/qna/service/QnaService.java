@@ -39,9 +39,7 @@ public class QnaService {
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
         for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
+            answer.sameAsUser(loginUser);
         }
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
