@@ -45,5 +45,5 @@ references user
 ### QnaService.java 리팩토링 목록
 - [x] Question 작성자와 로그인 유저의 일치 여부 검증 => Question 도메인 객체로 이동
 - [x] Answer 작성자와 로그인 유저의 일치 여부 검증 => Answer 도메인 객체로 이동
-- [] List<DeleteHistory> 일급 콜렉션 리펙토링
+- [x] List<DeleteHistory> 일급 콜렉션 리펙토링
 - [] List<Answer> 일급 콜렉션 리펙토링
