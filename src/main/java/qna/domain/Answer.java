@@ -66,7 +66,7 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    private void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -97,10 +97,10 @@ public class Answer extends BaseTimeEntity {
                 '}';
     }
 
-    public DeleteHistory deleteAnswer(User writer) throws CannotDeleteException {
+    public DeleteHistory deleteAnswer(User writer, LocalDateTime localDateTime) throws CannotDeleteException {
         validateAnswer(writer);
         this.setDeleted(true);
-        return new DeleteHistory(ContentType.ANSWER, this.id, writer, LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER, this.id, writer, localDateTime);
     }
 
     void validateAnswer(User writer) {
