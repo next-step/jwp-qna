@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,8 +12,11 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "question")
@@ -37,7 +42,7 @@ public class Question {
 
     @OneToMany
     @JoinColumn(name = "question_id")
-    private List<Answer> answers = new ArrayList<>();
+    private Set<Answer> answers = new HashSet<>();
 
     protected Question() {
     }
@@ -50,6 +55,23 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    public List<DeleteHistory> deleteQuestion(User loginUser) throws CannotDeleteException {
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        if (!writer.equals(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        for (Answer answer : answers) {
+            DeleteHistory deletedAnswer = answer.deleteAnswer(loginUser);
+            deleteHistories.add(deletedAnswer);
+        }
+
+        deleted = true;
+        return deleteHistories;
     }
 
     public Question writeBy(User writer) {
@@ -102,15 +124,7 @@ public class Question {
         return writer;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
-    public List<Answer> getAnswers() {
+    public Set<Answer> getAnswers() {
         return answers;
-    }
-
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
     }
 }
