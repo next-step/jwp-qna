@@ -52,7 +52,7 @@ public class DeleteHistoryRepositoryTest {
 
     @DisplayName("질문 삭제 시간과 삭제내역 생성시간이 같아야함")
     @Test
-    void test() throws Exception{
+    void timeCompare() throws Exception{
         final User user = userRepository.save(UserTest.JAVAJIGI);
         final Question question =questionRepository.save( new Question("test","contents").writeBy(user));
         final Answer answer = answerRepository.save(new Answer(UserTest.JAVAJIGI, question, "Answers Contents1"));

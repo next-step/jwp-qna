@@ -10,39 +10,41 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @DisplayName("답변 삭제 할때 삭제 상태로 변경해준다.")
     @Test
     void deleteTest() throws CannotDeleteException {
-        A1.delete(UserTest.JAVAJIGI);
+        final User user = new User(1L,"lsm","password","이승민","test@test.com");
+        final Question question = new Question(1L,"Question","Question Contents1").writeBy(user);
+        final Answer answer = new Answer(1L,user, question, "Answers Contents1");
 
-        assertThat(A1.isDeleted()).isTrue();
+        answer.delete(user);
+
+        assertThat(answer.isDeleted()).isTrue();
     }
 
     @DisplayName("답변 삭제 시 DeleteHistory에 이력정보객체 생성.")
     @Test
     void deleteHistoryToAnswer() throws CannotDeleteException {
-        final DeleteHistory deleteHistory = A1.delete(UserTest.JAVAJIGI);
+        final User user = new User(1L,"lsm","password","이승민","test@test.com");
+        final Question question = new Question(1L,"Question","Question Contents1").writeBy(user);
+        final Answer answer = new Answer(1L,user, question, "Answers Contents1");
+
+        final DeleteHistory deleteHistory = answer.delete(user);
 
         assertThat(deleteHistory).isNotNull();
-        assertThat(deleteHistory).isEqualTo(new DeleteHistory(ContentType.ANSWER, A1.getId(), UserTest.JAVAJIGI, LocalDateTime.now()));
-    }
-
-    @DisplayName("답변 등록자가 삭제하려는 사람과 같을때 삭제 되는지 검증")
-    @Test
-    void deleteAnswerByUser() throws CannotDeleteException {
-        A1.delete(UserTest.JAVAJIGI);
-
-        assertThat(A1.isDeleted()).isTrue();
+        assertThat(deleteHistory).isEqualTo(new DeleteHistory(ContentType.ANSWER, answer.getId(), user, LocalDateTime.now()));
     }
 
     @DisplayName("답변 등록자가 삭제하려는 사람과 다를때 에러")
     @Test
     void deleteAnswerByUserError() throws CannotDeleteException {
+        final User user = new User(1L,"lsm","password","이승민","test@test.com");
+        final Question question = new Question(1L,"Question","Question Contents1").writeBy(user);
+        final Answer answer = new Answer(1L,user, question, "Answers Contents1");
+
         assertThatThrownBy(() -> {
-            A1.delete(new User("lsm", "password", "이승민", "test@test.com"));
+            answer.delete(new User(2L,"lsm2", "password", "이승민", "test@test.com"));
         }).isInstanceOf(CannotDeleteException.class)
                 .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
