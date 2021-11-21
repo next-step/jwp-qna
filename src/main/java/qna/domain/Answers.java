@@ -20,11 +20,11 @@ public class Answers {
     protected Answers() {
     }
 
-    public List<DeleteHistory> delete(User loginUser) {
+    public DeleteHistories delete(User loginUser) {
         validateOwner(loginUser);
-        return answers.stream()
+        return new DeleteHistories(answers.stream()
             .map(answer -> answer.delete(loginUser))
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()));
     }
 
     protected void validateOwner(User loginUser) {

@@ -3,9 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,17 +34,15 @@ class AnswersTest {
     @DisplayName("삭제")
     @Test
     void delete() {
-        Answers answers = new Answers(Arrays.asList(AnswerTest.A1, AnswerTest.A1));
-        List<DeleteHistory> expected = new ArrayList<>();
-        expected.add(
-            new DeleteHistory(ContentType.ANSWER, AnswerTest.A1.getId(), AnswerTest.A1.getWriter(), LocalDateTime
-                .now()));
-        expected.add(
-            new DeleteHistory(ContentType.ANSWER, AnswerTest.A1.getId(), AnswerTest.A1.getWriter(), LocalDateTime
-                .now()));
+        Answers answers = new Answers(Arrays.asList(AnswerTest.A2, AnswerTest.A3, AnswerTest.A4));
+        DeleteHistories expected = new DeleteHistories(Arrays.asList(
+            new DeleteHistory(ContentType.ANSWER, AnswerTest.A2.getId(), AnswerTest.A2.getWriter(), LocalDateTime.now()),
+            new DeleteHistory(ContentType.ANSWER, AnswerTest.A3.getId(), AnswerTest.A3.getWriter(), LocalDateTime.now()),
+            new DeleteHistory(ContentType.ANSWER, AnswerTest.A3.getId(), AnswerTest.A3.getWriter(), LocalDateTime.now())
+            ));
 
-        List<DeleteHistory> deleteHistories = answers.delete(UserTest.JAVAJIGI);
+        DeleteHistories deleteHistories = answers.delete(UserTest.SANJIGI);
 
-        assertThat(deleteHistories).isEqualTo(expected);
+        assertThat(expected).isEqualTo(deleteHistories);
     }
 }

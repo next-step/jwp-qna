@@ -35,10 +35,10 @@ public class QuestionTest {
     void delete() {
         Q2.addAnswer(AnswerTest.A3);
         assertThat(Q2.delete(UserTest.SANJIGI))
-            .isEqualTo(Arrays.asList(
+            .isEqualTo(new DeleteHistories(Arrays.asList(
                 new DeleteHistory(ContentType.QUESTION, Q2.getId(), Q2.getWriter(), LocalDateTime.now()),
                 new DeleteHistory(ContentType.ANSWER, AnswerTest.A3.getId(), AnswerTest.A3.getWriter(),
-                    LocalDateTime.now())
+                    LocalDateTime.now()))
             ));
     }
 }
