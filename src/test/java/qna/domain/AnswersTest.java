@@ -3,7 +3,6 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
@@ -21,9 +20,9 @@ public class AnswersTest {
         final Answers answers = new Answers(Arrays.asList(answer1, answer2));
 
         // when
-        final List<DeleteHistory> deleteHistories = answers.delete(writer);
+        final DeleteHistories deleteHistories = answers.delete(writer);
 
         // then
-        assertThat(deleteHistories).hasSize(2);
+        assertThat(deleteHistories.getValues()).hasSize(2);
     }
 }

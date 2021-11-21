@@ -1,8 +1,8 @@
 package qna.domain;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import qna.CannotDeleteException;
@@ -24,13 +24,30 @@ public class Answers {
         answers.add(answer);
     }
 
-    public List<DeleteHistory> delete(final User loginUser) throws CannotDeleteException {
-        final List<DeleteHistory> deleteHistories = new ArrayList<>();
+    public DeleteHistories delete(final User loginUser) throws CannotDeleteException {
+        final DeleteHistories deleteHistories = new DeleteHistories();
         for (Answer answer : answers) {
             deleteHistories.add(
                 answer.delete(loginUser)
             );
         }
-        return Collections.unmodifiableList(deleteHistories);
+        return deleteHistories;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Answers answers1 = (Answers) o;
+        return Objects.equals(answers, answers1.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(answers);
     }
 }
