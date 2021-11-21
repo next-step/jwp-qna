@@ -70,7 +70,7 @@ public class Answer extends BaseTimeEntity {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER, id, writer, this.getUpdatedAt());
     }
 
     public Long getId() {

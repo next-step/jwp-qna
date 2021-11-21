@@ -59,7 +59,8 @@ public class DeleteHistoryRepositoryTest {
 
         List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
         deleteHistoryRepository.saveAll(deleteHistories);
-        assertThat(deleteHistories.get(0).getCreateDate()).isEqualTo(answer.getUpdatedAt());
+        assertThat(deleteHistories.get(0).getCreateDate()).isEqualTo(question.getUpdatedAt());
+        assertThat(deleteHistories.get(1).getCreateDate()).isEqualTo(answer.getUpdatedAt());
 
     }
 }
