@@ -64,7 +64,7 @@ public class QuestionRepositoryTest {
         final User javajigi = users.save(UserTest.JAVAJIGI);
         final Question q1 = questions.save(QuestionTest.Q1.writeBy(javajigi));
         // given
-        q1.delete(UserTest.JAVAJIGI);
+        q1.delete(javajigi);
 
         Question deleted = questions.save(q1);
 
@@ -77,21 +77,16 @@ public class QuestionRepositoryTest {
     @DisplayName("삭제시 작성자와 다른 답변자가 있으면 예외를 출력한다")
     void differentAnswerWriterTest() {
         final User javajigi = users.save(UserTest.JAVAJIGI);
-        final User sanjigi = users.save(UserTest.SANJIGI);
-        final Question q1 = questions.save(QuestionTest.Q1);
+        Question q1 = QuestionTest.Q1;
         q1.setWriter(javajigi);
+        Question q2 = questions.save(q1);
         Answer a1 = AnswerTest.A1;
-        a1.setWriter(sanjigi);
-        a1.setQuestion(q1);
-        Answer actual = answers.save(a1);
-
-        q1.writeBy(javajigi);
-        q1.addAnswer(actual);
-
-        final Question q2 = questions.save(q1);
+        Answer a2 = AnswerTest.A2;
+        q2.addAnswer(a2);
+        questions.save(q2);
 
         // then
-        assertThatThrownBy(() -> q2.delete(UserTest.JAVAJIGI))
+        assertThatThrownBy(() -> q2.delete(javajigi))
                 .isInstanceOf(ForbiddenException.class);
     }
 }

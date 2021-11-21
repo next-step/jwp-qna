@@ -52,8 +52,6 @@ public class QuestionTest {
     void makeDeleteHistoryTest() {
         q1.addAnswer(AnswerTest.A1);
 
-        System.out.println(q1.delete(UserTest.JAVAJIGI));
-
-        assertThat(q1.delete(UserTest.JAVAJIGI).size()).isEqualTo(3);
+        assertThat(q1.delete(UserTest.JAVAJIGI).size()).isEqualTo(2);
     }
 }

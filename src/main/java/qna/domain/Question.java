@@ -15,7 +15,7 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 

@@ -2,6 +2,7 @@ package qna.domain;
 
 import qna.ForbiddenException;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
@@ -11,7 +12,7 @@ import java.util.List;
 @Embeddable
 public class Answers {
     public static final String MESSAGE_NOT_OWNER = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers;
 
     public Answers() {
