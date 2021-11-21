@@ -21,16 +21,6 @@ class AnswersTest {
         assertThat(answers).isEqualTo(new Answers(Arrays.asList(AnswerTest.A1)));
     }
 
-    @DisplayName("모든 답변자가 작성자인지 확인")
-    @Test
-    void validateOwner() {
-        Answers answers = new Answers(Arrays.asList(AnswerTest.A1, AnswerTest.A2));
-
-        assertThatExceptionOfType(CannotDeleteException.class)
-            .isThrownBy(() -> answers.validateOwner(UserTest.JAVAJIGI))
-            .withMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-    }
-
     @DisplayName("삭제")
     @Test
     void delete() {

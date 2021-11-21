@@ -21,16 +21,9 @@ public class Answers {
     }
 
     public DeleteHistories delete(User loginUser) {
-        validateOwner(loginUser);
         return new DeleteHistories(answers.stream()
             .map(answer -> answer.delete(loginUser))
             .collect(Collectors.toList()));
-    }
-
-    protected void validateOwner(User loginUser) {
-        for (Answer answer : answers) {
-            answer.validateOwner(loginUser);
-        }
     }
 
     public boolean add(Answer answer) {
