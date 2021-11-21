@@ -44,24 +44,6 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    void equals() {
-        // given
-        final User writer = userRepository.save(
-            TestUserFactory.create(
-                "javajigi", "password", "name", "javajigi@slipp.net"
-            )
-        );
-        final Question before = TestQuestionFactory.create(1L, "title1", "contents1", writer);
-
-        // when
-        final Question after = questionRepository.save(before);
-        after.delete();
-
-        // then
-        assertThat(before).isEqualTo(after);
-    }
-
-    @Test
     void findAll() {
         // given
         final User writer = userRepository.save(
@@ -96,27 +78,5 @@ public class QuestionRepositoryTest {
 
         // then
         assertThat(actual).isEqualTo(question);
-    }
-
-    @Test
-    void addAnswer() {
-        // given
-        final User writer = userRepository.save(
-            TestUserFactory.create(
-                "javajigi", "password", "name", "javajigi@slipp.net"
-            )
-        );
-        final Question question = questionRepository.save(
-            TestQuestionFactory.create("title1", "contents1", writer)
-        );
-        final Answer answer = answerRepository.save(
-            TestAnswerFactory.create(writer, question, "Answers Contents1")
-        );
-
-        // when
-        question.addAnswer(answer);
-
-        // then
-        assertThat(answer.getQuestion()).isEqualTo(question);
     }
 }

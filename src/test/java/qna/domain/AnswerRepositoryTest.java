@@ -46,25 +46,6 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    void equals() {
-        // given
-        final User writer = userRepository.save(
-            TestUserFactory.create("javajigi", "password", "name", "javajigi@slipp.net")
-        );
-        final Question question = questionRepository.save(
-            TestQuestionFactory.create("title1", "contents1", writer)
-        );
-        final Answer before = TestAnswerFactory.create(1L, writer, question, "Answers Contents1");
-
-        // when
-        final Answer after = answerRepository.save(before);
-        after.delete();
-
-        // then
-        assertThat(before).isEqualTo(after);
-    }
-
-    @Test
     void findByQuestionId() {
         // given
         final User writer = userRepository.save(

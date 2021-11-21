@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -88,8 +90,16 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public DeleteHistory delete(final User loginUser) throws CannotDeleteException {
+        verifyOwner(loginUser);
         this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, getId(), getWriter(), LocalDateTime.now());
+    }
+
+    private void verifyOwner(final User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -11,6 +12,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 
 @Entity
 @Where(clause = "deleted = false")
@@ -79,8 +81,34 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public List<DeleteHistory> delete(final User loginUser) throws CannotDeleteException {
+        verifyOwner(loginUser);
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(
+            new DeleteHistory(ContentType.QUESTION, getId(), getWriter(), LocalDateTime.now())
+        );
         this.deleted = true;
+
+        for (Answer answer : answers) {
+            answer.delete(loginUser);
+            deleteHistories.add(
+                new DeleteHistory(
+                    ContentType.ANSWER,
+                    answer.getId(),
+                    answer.getWriter(),
+                    LocalDateTime.now()
+                )
+            );
+        }
+
+        return deleteHistories;
+    }
+
+    private void verifyOwner(final User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     @Override
