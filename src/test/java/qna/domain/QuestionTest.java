@@ -3,7 +3,12 @@ package qna.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
+import qna.domain.fixture.TestAnswerFactory;
+import qna.domain.fixture.TestAnswersFactory;
+import qna.domain.fixture.TestQuestionFactory;
+import qna.domain.fixture.TestUserFactory;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,10 +19,11 @@ class QuestionTest {
 
     @Test
     @DisplayName("로그인한 사용자와 질문자가 같은 경우 답변이 없다면 삭제할 수 있고 삭제 시 삭제 이력이 남는다.")
-    void deleteQuestion_정상_질문자_일치() throws CannotDeleteException {
-        final Question question = 질문_생성("questionWriter");
+    void deleteQuestion_정상_로그인사용자_질문자_일치() throws CannotDeleteException {
+        final User user = TestUserFactory.create("writer");
+        final Question question = TestQuestionFactory.create(user);
 
-        final List<DeleteHistory> deleteHistories = 질문_삭제(question);
+        final List<DeleteHistory> deleteHistories = 질문_삭제(question, LocalDateTime.now());
 
         assertAll(
                 () -> assertThat(question.isDeleted()).isTrue(),
@@ -30,11 +36,12 @@ class QuestionTest {
 
     @Test
     @DisplayName("로그인한 사용자와 질문자가 다른 경우 질문을 삭제할 수 없다.")
-    void deleteQuestion_예외_질문자_불일치() throws CannotDeleteException {
-        final User anotherUser = 사용자_생성("anotherWriter");
-        final Question question = 질문_생성("questionWriter");
+    void deleteQuestion_예외_로그인사용자_질문자_불일치() throws CannotDeleteException {
+        final User questionWriter = TestUserFactory.create("questionWriter");
+        final Question question = TestQuestionFactory.create(questionWriter);
+        final User answerWriter = TestUserFactory.create("answerWriter");
 
-        assertThatThrownBy(() -> question.deleteQuestion(anotherUser))
+        assertThatThrownBy(() -> question.deleteQuestion(answerWriter, LocalDateTime.now()))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("질문을 삭제할 권한이 없습니다.");
     }
@@ -42,58 +49,53 @@ class QuestionTest {
     @Test
     @DisplayName("질문자가 질문 삭제 시 모든 답변자가 질문자와 같다면 삭제할 수 있다")
     void deleteQuestion_정상_질문자_모든답변자_일치() {
-        final Question question = 질문자_모든답변자_일치("questionWriter");
 
-        final List<DeleteHistory> deleteHistories = 질문_삭제(question);
+        final User user = TestUserFactory.create("writer");
+        final Question question = TestQuestionFactory.create(user);
+        final Answer answer1 = TestAnswerFactory.create(user, question);
+        final Answers answers = TestAnswersFactory.create(answer1);
+
+        final List<DeleteHistory> deleteHistories = 질문_삭제(question, LocalDateTime.now());
 
         assertAll(
-                () -> assertThat(deleteHistories).hasSize(3),
-                () -> assertThat(question.isDeleted()).isTrue()
+                () -> assertThat(deleteHistories).hasSize(2),
+                () -> assertThat(question.isDeleted()).isTrue(),
+                () -> assertThat(answer1.isDeleted()).isTrue(),
+                () -> assertThat(answers.getAnswers()).hasSize(1)
         );
-
     }
 
     @Test
     @DisplayName("질문자가 질문 삭제 시 다른 사용자의 답변이 있다면 삭제할 수 없다.")
-    void deleteQuestion_예외_질문자_다른답변자() {
-        final Question question = 질문자_모든답변자_불일치("questionWriter");
+    void deleteQuestion_예외_질문자_다른답변자_불일치() {
 
-        assertThatThrownBy(() -> question.deleteQuestion(question.getWriter()))
+        final User user = TestUserFactory.create("writer");
+        final Question question = TestQuestionFactory.create(user);
+        final User answerUser = TestUserFactory.create("answerUser");
+        final Answer answer1 = TestAnswerFactory.create(answerUser, question);
+        final Answers answers = TestAnswersFactory.create(answer1);
+
+        assertThatThrownBy(() -> question.deleteQuestion(user, LocalDateTime.now()))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("답변을 삭제할 권한이 없습니다.");
     }
 
-    private User 사용자_생성(String writer) {
-        return new User(writer, "password", "lsh", "lsh@mail.com");
+    @Test
+    @DisplayName("질문을 삭제한 시간과 삭제내역이 생성된 시간은 같아야 한다")
+    void deleteQuestion_정상_삭제시간_일치() {
+        final User user = TestUserFactory.create("writer");
+        final Question question = TestQuestionFactory.create(user);
+
+        final LocalDateTime localDateTime = LocalDateTime.now();
+        final List<DeleteHistory> deleteHistories = 질문_삭제(question, localDateTime);
+
+        assertAll(
+                () -> assertThat(deleteHistories).hasSize(1),
+                () -> assertThat(deleteHistories.get(0).getCreateDate()).isEqualTo(localDateTime)
+        );
     }
 
-    private Question 질문_생성(String writer) {
-        return new Question("title", "contents", 사용자_생성(writer));
-    }
-
-    private List<DeleteHistory> 질문_삭제(Question question) {
-        return question.deleteQuestion(question.getWriter());
-    }
-
-    private Answer 답변_생성(String writer) {
-        return new Answer(사용자_생성(writer), 질문_생성(writer), "contents");
-    }
-
-    private Question 질문자_모든답변자_일치(String writer) {
-        final Question question = 질문_생성(writer);
-        final Answers answers = new Answers();
-        answers.addAnswer(답변_생성(writer));
-        answers.addAnswer(답변_생성(writer));
-        question.setAnswers(answers);
-        return question;
-    }
-
-    private Question 질문자_모든답변자_불일치(String writer) {
-        final Question question = 질문_생성(writer);
-        final Answers answers = new Answers();
-        answers.addAnswer(답변_생성(writer));
-        answers.addAnswer(답변_생성("anotherWriter"));
-        question.setAnswers(answers);
-        return question;
+    private List<DeleteHistory> 질문_삭제(final Question question, final LocalDateTime localDateTime) {
+        return question.deleteQuestion(question.getWriter(), localDateTime);
     }
 }
