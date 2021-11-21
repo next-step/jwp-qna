@@ -15,9 +15,7 @@ public class TitleTest {
         String text = "title test";
         Title title = new Title(text);
 
-        String result = title.getTitle();
-
-        assertThat(result).isEqualTo(text);
+        assertThat(title).isNotNull();
     }
 
     @DisplayName("Title 비교")

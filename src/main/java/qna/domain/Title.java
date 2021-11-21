@@ -32,10 +32,6 @@ public class Title {
         return MAX_LENGTH < text.length();
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o)

@@ -2,6 +2,8 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -27,7 +29,7 @@ public class QuestionTest {
     void deleteQuestion() {
         User loginUser = TestCreateFactory.createUser(1L);
         Question loginUserQuestion = TestCreateFactory.createQuestion(loginUser);
-        loginUserQuestion.delete(loginUser);
+        loginUserQuestion.delete(loginUser, LocalDateTime.of(2021,12,13,5,0));
 
         boolean isDeleted = loginUserQuestion.isDeleted();
 
@@ -43,7 +45,7 @@ public class QuestionTest {
                 User anotherUser = TestCreateFactory.createUser(2L);
                 Question anotherQuestion = TestCreateFactory.createQuestion(anotherUser);
 
-                anotherQuestion.delete(loginUser);
+                anotherQuestion.delete(loginUser, LocalDateTime.now());
             }).withMessageMatching("질문을 삭제할 권한이 없습니다.");
     }
 
@@ -54,7 +56,7 @@ public class QuestionTest {
         Question loginUserQuestion = TestCreateFactory.createQuestion(loginUser);
         Answer loginUserAnswer = TestCreateFactory.createAnswer(loginUser, loginUserQuestion);
         loginUserQuestion.addAnswer(loginUserAnswer);
-        loginUserQuestion.delete(loginUser);
+        loginUserQuestion.delete(loginUser, LocalDateTime.now());
 
         boolean isDeleted = loginUserQuestion.isDeleted();
 
@@ -72,7 +74,7 @@ public class QuestionTest {
                 Answer anotherUserAnswer = TestCreateFactory.createAnswer(anotherUser, loginUserQuestion);
                 loginUserQuestion.addAnswer(anotherUserAnswer);
 
-                loginUserQuestion.delete(loginUser);
+                loginUserQuestion.delete(loginUser, LocalDateTime.now());
             }).withMessageMatching("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }

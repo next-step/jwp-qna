@@ -3,6 +3,8 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +22,7 @@ public class AnswerTest {
         Question question = TestCreateFactory.createQuestion(user);
         Answer answer = TestCreateFactory.createAnswer(user, question);
 
-        assertThat(answer.getWriter()).isEqualTo(user);
+        assertThat(answer.getId()).isNotNull();
     }
 
     @DisplayName("로그인한 사용자의 답변 삭제")
@@ -30,7 +32,7 @@ public class AnswerTest {
         Question question = TestCreateFactory.createQuestion(loginUser);
         Answer answer = TestCreateFactory.createAnswer(loginUser, question);
 
-        answer.delete(loginUser);
+        answer.delete(loginUser, LocalDateTime.now());
 
         assertThat(answer.isDeleted()).isTrue();
     }
@@ -45,7 +47,7 @@ public class AnswerTest {
                 Question question = TestCreateFactory.createQuestion(loginUser);
                 Answer answer = TestCreateFactory.createAnswer(answerUser, question);
 
-                answer.delete(loginUser);
+                answer.delete(loginUser, LocalDateTime.now());
             }).withMessageMatching("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }

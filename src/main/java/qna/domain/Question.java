@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 
 import qna.CannotDeleteException;
 
@@ -42,9 +41,6 @@ public class Question extends BaseEntity {
     @Embedded
     Answers answers;
 
-    @Transient
-    private DateTimeGenerator dateTimeGenerator = new CurrentDateTimeGenerator();
-
     protected Question() {
     }
 
@@ -64,22 +60,21 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public DeleteHistorys delete(User loginUser) {
+    public DeleteHistorys delete(User loginUser, LocalDateTime deleteAt) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException();
         }
 
         this.deleted = true;
-        LocalDateTime deleteDateTime = dateTimeGenerator.generateDateTime();
 
         DeleteHistory questionDeleteHistory =
-            new DeleteHistory(ContentType.QUESTION, this.id, this.writer, deleteDateTime);
-        DeleteHistorys deleteHistorys = answers.delete(loginUser, deleteDateTime);
+            new DeleteHistory(ContentType.QUESTION, this.id, this.writer, deleteAt);
+        DeleteHistorys deleteHistorys = answers.delete(loginUser, deleteAt);
 
         return deleteHistorys.prepend(questionDeleteHistory);
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 

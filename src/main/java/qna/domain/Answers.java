@@ -23,9 +23,9 @@ public class Answers {
         this.answers = Collections.unmodifiableList(answerList);
     }
 
-    public DeleteHistorys delete(User loginUser, LocalDateTime deleteDateTime) {
+    public DeleteHistorys delete(User loginUser, LocalDateTime deleteAt) {
         return this.answers.stream()
-            .map(answer -> answer.delete(loginUser, deleteDateTime))
+            .map(answer -> answer.delete(loginUser, deleteAt))
             .collect(Collectors.collectingAndThen(
                 Collectors.toList(), DeleteHistorys::new));
     }

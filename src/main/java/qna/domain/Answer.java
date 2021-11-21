@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 
 import qna.CannotDeleteSomeoneElseException;
 import qna.NotFoundException;
@@ -41,8 +40,8 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @Transient
-    private DateTimeGenerator dateTimeGenerator = new CurrentDateTimeGenerator();
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -64,29 +63,18 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    protected Answer() {
-    }
-
-    public DeleteHistory delete(User loginUser) {
-        return delete(loginUser, dateTimeGenerator.generateDateTime());
-    }
-
-    public DeleteHistory delete(User loginUser, LocalDateTime deleteDateTime) {
+    public DeleteHistory delete(User loginUser, LocalDateTime deleteAt) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteSomeoneElseException();
         }
 
         this.deleted = true;
 
-        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, deleteDateTime);
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, deleteAt);
     }
 
     public Long getId() {
         return id;
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
     }
 
     public boolean isDeleted() {
@@ -95,6 +83,10 @@ public class Answer extends BaseEntity {
 
     public User getWriter() {
         return writer;
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     @Override
