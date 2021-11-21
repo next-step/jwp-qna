@@ -18,7 +18,7 @@ public class Answers {
     protected Answers() {
     }
 
-    public static Answers of() {
+    public static Answers empty() {
         return new Answers();
     }
 

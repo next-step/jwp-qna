@@ -5,7 +5,6 @@ import qna.CannotDeleteException;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "question")
@@ -29,7 +28,7 @@ public class Question extends BaseTimeEntity {
     private boolean deleted = false;
 
     @Embedded
-    private Answers answers = Answers.of();
+    private Answers answers = Answers.empty();
 
     protected Question() {
     }
@@ -56,7 +55,7 @@ public class Question extends BaseTimeEntity {
         }
         List<DeleteHistory> result = new ArrayList<>();
         deleted = true;
-        result.add(new DeleteHistory(ContentType.QUESTION, id, writer));
+        result.add(new DeleteHistory(ContentType.QUESTION, id, writer, this.getUpdatedAt()));
         result.addAll(answers.delete(loginUser));
         return result;
     }

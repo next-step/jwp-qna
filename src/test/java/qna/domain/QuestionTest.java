@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +28,7 @@ public class QuestionTest {
         final List<DeleteHistory> deleteHistorys = Q1.delete(UserTest.JAVAJIGI);
 
         assertThat(deleteHistorys).isNotNull();
-        assertThat(deleteHistorys.get(0)).isEqualTo(new DeleteHistory(ContentType.QUESTION, Q1.getId(), UserTest.JAVAJIGI));
+        assertThat(deleteHistorys.get(0)).isEqualTo(new DeleteHistory(ContentType.QUESTION, Q1.getId(), UserTest.JAVAJIGI, LocalDateTime.now()));
 
     }
 
@@ -58,4 +59,5 @@ public class QuestionTest {
         }).isInstanceOf(CannotDeleteException.class)
                 .hasMessageContaining("질문을 삭제할 권한이 없습니다.");
     }
+
 }

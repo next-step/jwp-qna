@@ -15,7 +15,7 @@ public class AnswersTest {
     private final User user = new User(1L, "lsm", "password", "이승민", "test@test.com");
     private final Answer A1 = new Answer(1L, user, QuestionTest.Q1, "Answers Contents1");
     private final Answer A2 = new Answer(2L, user, QuestionTest.Q1, "Answers Contents2");
-    private final Answers answers = Answers.of();
+    private final Answers answers = Answers.empty();
 
     @BeforeEach
     void setUp() {
