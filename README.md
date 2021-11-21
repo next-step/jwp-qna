@@ -39,3 +39,11 @@ alter table question
 add constraint fk_question_writer
 foreign key (writer_id)
 references user
+
+## step3 - 질문 삭제하기 리팩토링
+
+### QnaService.java 리팩토링 목록
+- [] Question 작성자와 로그인 유저의 일치 여부 검증 => Question 도메인 객체로 이동
+- [] Answer 작성자와 로그인 유저의 일치 여부 검증 => Answer 도메인 객체로 이동
+- [] List<DeleteHistory> 일급 콜렉션 리펙토링
+- [] List<Answer> 일급 콜렉션 리펙토링
