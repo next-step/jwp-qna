@@ -48,8 +48,4 @@ class UserRepositoryTest {
     private User 사용자_조회(User actual) {
         return users.findByUserId(actual.getUserId()).orElseThrow(NotFoundException::new);
     }
-
-    private void 사용자_수정(User actual, User expected) {
-        actual.update(actual, expected);
-    }
 }
