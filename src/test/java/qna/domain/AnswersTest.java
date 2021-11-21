@@ -13,8 +13,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class AnswersTest {
 
     private final User user = new User(1L, "lsm", "password", "이승민", "test@test.com");
-    private final Answer A1 = new Answer(1L, user, QuestionTest.Q1, "Answers Contents1");
-    private final Answer A2 = new Answer(2L, user, QuestionTest.Q1, "Answers Contents2");
+    private final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+    private final Answer A1 = new Answer(1L, user, Q1, "Answers Contents1");
+    private final Answer A2 = new Answer(2L, user, Q1, "Answers Contents2");
     private final Answers answers = Answers.empty();
 
     @BeforeEach

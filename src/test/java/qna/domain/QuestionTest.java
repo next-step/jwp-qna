@@ -11,20 +11,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static
 
     @DisplayName("질문 삭제 할 때 삭제 상태로 변경 검증")
     @Test
     void deleteTest() throws CannotDeleteException {
-        Q1.delete(UserTest.JAVAJIGI);
-        assertThat(Q1.isDeleted()).isTrue();
+        final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
 
+        Q1.delete(UserTest.JAVAJIGI);
+
+        assertThat(Q1.isDeleted()).isTrue();
     }
 
     @DisplayName("질문 삭제 시 DeleteHistory에 이력정보 생성  검증")
     @Test
     void deleteHistoryToQuestion() throws CannotDeleteException {
+        final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+
         final List<DeleteHistory> deleteHistorys = Q1.delete(UserTest.JAVAJIGI);
 
         assertThat(deleteHistorys).isNotNull();
@@ -35,8 +38,9 @@ public class QuestionTest {
     @DisplayName("질문 삭제 시 답변도 삭제해야함.")
     @Test
     void deleteWithAnswer() throws CannotDeleteException {
-        final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-        final Answer A2 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents2");
+        final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        final Answer A1 = new Answer(UserTest.JAVAJIGI, Q1, "Answers Contents1");
+        final Answer A2 = new Answer(UserTest.JAVAJIGI, Q1, "Answers Contents2");
 
         Q1.delete(UserTest.JAVAJIGI);
 
@@ -44,16 +48,11 @@ public class QuestionTest {
         assertThat(A2.isDeleted()).isTrue();
     }
 
-    @DisplayName("사용자와 질문이 같은 User인 경우 삭제가능")
-    @Test
-    void deleteByUser() throws CannotDeleteException {
-        Q1.delete(UserTest.JAVAJIGI);
-        assertThat(Q1.isDeleted()).isTrue();
-    }
-
     @DisplayName("사용자와 질문이 다른 User인 경우 삭제할때 에러")
     @Test
     void deleteByUserError() {
+        final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+
         assertThatThrownBy(() -> {
             Q1.delete(new User("lsm", "password", "이승민", "test@test.com"));
         }).isInstanceOf(CannotDeleteException.class)
