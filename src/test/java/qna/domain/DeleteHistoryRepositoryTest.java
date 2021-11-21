@@ -23,7 +23,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     void save() {
         User user = userRepository.save(new User("userId", "password", "name", "email"));
-        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, 1L, user, LocalDateTime.now());
+        DeleteHistory expected = new DeleteHistory(new Content(ContentType.ANSWER, 1L, user), LocalDateTime.now());
 
         DeleteHistory actual = deleteHistoryRepository.save(expected);
 

@@ -64,7 +64,7 @@ class AnswerRepositoryTest {
     @DisplayName("삭제되지 않은 답변 질문 id로 조회")
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        answer1.delete(user1);
+        answer1.delete();
         answerRepository.save(answer1);
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
@@ -75,11 +75,11 @@ class AnswerRepositoryTest {
     @DisplayName("삭제되지 않은 답변 id로 조회")
     @Test
     void findByIdAndDeletedFalse() {
-        answer2.delete(user2);
+        answer2.delete();
         answerRepository.save(answer2);
 
         Answer deletedAnswer = answerRepository.save(new Answer(user1, question, "answer contents3"));
-        deletedAnswer.delete(user1);
+        deletedAnswer.delete();
 
         Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(answer1.getId());
         Optional<Answer> actualNull = answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId());

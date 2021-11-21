@@ -36,9 +36,8 @@ public class QuestionTest {
         Q2.addAnswer(AnswerTest.A3);
         assertThat(Q2.delete(UserTest.SANJIGI))
             .isEqualTo(new DeleteHistories(Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, Q2.getId(), Q2.getWriter(), LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, AnswerTest.A3.getId(), AnswerTest.A3.getWriter(),
-                    LocalDateTime.now()))
+                new DeleteHistory(new Content(Q2), LocalDateTime.now()),
+                new DeleteHistory(new Content(AnswerTest.A3), LocalDateTime.now()))
             ));
     }
 }

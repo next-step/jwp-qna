@@ -4,15 +4,11 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class DeleteHistory {
@@ -20,22 +16,14 @@ public class DeleteHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private ContentType contentType;
-
-    private Long contentId;
-
-    @ManyToOne
-    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
-    private User user;
+    @Embedded
+    private Content content;
 
     @Column(length = 6)
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
-        this.contentType = contentType;
-        this.contentId = contentId;
-        this.user = user;
+    public DeleteHistory(Content content, LocalDateTime createDate) {
+        this.content = content;
         this.createDate = createDate;
     }
 
@@ -52,24 +40,21 @@ public class DeleteHistory {
         }
         DeleteHistory that = (DeleteHistory)o;
         return Objects.equals(id, that.id) &&
-            contentType == that.contentType &&
-            Objects.equals(contentId, that.contentId) &&
-            Objects.equals(user, that.user);
+            Objects.equals(content, that.content);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, user);
+        return Objects.hash(id, content);
     }
 
     @Override
     public String toString() {
-        return "DeleteHistory{" +
-            "id=" + id +
-            ", contentType=" + contentType +
-            ", contentId=" + contentId +
-            ", user=" + user +
-            ", createDate=" + createDate +
-            '}';
+        final StringBuilder sb = new StringBuilder("DeleteHistory{");
+        sb.append("id=").append(id);
+        sb.append(", content=").append(content);
+        sb.append(", createDate=").append(createDate);
+        sb.append('}');
+        return sb.toString();
     }
 }

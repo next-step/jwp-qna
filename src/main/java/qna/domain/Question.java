@@ -85,7 +85,7 @@ public class Question extends BaseTimeEntity {
 
     protected DeleteHistories makeDeleteHistories(User loginUser) {
         DeleteHistories deleteHistories = new DeleteHistories(
-            new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+            new DeleteHistory(new Content(this), LocalDateTime.now()));
         deleteHistories.addAll(answers.delete(loginUser));
         return deleteHistories;
     }

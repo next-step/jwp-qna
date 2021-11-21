@@ -26,7 +26,7 @@ public class Answers {
         validateOwner(loginUser);
 
         return new DeleteHistories(answers.stream()
-            .map(answer -> answer.delete(loginUser))
+            .map(Answer::delete)
             .collect(Collectors.toList()));
     }
 

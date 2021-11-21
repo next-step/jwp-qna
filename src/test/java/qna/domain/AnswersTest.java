@@ -36,11 +36,9 @@ class AnswersTest {
     void delete() {
         Answers answers = new Answers(Arrays.asList(AnswerTest.A2, AnswerTest.A3, AnswerTest.A4));
         DeleteHistories expected = new DeleteHistories(Arrays.asList(
-            new DeleteHistory(ContentType.ANSWER, AnswerTest.A2.getId(), AnswerTest.A2.getWriter(),
-                LocalDateTime.now()),
-            new DeleteHistory(ContentType.ANSWER, AnswerTest.A3.getId(), AnswerTest.A3.getWriter(),
-                LocalDateTime.now()),
-            new DeleteHistory(ContentType.ANSWER, AnswerTest.A3.getId(), AnswerTest.A3.getWriter(), LocalDateTime.now())
+            new DeleteHistory(new Content(AnswerTest.A2), LocalDateTime.now()),
+            new DeleteHistory(new Content(AnswerTest.A3), LocalDateTime.now()),
+            new DeleteHistory(new Content(AnswerTest.A4), LocalDateTime.now())
         ));
 
         DeleteHistories deleteHistories = answers.delete(UserTest.SANJIGI);

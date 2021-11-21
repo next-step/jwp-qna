@@ -63,9 +63,9 @@ public class Answer extends BaseTimeEntity {
         return this.question.matchId(question);
     }
 
-    public DeleteHistory delete(User writer) {
+    public DeleteHistory delete() {
         deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+        return new DeleteHistory(new Content(this), LocalDateTime.now());
     }
 
     protected boolean isOwner(User writer) {
