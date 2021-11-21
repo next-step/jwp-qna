@@ -25,34 +25,30 @@ class QnaServiceTest {
     private QuestionRepository questionRepository;
 
     @Mock
-    private AnswerRepository answerRepository;
-
-    @Mock
     private DeleteHistoryService deleteHistoryService;
 
     @InjectMocks
     private QnaService qnaService;
 
+    private User user;
+    private User anotherUser;
     private Question question;
     private Answer answer;
-    private User questionWriter;
-    private User anotherWriter;
 
     @BeforeEach
     void setUp() {
-        questionWriter = new User("questionWriter", "password", "lsh", "lsh@mail.com");
-        question = new Question("title1", "contents1", questionWriter);
-        answer = new Answer(questionWriter, question, "Answers Contents1");
-        anotherWriter = new User("anotherWriter", "password", "lsh", "lsh@mail.com");
+        user = new User(1L, "writer", "password", "lsh", "lsh@mail.com");
+        anotherUser = new User(2L, "anotherWriter", "password", "lsh", "lsh@mail.com");
+        question = new Question(1L, "title1", "contents1", user);
+        answer = new Answer(1L, user, question, "Answers Contents1");
     }
 
     @Test
     void delete_성공() {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer));
 
         assertThat(question.isDeleted()).isFalse();
-        qnaService.deleteQuestion(questionWriter, question.getId());
+        qnaService.deleteQuestion(user, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
         verifyDeleteHistories();
@@ -62,16 +58,15 @@ class QnaServiceTest {
     void delete_다른_사람이_쓴_글() {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(anotherWriter, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(anotherUser, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
     void delete_성공_질문자_답변자_같음() {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer));
 
-        qnaService.deleteQuestion(questionWriter, question.getId());
+        qnaService.deleteQuestion(user, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
@@ -80,12 +75,9 @@ class QnaServiceTest {
 
     @Test
     void delete_답변_중_다른_사람이_쓴_글() {
-        Answer answer2 = new Answer(2L, anotherWriter, question, "Answers Contents1");
-
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer, answer2));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(questionWriter, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(anotherUser, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
