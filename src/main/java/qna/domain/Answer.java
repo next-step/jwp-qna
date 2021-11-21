@@ -40,16 +40,10 @@ public class Answer extends BaseTimeEntity {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
+        validateWriter(writer);
+        validateQuestion(question);
+
         this.id = id;
-
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
-
         this.writer = writer;
         this.question = question;
         question.addAnswer(this);
@@ -57,6 +51,18 @@ public class Answer extends BaseTimeEntity {
     }
 
     protected Answer() {
+    }
+
+    private void validateWriter(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
+    }
+
+    private void validateQuestion(Question question) {
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
     }
 
     public boolean isFrom(Question question) {

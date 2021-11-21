@@ -24,9 +24,7 @@ public class QuestionTest {
     @Test
     void validateOwner_fail() {
         assertThatExceptionOfType(CannotDeleteException.class)
-            .isThrownBy(() -> {
-                Q1.validateOwner(UserTest.SANJIGI);
-            })
+            .isThrownBy(() -> Q1.validateOwner(UserTest.SANJIGI))
             .withMessage("질문을 삭제할 권한이 없습니다.");
     }
 

@@ -43,9 +43,6 @@ public class Answers {
     }
 
     public boolean add(Answer answer) {
-        if (answers.contains(answer)) {
-            return false;
-        }
         return answers.add(answer);
     }
 

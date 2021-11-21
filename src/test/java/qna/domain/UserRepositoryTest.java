@@ -61,4 +61,16 @@ class UserRepositoryTest {
             () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
         );
     }
+
+    private void assertUswer(User actual, User expected) {
+        assertAll(
+            () -> assertThat(actual.getId()).isNotNull(),
+            () -> assertThat(actual.getUserId()).isEqualTo(expected.getUserId()),
+            () -> assertThat(actual.getPassword()).isEqualTo(expected.getPassword()),
+            () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
+            () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail()),
+            () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
+            () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
+        );
+    }
 }
