@@ -43,7 +43,24 @@ public class QuestionTest {
     }
 
     @Test
-    void delete() {
+    void delete() throws CannotDeleteException {
+        // given
+        final User owner = TestUserFactory.create(
+            1L, "javajigi", "password", "name", "javajigi@slipp.net"
+        );
+        final Question question = TestQuestionFactory.create(1L, "title1", "contents1", owner);
+        final Answer answer = TestAnswerFactory.create(1L, owner, question, "Answers Contents1");
+        question.addAnswer(answer);
+
+        // when
+        final DeleteHistories deleteHistories = question.delete(owner);
+
+        // then
+        assertThat(deleteHistories.getValues()).hasSize(2);
+    }
+
+    @Test
+    void delete_invalidOwner() {
         // given
         final User owner = TestUserFactory.create(
             1L, "javajigi", "password", "name", "javajigi@slipp.net"
@@ -55,12 +72,33 @@ public class QuestionTest {
 
         // when, then
         assertAll(
-            () -> assertDoesNotThrow(
-                () -> question.delete(owner)
-            ),
-            () -> assertThatThrownBy(
-                () -> question.delete(someUser)
-            ).isInstanceOf(CannotDeleteException.class)
+            () -> assertDoesNotThrow(() -> question.delete(owner)),
+            () -> assertThatThrownBy(() -> question.delete(someUser))
+                .isInstanceOf(CannotDeleteException.class)
         );
+    }
+
+    @Test
+    void delete_multipleWriters() {
+        // given
+        final User owner = TestUserFactory.create(
+            1L, "javajigi", "password", "name", "javajigi@slipp.net"
+        );
+        final User someUser = TestUserFactory.create(
+            2L, "sanjigi", "password", "name", "sanjigi@slipp.net"
+        );
+        final Question question = TestQuestionFactory.create(1L, "title1", "contents1", owner);
+        question.addAnswer(
+            TestAnswerFactory.create(1L, owner, question,
+                "Answers Contents1")
+        );
+        question.addAnswer(
+            TestAnswerFactory.create(2L, someUser, question,
+                "Answers Contents2")
+        );
+
+        // when, then
+        assertThatThrownBy(() -> question.delete(someUser))
+            .isInstanceOf(CannotDeleteException.class);
     }
 }

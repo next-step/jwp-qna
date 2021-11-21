@@ -25,7 +25,24 @@ public class AnswerTest {
     }
 
     @Test
-    void delete() {
+    void delete() throws CannotDeleteException {
+        // given
+        final User owner = TestUserFactory.create(
+            1L, "javajigi", "password", "name", "javajigi@slipp.net"
+        );
+        final Question question = TestQuestionFactory.create(1L, "title1", "contents1", owner);
+        final Answer answer = TestAnswerFactory.create(1L, owner, question, "Answers Contents1");
+        answer.delete(owner);
+
+        // when
+        final DeleteHistories deleteHistories = question.delete(owner);
+
+        // then
+        assertThat(deleteHistories.getValues()).hasSize(1);
+    }
+
+    @Test
+    void delete_invalidOwner() {
         // given
         final User owner = TestUserFactory.create(
             1L, "javajigi", "password", "name", "javajigi@slipp.net"
