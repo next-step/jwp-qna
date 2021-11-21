@@ -16,6 +16,9 @@ public class QuestionRepositoryTest {
     private QuestionRepository questionRepository;
 
     @Autowired
+    private AnswerRepository answerRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Test
@@ -93,5 +96,27 @@ public class QuestionRepositoryTest {
 
         // then
         assertThat(actual).isEqualTo(question);
+    }
+
+    @Test
+    void addAnswer() {
+        // given
+        final User writer = userRepository.save(
+            TestUserFactory.create(
+                "javajigi", "password", "name", "javajigi@slipp.net"
+            )
+        );
+        final Question question = questionRepository.save(
+            TestQuestionFactory.create("title1", "contents1", writer)
+        );
+        final Answer answer = answerRepository.save(
+            TestAnswerFactory.create(writer, question, "Answers Contents1")
+        );
+
+        // when
+        question.addAnswer(answer);
+
+        // then
+        assertThat(answer.getQuestion()).isEqualTo(question);
     }
 }

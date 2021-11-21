@@ -64,7 +64,7 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
+    public void replyToQuestion(Question question) {
         this.question = question;
     }
 
