@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 
@@ -35,8 +35,8 @@ public class Question extends BaseEntity {
     )
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -83,25 +83,13 @@ public class Question extends BaseEntity {
 
     public List<DeleteHistory> delete(final User loginUser) throws CannotDeleteException {
         verifyOwner(loginUser);
-
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        final List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(
             new DeleteHistory(ContentType.QUESTION, getId(), getWriter(), LocalDateTime.now())
         );
+        final List<DeleteHistory> answerDeleteHistories = answers.delete(loginUser);
+        deleteHistories.addAll(answerDeleteHistories);
         this.deleted = true;
-
-        for (Answer answer : answers) {
-            answer.delete(loginUser);
-            deleteHistories.add(
-                new DeleteHistory(
-                    ContentType.ANSWER,
-                    answer.getId(),
-                    answer.getWriter(),
-                    LocalDateTime.now()
-                )
-            );
-        }
-
         return deleteHistories;
     }
 
