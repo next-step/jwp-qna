@@ -93,7 +93,7 @@ public class Answer extends BaseEntity {
     public DeleteHistory delete(final User loginUser) throws CannotDeleteException {
         verifyOwner(loginUser);
         this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, getId(), getWriter(), LocalDateTime.now());
+        return DeleteHistory.ofAnswer(getId(), getWriter(), LocalDateTime.now());
     }
 
     private void verifyOwner(final User loginUser) throws CannotDeleteException {

@@ -18,7 +18,7 @@ public class DeleteHistoriesTest {
 
         // when
         deleteHistories.add(
-            new DeleteHistory(ContentType.QUESTION, 1L, writer, LocalDateTime.now())
+            DeleteHistory.ofQuestion(1L, writer, LocalDateTime.now())
         );
 
         // then
@@ -33,7 +33,7 @@ public class DeleteHistoriesTest {
         );
         final DeleteHistories deleteHistories = new DeleteHistories(
             Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, 1L, writer, LocalDateTime.now())
+                DeleteHistory.ofQuestion(1L, writer, LocalDateTime.now())
             )
         );
 
@@ -41,8 +41,8 @@ public class DeleteHistoriesTest {
         deleteHistories.addAll(
             new DeleteHistories(
                 Arrays.asList(
-                    new DeleteHistory(ContentType.QUESTION, 2L, writer, LocalDateTime.now()),
-                    new DeleteHistory(ContentType.QUESTION, 3L, writer, LocalDateTime.now())
+                    DeleteHistory.ofQuestion(2L, writer, LocalDateTime.now()),
+                    DeleteHistory.ofQuestion(3L, writer, LocalDateTime.now())
                 )
             )
         );

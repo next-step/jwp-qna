@@ -82,9 +82,7 @@ public class Question extends BaseEntity {
     public DeleteHistories delete(final User loginUser) throws CannotDeleteException {
         verifyOwner(loginUser);
         final DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.add(
-            new DeleteHistory(ContentType.QUESTION, getId(), getWriter(), LocalDateTime.now())
-        );
+        deleteHistories.add(DeleteHistory.ofQuestion(getId(), getWriter(), LocalDateTime.now()));
         deleteHistories.addAll(answers.delete(loginUser));
         this.deleted = true;
         return deleteHistories;
