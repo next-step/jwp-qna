@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -8,6 +9,9 @@ import java.util.Objects;
 
 @Entity
 public class Answer extends BaseTimeEntity{
+
+    private static String EXCEPTION_MSG = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -47,7 +51,8 @@ public class Answer extends BaseTimeEntity{
         this.writer = writer;
         this.question = question;
         this.contents = contents;
-        //question.addAnswer(this);
+
+        question.addAnswer(this);
     }
 
     public boolean isOwner(User writer) {
@@ -55,7 +60,11 @@ public class Answer extends BaseTimeEntity{
     }
 
     public void toQuestion(Question question) {
+        if (this.question != null) {
+            this.question.getAnswers().remove(this);
+        }
         this.question = question;
+        question.getAnswers().add(this);
     }
 
     public Long getId() {
@@ -74,8 +83,8 @@ public class Answer extends BaseTimeEntity{
         return deleted.isDeleted();
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted.setDeleted(deleted);
+    public void setDeleted(Deleted deleted) {
+        this.deleted = deleted;
     }
 
     @Override
@@ -89,5 +98,12 @@ public class Answer extends BaseTimeEntity{
                 '}';
     }
 
-
+    public DeleteHistory delete(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException(EXCEPTION_MSG);
+        }
+        deleted = Deleted.TRUE;
+        return DeleteHistory.of(ContentType.ANSWER, id, user);
+    }
 }
+
