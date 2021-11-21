@@ -80,6 +80,10 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }

@@ -45,8 +45,8 @@ public class UserTest {
     void signUp() {
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId()).isEqualTo(3L),
-                () -> assertThat(actual.getUserId()).isEqualTo("inmookjeong")
+                () -> assertThat(actual.getUserId()).isEqualTo("inmookjeong"),
+                () -> assertThat(actual.getPassword()).isEqualTo("password")
         );
     }
 
@@ -58,7 +58,7 @@ public class UserTest {
         actual.update(actual, actual);
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId()).isEqualTo(3L),
+                () -> assertThat(actual.getUserId()).isEqualTo("inmookjeong"),
                 () -> assertThat(actual.getName()).isEqualTo("mook"),
                 () -> assertThat(actual.getEmail()).isEqualTo("jeonginmook2@gmail.com")
         );
@@ -70,7 +70,7 @@ public class UserTest {
         actual.updatePassword(actual, "newPassword");
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId()).isEqualTo(3L),
+                () -> assertThat(actual.getUserId()).isEqualTo("inmookjeong"),
                 () -> assertThat(actual.getPassword()).isEqualTo("newPassword")
         );
     }

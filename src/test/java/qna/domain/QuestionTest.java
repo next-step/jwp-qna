@@ -34,7 +34,7 @@ public class QuestionTest {
     private Question question2;
 
     @BeforeEach
-    void saveDefaultQuestions() {
+    public void saveDefaultQuestions() {
         question1 = questionRepository.save(Q1);
         question2 = questionRepository.save(Q2);
     }
@@ -115,7 +115,7 @@ public class QuestionTest {
     @Test
     @DisplayName("질문 삭제")
     void deleteQuestion() {
-        _saveTempAnswer();
+        _saveTempAnswer(question1);
         Long answerCount = answerRepository.countByQuestionIdAndDeletedFalse(question1.getId());
         _log.info("##### Question has" + answerCount + " Answers.");
 
@@ -138,8 +138,8 @@ public class QuestionTest {
         assertThat(answerRepository.countByQuestionIdAndDeletedFalse(questionId)).isEqualTo(0L);
     }
 
-    private void _saveTempAnswer() {
-        answerRepository.save(AnswerTest.A1);
+    private void _saveTempAnswer(Question question) {
+        answerRepository.save(new Answer(UserTest.JAVAJIGI, question, "Answers Contents1"));
     }
 
 }

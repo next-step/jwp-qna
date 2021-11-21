@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+    public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -25,19 +25,27 @@ public class AnswerTest {
     private Answer answer1;
     private Answer answer2;
 
+    private Question question;
+
     @BeforeEach
     void saveDefaultAnswer() {
+        question = _saveDefaultQuestions();
+        A1.setQuestion(question);
+        A2.setQuestion(question);
         answer1 = answerRepository.save(A1);
         answer2 = answerRepository.save(A2);
+    }
+
+    private Question _saveDefaultQuestions() {
+        return questionRepository.save(QuestionTest.Q1);
     }
 
     @Test
     @DisplayName("답변 등록")
     void save() {
-        Answer actual = answer1;
         assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId()).isEqualTo(A1.getId())
+                () -> assertThat(answer1).isNotNull(),
+                () -> assertThat(answer1.isDeleted()).isEqualTo(false)
         );
     }
 
@@ -56,15 +64,13 @@ public class AnswerTest {
     @Test
     @DisplayName("Question Id를 통해 Answer 갯수 조회")
     void countByQuestionIdAndDeletedFalse() {
-        questionRepository.save(QuestionTest.Q1);
-        Long count = answerRepository.countByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        Long count = answerRepository.countByQuestionIdAndDeletedFalse(question.getId());
         assertThat(count).isEqualTo(2L);
     }
     
     @Test
     @DisplayName("Question Id를 통해 Answer 목록 조회")
     void findByQuestionIdAndDeletedFalse() {
-        Question question = questionRepository.save(QuestionTest.Q1);
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
         assertAll(
                 () -> assertThat(answers).isNotNull(),
@@ -75,7 +81,6 @@ public class AnswerTest {
     @Test
     @DisplayName("Answer ID를 통한 삭제")
     void deleteAnswerById() {
-        Question question = questionRepository.save(QuestionTest.Q1);
         answer1.setDeleted(true);
         assertThat(answerRepository.countByQuestionIdAndDeletedFalse(question.getId())).isEqualTo(1L);
     }
