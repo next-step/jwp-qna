@@ -19,6 +19,9 @@ public class QuestionTest {
 	@Autowired
 	private QuestionRepository questionRepository;
 
+	@Autowired
+	private UserRepository userRepository;
+
 	@Test
 	@DisplayName("질문을 저장한다.")
 	void save() {
@@ -27,6 +30,14 @@ public class QuestionTest {
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getTitle()).isEqualTo(Q1.getTitle())
 		);
+	}
+
+	@Test
+	@DisplayName("질문을 작성한 유저 가져오기")
+	void findQuestionWithUser() {
+		final Question actual = questionRepository.save(Q1);
+		final User user = userRepository.findByUserId(actual.getWriter().getUserId()).get();
+		assertThat(actual.getWriter()).isEqualTo(user);
 	}
 
 	@Test

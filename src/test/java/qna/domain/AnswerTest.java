@@ -19,6 +19,12 @@ public class AnswerTest {
 	@Autowired
 	private AnswerRepository answerRepository;
 
+	@Autowired
+	private QuestionRepository questionRepository;
+
+	@Autowired
+	private UserRepository userRepository;
+
 	@Test
 	@DisplayName("답변을 저장한다.")
 	void save() {
@@ -30,14 +36,29 @@ public class AnswerTest {
 	}
 
 	@Test
+	@DisplayName("답변이 작성된 질문 가져오기")
+	void findAnswerWithQuestion() {
+		final Answer actual = answerRepository.save(A1);
+		final Question question = questionRepository.findById(actual.getQuestion().getId()).get();
+		assertThat(actual.getQuestion()).isEqualTo(question);
+	}
+
+	@Test
+	@DisplayName("답변을 작성한 유저 가져오기")
+	void findAnswerWithUser() {
+		final Answer actual = answerRepository.save(A1);
+		final User user = userRepository.findByUserId(actual.getWriter().getUserId()).get();
+		assertThat(actual.getWriter()).isEqualTo(user);
+	}
+
+	@Test
 	@DisplayName("질문 ID의 삭제되지 않은 답변 목록을 가져온다.")
 	void findByQuestionIdAndDeletedFalse() {
-		final Answer answer1 = answerRepository.save(A1);
-		final Answer answer2 = answerRepository.save(A2);
+		final Answer answer = answerRepository.save(A1);
 		final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(
-			QuestionTest.Q1.getId());
+			answer.getQuestion().getId());
 
-		assertThat(actual).contains(answer1, answer2);
+		assertThat(actual).contains(answer);
 	}
 
 	@Test
