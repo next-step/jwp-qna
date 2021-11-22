@@ -2,91 +2,50 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import qna.AnswerWrittenBySomeoneElseException;
 
 @DataJpaTest
 public class AnswerTest {
 
-    @Autowired
-    private AnswerRepository answers;
-    @Autowired
-    private UserRepository users;
-    @Autowired
-    private QuestionRepository questions;
+    @DisplayName("Answer 값 확인")
+    @Test
+    void init() {
+        User user = TestCreateFactory.createUser(1L);
+        Question question = TestCreateFactory.createQuestion(user);
+        Answer answer = TestCreateFactory.createAnswer(user, question);
 
-    private Answer firstAnswer;
-    private Answer secondAnswer;
-
-    @BeforeEach
-    void setUp() {
-        User firstUser = users.save(UserTest.JAVAJIGI);
-        User secondUser = users.save(UserTest.SANJIGI);
-
-        Question firstQuestion = questions.save(QuestionTest.Q1);
-        Question secondQuestion = questions.save(QuestionTest.Q2);
-
-        firstAnswer = new Answer(firstUser, firstQuestion, "Answers Contents1");
-        secondAnswer = new Answer(secondUser, secondQuestion, "Answers Contents2");
+        assertThat(answer).isNotNull();
     }
 
-    @DisplayName("A1 Answer 정보 저장 및 데이터 확인")
+    @DisplayName("로그인한 사용자의 답변 삭제")
     @Test
-    void saveAnswer() {
-        final Answer actual = answers.save(firstAnswer);
+    void deleteAnswer() {
+        User loginUser = TestCreateFactory.createUser(1L);
+        Question question = TestCreateFactory.createQuestion(loginUser);
+        Answer answer = TestCreateFactory.createAnswer(loginUser, question);
 
-        User writer = actual.getWriter();
-        Question question = actual.getQuestion();
+        answer.delete(loginUser, LocalDateTime.now());
 
-        assertThat(writer).isEqualTo(firstAnswer.getWriter());
-        assertThat(question).isEqualTo(firstAnswer.getQuestion());
+        assertThat(answer.isDeleted()).isTrue();
     }
 
-    @DisplayName("writer_id로 데이터 조회")
+    @DisplayName("답변 삭제 시 로그인한 사용자의 답변이 아닐 경우")
     @Test
-    void findByWriterId() {
-        final Answer standard = answers.save(firstAnswer);
-        final Answer target = answers.findByWriterId(UserTest.JAVAJIGI.getId());
+    void invalidDeleteAnswer() {
+        assertThatExceptionOfType(AnswerWrittenBySomeoneElseException.class)
+            .isThrownBy(() -> {
+                User loginUser = TestCreateFactory.createUser(1L);
+                User answerUser = TestCreateFactory.createUser(2L);
+                Question question = TestCreateFactory.createQuestion(loginUser);
+                Answer answer = TestCreateFactory.createAnswer(answerUser, question);
 
-        User standardWriter = standard.getWriter();
-        User targetWriter = target.getWriter();
-
-        assertThat(standardWriter).isEqualTo(targetWriter);
-    }
-
-    @DisplayName("QuestionId로 데이터 조회")
-    @Test
-    void findByQuestionId() {
-        final Answer standard = answers.save(firstAnswer);
-        final List<Answer> target = answers.findByQuestion(firstAnswer.getQuestion());
-
-        assertThat(target).contains(standard);
-    }
-
-    @DisplayName("Id 와 Deleted 값이 fasle 인 값 찾기")
-    @Test
-    void findByIdAndDeletedFalse() {
-        answers.save(secondAnswer);
-        final Answer target = answers.findByIdAndDeletedFalse(secondAnswer.getId()).get();
-
-        boolean targetDeleted = target.isDeleted();
-
-        assertThat(targetDeleted).isFalse();
-    }
-
-    @DisplayName("Contents 값 'ents1' Like 찾기")
-    @Test
-    void findByContentsLike() {
-        answers.save(firstAnswer);
-        final Answer target = answers.findByContentsLike("%ents1%");
-
-        String targetContents = target.getContents();
-
-        assertThat(targetContents).contains("ents1");
+                answer.delete(loginUser, LocalDateTime.now());
+            }).withMessageMatching("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }

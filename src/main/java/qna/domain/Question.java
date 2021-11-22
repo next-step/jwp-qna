@@ -1,8 +1,10 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -13,8 +15,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.NoPermissionDeleteQuestionException;
+
 @Entity
 public class Question extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,12 +31,15 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column(nullable = false, length = 100)
-    private String title;
+    @Embedded
+    private Title title;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @Embedded
+    Answers answers;
 
     protected Question() {
     }
@@ -42,8 +50,9 @@ public class Question extends BaseEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
+        this.title = new Title(title);
         this.contents = contents;
+        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {
@@ -51,28 +60,34 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
+    public DeleteHistorys delete(User loginUser, LocalDateTime deleteAt) {
+        if (!isOwner(loginUser)) {
+            throw new NoPermissionDeleteQuestionException();
+        }
+
+        this.deleted = true;
+
+        DeleteHistory questionDeleteHistory =
+            new DeleteHistory(ContentType.QUESTION, this.id, this.writer, deleteAt);
+        DeleteHistorys deleteHistorys = answers.delete(loginUser, deleteAt);
+
+        return deleteHistorys.prepend(questionDeleteHistory);
+    }
+
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.setQuestion(this);
+        this.answers = this.answers.append(answer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public User getWriter() {

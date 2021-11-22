@@ -33,20 +33,24 @@ public class DeleteHistory {
     private ContentType contentType;
 
     @CreatedDate
-    private LocalDateTime createDate;
+    private LocalDateTime createDate = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
-    private User deletedBy;
+    private User deleter;
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    protected DeleteHistory() {
+    }
+
+    public DeleteHistory(ContentType contentType, Long contentId, User deleter, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedBy = deletedBy;
+        this.deleter = deleter;
         this.createDate = createDate;
     }
 
-    protected DeleteHistory() {
+    public Long getId() {
+        return id;
     }
 
     @Override
@@ -58,12 +62,11 @@ public class DeleteHistory {
         DeleteHistory that = (DeleteHistory)o;
         return Objects.equals(id, that.id) && Objects.equals(contentId, that.contentId)
             && contentType == that.contentType && Objects.equals(createDate, that.createDate)
-            && Objects.equals(deletedBy, that.deletedBy);
+            && Objects.equals(deleter, that.deleter);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentId, contentType, createDate, deletedBy);
+        return Objects.hash(id, contentId, contentType, createDate, deleter);
     }
-
 }

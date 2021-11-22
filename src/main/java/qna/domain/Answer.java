@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -13,11 +14,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.AnswerWrittenBySomeoneElseException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,6 +39,9 @@ public class Answer extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
+
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -57,39 +63,46 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    protected Answer() {
+    public DeleteHistory delete(User loginUser, LocalDateTime deleteAt) {
+        if (!isOwner(loginUser)) {
+            throw new AnswerWrittenBySomeoneElseException();
+        }
+
+        this.deleted = true;
+
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, deleteAt);
     }
 
     public Long getId() {
         return id;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public User getWriter() {
         return writer;
     }
 
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Answer answer = (Answer)o;
+        return Objects.equals(id, answer.id) && Objects.equals(contents, answer.contents)
+            && Objects.equals(deleted, answer.deleted) && Objects.equals(question, answer.question)
+            && Objects.equals(writer, answer.writer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contents, deleted, question, writer);
+    }
 }

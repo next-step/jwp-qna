@@ -11,6 +11,4 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     Optional<Question> findByIdAndDeletedFalse(Long id);
 
     Question findByWriterId(Long id);
-
-    Question findByTitleLike(String title);
 }
