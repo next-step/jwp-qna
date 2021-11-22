@@ -1,14 +1,15 @@
 package qna.domain;
 
-import net.bytebuddy.asm.Advice;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "question")
-public class Question {
+public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,42 +17,39 @@ public class Question {
     @Lob
     private String contents;
 
-    @Column(name = "created_at",nullable = false)
-    private LocalDateTime createdAt;
-
     @Column(nullable = false)
     private boolean deleted = false;
 
     @Column(length = 100, nullable = false)
     private String title;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<Answer>();
 
     // Arguments가 없는 Default Constructor 생성
     protected Question() {}
 
     public Question(String title, String contents) {
-        this(null, title, contents, LocalDateTime.now());
+        this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents, LocalDateTime createdAt) {
+    public Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.createdAt = createdAt;
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -83,12 +81,10 @@ public class Question {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return writer.getId();
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
+    public User getWriter() { return this.writer; }
 
     public boolean isDeleted() {
         return deleted;
@@ -104,8 +100,9 @@ public class Question {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + this.writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
+
 }

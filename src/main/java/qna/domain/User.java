@@ -1,23 +1,22 @@
 package qna.domain;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt;
 
     @Column(length = 50)
     private String email;
@@ -28,26 +27,31 @@ public class User {
     @Column(length = 20, nullable = false)
     private String password;
 
-    @Column
-    private LocalDateTime updateAt;
-
-    @Column(name = "user_id", length = 20, unique = true)
+    @Column(name = "user_id", length = 20, nullable = false, unique = true)
     private String userId;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<Answer>();
+
+    @OneToMany(mappedBy = "writer")
+    private List<Question> question = new ArrayList<Question>();
+
+    @OneToMany(mappedBy = "deleteUser")
+    private List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
 
     // Arguments가 없는 Default Constructor 생성
     protected User() {}
 
     public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email, LocalDateTime.now());
+        this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, String email, LocalDateTime createAt) {
+    public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
-        this.createAt = createAt;
     }
 
     public void update(User loginUser, User target) {
@@ -61,6 +65,21 @@ public class User {
 
         this.name = target.name;
         this.email = target.email;
+    }
+
+    /**
+     * User Password 변경
+     * @param loginUser
+     * @param newPassword
+     */
+    public void updatePassword(User loginUser, String newPassword) {
+        if (!matchUserId(loginUser.userId)) {
+            throw new UnAuthorizedException();
+        }
+
+        if (!matchPassword(newPassword)) {
+            this.password = newPassword;
+        }
     }
 
     private boolean matchUserId(String userId) {
