@@ -17,20 +17,19 @@ public class DeleteHistoryTest {
 
 	@Test
 	void save() {
-		Question question = new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents());
-		questionRepository.save(question);
-		DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), 0L, LocalDateTime.now());
-
+		questionRepository.save(QuestionTest.Q1);
+		DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, QuestionTest.Q1.getId(),
+			UserTest.JAVAJIGI.getId(),
+			LocalDateTime.now());
 		DeleteHistory actual = deleteHistoryRepository.save(deleteHistory);
-		assertThat(actual).isEqualTo(deleteHistory);
-		assertThat(actual).isSameAs(deleteHistory);
+
+		assertThat(actual).isNotNull();
 	}
 
 	@Test
 	void findById() {
-		Question question = new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents());
-		Question actual = questionRepository.save(question);
-		Question expected = questionRepository.findById(question.getId()).get();
+		Question actual = questionRepository.save(QuestionTest.Q2);
+		Question expected = questionRepository.findById(QuestionTest.Q2.getId()).get();
 
 		assertThat(actual).isEqualTo(expected);
 		assertThat(actual).isSameAs(expected);
