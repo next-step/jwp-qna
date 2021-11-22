@@ -16,10 +16,17 @@ public class QuestionTest {
 
     @Test
     void save() {
-        Question question = new Question(Q1.getTitle(), Q1.getContents());
-        Question actual = questionRepository.save(question);
+        Question actual = questionRepository.save(Q1);
 
-        assertThat(actual).isEqualTo(question);
-        assertThat(actual).isSameAs(question);
+        assertThat(actual).isNotNull();
+    }
+
+    @Test
+    void findById() {
+        Question expected = questionRepository.save(Q2);
+        Question actual = questionRepository.findById(Q2.getId()).get();
+
+        assertThat(expected).isEqualTo(actual);
+        assertThat(expected).isSameAs(actual);
     }
 }
