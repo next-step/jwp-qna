@@ -1,8 +1,12 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.domain.common.BaseTimeEntity;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -44,16 +48,8 @@ public class Question extends BaseTimeEntity {
     protected Question() {
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public String getContents() {
@@ -68,11 +64,15 @@ public class Question extends BaseTimeEntity {
         return answers;
     }
 
+    public void setAnswers(Answers answers) {
+        this.answers = answers;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    private void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -86,5 +86,26 @@ public class Question extends BaseTimeEntity {
                 ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public List<DeleteHistory> deleteQuestion(User writer, LocalDateTime deletedTime) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        validateQuestion(writer);
+        if( this.getAnswers().existAnswer() ) {
+            deleteHistories.addAll(this.answers.deleteAnswers(writer, deletedTime));
+        }
+        this.setDeleted(true);
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, deletedTime));
+        return deleteHistories;
+    }
+
+    private void validateQuestion(User writer) {
+        if (!this.writer.isOwner(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    void removeAnswer(Answer answer) {
+        this.answers.getAnswers().remove(answer);
     }
 }

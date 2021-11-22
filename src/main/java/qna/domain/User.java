@@ -15,7 +15,7 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", length = 20, nullable = false)
+    @Column(name = "user_id", length = 20, nullable = false, unique = true)
     private String userId;
 
     @Column(name = "password", length = 20, nullable = false)
@@ -72,12 +72,12 @@ public class User extends BaseTimeEntity {
                 email.equals(target.email);
     }
 
-    public boolean isGuestUser() {
-        return false;
+    public boolean isOwner(User writer) {
+        return this.equals(writer);
     }
 
-    public Long getId() {
-        return id;
+    public boolean isGuestUser() {
+        return false;
     }
 
     public String getUserId() {
@@ -112,12 +112,12 @@ public class User extends BaseTimeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(userId, user.userId) && Objects.equals(password, user.password) && Objects.equals(name, user.name) && Objects.equals(email, user.email);
+        return Objects.equals(userId, user.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email);
+        return Objects.hash(userId);
     }
 
     private static class GuestUser extends User {
@@ -126,4 +126,5 @@ public class User extends BaseTimeEntity {
             return true;
         }
     }
+
 }

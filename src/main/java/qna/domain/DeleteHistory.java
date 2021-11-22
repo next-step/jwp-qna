@@ -31,15 +31,19 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public User getDeletedBy() {
+        return deletedBy;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
     protected DeleteHistory() {
-    }
-
-    public Long getDeletedById() {
-        return deletedBy.getId();
-    }
-
-    public void setDeletedBy(User deletedBy) {
-        this.deletedBy = deletedBy;
     }
 
     @Override
@@ -68,4 +72,5 @@ public class DeleteHistory {
                 ", createDate=" + createDate +
                 '}';
     }
+
 }

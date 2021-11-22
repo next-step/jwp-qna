@@ -4,10 +4,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
@@ -24,7 +21,8 @@ public abstract class BaseTimeEntity {
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        final LocalDateTime localDateTime = LocalDateTime.now();
+        this.createdAt = localDateTime;
+        this.updatedAt = localDateTime;
     }
 }
