@@ -4,7 +4,7 @@ import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,8 +24,8 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -42,12 +42,6 @@ public class Question extends BaseTimeEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
-    }
-
-    public void sameAsUser(User loginUser) throws CannotDeleteException {
-        if (!writer.equals(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
     }
 
     public Question writeBy(User writer) {
@@ -71,8 +65,8 @@ public class Question extends BaseTimeEntity {
         answer.mappingToQuestion(this);
     }
 
-    public List<Answer> getAnswer() {
-        return answers;
+    public List<Answer> getAnswers() {
+        return answers.getAnswers();
     }
 
     public Long getId() {
@@ -95,10 +89,6 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     @Override
     public String toString() {
         return "Question{" +
@@ -108,5 +98,20 @@ public class Question extends BaseTimeEntity {
                 ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public DeleteHistories delete(User loginUser) {
+        if (!isSameUser(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.deleted = true;
+        DeleteHistory deleteQuestion = DeleteHistory.deleteQuestion(id, loginUser, LocalDateTime.now());
+        DeleteHistories deleteHistories = answers.deleteBy(loginUser);
+        deleteHistories.add(deleteQuestion);
+        return deleteHistories;
+    }
+
+    private boolean isSameUser(User loginUser) {
+        return writer.equals(loginUser);
     }
 }

@@ -118,7 +118,7 @@ public class AnswerTest {
     void sameAsUserError() {
         Answer answer = answer(5);
         assertThatThrownBy(()->
-                answer.sameAsUser(userB()))
+                answer.deleteBy(userB()))
                 .isInstanceOf(CannotDeleteException.class).hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 
@@ -126,7 +126,7 @@ public class AnswerTest {
     @Test
     void sameAsUser() throws CannotDeleteException {
         Answer answer = answer(5);
-        answer.sameAsUser(userA());
+        answer.deleteBy(userA());
     }
 
     static Answer answer(int number) {

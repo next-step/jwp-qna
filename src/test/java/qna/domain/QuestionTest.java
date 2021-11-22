@@ -39,7 +39,7 @@ public class QuestionTest {
         assertAll(
                 () -> assertThat(result.getId()).isNotNull(),
                 () -> assertThat(result.getWriter()).isNotNull(),
-                () -> assertThat(result.getAnswer()).isNotEmpty()
+                () -> assertThat(result.getAnswers()).isNotEmpty()
         );
     }
 
@@ -58,7 +58,7 @@ public class QuestionTest {
         //then
         assertAll(
                 () -> assertThat(result).isEqualTo(expected),
-                () -> assertThat(result.getAnswer().get(0).getContents()).isEqualTo("답변5")
+                () -> assertThat(result.getAnswers().get(0).getContents()).isEqualTo("답변5")
         );
 
     }
@@ -114,15 +114,15 @@ public class QuestionTest {
     void sameAsUserError() {
         Question question = question(5).writeBy(userA());
         assertThatThrownBy(()->
-                question.sameAsUser(userB()))
+                question.delete(userB()))
                     .isInstanceOf(CannotDeleteException.class).hasMessage("질문을 삭제할 권한이 없습니다.");
     }
 
     @DisplayName("질문 작성자와 로그인 유저가 같으면 CannotDeleteException 에러 발생 안함")
     @Test
-    void sameAsUser() throws CannotDeleteException {
+    void sameAsUser() {
         Question question = question(5).writeBy(userA());
-        question.sameAsUser(userA());
+        question.delete(userA());
     }
 
     static Question question(int number) {

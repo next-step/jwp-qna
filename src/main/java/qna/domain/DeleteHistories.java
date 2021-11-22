@@ -1,49 +1,33 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DeleteHistories {
-    private List<DeleteHistory> deleteHistories = new ArrayList<>();
+    private List<DeleteHistory> deleteHistories;
 
-    private DeleteHistories(Question question, Answers answers) {
-        deleteQuestion(question);
-        deleteAnswers(answers);
-    }
-
-    public static DeleteHistories createDeletedHistories(Question question, Answers answers) {
-        return new DeleteHistories(question, answers);
-    }
-
-    private void deleteQuestion(Question question) {
-        question.setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
-    }
-
-    private void deleteAnswers(Answers answers) {
-        for (Answer answer : answers.getAnswers()) {
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
+    public DeleteHistories(List<DeleteHistory> deleteHistories) {
+        this.deleteHistories = deleteHistories;
     }
 
     public List<DeleteHistory> getDeleteHistories() {
         return deleteHistories;
     }
 
+    public void add(DeleteHistory deleteHistory) {
+        this.deleteHistories.add(0, deleteHistory);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         DeleteHistories that = (DeleteHistories) o;
-
-        return deleteHistories != null ? deleteHistories.equals(that.deleteHistories) : that.deleteHistories == null;
+        return Objects.equals(deleteHistories, that.deleteHistories);
     }
 
     @Override
     public int hashCode() {
-        return deleteHistories != null ? deleteHistories.hashCode() : 0;
+        return Objects.hash(deleteHistories);
     }
 }
