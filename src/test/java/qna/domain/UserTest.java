@@ -16,7 +16,7 @@ public class UserTest {
 
     @Test
     void save() {
-        User user = new User(JAVAJIGI.getUserId(), JAVAJIGI.getPassword(), JAVAJIGI.getName(), JAVAJIGI.getEmail());
+        User user = JAVAJIGI;
         User actual = userRepository.save(user);
 
         assertThat(actual).isNotNull();
@@ -24,9 +24,9 @@ public class UserTest {
 
     @Test
     void findByUserId() {
-        User user = new User(JAVAJIGI.getUserId(), JAVAJIGI.getPassword(), JAVAJIGI.getName(), JAVAJIGI.getEmail());
+        User user = SANJIGI;
         User expected = userRepository.save(user);
-        User actual = userRepository.findByUserId(JAVAJIGI.getUserId()).get();
+        User actual = userRepository.findByUserId(SANJIGI.getUserId()).get();
 
         assertThat(expected).isEqualTo(actual);
         assertThat(expected).isSameAs(actual);
