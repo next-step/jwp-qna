@@ -16,17 +16,15 @@ public class UserTest {
 
     @Test
     void save() {
-        User user = JAVAJIGI;
-        User actual = userRepository.save(user);
+        User actual = userRepository.save(JAVAJIGI);
 
         assertThat(actual).isNotNull();
     }
 
     @Test
-    void findByUserId() {
-        User user = SANJIGI;
-        User expected = userRepository.save(user);
-        User actual = userRepository.findByUserId(SANJIGI.getUserId()).get();
+    void findById() {
+        User expected = userRepository.save(SANJIGI);
+        User actual = userRepository.findById(SANJIGI.getId()).get();
 
         assertThat(expected).isEqualTo(actual);
         assertThat(expected).isSameAs(actual);
