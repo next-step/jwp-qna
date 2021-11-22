@@ -2,6 +2,12 @@ package qna.domain;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.DeleteHistory;
+import qna.domain.Question;
+import qna.domain.User;
+import qna.domain.commons.BaseTimeEntity;
+import qna.domain.commons.Contents;
+import qna.domain.commons.Deleted;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -20,19 +26,19 @@ public class Answer extends BaseTimeEntity {
   @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
   private Question question;
 
-  @Lob
-  private String contents;
+  @Embedded
+  private Contents contents;
 
-  @Column(columnDefinition = "bit", nullable = false)
-  private boolean deleted = false;
+  @Embedded
+  private Deleted deleted = new Deleted();
 
   protected Answer() {}
 
-  public Answer(User writer, Question question, String contents) {
+  public Answer(User writer, Question question, Contents contents) {
     this(null, writer, question, contents);
   }
 
-  public Answer(Long id, User writer, Question question, String contents) {
+  public Answer(Long id, User writer, Question question, Contents contents) {
     this.id = id;
 
     if (Objects.isNull(writer)) {
@@ -57,7 +63,7 @@ public class Answer extends BaseTimeEntity {
   }
 
   public DeleteHistory delete(User loginUser) {
-    setDeleted(true);
+    deleted.toTrue();
     return DeleteHistory.ofAnswer(id, loginUser);
   }
 
@@ -85,20 +91,16 @@ public class Answer extends BaseTimeEntity {
     this.question = question;
   }
 
-  public String getContents() {
+  public Contents getContents() {
     return contents;
   }
 
-  public void setContents(String contents) {
+  public void setContents(Contents contents) {
     this.contents = contents;
   }
 
   public boolean isDeleted() {
-    return deleted;
-  }
-
-  public void setDeleted(boolean deleted) {
-    this.deleted = deleted;
+    return deleted.is();
   }
 
   @Override

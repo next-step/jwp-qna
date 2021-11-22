@@ -1,10 +1,17 @@
 package qna.domain;
 
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
+@Embeddable
 public class DeleteHistories {
+  @OneToMany(mappedBy = "deletedBy")
   private List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+  protected DeleteHistories() {
+  }
 
   public DeleteHistories(List<DeleteHistory> deleteHistories) {
     this.deleteHistories = deleteHistories;
@@ -18,7 +25,16 @@ public class DeleteHistories {
     return new DeleteHistories(deleteHistories);
   }
 
-  public List<DeleteHistory> getList() {
+  public void add(DeleteHistory deleteHistory) {
+    deleteHistories.add(deleteHistory);
+  }
+
+  public List<DeleteHistory> getDeleteHistories() {
     return deleteHistories;
   }
+
+  public void setDeleteHistories(List<DeleteHistory> deleteHistories) {
+    this.deleteHistories = deleteHistories;
+  }
+
 }

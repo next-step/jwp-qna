@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
+import qna.domain.commons.Email;
+import qna.domain.commons.Name;
+import qna.domain.commons.Password;
+import qna.domain.commons.UserId;
 
 import javax.persistence.EntityManager;
 import java.util.Optional;
@@ -18,8 +22,8 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UserTest {
-  public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-  public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+  public static final User JAVAJIGI = new User(1L, UserId.of("javajigi"), Password.of("password"), Name.of("name"), Email.of("javajigi@slipp.net"));
+  public static final User SANJIGI = new User(2L, UserId.of("sanjigi"), Password.of("password"), Name.of("name"), Email.of("sanjigi@slipp.net"));
 
   @Autowired
   UserRepository userRepository;
@@ -44,7 +48,7 @@ public class UserTest {
     userRepository.save(JAVAJIGI);
     userRepository.save(SANJIGI);
 
-    Optional<User> actual = userRepository.findByUserId("javajigi");
+    Optional<User> actual = userRepository.findUserByUserId(UserId.of("javajigi"));
 
     assertThat(actual.get()).isEqualTo(JAVAJIGI);
   }
@@ -92,8 +96,8 @@ public class UserTest {
     userRepository.save(JAVAJIGI);
     userRepository.save(SANJIGI);
 
-    userRepository.updateNameById(JAVAJIGI.getId(), "js");
+    userRepository.updateNameById(JAVAJIGI.getId(), Name.of("js"));
 
-    assertThat(userRepository.findById(JAVAJIGI.getId()).map(User::getName).get()).isEqualTo("js");
+    assertThat(userRepository.findById(JAVAJIGI.getId()).map(User::getName).get()).isEqualTo(Name.of("js"));
   }
 }

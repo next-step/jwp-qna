@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import qna.CannotDeleteException;
+import qna.domain.commons.*;
 
 import javax.persistence.EntityManager;
 
@@ -34,15 +35,15 @@ public class QuestionTest {
     entityManager.createNativeQuery("ALTER TABLE `question` ALTER COLUMN `id` RESTART WITH 1")
       .executeUpdate();
 
-    Question q1 = QuestionFactory.create("test", "contents");
-    Question q2 = QuestionFactory.create("test q2", "contents q2");
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents"));
+    Question q2 = QuestionFactory.create(Title.of("test q2"), Contents.of("contents q2"));
   }
 
   @DisplayName("질문을 저장한다.")
   @Test
   void save() {
-    Question q1 = QuestionFactory.create("test", "contents");
-    Question q2 = QuestionFactory.create("test q2", "contents q2");
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents"));
+    Question q2 = QuestionFactory.create(Title.of("test q2"), Contents.of("contents q2"));
     Question actual = questionRepository.save(q1);
 
     assertAll(
@@ -55,8 +56,8 @@ public class QuestionTest {
   @DisplayName("질문을 ID로 찾는다.")
   @Test
   void findById() {
-    Question q1 = QuestionFactory.create("test", "contents");
-    Question q2 = QuestionFactory.create("test q2", "contents q2");
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents"));
+    Question q2 = QuestionFactory.create(Title.of("test q2"), Contents.of("contents q2"));
     questionRepository.save(q1);
 
     Question question = questionRepository.findById(q1.getId()).orElse(null);
@@ -71,8 +72,8 @@ public class QuestionTest {
   @DisplayName("모든 질문을 검색한다.")
   @Test
   void findAll() {
-    Question q1 = QuestionFactory.create("test", "contents");
-    Question q2 = QuestionFactory.create("test q2", "contents q2");
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents"));
+    Question q2 = QuestionFactory.create(Title.of("test q2"), Contents.of("contents q2"));
     questionRepository.save(q1);
     questionRepository.save(q2);
 
@@ -82,8 +83,8 @@ public class QuestionTest {
   @DisplayName("모든 질문을 삭제한다.")
   @Test
   void deleteAll() {
-    Question q1 = QuestionFactory.create("test", "contents");
-    Question q2 = QuestionFactory.create("test q2", "contents q2");
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents"));
+    Question q2 = QuestionFactory.create(Title.of("test q2"), Contents.of("contents q2"));
     questionRepository.save(q1);
     questionRepository.save(q2);
 
@@ -97,9 +98,9 @@ public class QuestionTest {
   @DisplayName("로그인 User id와 Question writer_id가 같지 않을 경우 예외를 던진다.")
   @Test
   void deleteByLoginUser() throws CannotDeleteException {
-    User loginUser = UserFactory.create(1L, "test", "test", "js", "nextstep@gmail.com");
-    User questionWriter = UserFactory.create(2L, "test2", "test", "js", "test@gmail.com");
-    Question q1 = QuestionFactory.create("test", "contents").writeBy(questionWriter);
+    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test"), Name.of("js"), Email.of("nextstep@gmail.com"));
+    User questionWriter = UserFactory.create(2L, UserId.of("test"), Password.of("test"), Name.of("test"), Email.of("test@gmail.com"));
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(questionWriter);
 
     assertThatThrownBy(() -> q1.delete(loginUser))
       .isInstanceOf(CannotDeleteException.class);
@@ -108,8 +109,8 @@ public class QuestionTest {
   @DisplayName("Question 하위에 답변이 없는 경우 삭제 가능하다.")
   @Test
   void deleteIfAnswersIsNotExists() throws CannotDeleteException {
-    User loginUser = UserFactory.create(1L, "test", "test", "js", "nextstep@gmail.com");
-    Question q1 = QuestionFactory.create("test", "contents").writeBy(loginUser);
+    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test"), Name.of("js"), Email.of("nextstep@gmail.com"));
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(loginUser);
 
     q1.delete(loginUser);
 
@@ -119,12 +120,12 @@ public class QuestionTest {
   @DisplayName("Question 하위에 답변 중 다른 다른 사람이 쓴 답변이 있을 경우 삭제할 수 없다.")
   @Test
   void deleteIfAnswersWriterIsLoginUser() {
-    User loginUser = UserFactory.create(1L, "test", "test", "js", "nextstep@gmail.com");
-    User answerUser = UserFactory.create(2L, "test2", "test", "js", "test@gmail.com");
-    Question q1 = QuestionFactory.create("test", "contents").writeBy(loginUser);
+    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test"), Name.of("js"), Email.of("nextstep@gmail.com"));
+    User answerUser = UserFactory.create(2L, UserId.of("test"), Password.of("test"), Name.of("test"), Email.of("test@gmail.com"));
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(loginUser);
 
-    Answer a1 = AnswerFactory.create(loginUser, q1, "answer1");
-    Answer a2 = AnswerFactory.create(answerUser, q1, "answer2");
+    Answer a1 = AnswerFactory.create(loginUser, q1, Contents.of("answer1"));
+    Answer a2 = AnswerFactory.create(answerUser, q1, Contents.of("answer2"));
 
     q1.setAnswers(new Answers(Arrays.asList(a1, a2)));
 
@@ -136,11 +137,11 @@ public class QuestionTest {
   @DisplayName("Question 내에 모든 Answer를 삭제 처리(deleted -> true)한다.")
   @Test
   void deleteQuestionAndAnswers() throws CannotDeleteException {
-    User loginUser = UserFactory.create(1L, "test", "test", "js", "nextstep@gmail.com");
-    Question q1 = QuestionFactory.create("test", "contents").writeBy(loginUser);
+    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test"), Name.of("js"), Email.of("nextstep@gmail.com"));
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(loginUser);
 
-    Answer a1 = AnswerFactory.create(loginUser, q1, "answer1");
-    Answer a2 = AnswerFactory.create(loginUser, q1, "answer2");
+    Answer a1 = AnswerFactory.create(loginUser, q1, Contents.of("answer1"));
+    Answer a2 = AnswerFactory.create(loginUser, q1, Contents.of("answer2"));
 
     q1.setAnswers(new Answers(Arrays.asList(a1, a2)));
     q1.delete(loginUser);

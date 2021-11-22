@@ -8,6 +8,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.domain.*;
+import qna.domain.Answer;
+import qna.domain.AnswerRepository;
+import qna.domain.commons.ContentType;
+import qna.domain.commons.Contents;
+import qna.domain.commons.CreateDate;
+import qna.domain.commons.Title;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -38,8 +44,8 @@ class QnaServiceTest {
 
   @BeforeEach
   public void setUp() throws Exception {
-    question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
+    question = new Question(1L, Title.of("title1"), Contents.of("contents1")).writeBy(UserTest.JAVAJIGI);
+    answer = new Answer(1L, UserTest.JAVAJIGI, question, Contents.of("Answers Contents1"));
     question.addAnswer(answer);
   }
 
@@ -75,7 +81,7 @@ class QnaServiceTest {
 
   @Test
   public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-    Answer answer2 = new Answer(2L, UserTest.SANJIGI, new Question("test", "contents").writeBy(UserTest.JAVAJIGI), "Answers Contents1");
+    Answer answer2 = new Answer(2L, UserTest.SANJIGI, new Question(Title.of("test"), Contents.of("contents")).writeBy(UserTest.JAVAJIGI), Contents.of("Answers Contents1"));
     question.addAnswer(answer2);
 
     when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
@@ -86,8 +92,8 @@ class QnaServiceTest {
 
   private void verifyDeleteHistories() {
     List<DeleteHistory> deleteHistories = Arrays.asList(
-      new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
-      new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
+      new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), CreateDate.of(LocalDateTime.now())),
+      new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), CreateDate.of(LocalDateTime.now()))
     );
     verify(deleteHistoryService).saveAll(deleteHistories);
   }

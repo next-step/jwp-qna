@@ -1,12 +1,12 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
+import qna.domain.commons.BaseTimeEntity;
+import qna.domain.commons.Contents;
+import qna.domain.commons.Deleted;
+import qna.domain.commons.Title;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -14,29 +14,30 @@ public class Question extends BaseTimeEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(length = 100, nullable = false)
-  private String title;
+  @Embedded
+  private Title title;
 
-  @Lob
-  private String contents;
+  @Embedded
+  private Contents contents;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
   private User writer;
 
-  @Column(columnDefinition = "bit", nullable = false)
-  private boolean deleted = false;
+  @Embedded
+  private Deleted deleted = new Deleted();
 
   @Embedded
+  @AttributeOverride( name = "question", column = @Column(name = "question_id"))
   private Answers answers = new Answers();
 
   protected Question() {}
 
-  public Question(String title, String contents) {
+  public Question(Title title, Contents contents) {
     this(null, title, contents);
   }
 
-  public Question(Long id, String title, String contents) {
+  public Question(Long id, Title title, Contents contents) {
     this.id = id;
     this.title = title;
     this.contents = contents;
@@ -53,7 +54,7 @@ public class Question extends BaseTimeEntity {
 
   public DeleteHistories delete(User loginUser) throws CannotDeleteException {
     checkDeletableQuestionByUser(loginUser);
-    setDeleted(true);
+    deleted.toTrue();
 
     return DeleteHistories.ofQuestion(DeleteHistory.ofQuestion(id, loginUser), answers.deleteAll(loginUser));
   }
@@ -74,19 +75,19 @@ public class Question extends BaseTimeEntity {
     this.id = id;
   }
 
-  public String getTitle() {
+  public Title getTitle() {
     return title;
   }
 
-  public void setTitle(String title) {
+  public void setTitle(Title title) {
     this.title = title;
   }
 
-  public String getContents() {
+  public Contents getContents() {
     return contents;
   }
 
-  public void setContents(String contents) {
+  public void setContents(Contents contents) {
     this.contents = contents;
   }
 
@@ -99,10 +100,10 @@ public class Question extends BaseTimeEntity {
   }
 
   public boolean isDeleted() {
-    return deleted;
+    return deleted.is();
   }
 
-  public void setDeleted(boolean deleted) {
+  public void setDeleted(Deleted deleted) {
     this.deleted = deleted;
   }
 

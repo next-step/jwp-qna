@@ -3,6 +3,8 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Embeddable
 public class Answers {
-  @OneToMany(mappedBy = "question")
+  @OneToMany
   private List<Answer> answers = new ArrayList<>();
 
   protected Answers() {}
