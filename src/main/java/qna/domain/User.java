@@ -43,7 +43,7 @@ public class User {
     @Column(length = 20, nullable = false)
     private String password;
     private LocalDateTime updatedAt;
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String userId;
 
     protected User() {
