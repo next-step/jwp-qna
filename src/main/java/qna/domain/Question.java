@@ -1,7 +1,13 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 /**
  * create table question
@@ -19,11 +25,18 @@ import javax.persistence.Id;
 @Entity
 public class Question {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+    @Lob
     private String contents;
-    private Long writerId;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    @Column(nullable = false)
     private boolean deleted = false;
+    @Column(length = 100, nullable = false)
+    private String title;
+    private LocalDateTime updatedAt;
+    private Long writerId;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -33,9 +46,12 @@ public class Question {
     }
 
     public Question(Long id, String title, String contents) {
+        LocalDateTime createdAt = LocalDateTime.now();
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.createdAt = createdAt;
+        this.updatedAt = createdAt;
     }
 
     public Question writeBy(User writer) {
