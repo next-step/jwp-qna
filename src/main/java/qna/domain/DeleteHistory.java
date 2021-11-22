@@ -32,10 +32,12 @@ public class DeleteHistory {
     // Arguments가 없는 Default Constructor 생성
     protected DeleteHistory() {}
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    // User 객체를 통해 연관관계가 매핑이 되기 때문에 기존 deletedById Parameter를 User 객체로 바꿔 사용
+    // 만약 기존 파라미터인 deleteById를 사용할 경우 UserRepository를 통해 User 객체를 꺼낸 후 deleteUser와 매핑하기.
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deleteUser.setId(deletedById);
+        this.deleteUser = deletedUser;
         this.createDate = createDate;
     }
 

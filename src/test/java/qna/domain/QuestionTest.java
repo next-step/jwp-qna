@@ -48,6 +48,20 @@ public class QuestionTest {
     }
 
     @Test
+    @DisplayName("질문 등록")
+    void addQuestion() {
+        Question newQuestion = new Question("First Question", "This is first Question.");
+        User user = UserTest.JAVAJIGI;
+        newQuestion.writeBy(user);
+        assertAll(
+                () -> assertThat(newQuestion).isNotNull(),
+                () -> assertThat(newQuestion.getTitle()).isEqualTo("First Question"),
+                () -> assertThat(newQuestion.getContents()).isEqualTo("This is first Question."),
+                () -> assertThat(newQuestion.getWriterId()).isEqualTo(user.getId())
+        );
+    }
+
+    @Test
     @DisplayName("질문 수정 : 질문 제목, 질문 내용")
     void update() {
         question1.setTitle("첫번째 질문");

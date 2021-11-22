@@ -72,6 +72,8 @@ public class Answer extends BaseEntity {
         return this.writer.getId();
     }
 
+    public User getWriter() { return this.writer; }
+
     public String getContents() {
         return contents;
     }

@@ -84,6 +84,8 @@ public class Question extends BaseEntity {
         return writer.getId();
     }
 
+    public User getWriter() { return this.writer; }
+
     public boolean isDeleted() {
         return deleted;
     }

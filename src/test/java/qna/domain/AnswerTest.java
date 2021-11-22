@@ -45,7 +45,7 @@ public class AnswerTest {
     void save() {
         assertAll(
                 () -> assertThat(answer1).isNotNull(),
-                () -> assertThat(answer1.isDeleted()).isEqualTo(false)
+                () -> assertThat(answer1.isDeleted()).isFalse()
         );
     }
 
