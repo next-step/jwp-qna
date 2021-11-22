@@ -16,11 +16,24 @@ public class Answers {
     }
 
     public Answers(final List<Answer> answers) {
-        this.answers = new ArrayList<>(answers);
+        // this.answers = new ArrayList<>(answers);
+        answers.forEach(this::add);
     }
 
     public void add(final Answer answer) {
+        if (answers.contains(answer)) {
+            throw new IllegalArgumentException("이미 등록된 답변입니다.");
+        }
+        if (!answers.isEmpty()) {
+            validateQuestion(answer);
+        }
         answers.add(answer);
+    }
+
+    private void validateQuestion(final Answer answer) {
+        if (!answers.get(0).getQuestion().equals(answer.getQuestion())) {
+            throw new IllegalArgumentException("이미 등록된 답변입니다.");
+        }
     }
 
     public DeleteHistories delete(final User loginUser) {
