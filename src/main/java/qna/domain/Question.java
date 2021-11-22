@@ -79,9 +79,8 @@ public class Question extends BaseEntity {
 
     public DeleteHistories delete(final User loginUser) {
         verifyOwner(loginUser);
-        final DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.add(DeleteHistory.ofQuestion(getId(), getWriter()));
-        deleteHistories.addAll(answers.delete(loginUser));
+        final DeleteHistories deleteHistories = answers.delete(loginUser)
+            .add(DeleteHistory.ofQuestion(getId(), getWriter()));
         this.deleted = true;
         return deleteHistories;
     }

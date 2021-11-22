@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
@@ -37,13 +38,9 @@ public class Answers {
     }
 
     public DeleteHistories delete(final User loginUser) {
-        final DeleteHistories deleteHistories = new DeleteHistories();
-        for (Answer answer : answers) {
-            deleteHistories.add(
-                answer.delete(loginUser)
-            );
-        }
-        return deleteHistories;
+        return answers.stream()
+            .map(answer -> answer.delete(loginUser))
+            .collect(Collectors.collectingAndThen(Collectors.toList(), DeleteHistories::new));
     }
 
     @Override

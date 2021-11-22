@@ -16,12 +16,10 @@ public class DeleteHistories {
         this.deleteHistories = new ArrayList<>(deleteHistories);
     }
 
-    public void addAll(final DeleteHistories other) {
-        deleteHistories.addAll(new ArrayList<>(other.deleteHistories));
-    }
-
-    public void add(final DeleteHistory deleteHistory) {
-        deleteHistories.add(deleteHistory);
+    public DeleteHistories add(final DeleteHistory deleteHistory) {
+        final List<DeleteHistory> newDeleteHistories = new ArrayList<>(deleteHistories);
+        newDeleteHistories.add(deleteHistory);
+        return new DeleteHistories(newDeleteHistories);
     }
 
     public List<DeleteHistory> getValues() {
