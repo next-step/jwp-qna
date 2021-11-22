@@ -4,12 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
-import qna.CannotDeleteException;
 
 public class AnswersTest {
 
     @Test
-    void delete() throws CannotDeleteException {
+    void delete() {
         // given
         final User writer = TestUserFactory.create(
             1L, "javajigi", "password", "name", "javajigi@slipp.net"

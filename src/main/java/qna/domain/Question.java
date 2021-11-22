@@ -10,7 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import org.hibernate.annotations.Where;
-import qna.CannotDeleteException;
 
 @Entity
 @Where(clause = "deleted = false")
@@ -79,7 +78,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public DeleteHistories delete(final User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(final User loginUser) {
         verifyOwner(loginUser);
         final DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(DeleteHistory.ofQuestion(getId(), getWriter(), LocalDateTime.now()));
@@ -88,9 +87,9 @@ public class Question extends BaseEntity {
         return deleteHistories;
     }
 
-    private void verifyOwner(final User loginUser) throws CannotDeleteException {
+    private void verifyOwner(final User loginUser) {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new IllegalArgumentException("질문을 삭제할 권한이 없습니다.");
         }
     }
 

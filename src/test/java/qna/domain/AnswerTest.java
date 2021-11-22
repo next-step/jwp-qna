@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import org.junit.jupiter.api.Test;
-import qna.CannotDeleteException;
 
 public class AnswerTest {
 
@@ -25,7 +24,7 @@ public class AnswerTest {
     }
 
     @Test
-    void delete() throws CannotDeleteException {
+    void delete() {
         // given
         final User owner = TestUserFactory.create(
             1L, "javajigi", "password", "name", "javajigi@slipp.net"
@@ -60,7 +59,7 @@ public class AnswerTest {
             ),
             () -> assertThatThrownBy(
                 () -> answer.delete(someUser)
-            ).isInstanceOf(CannotDeleteException.class)
+            ).isInstanceOf(IllegalArgumentException.class)
         );
     }
 }
