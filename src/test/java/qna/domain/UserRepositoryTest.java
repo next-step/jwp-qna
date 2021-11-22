@@ -31,16 +31,6 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void equals() {
-        final User before = TestUserFactory.create(
-            1L, "userId", "password", "name", "email@slipp.net"
-        );
-        final User after = userRepository.save(before);
-        after.changeName("another name");
-        assertThat(before).isEqualTo(after);
-    }
-
-    @Test
     void findByUserId() {
         final User expected = TestUserFactory.create(
             "javajigi", "password", "name", "javajigi@slipp.net"
