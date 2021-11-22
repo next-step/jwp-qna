@@ -1,7 +1,6 @@
 package qna.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import qna.domain.DeleteHistories;
 import qna.domain.DeleteHistoryRepository;
@@ -15,7 +14,7 @@ public class DeleteHistoryService {
         this.deleteHistoryRepository = deleteHistoryRepository;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void saveAll(DeleteHistories deleteHistories) {
         deleteHistoryRepository.saveAll(deleteHistories.getValues());
     }
