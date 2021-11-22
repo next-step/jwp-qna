@@ -99,4 +99,16 @@ public class AnswerTest {
 
     assertThat(answerRepository.findByWriterId(answerWriter.getId()).get(0)).isEqualTo(answer);
   }
+
+  @DisplayName("작성자에 의해 질문을 삭제한다.")
+  @Test
+  void deleteAnswerByWriter() {
+    User writer = UserFactory.create(1L, "wonjune", "pass", "june", "dvg@gmail.com");
+    Question q1 = QuestionFactory.create("testQ", "test").writeBy(writer);
+    Answer a1 = AnswerFactory.create(writer, q1, "test");
+
+    a1.delete(writer);
+
+    assertThat(a1.isDeleted()).isTrue();
+  }
 }

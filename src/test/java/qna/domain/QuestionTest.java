@@ -7,10 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
+import qna.CannotDeleteException;
 
 import javax.persistence.EntityManager;
 
+import java.util.Arrays;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.*;
 import static org.springframework.test.annotation.DirtiesContext.*;
@@ -89,4 +93,59 @@ public class QuestionTest {
 
     assertThat(questionRepository.count()).isEqualTo(0);
   }
+
+  @DisplayName("로그인 User id와 Question writer_id가 같지 않을 경우 예외를 던진다.")
+  @Test
+  void deleteByLoginUser() throws CannotDeleteException {
+    User loginUser = UserFactory.create(1L, "test", "test", "js", "nextstep@gmail.com");
+    User questionWriter = UserFactory.create(2L, "test2", "test", "js", "test@gmail.com");
+    Question q1 = QuestionFactory.create("test", "contents").writeBy(questionWriter);
+
+    assertThatThrownBy(() -> q1.delete(loginUser))
+      .isInstanceOf(CannotDeleteException.class);
+  }
+
+  @DisplayName("Question 하위에 답변이 없는 경우 삭제 가능하다.")
+  @Test
+  void deleteIfAnswersIsNotExists() throws CannotDeleteException {
+    User loginUser = UserFactory.create(1L, "test", "test", "js", "nextstep@gmail.com");
+    Question q1 = QuestionFactory.create("test", "contents").writeBy(loginUser);
+
+    q1.delete(loginUser);
+
+    assertThat(q1.isDeleted()).isTrue();
+  }
+
+  @DisplayName("Question 하위에 답변 중 다른 다른 사람이 쓴 답변이 있을 경우 삭제할 수 없다.")
+  @Test
+  void deleteIfAnswersWriterIsLoginUser() {
+    User loginUser = UserFactory.create(1L, "test", "test", "js", "nextstep@gmail.com");
+    User answerUser = UserFactory.create(2L, "test2", "test", "js", "test@gmail.com");
+    Question q1 = QuestionFactory.create("test", "contents").writeBy(loginUser);
+
+    Answer a1 = AnswerFactory.create(loginUser, q1, "answer1");
+    Answer a2 = AnswerFactory.create(answerUser, q1, "answer2");
+
+    q1.setAnswers(new Answers(Arrays.asList(a1, a2)));
+
+    assertThatThrownBy(() -> q1.delete(loginUser))
+      .isInstanceOf(CannotDeleteException.class)
+      .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+  }
+
+  @DisplayName("Question 내에 모든 Answer를 삭제 처리(deleted -> true)한다.")
+  @Test
+  void deleteQuestionAndAnswers() throws CannotDeleteException {
+    User loginUser = UserFactory.create(1L, "test", "test", "js", "nextstep@gmail.com");
+    Question q1 = QuestionFactory.create("test", "contents").writeBy(loginUser);
+
+    Answer a1 = AnswerFactory.create(loginUser, q1, "answer1");
+    Answer a2 = AnswerFactory.create(loginUser, q1, "answer2");
+
+    q1.setAnswers(new Answers(Arrays.asList(a1, a2)));
+    q1.delete(loginUser);
+
+    assertThat(q1.getAnswers().isAllDeleted()).isTrue();
+  }
+
 }
