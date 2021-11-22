@@ -1,9 +1,11 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -29,11 +31,6 @@ public class Answer extends BaseTimeEntity {
     private User writer;
 
     protected Answer() {
-
-    }
-
-    public Answer(String contents) {
-        this.contents = contents;
     }
 
     public Answer(User writer, Question question, String contents) {
@@ -52,20 +49,28 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.writer = writer;
-        this.question = question;
+        setQuestion(question);
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.matchId(writer);
     }
 
-    public void setQuestion(Question question) {
+    private void setQuestion(Question question) {
         if (Objects.nonNull(this.question)) {
             this.question.getAnswers().remove(this);
         }
         this.question = question;
-        question.getAnswers().add(this);
+        question.addAnswer(this);
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, this.getUpdatedAt());
     }
 
     public Long getId() {
@@ -92,14 +97,6 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public void setUser(User writer) {
-        this.writer = writer;
-    }
-
     @Override
     public String toString() {
         return "Answer{" +
@@ -110,4 +107,5 @@ public class Answer extends BaseTimeEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }

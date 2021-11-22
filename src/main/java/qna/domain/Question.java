@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +27,8 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = Answers.empty();
 
     protected Question() {
     }
@@ -46,41 +48,42 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        List<DeleteHistory> result = new ArrayList<>();
+        deleted = true;
+        result.add(new DeleteHistory(ContentType.QUESTION, id, writer, this.getUpdatedAt()));
+        result.addAll(answers.delete(loginUser));
+        return result;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+    protected List<Answer> getAnswers() {
+        return answers.getAnswerGroup();
     }
 
-    public void addAnswer(Answer answer) {
-        answers.add(answer);
-        answer.setQuestion(this);
+    private boolean isOwner(User writer) {
+        return this.writer.matchId(writer);
+    }
+
+    void addAnswer(Answer answer) {
+        if (!answers.contains(answer)) {
+            answers.add(answer);
+        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public User getWriter() {
@@ -90,11 +93,6 @@ public class Question extends BaseTimeEntity {
     public boolean isDeleted() {
         return deleted;
     }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
 
     @Override
     public String toString() {
@@ -106,4 +104,5 @@ public class Question extends BaseTimeEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }

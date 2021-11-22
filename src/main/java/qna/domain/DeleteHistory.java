@@ -23,17 +23,11 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedByUser;
 
-    @Column
     @CreatedDate
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createDate = LocalDateTime.now();
 
     public DeleteHistory() {
-    }
-
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
-        this.contentType = contentType;
-        this.contentId = contentId;
-        this.deletedByUser = deletedByUser;
     }
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
@@ -57,6 +51,10 @@ public class DeleteHistory {
 
     public User getDeletedByUser() {
         return deletedByUser;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
     }
 
     @Override

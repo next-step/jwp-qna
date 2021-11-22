@@ -125,6 +125,10 @@ public class User {
                 '}';
     }
 
+    public boolean matchId(User user) {
+        return this.id.equals(user.getId());
+    }
+
     private static class GuestUser extends User {
         @Override
         public boolean isGuestUser() {
