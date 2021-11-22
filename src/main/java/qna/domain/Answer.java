@@ -56,6 +56,11 @@ public class Answer extends BaseTimeEntity {
     this.question = question;
   }
 
+  public DeleteHistory delete(User loginUser) {
+    setDeleted(true);
+    return DeleteHistory.ofAnswer(id, loginUser);
+  }
+
   public Long getId() {
     return id;
   }
@@ -116,4 +121,5 @@ public class Answer extends BaseTimeEntity {
       + super.getUpdatedAt()
       + '}';
   }
+
 }
