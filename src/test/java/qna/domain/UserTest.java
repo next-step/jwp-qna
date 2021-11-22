@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,10 +16,16 @@ public class UserTest {
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
     @Autowired
+    private AnswerRepository answers;
+
+    @Autowired
+    private QuestionRepository questions;
+
+    @Autowired
     private UserRepository users;
 
     @Test
-    @DisplayName("Create User - 저장된 ID, email 확인")
+    @DisplayName("User 저장 테스트")
     void saveUser() {
         User savedUser = users.save(JAVAJIGI);
 
@@ -29,45 +36,63 @@ public class UserTest {
     }
 
     @Test
-    @DisplayName("Read User - userId 로 조회한 User 의 Id, Name 을 확인")
+    @DisplayName("User 조회 테스트")
     void findByUserId() {
-        User savedUser = users.save(JAVAJIGI);
-        Optional<User> foundUser = users.findByUserId(JAVAJIGI.getUserId());
+        // JAVAJIGI 조회
+        User expected = JAVAJIGI;
+        Optional<User> actual = users.findByUserId(expected.getUserId());
 
         assertAll(
-            () -> assertThat(foundUser).isPresent(),
-            () -> assertThat(foundUser.get().getId()).isNotNull(),
-            () -> assertThat(foundUser.get().getName()).isEqualTo(savedUser.getName())
+            () -> assertThat(actual).isPresent(),
+            () -> assertThat(actual.get().getId()).isNotNull(),
+            () -> assertThat(actual.get().getName()).isEqualTo(expected.getName())
         );
     }
 
     @Test
-    @DisplayName("Update User - userId 변경 후 변경된 내용 확인")
+    @DisplayName("User 수정 테스트")
     void updateUser() {
-        User savedUser = users.save(JAVAJIGI);
-        User foundUser = users.findByUserId(JAVAJIGI.getUserId()).get();
-        foundUser.setUserId(SANJIGI.getUserId());
+        User userBefore = users.findByUserId(JAVAJIGI.getUserId()).get();
 
-        Optional<User> foundUserByUserId = users.findByUserId(SANJIGI.getUserId());
+        // email 수정
+        userBefore.setEmail(SANJIGI.getEmail());
+
+        User userAfter = users.findByUserId(JAVAJIGI.getUserId()).get();
 
         assertAll(
-            () -> assertThat(foundUserByUserId).isPresent(),
-            () -> assertThat(foundUser).isSameAs(foundUserByUserId.get())
+            () -> assertThat(userAfter.getId()).isEqualTo(userBefore.getId()),
+            () -> assertThat(userAfter.getEmail()).isEqualTo(SANJIGI.getEmail())
         );
     }
 
     @Test
-    @DisplayName("Delete User - 삭제 후 존재하지 않는 것을 확인")
+    @DisplayName("User 삭제 테스트")
     void deleteUser() {
-        User savedUser = users.save(JAVAJIGI);
-        User foundUser = users.findByUserId(JAVAJIGI.getUserId()).get();
+        final User targetUser = JAVAJIGI;
 
-        users.delete(foundUser);
+        User userBefore = users.findByUserId(targetUser.getUserId()).get();
+        List<Answer> answerListBefore = answers.findAnswerByWriterId(JAVAJIGI.getId());
+        List<Question> questionListBefore = questions.findQuestionsByWriterId(JAVAJIGI.getId());
 
-        Optional<User> foundUserByUserId = users.findByUserId(foundUser.getUserId());
+        // 연관 관계 객체 삭제
+        answerListBefore.forEach(answer -> {
+            answers.delete(answer);
+        });
+        questionListBefore.forEach(question -> {
+            List<Answer> answerListOfQuestion = answers.findAnswerByQuestionId(question.getId());
+            answerListOfQuestion.forEach(answer -> {
+                answers.delete(answer);
+            });
+            questions.delete(question);
+        });
+
+        // user 삭제
+        users.delete(userBefore);
+
+        Optional<User> userAfter = users.findByUserId(targetUser.getUserId());
 
         assertAll(
-            () -> assertThat(foundUserByUserId).isNotPresent()
+            () -> assertThat(userAfter).isNotPresent()
         );
     }
 }

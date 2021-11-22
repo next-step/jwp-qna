@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,60 +17,82 @@ public class QuestionTest {
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Autowired
+    private UserRepository users;
+
+    @Autowired
+    private AnswerRepository answers;
+
+    @Autowired
     private QuestionRepository questions;
 
+    private User findUser(User user) {
+        Optional<User> foundUser = users.findByUserId(UserTest.JAVAJIGI.getUserId());
+        return foundUser.orElseGet(() -> users.save(user));
+    }
+
     @Test
-    @DisplayName("Create Question - 저장된 ID, contents 확인")
+    @DisplayName("Question 저장 테스트")
     void saveQuestion() {
-        Question savedQuestion = questions.save(Q1);
+        Question expected = new Question("title3", "contents3")
+            .writeBy(findUser(UserTest.JAVAJIGI));
+        Question actual = questions.save(expected);
 
         assertAll(
-            () -> assertThat(savedQuestion.getId()).isNotNull(),
-            () -> assertThat(savedQuestion.getContents()).isEqualTo(Q1.getContents())
+            () -> assertThat(actual.getId()).isNotNull(),
+            () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
         );
     }
 
     @Test
-    @DisplayName("Read Question - title 로 조회한 Question 의 Id, contents 를 확인")
+    @DisplayName("Question 조회 테스트")
     void findByTitle() {
-        Question savedQuestion = questions.save(Q1);
-        Question foundQuestion = questions.findFirstByTitle(Q1.getTitle());
+        // Q1 조회
+        Question expected = Q1;
+        Optional<Question> actual = questions.findFirstByTitle(expected.getTitle());
 
         assertAll(
-            () -> assertThat(foundQuestion.getId()).isNotNull(),
-            () -> assertThat(foundQuestion.getContents()).isEqualTo(savedQuestion.getContents())
+            () -> assertThat(actual).isPresent(),
+            () -> assertThat(actual.get().getContents()).isEqualTo(expected.getContents())
         );
     }
 
     @Test
-    @DisplayName("Update Question - deleted 값 변경 후 변경된 내용 확인")
+    @DisplayName("Question 수정 테스트 - Contents 수정")
     void updateQuestion() {
-        Question savedQuestion = questions.save(Q1);
-        Question foundQuestion = questions.findByIdAndDeletedFalse(savedQuestion.getId()).get();
-        foundQuestion.setDeleted(true);
+        Question questionBefore = questions.findFirstByTitle(Q1.getTitle()).get();
 
-        Optional<Question> foundQuestionById = questions.findById(savedQuestion.getId());
-        Optional<Question> foundQuestionByIdAndDeletedFalse = questions
-            .findByIdAndDeletedFalse(savedQuestion.getId());
+        // question 수정
+        questionBefore.setContents(Q2.getContents());
+
+        Question questionAfter = questions.findFirstByTitle(Q1.getTitle()).get();
 
         assertAll(
-            () -> assertThat(foundQuestionById).isPresent(),
-            () -> assertThat(foundQuestionByIdAndDeletedFalse).isNotPresent()
+            () -> assertThat(questionAfter.getId()).isNotNull(),
+            () -> assertThat(questionAfter.getContents()).isEqualTo(Q2.getContents())
         );
     }
 
     @Test
-    @DisplayName("Delete Question - 삭제 후 존재하지 않는 것을 확인")
+    @DisplayName("Question 삭제 테스트")
     void deleteQuestion() {
-        Question savedQuestion = questions.save(Q1);
-        Question foundQuestion = questions.findById(savedQuestion.getId()).get();
+        String targetQuestionTitle = Q1.getTitle();
+        Question questionBefore = questions.findFirstByTitle(targetQuestionTitle).get();
 
-        questions.delete(foundQuestion);
+        // 연관 관계 객체 삭제
+        List<Answer> answerListBefore = answers.findAnswerByQuestionId(questionBefore.getId());
+        answerListBefore.forEach(answer -> {
+            answers.delete(answer);
+        });
+        // question 삭제
+        questions.delete(questionBefore); // 고아 객체(Answer) 삭제 고려
 
-        Optional<Question> foundQuestionById = questions.findById(savedQuestion.getId());
+
+        Optional<Question> questionAfter = questions.findFirstByTitle(targetQuestionTitle);
+        List<Answer> answerListAfter = answers.findAnswerByQuestionId(questionBefore.getId());
 
         assertAll(
-            () -> assertThat(foundQuestionById).isNotPresent()
+            () -> assertThat(questionAfter).isNotPresent(),
+            () -> assertThat(answerListAfter).isEmpty()
         );
     }
 }
