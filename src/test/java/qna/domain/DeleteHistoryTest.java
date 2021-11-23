@@ -28,9 +28,13 @@ public class DeleteHistoryTest {
 
 	@Test
 	void findById() {
-		Question actual = questionRepository.save(QuestionTest.Q2);
-		Question expected = questionRepository.findById(QuestionTest.Q2.getId()).get();
+		questionRepository.save(QuestionTest.Q2);
+		DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, QuestionTest.Q2.getId(),
+			QuestionTest.Q2.getWriterId(),
+			LocalDateTime.now());
+		deleteHistoryRepository.save(expected);
 
+		DeleteHistory actual = deleteHistoryRepository.findById(1L).get();
 		assertThat(actual).isEqualTo(expected);
 		assertThat(actual).isSameAs(expected);
 	}
