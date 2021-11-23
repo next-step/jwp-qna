@@ -1,9 +1,11 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -49,17 +51,13 @@ public class Answer extends BaseTimeEntity {
     protected Answer() {
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void mappingToQuestion(Question question) {
         if (Objects.nonNull(this.question)) {
-            this.question.getAnswer().remove(this);
+            this.question.getAnswers().remove(this);
         }
         this.question = question;
-        if(!question.getAnswer().contains(this)) {
-            question.getAnswer().add(this);
+        if(!question.getAnswers().contains(this)) {
+            question.getAnswers().add(this);
         }
     }
 
@@ -104,10 +102,6 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     @Override
     public String toString() {
         return "Answer{" +
@@ -117,5 +111,17 @@ public class Answer extends BaseTimeEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public DeleteHistory deleteBy(User loginUser) {
+        if (!isSameUser(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.deleted = true;
+        return DeleteHistory.deleteAnswer(id, loginUser, LocalDateTime.now());
+    }
+
+    private boolean isSameUser(User loginUser) {
+        return writer.equals(loginUser);
     }
 }
