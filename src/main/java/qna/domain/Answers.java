@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
-import qna.CannotDeleteException;
-
 @Embeddable
 public class Answers {
     @OneToMany(mappedBy = "question")

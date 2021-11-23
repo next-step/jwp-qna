@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -76,7 +75,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     protected void validateOwner(User writer) {
-        if(!this.writer.matchId(writer)) {
+        if (!this.writer.matchId(writer)) {
             throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
         }
     }
