@@ -32,13 +32,7 @@ public class Answers {
 
     protected void validateOwner(User loginUser) {
         for (Answer answer : answers) {
-            validateOwner(answer, loginUser);
-        }
-    }
-
-    private void validateOwner(Answer answer, User loginUser) {
-        if (!answer.isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            answer.validateOwner(loginUser);
         }
     }
 

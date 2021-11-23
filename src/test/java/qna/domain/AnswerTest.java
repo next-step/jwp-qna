@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import qna.CannotDeleteException;
+
 public class AnswerTest {
     private Answer answer;
 
@@ -16,16 +18,12 @@ public class AnswerTest {
         answer = new Answer(user, question, "Answers Contents1");
     }
 
-    @DisplayName("작성자 일치")
-    @Test
-    void validateOwner_true() {
-        assertThat(answer.isOwner(UserTest.JAVAJIGI)).isTrue();
-    }
-
     @DisplayName("작성자 불일치")
     @Test
-    void validateOwner_false() {
-        assertThat(answer.isOwner(UserTest.SANJIGI)).isFalse();
+    void validateOwner_fail() {
+        assertThatExceptionOfType(CannotDeleteException.class)
+            .isThrownBy(() -> answer.validateOwner(UserTest.SANJIGI))
+            .withMessage("답변을 삭제할 권한이 없습니다.");
     }
 
     @DisplayName("삭제")
