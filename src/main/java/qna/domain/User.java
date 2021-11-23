@@ -18,8 +18,8 @@ public class User extends BaseTimeEntity {
     @Embedded
     private UserId userId;
 
-    @Column(length = 20, nullable = false)
-    private String password;
+    @Embedded
+    private Password password;
 
     @Column(length = 20, nullable = false)
     private String name;
@@ -37,7 +37,7 @@ public class User extends BaseTimeEntity {
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
         this.userId = new UserId(userId);
-        this.password = password;
+        this.password = new Password(password);
         this.name = name;
         this.email = email;
     }
@@ -57,7 +57,7 @@ public class User extends BaseTimeEntity {
         return userId;
     }
 
-    public String getPassword() {
+    public Password getPassword() {
         return password;
     }
 
