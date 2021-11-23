@@ -26,7 +26,6 @@ public class AnswerTest {
         Answer expected = answerRepository.save(A2);
         Answer actual = answerRepository.findById(A2.getId()).get();
 
-        assertThat(expected).isEqualTo(actual);
-        assertThat(expected).isSameAs(actual);
+        assertThat(actual).isEqualTo(expected);
     }
 }
