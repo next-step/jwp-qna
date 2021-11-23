@@ -19,8 +19,9 @@ public class UserId {
     }
 
     private void validateUserId(String userId) {
-        if (userId == null || userId.length() > MAX_LENGTH)
+        if (userId == null || userId.length() > MAX_LENGTH) {
             throw new IllegalArgumentException(INVALID_MESSAGE);
+        }
     }
 
     protected UserId() {

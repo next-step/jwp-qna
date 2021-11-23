@@ -19,8 +19,9 @@ public class Title {
     }
 
     private void validateTitle(String title) {
-        if (title == null || title.length() > MAX_LENGTH)
+        if (title == null || title.length() > MAX_LENGTH) {
             throw new IllegalArgumentException(INVALID_MESSAGE);
+        }
     }
 
     protected Title() {
