@@ -56,7 +56,7 @@ class AnswerRepositoryTest {
             () -> assertThat(actual.getContents()).isEqualTo(answer1.getContents()),
             () -> assertThat(actual.getWriter()).isEqualTo(answer1.getWriter()),
             () -> assertThat(actual.getQuestion()).isEqualTo(answer1.getQuestion()),
-            () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
+            () -> assertThat(actual.getCreatedAt().isAfterOrEqualTo(new CreatedAt(startTime))).isTrue(),
             () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
         );
     }
