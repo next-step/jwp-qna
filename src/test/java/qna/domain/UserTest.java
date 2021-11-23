@@ -2,6 +2,8 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -24,9 +26,8 @@ public class UserTest {
     @Test
     void findById() {
         User expected = userRepository.save(SANJIGI);
-        User actual = userRepository.findById(expected.getId()).get();
+        Optional<User> actual = userRepository.findById(expected.getId());
 
-        assertThat(expected).isEqualTo(actual);
-        assertThat(expected).isSameAs(actual);
+        assertThat(actual).hasValue(expected);
     }
 }
