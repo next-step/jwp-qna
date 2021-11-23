@@ -24,7 +24,7 @@ public class UserTest {
     @Test
     void findById() {
         User expected = userRepository.save(SANJIGI);
-        User actual = userRepository.findById(SANJIGI.getId()).get();
+        User actual = userRepository.findById(expected.getId()).get();
 
         assertThat(expected).isEqualTo(actual);
         assertThat(expected).isSameAs(actual);

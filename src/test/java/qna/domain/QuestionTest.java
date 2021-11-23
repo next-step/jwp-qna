@@ -24,7 +24,7 @@ public class QuestionTest {
     @Test
     void findById() {
         Question expected = questionRepository.save(Q2);
-        Question actual = questionRepository.findById(Q2.getId()).get();
+        Question actual = questionRepository.findById(expected.getId()).get();
 
         assertThat(expected).isEqualTo(actual);
         assertThat(expected).isSameAs(actual);
