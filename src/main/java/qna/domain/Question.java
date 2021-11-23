@@ -42,7 +42,7 @@ public class Question {
 
     @OneToMany
     @JoinColumn(name = "question_id")
-    private Set<Answer> answers = new HashSet<>();
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -64,7 +64,7 @@ public class Question {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.add(DeleteHistory.ofQuestion(id, writer));
         for (Answer answer : answers) {
             DeleteHistory deletedAnswer = answer.deleteAnswer(loginUser);
             deleteHistories.add(deletedAnswer);
@@ -84,7 +84,6 @@ public class Question {
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -124,7 +123,7 @@ public class Question {
         return writer;
     }
 
-    public Set<Answer> getAnswers() {
+    public List<Answer> getAnswers() {
         return answers;
     }
 }

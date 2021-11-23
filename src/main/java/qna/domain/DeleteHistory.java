@@ -50,6 +50,14 @@ public class DeleteHistory {
         return id;
     }
 
+    public static DeleteHistory ofAnswer(Long answerId, User writer) {
+        return new DeleteHistory(ContentType.ANSWER, answerId, writer, LocalDateTime.now());
+    }
+
+    public static DeleteHistory ofQuestion(Long questionId, User writer) {
+        return new DeleteHistory(ContentType.QUESTION, questionId, writer, LocalDateTime.now());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
