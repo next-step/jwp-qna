@@ -71,7 +71,7 @@ public class Answer extends BaseTimeEntity {
 
     public DeleteHistory delete() {
         deleted = true;
-        return new DeleteHistory(new Content(this), LocalDateTime.now());
+        return DeleteHistory.ofContent(Content.ofAnswer(this));
     }
 
     protected boolean isOwner(User writer) {

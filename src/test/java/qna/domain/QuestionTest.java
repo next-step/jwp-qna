@@ -2,9 +2,6 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -34,9 +31,9 @@ public class QuestionTest {
         Answer answer = new Answer(UserTest.SANJIGI, Q2, "contents");
 
         assertThat(Q2.delete(UserTest.SANJIGI))
-            .isEqualTo(new DeleteHistories(Arrays.asList(
-                new DeleteHistory(new Content(Q2), LocalDateTime.now()),
-                new DeleteHistory(new Content(answer), LocalDateTime.now()))
+            .isEqualTo(new DeleteHistories(
+                DeleteHistory.ofContent(Content.ofQuestion(Q2)),
+                DeleteHistory.ofContent(Content.ofAnswer(answer))
             ));
     }
 }

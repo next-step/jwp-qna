@@ -3,7 +3,6 @@ package qna.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -86,8 +85,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-            new DeleteHistory(new Content(question), LocalDateTime.now()),
-            new DeleteHistory(new Content(answer), LocalDateTime.now())
+            DeleteHistory.ofContent(Content.ofQuestion(question)),
+            DeleteHistory.ofContent(Content.ofAnswer(answer))
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

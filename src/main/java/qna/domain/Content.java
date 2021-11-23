@@ -20,18 +20,18 @@ public class Content {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User writer;
 
-    public Content(Answer answer) {
-        this(ContentType.ANSWER, answer.getId(), answer.getWriter());
-    }
-
-    public Content(Question question) {
-        this(ContentType.QUESTION, question.getId(), question.getWriter());
-    }
-
     protected Content(ContentType contentType, Long contentId, User writer) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.writer = writer;
+    }
+
+    public static Content ofAnswer(Answer answer) {
+        return new Content(ContentType.ANSWER, answer.getId(), answer.getWriter());
+    }
+
+    public static Content ofQuestion(Question question) {
+        return new Content(ContentType.QUESTION, question.getId(), question.getWriter());
     }
 
     protected Content() {

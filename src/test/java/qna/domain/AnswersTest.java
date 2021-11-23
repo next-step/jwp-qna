@@ -2,7 +2,6 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +25,6 @@ class AnswersTest {
         answer2 = new Answer(user2, question, "Answers Contents2");
         answer3 = new Answer(user, question, "Answers Contents3");
     }
-
 
     @DisplayName("답변 추가")
     @Test
@@ -61,10 +59,10 @@ class AnswersTest {
     @Test
     void delete() {
         Answers answers = new Answers(Arrays.asList(answer1, answer3));
-        DeleteHistories expected = new DeleteHistories(Arrays.asList(
-            new DeleteHistory(new Content(answer1), LocalDateTime.now()),
-            new DeleteHistory(new Content(answer3), LocalDateTime.now())
-        ));
+        DeleteHistories expected = new DeleteHistories(
+            DeleteHistory.ofContent(Content.ofAnswer(answer1)),
+            DeleteHistory.ofContent(Content.ofAnswer(answer3))
+        );
 
         DeleteHistories deleteHistories = answers.delete(user);
 

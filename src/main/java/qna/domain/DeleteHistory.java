@@ -22,7 +22,11 @@ public class DeleteHistory {
     @Column(length = 6)
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(Content content, LocalDateTime createDate) {
+    public static DeleteHistory ofContent(Content content) {
+        return new DeleteHistory(content, LocalDateTime.now());
+    }
+
+    private DeleteHistory(Content content, LocalDateTime createDate) {
         this.content = content;
         this.createDate = createDate;
     }

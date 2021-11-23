@@ -2,8 +2,6 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,6 +32,6 @@ public class AnswerTest {
     @Test
     void delete() {
         assertThat(answer.delete())
-            .isEqualTo(new DeleteHistory(new Content(answer), LocalDateTime.now()));
+            .isEqualTo(DeleteHistory.ofContent(Content.ofAnswer(answer)));
     }
 }
