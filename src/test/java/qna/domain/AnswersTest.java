@@ -36,15 +36,6 @@ class AnswersTest {
         assertThat(answers).isEqualTo(new Answers(Arrays.asList(answer1)));
     }
 
-    @DisplayName("모든 답변자가 작성자인지 확인")
-    @Test
-    void validateOwner_success() {
-        Answers answers = new Answers(Arrays.asList(answer1));
-
-        answers.validateOwner(user);
-        // 에러 발생 X
-    }
-
     @DisplayName("답변자가 아닌 답변이 있는 경우 에러 확인")
     @Test
     void validateOwner_error() {
