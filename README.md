@@ -51,4 +51,21 @@
 - [X] delete 관련 메서드 한 곳에 모으기
 - [X] 테스트코드 단건 호출시 에러 수정
 - [X] 삭제이력모음 일급컬렉션 추가
+#### 코드 리뷰사항
+- [ ] 정적 팩토리 메서드를 추가하여 인자도 줄이고 가독성 증가
+- [ ] 모든 원시 값과 문자열 포장
+- [ ] Answer 작성자에 대한 검증은 Answer 내에서 삭제시 수행
+- [ ] 순환참조를 예방하기 위해 DTO 사용
+- [ ] 검증이 없어 불필요한 테스트 제거
+
+## 참고 링크
+- [JPA @where 어노테이션](https://cheese10yun.github.io/jpa-where/)
+- [요청과 응답으로 엔티티(Entity) 대신 DTO를 사용하자](https://tecoble.techcourse.co.kr/post/2020-08-31-dto-vs-entity/)
+- [JPA 양방향 Entity 무한재귀 문제해결](https://thxwelchs.github.io/JPA%20%EC%96%91%EB%B0%A9%ED%96%A5%20Entity%20%EB%AC%B4%ED%95%9C%20%EC%9E%AC%EA%B7%80%20%EB%AC%B8%EC%A0%9C%20%ED%95%B4%EA%B2%B0/)
+- [JPA cascade 종류](https://data-make.tistory.com/668)
+- [JPA CascadeType.REMOVE vs orphanRemoval = true](https://tecoble.techcourse.co.kr/post/2021-08-15-jpa-cascadetype-remove-vs-orphanremoval-true/)
+- [JPA 임베디드 타입](https://velog.io/@conatuseus/JPA-%EC%9E%84%EB%B2%A0%EB%94%94%EB%93%9C-%ED%83%80%EC%9E%85embedded-type-8ak3ygq8wo)
+- [JPA @Embedded 사용시 주의사항](https://jojoldu.tistory.com/559)
+- [우테코 JPA 참고](https://tecoble.techcourse.co.kr/tags/jpa/)
+
 
