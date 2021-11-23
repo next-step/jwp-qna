@@ -2,7 +2,6 @@ package qna.domain;
 
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,8 +23,8 @@ public class User extends BaseTimeEntity {
     @Embedded
     private Name name;
 
-    @Column(length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
@@ -39,7 +38,7 @@ public class User extends BaseTimeEntity {
         this.userId = new UserId(userId);
         this.password = new Password(password);
         this.name = new Name(name);
-        this.email = email;
+        this.email = new Email(email);
     }
 
     public boolean matchId(User user) {
@@ -65,7 +64,7 @@ public class User extends BaseTimeEntity {
         return name;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
