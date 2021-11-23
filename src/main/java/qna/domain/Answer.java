@@ -1,17 +1,16 @@
 package qna.domain;
 
-import java.sql.Timestamp;
-import javax.persistence.Column;
+import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-
-import java.util.Objects;
 
 /**
  * create table answer
@@ -32,14 +31,18 @@ public class Answer extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "clob")
+    @Lob
     private String contents;
 
     private boolean deleted = false;
 
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
     protected Answer() {
     }
@@ -59,17 +62,17 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.setQuestion(question);
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -80,20 +83,26 @@ public class Answer extends BaseTimeEntity {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().remove(this);
+        }
+        if (Objects.nonNull(question)) {
+            this.toQuestion(question);
+            question.getAnswers().add(this);
+        }
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public String getContents() {
@@ -116,8 +125,8 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
