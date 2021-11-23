@@ -63,32 +63,8 @@ public class Answer extends BaseEntity {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public Long getWriterId() {
 		return writerId;
-	}
-
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
-	}
-
-	public Long getQuestionId() {
-		return questionId;
-	}
-
-	public void setQuestionId(Long questionId) {
-		this.questionId = questionId;
-	}
-
-	public String getContents() {
-		return contents;
-	}
-
-	public void setContents(String contents) {
-		this.contents = contents;
 	}
 
 	public boolean isDeleted() {
