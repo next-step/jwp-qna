@@ -72,6 +72,13 @@ public class QuestionTest {
                 .isInstanceOf(NotFoundException.class);
     }
 
+    @Test
+    void isOwnerTest() {
+        final Question question = questionRepository.save(QuestionFixture.질문().writeBy(javajigi));
+        questionRepository.flush();
+        assertThat(question.isOwner(javajigi)).isTrue();
+    }
+
     @AfterEach
     public void tearDown() {
         userRepository.deleteAll();

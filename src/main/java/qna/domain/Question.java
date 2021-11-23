@@ -1,5 +1,8 @@
 package qna.domain;
 
+import org.hibernate.sql.Delete;
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +25,8 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answer;
+    @Embedded
+    private Answers answers;
 
     protected Question() {
     }
@@ -36,7 +39,7 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.answer = new ArrayList<>();
+        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {
@@ -80,8 +83,23 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public DeleteHistory setDeleted(boolean deleted) {
         this.deleted = deleted;
+        return new DeleteHistory(ContentType.QUESTION, this.getId(), this.getWriter());
+    }
+
+    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+        if(! isOwner(user)){
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        if(! answers.isMyAnswer(user)){
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(this.setDeleted(true));
+        deleteHistories.addAll(this.answers.delete());
+
+        return deleteHistories;
     }
 
     @Override
@@ -95,8 +113,8 @@ public class Question extends BaseEntity {
                 '}';
     }
 
-    public List<Answer> getAnswers() {
-        return this.answer;
+    public Answers getAnswers() {
+        return this.answers;
     }
 
     public User getWriter() {
