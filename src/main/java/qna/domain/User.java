@@ -12,21 +12,18 @@ import javax.persistence.Id;
 import qna.UnAuthorizedException;
 
 @Entity
-public class User {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
     @Column(length = 50)
     private String email;
     @Column(length = 20, nullable = false)
     private String name;
     @Column(length = 20, nullable = false)
     private String password;
-    private LocalDateTime updatedAt;
     @Column(nullable = false, length = 20, unique = true)
     private String userId;
 

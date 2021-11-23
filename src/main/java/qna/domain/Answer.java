@@ -14,18 +14,15 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
-public class Answer {
+public class Answer extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Lob
 	private String contents;
 	@Column(nullable = false)
-	private LocalDateTime createdAt;
-	@Column(nullable = false)
 	private boolean deleted = false;
 	private Long questionId;
-	private LocalDateTime updatedAt;
 	private Long writerId;
 
 	public Answer(User writer, Question question, String contents) {
