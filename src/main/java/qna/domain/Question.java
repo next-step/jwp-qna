@@ -2,7 +2,6 @@ package qna.domain;
 
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -22,8 +21,8 @@ public class Question extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+    @Embedded
+    private Title title;
 
     @Lob
     private String contents;
@@ -43,7 +42,7 @@ public class Question extends BaseTimeEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
+        this.title = new Title(title);
         this.contents = contents;
     }
 
@@ -92,7 +91,7 @@ public class Question extends BaseTimeEntity {
         return id;
     }
 
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 
