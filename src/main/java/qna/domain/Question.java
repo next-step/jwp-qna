@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
 
 /**
  * create table question
@@ -126,8 +127,32 @@ public class Question extends BaseTimeEntity {
     }
 
     public Answer getLastAnswer() {
-        return answers.size() > 0? answers.get(answers.size() - 1) : null;
+        if (answers.size() > 0)
+            return answers.get(answers.size() - 1);
+        return null;
     }
+
+    public List<DeleteHistory> delete(User deleteBy) throws CannotDeleteException {
+        validateRemovable(deleteBy);
+
+        // delete answers
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : this.answers) {
+            deleteHistories.add(answer.delete(deleteBy));
+        }
+
+        // delete question
+        setDeleted(true);
+        deleteHistories.add(DeleteHistory.of(this));
+        return deleteHistories;
+    }
+
+    private void validateRemovable(User deleteBy) throws CannotDeleteException {
+        if (!this.isOwner(deleteBy)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
     @Override
     public String toString() {
         return "Question{" +
