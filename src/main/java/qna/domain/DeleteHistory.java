@@ -25,19 +25,14 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
-        deletedBy(deletedBy);
-        this.createDate = createDate;
+        this.deletedBy = deletedBy;
     }
 
-    public void deletedBy(User writer) {
-        if (this.deletedBy != null) {
-            this.deletedBy.getDeleteHistories().remove(this);
-        }
-        this.deletedBy = writer;
-        this.deletedBy.getDeleteHistories().add(this);
+    public User getDeletedBy() {
+        return deletedBy;
     }
 
     @Override

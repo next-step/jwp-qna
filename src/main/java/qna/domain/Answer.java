@@ -18,7 +18,7 @@ public class Answer extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,21 +42,13 @@ public class Answer extends BaseEntity {
             throw new NotFoundException();
         }
 
-        writerBy(writer);
+        this.writer = writer;
         toQuestion(question);
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
-    }
-
-    public void writerBy(User writer) {
-        if (this.writer != null) {
-            this.writer.getAnswers().remove(this);
-        }
-        this.writer = writer;
-        this.writer.getAnswers().add(this);
     }
 
     public void toQuestion(Question question) {
@@ -71,10 +63,6 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return this.writer;
     }
@@ -83,20 +71,13 @@ public class Answer extends BaseEntity {
         return this.question;
     }
 
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public DeleteHistory delete(boolean deleted) {
         this.deleted = deleted;
+        return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter());
     }
 
     @Override
