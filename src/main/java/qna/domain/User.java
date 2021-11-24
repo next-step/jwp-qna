@@ -1,10 +1,12 @@
 package qna.domain;
 
 import qna.UnAuthorizedException;
+import qna.domain.commons.Email;
+import qna.domain.commons.Name;
+import qna.domain.commons.Password;
+import qna.domain.commons.UserId;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -15,34 +17,35 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false, length = 20, unique = true)
-  private String userId;
+  @Embedded
+  private UserId userId;
 
-  @Column(nullable = false, length = 20)
-  private String password;
+  @Embedded
+  private Password password;
 
-  @Column(nullable = false, length = 20)
-  private String name;
+  @Embedded
+  private Name name;
 
-  @Column(nullable = false, length = 50)
-  private String email;
+  @Embedded
+  private Email email;
 
-  @OneToMany(mappedBy = "writer")
-  private final List<Answer> answers = new ArrayList<>();
+  @Embedded
+  @AttributeOverride( name = "writer", column = @Column(name = "writer_id"))
+  private final Answers answers = new Answers();
 
-  @OneToMany(mappedBy = "writer")
-  private final List<Question> questions = new ArrayList<>();
+  @Embedded
+  private final Questions questions = new Questions();
 
-  @OneToMany(mappedBy = "deletedBy")
-  private final List<DeleteHistory> deleteHistories = new ArrayList<>();
+  @Embedded
+  private final DeleteHistories deleteHistories = new DeleteHistories();
 
   protected User() {}
 
-  public User(String userId, String password, String name, String email) {
+  public User(UserId userId, Password password, Name name, Email email) {
     this(null, userId, password, name, email);
   }
 
-  public User(Long id, String userId, String password, String name, String email) {
+  public User(Long id, UserId userId, Password password, Name name, Email email) {
     this.id = id;
     this.userId = userId;
     this.password = password;
@@ -63,11 +66,11 @@ public class User {
     this.email = target.email;
   }
 
-  private boolean matchUserId(String userId) {
+  private boolean matchUserId(UserId userId) {
     return this.userId.equals(userId);
   }
 
-  public boolean matchPassword(String targetPassword) {
+  public boolean matchPassword(Password targetPassword) {
     return this.password.equals(targetPassword);
   }
 
@@ -92,35 +95,35 @@ public class User {
     this.id = id;
   }
 
-  public String getUserId() {
+  public UserId getUserId() {
     return userId;
   }
 
-  public void setUserId(String userId) {
+  public void setUserId(UserId userId) {
     this.userId = userId;
   }
 
-  public String getPassword() {
+  public Password getPassword() {
     return password;
   }
 
-  public void setPassword(String password) {
+  public void setPassword(Password password) {
     this.password = password;
   }
 
-  public String getName() {
+  public Name getName() {
     return name;
   }
 
-  public void setName(String name) {
+  public void setName(Name name) {
     this.name = name;
   }
 
-  public String getEmail() {
+  public Email getEmail() {
     return email;
   }
 
-  public void setEmail(String email) {
+  public void setEmail(Email email) {
     this.email = email;
   }
 
@@ -128,7 +131,7 @@ public class User {
     answers.add(answer);
   }
 
-  public List<Answer> getAnswers() {
+  public Answers getAnswers() {
     return answers;
   }
 
@@ -137,16 +140,20 @@ public class User {
     question.writeBy(this);
   }
 
-  public List<Question> getQuestions() {
+  public Questions getQuestions() {
     return questions;
   }
 
   public void addDeleteHistory(DeleteHistory deleteHistory) {
-    deleteHistories.add(deleteHistory);
     deleteHistory.toDeletedBy(this);
+    deleteHistories.add(deleteHistory);
   }
 
-  public List<DeleteHistory> getDeleteHistories() {
+  public void addDeleteHistories(DeleteHistories deleteHistories) {
+    this.deleteHistories.addAll(deleteHistories);
+  }
+
+  public DeleteHistories getDeleteHistories() {
     return deleteHistories;
   }
 
@@ -166,7 +173,7 @@ public class User {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     User user = (User) o;
-    return Objects.equals(id, user.id) && Objects.equals(userId, user.userId);
+    return Objects.equals(id, user.id);
   }
 
   @Override

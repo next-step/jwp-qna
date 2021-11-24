@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.domain.commons.ContentType;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -29,6 +31,14 @@ public class DeleteHistory {
     this.contentId = contentId;
     this.deletedBy = deletedBy;
     this.createDate = createDate;
+  }
+
+  public static DeleteHistory ofAnswer(Long id, User deletedBy) {
+    return new DeleteHistory(ContentType.ANSWER, id, deletedBy, LocalDateTime.now());
+  }
+
+  public static DeleteHistory ofQuestion(Long id, User deletedBy) {
+    return new DeleteHistory(ContentType.QUESTION, id, deletedBy, LocalDateTime.now());
   }
 
   public void toDeletedBy(User deletedBy) {

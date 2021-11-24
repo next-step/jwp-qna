@@ -1,8 +1,11 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+import qna.domain.commons.BaseTimeEntity;
+import qna.domain.commons.Contents;
+import qna.domain.commons.Title;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -10,11 +13,11 @@ public class Question extends BaseTimeEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(length = 100, nullable = false)
-  private String title;
+  @Embedded
+  private Title title;
 
-  @Lob
-  private String contents;
+  @Embedded
+  private Contents contents;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -23,16 +26,17 @@ public class Question extends BaseTimeEntity {
   @Column(columnDefinition = "bit", nullable = false)
   private boolean deleted = false;
 
-  @OneToMany(mappedBy = "question")
-  private final List<Answer> answers = new ArrayList<>();
+  @Embedded
+  @AttributeOverride( name = "question", column = @Column(name = "question_id"))
+  private Answers answers = new Answers();
 
   protected Question() {}
 
-  public Question(String title, String contents) {
+  public Question(Title title, Contents contents) {
     this(null, title, contents);
   }
 
-  public Question(Long id, String title, String contents) {
+  public Question(Long id, Title title, Contents contents) {
     this.id = id;
     this.title = title;
     this.contents = contents;
@@ -47,6 +51,25 @@ public class Question extends BaseTimeEntity {
     return this.writer.equals(writer);
   }
 
+  public DeleteHistories delete(User loginUser) {
+    checkDeletableQuestionByUser(loginUser);
+    setDeleted(true);
+
+    DeleteHistories deleteHistories = DeleteHistories
+      .ofQuestion(DeleteHistory.ofQuestion(id, loginUser), answers.deleteAll(loginUser));
+    loginUser.addDeleteHistories(deleteHistories);
+
+    return deleteHistories;
+  }
+
+
+
+  private void checkDeletableQuestionByUser(User loginUser) {
+    if (!isOwner(loginUser)) {
+      throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+    }
+  }
+
   public Long getId() {
     return id;
   }
@@ -55,19 +78,19 @@ public class Question extends BaseTimeEntity {
     this.id = id;
   }
 
-  public String getTitle() {
+  public Title getTitle() {
     return title;
   }
 
-  public void setTitle(String title) {
+  public void setTitle(Title title) {
     this.title = title;
   }
 
-  public String getContents() {
+  public Contents getContents() {
     return contents;
   }
 
-  public void setContents(String contents) {
+  public void setContents(Contents contents) {
     this.contents = contents;
   }
 
@@ -91,7 +114,11 @@ public class Question extends BaseTimeEntity {
     answers.add(answer);
   }
 
-  public List<Answer> getAnswers() {
+  public void setAnswers(Answers answers) {
+    this.answers = answers;
+  }
+
+  public Answers getAnswers() {
     return answers;
   }
 
@@ -105,4 +132,5 @@ public class Question extends BaseTimeEntity {
       ", deleted=" + deleted +
       '}';
   }
+
 }

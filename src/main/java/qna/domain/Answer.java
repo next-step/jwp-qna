@@ -1,7 +1,10 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.commons.BaseTimeEntity;
+import qna.domain.commons.Contents;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -20,19 +23,19 @@ public class Answer extends BaseTimeEntity {
   @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
   private Question question;
 
-  @Lob
-  private String contents;
+  @Embedded
+  private Contents contents;
 
   @Column(columnDefinition = "bit", nullable = false)
   private boolean deleted = false;
 
   protected Answer() {}
 
-  public Answer(User writer, Question question, String contents) {
+  public Answer(User writer, Question question, Contents contents) {
     this(null, writer, question, contents);
   }
 
-  public Answer(Long id, User writer, Question question, String contents) {
+  public Answer(Long id, User writer, Question question, Contents contents) {
     this.id = id;
 
     if (Objects.isNull(writer)) {
@@ -54,6 +57,18 @@ public class Answer extends BaseTimeEntity {
 
   public void toQuestion(Question question) {
     this.question = question;
+  }
+
+  public DeleteHistory delete(User loginUser) {
+    checkDeletableAnswersByUser(loginUser);
+    setDeleted(true);
+    return DeleteHistory.ofAnswer(id, loginUser);
+  }
+
+  private void checkDeletableAnswersByUser(User loginUser) {
+    if (!isOwner(loginUser)) {
+      throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
   }
 
   public Long getId() {
@@ -80,20 +95,20 @@ public class Answer extends BaseTimeEntity {
     this.question = question;
   }
 
-  public String getContents() {
+  public Contents getContents() {
     return contents;
   }
 
-  public void setContents(String contents) {
+  public void setContents(Contents contents) {
     this.contents = contents;
-  }
-
-  public boolean isDeleted() {
-    return deleted;
   }
 
   public void setDeleted(boolean deleted) {
     this.deleted = deleted;
+  }
+
+  public boolean isDeleted() {
+    return deleted;
   }
 
   @Override
@@ -116,4 +131,5 @@ public class Answer extends BaseTimeEntity {
       + super.getUpdatedAt()
       + '}';
   }
+
 }

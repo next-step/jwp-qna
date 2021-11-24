@@ -7,10 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
+import qna.CannotDeleteException;
+import qna.domain.commons.*;
 
 import javax.persistence.EntityManager;
 
+import java.util.Arrays;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.*;
 import static org.springframework.test.annotation.DirtiesContext.*;
@@ -30,15 +35,15 @@ public class QuestionTest {
     entityManager.createNativeQuery("ALTER TABLE `question` ALTER COLUMN `id` RESTART WITH 1")
       .executeUpdate();
 
-    Question q1 = QuestionFactory.create("test", "contents");
-    Question q2 = QuestionFactory.create("test q2", "contents q2");
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents"));
+    Question q2 = QuestionFactory.create(Title.of("test q2"), Contents.of("contents q2"));
   }
 
   @DisplayName("질문을 저장한다.")
   @Test
   void save() {
-    Question q1 = QuestionFactory.create("test", "contents");
-    Question q2 = QuestionFactory.create("test q2", "contents q2");
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents"));
+    Question q2 = QuestionFactory.create(Title.of("test q2"), Contents.of("contents q2"));
     Question actual = questionRepository.save(q1);
 
     assertAll(
@@ -51,8 +56,8 @@ public class QuestionTest {
   @DisplayName("질문을 ID로 찾는다.")
   @Test
   void findById() {
-    Question q1 = QuestionFactory.create("test", "contents");
-    Question q2 = QuestionFactory.create("test q2", "contents q2");
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents"));
+    Question q2 = QuestionFactory.create(Title.of("test q2"), Contents.of("contents q2"));
     questionRepository.save(q1);
 
     Question question = questionRepository.findById(q1.getId()).orElse(null);
@@ -67,8 +72,8 @@ public class QuestionTest {
   @DisplayName("모든 질문을 검색한다.")
   @Test
   void findAll() {
-    Question q1 = QuestionFactory.create("test", "contents");
-    Question q2 = QuestionFactory.create("test q2", "contents q2");
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents"));
+    Question q2 = QuestionFactory.create(Title.of("test q2"), Contents.of("contents q2"));
     questionRepository.save(q1);
     questionRepository.save(q2);
 
@@ -78,8 +83,8 @@ public class QuestionTest {
   @DisplayName("모든 질문을 삭제한다.")
   @Test
   void deleteAll() {
-    Question q1 = QuestionFactory.create("test", "contents");
-    Question q2 = QuestionFactory.create("test q2", "contents q2");
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents"));
+    Question q2 = QuestionFactory.create(Title.of("test q2"), Contents.of("contents q2"));
     questionRepository.save(q1);
     questionRepository.save(q2);
 
@@ -89,4 +94,59 @@ public class QuestionTest {
 
     assertThat(questionRepository.count()).isEqualTo(0);
   }
+
+  @DisplayName("로그인 User id와 Question writer_id가 같지 않을 경우 예외를 던진다.")
+  @Test
+  void deleteByLoginUser() throws CannotDeleteException {
+    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test@password12"), Name.of("js"), Email.of("nextstep@gmail.com"));
+    User questionWriter = UserFactory.create(2L, UserId.of("test"), Password.of("test@password12"), Name.of("test"), Email.of("test@gmail.com"));
+    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(questionWriter);
+
+    assertThatThrownBy(() -> q1.delete(loginUser))
+      .isInstanceOf(CannotDeleteException.class);
+  }
+
+  @DisplayName("Question 하위에 답변이 없는 경우 삭제 가능하다.")
+  @Test
+  void deleteIfAnswersIsNotExists() throws CannotDeleteException {
+    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test@password12"), Name.of("js"), Email.of("nextstep@gmail.com"));
+    Question question = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(loginUser);
+
+    question.delete(loginUser);
+
+    assertThat(question.isDeleted()).isTrue();
+  }
+
+  @DisplayName("Question 하위에 답변 중 다른 다른 사람이 쓴 답변이 있을 경우 삭제할 수 없다.")
+  @Test
+  void deleteIfAnswersWriterIsLoginUser() {
+    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test@password12"), Name.of("js"), Email.of("nextstep@gmail.com"));
+    User answerUser = UserFactory.create(2L, UserId.of("test"), Password.of("test@password12"), Name.of("test"), Email.of("test@gmail.com"));
+    Question question = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(loginUser);
+
+    Answer answer1 = AnswerFactory.create(loginUser, question, Contents.of("answer1"));
+    Answer answer2 = AnswerFactory.create(answerUser, question, Contents.of("answer2"));
+
+    question.setAnswers(new Answers(Arrays.asList(answer1, answer2)));
+
+    assertThatThrownBy(() -> question.delete(loginUser))
+      .isInstanceOf(CannotDeleteException.class)
+      .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+  }
+
+  @DisplayName("Question 내에 모든 Answer를 삭제 처리(deleted -> true)한다.")
+  @Test
+  void deleteQuestionAndAnswers() throws CannotDeleteException {
+    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test@password12"), Name.of("js"), Email.of("nextstep@gmail.com"));
+    Question question = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(loginUser);
+
+    Answer answer1 = AnswerFactory.create(loginUser, question, Contents.of("answer1"));
+    Answer answer2 = AnswerFactory.create(loginUser, question, Contents.of("answer2"));
+
+    question.setAnswers(new Answers(Arrays.asList(answer1, answer2)));
+    question.delete(loginUser);
+
+    assertThat(question.getAnswers().isAllDeleted()).isTrue();
+  }
+
 }
