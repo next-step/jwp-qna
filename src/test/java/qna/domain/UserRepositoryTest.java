@@ -32,15 +32,7 @@ class UserRepositoryTest {
 
         User actual = userRepository.save(expected);
 
-        assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getUserId()).isEqualTo(expected.getUserId()),
-            () -> assertThat(actual.getPassword()).isEqualTo(expected.getPassword()),
-            () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
-            () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail()),
-            () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
-            () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
-        );
+        assertUser(actual, expected);
     }
 
     @DisplayName("id로 유저 조회")
@@ -49,15 +41,19 @@ class UserRepositoryTest {
         User expected = new User("userId", "password", "name", "email");
         userRepository.save(expected);
 
-        User actual = userRepository.findByUserId("userId").get();
+        User actual = userRepository.findByUserId(new UserId("userId")).get();
 
+        assertUser(actual, expected);
+    }
+
+    private void assertUser(User actual, User expected) {
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
             () -> assertThat(actual.getUserId()).isEqualTo(expected.getUserId()),
             () -> assertThat(actual.getPassword()).isEqualTo(expected.getPassword()),
             () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
             () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail()),
-            () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
+            () -> assertThat(actual.getCreatedAt().isAfterOrEqualTo(new CreatedAt(startTime))).isTrue(),
             () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
         );
     }

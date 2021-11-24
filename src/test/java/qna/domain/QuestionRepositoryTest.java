@@ -50,15 +50,7 @@ class QuestionRepositoryTest {
     void save() {
         Question actual = questionRepository.findById(this.question.getId()).get();
 
-        assertAll(
-            () -> assertThat(actual.getId()).isEqualTo(question.getId()),
-            () -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
-            () -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
-            () -> assertThat(actual.getWriter()).isEqualTo(question.getWriter()),
-            () -> assertThat(actual.getAnswers()).isEqualTo(question.getAnswers()),
-            () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
-            () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
-        );
+        assertQuestion(actual);
 
         questionRepository.flush();
     }
@@ -68,7 +60,7 @@ class QuestionRepositoryTest {
     void findByDeletedFalse() {
         Question expected1 = new Question("title2", "contents2").writeBy(user);
         Question expected2 = new Question("title3", "contents3").writeBy(user);
-        question.setDeleted(true);
+        question.delete(user);
         questionRepository.save(expected1);
         questionRepository.save(expected2);
         questionRepository.save(question);
@@ -83,21 +75,13 @@ class QuestionRepositoryTest {
     void findByIdAndDeletedFalse_exists() {
         Question actual = questionRepository.findByIdAndDeletedFalse(question.getId()).get();
 
-        assertAll(
-            () -> assertThat(actual.getId()).isEqualTo(question.getId()),
-            () -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
-            () -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
-            () -> assertThat(actual.getWriter()).isEqualTo(question.getWriter()),
-            () -> assertThat(actual.getAnswers()).isEqualTo(question.getAnswers()),
-            () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
-            () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
-        );
+        assertQuestion(actual);
     }
 
     @DisplayName("삭제되지 않은 질문 id로 조회하여 존재하지 않는 케이스")
     @Test
     void findByIdAndDeletedFalse_notExists() {
-        question.setDeleted(true);
+        question.delete(user);
         questionRepository.save(question);
 
         Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(user.getId());
@@ -110,13 +94,17 @@ class QuestionRepositoryTest {
     void findByWriter() {
         Question actual = questionRepository.findByWriter(user).get();
 
+        assertQuestion(actual);
+    }
+
+    private void assertQuestion(Question actual) {
         assertAll(
             () -> assertThat(actual.getId()).isEqualTo(question.getId()),
             () -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
             () -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
             () -> assertThat(actual.getWriter()).isEqualTo(question.getWriter()),
             () -> assertThat(actual.getAnswers()).isEqualTo(question.getAnswers()),
-            () -> assertThat(actual.getCreatedAt()).isAfterOrEqualTo(startTime),
+            () -> assertThat(actual.getCreatedAt().isAfterOrEqualTo(new CreatedAt(startTime))).isTrue(),
             () -> assertThat(actual.getUpdatedAt()).isAfterOrEqualTo(startTime)
         );
     }

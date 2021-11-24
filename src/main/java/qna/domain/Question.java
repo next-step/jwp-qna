@@ -1,6 +1,7 @@
 package qna.domain;
 
-import javax.persistence.Column;
+import java.util.Objects;
+
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -8,9 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
-import qna.ForbiddenException;
+import qna.CannotAddException;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -18,10 +21,10 @@ public class Question extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+    @Embedded
+    private Title title;
 
-    @Column(columnDefinition = "longtext")
+    @Lob
     private String contents;
 
     @ManyToOne
@@ -39,7 +42,7 @@ public class Question extends BaseTimeEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
+        this.title = new Title(title);
         this.contents = contents;
     }
 
@@ -51,39 +54,49 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public boolean matchId(Question question) {
+        if (Objects.isNull(this.id)) {
+            return false;
+        }
+
+        return this.id.equals(question.id);
     }
 
     public void addAnswer(Answer answer) {
         if (!answer.isFrom(this)) {
-            throw new ForbiddenException();
+            throw new CannotAddException("이 질문에 대한 답변이 아니므로 추가할 수 없습니다.");
         }
         this.answers.add(answer);
+    }
+
+    public DeleteHistories delete(User loginUser) {
+        validateOwner(loginUser);
+        deleted = true;
+        return makeDeleteHistories(loginUser);
+    }
+
+    protected void validateOwner(User writer) {
+        if (!this.writer.matchId(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    protected DeleteHistories makeDeleteHistories(User loginUser) {
+        DeleteHistories deleteHistories = new DeleteHistories(DeleteHistory.ofContent(Content.ofQuestion(this)));
+        deleteHistories.addAll(answers.delete(loginUser));
+        return deleteHistories;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
+    public Title getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public User getWriter() {
@@ -92,10 +105,6 @@ public class Question extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public Answers getAnswers() {

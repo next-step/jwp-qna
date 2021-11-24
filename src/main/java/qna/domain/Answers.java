@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -17,6 +18,20 @@ public class Answers {
     }
 
     protected Answers() {
+    }
+
+    public DeleteHistories delete(User loginUser) {
+        validateOwner(loginUser);
+
+        return new DeleteHistories(answers.stream()
+            .map(Answer::delete)
+            .collect(Collectors.toList()));
+    }
+
+    protected void validateOwner(User loginUser) {
+        for (Answer answer : answers) {
+            answer.validateOwner(loginUser);
+        }
     }
 
     public boolean add(Answer answer) {
