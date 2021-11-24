@@ -44,7 +44,7 @@
 * [x] 위의 과정에서 삭제될 경우 delete_history에 삭제된 정보를 추가한다.
 
 ### 1차 피드백 목록
-* [ ] CannotDeleteException Exception을 상속 -> RuntimeException 상속으로 변경
+* [x] CannotDeleteException Exception을 상속 -> RuntimeException 상속으로 변경
 * [ ] 원시값, 참조값 래핑에 대한 의미있는 코드 작성
 * [ ] 답변을 지울 때, answer.delete(loginUser) 시에 확인하는 로직으로 객체지향적인 코드 작성
 * [ ] 양방향 연관관계에서의 여러 케이스 고려
