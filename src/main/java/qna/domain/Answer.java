@@ -85,4 +85,21 @@ public class Answer extends BaseEntity {
 			", deleted=" + deleted +
 			'}';
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Answer answer = (Answer)o;
+		return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents,
+			answer.contents) && Objects.equals(questionId, answer.questionId) && Objects.equals(
+			writerId, answer.writerId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, contents, deleted, questionId, writerId);
+	}
 }

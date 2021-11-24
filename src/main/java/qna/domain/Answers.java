@@ -37,4 +37,10 @@ public class Answers {
 	public int hashCode() {
 		return Objects.hash(answers);
 	}
+
+	public void setDeleted(boolean isDelete) {
+		for (Answer answer: answers) {
+			answer.setDeleted(isDelete);
+		}
+	}
 }

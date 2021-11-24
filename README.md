@@ -4,6 +4,8 @@
 - [x] DeleteHistory Entity 매핑
 - [x] Answer Entity 매핑
 - [x] DeleteHistoryService의 Transactional Propagation = REQUIRES_NEW를 제거
-- QnAService 매핑
-  - [x] 일급 컬렉션: List<Answer>를 Answers로 변환
-  - [ ] 일급 컬렉션: List<DeleteHistory>를 deleteHistories로 변환
+- QnAService
+  - DeleteQuestion 리팩토링
+    - [x] 일급 컬렉션: List<Answer>를 Answers로 변환
+    - [x] 일급 컬렉션: List<DeleteHistory>를 deleteHistories로 변환
+    - [x] Answers.setDeleted 추가
