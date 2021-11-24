@@ -22,8 +22,8 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UserTest {
-  public static final User JAVAJIGI = new User(1L, UserId.of("javajigi"), Password.of("password"), Name.of("name"), Email.of("javajigi@slipp.net"));
-  public static final User SANJIGI = new User(2L, UserId.of("sanjigi"), Password.of("password"), Name.of("name"), Email.of("sanjigi@slipp.net"));
+  public static final User JAVAJIGI = new User(1L, UserId.of("javajigi"), Password.of("pa1ssword@"), Name.of("name"), Email.of("javajigi@slipp.net"));
+  public static final User SANJIGI = new User(2L, UserId.of("sanjigi"), Password.of("passw1ord@"), Name.of("name"), Email.of("sanjigi@slipp.net"));
 
   @Autowired
   UserRepository userRepository;

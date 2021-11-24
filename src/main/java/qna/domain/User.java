@@ -145,8 +145,12 @@ public class User {
   }
 
   public void addDeleteHistory(DeleteHistory deleteHistory) {
-    deleteHistories.add(deleteHistory);
     deleteHistory.toDeletedBy(this);
+    deleteHistories.add(deleteHistory);
+  }
+
+  public void addDeleteHistories(DeleteHistories deleteHistories) {
+    this.deleteHistories.addAll(deleteHistories);
   }
 
   public DeleteHistories getDeleteHistories() {

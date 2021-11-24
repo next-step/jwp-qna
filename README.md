@@ -47,5 +47,5 @@
 * [x] CannotDeleteException Exception을 상속 -> RuntimeException 상속으로 변경
 * [x] 원시값, 참조값 래핑에 대한 의미있는 코드 작성
 * [x] 답변을 지울 때, answer.delete(loginUser) 시에 확인하는 로직으로 객체지향적인 코드 작성
-* [ ] 양방향 연관관계에서의 여러 케이스 고려
+* [x] 양방향 연관관계에서의 여러 케이스 고려
 * [x] 변수명에 q1, a1과 같은 약어는 지양
