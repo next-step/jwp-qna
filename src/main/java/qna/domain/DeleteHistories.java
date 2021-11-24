@@ -37,4 +37,7 @@ public class DeleteHistories {
     this.deleteHistories = deleteHistories;
   }
 
+  public void addAll(DeleteHistories deleteHistories) {
+    this.deleteHistories.addAll(deleteHistories.deleteHistories);
+  }
 }

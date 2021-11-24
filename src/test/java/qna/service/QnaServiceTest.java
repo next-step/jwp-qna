@@ -12,7 +12,6 @@ import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.commons.ContentType;
 import qna.domain.commons.Contents;
-import qna.domain.commons.CreateDate;
 import qna.domain.commons.Title;
 
 import java.time.LocalDateTime;
@@ -92,8 +91,8 @@ class QnaServiceTest {
 
   private void verifyDeleteHistories() {
     List<DeleteHistory> deleteHistories = Arrays.asList(
-      new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), CreateDate.of(LocalDateTime.now())),
-      new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), CreateDate.of(LocalDateTime.now()))
+      new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
+      new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
     );
     verify(deleteHistoryService).saveAll(deleteHistories);
   }

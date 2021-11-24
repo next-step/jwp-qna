@@ -1,7 +1,6 @@
 package qna.domain;
 
 import qna.domain.commons.ContentType;
-import qna.domain.commons.CreateDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -22,12 +21,12 @@ public class DeleteHistory {
   @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
   private User deletedBy;
 
-  @Embedded
-  private CreateDate createDate = new CreateDate();
+  @Column(columnDefinition = "datetime(6)")
+  private LocalDateTime createDate = LocalDateTime.now();
 
   protected DeleteHistory() {}
 
-  public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, CreateDate createDate) {
+  public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
     this.contentType = contentType;
     this.contentId = contentId;
     this.deletedBy = deletedBy;
@@ -35,11 +34,11 @@ public class DeleteHistory {
   }
 
   public static DeleteHistory ofAnswer(Long id, User deletedBy) {
-    return new DeleteHistory(ContentType.ANSWER, id, deletedBy, CreateDate.of(LocalDateTime.now()));
+    return new DeleteHistory(ContentType.ANSWER, id, deletedBy, LocalDateTime.now());
   }
 
   public static DeleteHistory ofQuestion(Long id, User deletedBy) {
-    return new DeleteHistory(ContentType.QUESTION, id, deletedBy, CreateDate.of(LocalDateTime.now()));
+    return new DeleteHistory(ContentType.QUESTION, id, deletedBy, LocalDateTime.now());
   }
 
   public void toDeletedBy(User deletedBy) {

@@ -1,13 +1,10 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-import qna.domain.DeleteHistory;
-import qna.domain.Question;
-import qna.domain.User;
 import qna.domain.commons.BaseTimeEntity;
 import qna.domain.commons.Contents;
-import qna.domain.commons.Deleted;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -29,8 +26,8 @@ public class Answer extends BaseTimeEntity {
   @Embedded
   private Contents contents;
 
-  @Embedded
-  private Deleted deleted = new Deleted();
+  @Column(columnDefinition = "bit", nullable = false)
+  private boolean deleted = false;
 
   protected Answer() {}
 
@@ -63,8 +60,15 @@ public class Answer extends BaseTimeEntity {
   }
 
   public DeleteHistory delete(User loginUser) {
-    deleted.toTrue();
+    checkDeletableAnswersByUser(loginUser);
+    setDeleted(true);
     return DeleteHistory.ofAnswer(id, loginUser);
+  }
+
+  private void checkDeletableAnswersByUser(User loginUser) {
+    if (!isOwner(loginUser)) {
+      throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
   }
 
   public Long getId() {
@@ -99,8 +103,12 @@ public class Answer extends BaseTimeEntity {
     this.contents = contents;
   }
 
+  public void setDeleted(boolean deleted) {
+    this.deleted = deleted;
+  }
+
   public boolean isDeleted() {
-    return deleted.is();
+    return deleted;
   }
 
   @Override

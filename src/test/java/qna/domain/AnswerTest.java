@@ -25,8 +25,8 @@ public class AnswerTest {
   @DisplayName("답변을 저장한다.")
   @Test
   void save() {
-    User questionWriter = UserFactory.create(UserId.of("test_question_pro"), Password.of("pass"), Name.of("test"), Email.of("dev22@gmail.com"));
-    User answerWriter = UserFactory.create(UserId.of("wonjune"), Password.of("pass"), Name.of("june"), Email.of("dev@gmail.com"));
+    User questionWriter = UserFactory.create(UserId.of("test_question_pro"), Password.of("pass1word@"), Name.of("test"), Email.of("dev22@gmail.com"));
+    User answerWriter = UserFactory.create(UserId.of("wonjune"), Password.of("pass1word@"), Name.of("june"), Email.of("dev@gmail.com"));
     Question question = QuestionFactory.create(Title.of("test question"), Contents.of("contents")).writeBy(questionWriter);
 
     Answer answer = AnswerFactory.create(answerWriter, question, Contents.of("test contents"));
@@ -43,8 +43,8 @@ public class AnswerTest {
   @DisplayName("답변을 삭제한다.")
   @Test
   void delete() {
-    User questionWriter = UserFactory.create(UserId.of("test_question_pro"), Password.of("pass"), Name.of("test"), Email.of("dev22@gmail.com"));
-    User answerWriter = UserFactory.create(UserId.of("wonjune"), Password.of("pass"), Name.of("june"), Email.of("dev@gmail.com"));
+    User questionWriter = UserFactory.create(UserId.of("test_question_pro"), Password.of("pass1word@"), Name.of("test"), Email.of("dev22@gmail.com"));
+    User answerWriter = UserFactory.create(UserId.of("wonjune"), Password.of("pass1word@"), Name.of("june"), Email.of("dev@gmail.com"));
     Question question = QuestionFactory.create(Title.of("test question"), Contents.of("contents")).writeBy(questionWriter);
 
     Answer answer = AnswerFactory.create(answerWriter, question, Contents.of("test contents"));
@@ -57,8 +57,8 @@ public class AnswerTest {
   @DisplayName("답변의 내용을 수정한다.")
   @Test
   void updateContentsById() {
-    User questionWriter = UserFactory.create(UserId.of("test_question_pro"), Password.of("pass"), Name.of("test"), Email.of("dev22@gmail.com"));
-    User answerWriter = UserFactory.create(UserId.of("wonjune"), Password.of("pass"), Name.of("june"), Email.of("dev@gmail.com"));
+    User questionWriter = UserFactory.create(UserId.of("test_question_pro"), Password.of("pass1word@"), Name.of("test"), Email.of("dev22@gmail.com"));
+    User answerWriter = UserFactory.create(UserId.of("wonjune"), Password.of("pass1word@"), Name.of("june"), Email.of("dev@gmail.com"));
     Question question = QuestionFactory.create(Title.of("test question"), Contents.of("contents")).writeBy(questionWriter);
 
     Answer answer = AnswerFactory.create(answerWriter, question, Contents.of("test contents"));
@@ -73,8 +73,8 @@ public class AnswerTest {
   @DisplayName("ID로 답변을 찾는다.")
   @Test
   void findById() {
-    User questionWriter = UserFactory.create(UserId.of("test_question_pro"), Password.of("pass"), Name.of("test"), Email.of("dev22@gmail.com"));
-    User answerWriter = UserFactory.create(UserId.of("wonjune"), Password.of("pass"), Name.of("june"), Email.of("dev@gmail.com"));
+    User questionWriter = UserFactory.create(UserId.of("test_question_pro"), Password.of("pass1word@"), Name.of("test"), Email.of("dev22@gmail.com"));
+    User answerWriter = UserFactory.create(UserId.of("wonjune"), Password.of("pass1word@"), Name.of("june"), Email.of("dev@gmail.com"));
     Question question = QuestionFactory.create(Title.of("test question"), Contents.of("contents")).writeBy(questionWriter);
 
     Answer answer = AnswerFactory.create(answerWriter, question, Contents.of("test contents"));
@@ -88,8 +88,8 @@ public class AnswerTest {
   @DisplayName("답변을 작성자 ID로 찾는다.")
   @Test
   void findAnswersByWriterId() {
-    User questionWriter = UserFactory.create(UserId.of("test_question_pro"), Password.of("pass"), Name.of("test"), Email.of("dev22@gmail.com"));
-    User answerWriter = UserFactory.create(UserId.of("wonjune"), Password.of("pass"), Name.of("june"), Email.of("dev@gmail.com"));
+    User questionWriter = UserFactory.create(UserId.of("test_question_pro"), Password.of("pass1word@"), Name.of("test"), Email.of("dev22@gmail.com"));
+    User answerWriter = UserFactory.create(UserId.of("wonjune"), Password.of("pass1word@"), Name.of("june"), Email.of("dev@gmail.com"));
     Question question = QuestionFactory.create(Title.of("test question"), Contents.of("contents")).writeBy(questionWriter);
 
     Answer answer = AnswerFactory.create(answerWriter, question, Contents.of("test contents"));
@@ -104,12 +104,12 @@ public class AnswerTest {
   @DisplayName("작성자에 의해 질문을 삭제한다.")
   @Test
   void deleteAnswerByWriter() {
-    User writer = UserFactory.create(1L, UserId.of("wonjune"), Password.of("pass"), Name.of("june"), Email.of("dvg@gmail.com"));
-    Question q1 = QuestionFactory.create(Title.of("testQ"), Contents.of("test")).writeBy(writer);
-    Answer a1 = AnswerFactory.create(writer, q1, Contents.of("test"));
+    User writer = UserFactory.create(1L, UserId.of("wonjune"), Password.of("pass1word@"), Name.of("june"), Email.of("dvg@gmail.com"));
+    Question question = QuestionFactory.create(Title.of("testQ"), Contents.of("test")).writeBy(writer);
+    Answer answer = AnswerFactory.create(writer, question, Contents.of("test"));
 
-    a1.delete(writer);
+    answer.delete(writer);
 
-    assertThat(a1.isDeleted()).isTrue();
+    assertThat(answer.isDeleted()).isTrue();
   }
 }

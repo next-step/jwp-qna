@@ -25,16 +25,15 @@ public class Answers {
     answers.add(answer);
   }
 
-  public DeleteHistories deleteAll(User loginUser) throws CannotDeleteException {
-    checkDeletableAnswersByUser(loginUser);
-    return new DeleteHistories(answers.stream().map(answer -> answer.delete(loginUser)).collect(Collectors.toList()));
+  public DeleteHistories deleteAll(User loginUser) {
+    return new DeleteHistories(
+      answers.stream()
+        .map(answer -> answer.delete(loginUser))
+        .collect(Collectors.toList())
+    );
   }
 
-  private void checkDeletableAnswersByUser(User loginUser) throws CannotDeleteException {
-    if (answers != null && !isAllMatchWriter(loginUser)) {
-      throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-    }
-  }
+
 
   public boolean isEmpty() {
     return answers.isEmpty();

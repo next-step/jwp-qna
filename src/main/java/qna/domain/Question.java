@@ -3,7 +3,6 @@ package qna.domain;
 import qna.CannotDeleteException;
 import qna.domain.commons.BaseTimeEntity;
 import qna.domain.commons.Contents;
-import qna.domain.commons.Deleted;
 import qna.domain.commons.Title;
 
 import javax.persistence.*;
@@ -24,8 +23,8 @@ public class Question extends BaseTimeEntity {
   @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
   private User writer;
 
-  @Embedded
-  private Deleted deleted = new Deleted();
+  @Column(columnDefinition = "bit", nullable = false)
+  private boolean deleted = false;
 
   @Embedded
   @AttributeOverride( name = "question", column = @Column(name = "question_id"))
@@ -52,16 +51,20 @@ public class Question extends BaseTimeEntity {
     return this.writer.equals(writer);
   }
 
-  public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+  public DeleteHistories delete(User loginUser) {
     checkDeletableQuestionByUser(loginUser);
-    deleted.toTrue();
+    setDeleted(true);
 
-    return DeleteHistories.ofQuestion(DeleteHistory.ofQuestion(id, loginUser), answers.deleteAll(loginUser));
+    DeleteHistories deleteHistories = DeleteHistories
+      .ofQuestion(DeleteHistory.ofQuestion(id, loginUser), answers.deleteAll(loginUser));
+    loginUser.addDeleteHistories(deleteHistories);
+
+    return deleteHistories;
   }
 
 
 
-  private void checkDeletableQuestionByUser(User loginUser) throws CannotDeleteException {
+  private void checkDeletableQuestionByUser(User loginUser) {
     if (!isOwner(loginUser)) {
       throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
     }
@@ -100,10 +103,10 @@ public class Question extends BaseTimeEntity {
   }
 
   public boolean isDeleted() {
-    return deleted.is();
+    return deleted;
   }
 
-  public void setDeleted(Deleted deleted) {
+  public void setDeleted(boolean deleted) {
     this.deleted = deleted;
   }
 

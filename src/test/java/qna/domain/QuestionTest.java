@@ -98,8 +98,8 @@ public class QuestionTest {
   @DisplayName("로그인 User id와 Question writer_id가 같지 않을 경우 예외를 던진다.")
   @Test
   void deleteByLoginUser() throws CannotDeleteException {
-    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test"), Name.of("js"), Email.of("nextstep@gmail.com"));
-    User questionWriter = UserFactory.create(2L, UserId.of("test"), Password.of("test"), Name.of("test"), Email.of("test@gmail.com"));
+    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test@password12"), Name.of("js"), Email.of("nextstep@gmail.com"));
+    User questionWriter = UserFactory.create(2L, UserId.of("test"), Password.of("test@password12"), Name.of("test"), Email.of("test@gmail.com"));
     Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(questionWriter);
 
     assertThatThrownBy(() -> q1.delete(loginUser))
@@ -109,27 +109,27 @@ public class QuestionTest {
   @DisplayName("Question 하위에 답변이 없는 경우 삭제 가능하다.")
   @Test
   void deleteIfAnswersIsNotExists() throws CannotDeleteException {
-    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test"), Name.of("js"), Email.of("nextstep@gmail.com"));
-    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(loginUser);
+    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test@password12"), Name.of("js"), Email.of("nextstep@gmail.com"));
+    Question question = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(loginUser);
 
-    q1.delete(loginUser);
+    question.delete(loginUser);
 
-    assertThat(q1.isDeleted()).isTrue();
+    assertThat(question.isDeleted()).isTrue();
   }
 
   @DisplayName("Question 하위에 답변 중 다른 다른 사람이 쓴 답변이 있을 경우 삭제할 수 없다.")
   @Test
   void deleteIfAnswersWriterIsLoginUser() {
-    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test"), Name.of("js"), Email.of("nextstep@gmail.com"));
-    User answerUser = UserFactory.create(2L, UserId.of("test"), Password.of("test"), Name.of("test"), Email.of("test@gmail.com"));
-    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(loginUser);
+    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test@password12"), Name.of("js"), Email.of("nextstep@gmail.com"));
+    User answerUser = UserFactory.create(2L, UserId.of("test"), Password.of("test@password12"), Name.of("test"), Email.of("test@gmail.com"));
+    Question question = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(loginUser);
 
-    Answer a1 = AnswerFactory.create(loginUser, q1, Contents.of("answer1"));
-    Answer a2 = AnswerFactory.create(answerUser, q1, Contents.of("answer2"));
+    Answer answer1 = AnswerFactory.create(loginUser, question, Contents.of("answer1"));
+    Answer answer2 = AnswerFactory.create(answerUser, question, Contents.of("answer2"));
 
-    q1.setAnswers(new Answers(Arrays.asList(a1, a2)));
+    question.setAnswers(new Answers(Arrays.asList(answer1, answer2)));
 
-    assertThatThrownBy(() -> q1.delete(loginUser))
+    assertThatThrownBy(() -> question.delete(loginUser))
       .isInstanceOf(CannotDeleteException.class)
       .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
   }
@@ -137,16 +137,16 @@ public class QuestionTest {
   @DisplayName("Question 내에 모든 Answer를 삭제 처리(deleted -> true)한다.")
   @Test
   void deleteQuestionAndAnswers() throws CannotDeleteException {
-    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test"), Name.of("js"), Email.of("nextstep@gmail.com"));
-    Question q1 = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(loginUser);
+    User loginUser = UserFactory.create(1L, UserId.of("test"), Password.of("test@password12"), Name.of("js"), Email.of("nextstep@gmail.com"));
+    Question question = QuestionFactory.create(Title.of("test"), Contents.of("contents")).writeBy(loginUser);
 
-    Answer a1 = AnswerFactory.create(loginUser, q1, Contents.of("answer1"));
-    Answer a2 = AnswerFactory.create(loginUser, q1, Contents.of("answer2"));
+    Answer answer1 = AnswerFactory.create(loginUser, question, Contents.of("answer1"));
+    Answer answer2 = AnswerFactory.create(loginUser, question, Contents.of("answer2"));
 
-    q1.setAnswers(new Answers(Arrays.asList(a1, a2)));
-    q1.delete(loginUser);
+    question.setAnswers(new Answers(Arrays.asList(answer1, answer2)));
+    question.delete(loginUser);
 
-    assertThat(q1.getAnswers().isAllDeleted()).isTrue();
+    assertThat(question.getAnswers().isAllDeleted()).isTrue();
   }
 
 }
