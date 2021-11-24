@@ -12,10 +12,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
+@DisplayName("답변 테스트")
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-
     @Autowired
     AnswerRepository answerRepository;
 
@@ -25,21 +23,20 @@ public class AnswerTest {
     @Autowired
     UserRepository userRepository;
 
-    public User javajigi;
-    public User sanjigi;
+    private User javajigi;
+    private User sanjigi;
 
-    public Question questionJavajigi;
+    private Question questionJavajigi;
 
     @BeforeEach
     void setUp() {
         javajigi = userRepository.save(UserTest.JAVAJIGI);
         sanjigi = userRepository.save(UserTest.SANJIGI);
-        questionJavajigi = questionRepository.save(QuestionFixture.질문().writeBy(javajigi));
-        userRepository.flush();
-        questionRepository.flush();
+        questionJavajigi = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi));
     }
 
     @Test
+    @DisplayName("답변 저장")
     void save() {
         final Answer answer = answerRepository.save(new Answer(sanjigi, questionJavajigi, "Answers Contents1"));
         answerRepository.flush();
@@ -47,6 +44,7 @@ public class AnswerTest {
     }
 
     @Test
+    @DisplayName("답변ID로 답변 조회")
     public void findById() {
         final Answer expected = answerRepository.save(new Answer(javajigi, questionJavajigi, "Answers Contents1"));
         answerRepository.flush();
@@ -58,26 +56,28 @@ public class AnswerTest {
     @Test
     @DisplayName("질문에 대한 답변 조회")
     public void getAnswersWithQuestion() {
-        final Answer answer = answerRepository.save(new Answer(javajigi, questionJavajigi, "Answers Contents1"));
+        answerRepository.save(new Answer(javajigi, questionJavajigi, "Answers Contents1"));
         answerRepository.flush();
         assertThat(questionJavajigi.getAnswers().size()).isEqualTo(1);
     }
 
     @Test
+    @DisplayName("답변 ID로 조회시 삭제된 답변은 조회되지 않음")
     void findByIdAndDeletedFalse() {
         final Answer answer = answerRepository.save(new Answer(javajigi, questionJavajigi, "Answers Contents1"));
         answerRepository.flush();
-        answer.setDeleted(true);
+        answer.delete(true);
         assertThatThrownBy(() -> answerRepository.findByIdAndDeletedFalse(answer.getId())
                 .orElseThrow(NotFoundException::new))
                 .isInstanceOf(NotFoundException.class);
     }
 
     @Test
+    @DisplayName("질문에 대한 답변 조회시 삭제된 답변은 조회되지 않음")
     void findByQuestionIdAndDeletedFalse() {
         final Answer answer = answerRepository.save(new Answer(sanjigi, questionJavajigi, "answer 111"));
         answerRepository.flush();
-        answer.setDeleted(true);
+        answer.delete(true);
         assertThat(answerRepository.findByQuestionIdAndDeletedFalse(questionJavajigi.getId()).size()).isEqualTo(0);
     }
 
@@ -86,14 +86,6 @@ public class AnswerTest {
         final Answer answer = answerRepository.save(new Answer(javajigi, questionJavajigi, "answer 111"));
         answerRepository.flush();
         assertThat(answer.isOwner(questionJavajigi.getWriter())).isTrue();
-    }
-
-    @Test
-    void 답변_조회() {
-        final Answer answerJavajigi = answerRepository.save(new Answer(javajigi, questionJavajigi, "answer 111"));
-        final Answer answerSanjigi = answerRepository.save(new Answer(sanjigi, questionJavajigi, "answer 111"));
-        answerRepository.flush();
-        assertThat(questionJavajigi.getAnswers().size()).isEqualTo(2);
     }
 
     @AfterEach

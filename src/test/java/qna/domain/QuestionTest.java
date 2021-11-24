@@ -1,23 +1,21 @@
 package qna.domain;
 
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
 import qna.NotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
+@DisplayName("질문 테스트")
 public class QuestionTest {
 
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Autowired
     QuestionRepository questionRepository;
@@ -25,17 +23,17 @@ public class QuestionTest {
     @Autowired
     UserRepository userRepository;
 
-    public User javajigi;
-    public User sanjigi;
+    private User javajigi;
+    private User sanjigi;
 
     @BeforeEach
     void setUp() {
         javajigi = userRepository.save(UserTest.JAVAJIGI);
         sanjigi = userRepository.save(UserTest.SANJIGI);
-        userRepository.flush();
     }
 
     @Test
+    @DisplayName("질문 저장")
     void save() {
         final String title = questionRepository.save(QuestionFixture.질문().writeBy(javajigi)).getTitle();
         questionRepository.flush();
@@ -44,6 +42,7 @@ public class QuestionTest {
     }
 
     @Test
+    @DisplayName("질문 ID로 질문 조회")
     void findById() {
         final Question question = questionRepository.save(QuestionFixture.질문().writeBy(javajigi));
         questionRepository.flush();
@@ -53,7 +52,7 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("삭제되지 않은 질문 찾기")
+    @DisplayName("삭제되지 않은 질문 조회")
     void findByDeletedFalse() {
         final Question question = questionRepository.save(QuestionFixture.질문().writeBy(javajigi));
         question.setDeleted(true);
@@ -62,7 +61,7 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("id로 삭제되지 않은 질문 찾기")
+    @DisplayName("ID로 삭제되지 않은 질문 조회")
     void findByIdAndDeletedFalse() {
         final Question question = questionRepository.save(QuestionFixture.질문().writeBy(javajigi));
         question.setDeleted(true);
@@ -73,6 +72,7 @@ public class QuestionTest {
     }
 
     @Test
+    @DisplayName("isOwner 메소드 테스트")
     void isOwnerTest() {
         final Question question = questionRepository.save(QuestionFixture.질문().writeBy(javajigi));
         questionRepository.flush();
@@ -83,7 +83,5 @@ public class QuestionTest {
     public void tearDown() {
         userRepository.deleteAll();
         questionRepository.deleteAll();
-        userRepository.flush();
-        questionRepository.flush();
     }
 }

@@ -1,6 +1,5 @@
 package qna.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class Answers {
     public List<DeleteHistory> delete() {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for(Answer answer : answerList){
-            deleteHistories.add(answer.setDeleted(true));
+            deleteHistories.add(answer.delete(true));
         }
         return deleteHistories;
     }
