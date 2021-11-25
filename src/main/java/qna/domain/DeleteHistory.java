@@ -29,9 +29,6 @@ public class DeleteHistory {
 	private LocalDateTime createDate = LocalDateTime.now();
 
 	protected DeleteHistory() {
-		int[][] dp = new int[3][3];
-		String[] stringArray = {"a", "b", "c"};
-		// java.util.Arrays.ArrayList != java.util.ArrayLit, Arrays.ArrayList는 불변한 리스트를 리턴한다. add() 메소드 사용불가
 	}
 
 	public DeleteHistory(ContentType contentType, Long contentId, User eraser) {

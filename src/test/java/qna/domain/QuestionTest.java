@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +15,23 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class QuestionTest {
-	public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-	public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+	private User JAVAJIGI;
+	private User SANJIGI;
+	private Question Q1;
+	private Question Q2;
 	@Autowired
 	private QuestionRepository questionRepository;
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@BeforeEach
+	void setUp() {
+		JAVAJIGI = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+		SANJIGI = userRepository.save(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
+		Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+		Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
+	}
 
 	@Test
 	@DisplayName("질문을 저장한다.")
@@ -44,7 +55,7 @@ public class QuestionTest {
 	@DisplayName("작성자 ID의 질문을 가져온다.")
 	void findByWriterId() {
 		final Question question = questionRepository.save(Q1);
-		final List<Question> actual = questionRepository.findByWriterId(UserTest.JAVAJIGI.getId());
+		final List<Question> actual = questionRepository.findByWriterId(JAVAJIGI.getId());
 
 		assertThat(actual.get(0)).isEqualTo(question);
 	}

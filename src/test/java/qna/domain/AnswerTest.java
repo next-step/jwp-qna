@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class AnswerTest {
-	public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-	public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+	private User JAVAJIGI;
+	private User SANJIGI;
+	private Question Q1;
+	private Question Q2;
+	private Answer A1;
+	private Answer A2;
 	@Autowired
 	private AnswerRepository answerRepository;
 
@@ -24,6 +29,16 @@ public class AnswerTest {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@BeforeEach
+	void setUp() {
+		JAVAJIGI = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+		SANJIGI = userRepository.save(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
+		Q1 = questionRepository.save(new Question("title1", "contents1").writeBy(JAVAJIGI));
+		Q2 = questionRepository.save(new Question("title2", "contents2").writeBy(SANJIGI));
+		A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
+		A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
+	}
 
 	@Test
 	@DisplayName("답변을 저장한다.")
