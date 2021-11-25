@@ -31,17 +31,6 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void equals() {
-        final User user1 = TestUserFactory.create(
-            1L, "userId1", "password1", "name1", "1@slipp.net"
-        );
-        final User user2 = TestUserFactory.create(
-            1L, "userId2", "password2", "name2", "2@slipp.net"
-        );
-        assertThat(user1).isEqualTo(user2);
-    }
-
-    @Test
     void findByUserId() {
         final User expected = TestUserFactory.create(
             "javajigi", "password", "name", "javajigi@slipp.net"

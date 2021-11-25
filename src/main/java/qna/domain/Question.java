@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -30,6 +31,9 @@ public class Question extends BaseEntity {
     )
     private User writer;
 
+    @Embedded
+    private Answers answers = new Answers();
+
     protected Question() {
     }
 
@@ -45,11 +49,12 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equalsNameAndEmail(writer);
+        return this.writer.equals(writer);
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+    public void addAnswer(final Answer answer) {
+        answers.add(answer);
+        answer.replyToQuestion(this);
     }
 
     public Long getId() {
@@ -72,8 +77,18 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistories delete(final User loginUser) {
+        verifyOwner(loginUser);
+        final DeleteHistories deleteHistories = answers.delete(loginUser)
+            .add(DeleteHistory.ofQuestion(getId(), getWriter()));
+        this.deleted = true;
+        return deleteHistories;
+    }
+
+    private void verifyOwner(final User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new IllegalArgumentException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     @Override

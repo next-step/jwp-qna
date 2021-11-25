@@ -64,7 +64,7 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
+    public void replyToQuestion(Question question) {
         this.question = question;
     }
 
@@ -88,8 +88,16 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory delete(final User loginUser) {
+        verifyOwner(loginUser);
+        this.deleted = true;
+        return DeleteHistory.ofAnswer(getId(), getWriter());
+    }
+
+    private void verifyOwner(final User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new IllegalArgumentException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     @Override
