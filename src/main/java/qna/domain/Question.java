@@ -126,22 +126,18 @@ public class Question extends BaseTimeEntity {
         this.answers = answers;
     }
 
-    public Answer getLastAnswer() {
-        if (answers.size() > 0)
-            return answers.get(answers.size() - 1);
-        return null;
+    public boolean isLastAnswer(Answer answer) {
+        if (answers.size() > 0) {
+            return answers.get(answers.size() - 1).equals(answer);
+        }
+        return false;
     }
 
     public List<DeleteHistory> delete(User deleteBy) throws CannotDeleteException {
         validateRemovable(deleteBy);
 
-        // delete answers
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : this.answers) {
-            deleteHistories.add(answer.delete(deleteBy));
-        }
+        List<DeleteHistory> deleteHistories = deleteAnswers(deleteBy);
 
-        // delete question
         setDeleted(true);
         deleteHistories.add(DeleteHistory.of(this));
         return deleteHistories;
@@ -151,6 +147,14 @@ public class Question extends BaseTimeEntity {
         if (!this.isOwner(deleteBy)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
+    }
+
+    private List<DeleteHistory> deleteAnswers(User deleteBy) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : this.answers) {
+            deleteHistories.add(answer.delete(deleteBy));
+        }
+        return deleteHistories;
     }
 
     @Override

@@ -75,7 +75,7 @@ public class AnswerTest {
             () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
             // 관계성 체크
             () -> assertThat(actual.getQuestion()).isEqualTo(question),
-            () -> assertThat(question.getLastAnswer()).isEqualTo(actual)
+            () -> assertThat(question.isLastAnswer(actual)).isTrue()
         );
     }
 
@@ -125,8 +125,8 @@ public class AnswerTest {
 
         assertAll(
             () -> assertThat(answerAfter.getQuestion()).isEqualTo(questionAfter),
-            () -> assertThat(answerAfter).isEqualTo(questionAfter.getLastAnswer()),
-            () -> assertThat(answerAfter).isNotEqualTo(questionBefore.getLastAnswer())
+            () -> assertThat(questionAfter.isLastAnswer(answerAfter)).isTrue(),
+            () -> assertThat(questionBefore.isLastAnswer(answerAfter)).isFalse()
         );
     }
 
