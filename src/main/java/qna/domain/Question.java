@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 
 @Entity
-public class Question extends BaseEntity {
+public class Question extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,8 +34,6 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.createdAt = createdAt;
-        this.updatedAt = createdAt;
     }
 
     public Question writeBy(User writer) {

@@ -14,7 +14,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
-public class Answer extends BaseEntity {
+public class Answer extends AuditEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -44,8 +44,6 @@ public class Answer extends BaseEntity {
 		this.writerId = writer.getId();
 		this.questionId = question.getId();
 		this.contents = contents;
-		this.createdAt = createdAt;
-		this.updatedAt = createdAt;
 	}
 
 	protected Answer() {

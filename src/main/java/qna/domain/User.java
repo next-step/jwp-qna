@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import qna.UnAuthorizedException;
 
 @Entity
-public class User extends BaseEntity {
+public class User extends AuditEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -37,11 +37,9 @@ public class User extends BaseEntity {
     public User(Long id, String userId, String password, String name, String email) {
         LocalDateTime createdAt = LocalDateTime.now();
         this.id = id;
-        this.createdAt = createdAt;
         this.email = email;
         this.name = name;
         this.password = password;
-        this.updatedAt = createdAt;
         this.userId = userId;
     }
 
