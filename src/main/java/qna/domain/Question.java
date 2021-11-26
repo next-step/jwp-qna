@@ -6,7 +6,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity {

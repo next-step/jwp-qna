@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "user")
 public class User extends BaseEntity {

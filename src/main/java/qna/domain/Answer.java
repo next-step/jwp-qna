@@ -7,7 +7,6 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.util.Objects;
 
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseEntity {
