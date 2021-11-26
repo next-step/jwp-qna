@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,29 +19,34 @@ public class DeleteHistoryTest {
 	@Autowired
 	private UserRepository userRepository;
 
+	private User user;
+	private Question question;
+	private DeleteHistory deleteHistory;
+
+	@BeforeEach
+	void setUp() {
+		user = userRepository.save(UserTest.JAVAJIGI);
+		question = questionRepository.save(new Question("questionTitle", "questionContents").writeBy(user));
+		deleteHistory = deleteHistoryRepository.save(
+			new DeleteHistory(ContentType.QUESTION, question.getId(),
+				question.getWriter(),
+				LocalDateTime.now()));
+	}
+
 	@Test
 	void save() {
-		User user = userRepository.save(UserTest.JAVAJIGI);
-		Question question = questionRepository.save(QuestionTest.Q1.writeBy(user));
-		DeleteHistory actual = deleteHistoryRepository.save(
-			new DeleteHistory(ContentType.QUESTION, question.getId(),
-				question.getWriter().getId(),
-				LocalDateTime.now()));
-
-		assertThat(actual).isNotNull();
+		assertThat(deleteHistory).isNotNull();
 	}
 
 	@Test
 	void findById() {
-		User user = userRepository.save(UserTest.SANJIGI);
-		questionRepository.save(QuestionTest.Q2.writeBy(user));
-		DeleteHistory expected = deleteHistoryRepository.save(
-			new DeleteHistory(ContentType.QUESTION, QuestionTest.Q2.getId(),
-				QuestionTest.Q2.getWriter().getId(),
-				LocalDateTime.now()));
+		Optional<DeleteHistory> actual = deleteHistoryRepository.findById(deleteHistory.getId());
 
-		Optional<DeleteHistory> actual = deleteHistoryRepository.findById(1L);
+		assertThat(actual).hasValue(deleteHistory);
+	}
 
-		assertThat(actual).hasValue(expected);
+	@Test
+	void createWithDeletedBy() {
+		assertThat(deleteHistory.getDeletedBy()).isEqualTo(user);
 	}
 }

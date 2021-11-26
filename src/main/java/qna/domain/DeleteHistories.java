@@ -9,7 +9,7 @@ public class DeleteHistories {
 
 	public void add(Question question, LocalDateTime dateTime) {
 		DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(),
-			question.getWriter().getId(),
+			question.getWriter(),
 			dateTime);
 		deleteHistories.add(deleteHistory);
 	}
@@ -17,7 +17,7 @@ public class DeleteHistories {
 	public void add(Answers answers, LocalDateTime dateTime) {
 		for (Answer answer : answers.getAnswers()) {
 			DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, answer.getId(),
-				answer.getWriter().getId(),
+				answer.getWriter(),
 				dateTime);
 			deleteHistories.add(deleteHistory);
 		}
