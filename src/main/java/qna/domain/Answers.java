@@ -11,12 +11,8 @@ public class Answers {
 	}
 
 	public boolean haveNotOwner(User loginUser) {
-		for (Answer answer : answers) {
-			if (!answer.isOwner(loginUser)) {
-				return true;
-			}
-		}
-		return false;
+		return answers.stream()
+			.anyMatch(answer -> !answer.isOwner(loginUser));
 	}
 
 	public List<Answer> getAnswers() {
