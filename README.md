@@ -9,3 +9,8 @@
     - [x] 일급 컬렉션: List<Answer>를 Answers로 변환
     - [x] 일급 컬렉션: List<DeleteHistory>를 deleteHistories로 변환
     - [x] Answers.setDeleted 추가
+
+## 요구 사항 2단계
+- [ ] Question 연관 관계 매핑
+- [ ] DeleteHistory 연관 관계 매핑
+- [ ] Answer 연관 관계 매핑
