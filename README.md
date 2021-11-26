@@ -14,3 +14,4 @@
 - [x] Question 연관 관계 매핑
 - [x] DeleteHistory 연관 관계 매핑
 - [x] Answer 연관 관계 매핑
+- [x] DeleteHistory에 audit 적용

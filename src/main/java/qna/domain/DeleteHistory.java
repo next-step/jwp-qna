@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
@@ -13,7 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class DeleteHistory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,16 +26,16 @@ public class DeleteHistory {
 	private Long contentId;
 	@Enumerated(EnumType.STRING)
 	private ContentType contentType;
-	private LocalDateTime createDate = LocalDateTime.now();
+	@CreatedDate
+	private LocalDateTime createDate;
 	@ManyToOne
 	@JoinColumn(foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
 	private User deletedBy;
 
-	public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+	public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
 		this.contentType = contentType;
 		this.contentId = contentId;
 		this.deletedBy = deletedBy;
-		this.createDate = createDate;
 	}
 
 	protected DeleteHistory() {
@@ -38,6 +43,10 @@ public class DeleteHistory {
 
 	public Long getId() {
 		return id;
+	}
+
+	public LocalDateTime getCreateDate() {
+		return createDate;
 	}
 
 	public User getDeletedBy() {

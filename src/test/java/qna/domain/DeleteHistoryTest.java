@@ -29,8 +29,7 @@ public class DeleteHistoryTest {
 		question = questionRepository.save(new Question("questionTitle", "questionContents").writeBy(user));
 		deleteHistory = deleteHistoryRepository.save(
 			new DeleteHistory(ContentType.QUESTION, question.getId(),
-				question.getWriter(),
-				LocalDateTime.now()));
+				question.getWriter()));
 	}
 
 	@Test
@@ -48,5 +47,10 @@ public class DeleteHistoryTest {
 	@Test
 	void createWithDeletedBy() {
 		assertThat(deleteHistory.getDeletedBy()).isEqualTo(user);
+	}
+
+	@Test
+	void auditCreatedDate() {
+		assertThat(deleteHistory.getCreateDate()).isNotNull();
 	}
 }

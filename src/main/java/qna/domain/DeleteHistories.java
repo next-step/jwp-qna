@@ -7,18 +7,16 @@ import java.util.List;
 public class DeleteHistories {
 	private final List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-	public void add(Question question, LocalDateTime dateTime) {
+	public void add(Question question) {
 		DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(),
-			question.getWriter(),
-			dateTime);
+			question.getWriter());
 		deleteHistories.add(deleteHistory);
 	}
 
-	public void add(Answers answers, LocalDateTime dateTime) {
+	public void add(Answers answers) {
 		for (Answer answer : answers.getAnswers()) {
 			DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, answer.getId(),
-				answer.getWriter(),
-				dateTime);
+				answer.getWriter());
 			deleteHistories.add(deleteHistory);
 		}
 	}

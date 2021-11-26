@@ -35,7 +35,6 @@ public class User extends AuditEntity {
     }
 
     public User(Long id, String userId, String password, String name, String email) {
-        LocalDateTime createdAt = LocalDateTime.now();
         this.id = id;
         this.email = email;
         this.name = name;

@@ -35,7 +35,6 @@ public class Question extends AuditEntity {
     }
 
     public Question(Long id, String title, String contents) {
-        LocalDateTime createdAt = LocalDateTime.now();
         this.id = id;
         this.title = title;
         this.contents = contents;
