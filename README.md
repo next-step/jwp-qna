@@ -11,6 +11,8 @@
     - [x] Answers.setDeleted 추가
 
 ## 요구 사항 2단계
+- [x] Step1의 Answers.haveNotOwner 메서드 2depth로 구성되 있는 것을 2depth 미만으로 수정
+- [x] Answer, Question, User Entity의 createdAt, updatedAt을 JPA Auditing을 이용하여 중복 줄이기
 - [x] Question 연관 관계 매핑
 - [x] DeleteHistory 연관 관계 매핑
 - [x] Answer 연관 관계 매핑
