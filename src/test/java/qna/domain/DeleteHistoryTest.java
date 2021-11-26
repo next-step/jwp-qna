@@ -15,13 +15,16 @@ public class DeleteHistoryTest {
 	private DeleteHistoryRepository deleteHistoryRepository;
 	@Autowired
 	private QuestionRepository questionRepository;
+	@Autowired
+	private UserRepository userRepository;
 
 	@Test
 	void save() {
-		questionRepository.save(QuestionTest.Q1);
+		User user = userRepository.save(UserTest.JAVAJIGI);
+		Question question = questionRepository.save(QuestionTest.Q1.writeBy(user));
 		DeleteHistory actual = deleteHistoryRepository.save(
-			new DeleteHistory(ContentType.QUESTION, QuestionTest.Q1.getId(),
-				UserTest.JAVAJIGI.getId(),
+			new DeleteHistory(ContentType.QUESTION, question.getId(),
+				question.getWriter().getId(),
 				LocalDateTime.now()));
 
 		assertThat(actual).isNotNull();
@@ -29,7 +32,8 @@ public class DeleteHistoryTest {
 
 	@Test
 	void findById() {
-		questionRepository.save(QuestionTest.Q2);
+		User user = userRepository.save(UserTest.SANJIGI);
+		questionRepository.save(QuestionTest.Q2.writeBy(user));
 		DeleteHistory expected = deleteHistoryRepository.save(
 			new DeleteHistory(ContentType.QUESTION, QuestionTest.Q2.getId(),
 				QuestionTest.Q2.getWriter().getId(),
