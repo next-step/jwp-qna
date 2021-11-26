@@ -8,7 +8,7 @@ public class DeleteHistories {
 	private final List<DeleteHistory> deleteHistories = new ArrayList<>();
 
 	public void add(Question question, LocalDateTime dateTime) {
-		DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriterId(),
+		DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter().getId(),
 			dateTime);
 		deleteHistories.add(deleteHistory);
 	}

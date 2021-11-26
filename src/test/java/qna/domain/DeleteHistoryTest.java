@@ -32,7 +32,7 @@ public class DeleteHistoryTest {
 		questionRepository.save(QuestionTest.Q2);
 		DeleteHistory expected = deleteHistoryRepository.save(
 			new DeleteHistory(ContentType.QUESTION, QuestionTest.Q2.getId(),
-				QuestionTest.Q2.getWriterId(),
+				QuestionTest.Q2.getWriter().getId(),
 				LocalDateTime.now()));
 
 		Optional<DeleteHistory> actual = deleteHistoryRepository.findById(1L);
