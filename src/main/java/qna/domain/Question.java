@@ -1,7 +1,6 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +24,7 @@ public class Question extends AuditEntity {
     @Column(length = 100, nullable = false)
     private String title;
     @ManyToOne
-    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
     public Question(String title, String contents) {
@@ -82,18 +81,5 @@ public class Question extends AuditEntity {
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Question question = (Question)o;
-        return Objects.equals(id, question.id);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
