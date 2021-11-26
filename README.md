@@ -13,4 +13,4 @@
 ## 요구 사항 2단계
 - [x] Question 연관 관계 매핑
 - [ ] DeleteHistory 연관 관계 매핑
-- [ ] Answer 연관 관계 매핑
+- [x] Answer 연관 관계 매핑
