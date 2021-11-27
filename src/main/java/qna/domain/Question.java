@@ -1,13 +1,14 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 public class Question extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    public static final String MESSAGE_NOT_AUTHENTICATED = "질문을 삭제할 권한이 없습니다.";
     @Column(length = 100, nullable = false)
     private String title;
 
@@ -18,6 +19,9 @@ public class Question extends BaseEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
+    @Embedded
+    private Answers answers = new Answers();
+
     private boolean deleted = false;
 
     public Question(String title, String contents) {
@@ -25,7 +29,7 @@ public class Question extends BaseEntity {
     }
 
     public Question(Long id, String title, String contents) {
-        this.id = id;
+        this.setId(id);
         this.title = title;
         this.contents = contents;
     }
@@ -40,19 +44,14 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+        return Objects.equals(this.writer.getId(), writer.getId());
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        answers.add(answer);
+        if (answer.getQuestion() != this) {
+            answer.setQuestion(this);
+        }
     }
 
     public String getTitle() {
@@ -87,14 +86,37 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public Answers getAnswers() {
+        return answers;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", writerId=" + writer +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public DeleteHistories delete(User loginUser) {
+        validateAuthentication(loginUser);
+        answers.validateNotOwnerAnswers(loginUser);
+        setDeleted(true);
+        return getDeleteHistories();
+    }
+
+    private DeleteHistories getDeleteHistories() {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(), getWriter(), LocalDateTime.now()));
+        deleteHistories.addAll(answers.getDeleteHistories());
+        return deleteHistories;
+    }
+
+    private void validateAuthentication(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(MESSAGE_NOT_AUTHENTICATED);
+        }
     }
 }
