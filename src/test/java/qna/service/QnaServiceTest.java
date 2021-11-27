@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
+import qna.NotFoundException;
 import qna.domain.*;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -41,6 +43,14 @@ class QnaServiceTest {
         question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
         answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
+    }
+
+    @Test
+    void delete_찾는_글이_없으면_NotFoundException() throws CannotDeleteException {
+        when(questionRepository.findByIdAndDeletedFalse(anyLong())).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId()))
+            .isInstanceOf(NotFoundException.class);
     }
 
     @Test
