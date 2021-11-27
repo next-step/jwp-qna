@@ -4,9 +4,12 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import qna.CannotDeleteException;
 
 @DataJpaTest
 public class QuestionTest {
@@ -74,5 +77,27 @@ public class QuestionTest {
 		actual.writeBy(null);
 
 		assertThat(actual.getWriter()).isNull();
+	}
+
+	@Test
+	@DisplayName("로그인유저가 작성자가 아닌 경우 예외")
+	void delete1() {
+		User writer = userRepository.save(UserTest.JAVAJIGI);
+		User otherUser = userRepository.save(UserTest.SANJIGI);
+		Question question = questionRepository.save(new Question("questionTitle", "questionContents").writeBy(writer));
+
+		assertThatThrownBy(() -> question.delete(otherUser))
+			.isInstanceOf(CannotDeleteException.class)
+			.hasMessage(Question.MESSAGE_NOT_AUTHENTICATED_ON_DELETE);
+	}
+
+	@Test
+	@DisplayName("delete 성공")
+	void delete2() throws CannotDeleteException {
+		User writer = userRepository.save(UserTest.JAVAJIGI);
+		Question question = questionRepository.save(new Question("questionTitle", "questionContents").writeBy(writer));
+		question.delete(writer);
+
+		assertThat(question).hasFieldOrPropertyWithValue("deleted", true);
 	}
 }

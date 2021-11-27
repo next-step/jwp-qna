@@ -22,6 +22,6 @@
 - [ ] 전체적으로 equals, hashcode 수정
 - [ ] AuditEntityTest 테스트 메소드명 수정
 - QnAService deleteQuestion 리팩토링
-  - [ ] Question.delete 추가
+  - [x] Question.delete 추가
   - [ ] Answer.delete 추가
   - [ ] Answers.delete 추가
