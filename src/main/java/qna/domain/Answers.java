@@ -44,7 +44,7 @@ public class Answers {
         return deleteHistories;
     }
 
-    public void remove(Answer answer) {
-        answers.remove(answer);
+    public Answer get(int i) {
+        return answers.get(i);
     }
 }
