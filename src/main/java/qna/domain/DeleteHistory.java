@@ -31,17 +31,18 @@ public class DeleteHistory {
 	protected DeleteHistory() {
 	}
 
-	public DeleteHistory(ContentType contentType, Long contentId, User eraser) {
+	private DeleteHistory(ContentType contentType, Long contentId, User eraser) {
 		this.contentType = contentType;
 		this.contentId = contentId;
 		this.eraser = eraser;
 	}
 
-	public DeleteHistory(ContentType contentType, Long contentId, User eraser, LocalDateTime createDate) {
-		this.contentType = contentType;
-		this.contentId = contentId;
-		this.eraser = eraser;
-		this.createDate = createDate;
+	public static DeleteHistory ofQuestion(Long contentId, User deletedBy) {
+		return new DeleteHistory(ContentType.QUESTION, contentId, deletedBy);
+	}
+
+	public static DeleteHistory ofAnswer(Long contentId, User deletedBy) {
+		return new DeleteHistory(ContentType.ANSWER, contentId, deletedBy);
 	}
 
 	public Long getId() {
