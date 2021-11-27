@@ -1,6 +1,6 @@
 package qna.service;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import qna.CannotDeleteException;
 import qna.NotFoundException;
+import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.Answers;
 import qna.domain.DeleteHistories;
@@ -41,15 +42,16 @@ public class QnaService {
         Question question = findQuestionById(questionId);
         question.delete(loginUser);
 
-        Answers answers = new Answers(answerRepository.findByQuestionIdAndDeletedFalse(questionId));
-        if (answers.haveNotOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
+        Answers answers = new Answers(findAnswersByQuestionId(questionId));
+        answers.delete(loginUser);
 
-        answers.setDeleted(true);
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(question);
         deleteHistories.add(answers);
         deleteHistoryService.saveAll(deleteHistories.get());
+    }
+
+    private List<Answer> findAnswersByQuestionId(Long questionId) {
+        return answerRepository.findByQuestionIdAndDeletedFalse(questionId);
     }
 }

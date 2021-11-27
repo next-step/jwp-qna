@@ -8,56 +8,82 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
+
 @DataJpaTest
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+	public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+	public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+	public static final String FIELD_DELETED = "deleted";
 
-    @Autowired
-    private AnswerRepository answerRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private QuestionRepository questionRepository;
+	@Autowired
+	private AnswerRepository answerRepository;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private QuestionRepository questionRepository;
 
-    @Test
-    void save() {
-        Question question = questionRepository.save(new Question("questionTitle", "questionContents"));
-        User user = userRepository.save(UserTest.JAVAJIGI);
-        Answer actual = answerRepository.save(new Answer(user, question, "Answer Contents"));
+	@Test
+	void save() {
+		Question question = questionRepository.save(new Question("questionTitle", "questionContents"));
+		User user = userRepository.save(UserTest.JAVAJIGI);
+		Answer actual = answerRepository.save(new Answer(user, question, "Answer Contents"));
 
-        assertThat(actual).isNotNull();
-    }
+		assertThat(actual).isNotNull();
+	}
 
-    @Test
-    void findById() {
-        Question question = questionRepository.save(new Question("questionTitle", "questionContents"));
-        User user = userRepository.save(UserTest.SANJIGI);
-        Answer expected = answerRepository.save(new Answer(user, question, "Answer Contents"));
-        Optional<Answer> actual = answerRepository.findById(expected.getId());
+	@Test
+	void findById() {
+		Question question = questionRepository.save(new Question("questionTitle", "questionContents"));
+		User user = userRepository.save(UserTest.SANJIGI);
+		Answer expected = answerRepository.save(new Answer(user, question, "Answer Contents"));
+		Optional<Answer> actual = answerRepository.findById(expected.getId());
 
-        assertThat(actual).hasValue(expected);
-    }
+		assertThat(actual).hasValue(expected);
+	}
 
-    @Test
-    void createWithWriterAndQuestion() {
-        Question question = questionRepository.save(new Question("questionTitle", "questionContents"));
-        User user = userRepository.save(UserTest.JAVAJIGI);
-        Answer actual = answerRepository.save(new Answer(user, question, "answer Contents"));
+	@Test
+	void createWithWriterAndQuestion() {
+		Question question = questionRepository.save(new Question("questionTitle", "questionContents"));
+		User user = userRepository.save(UserTest.JAVAJIGI);
+		Answer actual = answerRepository.save(new Answer(user, question, "answer Contents"));
 
-        assertThat(actual).isNotNull();
-        assertThat(actual.getQuestion()).isEqualTo(question);
-        assertThat(actual.getWriter()).isEqualTo(user);
-    }
+		assertThat(actual).isNotNull();
+		assertThat(actual.getQuestion()).isEqualTo(question);
+		assertThat(actual.getWriter()).isEqualTo(user);
+	}
 
-    @Test
-    void readWithWriterAndQuestion() {
-        Question question = questionRepository.save(new Question("questionTitle", "questionContents"));
-        User user = userRepository.save(UserTest.JAVAJIGI);
-        Answer expected = answerRepository.save(new Answer(user, question, "answer Contents"));
+	@Test
+	void readWithWriterAndQuestion() {
+		Question question = questionRepository.save(new Question("questionTitle", "questionContents"));
+		User user = userRepository.save(UserTest.JAVAJIGI);
+		Answer expected = answerRepository.save(new Answer(user, question, "answer Contents"));
 
-        Optional<Answer> actual = answerRepository.findById(expected.getId());
+		Optional<Answer> actual = answerRepository.findById(expected.getId());
 
-        assertThat(actual).hasValue(expected);
-    }
+		assertThat(actual).hasValue(expected);
+	}
+
+	@Test
+	void delete_notWriter_cannotDeleteException() {
+		User writer = userRepository.save(UserTest.JAVAJIGI);
+        User otherUser = userRepository.save(UserTest.SANJIGI);
+		Question question = questionRepository.save(new Question("questionTitle", "questionContents").writeBy(writer));
+		Answer actual = answerRepository.save(new Answer(otherUser, question, "answer Contents"));
+
+        assertThatThrownBy(() -> actual.delete(writer))
+            .isInstanceOf(CannotDeleteException.class)
+            .hasMessage(Answer.MESSAGE_NOT_AUTHENTICATED_ON_DELETE);
+	}
+
+	@Test
+	void delete_success() throws CannotDeleteException {
+		User writer = userRepository.save(UserTest.JAVAJIGI);
+		Question question = questionRepository.save(new Question("questionTitle", "questionContents").writeBy(writer));
+		Answer actual = answerRepository.save(new Answer(writer, question, "answer Contents"));
+
+		actual.delete(writer);
+
+		assertThat(actual).hasFieldOrPropertyWithValue(FIELD_DELETED, true);
+	}
 }

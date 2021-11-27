@@ -3,6 +3,8 @@ package qna.domain;
 import java.util.List;
 import java.util.Objects;
 
+import qna.CannotDeleteException;
+
 public class Answers {
 	private final List<Answer> answers;
 
@@ -19,6 +21,18 @@ public class Answers {
 		return answers;
 	}
 
+	public void setDeleted(boolean isDelete) {
+		for (Answer answer: answers) {
+			answer.setDeleted(isDelete);
+		}
+	}
+
+	public void delete(User loginUser) throws CannotDeleteException {
+		for (Answer answer: answers) {
+			answer.delete(loginUser);
+		}
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -32,11 +46,5 @@ public class Answers {
 	@Override
 	public int hashCode() {
 		return Objects.hash(answers);
-	}
-
-	public void setDeleted(boolean isDelete) {
-		for (Answer answer: answers) {
-			answer.setDeleted(isDelete);
-		}
 	}
 }

@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -13,11 +12,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
 public class Answer extends AuditEntity {
+	public static final String MESSAGE_NOT_AUTHENTICATED_ON_DELETE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -109,5 +110,12 @@ public class Answer extends AuditEntity {
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, contents, deleted, question, writer.getId());
+	}
+
+	public void delete(User loginUser) throws CannotDeleteException {
+		if (!isOwner(loginUser)) {
+			throw new CannotDeleteException(MESSAGE_NOT_AUTHENTICATED_ON_DELETE);
+		}
+		setDeleted(true);
 	}
 }

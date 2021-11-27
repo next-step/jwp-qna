@@ -5,6 +5,10 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import qna.CannotDeleteException;
 
 public class AnswersTest {
 	private static final User user1 = new User(1L, "userId", "password", "name", "email");
@@ -45,5 +49,30 @@ public class AnswersTest {
 		answers.setDeleted(true);
 
 		assertThat(answers).isEqualTo(new Answers(Arrays.asList(answer1, answer2)));
+	}
+
+	@Test
+	void delete_notWriter_cannotDeleteException() {
+		User writer = UserTest.JAVAJIGI;
+		User otherUser = UserTest.SANJIGI;
+		Question question = new Question("questionTitle", "questionContents").writeBy(writer);
+		Answer answer1 = new Answer(writer, question, "answer Contents");
+		Answer answer2 = new Answer(otherUser, question, "answer Contents2");
+		Answers actual = new Answers(Arrays.asList(answer1, answer2));
+
+		assertThatThrownBy(() -> actual.delete(writer))
+			.isInstanceOf(CannotDeleteException.class)
+			.hasMessage(Answer.MESSAGE_NOT_AUTHENTICATED_ON_DELETE);
+	}
+
+	@Test
+	void delete_success() {
+		User writer = UserTest.JAVAJIGI;
+		Question question = new Question("questionTitle", "questionContents").writeBy(writer);
+		Answer answer1 = new Answer(writer, question, "answer Contents");
+		Answer answer2 = new Answer(writer, question, "answer Contents2");
+		Answers actual = new Answers(Arrays.asList(answer1, answer2));
+
+		assertThat(actual).hasFieldOrPropertyWithValue("answers", Arrays.asList(answer1, answer2));
 	}
 }
