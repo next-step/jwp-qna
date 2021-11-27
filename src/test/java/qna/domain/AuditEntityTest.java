@@ -18,7 +18,7 @@ public class AuditEntityTest {
 	private AnswerRepository answerRepository;
 
 	@Test
-	void JPA_Auditing_BaseTimeEntity() {
+	void JPAaudit_working() {
 		User user = new User("userId", "userPasswd", "userName", "userEmail");
 		Question question = new Question("questionTitle", "questionContents");
 		Answer answer = new Answer(user, question, "answerContents");
