@@ -19,7 +19,7 @@
 - [x] DeleteHistory에 audit 적용
 
 ## 요구 사항 3단계
-- [ ] 전체적으로 equals, hashcode 수정
+- [x] 전체적으로 equals, hashcode를 비즈니스 키/데이터베이스 키를 이용하여 구현하도록 수정
 - [ ] AuditEntityTest 테스트 메소드명 수정
 - QnAService deleteQuestion 리팩토링
   - [x] Question.delete 추가

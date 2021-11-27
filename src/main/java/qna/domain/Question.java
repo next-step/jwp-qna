@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -75,6 +77,21 @@ public class Question extends AuditEntity {
 			throw new CannotDeleteException(MESSAGE_NOT_AUTHENTICATED_ON_DELETE);
 		}
 		this.setDeleted(true);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Question question = (Question)o;
+		return Objects.equals(id, question.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 
 	@Override
