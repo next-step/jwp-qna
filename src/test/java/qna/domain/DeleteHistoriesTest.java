@@ -6,13 +6,22 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+@DataJpaTest
 public class DeleteHistoriesTest {
+	@Autowired
+	private QuestionRepository questionRepository;
+	@Autowired
+	private UserRepository userRepository;
+
 	@Test
 	void addQuestion() {
-		Question q1 = new Question("questionTitle", "questionContents");
+		User user = userRepository.save(UserTest.JAVAJIGI);
+		Question q1 = questionRepository.save(new Question("questionTitle", "questionContents").writeBy(user));
 		DeleteHistories deleteHistories = new DeleteHistories();
-		deleteHistories.add(q1, LocalDateTime.now());
+		deleteHistories.add(q1);
 
 		assertThat(deleteHistories.get().size()).isEqualTo(1);
 	}
@@ -24,7 +33,7 @@ public class DeleteHistoriesTest {
 		Answer a1 = new Answer(user, q1, "answerContents");
 		Answers answers = new Answers(Collections.singletonList(a1));
 		DeleteHistories deleteHistories = new DeleteHistories();
-		deleteHistories.add(answers, LocalDateTime.now());
+		deleteHistories.add(answers);
 
 		assertThat(deleteHistories.get().size()).isEqualTo(1);
 	}

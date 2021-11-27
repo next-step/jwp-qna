@@ -48,12 +48,11 @@ public class QnaService {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
 
-        LocalDateTime deleteDateTime = LocalDateTime.now();
         question.setDeleted(true);
         answers.setDeleted(true);
         DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.add(question, deleteDateTime);
-        deleteHistories.add(answers, deleteDateTime);
+        deleteHistories.add(question);
+        deleteHistories.add(answers);
         deleteHistoryService.saveAll(deleteHistories.get());
     }
 }

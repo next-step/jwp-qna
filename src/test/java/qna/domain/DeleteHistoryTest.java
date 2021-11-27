@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,28 +16,41 @@ public class DeleteHistoryTest {
 	private DeleteHistoryRepository deleteHistoryRepository;
 	@Autowired
 	private QuestionRepository questionRepository;
+	@Autowired
+	private UserRepository userRepository;
+
+	private User user;
+	private Question question;
+	private DeleteHistory deleteHistory;
+
+	@BeforeEach
+	void setUp() {
+		user = userRepository.save(UserTest.JAVAJIGI);
+		question = questionRepository.save(new Question("questionTitle", "questionContents").writeBy(user));
+		deleteHistory = deleteHistoryRepository.save(
+			new DeleteHistory(ContentType.QUESTION, question.getId(),
+				question.getWriter()));
+	}
 
 	@Test
 	void save() {
-		questionRepository.save(QuestionTest.Q1);
-		DeleteHistory actual = deleteHistoryRepository.save(
-			new DeleteHistory(ContentType.QUESTION, QuestionTest.Q1.getId(),
-				UserTest.JAVAJIGI.getId(),
-				LocalDateTime.now()));
-
-		assertThat(actual).isNotNull();
+		assertThat(deleteHistory).isNotNull();
 	}
 
 	@Test
 	void findById() {
-		questionRepository.save(QuestionTest.Q2);
-		DeleteHistory expected = deleteHistoryRepository.save(
-			new DeleteHistory(ContentType.QUESTION, QuestionTest.Q2.getId(),
-				QuestionTest.Q2.getWriterId(),
-				LocalDateTime.now()));
+		Optional<DeleteHistory> actual = deleteHistoryRepository.findById(deleteHistory.getId());
 
-		Optional<DeleteHistory> actual = deleteHistoryRepository.findById(1L);
+		assertThat(actual).hasValue(deleteHistory);
+	}
 
-		assertThat(actual).hasValue(expected);
+	@Test
+	void createWithDeletedBy() {
+		assertThat(deleteHistory.getDeletedBy()).isEqualTo(user);
+	}
+
+	@Test
+	void auditCreatedDate() {
+		assertThat(deleteHistory.getCreateDate()).isNotNull();
 	}
 }
