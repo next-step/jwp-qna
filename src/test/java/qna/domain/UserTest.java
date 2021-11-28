@@ -5,12 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
@@ -24,14 +27,19 @@ public class UserTest {
     @Autowired
     private UserRepository users;
 
+    @BeforeAll()
+    public void saveInitData() {
+        users.save(UserTest.JAVAJIGI);
+    }
+
     @Test
     @DisplayName("User 저장 테스트")
     void saveUser() {
-        User savedUser = users.save(JAVAJIGI);
+        User savedUser = users.save(SANJIGI);
 
         assertAll(
             () -> assertThat(savedUser.getId()).isNotNull(),
-            () -> assertThat(savedUser.getEmail()).isEqualTo(JAVAJIGI.getEmail())
+            () -> assertThat(savedUser.getEmail()).isEqualTo(SANJIGI.getEmail())
         );
     }
 

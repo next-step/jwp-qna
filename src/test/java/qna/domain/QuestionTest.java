@@ -1,16 +1,24 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.domain.AnswerTest.A1;
+import static qna.domain.AnswerTest.A2;
 
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 @DataJpaTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1")
         .writeBy(UserTest.JAVAJIGI);
@@ -25,9 +33,28 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questions;
 
+    private Question question;
+    private Answer answer;
+
     private User findUser(User user) {
         Optional<User> foundUser = users.findByUserId(UserTest.JAVAJIGI.getUserId());
         return foundUser.orElseGet(() -> users.save(user));
+    }
+
+    @BeforeAll()
+    public void saveInitData() {
+        users.save(UserTest.JAVAJIGI);
+        users.save(UserTest.SANJIGI);
+        questions.save(Q1);
+        questions.save(Q2);
+        answers.save(A1);
+        answers.save(A2);
+    }
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
     }
 
     @Test
@@ -84,8 +111,7 @@ public class QuestionTest {
             answers.delete(answer);
         });
         // question 삭제
-        questions.delete(questionBefore); // 고아 객체(Answer) 삭제 고려
-
+        questions.delete(questionBefore);
 
         Optional<Question> questionAfter = questions.findFirstByTitle(targetQuestionTitle);
         List<Answer> answerListAfter = answers.findAnswerByQuestionId(questionBefore.getId());
@@ -94,5 +120,22 @@ public class QuestionTest {
             () -> assertThat(questionAfter).isNotPresent(),
             () -> assertThat(answerListAfter).isEmpty()
         );
+    }
+
+    @Test
+    @DisplayName("Question 삭제 테스트 - deleted=true 성공")
+    public void deleteSuccess() throws Exception {
+        assertThat(question.isDeleted()).isFalse();
+        List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
+
+        assertThat(question.isDeleted()).isTrue();
+        assertThat(deleteHistories).isNotEmpty();
+    }
+
+    @Test
+    @DisplayName("Question 삭제 테스트 - deleted=true 실패")
+    public void deleteFail() {
+        assertThatThrownBy(() -> question.delete(UserTest.SANJIGI))
+            .isInstanceOf(CannotDeleteException.class);
     }
 }

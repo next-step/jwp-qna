@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -119,6 +120,18 @@ public class Answer extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public DeleteHistory delete(User deleteBy) throws CannotDeleteException {
+        validateRemovable(deleteBy);
+        setDeleted(true);
+        return DeleteHistory.of(this);
+    }
+
+    private void validateRemovable(User deleteBy) throws CannotDeleteException {
+        if (!this.isOwner(deleteBy)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     @Override
