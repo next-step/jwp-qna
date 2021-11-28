@@ -1,51 +1,42 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+import qna.CannotDeleteException;
+
 public class AnswerTest {
-	public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-	public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-	@Autowired
-	private AnswerRepository answerRepository;
+	private Question question;
+	private Answer answer;
 
-	@Test
-	@DisplayName("답변을 저장한다.")
-	void save() {
-		Answer actual = answerRepository.save(A1);
-		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.getContents()).isEqualTo(A1.getContents())
-		);
+	private User javajigi;
+	private User sanjigi;
+
+	@BeforeEach
+	public void setUp() throws Exception {
+		javajigi = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+		sanjigi = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+		question = new Question(1L, "title1", "contents1").writeBy(javajigi);
+		answer = new Answer(1L, javajigi, question, "Answers Contents1");
 	}
 
 	@Test
-	@DisplayName("질문 ID의 삭제되지 않은 답변 목록을 가져온다.")
-	void findByQuestionIdAndDeletedFalse() {
-		final Answer answer1 = answerRepository.save(A1);
-		final Answer answer2 = answerRepository.save(A2);
-		final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(
-			QuestionTest.Q1.getId());
-
-		assertThat(actual).contains(answer1, answer2);
+	@DisplayName("delete 성공 테스트")
+	void delete_성공() throws Exception {
+		final DeleteHistory deleteHistory = answer.delete(javajigi);
+		assertThat(DeleteHistory.ofAnswer(answer.getId(), javajigi)).isEqualTo(
+			deleteHistory);
 	}
 
 	@Test
-	@DisplayName("삭제되지 않은 주어진 id의 질문을 가져온다.")
-	void findByIdAndDeletedFalse() {
-		final Answer answer = answerRepository.save(A1);
-		final Answer actual = answerRepository.findByIdAndDeletedFalse(answer.getId()).get();
-
-		assertThat(actual).isEqualTo(answer);
+	@DisplayName("다른 사람의 댓글을 delete하여 실패하는 테스트")
+	void delete_다른사람의_댓글_실패() {
+		Answer answer2 = new Answer(2L, sanjigi, question, "Answers Contents1");
+		assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> {
+			answer2.delete(javajigi);
+		});
 	}
 }
