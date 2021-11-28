@@ -18,30 +18,65 @@ public class Answers {
 
 	private Answers(){}
 
-	/*
-	TODO
-	1. Question ID로 Answer List 가져오기
-	2. 로그인한 User가 모든 Answer의 Owner인지 검증
-	3. 모든 Answer 삭제
-	4. Question의 특정 Answer 삭제
-		- return 타깃 Answer가 삭제된 Answers
-	 */
-
 	public Answers(Long questionId) {
 		this.answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
 	}
 
-	public void deleteAnswers(User user) {
+	/**
+	 * 전체 답변 삭제
+	 * @param user
+	 */
+	public boolean deleteAnswers(User user) {
 		if(isAnswersOwner(user)) {
-			// TODO DELETE
+			deleteAll(user);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 특정 답변 삭제
+	 * @param user
+	 * @param answer
+	 */
+	public boolean deleteAnswer(User user, Answer answer) {
+		if(isAnswerOwner(user, answer)) {
+			deleteAnswer(answer);
+			return true;
+		}
+		return false;
+	}
+
+	private void deleteAll(User user) {
+		for(Answer answer : this.answers) {
+			deleteAnswer(answer);
 		}
 	}
 
-	private boolean isAnswersOwner(User user) {
+	private void deleteAnswer(Answer answer) {
+		answer.setDeleted(true);
+	}
+
+	/**
+	 * 로그인한 사용자가 모든 답변의 작성자인지 확인
+	 * @param user
+	 * @return
+	 */
+	public boolean isAnswersOwner(User user) {
 		return this.answers.stream().allMatch(answer -> answer.isOwner(user));
 	}
 
-	private boolean isAnswerOwner(User user, Answer targetAnswer) {
+	/**
+	 * 로그인한 사용자가 특정 답변의 작성자인지 확인
+	 * @param user
+	 * @param targetAnswer
+	 * @return
+	 */
+	public boolean isAnswerOwner(User user, Answer targetAnswer) {
 		return this.answers.stream().allMatch(answer -> answer.isOwner(user) && answer.equals(targetAnswer));
+	}
+
+	public int size() {
+		return this.size();
 	}
 }

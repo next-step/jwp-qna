@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,9 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 public class AnswersTest {
-
-	@Autowired
-	private UserRepository userRepository;
 
 	@Autowired
 	private QuestionRepository questionRepository;
@@ -32,17 +28,13 @@ public class AnswersTest {
 
 	@BeforeEach
 	void registerQuestionAndAnswer() {
-		// question1 = questionRepository.save(new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI));
+		// TODO 중복코드 제거 방법 생각하기.
 		question1 = questionRepository.save(QuestionTest.Q1);
 		question2 = questionRepository.save(QuestionTest.Q2);
-		answer1 = answerRepository.save(AnswerTest.A1);
-		answer1.setQuestion(question1);
-		answer2 = answerRepository.save(AnswerTest.A2);
-		answer2.setQuestion(question1);
-		answer3 = answerRepository.save(AnswerTest.A3);
-		answer3.setQuestion(question2);
-		answer4 = answerRepository.save(AnswerTest.A4);
-		answer4.setQuestion(question2);
+		answer1 = answerRepository.save(new Answer(1L, UserTest.JAVAJIGI, question1, "Answers Contents1"));
+		answer2 = answerRepository.save(new Answer(2L, UserTest.SANJIGI, question1, "Answers Contents2"));
+		answer3 = answerRepository.save(new Answer(3L, UserTest.SANJIGI, question2, "Answers Contents3"));
+		answer4 = answerRepository.save(new Answer(4L, UserTest.SANJIGI, question2, "Answers Contents4"));
 	}
 
 	@Test
@@ -56,12 +48,11 @@ public class AnswersTest {
 	@DisplayName("질문에 작성된 답변들이 모두 같은 사용자가 작성한 것인지 확인")
 	void isAnswersOwner() {
 		List<Answer> answers1 = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
-		boolean isOwner1 = answers1.stream().allMatch(answer -> answer.isOwner(UserTest.JAVAJIGI));
+		boolean isOwner1 = answers1.stream().allMatch(answer -> answer.isOwner(question1.getWriter()));
 		assertThat(isOwner1).isFalse();
 
 		List<Answer> answers2 = answerRepository.findByQuestionIdAndDeletedFalse(question2.getId());
-		boolean isOwner2 = answers2.stream().allMatch(answer -> answer.isOwner(UserTest.JAVAJIGI));
+		boolean isOwner2 = answers2.stream().allMatch(answer -> answer.isOwner(question2.getWriter()));
 		assertThat(isOwner2).isTrue();
 	}
-
 }
