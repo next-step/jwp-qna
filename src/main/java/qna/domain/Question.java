@@ -1,6 +1,10 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -19,6 +23,9 @@ public class Question extends BaseEntity {
     private User writer;
 
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
 
@@ -87,6 +94,10 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -96,5 +107,23 @@ public class Question extends BaseEntity {
                 ", writerId=" + writer +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public void validateDeletableBy(User user) throws CannotDeleteException {
+        if (!this.isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        for (Answer answer : answers) {
+            answer.validateDeletableBy(user);
+        }
+    }
+
+    public void delete() {
+        this.deleted = true;
+
+        for (Answer answer : answers) {
+            answer.delete();
+        }
     }
 }

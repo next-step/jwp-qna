@@ -76,12 +76,11 @@ class QnaServiceTest {
     }
 
     @Test
-    public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
+    public void delete_답변_중_다른_사람이_쓴_글() {
         Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer, answer2));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
