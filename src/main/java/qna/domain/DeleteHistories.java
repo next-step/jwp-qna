@@ -15,7 +15,7 @@ public class DeleteHistories {
 	public DeleteHistories(DeleteHistory... deleteHistories) {
 		this.deleteHistories = Arrays.asList(deleteHistories);
 	}
-
+  
 	public List<DeleteHistory> getDeleteHistories() {
 		return deleteHistories;
 	}

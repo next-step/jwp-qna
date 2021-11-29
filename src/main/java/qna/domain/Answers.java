@@ -10,7 +10,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Where;
-
 import qna.CannotDeleteException;
 
 @Embeddable
@@ -22,6 +21,7 @@ public class Answers {
 
 	protected Answers() {
 	}
+
 
 	public Answers(Answer... answers) {
 		this.answers.addAll(Arrays.asList(answers));
