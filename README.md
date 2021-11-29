@@ -25,3 +25,6 @@
   - [x] Question.delete 추가
   - [x] Answer.delete 추가
   - [x] Answers.delete 추가
+
+- [ ] 도메인 equals 키를 적절하게 설정하기
+- [ ] 객체지향적인 방식으로 Question-Answer 리팩토링
