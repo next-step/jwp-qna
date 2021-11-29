@@ -80,7 +80,7 @@ public class User extends BaseEntity {
         }
 
         if (!matchPassword(newPassword)) {
-            this.password.setPassword(newPassword);
+            this.password = new Password(newPassword);
         }
     }
 
@@ -91,7 +91,6 @@ public class User extends BaseEntity {
     public boolean matchPassword(String targetPassword) {
         return this.password.equals(new Password(targetPassword));
     }
-
 
     public boolean isGuestUser() {
         return false;
@@ -114,7 +113,7 @@ public class User extends BaseEntity {
     }
 
     public void setName(String name) {
-        this.name.setName(name);
+        this.name = new Name(name);
     }
 
     public String getEmail() {
@@ -122,7 +121,7 @@ public class User extends BaseEntity {
     }
 
     public void setEmail(String email) {
-        this.email.setEmail(email);
+        this.email = new Email(email);
     }
 
     @Override

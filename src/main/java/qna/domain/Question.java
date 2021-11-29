@@ -67,7 +67,7 @@ public class Question extends BaseEntity {
     }
 
     public void setTitle(String title) {
-        this.title.setTitle(title);
+        this.title = new Title(title);
     }
 
     public String getContents() {
@@ -75,7 +75,7 @@ public class Question extends BaseEntity {
     }
 
     public void setContents(String contents) {
-        this.contents.setContents(contents);
+        this.contents = new Contents(contents);
     }
 
     public Long getWriterId() {
@@ -89,7 +89,7 @@ public class Question extends BaseEntity {
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted.setDeleted(deleted);
+        this.deleted = new Deleted(deleted);
     }
     
     @Override

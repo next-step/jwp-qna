@@ -76,7 +76,7 @@ public class Answer extends BaseEntity {
     }
 
     public void setContents(String contents) {
-        this.contents.setContents(contents);
+        this.contents = new Contents(contents);
     }
 
     public void setQuestion(Question question) {
@@ -88,7 +88,7 @@ public class Answer extends BaseEntity {
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted.setDeleted(deleted);
+        this.deleted = new Deleted(deleted);
     }
 
     @Override

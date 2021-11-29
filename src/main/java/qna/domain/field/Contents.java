@@ -15,10 +15,6 @@ public class Contents {
 		this.contents = contents;
 	}
 
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
 	public String getContents() {
 		return this.contents;
 	}

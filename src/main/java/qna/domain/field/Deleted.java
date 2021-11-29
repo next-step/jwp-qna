@@ -15,10 +15,6 @@ public class Deleted {
 		this.deleted = deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
-
 	public boolean getDeleted() {
 		return this.deleted;
 	}
