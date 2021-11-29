@@ -14,12 +14,15 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
     private LocalDateTime createDate;
-    private Long deletedById;
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deletedById", insertable = false, updatable = false)
+    private User deletedUser;
+
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedUser = deletedUser;
         this.createDate = createDate;
     }
 
@@ -31,12 +34,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(deletedUser.getId(), that.deletedUser.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, deletedUser.getId());
     }
 
     @Override
@@ -45,7 +48,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + deletedUser.getId() +
                 ", createDate=" + createDate +
                 '}';
     }
