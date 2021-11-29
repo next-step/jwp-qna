@@ -170,4 +170,12 @@ public class UserTest {
     private void _saveTempQuestion() {
         questionRepository.save(QuestionTest.Q1);
     }
+
+    @Test
+    @DisplayName("두 사용자가 같은 사용자인지 검증")
+    void equals() {
+        User user1 = userRepository.findByUserId(new UserId("javajigi")).get();
+        User user2 = new User(1L, "javajigi", "password", "javaj", "javajigi@slipp.net");
+        assertThat(user1.equals(user2)).isTrue();
+    }
 }

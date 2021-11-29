@@ -41,7 +41,7 @@ public class QnaService {
      * @return
      */
     public DeletedHistories deleteQuestionWithAnswer(User user, Question question) throws CannotDeleteException {
-        if(!question.getWriter().getId().equals(user.getId())) {
+        if(!question.getWriter().equals(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 

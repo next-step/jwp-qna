@@ -20,6 +20,10 @@ public class Password {
 		return this.password;
 	}
 
+	public boolean isEqualsPassword(String password) {
+		return this.password.equals(password);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == null || getClass() != o.getClass()) return false;

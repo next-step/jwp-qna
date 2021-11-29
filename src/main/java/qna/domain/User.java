@@ -85,11 +85,11 @@ public class User extends BaseEntity {
     }
 
     private boolean matchUserId(UserId userId) {
-        return this.userId.getUserId().equals(userId.getUserId());
+        return this.userId.equals(userId);
     }
 
     public boolean matchPassword(String targetPassword) {
-        return this.password.equals(new Password(targetPassword));
+        return this.password.isEqualsPassword(targetPassword);
     }
 
     public boolean isGuestUser() {
@@ -133,6 +133,14 @@ public class User extends BaseEntity {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(this.id, user.id);
     }
 
     private static class GuestUser extends User {

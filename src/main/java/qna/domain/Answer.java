@@ -54,7 +54,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getUserId().equals(writer.getUserId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
