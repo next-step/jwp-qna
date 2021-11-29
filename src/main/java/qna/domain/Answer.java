@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -32,6 +33,8 @@ public class Answer extends AuditEntity {
 	@ManyToOne
 	@JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
 	private User writer;
+	@Embedded
+	private Answers answers;
 
 	public Answer(User writer, Question question, String contents) {
 		this(null, writer, question, contents);
@@ -62,6 +65,9 @@ public class Answer extends AuditEntity {
 
 	public void toQuestion(Question question) {
 		this.question = question;
+		if (!question.getAnswers().get().contains(this)) {
+			question.addAnswer(this);
+		}
 	}
 
 	public Question getQuestion() {

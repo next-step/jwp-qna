@@ -14,7 +14,7 @@ public class DeleteHistories {
 	}
 
 	public void add(Answers answers) {
-		for (Answer answer : answers.getAnswers()) {
+		for (Answer answer : answers.get()) {
 			DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, answer.getId(),
 				answer.getWriter());
 			deleteHistories.add(deleteHistory);

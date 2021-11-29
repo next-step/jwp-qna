@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -29,6 +30,8 @@ public class Question extends AuditEntity {
 	@ManyToOne
 	@JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
+	@Embedded
+	private Answers answers = new Answers();
 
 	public Question(String title, String contents) {
 		this(null, title, contents);
@@ -53,11 +56,18 @@ public class Question extends AuditEntity {
 	}
 
 	public void addAnswer(Answer answer) {
-		answer.toQuestion(this);
+		answers.add(answer);
+		if (!answer.getQuestion().equals(this)) {
+			answer.toQuestion(this);
+		}
 	}
 
 	public Long getId() {
 		return id;
+	}
+
+	public Answers getAnswers() {
+		return answers;
 	}
 
 	public User getWriter() {
@@ -72,11 +82,14 @@ public class Question extends AuditEntity {
 		this.deleted = deleted;
 	}
 
-	public void delete(User loginUser) throws CannotDeleteException {
+	public DeleteHistories delete(User loginUser) throws CannotDeleteException {
 		if (!isOwner(loginUser)) {
 			throw new CannotDeleteException(MESSAGE_NOT_AUTHENTICATED_ON_DELETE);
 		}
 		this.setDeleted(true);
+		DeleteHistories deleteHistories = answers.delete(loginUser);
+		deleteHistories.add(this);
+		return deleteHistories;
 	}
 
 	@Override
