@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -8,21 +9,28 @@ import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Where;
+
 import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
 
 	@OneToMany(mappedBy = "question")
+	@Where(clause = "deleted = false")
 	private final List<Answer> answers = new ArrayList<>();
 
 	protected Answers() {
 	}
 
+	public Answers(Answer... answers) {
+		this.answers.addAll(Arrays.asList(answers));
+	}
+
 	public DeleteHistories delete(User loginUser) throws CannotDeleteException {
 		List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-		for (Answer answer : getAnswersNotDeleted()) {
+		for (Answer answer : answers) {
 			deleteHistories.add(answer.delete(loginUser));
 		}
 

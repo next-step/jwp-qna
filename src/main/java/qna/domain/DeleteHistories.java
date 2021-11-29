@@ -15,9 +15,13 @@ public class DeleteHistories {
 	public DeleteHistories(DeleteHistory... deleteHistories) {
 		this.deleteHistories = Arrays.asList(deleteHistories);
 	}
-	
+
 	public List<DeleteHistory> getDeleteHistories() {
 		return deleteHistories;
+	}
+
+	public boolean contains(DeleteHistory deleteHistory) {
+		return deleteHistories.contains(deleteHistory);
 	}
 
 	@Override
