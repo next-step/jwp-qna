@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.field.Contents;
@@ -68,10 +67,6 @@ public class Answer extends BaseEntity {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getWriterId() {
-        return this.writer.getId();
     }
 
     public User getWriter() { return this.writer; }

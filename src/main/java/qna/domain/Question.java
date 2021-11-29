@@ -95,24 +95,6 @@ public class Question extends BaseEntity {
     public void setDeleted(boolean deleted) {
         this.deleted.setDeleted(deleted);
     }
-
-    /**
-     * 질문 삭제 시 답변까지 삭제
-     * @param user
-     * @return
-     */
-    public boolean deleteQuestionWithAnswer(User user) {
-        if(!this.writer.getId().equals(user.getId())) {
-            return false;
-        }
-        Answers answers = new Answers(this.id);
-        if(answers.size() != 0 && answers.isAnswersOwner(this.writer)) {
-            answers.deleteAnswers(this.writer);
-            this.deleted.setDeleted(true);
-            return true;
-        }
-        return false;
-    }
     
     @Override
     public String toString() {

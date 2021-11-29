@@ -2,6 +2,7 @@ package qna.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,27 +12,21 @@ import java.util.List;
  */
 public class Answers {
 
-	@Autowired
-	AnswerRepository answerRepository;
-
 	private List<Answer> answers;
 
-	private Answers(){}
-
-	public Answers(Long questionId) {
-		this.answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
+	public Answers(List<Answer> answers) {
+		this.answers = answers;
 	}
 
 	/**
 	 * 전체 답변 삭제
 	 * @param user
 	 */
-	public boolean deleteAnswers(User user) {
+	public Answers deleteAnswers(User user) {
 		if(isAnswersOwner(user)) {
-			deleteAll(user);
-			return true;
+			deleteAll();
 		}
-		return false;
+		return this;
 	}
 
 	/**
@@ -39,18 +34,18 @@ public class Answers {
 	 * @param user
 	 * @param answer
 	 */
-	public boolean deleteAnswer(User user, Answer answer) {
+	public Answers deleteAnswer(User user, Answer answer) {
 		if(isAnswerOwner(user, answer)) {
 			deleteAnswer(answer);
-			return true;
 		}
-		return false;
+		return this;
 	}
 
-	private void deleteAll(User user) {
+	private Answers deleteAll() {
 		for(Answer answer : this.answers) {
 			deleteAnswer(answer);
 		}
+		return this;
 	}
 
 	private void deleteAnswer(Answer answer) {
@@ -76,7 +71,11 @@ public class Answers {
 		return this.answers.stream().allMatch(answer -> answer.isOwner(user) && answer.equals(targetAnswer));
 	}
 
-	public int size() {
-		return this.size();
+	public int count() {
+		return this.answers.size();
+	}
+
+	public List<Answer> getAnswers() {
+		return this.answers;
 	}
 }

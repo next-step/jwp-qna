@@ -39,15 +39,14 @@ class QnaServiceTest {
     @BeforeEach
     public void setUp() throws Exception {
         question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-        System.out.println("question : " + question.toString());
+        questionRepository.save(question);
         answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
+        answerRepository.save(answer);
         question.addAnswer(answer);
     }
 
     @Test
     public void delete_성공() throws Exception {
-        System.out.println("questionId : " + question.getId());
-        System.out.println("qustino Ans : " + answerRepository.findByQuestionIdAndDeletedFalse(question.getId()).toString());
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
@@ -92,8 +91,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter())
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()),
+                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }
