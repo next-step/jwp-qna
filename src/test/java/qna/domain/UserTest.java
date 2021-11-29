@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Sort;
+import qna.domain.field.Email;
+import qna.domain.field.Name;
+import qna.domain.field.UserId;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -53,14 +56,15 @@ public class UserTest {
     @Test
     @DisplayName("회원정보 수정 : 회원 이름, 이메일")
     void update() {
-        actual.setName("mook");
-        actual.setEmail("jeonginmook2@gmail.com");
-        actual.update(actual, actual);
+        User updateUser = actual;
+        updateUser.setName("mook");
+        updateUser.setEmail("jeonginmook2@gmail.com");
+        actual.update(actual, updateUser);
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getUserId()).isEqualTo("inmookjeong"),
-                () -> assertThat(actual.getName()).isEqualTo("mook"),
-                () -> assertThat(actual.getEmail()).isEqualTo("jeonginmook2@gmail.com")
+                () -> assertThat(actual.getName()).isEqualTo(new Name("mook").getName()),
+                () -> assertThat(actual.getEmail()).isEqualTo(new Email("jeonginmook2@gmail.com").getEmail())
         );
     }
 
@@ -79,7 +83,7 @@ public class UserTest {
     @CsvSource(value = {"javajigi:password:true", "sanjigi:password:true", "inmookjeong:unMatchPw:false"}, delimiter = ':')
     @DisplayName("로그인 : userId를 통해 사용자를 검색 후 password가 일치하는지 확인")
     void signIn(String userId, String password, boolean expected) {
-        User user = userRepository.findByUserId(userId).get();
+        User user = userRepository.findByUserId(new UserId(userId)).get();
         assertThat(user.getPassword().equals(password)).isEqualTo(expected);
     }
 
@@ -106,7 +110,7 @@ public class UserTest {
     @CsvSource(value = {"javajigi:1", "sanjigi:1", "inmookjeong:1", "pobi:0"}, delimiter = ':')
     @DisplayName("입력한 userId를 가지고 있는 사용자 수 조회")
     void countUserByUserId(String userId, int count) {
-        long foundCount = userRepository.countByUserId(userId);
+        long foundCount = userRepository.countByUserId(new UserId(userId));
         assertThat(foundCount).isEqualTo(count);
     }
 
@@ -114,7 +118,7 @@ public class UserTest {
     @CsvSource(value = {"javajigi:1", "sanjigi:2"}, delimiter = ':')
     @DisplayName("입력한 userId를 통해 사용자 조회")
     void findUserByUserId(String userId, Long id) {
-        User user = userRepository.findByUserId(userId).get();
+        User user = userRepository.findByUserId(new UserId(userId)).get();
         assertAll(
                 () -> assertThat(user).isNotNull(),
                 () -> assertThat(user.getId()).isEqualTo(id)
@@ -125,7 +129,7 @@ public class UserTest {
     @CsvSource(value = {"javaj:1", "sanj:1", "inmookjeong:1", "pobi:0"}, delimiter = ':')
     @DisplayName("입력한 사용자 이름 가지고 있는 사용자 수 조회")
     void countUserByName(String name, int count) {
-        long foundCount = userRepository.countByName(name);
+        long foundCount = userRepository.countByName(new Name(name));
         assertThat(foundCount).isEqualTo(count);
     }
 
@@ -133,18 +137,18 @@ public class UserTest {
     @CsvSource(value = {"javaj:javajigi", "sanj:sanjigi", "inmookjeong:inmookjeong"}, delimiter = ':')
     @DisplayName("입력한 사용자 이름을 통해 사용자 조회")
     void findUserByName(String name, String userId) {
-        User user = userRepository.findByName(name).get();
+        User user = userRepository.findByName(new Name(name)).get();
         assertThat(user.getUserId()).isEqualTo(userId);
     }
 
     @Test
     @DisplayName("회원탈퇴 : 회원정보 삭제")
     void leave() {
-        User user = userRepository.findByUserId("javajigi").get();
+        User user = userRepository.findByUserId(new UserId("javajigi")).get();
         _deleteQuestionIfExist(user);
 
-        userRepository.deleteByUserId(user.getUserId());
-        assertThatThrownBy(() -> userRepository.findByUserId(user.getUserId()).get())
+        userRepository.deleteByUserId(new UserId(user.getUserId()));
+        assertThatThrownBy(() -> userRepository.findByUserId(new UserId(user.getUserId())).get())
                 .isInstanceOf(NoSuchElementException.class);
     }
 

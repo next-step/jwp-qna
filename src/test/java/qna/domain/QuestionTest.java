@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Sort;
+import qna.domain.field.Title;
 
 import java.util.List;
 
@@ -109,17 +110,18 @@ public class QuestionTest {
     @Test
     @DisplayName("질문 Title을 통해 질문 목록 수 가져오기")
     void countByTitleContains() {
-        assertThat(questionRepository.countByTitleContains("title")).isEqualTo(2L);
+        // Like 검색 공부하기.
+        assertThat(questionRepository.countByTitle(new Title("title1"))).isEqualTo(1L);
     }
 
     @Test
     @DisplayName("질문 Title을 통해 질문 목록 가져오기")
     void findByTitleContains() {
-        List<Question> questions = questionRepository.findByTitleContains("title");
+        // Like 검색 공부하기.
+        List<Question> questions = questionRepository.findByTitle(new Title("title1"));
         assertAll(
-                () -> assertThat(questions.size()).isEqualTo(2L),
-                () -> assertThat(questions.contains(question1)).isTrue(),
-                () -> assertThat(questions.contains(question2)).isTrue()
+                () -> assertThat(questions.size()).isEqualTo(1L),
+                () -> assertThat(questions.contains(question1)).isTrue()
         );
     }
 

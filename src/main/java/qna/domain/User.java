@@ -1,7 +1,10 @@
 package qna.domain;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
+import qna.domain.field.Email;
+import qna.domain.field.Name;
+import qna.domain.field.Password;
+import qna.domain.field.UserId;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,17 +20,17 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
-    @Column(length = 20, nullable = false)
-    private String name;
+    @Embedded
+    private Name name;
 
-    @Column(length = 20, nullable = false)
-    private String password;
+    @Embedded
+    private Password password;
 
-    @Column(name = "user_id", length = 20, nullable = false, unique = true)
-    private String userId;
+    @Embedded
+    private UserId userId;
 
     @OneToMany(mappedBy = "writer")
     private List<Answer> answers = new ArrayList<Answer>();
@@ -47,10 +50,10 @@ public class User extends BaseEntity {
 
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+        this.userId = new UserId(userId);
+        this.password = new Password(password);
+        this.name = new Name(name);
+        this.email = new Email(email);
     }
 
     public void update(User loginUser, User target) {
@@ -58,7 +61,7 @@ public class User extends BaseEntity {
             throw new UnAuthorizedException();
         }
 
-        if (!matchPassword(target.password)) {
+        if (!matchPassword(target.password.getPassword())) {
             throw new UnAuthorizedException();
         }
 
@@ -77,16 +80,16 @@ public class User extends BaseEntity {
         }
 
         if (!matchPassword(newPassword)) {
-            this.password = newPassword;
+            this.password.setPassword(newPassword);
         }
     }
 
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
+    private boolean matchUserId(UserId userId) {
+        return this.userId.getUserId().equals(userId.getUserId());
     }
 
     public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
+        return this.password.equals(new Password(targetPassword));
     }
 
     public boolean equalsNameAndEmail(User target) {
@@ -111,35 +114,35 @@ public class User extends BaseEntity {
     }
 
     public String getUserId() {
-        return userId;
+        return userId.getUserId();
     }
 
     public void setUserId(String userId) {
-        this.userId = userId;
+        this.userId = new UserId(userId);
     }
 
     public String getPassword() {
-        return password;
+        return this.password.getPassword();
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password.setPassword(password);
     }
 
     public String getName() {
-        return name;
+        return this.name.getName();
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name.setName(name);
     }
 
     public String getEmail() {
-        return email;
+        return this.email.getEmail();
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email.setEmail(email);
     }
 
     @Override

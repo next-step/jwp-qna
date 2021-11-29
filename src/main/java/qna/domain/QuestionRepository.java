@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import qna.domain.field.Title;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,9 +15,9 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     Long countByWriter(User writer);
 
-    List<Question> findByTitleContains(String title);
+    List<Question> findByTitle(Title title);
 
-    Long countByTitleContains(String title);
+    Long countByTitle(Title title);
 
     void deleteByWriter(User writer);
 }
