@@ -30,8 +30,8 @@ public class User extends BaseEntity {
 
     public User(Long id, String userId, String password, String name, String email) {
         checkId(userId);
-        checkPassword(userId);
-        checkName(userId);
+        checkPassword(password);
+        checkName(name);
         this.id = id;
         this.userId = userId;
         this.password = password;
