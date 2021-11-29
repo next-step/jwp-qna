@@ -92,14 +92,6 @@ public class User extends BaseEntity {
         return this.password.equals(new Password(targetPassword));
     }
 
-    public boolean equalsNameAndEmail(User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
-
-        return name.equals(target.name) &&
-                email.equals(target.email);
-    }
 
     public boolean isGuestUser() {
         return false;
@@ -109,24 +101,12 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId.getUserId();
     }
 
-    public void setUserId(String userId) {
-        this.userId = new UserId(userId);
-    }
-
     public String getPassword() {
         return this.password.getPassword();
-    }
-
-    public void setPassword(String password) {
-        this.password.setPassword(password);
     }
 
     public String getName() {

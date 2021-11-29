@@ -16,10 +16,6 @@ public class UserId {
 		this.userId = userId;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
 	public String getUserId() {
 		return this.userId;
 	}

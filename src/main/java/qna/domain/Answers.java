@@ -1,8 +1,5 @@
 package qna.domain;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,18 +22,6 @@ public class Answers {
 	public Answers deleteAnswers(User user) {
 		if(isAnswersOwner(user)) {
 			deleteAll();
-		}
-		return this;
-	}
-
-	/**
-	 * 특정 답변 삭제
-	 * @param user
-	 * @param answer
-	 */
-	public Answers deleteAnswer(User user, Answer answer) {
-		if(isAnswerOwner(user, answer)) {
-			deleteAnswer(answer);
 		}
 		return this;
 	}

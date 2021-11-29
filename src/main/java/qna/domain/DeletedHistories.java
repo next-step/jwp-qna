@@ -1,14 +1,9 @@
 package qna.domain;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class DeletedHistories {
-
-	@Autowired
-	DeleteHistoryRepository deleteHistoryRepository;
 
 	private List<DeleteHistory> deleteHistories;
 
@@ -24,11 +19,6 @@ public class DeletedHistories {
 
 	public DeletedHistories addDeleteHistory(DeleteHistory deleteHistory) {
 		this.deleteHistories.add(deleteHistory);
-		return this;
-	}
-
-	public DeletedHistories addDeleteHistory(DeletedHistories deleteHistories) {
-		this.deleteHistories.addAll(deleteHistories.getDeleteHistories());
 		return this;
 	}
 
