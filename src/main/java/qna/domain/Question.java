@@ -99,12 +99,14 @@ public class Question extends AuditEntity {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		Question question = (Question)o;
-		return Objects.equals(id, question.id);
+		return Objects.equals(id, question.id) && Objects.equals(contents, question.contents)
+			&& Objects.equals(title, question.title) && Objects.equals(writer, question.writer)
+			&& Objects.equals(createdAt, question.createdAt);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id);
+		return Objects.hash(id, contents, title, writer, createdAt);
 	}
 
 	@Override

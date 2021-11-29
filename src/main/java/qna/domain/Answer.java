@@ -106,5 +106,19 @@ public class Answer extends AuditEntity {
 		setDeleted(true);
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Answer answer = (Answer)o;
+		return Objects.equals(id, answer.id) && Objects.equals(contents, answer.contents)
+			&& Objects.equals(question, answer.question) && Objects.equals(createdAt, answer.createdAt);
+	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, contents, question, createdAt);
+	}
 }
