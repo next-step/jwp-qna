@@ -109,7 +109,12 @@ public class Question extends BaseEntity {
                 '}';
     }
 
-    public void validateDeletableBy(User user) throws CannotDeleteException {
+    public void delete(User user) throws CannotDeleteException {
+        validateDeletableBy(user);
+        delete();
+    }
+
+    void validateDeletableBy(User user) throws CannotDeleteException {
         if (!this.isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
@@ -119,7 +124,7 @@ public class Question extends BaseEntity {
         }
     }
 
-    public void delete() {
+    void delete() {
         this.deleted = true;
 
         for (Answer answer : answers) {

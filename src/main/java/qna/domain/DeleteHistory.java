@@ -2,6 +2,9 @@ package qna.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -30,6 +33,45 @@ public class DeleteHistory {
         this.contentId = contentId;
         this.deletedBy = deletedBy;
         this.createDate = createDate;
+    }
+
+    public static List<DeleteHistory> of(Question question) {
+        final List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.ofQuestion(question));
+
+        for (Answer answer : question.getAnswers()) {
+            deleteHistories.add(DeleteHistory.ofAnswer(answer));
+        }
+
+        return deleteHistories;
+    }
+
+    static DeleteHistory ofQuestion(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+    }
+
+    static DeleteHistory ofAnswer(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public User getDeletedBy() {
+        return deletedBy;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
     }
 
     @Override
