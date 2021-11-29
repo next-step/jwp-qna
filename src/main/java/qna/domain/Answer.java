@@ -33,8 +33,6 @@ public class Answer extends AuditEntity {
 	@ManyToOne
 	@JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
 	private User writer;
-	@Embedded
-	private Answers answers;
 
 	public Answer(User writer, Question question, String contents) {
 		this(null, writer, question, contents);
@@ -108,18 +106,5 @@ public class Answer extends AuditEntity {
 		setDeleted(true);
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Answer answer = (Answer)o;
-		return Objects.equals(id, answer.id);
-	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
 }
