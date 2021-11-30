@@ -55,6 +55,9 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
+        if (this.question != null) {
+            question.getAnswers().remove(this);
+        }
         this.question = question;
         question.getAnswers().add(this);
     }
@@ -110,13 +113,14 @@ public class Answer extends BaseEntity {
                 '}';
     }
 
-    public void validateDeletableBy(User user) throws CannotDeleteException {
+    public void delete(User user) {
+        validateDeletableBy(user);
+        this.deleted = true;
+    }
+
+    private void validateDeletableBy(User user) {
         if (!this.isOwner(user)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
-    }
-
-    public void delete() {
-        this.deleted = true;
     }
 }

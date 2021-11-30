@@ -1,13 +1,16 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,17 +25,17 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
 
-    private LocalDateTime createDate = LocalDateTime.now();
+    @CreatedDate
+    private LocalDateTime createDate;
 
     protected DeleteHistory() {
 
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
-        this.createDate = createDate;
     }
 
     public static List<DeleteHistory> of(Question question) {
@@ -47,11 +50,11 @@ public class DeleteHistory {
     }
 
     static DeleteHistory ofQuestion(Question question) {
-        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter());
     }
 
     static DeleteHistory ofAnswer(Answer answer) {
-        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter());
     }
 
     public Long getId() {

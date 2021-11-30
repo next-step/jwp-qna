@@ -79,31 +79,31 @@ public class QuestionTest {
     }
 
     @Test
-    void validateDeletableBy_성공() throws CannotDeleteException {
+    void delete_성공() throws CannotDeleteException {
         final User user = users.save(UserTest.JAVAJIGI);
         final Question question = questions.save(QuestionTest.Q1.writeBy(user));
 
-        question.validateDeletableBy(user);
+        question.delete(user);
     }
 
     @Test
-    void validateDeletableBy_질문_작성자가아닌경우() throws CannotDeleteException {
+    void delete_질문_작성자가아닌경우() throws CannotDeleteException {
         final User user = users.save(UserTest.JAVAJIGI);
         final Question question = questions.save(QuestionTest.Q1.writeBy(user));
 
-        assertThatThrownBy(() -> question.validateDeletableBy(UserTest.SANJIGI))
+        assertThatThrownBy(() -> question.delete(UserTest.SANJIGI))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
-    void validateDeletableBy_댓글_작성자가아닌경우() {
+    void delete_댓글_작성자가아닌경우() {
         final User javajigi = users.save(UserTest.JAVAJIGI);
         final User sanjigi = users.save(UserTest.SANJIGI);
         final Question question = questions.save(QuestionTest.Q1.writeBy(javajigi));
         final Answer answer = answers.save(new Answer(sanjigi, question, "Answers Contents1"));
         question.addAnswer(answer);
 
-        assertThatThrownBy(() -> question.validateDeletableBy(javajigi))
+        assertThatThrownBy(() -> question.delete(javajigi))
                 .isInstanceOf(CannotDeleteException.class);
     }
 }
