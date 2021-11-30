@@ -69,32 +69,16 @@ public class Question extends BaseTimeEntity {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getTitle() {
 		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
 	}
 
 	public String getContents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
 	public User getWriter() {
 		return writer;
-	}
-
-	public void setWriter(User writer) {
-		this.writer = writer;
 	}
 
 	public boolean isDeleted() {
@@ -107,32 +91,6 @@ public class Question extends BaseTimeEntity {
 
 	public Answers getAnswers() {
 		return answers;
-	}
-
-	@Override
-	public String toString() {
-		return "Question{" +
-			"id=" + id +
-			", title='" + title + '\'' +
-			", contents='" + contents + '\'' +
-			", writer=" + writer +
-			", deleted=" + deleted +
-			'}';
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Question question = (Question)o;
-		return Objects.equals(id, question.id);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
 	}
 
 	public DeleteHistories delete(User loginUser) throws CannotDeleteException {
@@ -151,5 +109,31 @@ public class Question extends BaseTimeEntity {
 		deleteHistoryList.addAll(deleteHistories.getDeleteHistories());
 
 		return new DeleteHistories(deleteHistoryList);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Question question = (Question)o;
+		return Objects.equals(id, question.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public String toString() {
+		return "Question{" +
+			"id=" + id +
+			", title='" + title + '\'' +
+			", contents='" + contents + '\'' +
+			", writer=" + writer +
+			", deleted=" + deleted +
+			'}';
 	}
 }
