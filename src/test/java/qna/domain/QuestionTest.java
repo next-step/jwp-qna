@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.jdbc.Sql;
 import qna.CannotDeleteException;
 
 import javax.persistence.EntityManager;
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
+@Sql("/truncate.sql")
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
@@ -37,6 +39,18 @@ public class QuestionTest {
         );
         assertThat(question.getId()).isNotNull();
         assertThat(question.getTitle()).isEqualTo(Q1.getTitle());
+    }
+
+    @Test
+    void save_withAnswersCascade() {
+        final User user = users.save(UserTest.JAVAJIGI);
+        final Question question = Q1.writeBy(user);
+        question.addAnswer(AnswerTest.A1);
+        final Question savedQuestion = questions.save(question);
+
+        assertThat(savedQuestion.getAnswers()).hasSize(1);
+        assertThat(savedQuestion.getAnswers()).contains(AnswerTest.A1);
+
     }
 
     @Test

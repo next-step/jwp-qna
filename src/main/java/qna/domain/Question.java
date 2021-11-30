@@ -24,7 +24,7 @@ public class Question extends BaseEntity {
 
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
