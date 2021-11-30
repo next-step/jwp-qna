@@ -65,21 +65,17 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() { return this.writer; }
 
     public String getContents() {
         return contents.getContents();
     }
 
-    public void setContents(String contents) {
+    public void registerContents(String contents) {
         this.contents = new Contents(contents);
     }
 
-    public void setQuestion(Question question) {
+    public void addForQuestion(Question question) {
         this.question = question;
     }
 
@@ -87,7 +83,7 @@ public class Answer extends BaseEntity {
         return deleted.getDeleted();
     }
 
-    public void setDeleted(boolean deleted) {
+    public void changeDeleted(boolean deleted) {
         this.deleted = new Deleted(deleted);
     }
 

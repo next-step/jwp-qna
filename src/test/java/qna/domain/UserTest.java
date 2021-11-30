@@ -57,8 +57,8 @@ public class UserTest {
     @DisplayName("회원정보 수정 : 회원 이름, 이메일")
     void update() {
         User updateUser = actual;
-        updateUser.setName("mook");
-        updateUser.setEmail("jeonginmook2@gmail.com");
+        updateUser.registerName("mook");
+        updateUser.registerEmail("jeonginmook2@gmail.com");
         actual.update(actual, updateUser);
         assertAll(
                 () -> assertThat(actual).isNotNull(),

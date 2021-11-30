@@ -62,8 +62,8 @@ public class QuestionTest {
     @DisplayName("질문 수정 : 질문 제목, 질문 내용")
     void update() {
         System.out.println("question1 : " + question1.toString());
-        question1.setTitle("첫번째 질문");
-        question1.setContents("첫번째 질문 내용입니다.");
+        question1.registerTitle("첫번째 질문");
+        question1.registerContents("첫번째 질문 내용입니다.");
         Question actual = questionRepository.save(question1);
         assertAll(
                 () -> assertThat(actual).isNotNull(),
@@ -144,13 +144,13 @@ public class QuestionTest {
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
         if(answers.stream().allMatch(answer -> answer.isOwner(question.getWriter()))) {
             for(Answer answer : answers) {
-                answer.setDeleted(true);
+                answer.changeDeleted(true);
             }
             changeDeleted(question);
         }
     }
 
     private void changeDeleted(Question question) {
-        question.setDeleted(true);
+        question.changeDeleted(true);
     }
 }

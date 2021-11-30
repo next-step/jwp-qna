@@ -40,7 +40,7 @@ public class Answers {
 	}
 
 	private void deleteAnswer(Answer answer) {
-		answer.setDeleted(true);
+		answer.changeDeleted(true);
 	}
 
 	/**

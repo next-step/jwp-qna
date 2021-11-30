@@ -66,7 +66,7 @@ public class Question extends BaseEntity {
         return title.getTitle();
     }
 
-    public void setTitle(String title) {
+    public void registerTitle(String title) {
         this.title = new Title(title);
     }
 
@@ -74,7 +74,7 @@ public class Question extends BaseEntity {
         return contents.getContents();
     }
 
-    public void setContents(String contents) {
+    public void registerContents(String contents) {
         this.contents = new Contents(contents);
     }
 
@@ -88,7 +88,7 @@ public class Question extends BaseEntity {
         return deleted.getDeleted();
     }
 
-    public void setDeleted(boolean deleted) {
+    public void changeDeleted(boolean deleted) {
         this.deleted = new Deleted(deleted);
     }
     

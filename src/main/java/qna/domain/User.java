@@ -112,7 +112,7 @@ public class User extends BaseEntity {
         return this.name.getName();
     }
 
-    public void setName(String name) {
+    public void registerName(String name) {
         this.name = new Name(name);
     }
 
@@ -120,7 +120,7 @@ public class User extends BaseEntity {
         return this.email.getEmail();
     }
 
-    public void setEmail(String email) {
+    public void registerEmail(String email) {
         this.email = new Email(email);
     }
 
