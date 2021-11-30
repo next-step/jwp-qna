@@ -57,7 +57,7 @@ public class QuestionTest {
     }
 
     @Test
-    void findByDeletedFalse_WithAnswer() { // TODO: 2021/11/25 setAnswer가 되어야지!!!
+    void findByDeletedFalse_WithAnswer() {
         final User user = users.save(UserTest.JAVAJIGI);
         final Question question = questions.save(QuestionTest.Q1.writeBy(user));
         answers.save(new Answer(user, question, "Answers Contents1"));
