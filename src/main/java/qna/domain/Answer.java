@@ -1,9 +1,9 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -13,11 +13,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
 public class Answer extends AuditEntity {
+	public static final String MESSAGE_NOT_AUTHENTICATED_ON_DELETE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -61,6 +63,9 @@ public class Answer extends AuditEntity {
 
 	public void toQuestion(Question question) {
 		this.question = question;
+		if (!question.getAnswers().get().contains(this)) {
+			question.addAnswer(this);
+		}
 	}
 
 	public Question getQuestion() {
@@ -94,6 +99,13 @@ public class Answer extends AuditEntity {
 			'}';
 	}
 
+	public void delete(User loginUser) throws CannotDeleteException {
+		if (!isOwner(loginUser)) {
+			throw new CannotDeleteException(MESSAGE_NOT_AUTHENTICATED_ON_DELETE);
+		}
+		setDeleted(true);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -101,13 +113,12 @@ public class Answer extends AuditEntity {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		Answer answer = (Answer)o;
-		return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents,
-			answer.contents) && Objects.equals(question, answer.question) && Objects.equals(
-			writer, answer.writer);
+		return Objects.equals(id, answer.id) && Objects.equals(contents, answer.contents)
+			&& Objects.equals(question, answer.question) && Objects.equals(createdAt, answer.createdAt);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, contents, deleted, question, writer.getId());
+		return Objects.hash(id, contents, question, createdAt);
 	}
 }

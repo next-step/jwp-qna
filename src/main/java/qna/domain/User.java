@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -105,11 +104,11 @@ public class User extends AuditEntity {
         if (o == null || getClass() != o.getClass())
             return false;
         User user = (User)o;
-        return Objects.equals(id, user.id);
+        return Objects.equals(id, user.id) && Objects.equals(userId, user.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, userId);
     }
 }

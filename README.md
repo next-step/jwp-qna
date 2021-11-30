@@ -17,3 +17,14 @@
 - [x] DeleteHistory 연관 관계 매핑
 - [x] Answer 연관 관계 매핑
 - [x] DeleteHistory에 audit 적용
+
+## 요구 사항 3단계
+- [x] 전체적으로 equals, hashcode를 비즈니스 키/데이터베이스 키를 이용하여 구현하도록 수정
+- [x] AuditEntityTest 테스트 메소드명 수정
+- QnAService deleteQuestion 리팩토링
+  - [x] Question.delete 추가
+  - [x] Answer.delete 추가
+  - [x] Answers.delete 추가
+
+- [x] 도메인 equals 키를 적절하게 설정하기
+- [x] 객체지향적인 방식으로 Question-Answer-QnaService 리팩토링
