@@ -1,13 +1,13 @@
 package qna.domain;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.field.Contents;
+import qna.domain.field.Deleted;
 
 import javax.persistence.*;
 import java.util.Objects;
 
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseEntity {
@@ -15,11 +15,11 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted;
 
     @ManyToOne
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -49,7 +49,8 @@ public class Answer extends BaseEntity {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
+        this.contents = new Contents(contents);
+        this.deleted = new Deleted(false);
     }
 
     public boolean isOwner(User writer) {
@@ -64,34 +65,26 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return this.writer.getId();
-    }
-
     public User getWriter() { return this.writer; }
 
     public String getContents() {
-        return contents;
+        return contents.getContents();
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
+    public void registerContents(String contents) {
+        this.contents = new Contents(contents);
     }
 
-    public void setQuestion(Question question) {
+    public void addForQuestion(Question question) {
         this.question = question;
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.getDeleted();
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void changeDeleted(boolean deleted) {
+        this.deleted = new Deleted(deleted);
     }
 
     @Override

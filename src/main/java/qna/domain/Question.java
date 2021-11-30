@@ -1,12 +1,13 @@
 package qna.domain;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import qna.domain.field.Contents;
+import qna.domain.field.Deleted;
+import qna.domain.field.Title;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity {
@@ -14,14 +15,14 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    private Deleted deleted;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+    @Embedded
+    private Title title;
 
     @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -39,8 +40,9 @@ public class Question extends BaseEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
-        this.contents = contents;
+        this.title = new Title(title);
+        this.contents = new Contents(contents);
+        this.deleted = new Deleted(false);
     }
 
     public Question writeBy(User writer) {
@@ -49,7 +51,7 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -60,24 +62,20 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
-        return title;
+        return title.getTitle();
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void registerTitle(String title) {
+        this.title = new Title(title);
     }
 
     public String getContents() {
-        return contents;
+        return contents.getContents();
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
+    public void registerContents(String contents) {
+        this.contents = new Contents(contents);
     }
 
     public Long getWriterId() {
@@ -87,13 +85,13 @@ public class Question extends BaseEntity {
     public User getWriter() { return this.writer; }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.getDeleted();
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void changeDeleted(boolean deleted) {
+        this.deleted = new Deleted(deleted);
     }
-
+    
     @Override
     public String toString() {
         return "Question{" +

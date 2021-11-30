@@ -1,14 +1,16 @@
 package qna.domain;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
+import qna.domain.field.Email;
+import qna.domain.field.Name;
+import qna.domain.field.Password;
+import qna.domain.field.UserId;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "user")
 public class User extends BaseEntity {
@@ -18,26 +20,26 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
-    @Column(length = 20, nullable = false)
-    private String name;
+    @Embedded
+    private Name name;
 
-    @Column(length = 20, nullable = false)
-    private String password;
+    @Embedded
+    private Password password;
 
-    @Column(name = "user_id", length = 20, nullable = false, unique = true)
-    private String userId;
+    @Embedded
+    private UserId userId;
 
-    @OneToMany(mappedBy = "writer")
-    private List<Answer> answers = new ArrayList<Answer>();
+    @Embedded
+    private Answers answers;
 
     @OneToMany(mappedBy = "writer")
     private List<Question> question = new ArrayList<Question>();
 
-    @OneToMany(mappedBy = "deleteUser")
-    private List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
+    @Embedded
+    private DeletedHistories deleteHistories;
 
     // Arguments가 없는 Default Constructor 생성
     protected User() {}
@@ -48,10 +50,10 @@ public class User extends BaseEntity {
 
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+        this.userId = new UserId(userId);
+        this.password = new Password(password);
+        this.name = new Name(name);
+        this.email = new Email(email);
     }
 
     public void update(User loginUser, User target) {
@@ -59,7 +61,7 @@ public class User extends BaseEntity {
             throw new UnAuthorizedException();
         }
 
-        if (!matchPassword(target.password)) {
+        if (!matchPassword(target.password.getPassword())) {
             throw new UnAuthorizedException();
         }
 
@@ -78,25 +80,16 @@ public class User extends BaseEntity {
         }
 
         if (!matchPassword(newPassword)) {
-            this.password = newPassword;
+            this.password = new Password(newPassword);
         }
     }
 
-    private boolean matchUserId(String userId) {
+    private boolean matchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
     public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
-    }
-
-    public boolean equalsNameAndEmail(User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
-
-        return name.equals(target.name) &&
-                email.equals(target.email);
+        return this.password.isEqualsPassword(targetPassword);
     }
 
     public boolean isGuestUser() {
@@ -107,40 +100,28 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
+        return userId.getUserId();
     }
 
     public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+        return this.password.getPassword();
     }
 
     public String getName() {
-        return name;
+        return this.name.getName();
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void registerName(String name) {
+        this.name = new Name(name);
     }
 
     public String getEmail() {
-        return email;
+        return this.email.getEmail();
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void registerEmail(String email) {
+        this.email = new Email(email);
     }
 
     @Override
@@ -152,6 +133,14 @@ public class User extends BaseEntity {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(this.id, user.id);
     }
 
     private static class GuestUser extends User {

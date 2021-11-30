@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Sort;
+import qna.domain.field.Title;
 
 import java.util.List;
 
@@ -37,14 +38,10 @@ public class QuestionTest {
     public void saveDefaultQuestions() {
         question1 = questionRepository.save(Q1);
         question2 = questionRepository.save(Q2);
-    }
-
-    @Test
-    void save() {
-        assertAll(
-                () -> assertThat(question1).isNotNull(),
-                () -> assertThat(question1.getTitle()).isEqualTo(Q1.getTitle())
-        );
+        answerRepository.save(new Answer(1L, UserTest.JAVAJIGI, question1, "Answers Contents1"));
+        answerRepository.save(new Answer(2L, UserTest.SANJIGI, question1, "Answers Contents2"));
+        answerRepository.save(new Answer(3L, UserTest.SANJIGI, question2, "Answers Contents3"));
+        answerRepository.save(new Answer(4L, UserTest.SANJIGI, question2, "Answers Contents4"));
     }
 
     @Test
@@ -64,8 +61,9 @@ public class QuestionTest {
     @Test
     @DisplayName("질문 수정 : 질문 제목, 질문 내용")
     void update() {
-        question1.setTitle("첫번째 질문");
-        question1.setContents("첫번째 질문 내용입니다.");
+        System.out.println("question1 : " + question1.toString());
+        question1.registerTitle("첫번째 질문");
+        question1.registerContents("첫번째 질문 내용입니다.");
         Question actual = questionRepository.save(question1);
         assertAll(
                 () -> assertThat(actual).isNotNull(),
@@ -110,50 +108,49 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("작성자 ID를 통해 질문 목록 수 가져오기")
+    @DisplayName("질문 Title을 통해 질문 목록 수 가져오기")
     void countByTitleContains() {
-        assertThat(questionRepository.countByTitleContains("title")).isEqualTo(2L);
+        // Like 검색 공부하기.
+        assertThat(questionRepository.countByTitle(new Title("title1"))).isEqualTo(1L);
     }
 
     @Test
-    @DisplayName("작성자 ID를 통해 질문 목록 가져오기")
+    @DisplayName("질문 Title을 통해 질문 목록 가져오기")
     void findByTitleContains() {
-        List<Question> questions = questionRepository.findByTitleContains("title");
+        // Like 검색 공부하기.
+        List<Question> questions = questionRepository.findByTitle(new Title("title1"));
         assertAll(
-                () -> assertThat(questions.size()).isEqualTo(2L),
-                () -> assertThat(questions.contains(question1)).isTrue(),
-                () -> assertThat(questions.contains(question2)).isTrue()
+                () -> assertThat(questions.size()).isEqualTo(1L),
+                () -> assertThat(questions.contains(question1)).isTrue()
         );
     }
 
     @Test
     @DisplayName("질문 삭제")
     void deleteQuestion() {
-        _saveTempAnswer(question1);
-        Long answerCount = answerRepository.countByQuestionIdAndDeletedFalse(question1.getId());
-        _log.info("##### Question has" + answerCount + " Answers.");
-
-        _deleteAnswerByQuestionId(question1.getId());
-        question1.setDeleted(true);
-        Question actual = questionRepository.save(question1);
+        Long answerCount = answerRepository.countByQuestionIdAndDeletedFalse(question2.getId());
+        boolean isOwner = question2.isOwner(UserTest.SANJIGI);
+        if(isOwner && answerCount == 0) {
+            changeDeleted(question2);
+        }
+        if(isOwner && answerCount != 0) {
+            deleteQuestionWithAnswers(question2);
+        }
+        Question actual = questionRepository.save(question2);
         assertThat(actual.isDeleted()).isTrue();
     }
 
-    /**
-     * QuestionId를 통해 Answer가 있는 경우 삭제 처리
-     * @param questionId
-     */
-    private void _deleteAnswerByQuestionId(Long questionId) {
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
-        for(Answer answer : answers) {
-            answer.setDeleted(true);
-            answerRepository.save(answer);
+    private void deleteQuestionWithAnswers(Question question) {
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+        if(answers.stream().allMatch(answer -> answer.isOwner(question.getWriter()))) {
+            for(Answer answer : answers) {
+                answer.changeDeleted(true);
+            }
+            changeDeleted(question);
         }
-        assertThat(answerRepository.countByQuestionIdAndDeletedFalse(questionId)).isEqualTo(0L);
     }
 
-    private void _saveTempAnswer(Question question) {
-        answerRepository.save(new Answer(UserTest.JAVAJIGI, question, "Answers Contents1"));
+    private void changeDeleted(Question question) {
+        question.changeDeleted(true);
     }
-
 }

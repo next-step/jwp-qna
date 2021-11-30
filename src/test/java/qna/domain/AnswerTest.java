@@ -15,6 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AnswerTest {
     public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A3 = new Answer(3L, UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents3");
+    public static final Answer A4 = new Answer(4L, UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents4");
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -30,8 +32,8 @@ public class AnswerTest {
     @BeforeEach
     void saveDefaultAnswer() {
         question = _saveDefaultQuestions();
-        A1.setQuestion(question);
-        A2.setQuestion(question);
+        A1.addForQuestion(question);
+        A2.addForQuestion (question);
         answer1 = answerRepository.save(A1);
         answer2 = answerRepository.save(A2);
     }
@@ -53,7 +55,7 @@ public class AnswerTest {
     @DisplayName("질문 수정")
     void update() {
         String contents = "질문 내용을 수정합니다.";
-        answer1.setContents(contents);
+        answer1.registerContents(contents);
         Answer actual = answerRepository.save(answer1);
         assertAll(
                 () -> assertThat(actual).isNotNull(),
@@ -81,7 +83,7 @@ public class AnswerTest {
     @Test
     @DisplayName("Answer ID를 통한 삭제")
     void deleteAnswerById() {
-        answer1.setDeleted(true);
+        answer1.changeDeleted(true);
         assertThat(answerRepository.countByQuestionIdAndDeletedFalse(question.getId())).isEqualTo(1L);
     }
 }

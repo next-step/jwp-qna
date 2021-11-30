@@ -8,10 +8,6 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 public class QnaService {
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
@@ -35,24 +31,46 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-        if (!question.isOwner(loginUser)) {
+        DeletedHistories deletedHistories = deleteQuestionWithAnswer(loginUser, question);
+        deleteHistoryService.saveAll(deletedHistories.getDeleteHistories());
+    }
+
+    /**
+     * 질문 삭제 시 답변까지 삭제
+     * @param user
+     * @return
+     */
+    public DeletedHistories deleteQuestionWithAnswer(User user, Question question) throws CannotDeleteException {
+        if(!question.isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
+        DeletedHistories deletedHistories = new DeletedHistories();
+        deletedHistories = deleteAnswers(deletedHistories, question, user);
+
+        question.changeDeleted(true);
+        deletedHistories.addDeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter());
+
+        return deletedHistories;
+    }
+
+    private DeletedHistories deleteAnswers(DeletedHistories deletedHistories, Question question, User user) throws CannotDeleteException {
+        Answers answers = new Answers(answerRepository.findByQuestionIdAndDeletedFalse(question.getId()));
+        if(!answers.isAnswersOwner(user)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter(), LocalDateTime.now()));
-        for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+        if(answers.count() != 0) {
+            answers.deleteAnswers(user);
+            setDeletedHistories(deletedHistories, answers);
         }
-        deleteHistoryService.saveAll(deleteHistories);
+
+        return deletedHistories;
+    }
+
+    private void setDeletedHistories(DeletedHistories deletedHistories, Answers answers) {
+        for(Answer answer : answers.getAnswers()) {
+            deletedHistories.addDeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter());
+        }
     }
 }
