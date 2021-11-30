@@ -32,14 +32,14 @@ public class User extends BaseEntity {
     @Embedded
     private UserId userId;
 
-    @OneToMany(mappedBy = "writer")
-    private List<Answer> answers = new ArrayList<Answer>();
+    @Embedded
+    private Answers answers;
 
     @OneToMany(mappedBy = "writer")
     private List<Question> question = new ArrayList<Question>();
 
-    @OneToMany(mappedBy = "deleteUser")
-    private List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
+    @Embedded
+    private DeletedHistories deleteHistories;
 
     // Arguments가 없는 Default Constructor 생성
     protected User() {}

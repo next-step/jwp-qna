@@ -1,5 +1,7 @@
 package qna.domain;
 
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 import java.util.List;
 
 /**
@@ -7,9 +9,13 @@ import java.util.List;
  * @since 2021.11.26
  * @author Inmook,Jeong
  */
+@Embeddable
 public class Answers {
 
+	@OneToMany(mappedBy = "writer")
 	private List<Answer> answers;
+
+	protected Answers() {}
 
 	public Answers(List<Answer> answers) {
 		this.answers = answers;

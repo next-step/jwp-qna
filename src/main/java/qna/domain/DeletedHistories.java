@@ -1,10 +1,14 @@
 package qna.domain;
 
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
+@Embeddable
 public class DeletedHistories {
 
+	@OneToMany(mappedBy = "deleteUser")
 	private List<DeleteHistory> deleteHistories;
 
 	public DeletedHistories() {
