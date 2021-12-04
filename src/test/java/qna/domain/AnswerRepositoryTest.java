@@ -26,9 +26,9 @@ public class AnswerRepositoryTest {
         questionRepository.save(AnswerTest.A1.getQuestion());
         Answer answer = answerRepository.save(AnswerTest.A1);
 
-        Optional<Answer> opAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId());
+        Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId());
 
-        assertThat(opAnswer).isNotEmpty();
-        assertThat(opAnswer.get()).isEqualTo(answer);
+        assertThat(optionalAnswer).isNotEmpty();
+        assertThat(optionalAnswer.get()).isEqualTo(answer);
     }
 }
