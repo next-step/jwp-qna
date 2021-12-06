@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -19,5 +20,10 @@ public class AnswerTest {
     @Test
     void question_null_테스트() {
         assertThatExceptionOfType(NotFoundException.class).isThrownBy(() -> new Answer(UserTest.JAVAJIGI, null, "Answers Contents1"));
+    }
+
+    @Test
+    void 다른_사람이_작성한_답변_삭제_테스트() {
+        assertThatExceptionOfType(CannotDeleteException.class).isThrownBy(() -> A1.delete(UserTest.SANJIGI));
     }
 }

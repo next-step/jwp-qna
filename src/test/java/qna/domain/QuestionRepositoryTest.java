@@ -18,9 +18,9 @@ public class QuestionRepositoryTest {
     void 질문_저장_후_조회_테스트() {
         Question question = questionRepository.save(QuestionTest.Q1);
 
-        Optional<Question> opQuestion = questionRepository.findByIdAndDeletedFalse(question.getId());
+        Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(question.getId());
 
-        assertThat(opQuestion).isNotEmpty();
-        assertThat(opQuestion.get()).isEqualTo(question);
+        assertThat(optionalQuestion).isNotEmpty();
+        assertThat(optionalQuestion.get()).isEqualTo(question);
     }
 }
