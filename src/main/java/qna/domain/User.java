@@ -10,7 +10,7 @@ import qna.UnAuthorizedException;
 import java.util.Objects;
 
 @Entity
-public class User extends BaseTimeEntity{
+public class User extends BaseTimeEntity {
 
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -72,7 +72,7 @@ public class User extends BaseTimeEntity{
         }
 
         return name.equals(target.name) &&
-                email.equals(target.email);
+            email.equals(target.email);
     }
 
     public boolean isGuestUser() {
@@ -120,17 +120,37 @@ public class User extends BaseTimeEntity{
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id) && userId.equals(user.userId) && password
+            .equals(user.password) && name.equals(user.name) && Objects
+            .equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email);
+    }
+
+    @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+            "id=" + id +
+            ", userId='" + userId + '\'' +
+            ", password='" + password + '\'' +
+            ", name='" + name + '\'' +
+            ", email='" + email + '\'' +
+            '}';
     }
 
     private static class GuestUser extends User {
+
         @Override
         public boolean isGuestUser() {
             return true;
