@@ -1,6 +1,5 @@
 package qna.domain;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
@@ -25,7 +24,7 @@ class AnswerRepositoryTest {
         answerRepository.saveAll(Arrays.asList(AnswerTest.A3, AnswerTest.A4));
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(QUESTION_ID);
         for (Answer answer : answers) {
-            assertThat(answer.getQuestionId().equals(QUESTION_ID)).isTrue();
+            assertThat(answer.getQuestion().equals(QUESTION_ID)).isTrue();
             assertThat(answer.isDeleted()).isFalse();
         }
     }

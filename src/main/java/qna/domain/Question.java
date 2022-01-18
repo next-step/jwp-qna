@@ -3,10 +3,13 @@ package qna.domain;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -23,7 +26,9 @@ public class Question extends BaseTimeEntity {
     @Lob
     private String contents;
 
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"), name = "writer_id")
+    private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -39,12 +44,12 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -75,12 +80,16 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public Long getWriterId() {
+        return writer.getId();
+    }
+
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -102,12 +111,12 @@ public class Question extends BaseTimeEntity {
         Question question = (Question) o;
         return deleted == question.deleted && Objects.equals(id, question.id) && title
             .equals(question.title) && Objects.equals(contents, question.contents)
-            && Objects.equals(writerId, question.writerId);
+            && Objects.equals(writer, question.writer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writerId, deleted);
+        return Objects.hash(id, title, contents, writer, deleted);
     }
 
     @Override
@@ -116,7 +125,7 @@ public class Question extends BaseTimeEntity {
             "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", writerId=" + writerId +
+            ", writerId=" + writer +
             ", deleted=" + deleted +
             '}';
     }
