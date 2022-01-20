@@ -9,11 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
-import qna.domain.User;
 
 @Entity
 public class Answer extends BaseTimeEntity {
@@ -56,8 +56,19 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
+    public void delete(User loginUser) throws CannotDeleteException {
+        checkAuthority(loginUser);
+        setDeleted(true);
+    }
+
+    private void checkAuthority(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -72,10 +83,6 @@ public class Answer extends BaseTimeEntity {
         return writer;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
-    }
-
     public Question getQuestion() {
         return question;
     }
@@ -84,7 +91,7 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    private void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 

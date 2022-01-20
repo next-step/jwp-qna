@@ -1,8 +1,13 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,7 +15,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
@@ -33,6 +40,9 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers = new ArrayList<>();
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }
@@ -48,55 +58,51 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
-    }
-
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.add(answer);
+    }
+
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        checkAuthority(loginUser);
+        setDeleted(true);
+        List<Answer> answers = validAnswers();
+        for (Answer answer : answers) {
+            answer.delete(loginUser);
+        }
+        DeleteHistories deleteHistories = new DeleteHistories(this, answers);
+        return deleteHistories;
+    }
+
+    private List<Answer> validAnswers() {
+        return answers.stream()
+            .filter(answer -> !answer.isDeleted())
+            .collect(Collectors.toList());
+    }
+
+    private void checkAuthority(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public Long getWriterId() {
-        return writer.getId();
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    private void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
