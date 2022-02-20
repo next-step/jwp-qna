@@ -1,11 +1,25 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.*;
+
+@Entity
+public class Question extends AbstractDate {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Lob
     private String contents;
-    private Long writerId;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column(length = 100, nullable = false)
+    private String title;
+
+    @Column(name = "content_id")
+    private Long writerId;
 
     public Question(String title, String contents) {
         this(null, title, contents);
