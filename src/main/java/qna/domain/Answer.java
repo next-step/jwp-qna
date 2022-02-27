@@ -25,6 +25,9 @@ public class Answer extends AbstractDate {
     @Column(name = "writer_id")
     private Long writerId;
 
+    public Answer() {
+    }
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }

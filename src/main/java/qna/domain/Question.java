@@ -21,6 +21,9 @@ public class Question extends AbstractDate {
     @Column(name = "content_id")
     private Long writerId;
 
+    public Question() {
+    }
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }

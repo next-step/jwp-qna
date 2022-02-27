@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +21,8 @@ class QuestionRepositoryTest {
 
     @Test
     void save() {
-        Question question = questionRepository.save(QuestionTest.Q1);
-        assertThat(question.getId()).isEqualTo(QuestionTest.Q1.getId());
+        final Question actual = questionRepository.save(QuestionTest.Q3);
+        assertThat(actual.getId()).isEqualTo(QuestionTest.Q3.getId());
     }
 
     @Test
@@ -29,7 +31,6 @@ class QuestionRepositoryTest {
         questionRepository.saveAll(Arrays.asList(QuestionTest.Q1, QuestionTest.Q2));
         List<Question> findQuestions = questionRepository.findByDeletedFalse();
 
-        assertThat(findQuestions.size()).isEqualTo(2);
         for (Question question : findQuestions) {
             assertThat(question.isDeleted()).isFalse();
         }
