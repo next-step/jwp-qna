@@ -33,19 +33,20 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 Answer 리스트를 QuestionId 로 찾는다")
     void findByQuestionIdAndDeletedFalse() {
-        answerRepository.saveAll(Arrays.asList(AnswerTest.A3, AnswerTest.A4));
+        List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(AnswerTest.A3, AnswerTest.A4));
+        actualAnswers.get(0).setDeleted(true);
+
         final List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
-        for (Answer answer : findAnswers) {
-            assertThat(answer.isDeleted()).isFalse();
-        }
+        assertThat(findAnswers.size()).isEqualTo(1);
     }
 
     @Test
     @DisplayName("삭제되지 않은 Answer 를 id 로 찾는다")
     void findByIdAndDeletedFalse() {
-        answerRepository.saveAll(Arrays.asList(AnswerTest.A3, AnswerTest.A4));
+        List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(AnswerTest.A3, AnswerTest.A4));
+        actualAnswers.get(0).setDeleted(true);
+
         final Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(AnswerTest.A3.getId());
-        assertThat(findAnswer.get().getId()).isEqualTo(AnswerTest.A3.getId());
-        assertThat(findAnswer.get().isDeleted()).isFalse();
+        assertThat(findAnswer.isPresent()).isFalse();
     }
 }

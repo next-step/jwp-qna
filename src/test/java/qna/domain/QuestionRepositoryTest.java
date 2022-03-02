@@ -31,6 +31,7 @@ class QuestionRepositoryTest {
         questionRepository.saveAll(Arrays.asList(QuestionTest.Q1, QuestionTest.Q2));
         List<Question> findQuestions = questionRepository.findByDeletedFalse();
 
+        assertThat(findQuestions.size()).isEqualTo(2);
         for (Question question : findQuestions) {
             assertThat(question.isDeleted()).isFalse();
         }
@@ -39,9 +40,10 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 질문들을 id 를 통해서 찾는다")
     void findByIdAndDeletedFalse() {
-        questionRepository.saveAll(Arrays.asList(QuestionTest.Q1, QuestionTest.Q2));
-        Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(QuestionTest.Q1.getId());
-        assertThat(findQuestion.get().getId()).isEqualTo(QuestionTest.Q1.getId());
-        assertThat(findQuestion.get().isDeleted()).isFalse();
+        List<Question> actual = questionRepository.saveAll(Arrays.asList(QuestionTest.Q4));
+        actual.get(0).setDeleted(true);
+
+        Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(QuestionTest.Q4.getId());
+        assertThat(findQuestion.isPresent()).isFalse();
     }
 }

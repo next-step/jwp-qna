@@ -1,8 +1,14 @@
 package qna.domain;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 @Entity
+@Where(clause = "deleted = 0")
+@SQLDelete(sql = "update question set deleted = 1 where id = ?")
 public class Question extends AbstractDate {
 
     @Id
@@ -12,6 +18,7 @@ public class Question extends AbstractDate {
     @Lob
     private String contents;
 
+    @ColumnDefault("0")
     @Column(nullable = false)
     private boolean deleted = false;
 

@@ -1,5 +1,8 @@
 package qna.domain;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
@@ -7,6 +10,8 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Where(clause = "deleted = 0")
+@SQLDelete(sql = "UPDATE answer SET deleted = 1 WHERE id = ?")
 public class Answer extends AbstractDate {
 
     @Id
@@ -16,6 +21,7 @@ public class Answer extends AbstractDate {
     @Lob
     private String contents;
 
+    @ColumnDefault("0")
     @Column(nullable = false)
     private boolean deleted = false;
 
