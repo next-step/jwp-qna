@@ -1,16 +1,38 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+@Where(clause = "deleted = 0")
+@SQLDelete(sql = "UPDATE answer SET deleted = 1 WHERE id = ?")
+public class Answer extends AbstractDate {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+
+    @Lob
     private String contents;
+
+    @ColumnDefault("0")
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column(name = "question_id")
+    private Long questionId;
+
+    @Column(name = "writer_id")
+    private Long writerId;
+
+    public Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);

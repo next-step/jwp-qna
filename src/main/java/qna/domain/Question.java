@@ -1,11 +1,35 @@
 package qna.domain;
 
-public class Question {
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
+import javax.persistence.*;
+
+@Entity
+@Where(clause = "deleted = 0")
+@SQLDelete(sql = "update question set deleted = 1 where id = ?")
+public class Question extends AbstractDate {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Lob
     private String contents;
-    private Long writerId;
+
+    @ColumnDefault("0")
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column(length = 100, nullable = false)
+    private String title;
+
+    @Column(name = "content_id")
+    private Long writerId;
+
+    public Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
