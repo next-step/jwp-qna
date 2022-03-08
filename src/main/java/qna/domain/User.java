@@ -3,6 +3,8 @@ package qna.domain;
 import qna.exception.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -10,7 +12,7 @@ public class User extends AbstractDate {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @Column(length = 50)
@@ -24,6 +26,15 @@ public class User extends AbstractDate {
 
     @Column(name = "user_id", length = 20, nullable = false)
     private String userId;
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+    private List<Question> question = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+    private List<Answer> answer = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     private User() {
     }
@@ -112,6 +123,30 @@ public class User extends AbstractDate {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Question> getQuestion() {
+        return question;
+    }
+
+    public List<Answer> getAnswer() {
+        return answer;
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
+    }
+
+    public void setQuestion(List<Question> question) {
+        this.question = question;
+    }
+
+    public void setAnswer(List<Answer> answer) {
+        this.answer = answer;
+    }
+
+    public void setDeleteHistories(List<DeleteHistory> deleteHistories) {
+        this.deleteHistories = deleteHistories;
     }
 
     @Override
