@@ -26,7 +26,8 @@ public class WhereTest {
     void createdDateTest() {
         Answer actual = answerRepository.save(AnswerTest.A1);
         assertThat(actual.isDeleted()).isEqualTo(false);
-        actual.setDeleted(true);
+        //actual.setDeleted(true);
+        answerRepository.delete(actual);
 
         List<Answer> result = answerRepository.findAll();
         assertThat(result.size()).isEqualTo(0);

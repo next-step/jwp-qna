@@ -12,7 +12,7 @@ public class User extends AbstractDate {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 50)

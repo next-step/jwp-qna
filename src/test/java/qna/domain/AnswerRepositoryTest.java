@@ -1,7 +1,6 @@
 package qna.domain;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -16,6 +15,16 @@ class AnswerRepositoryTest {
 
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @BeforeEach
+    void setting() {
+        userRepository.saveAll(Arrays.asList(UserTest.JAVAJIGI, UserTest.SANJIGI, UserTest.TESTUSER));
+        questionRepository.saveAll(Arrays.asList(QuestionTest.Q1, QuestionTest.Q2, QuestionTest.Q3, QuestionTest.Q4));
+    }
 
     @Test
     void save() {
@@ -34,17 +43,19 @@ class AnswerRepositoryTest {
     @DisplayName("삭제되지 않은 Answer 리스트를 QuestionId 로 찾는다")
     void findByQuestionIdAndDeletedFalse() {
         List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(AnswerTest.A3, AnswerTest.A4));
-        actualAnswers.get(0).setDeleted(true);
+        //actualAnswers.get(0).setDeleted(true);
+        answerRepository.delete(actualAnswers.get(0));
 
-        final List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
-        assertThat(findAnswers.size()).isEqualTo(1);
+        final List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q3.getId());
+        assertThat(findAnswers.size()).isEqualTo(0);
     }
 
     @Test
     @DisplayName("삭제되지 않은 Answer 를 id 로 찾는다")
     void findByIdAndDeletedFalse() {
         List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(AnswerTest.A3, AnswerTest.A4));
-        actualAnswers.get(0).setDeleted(true);
+        //actualAnswers.get(0).setDeleted(true);
+        answerRepository.delete(actualAnswers.get(0));
 
         final Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(AnswerTest.A3.getId());
         assertThat(findAnswer.isPresent()).isFalse();

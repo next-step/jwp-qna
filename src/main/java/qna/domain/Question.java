@@ -14,7 +14,7 @@ import java.util.List;
 public class Question extends AbstractDate {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Lob
@@ -28,7 +28,7 @@ public class Question extends AbstractDate {
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id")
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)

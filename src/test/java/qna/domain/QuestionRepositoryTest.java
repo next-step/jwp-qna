@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +17,13 @@ class QuestionRepositoryTest {
 
     @Autowired
     QuestionRepository questionRepository;
+    @Autowired
+    UserRepository userRepository;
+
+    @BeforeEach
+    void setting() {
+        userRepository.saveAll(Arrays.asList(UserTest.JAVAJIGI, UserTest.SANJIGI, UserTest.TESTUSER));
+    }
 
     @Test
     void save() {

@@ -8,7 +8,7 @@ import java.util.Objects;
 public class DeleteHistory extends AbstractDate {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "content_id")
@@ -22,7 +22,7 @@ public class DeleteHistory extends AbstractDate {
     private LocalDateTime createDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "deleted_by_id")
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User writer;
 
     public DeleteHistory(ContentType contentType, Long contentId, User writer, LocalDateTime createDate) {
