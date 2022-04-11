@@ -28,6 +28,16 @@ class QuestionRepositoryTest {
     }
 
     @Test
+    @DisplayName("save 학습테스트. 같은 객체를 중복으로 저장하였을 때 결과 확인")
+    void duplicateSave() {
+        final User writer = userRepository.save(UserTest.TESTUSER);
+        final Question question1 = questionRepository.save(QuestionTest.Q1.writeBy(writer));
+        final Question question2 = questionRepository.save(QuestionTest.Q1.writeBy(writer));
+        assertThat(question1.getId()).isEqualTo(question2.getId());
+        assertThat(question1.getId()).isEqualTo(QuestionTest.Q1.getId());
+    }
+
+    @Test
     @DisplayName("삭제되지 않은 질문들을 찾는다")
     void findByDeletedFalse() {
         final List<User> writers = userRepository.saveAll(Arrays.asList(UserTest.JAVAJIGI, UserTest.SANJIGI));
