@@ -20,31 +20,35 @@ class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
-    @BeforeEach
-    void setting() {
-        userRepository.saveAll(Arrays.asList(UserTest.JAVAJIGI, UserTest.SANJIGI, UserTest.TESTUSER));
-        questionRepository.saveAll(Arrays.asList(QuestionTest.Q1, QuestionTest.Q2, QuestionTest.Q3, QuestionTest.Q4));
-    }
 
     @Test
     void save() {
-        final Answer actual = answerRepository.save(AnswerTest.A1);
-        assertThat(actual.getId()).isEqualTo(AnswerTest.A1.getId());
+        final User writer = userRepository.save(UserTest.JAVAJIGI);
+        final Question question = questionRepository.save(QuestionTest.Q1.writeBy(writer));
+        final Answer A1 = new Answer(writer, question, "A1");
+        final Answer actual = answerRepository.save(A1); //save 에 transaction 걸려있음. IDENTITY 전략이라 insert 적용
+        assertThat(actual).isEqualTo(A1);
     }
 
     @Test
     void findById() {
-        final Answer answer = answerRepository.save(AnswerTest.A2);
-        final Optional<Answer> actual = answerRepository.findById(AnswerTest.A2.getId());
+        final User writer = userRepository.save(UserTest.SANJIGI);
+        final Question question = questionRepository.save(QuestionTest.Q2.writeBy(writer));
+        final Answer answer = answerRepository.save(new Answer(writer, question, "A2"));
+        final Optional<Answer> actual = answerRepository.findById(answer.getId());
         assertThat(actual.get()).isEqualTo(answer);
     }
 
     @Test
     @DisplayName("삭제되지 않은 Answer 리스트를 QuestionId 로 찾는다")
     void findByQuestionIdAndDeletedFalse() {
-        List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(AnswerTest.A3, AnswerTest.A4));
+        final User writer = userRepository.save(UserTest.TESTUSER);
+        final List<Question> questions = questionRepository.saveAll(Arrays.asList(QuestionTest.Q3.writeBy(writer), QuestionTest.Q4.writeBy(writer)));
+        final Answer A3 = new Answer(writer, questions.get(0), "A3");
+        final Answer A4 = new Answer(writer, questions.get(1), "A4");
+        final List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(A3, A4));
         //actualAnswers.get(0).setDeleted(true);
-        answerRepository.delete(actualAnswers.get(0));
+        answerRepository.delete(A3);
 
         final List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q3.getId());
         assertThat(findAnswers.size()).isEqualTo(0);
@@ -53,11 +57,15 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 Answer 를 id 로 찾는다")
     void findByIdAndDeletedFalse() {
-        List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(AnswerTest.A3, AnswerTest.A4));
+        final User writer = userRepository.save(UserTest.TESTUSER);
+        final List<Question> questions = questionRepository.saveAll(Arrays.asList(QuestionTest.Q3.writeBy(writer), QuestionTest.Q4.writeBy(writer)));
+        final Answer A3 = new Answer(writer, questions.get(0), "A3");
+        final Answer A4 = new Answer(writer, questions.get(1), "A4");
+        final List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(A3, A4));
         //actualAnswers.get(0).setDeleted(true);
-        answerRepository.delete(actualAnswers.get(0));
+        answerRepository.delete(A3);
 
-        final Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(AnswerTest.A3.getId());
+        final Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(A3.getId());
         assertThat(findAnswer.isPresent()).isFalse();
     }
 }

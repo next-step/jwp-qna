@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,21 +19,20 @@ class QuestionRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
-    @BeforeEach
-    void setting() {
-        userRepository.saveAll(Arrays.asList(UserTest.JAVAJIGI, UserTest.SANJIGI, UserTest.TESTUSER));
-    }
 
     @Test
     void save() {
-        final Question actual = questionRepository.save(QuestionTest.Q3);
+        final User writer = userRepository.save(UserTest.TESTUSER);
+        final Question actual = questionRepository.save(QuestionTest.Q3.writeBy(writer));
         assertThat(actual.getId()).isEqualTo(QuestionTest.Q3.getId());
     }
 
     @Test
     @DisplayName("삭제되지 않은 질문들을 찾는다")
     void findByDeletedFalse() {
-        questionRepository.saveAll(Arrays.asList(QuestionTest.Q1, QuestionTest.Q2));
+        final List<User> writers = userRepository.saveAll(Arrays.asList(UserTest.JAVAJIGI, UserTest.SANJIGI));
+        final List<Question> questions = questionRepository.saveAll(Arrays.asList(
+                QuestionTest.Q1.writeBy(writers.get(0)), QuestionTest.Q2.writeBy(writers.get(1))));
         List<Question> findQuestions = questionRepository.findByDeletedFalse();
 
         assertThat(findQuestions.size()).isEqualTo(2);
@@ -46,8 +44,10 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 질문들을 id 를 통해서 찾는다")
     void findByIdAndDeletedFalse() {
-        List<Question> actual = questionRepository.saveAll(Arrays.asList(QuestionTest.Q4));
-        actual.get(0).setDeleted(true);
+        final User writer = userRepository.save(UserTest.TESTUSER);
+        final List<Question> questions = questionRepository.saveAll(Arrays.asList(QuestionTest.Q4.writeBy(writer)));
+        //questions.get(0).setDeleted(true);
+        questionRepository.delete(questions.get(0));
 
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(QuestionTest.Q4.getId());
         assertThat(findQuestion.isPresent()).isFalse();

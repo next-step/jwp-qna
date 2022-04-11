@@ -25,6 +25,9 @@ public class DeleteHistory extends AbstractDate {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User writer;
 
+    public DeleteHistory() {
+    }
+
     public DeleteHistory(ContentType contentType, Long contentId, User writer, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;

@@ -36,7 +36,7 @@ public class User extends AbstractDate {
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-    private User() {
+    public User() {
     }
 
     public User(String userId, String password, String name, String email) {
