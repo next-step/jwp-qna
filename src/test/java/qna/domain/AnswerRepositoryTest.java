@@ -70,6 +70,9 @@ class AnswerRepositoryTest {
         assertThat(findAnswer.isPresent()).isFalse();
     }
 
+
+
+
     @Test
     @DisplayName("cascade 학습테스트. 부모가 영속 상태이면, 자식도 영속 상태가 된다")
     void cascade() {
@@ -78,17 +81,20 @@ class AnswerRepositoryTest {
         Question newQuestion = new Question("question", "is");
         Answer newAnswer = new Answer(newWriter, newQuestion, "answer");
 
-        newQuestion.writeBy(newWriter);
-        newQuestion.addAnswer(newAnswer);
-        newWriter.addAnswer(newAnswer);
+        newQuestion.writeBy(newWriter);         // 연관관계의 주인으로 양방향 연관관계 설정 (연관관계를 안해주면 연관관계가 실패하여 save 가 실패한다.)
+        newQuestion.addAnswer(newAnswer);       // 연관관계의 주인이 아니지만, cascade 를 통해서 Answer 도 영속성
+        //newAnswer.setQuestion(newQuestion);   // 연관관계의 주인이지만, 이렇게 하려면 question 도 save 하고, answer 도 save 해야 한다.
+        //newWriter.addAnswer(newAnswer);       // 연관관계의 주인이 아니고, Answer 에서 User 를 넣어서 연관관계 맺어주었으므로 안해줘도 성공한다.
+        //newWriter.addQuestion();              // 연관관계의 주인이 아니고, newQuestion.writeBy 으로 맺어주었으므로 안해줘도 성공한다.
 
         //when
         userRepository.save(newWriter);
-        Question q = questionRepository.save(newQuestion);
+        Question actualQuestion = questionRepository.save(newQuestion);
 
         //then
-        //assertThat(q.getWriter()).isEqualTo(newWriter);
-        assertThat(q.getAnswer().size()).isEqualTo(1);
-        //assertThat(answerRepository.findById(newAnswer.getId())).isNotEmpty();
+        //userRepository, questionRepository, answerRepository 모두 같은 영속성 컨텍스트에서 관리된다.
+        assertThat(actualQuestion.getAnswer().size()).isEqualTo(1);
+        assertThat(answerRepository.findById(newAnswer.getId()).get().getWriter()).isEqualTo(newWriter);
+        assertThat(answerRepository.findById(newAnswer.getId())).isNotEmpty();
     }
 }

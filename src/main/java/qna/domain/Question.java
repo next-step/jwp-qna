@@ -56,8 +56,9 @@ public class Question extends AbstractDate {
         return this.writer.getId().equals(writer.getId());
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+    public void addAnswer(Answer newAnswer) {
+        newAnswer.toQuestion(this);
+        answer.add(newAnswer);
     }
 
     public Long getId() {
