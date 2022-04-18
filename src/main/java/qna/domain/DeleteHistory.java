@@ -21,13 +21,17 @@ public class DeleteHistory extends AbstractDate {
     @Column(name = "create_date")
     private LocalDateTime createDate;
 
-    @Column(name = "deleted_by_id")
-    private Long deletedById;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User writer;
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory() {
+    }
+
+    public DeleteHistory(ContentType contentType, Long contentId, User writer, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.writer = writer;
         this.createDate = createDate;
     }
 
@@ -39,12 +43,12 @@ public class DeleteHistory extends AbstractDate {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(writer.getId(), that.writer.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, writer.getId());
     }
 
     @Override
@@ -53,7 +57,7 @@ public class DeleteHistory extends AbstractDate {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + writer.getId() +
                 ", createDate=" + createDate +
                 '}';
     }

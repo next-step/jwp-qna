@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,14 @@ class UserRepositoryTest {
     void save() {
         final User user = userRepository.save(UserTest.SANJIGI);
         assertThat(user.getUserId()).isEqualTo(UserTest.SANJIGI.getUserId());
+    }
+
+    @Test
+    @DisplayName("save 학습테스트. GenerationType.IDENTITY 전략에서 객체를 저장하였을 때 결과 확인")
+    void saveIDENTITY() {
+        final User user = userRepository.save(UserTest.TESTUSER);
+        assertThat(user.getId()).isNotEqualTo(UserTest.TESTUSER.getId());
+        //UserTest.TESTUSER 의 id를 지정해줬어도 IDENTITY 에 따라 실제 id 저장 값은 다르게 된다.
     }
 
     @Test

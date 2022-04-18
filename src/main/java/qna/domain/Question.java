@@ -5,6 +5,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Where(clause = "deleted = 0")
@@ -25,8 +27,12 @@ public class Question extends AbstractDate {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @Column(name = "content_id")
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    private List<Answer> answer = new ArrayList<>();
 
     public Question() {
     }
@@ -42,16 +48,17 @@ public class Question extends AbstractDate {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+    public void addAnswer(Answer newAnswer) {
+        newAnswer.toQuestion(this);
+        answer.add(newAnswer);
     }
 
     public Long getId() {
@@ -78,12 +85,12 @@ public class Question extends AbstractDate {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -94,13 +101,22 @@ public class Question extends AbstractDate {
         this.deleted = deleted;
     }
 
+    public List<Answer> getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(List<Answer> answer) {
+        this.answer = answer;
+    }
+
+
     @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
