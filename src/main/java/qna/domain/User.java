@@ -149,6 +149,14 @@ public class User extends AbstractDate {
         this.deleteHistories = deleteHistories;
     }
 
+    public void addQuestion(Question newQuestion) {
+        question.add(newQuestion);
+    }
+
+    public void addAnswer(Answer newAnswer) {
+        answer.add(newAnswer);
+    }
+
     @Override
     public String toString() {
         return "User{" +

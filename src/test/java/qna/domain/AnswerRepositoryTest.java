@@ -20,11 +20,17 @@ class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    private User writer;
+    private Question question;
+
+    @BeforeEach
+    void setting() {
+        writer = userRepository.save(new User("id", "pwd", "writer", "writer@slipp.net"));
+        question = questionRepository.save(QuestionTest.Q1.writeBy(writer));
+    }
 
     @Test
     void save() {
-        final User writer = userRepository.save(UserTest.JAVAJIGI);
-        final Question question = questionRepository.save(QuestionTest.Q1.writeBy(writer));
         final Answer A1 = new Answer(writer, question, "A1");
         final Answer actual = answerRepository.save(A1); //save 에 transaction 걸려있음. IDENTITY 전략이라 insert 적용
         assertThat(actual).isEqualTo(A1);
@@ -32,40 +38,57 @@ class AnswerRepositoryTest {
 
     @Test
     void findById() {
-        final User writer = userRepository.save(UserTest.SANJIGI);
-        final Question question = questionRepository.save(QuestionTest.Q2.writeBy(writer));
-        final Answer answer = answerRepository.save(new Answer(writer, question, "A2"));
-        final Optional<Answer> actual = answerRepository.findById(answer.getId());
-        assertThat(actual.get()).isEqualTo(answer);
+        final Answer answer = new Answer(writer, question, "AnswerIs");
+        final Answer actual = answerRepository.save(answer);
+        final Optional<Answer> answers = answerRepository.findById(actual.getId());
+        assertThat(actual.getContents()).isEqualTo(answer.getContents());
     }
 
     @Test
     @DisplayName("삭제되지 않은 Answer 리스트를 QuestionId 로 찾는다")
     void findByQuestionIdAndDeletedFalse() {
-        final User writer = userRepository.save(UserTest.TESTUSER);
-        final List<Question> questions = questionRepository.saveAll(Arrays.asList(QuestionTest.Q3.writeBy(writer), QuestionTest.Q4.writeBy(writer)));
-        final Answer A3 = new Answer(writer, questions.get(0), "A3");
-        final Answer A4 = new Answer(writer, questions.get(1), "A4");
-        final List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(A3, A4));
+        final Answer answer1 = new Answer(writer, question, "AnswerIs1");
+        final Answer answer2 = new Answer(writer, question, "AnswerIs2");
+        final List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(answer1, answer2));
         //actualAnswers.get(0).setDeleted(true);
-        answerRepository.delete(A3);
+        answerRepository.delete(answer1);
 
-        final List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q3.getId());
-        assertThat(findAnswers.size()).isEqualTo(0);
+        final List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+        assertThat(findAnswers.size()).isEqualTo(1);
     }
 
     @Test
     @DisplayName("삭제되지 않은 Answer 를 id 로 찾는다")
     void findByIdAndDeletedFalse() {
-        final User writer = userRepository.save(UserTest.TESTUSER);
-        final List<Question> questions = questionRepository.saveAll(Arrays.asList(QuestionTest.Q3.writeBy(writer), QuestionTest.Q4.writeBy(writer)));
-        final Answer A3 = new Answer(writer, questions.get(0), "A3");
-        final Answer A4 = new Answer(writer, questions.get(1), "A4");
-        final List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(A3, A4));
+        final Answer answer1 = new Answer(writer, question, "AnswerIs1");
+        final Answer answer2 = new Answer(writer, question, "AnswerIs2");
+        final List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(answer1, answer2));
         //actualAnswers.get(0).setDeleted(true);
-        answerRepository.delete(A3);
+        answerRepository.delete(answer1);
 
-        final Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(A3.getId());
+        final Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(actualAnswers.get(0).getId());
         assertThat(findAnswer.isPresent()).isFalse();
+    }
+
+    @Test
+    @DisplayName("cascade 학습테스트. 부모가 영속 상태이면, 자식도 영속 상태가 된다")
+    void cascade() {
+        //given
+        User newWriter = new User("id", "pwd", "user", "email@slipp.net");
+        Question newQuestion = new Question("question", "is");
+        Answer newAnswer = new Answer(newWriter, newQuestion, "answer");
+
+        newQuestion.writeBy(newWriter);
+        newQuestion.addAnswer(newAnswer);
+        newWriter.addAnswer(newAnswer);
+
+        //when
+        userRepository.save(newWriter);
+        Question q = questionRepository.save(newQuestion);
+
+        //then
+        //assertThat(q.getWriter()).isEqualTo(newWriter);
+        assertThat(q.getAnswer().size()).isEqualTo(1);
+        //assertThat(answerRepository.findById(newAnswer.getId())).isNotEmpty();
     }
 }
