@@ -3,8 +3,10 @@ package qna.domain;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import qna.exception.CannotDeleteException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +55,7 @@ public class Question extends AbstractDate {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer newAnswer) {
@@ -107,6 +109,19 @@ public class Question extends AbstractDate {
 
     public void setAnswer(List<Answer> answer) {
         this.answer = answer;
+    }
+
+
+    public void delete(User loginUser, List<DeleteHistory> deleteHistories) throws CannotDeleteException {
+        validateDelete(loginUser);
+        setDeleted(true);
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now()));
+    }
+
+    public void validateDelete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
 
