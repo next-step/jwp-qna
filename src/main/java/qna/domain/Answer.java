@@ -19,8 +19,8 @@ public class Answer extends AbstractDate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @ColumnDefault("0")
     @Column(nullable = false)
@@ -31,17 +31,17 @@ public class Answer extends AbstractDate {
     private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id" , foreignKey = @ForeignKey(name = "fk_answer_to_writer"))
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_to_writer"))
     private User writer;
 
     public Answer() {
     }
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer(User writer, Question question, Contents contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, Contents contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -89,11 +89,11 @@ public class Answer extends AbstractDate {
         this.question = question;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void setContents(Contents contents) {
         this.contents = contents;
     }
 

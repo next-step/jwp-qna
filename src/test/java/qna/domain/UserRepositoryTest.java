@@ -18,7 +18,7 @@ class UserRepositoryTest {
     @Test
     void save() {
         final User user = userRepository.save(UserTest.SANJIGI);
-        assertThat(user.getUserId()).isEqualTo(UserTest.SANJIGI.getUserId());
+        assertThat(user.getUserInfo().getUserId()).isEqualTo(UserTest.SANJIGI.getUserInfo().getUserId());
     }
 
     @Test
@@ -30,10 +30,10 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("id 를 통해서 user 를 찾는다")
+    @DisplayName("회원정보를 통해서 user 를 찾는다")
     void findByUserId() {
         final User user = userRepository.save(UserTest.JAVAJIGI);
-        final Optional<User> findUser = userRepository.findByUserId(user.getUserId());
-        assertThat(findUser.get().getUserId()).isEqualTo(user.getUserId());
+        final Optional<User> findUser = userRepository.findByUserInfo(user.getUserInfo());
+        assertThat(findUser.get().getUserInfo().getUserId()).isEqualTo(user.getUserInfo().getUserId());
     }
 }

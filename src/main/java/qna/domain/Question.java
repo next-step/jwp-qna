@@ -19,8 +19,8 @@ public class Question extends AbstractDate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @ColumnDefault("0")
     @Column(nullable = false)
@@ -39,11 +39,11 @@ public class Question extends AbstractDate {
     public Question() {
     }
 
-    public Question(String title, String contents) {
+    public Question(String title, Contents contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, String title, Contents contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -79,11 +79,11 @@ public class Question extends AbstractDate {
         this.title = title;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void setContents(Contents contents) {
         this.contents = contents;
     }
 
