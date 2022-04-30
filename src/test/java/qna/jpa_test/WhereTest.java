@@ -31,7 +31,8 @@ public class WhereTest {
 
     @BeforeEach
     void setting() {
-        UserInfo userInfo = new UserInfo("id", "pwd", "writer", "writer@slipp.net");
+        LoginInfo loginInfo = new LoginInfo("id", "pwd", "writer@slipp.net");
+        UserInfo userInfo = new UserInfo("writer", loginInfo);
         writer = userRepository.save(new User(userInfo));
         question = questionRepository.save(QuestionTest.Q1.writeBy(writer));
     }
@@ -39,7 +40,7 @@ public class WhereTest {
     @Test
     @DisplayName("soft-delete 학습 테스트")
     void createdDateTest() {
-        Answer actual = answerRepository.save(new Answer(writer, question, new Contents("answer")));
+        Answer actual = answerRepository.save(new Answer(writer, question, "answer"));
         assertThat(actual.isDeleted()).isEqualTo(false);
         //actual.setDeleted(true);
         answerRepository.delete(actual);

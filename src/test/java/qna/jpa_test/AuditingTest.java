@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,30 +30,31 @@ public class AuditingTest {
 
     @BeforeEach
     void setting() {
-        UserInfo userInfo = new UserInfo("id", "pwd", "writer", "writer@slipp.net");
+        LoginInfo loginInfo = new LoginInfo("id", "pwd", "writer@slipp.net");
+        UserInfo userInfo = new UserInfo("writer", loginInfo);
         writer = userRepository.save(new User(userInfo));
-        question = questionRepository.save(new Question("title", new Contents("question")).writeBy(writer));
+        question = questionRepository.save(new Question("title", "question").writeBy(writer));
     }
 
     @Test
     @DisplayName("CreatedDate 학습 테스트")
     void createdDateTest() {
-        LocalDateTime now = LocalDateTime.now();
-        Answer answer = answerRepository.save(new Answer(writer, question, new Contents("A1")));
+        Answer answer = answerRepository.save(new Answer(writer, question, "A1"));
         LocalDateTime createTime = answer.getCreatedAt();
-        assertThat(createTime).isAfter(now);
         assertThat(createTime).isNotNull();
+        assertThat(createTime).isNotEqualTo(LocalDateTime.now());
     }
 
     @Test
     @DisplayName("LastModifiedDate 학습 테스트")
     void LastModifiedDate() {
-        Answer answer = new Answer(writer, question, new Contents("after update"));
-        LocalDateTime before = LocalDateTime.now();
+        Answer answer = new Answer(writer, question, "before update");
         Answer actual = answerRepository.save(answer);
+        LocalDateTime before = actual.getCreatedAt();
 
-        actual.setContents(new Contents("after update"));
-        LocalDateTime after = actual.getUpdatedAt();
+        actual.setContents("after update");
+        Answer persist = answerRepository.findAll().get(0);
+        LocalDateTime after = persist.getUpdatedAt();
 
         assertThat(after).isNotEqualTo(before);
     }

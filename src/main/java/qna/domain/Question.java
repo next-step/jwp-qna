@@ -19,8 +19,8 @@ public class Question extends AbstractDate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Embedded
-    private Contents contents;
+    @Lob
+    private String contents;
 
     @ColumnDefault("0")
     @Column(nullable = false)
@@ -39,11 +39,11 @@ public class Question extends AbstractDate {
     public Question() {
     }
 
-    public Question(String title, Contents contents) {
+    public Question(String title, String contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, Contents contents) {
+    public Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -79,11 +79,11 @@ public class Question extends AbstractDate {
         this.title = title;
     }
 
-    public Contents getContents() {
+    public String getContents() {
         return contents;
     }
 
-    public void setContents(Contents contents) {
+    public void setContents(String contents) {
         this.contents = contents;
     }
 
@@ -122,6 +122,7 @@ public class Question extends AbstractDate {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
+        new Answers(answer).validateDelete(loginUser);
     }
 
 

@@ -38,7 +38,7 @@ public class User extends AbstractDate {
     }
 
     public void update(User loginUser, User target) {
-        userInfo.update(loginUser.userInfo, target.userInfo);
+        userInfo.update(target.userInfo);
     }
 
     public boolean equalsNameAndEmail(User target) {

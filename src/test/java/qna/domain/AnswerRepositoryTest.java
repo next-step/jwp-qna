@@ -25,21 +25,22 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     void setting() {
-        UserInfo userInfo = new UserInfo("id", "pwd", "writer", "writer@slipp.net");
+        LoginInfo loginInfo = new LoginInfo("id", "pwd", "writer@slipp.net");
+        UserInfo userInfo = new UserInfo("writer", loginInfo);
         writer = userRepository.save(new User(userInfo));
         question = questionRepository.save(QuestionTest.Q1.writeBy(writer));
     }
 
     @Test
     void save() {
-        final Answer A1 = new Answer(writer, question, new Contents("A1"));
+        final Answer A1 = new Answer(writer, question, "A1");
         final Answer actual = answerRepository.save(A1); //save 에 transaction 걸려있음. IDENTITY 전략이라 insert 적용
         assertThat(actual).isEqualTo(A1);
     }
 
     @Test
     void findById() {
-        final Answer answer = new Answer(writer, question, new Contents("AnswerIs"));
+        final Answer answer = new Answer(writer, question, "AnswerIs");
         final Answer actual = answerRepository.save(answer);
         final Optional<Answer> answers = answerRepository.findById(actual.getId());
         assertThat(actual.getContents()).isEqualTo(answer.getContents());
@@ -48,8 +49,8 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 Answer 리스트를 QuestionId 로 찾는다")
     void findByQuestionIdAndDeletedFalse() {
-        final Answer answer1 = new Answer(writer, question, new Contents("AnswerIs1"));
-        final Answer answer2 = new Answer(writer, question, new Contents("AnswerIs2"));
+        final Answer answer1 = new Answer(writer, question, "AnswerIs1");
+        final Answer answer2 = new Answer(writer, question, "AnswerIs2");
         final List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(answer1, answer2));
         //actualAnswers.get(0).setDeleted(true);
         answerRepository.delete(answer1);
@@ -61,8 +62,8 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 Answer 를 id 로 찾는다")
     void findByIdAndDeletedFalse() {
-        final Answer answer1 = new Answer(writer, question, new Contents("AnswerIs1"));
-        final Answer answer2 = new Answer(writer, question, new Contents("AnswerIs2"));
+        final Answer answer1 = new Answer(writer, question, "AnswerIs1");
+        final Answer answer2 = new Answer(writer, question, "AnswerIs2");
         final List<Answer> actualAnswers = answerRepository.saveAll(Arrays.asList(answer1, answer2));
         //actualAnswers.get(0).setDeleted(true);
         answerRepository.delete(answer1);

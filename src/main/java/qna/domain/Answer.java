@@ -8,6 +8,8 @@ import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -19,8 +21,8 @@ public class Answer extends AbstractDate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Embedded
-    private Contents contents;
+    @Lob
+    private String contents;
 
     @ColumnDefault("0")
     @Column(nullable = false)
@@ -37,11 +39,11 @@ public class Answer extends AbstractDate {
     public Answer() {
     }
 
-    public Answer(User writer, Question question, Contents contents) {
+    public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, Contents contents) {
+    public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -89,11 +91,11 @@ public class Answer extends AbstractDate {
         this.question = question;
     }
 
-    public Contents getContents() {
+    public String getContents() {
         return contents;
     }
 
-    public void setContents(Contents contents) {
+    public void setContents(String contents) {
         this.contents = contents;
     }
 
@@ -103,6 +105,12 @@ public class Answer extends AbstractDate {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void delete(User loginUser, List<DeleteHistory> deleteHistories) throws CannotDeleteException {
+        validateDelete(loginUser);
+        setDeleted(true);
+        deleteHistories.add(new DeleteHistory(ContentType.ANSWER, getId(), getWriter(), LocalDateTime.now()));
     }
 
     public void validateDelete(User loginUser) throws CannotDeleteException {
