@@ -29,8 +29,7 @@ public class CascadeTest {
     @BeforeEach
     void setting() {
         UserLogin userLogin = new UserLogin("id", "pwd", "writer@slipp.net");
-        UserInfo userInfo = new UserInfo("writer", userLogin);
-        writer = userRepository.save(new User(userInfo));
+        writer = userRepository.save(new User("writer", userLogin));
         question = questionRepository.save(QuestionTest.Q1.writeBy(writer));
     }
 
@@ -38,7 +37,7 @@ public class CascadeTest {
     @DisplayName("cascade 학습테스트. 부모가 영속 상태이면, 자식도 영속 상태가 된다")
     void cascade() {
         //given
-        User newWriter = new User(new UserInfo("user", new UserLogin("id", "pwd", "email@slipp.net")));
+        User newWriter = new User("user", new UserLogin("id", "pwd", "email@slipp.net"));
         Question newQuestion = new Question("question", "question is");
         Answer newAnswer = new Answer(newWriter, newQuestion, "answer is");
 

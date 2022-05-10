@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.exception.UnAuthorizedException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +15,11 @@ public class User extends AbstractDate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 20, nullable = false)
+    private String name;
+
     @Embedded
-    private UserInfo userInfo;
+    private UserLogin userLogin;
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Question> question = new ArrayList<>();
@@ -28,24 +33,30 @@ public class User extends AbstractDate {
     public User() {
     }
 
-    public User(UserInfo userInfo) {
-        this(null, userInfo);
+    public User(String name, UserLogin userLogin) {
+        this(null, name, userLogin);
     }
 
-    public User(Long id, UserInfo userInfo) {
+    public User(Long id, String name, UserLogin userLogin) {
         this.id = id;
-        this.userInfo = userInfo;
+        this.name = name;
+        this.userLogin = userLogin;
     }
 
     public void update(User loginUser, User target) {
-        userInfo.update(target.userInfo);
+        if (!userLogin.equalsUserIdAndPassword(target.userLogin)) {
+            throw new UnAuthorizedException("로그인 정보가 맞지 않아 개인 정보를 변경할 수 없습니다.");
+        }
+        this.name = target.name;
+        this.userLogin = target.userLogin;
     }
 
     public boolean equalsNameAndEmail(User target) {
         if (Objects.isNull(target)) {
             return false;
         }
-        return userInfo.equalsNameAndEmail(target.userInfo);
+        return name.equals(target.name)
+                && userLogin.getEmail().equals(target.userLogin.getEmail());
     }
 
     public boolean isGuestUser() {
@@ -60,12 +71,12 @@ public class User extends AbstractDate {
         this.id = id;
     }
 
-    public UserInfo getUserInfo() {
-        return userInfo;
+    public String getName() {
+        return name;
     }
 
-    public void setUserInfo(UserInfo userInfo) {
-        this.userInfo = userInfo;
+    public UserLogin getUserLogin() {
+        return userLogin;
     }
 
     public List<Question> getQuestion() {
@@ -104,7 +115,8 @@ public class User extends AbstractDate {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", userInfo=" + userInfo +
+                ", name='" + name + '\'' +
+                ", userLogin=" + userLogin +
                 '}';
     }
 

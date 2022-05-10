@@ -29,8 +29,7 @@ public class EmbeddedTest {
     @DisplayName("임베디드 타입을 여러 엔티티에서 사용하는 경우")
     void embeddedType() {
         UserLogin userLogin = new UserLogin("id", "pwd", "writer@slipp.net");
-        UserInfo userInfo = new UserInfo("writer", userLogin);
-        User writer = userRepository.save(new User(userInfo));
+        User writer = userRepository.save(new User("writer", userLogin));
         Question question = questionRepository.save(new Question("title", "question_contents").writeBy(writer));
         Answer answer = answerRepository.save(new Answer(writer, question, "answer_contents"));
 
@@ -41,8 +40,7 @@ public class EmbeddedTest {
     @DisplayName("임베디드 타입을 여러 엔티티에서 공유 참조를 막기 위한 방법 - 입베디드타입을 불변 객체로 설계")
     void embeddedTypeShare() {
         UserLogin userLogin = new UserLogin("id", "pwd", "writer@slipp.net");
-        UserInfo userInfo = new UserInfo("writer", userLogin);
-        User writer = userRepository.save(new User(userInfo));
+        User writer = userRepository.save(new User("writer", userLogin));
         Question question = questionRepository.save(new Question("title1", "contents").writeBy(writer));
         Answer answer = answerRepository.save(new Answer(writer, question, "contents"));
 
@@ -55,7 +53,7 @@ public class EmbeddedTest {
     @Test
     @DisplayName("cascade 를 설정하고 일급 컬렉션을 임베디드 타입으로 사용하는 경우")
     void embeddedFirstCollection() {
-        User newWriter = new User(new UserInfo("user", new UserLogin("id", "pwd", "email@slipp.net")));
+        User newWriter = new User("user", new UserLogin("id", "pwd", "email@slipp.net"));
         Question newQuestion = new Question("question", "question is");
         Answer newAnswer1 = new Answer(newWriter, newQuestion, "answer is 1");
         Answer newAnswer2 = new Answer(newWriter, newQuestion, "answer is 2");

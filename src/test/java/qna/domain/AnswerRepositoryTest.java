@@ -26,8 +26,7 @@ class AnswerRepositoryTest {
     @BeforeEach
     void setting() {
         UserLogin userLogin = new UserLogin("id", "pwd", "writer@slipp.net");
-        UserInfo userInfo = new UserInfo("writer", userLogin);
-        writer = userRepository.save(new User(userInfo));
+        writer = userRepository.save(new User("writer", userLogin));
         question = questionRepository.save(QuestionTest.Q1.writeBy(writer));
     }
 
