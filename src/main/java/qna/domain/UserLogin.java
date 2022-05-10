@@ -5,7 +5,7 @@ import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
-public class LoginInfo {
+public class UserLogin {
 
     @Column(name = "user_id", length = 20, nullable = false)
     private String userId;
@@ -16,10 +16,10 @@ public class LoginInfo {
     @Column(length = 50)
     private String email;
 
-    public LoginInfo() {
+    public UserLogin() {
     }
 
-    public LoginInfo(String userId, String password, String email) {
+    public UserLogin(String userId, String password, String email) {
         this.userId = userId;
         this.password = password;
         this.email = email;
@@ -37,16 +37,16 @@ public class LoginInfo {
         return email;
     }
 
-    public boolean equalsUserIdAndPassword(LoginInfo target) {
+    public boolean equalsUserIdAndPassword(UserLogin target) {
         return userId.equals(target.userId) && password.equals(target.password);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LoginInfo)) return false;
-        LoginInfo loginInfo = (LoginInfo) o;
-        return getUserId().equals(loginInfo.getUserId()) && getEmail().equals(loginInfo.getEmail()) && getPassword().equals(loginInfo.getPassword());
+        if (!(o instanceof UserLogin)) return false;
+        UserLogin userLogin = (UserLogin) o;
+        return getUserId().equals(userLogin.getUserId()) && getEmail().equals(userLogin.getEmail()) && getPassword().equals(userLogin.getPassword());
     }
 
     @Override
@@ -56,7 +56,7 @@ public class LoginInfo {
 
     @Override
     public String toString() {
-        return "LoginInfo{" +
+        return "UserLogin{" +
                 "userId='" + userId + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +

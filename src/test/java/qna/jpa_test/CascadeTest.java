@@ -28,8 +28,8 @@ public class CascadeTest {
 
     @BeforeEach
     void setting() {
-        LoginInfo loginInfo = new LoginInfo("id", "pwd", "writer@slipp.net");
-        UserInfo userInfo = new UserInfo("writer", loginInfo);
+        UserLogin userLogin = new UserLogin("id", "pwd", "writer@slipp.net");
+        UserInfo userInfo = new UserInfo("writer", userLogin);
         writer = userRepository.save(new User(userInfo));
         question = questionRepository.save(QuestionTest.Q1.writeBy(writer));
     }
@@ -38,7 +38,7 @@ public class CascadeTest {
     @DisplayName("cascade 학습테스트. 부모가 영속 상태이면, 자식도 영속 상태가 된다")
     void cascade() {
         //given
-        User newWriter = new User(new UserInfo("user", new LoginInfo("id", "pwd", "email@slipp.net")));
+        User newWriter = new User(new UserInfo("user", new UserLogin("id", "pwd", "email@slipp.net")));
         Question newQuestion = new Question("question", "question is");
         Answer newAnswer = new Answer(newWriter, newQuestion, "answer is");
 
@@ -51,7 +51,7 @@ public class CascadeTest {
 
         //then
         //userRepository, questionRepository, answerRepository 모두 같은 영속성 컨텍스트에서 관리된다.
-        assertThat(actualQuestion.getAnswer().size()).isEqualTo(1);
+        assertThat(actualQuestion.getAnswers().size()).isEqualTo(1);
         assertThat(answerRepository.findById(newAnswer.getId()).get().getWriter()).isEqualTo(newWriter);
         assertThat(answerRepository.findById(newAnswer.getId())).isNotEmpty();
     }

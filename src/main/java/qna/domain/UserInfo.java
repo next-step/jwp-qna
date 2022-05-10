@@ -14,35 +14,35 @@ public class UserInfo {
     private String name;
 
     @Embedded
-    private LoginInfo loginInfo;
+    private UserLogin userLogin;
 
     public UserInfo() {
     }
 
-    public UserInfo(String name, LoginInfo loginInfo) {
+    public UserInfo(String name, UserLogin userLogin) {
         this.name = name;
-        this.loginInfo = loginInfo;
+        this.userLogin = userLogin;
     }
 
     public String getName() {
         return name;
     }
 
-    public LoginInfo getLoginInfo() {
-        return loginInfo;
+    public UserLogin getLoginInfo() {
+        return userLogin;
     }
 
     public void update(UserInfo target) {
-        if (!loginInfo.equalsUserIdAndPassword(target.loginInfo)) {
-            throw new UnAuthorizedException();
+        if (!userLogin.equalsUserIdAndPassword(target.userLogin)) {
+            throw new UnAuthorizedException("로그인 정보가 맞지 않아 개인 정보를 변경할 수 없습니다.");
         }
         this.name = target.name;
-        this.loginInfo = target.loginInfo;
+        this.userLogin = target.userLogin;
     }
 
     public boolean equalsNameAndEmail(UserInfo target) {
         return name.equals(target.name)
-                && loginInfo.getEmail().equals(target.loginInfo.getEmail());
+                && userLogin.getEmail().equals(target.userLogin.getEmail());
     }
 
     @Override
@@ -62,7 +62,7 @@ public class UserInfo {
     public String toString() {
         return "UserInfo{" +
                 "name='" + name + '\'' +
-                ", loginInfo=" + loginInfo +
+                ", loginInfo=" + userLogin +
                 '}';
     }
 }

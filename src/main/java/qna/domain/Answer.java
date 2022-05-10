@@ -115,7 +115,7 @@ public class Answer extends AbstractDate {
 
     public void validateDelete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException("다른 사람이 작성한 댓글은 삭제할 수 없습니다.");
         }
     }
 

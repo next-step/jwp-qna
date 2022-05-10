@@ -30,8 +30,8 @@ public class AuditingTest {
 
     @BeforeEach
     void setting() {
-        LoginInfo loginInfo = new LoginInfo("id", "pwd", "writer@slipp.net");
-        UserInfo userInfo = new UserInfo("writer", loginInfo);
+        UserLogin userLogin = new UserLogin("id", "pwd", "writer@slipp.net");
+        UserInfo userInfo = new UserInfo("writer", userLogin);
         writer = userRepository.save(new User(userInfo));
         question = questionRepository.save(new Question("title", "question").writeBy(writer));
     }
