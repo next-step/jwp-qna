@@ -11,3 +11,5 @@ spring:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
         show_sql: true
         format_sql: true
+    hibernate:
+     ddl-auto: update
