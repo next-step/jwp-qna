@@ -1,11 +1,37 @@
 package qna.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import java.time.LocalDateTime;
+
+@Entity
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Lob
     private String contents;
-    private Long writerId;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
     private boolean deleted = false;
+
+    @Column(length = 100, nullable = false)
+    private String title;
+
+    private LocalDateTime updatedAt;
+
+    private Long writerId;
+
+    public Question() {
+
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
