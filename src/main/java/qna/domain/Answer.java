@@ -1,17 +1,17 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.lang.NonNull;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -30,11 +30,15 @@ public class Answer {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    private Long questionId;
-
     private LocalDateTime updatedAt;
 
-    private Long writerId;
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey (name = "fk_answer_to_question"))
+    @ManyToOne
+    private Question question;
+
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey (name = "fk_answer_writer"))
+    @ManyToOne
+    private User writer;
 
     public Answer() {
     }
@@ -54,17 +58,17 @@ public class Answer {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -75,20 +79,20 @@ public class Answer {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public String getContents() {
@@ -111,10 +115,12 @@ public class Answer {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
+                ", createdAt=" + createdAt +
                 ", deleted=" + deleted +
+                ", question=" + question +
+                ", updatedAt=" + updatedAt +
+                ", writer=" + writer +
                 '}';
     }
 }
