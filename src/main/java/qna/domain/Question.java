@@ -1,6 +1,16 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import qna.domain.time.BaseTime;
+
+@Entity
+public class Question extends BaseTime {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String contents;
@@ -15,6 +25,9 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    protected Question() {
     }
 
     public Question writeBy(User writer) {
