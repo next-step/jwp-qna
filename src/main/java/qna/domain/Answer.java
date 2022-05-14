@@ -1,9 +1,11 @@
 package qna.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -18,7 +20,9 @@ public class Answer extends BaseTime {
     private Long id;
     private Long writerId;
     private Long questionId;
+    @Lob
     private String contents;
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Answer() {
