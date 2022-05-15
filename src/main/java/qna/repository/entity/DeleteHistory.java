@@ -37,6 +37,26 @@ public class DeleteHistory {
     public DeleteHistory() {
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
+    public Long getDeletedById() {
+        return deletedById;
+    }
+
     @Override
     public String toString() {
         return "DeleteHistory{" +
