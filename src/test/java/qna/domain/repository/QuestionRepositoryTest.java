@@ -1,0 +1,44 @@
+package qna.domain.repository;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.Question;
+
+@DataJpaTest
+class QuestionRepositoryTest {
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Test
+    void save() {
+        Question expected = new Question("JPA 잘쓰는 법", "알려주세요");
+        Question actual = questionRepository.save(expected);
+        assertAll(
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
+                () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
+        );
+    }
+
+    @Test
+    void findByDeletedFalse() {
+        for (Question question : questionRepository.findByDeletedFalse()) {
+            assertThat(question.isDeleted()).isFalse();
+        }
+    }
+
+    @Test
+    void findByIdAndDeletedFalse() {
+        Question question = questionRepository.findByIdAndDeletedFalse(1L).get();
+        assertAll(
+                () -> assertThat(question.isDeleted()).isFalse(),
+                () -> assertThat(question.getTitle()).isEqualTo("오늘 날씨 어떤가요?")
+        );
+    }
+}
