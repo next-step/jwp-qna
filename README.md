@@ -7,7 +7,7 @@
 - [X] User 엔티티 매핑
 - [X] Question 엔티티 매핑
 - [X] Answer 엔티티 매핑
-- [ ] DeleteHistory 엔티티 매핑
+- [X] DeleteHistory 엔티티 매핑
 - [ ] 매핑된 엔티티에 대한 DDL 이 정상적으로 처리되는지 확인 
 - 
 @DataJpaTest 를 활용한 도메인 테스트 진행
