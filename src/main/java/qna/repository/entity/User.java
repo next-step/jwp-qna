@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 @Table(name = "user")
