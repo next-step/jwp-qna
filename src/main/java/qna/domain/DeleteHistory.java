@@ -2,8 +2,12 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
-public class DeleteHistory {
+public class DeleteHistory extends BaseEntity {
+    @Id
+    @GeneratedValue
     private Long id;
     private ContentType contentType;
     private Long contentId;

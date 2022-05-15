@@ -1,6 +1,11 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+public class Question extends BaseEntity {
+    @Id
+    @GeneratedValue
     private Long id;
     private String title;
     private String contents;

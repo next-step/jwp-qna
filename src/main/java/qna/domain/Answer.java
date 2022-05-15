@@ -1,11 +1,15 @@
 package qna.domain;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
-public class Answer {
+public class Answer extends BaseEntity {
+    @Id
+    @GeneratedValue
     private Long id;
     private Long writerId;
     private Long questionId;
