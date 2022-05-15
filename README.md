@@ -6,7 +6,7 @@
 제시된 도메인 객체에 대한 엔티티 매핑 진행
 - [X] User 엔티티 매핑
 - [X] Question 엔티티 매핑
-- [ ] Answer 엔티티 매핑
+- [X] Answer 엔티티 매핑
 - [ ] DeleteHistory 엔티티 매핑
 - [ ] 매핑된 엔티티에 대한 DDL 이 정상적으로 처리되는지 확인 
 - 
