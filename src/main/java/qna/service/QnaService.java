@@ -11,6 +11,8 @@ import qna.domain.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import qna.domain.repository.AnswerRepository;
+import qna.domain.repository.QuestionRepository;
 
 @Service
 public class QnaService {
@@ -20,7 +22,8 @@ public class QnaService {
     private AnswerRepository answerRepository;
     private DeleteHistoryService deleteHistoryService;
 
-    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
+    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository,
+                      DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.deleteHistoryService = deleteHistoryService;
@@ -48,10 +51,12 @@ public class QnaService {
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         question.setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriterId(), LocalDateTime.now()));
+        deleteHistories
+                .add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriterId(), LocalDateTime.now()));
         for (Answer answer : answers) {
             answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId(), LocalDateTime.now()));
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId(),
+                    LocalDateTime.now()));
         }
         deleteHistoryService.saveAll(deleteHistories);
     }
