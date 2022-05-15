@@ -21,7 +21,7 @@ public class Question {
     private String contents;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     private boolean deleted = false;
 
@@ -46,6 +46,12 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    public Question(String title, String contents, User user) {
+        this.title = title;
+        this.contents = contents;
+        this.writer = user;
     }
 
     public Question writeBy(User writer) {

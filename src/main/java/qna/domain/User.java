@@ -19,7 +19,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(length = 50)
     private String email;
@@ -31,13 +31,13 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
     public User() {
-        
+
     }
 
     public User(String userId, String password, String name, String email) {
