@@ -43,6 +43,10 @@ public class User {
     public User() {
     }
 
+    public User(String name, String password, String userId) {
+        this(null, userId, password, name, null);
+    }
+
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
     }
@@ -53,12 +57,6 @@ public class User {
         this.password = password;
         this.name = name;
         this.email = email;
-    }
-
-    public User(String name, String password, String userId) {
-        this.name = name;
-        this.password = password;
-        this.userId = userId;
     }
 
     public void update(User loginUser, User target) {
