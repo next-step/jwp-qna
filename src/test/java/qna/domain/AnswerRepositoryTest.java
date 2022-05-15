@@ -9,6 +9,7 @@ import static qna.domain.AnswerTest.A2;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -27,6 +28,7 @@ class AnswerRepositoryTest {
         answerRepository.save(A2);
     }
 
+    @DisplayName("삭제 상태가 아닌 답변을 모두 찾는다.")
     @Test
     void findByIdAndDeletedFalse() {
         Optional<Answer> byId = answerRepository.findByIdAndDeletedFalse(A1.getId());

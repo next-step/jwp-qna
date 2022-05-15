@@ -7,6 +7,7 @@ import static qna.domain.UserTest.JAVAJIGI;
 
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -24,6 +25,7 @@ class UserRepositoryTest {
         user = userRepository.save(JAVAJIGI);
     }
 
+    @DisplayName("유저 ID를 통해 회원을 찾는다.")
     @Test
     void findByUserId() {
         Optional<User> byUserId = userRepository.findByUserId(JAVAJIGI.getUserId());

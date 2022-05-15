@@ -9,6 +9,7 @@ import static qna.domain.QuestionTest.Q2;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -27,6 +28,7 @@ class QuestionRepositoryTest {
         questionRepository.save(Q2);
     }
 
+    @DisplayName("해당 ID로 삭제상태가 아닌 질문을 찾는다.")
     @Test
     void findByIdAndDeletedFalse() {
         Long questionId = question.getId();
@@ -41,6 +43,7 @@ class QuestionRepositoryTest {
         );
     }
 
+    @DisplayName("삭제 상태가 아닌 질문을 모두 찾는다.")
     @Test
     void findByDeletedFalse() {
         List<Question> questionList = questionRepository.findByDeletedFalse();

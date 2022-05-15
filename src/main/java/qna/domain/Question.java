@@ -1,5 +1,6 @@
 package qna.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 
 @Entity
-public class Question extends BaseEntity{
+public class Question extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,8 +17,10 @@ public class Question extends BaseEntity{
     @Lob
     private String contents;
 
-    private boolean deleted = false;
+    @Column(nullable = false, length = 100)
     private String title;
+
+    private boolean deleted = false;
     private Long writerId;
 
     public Question() {
