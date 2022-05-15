@@ -1,19 +1,46 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
-
+@Entity
+@Table(name = "user")
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
     private String email;
 
-    private User() {
+    @Column(length = 20, nullable = false)
+    private String name;
+
+    @Column(length = 20, nullable = false)
+    private String password;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @Column(length = 20, nullable = false, unique = true)
+    private String userId;
+
+    public User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -26,6 +53,12 @@ public class User {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public User(String name, String password, String userId) {
+        this.name = name;
+        this.password = password;
+        this.userId = userId;
     }
 
     public void update(User loginUser, User target) {
@@ -106,10 +139,12 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
+                ", createdAt=" + createdAt +
                 ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", updatedAt=" + updatedAt +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 
