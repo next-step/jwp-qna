@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.repository.entity;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;

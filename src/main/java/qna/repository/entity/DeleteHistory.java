@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.repository.entity;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import qna.domain.ContentType;
 
 @Entity
 @Table(name = "delete_history")

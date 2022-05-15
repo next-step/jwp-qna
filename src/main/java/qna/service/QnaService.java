@@ -11,6 +11,12 @@ import qna.domain.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import qna.repository.AnswerRepository;
+import qna.repository.QuestionRepository;
+import qna.repository.entity.Answer;
+import qna.repository.entity.DeleteHistory;
+import qna.repository.entity.Question;
+import qna.repository.entity.User;
 
 @Service
 public class QnaService {

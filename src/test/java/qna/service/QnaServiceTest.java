@@ -13,6 +13,11 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import qna.repository.AnswerRepository;
+import qna.repository.QuestionRepository;
+import qna.repository.entity.Answer;
+import qna.repository.entity.DeleteHistory;
+import qna.repository.entity.Question;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
