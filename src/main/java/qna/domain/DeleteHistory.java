@@ -5,7 +5,7 @@ import java.util.Objects;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-public class DeleteHistory extends BaseEntity {
+public class DeleteHistory {
     @Id
     @GeneratedValue
     private Long id;

@@ -55,5 +55,5 @@ add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 - [x] application.yml 설정 파일을 이용한다.
 - [x] MySql 방언을 사용한다.
 - [x] 동적 쿼리 로그를 볼 수 있다.
-- [x] ID 자동생성 기능을 추가한다.
+- [] 엔티티 매핑 정보를 수정한다.
 
