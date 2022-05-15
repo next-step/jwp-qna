@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,18 +12,17 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
     @CreatedDate
-    @Column(name = "REG_DTS", nullable = false, updatable = false)
-    private LocalDateTime regDts;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "MOD_DTS")
-    private LocalDateTime modDts;
+    private LocalDateTime updatedAt;
 
-    public LocalDateTime getRegDts() {
-        return regDts;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public LocalDateTime getModDts() {
-        return modDts;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 }
