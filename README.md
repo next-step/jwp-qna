@@ -66,24 +66,24 @@ alter table user
 - **공통 엔티티 분리**
   - [x] createdAt, updatedAt을 가지고 있는 Entity 작성
 - **answer 테이블**
-  - [ ] Entity & Repository 수정
+  - [x] Entity 매핑
     - id : GenerateType.IDENTITY
     - created_by : NOT NULL
     - deleted : NOT NULL
   - [ ] `@DataJpaTest` 사용하여 테스트 코드 작성
 - **delete_history 테이블**
-  - [ ] Entity & Repository 수정
+  - [ ] Entity 매핑
     - id : GenerateType.IDENTITY
   - [ ] `@DataJpaTest` 사용하여 테스트 코드 작성
 - **question 테이블**
-  - [ ] Entity & Repository 
+  - [ ] Entity 매핑
     - id : GenerateType.IDENTITY
     - created_by : NOT NULL
     - deleted : NOT NULL
     - title : NOT NULL
   - [ ] `@DataJpaTest` 사용하여 테스트 코드 작성
 - **user 테이블**
-  - [ ] Entity & Repository 수정
+  - [ ] Entity 매핑
     - id : GenerateType.IDENTITY
     - name : NOT NULL
     - password : NOT NULL
