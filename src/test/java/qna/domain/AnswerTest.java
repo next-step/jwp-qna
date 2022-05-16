@@ -1,9 +1,12 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -41,6 +44,50 @@ public class AnswerTest {
             () -> assertTrue(findA1.isPresent()),
             () -> assertEqualsAnswer(a1, findA1.get()),
             () -> assertTrue(findA2.isPresent())
+        );
+    }
+
+    @Test
+    @DisplayName("삭제 되지 않은 Answer 도메인 Answer을 조회한다.")
+    void find01(){
+        // given && when
+        A1.delete();
+        Answer a1 = answerRepository.save(A1);
+        Answer a2 = answerRepository.save(A2);
+
+        em.flush();
+        em.clear();
+
+        // then
+        Optional<Answer> findA1 = answerRepository.findByIdAndDeletedFalse(a1.getId());
+        Optional<Answer> findA2 = answerRepository.findByIdAndDeletedFalse(a2.getId());
+
+        assertAll(
+            () -> assertFalse(findA1.isPresent()),
+            () -> assertTrue(findA2.isPresent()),
+            () -> assertEqualsAnswer(a2, findA2.get())
+        );
+    }
+
+
+    @Test
+    @DisplayName("QuestionId를 기준으로 삭제되지 않은 Answer를 조회할 수 있다.")
+    void find02(){
+        // given && when
+        A1.delete();
+        Answer a1 = answerRepository.save(A1);
+        Answer a2 = answerRepository.save(A2);
+
+        em.flush();
+        em.clear();
+
+        // then
+        List<Answer> answersByQuestionId = answerRepository.findByQuestionIdAndDeletedFalse(
+            a1.getQuestionId());
+
+        assertAll(
+            () -> assertThat(answersByQuestionId).hasSize(1),
+            () -> assertThat(answersByQuestionId).contains(a2)
         );
     }
 
