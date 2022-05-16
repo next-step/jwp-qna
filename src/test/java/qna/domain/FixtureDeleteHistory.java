@@ -1,11 +1,12 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
+import static qna.domain.FixtureAnswer.A1;
+import static qna.domain.FixtureQuestion.Q1;
 
 public final class FixtureDeleteHistory {
 
-    public static final DeleteHistory DH_A1 = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
-    public static final DeleteHistory DH_Q1 = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+    public static final DeleteHistory DH_A1 = new AnswerDeleteHistory(A1);
+    public static final DeleteHistory DH_Q1 = new QuestionDeleteHistory(Q1);
 
     private FixtureDeleteHistory() {
     }

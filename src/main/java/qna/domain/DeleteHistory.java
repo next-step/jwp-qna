@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class DeleteHistory {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,11 +19,10 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    protected DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
-        this.createDate = createDate;
     }
 
     public Long getId() {
@@ -51,7 +51,6 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
                 ", createDate=" + createDate +
                 '}';
     }
