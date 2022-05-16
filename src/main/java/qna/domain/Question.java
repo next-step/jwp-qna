@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -90,6 +91,10 @@ public class Question extends BaseDateTimeEntity{
         this.deleted = deleted;
     }
 
+    public void delete() {
+        this.deleted = true;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -99,5 +104,22 @@ public class Question extends BaseDateTimeEntity{
                 ", writerId=" + writerId +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Question question = (Question) o;
+        return Objects.equals(getId(), question.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }
