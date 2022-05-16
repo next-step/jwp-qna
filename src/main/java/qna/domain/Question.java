@@ -48,12 +48,6 @@ public class Question {
         this.contents = contents;
     }
 
-    public Question(String title, String contents, User user) {
-        this.title = title;
-        this.contents = contents;
-        this.writer = user;
-    }
-
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
@@ -71,32 +65,8 @@ public class Question {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
     }
 
     public boolean isDeleted() {
