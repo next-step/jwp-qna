@@ -23,11 +23,31 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
-        this.contentType = contentType;
-        this.contentId = contentId;
-        this.deletedById = deletedById;
-        this.createDate = createDate;
+    public DeleteHistory(DeleteHistoryBuilder deleteHistoryBuilder) {
+        this.contentType = deleteHistoryBuilder.contentType;
+        this.contentId = deleteHistoryBuilder.contentId;
+        this.deletedById = deleteHistoryBuilder.deletedById;
+        this.createDate = deleteHistoryBuilder.createDate;
+    }
+
+    public static class DeleteHistoryBuilder {
+        private ContentType contentType;
+        private Long contentId;
+        private Long deletedById;
+        private LocalDateTime createDate = LocalDateTime.now();
+
+        public DeleteHistoryBuilder(ContentType contentType, Long contentId, Long deletedById,
+                                    LocalDateTime createDate) {
+            this.contentType = contentType;
+            this.contentId = contentId;
+            this.deletedById = deletedById;
+            this.createDate = createDate;
+        }
+
+        public DeleteHistory build() {
+            return new DeleteHistory(this);
+        }
+
     }
 
     @Override
