@@ -47,7 +47,7 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("삭제되지 않은 도메인을 조회한다.")
+    @DisplayName("삭제되지 않은 Question 도메인 목록을 조회한다.")
     void find01(){
         // given && when
         Q1.delete();

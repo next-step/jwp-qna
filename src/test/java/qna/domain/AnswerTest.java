@@ -48,7 +48,7 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("삭제 되지 않은 Answer 도메인 Answer을 조회한다.")
+    @DisplayName("AnswerId를 기준으로 삭제되지 않은 Answer 도메인을 조회한다.")
     void find01(){
         // given && when
         A1.delete();
@@ -71,7 +71,7 @@ public class AnswerTest {
 
 
     @Test
-    @DisplayName("QuestionId를 기준으로 삭제되지 않은 Answer를 조회할 수 있다.")
+    @DisplayName("QuestionId를 기준으로 삭제되지 않은 Answer를 조회한다.")
     void find02(){
         // given && when
         A1.delete();
