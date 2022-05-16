@@ -64,7 +64,7 @@ alter table user
 
 ### 📚 TODO LIST 📚
 - **공통 엔티티 분리**
-  - [ ] createdAt, updatedAt을 가지고 있는 Entity 작성
+  - [x] createdAt, updatedAt을 가지고 있는 Entity 작성
 - **answer 테이블**
   - [ ] Entity & Repository 수정
     - id : GenerateType.IDENTITY
