@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 
 import java.util.Objects;
 import qna.common.BaseEntity;
