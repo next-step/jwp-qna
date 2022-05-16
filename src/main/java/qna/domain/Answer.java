@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +10,6 @@ import javax.persistence.Lob;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
 @Entity
 public class Answer extends BaseEntity {
     @Id
