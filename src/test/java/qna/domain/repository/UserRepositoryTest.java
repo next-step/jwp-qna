@@ -19,7 +19,9 @@ class UserRepositoryTest {
     @Test
     void save() {
         User expected = new User("Liv", "1234", "ksh", "step@step.com");
+
         User actual = userRepository.save(expected);
+
         assertThat(expected).isEqualTo(actual);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
@@ -30,6 +32,7 @@ class UserRepositoryTest {
     @Test
     void findByUserId() {
         User user = userRepository.findByUserId("ul8415").get();
+
         assertAll(
                 () -> assertThat(user.getId()).isNotNull(),
                 () -> assertThat(user.getName()).isEqualTo("홍길동"),

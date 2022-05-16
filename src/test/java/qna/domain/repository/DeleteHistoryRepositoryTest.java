@@ -19,7 +19,9 @@ class DeleteHistoryRepositoryTest {
     @Test
     void save() {
         DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+
         DeleteHistory actual = deleteHistoryRepository.save(expected);
+
         assertThat(expected).isEqualTo(actual);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
@@ -31,6 +33,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     void findById() {
         DeleteHistory deleteHistory = deleteHistoryRepository.findById(1L).get();
+
         assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER);
     }
 }
