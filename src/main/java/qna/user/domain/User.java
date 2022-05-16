@@ -1,25 +1,34 @@
 package qna.user.domain;
 
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import qna.user.exception.UnAuthorizedException;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Objects;
 
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String userId;
+
     private String password;
+
     private String name;
+
     private String email;
 
-    private User() {
-    }
-
-    public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
-    }
-
+    @Builder
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
         this.userId = userId;
@@ -62,44 +71,9 @@ public class User {
         return false;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public long getId() {
+        return this.id;
+        // fixme - 제거 방법 찾기
     }
 
     @Override

@@ -1,18 +1,31 @@
 package qna.question.domain;
 
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import qna.user.domain.User;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
+
     private String contents;
+
     private Long writerId;
+
     private boolean deleted = false;
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
+    @Builder
     public Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
@@ -32,43 +45,23 @@ public class Question {
         answer.toQuestion(this);
     }
 
-    public Long getId() {
-        return id;
+    public long getId() {
+        return this.id;
+        // fixme - 제거 방법 찾기
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public long getWriterId() {
+        // fixme - 제거 방법 찾기
+        return this.writerId;
     }
 
     public boolean isDeleted() {
-        return deleted;
+        // fixme - 제거 방법 찾기
+        return this.deleted;
     }
 
     public void setDeleted(boolean deleted) {
+        // fixme - 제거 방법 찾기
         this.deleted = deleted;
     }
 

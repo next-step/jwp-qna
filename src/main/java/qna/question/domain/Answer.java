@@ -1,22 +1,34 @@
 package qna.question.domain;
 
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import qna.question.exception.NotFoundException;
 import qna.user.exception.UnAuthorizedException;
 import qna.user.domain.User;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Objects;
 
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Answer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long writerId;
+
     private Long questionId;
+
     private String contents;
+
     private boolean deleted = false;
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
+    @Builder
     public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
@@ -41,43 +53,23 @@ public class Answer {
         this.questionId = question.getId();
     }
 
-    public Long getId() {
-        return id;
+    public long getId() {
+        // fixme - 제거 방법 찾기
+        return this.id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
+    public long getWriterId() {
+        // fixme - 제거 방법 찾기
+        return this.writerId;
     }
 
     public boolean isDeleted() {
-        return deleted;
+        // fixme - 제거 방법 찾기
+        return this.deleted;
     }
 
     public void setDeleted(boolean deleted) {
+        // fixme - 제거 방법 찾기
         this.deleted = deleted;
     }
 
