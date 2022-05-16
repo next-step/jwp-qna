@@ -51,9 +51,9 @@ add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
 
 ### JPA
-- [x] BaseEntity 상속과 Auduit 기능 추가
+- [x] BaseEntity 상속과 Auduit 기능을 추가한다.
 - [x] application.yml 설정 파일을 이용한다.
 - [x] MySql 방언을 사용한다.
 - [x] 동적 쿼리 로그를 볼 수 있다.
-- [] 엔티티 매핑 정보를 수정한다.
+- [x] 엔티티 매핑 정보를 수정한다.
 
