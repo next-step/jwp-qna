@@ -4,10 +4,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import qna.UnAuthorizedException;
 import qna.config.QnaDataJpaTest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.FixtureUser.JAVAJIGI;
 
 @QnaDataJpaTest
@@ -40,7 +41,35 @@ class UserRepositoryTest {
             final User heowc = new User(user.getUserId(), "1234", "heowc", "heowc@gmail.com");
             userRepository.save(heowc);
         })
-        .isInstanceOf(DataIntegrityViolationException.class)
-        .hasMessageContaining("could not execute statement");
+                .isInstanceOf(DataIntegrityViolationException.class)
+                .hasMessageContaining("could not execute statement");
+    }
+
+    @DisplayName("동일 user로 갱신시 예외 발생하지 않음")
+    @Test
+    void successfulUpdate() {
+        final User dummyUser = new User("dummyId", "1234", "dummy", "dummy@example.com");
+        final User user = userRepository.save(dummyUser);
+
+        assertThatNoException().isThrownBy(() -> {
+            user.update(dummyUser, dummyUser);
+        });
+    }
+
+    @DisplayName("다른 user로 갱신시 예외 발생")
+    @Test
+    void failureUpdate() {
+        final User dummyUser = new User("dummyId", "1234", "dummy", "dummy@example.com");
+        final User user = userRepository.save(dummyUser);
+
+        assertAll(() -> {
+            assertThatThrownBy(() -> {
+                user.update(JAVAJIGI, dummyUser);
+            }).isInstanceOf(UnAuthorizedException.class);
+        }, () -> {
+            assertThatThrownBy(() -> {
+                user.update(dummyUser, JAVAJIGI);
+            }).isInstanceOf(UnAuthorizedException.class);
+        });
     }
 }
