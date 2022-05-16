@@ -51,7 +51,10 @@ public class Station {
         if (Objects.nonNull(this.line)) {
             this.line.getStations().remove(this);
         }
+
         this.line = line;
-        line.getStations().add(this);
+        if (line != null) {
+            line.getStations().add(this);
+        }
     }
 }
