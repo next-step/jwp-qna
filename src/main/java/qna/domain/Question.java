@@ -1,18 +1,30 @@
 package qna.domain;
 
-public class Question {
-    private Long id;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="question")
+public class Question extends BaseEntity{
+    @Column(length = 100, nullable = false)
     private String title;
+    @Lob
     private String contents;
     private Long writerId;
     private boolean deleted = false;
+
+    protected Question() {
+
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
     }
 
     public Question(Long id, String title, String contents) {
-        this.id = id;
+        setId(id);
         this.title = title;
         this.contents = contents;
     }
@@ -28,14 +40,6 @@ public class Question {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -73,7 +77,7 @@ public class Question {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", writerId=" + writerId +
