@@ -72,7 +72,7 @@ alter table user
     - deleted : NOT NULL
   - [ ] `@DataJpaTest` 사용하여 테스트 코드 작성
 - **delete_history 테이블**
-  - [ ] Entity 매핑
+  - [x] Entity 매핑
     - id : GenerateType.IDENTITY
   - [ ] `@DataJpaTest` 사용하여 테스트 코드 작성
 - **question 테이블**
