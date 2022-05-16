@@ -13,4 +13,4 @@
 @DataJpaTest 를 활용한 도메인 테스트 진행
 - [X] User 엔티티 테스트코드 작성
 - [X] Question 엔티티 테스트코드 작성
-- [ ] Answer 엔티티 테스트코드 작성
+- [X] Answer 엔티티 테스트코드 작성
