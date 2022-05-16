@@ -7,6 +7,7 @@ import qna.config.QnaDataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.FixtureQuestion.Q1;
+import static qna.domain.FixtureUser.HEOWC;
 
 @QnaDataJpaTest
 class QuestionRepositoryTest {
@@ -29,5 +30,14 @@ class QuestionRepositoryTest {
         final Question question = repository.findById(saved.getId()).get();
         assertThat(saved.getId()).isEqualTo(question.getId());
         assertThat(saved).isEqualTo(question);
+    }
+
+    @DisplayName("Question에 대한 User 변경")
+    @Test
+    void writeBy() {
+        final Question question = new Question("dummy title", "dummy contents");
+        question.writeBy(HEOWC);
+        final Question saved = repository.save(question);
+        assertThat(saved.getWriterId()).isEqualTo(HEOWC.getId());
     }
 }
