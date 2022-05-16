@@ -1,7 +1,8 @@
-package qna.domain;
+package qna.question.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.question.exception.NotFoundException;
+import qna.user.exception.UnAuthorizedException;
+import qna.user.domain.User;
 
 import java.util.Objects;
 

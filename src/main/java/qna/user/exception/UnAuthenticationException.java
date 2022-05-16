@@ -1,4 +1,4 @@
-package qna;
+package qna.user.exception;
 
 public class UnAuthenticationException extends Exception {
     private static final long serialVersionUID = 1L;

@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.user.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

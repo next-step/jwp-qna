@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.question.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
