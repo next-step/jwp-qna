@@ -7,6 +7,8 @@ import qna.config.QnaDataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.FixtureAnswer.A1;
+import static qna.domain.FixtureQuestion.Q1;
+import static qna.domain.FixtureUser.HEOWC;
 
 @QnaDataJpaTest
 class AnswerRepositoryTest {
@@ -28,5 +30,14 @@ class AnswerRepositoryTest {
         final Answer answer = repository.findById(saved.getId()).get();
         assertThat(answer.getId()).isEqualTo(saved.getId());
         assertThat(answer).isEqualTo(saved);
+    }
+
+    @DisplayName("Answer에 대한 Question을 변경")
+    @Test
+    void toQuestion() {
+        final Answer answer = new Answer(HEOWC, Q1, "dummy");
+        answer.toQuestion(new Question(3L, "3", "3"));
+        final Answer saved = repository.save(answer);
+        assertThat(saved.getQuestionId()).isEqualTo(3L);
     }
 }
