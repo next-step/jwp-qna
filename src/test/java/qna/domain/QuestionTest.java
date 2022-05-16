@@ -1,9 +1,11 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -41,6 +43,24 @@ public class QuestionTest {
             () -> assertTrue(findQ1.isPresent()),
             () -> assertEqualsQuestion(q1, findQ1.get()),
             () -> assertTrue(findQ2.isPresent())
+        );
+    }
+
+    @Test
+    @DisplayName("삭제되지 않은 도메인을 조회한다.")
+    void find01(){
+        // given && when
+        Q1.delete();
+        Question q2 = questionRepository.save(Q2);
+
+        em.flush();
+        em.clear();
+
+        // then
+        List<Question> questionsByDeleteFalse = questionRepository.findByDeletedFalse();
+        assertAll(
+            () -> assertThat(questionsByDeleteFalse).hasSize(1),
+            () -> assertThat(questionsByDeleteFalse).contains(q2)
         );
     }
 
