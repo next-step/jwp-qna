@@ -1,6 +1,5 @@
 package qna.repository.entity;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,22 +7,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import qna.exception.UnAuthorizedException;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends AuditTimeBaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @CreationTimestamp
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
 
     private String email;
 
@@ -32,10 +25,6 @@ public class User {
 
     @Column(length = 20, nullable = false)
     private String password;
-
-    @UpdateTimestamp
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
 
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
@@ -137,11 +126,11 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", createdAt=" + createdAt +
+                ", getCreatedAt()=" + getCreatedAt() +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
-                ", updatedAt=" + updatedAt +
+                ", getUpdatedAt()=" + getUpdatedAt() +
                 ", userId='" + userId + '\'' +
                 '}';
     }

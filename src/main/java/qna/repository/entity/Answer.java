@@ -1,6 +1,5 @@
 package qna.repository.entity;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,14 +8,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
 @Entity
 @Table(name = "answer")
-public class Answer {
+public class Answer extends AuditTimeBaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,20 +21,12 @@ public class Answer {
     @Lob
     private String contents;
 
-    @CreationTimestamp
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
     @Column(nullable = false)
     private boolean deleted = false;
 
     private Long questionId;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
     private Long writerId;
-
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -115,11 +104,11 @@ public class Answer {
         return "Answer{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
-                ", createdAt=" + createdAt +
                 ", deleted=" + deleted +
                 ", questionId=" + questionId +
-                ", updatedAt=" + updatedAt +
                 ", writerId=" + writerId +
+                ", getCreatedAt()=" + getCreatedAt() +
+                ", getUpdatedAt()=" + getUpdatedAt() +
                 '}';
     }
 }

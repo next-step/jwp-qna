@@ -1,6 +1,5 @@
 package qna.repository.entity;
 
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,12 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "question")
-public class Question {
+public class Question extends AuditTimeBaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,19 +18,11 @@ public class Question {
     @Lob
     private String contents;
 
-    @CreationTimestamp
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
     @Column(nullable = false)
     private boolean deleted = false;
 
     @Column(length = 100, nullable = false)
     private String title;
-
-    @UpdateTimestamp
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
 
     private Long writerId;
 
@@ -108,10 +97,10 @@ public class Question {
         return "Question{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
-                ", createdAt=" + createdAt +
+                ", getCreatedAt()=" + getCreatedAt() +
                 ", deleted=" + deleted +
                 ", title='" + title + '\'' +
-                ", updatedAt=" + updatedAt +
+                ", getUpdatedAt()=" + getUpdatedAt() +
                 ", writerId=" + writerId +
                 '}';
     }
