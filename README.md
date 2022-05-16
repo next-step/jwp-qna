@@ -15,3 +15,5 @@
 - [X] Question 엔티티 테스트코드 작성
 - [ ] Question 엔티티의 삭제되지 않은 목록을 조회하는 API에 대한 테스트 코드 작성
 - [X] Answer 엔티티 테스트코드 작성
+- [X] Answer 엔티티의 findByIdAndDeletedFalse API 에 대한 테스트 코드 작성
+- [X] Answer 엔티티의 findByQuestionIdAndDeletedFalse API 에 대한 테스트 코드 작성
