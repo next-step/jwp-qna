@@ -51,6 +51,7 @@ public class QuestionTest {
     void find01(){
         // given && when
         Q1.delete();
+        questionRepository.save(Q1);
         Question q2 = questionRepository.save(Q2);
 
         em.flush();
