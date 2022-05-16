@@ -83,7 +83,7 @@ alter table user
     - title : NOT NULL
   - [ ] `@DataJpaTest` 사용하여 테스트 코드 작성
 - **user 테이블**
-  - [ ] Entity 매핑
+  - [x] Entity 매핑
     - id : GenerateType.IDENTITY
     - name : NOT NULL
     - password : NOT NULL
