@@ -8,7 +8,7 @@ import qna.config.QnaDataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.FixtureUser.JAVAJIGI;
 
 @QnaDataJpaTest
 class UserRepositoryTest {

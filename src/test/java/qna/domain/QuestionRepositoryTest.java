@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import qna.config.QnaDataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.QuestionTest.Q1;
+import static qna.domain.FixtureQuestion.Q1;
 
 @QnaDataJpaTest
 class QuestionRepositoryTest {
