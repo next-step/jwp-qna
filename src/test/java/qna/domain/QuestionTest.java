@@ -9,35 +9,32 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
-@Sql("/truncate.sql")
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class QuestionTest {
 
-    private Question q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    private Question q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Autowired
     private QuestionRepository questionRepository;
 
-    @BeforeEach
-    void setUp(){
-        q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-        q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
-    }
 
     @Test
     void save_테스트() {
-        Question managed = questionRepository.save(q1);
+        Question managed = questionRepository.save(Q1);
         Assertions.assertAll(
-                () -> assertThat(managed.getContents().equals(q1.getContents())).isTrue()
+                () -> assertThat(managed.getContents().equals(Q1.getContents())).isTrue()
         );
     }
 
     @Test
     void findById_테스트() {
-        Question savedQ1 = questionRepository.save(q1);
+        Question savedQ1 = questionRepository.save(Q1);
         Optional<Question> q1 = questionRepository.findById(savedQ1.getId());
         assertThat(q1.isPresent()).isTrue();
         assertThat(q1.get() == savedQ1).isTrue();
@@ -45,7 +42,7 @@ public class QuestionTest {
 
     @Test
     void deleteById_테스트() {
-        Question savedQ1 = questionRepository.save(q1);
+        Question savedQ1 = questionRepository.save(Q1);
         questionRepository.deleteById(savedQ1.getId());
         Optional<Question> q1 = questionRepository.findById(savedQ1.getId());
         assertThat(q1.isPresent()).isFalse();
@@ -53,8 +50,8 @@ public class QuestionTest {
 
     @Test
     void findByIdAndDeletedFalse_테스트() {
-        Question savedQ1 = questionRepository.save(q1);
-        Question savedQ2 = questionRepository.save(q2);
+        Question savedQ1 = questionRepository.save(Q1);
+        Question savedQ2 = questionRepository.save(Q2);
         savedQ1.setDeleted(true);
         Optional<Question> q1 = questionRepository.findByIdAndDeletedFalse(savedQ1.getId());
         Optional<Question> q2 = questionRepository.findByIdAndDeletedFalse(savedQ2.getId());
@@ -65,8 +62,8 @@ public class QuestionTest {
 
     @Test
     void findByDeletedFalse_테스트() {
-        Question savedQ1 = questionRepository.save(q1);
-        Question savedQ2 = questionRepository.save(q2);
+        Question savedQ1 = questionRepository.save(Q1);
+        Question savedQ2 = questionRepository.save(Q2);
         List<Question> questionList = questionRepository.findByDeletedFalse();
         assertThat(questionList).containsExactly(savedQ1, savedQ2);
     }
