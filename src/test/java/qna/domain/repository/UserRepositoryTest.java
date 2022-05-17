@@ -80,6 +80,6 @@ class UserRepositoryTest {
 
         repository.deleteAll();
 
-        assertThat(repository.count()).isEqualTo(0);
+        assertThat(repository.count()).isZero();
     }
 }
