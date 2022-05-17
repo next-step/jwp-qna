@@ -9,5 +9,7 @@ import qna.domain.Answer;
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
     List<Answer> findByQuestionIdAndDeletedFalse(Long questionId);
 
+    Optional<Answer> findByContentsEquals(String content);
+
     Optional<Answer> findByIdAndDeletedFalse(Long id);
 }

@@ -37,26 +37,23 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("특정 Id를 조회 한다.")
+    @DisplayName("특정 Contents를 조회 한다.")
     void read() {
         //when
-        Answer findAnswer = repository.findById(A1.getId()).get();
+        Answer findAnswer = repository.findByContentsEquals("Answers Contents1").get();
 
         //then
-        assertThat(findAnswer.getWriterId()).isEqualTo(A1.getWriterId());
+        assertThat(findAnswer).isNotNull();
     }
 
     @Test
-    @DisplayName("특정 Id의 레코드를 업데이트 한다.")
+    @DisplayName("특정 Contents의 레코드를 업데이트 한다.")
     void update() {
-        Answer findAnswer = repository.findById(A1.getId()).get();
+        Answer findAnswer = repository.findByContentsEquals("Answers Contents1").get();
 
         findAnswer.setContents("updated content");
 
-        em.flush();
-        em.clear();
-
-        Answer updatedAnswer = repository.findById(A1.getId()).get();
+        Answer updatedAnswer = repository.findByContentsEquals("updated content").get();
 
         assertThat(updatedAnswer.getContents()).isEqualTo("updated content");
     }
