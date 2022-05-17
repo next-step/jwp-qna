@@ -41,7 +41,7 @@ public class QuestionTest {
 
         assertAll(
             () -> assertTrue(findQ1.isPresent()),
-            () -> assertEqualsQuestion(q1, findQ1.get()),
+            () -> assertEquals(q1, findQ1.get()),
             () -> assertTrue(findQ2.isPresent())
         );
     }
@@ -62,16 +62,6 @@ public class QuestionTest {
         assertAll(
             () -> assertThat(questionsByDeleteFalse).hasSize(1),
             () -> assertThat(questionsByDeleteFalse).contains(q2)
-        );
-    }
-
-    private void assertEqualsQuestion(Question expect, Question actual) {
-        assertAll(
-            () -> assertEquals(expect.getId(), actual.getId()),
-            () -> assertEquals(expect.getTitle(), actual.getTitle()),
-            () -> assertEquals(expect.getContents(), actual.getContents()),
-            () -> assertEquals(expect.getWriterId(), actual.getWriterId()),
-            () -> assertEquals(expect.isDeleted(), actual.isDeleted())
         );
     }
 }
