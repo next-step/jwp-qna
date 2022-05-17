@@ -74,21 +74,21 @@ alter table user
 - **delete_history 테이블**
   - [x] Entity 매핑
     - id : GenerateType.IDENTITY
-  - [ ] `@DataJpaTest` 사용하여 테스트 코드 작성
+  - [x] `@DataJpaTest` 사용하여 테스트 코드 작성
 - **question 테이블**
   - [x] Entity 매핑
     - id : GenerateType.IDENTITY
     - created_by : NOT NULL
     - deleted : NOT NULL
     - title : NOT NULL
-  - [ ] `@DataJpaTest` 사용하여 테스트 코드 작성
+  - [x] `@DataJpaTest` 사용하여 테스트 코드 작성
 - **user 테이블**
   - [x] Entity 매핑
     - id : GenerateType.IDENTITY
     - name : NOT NULL
     - password : NOT NULL
     - user_id : NOT NULL, UNIQUE
-  - [ ] `@DataJpaTest` 사용하여 테스트 코드 작성
+  - [x] `@DataJpaTest` 사용하여 테스트 코드 작성
 
 
 
