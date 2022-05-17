@@ -20,7 +20,7 @@ class QuestionRepositoryTest {
     void save() {
         final Question question = repository.save(Q1);
         assertThat(question.getId()).isNotNull();
-        assertThat(question.getWriterId()).isEqualTo(Q1.getWriterId());
+        assertThat(question.getWriter()).isEqualTo(Q1.getWriter());
     }
 
     @DisplayName("저장한 엔티티와 동일한 id로 조회한 엔티티는 동일성 보장")
@@ -38,6 +38,6 @@ class QuestionRepositoryTest {
         final Question question = new Question("dummy title", "dummy contents");
         question.writeBy(HEOWC);
         final Question saved = repository.save(question);
-        assertThat(saved.getWriterId()).isEqualTo(HEOWC.getId());
+        assertThat(saved.getWriter()).isEqualTo(HEOWC);
     }
 }
