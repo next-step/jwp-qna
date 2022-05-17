@@ -3,14 +3,27 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.util.Date;
 import java.util.Objects;
 
+@Entity
+@Table(name = "answer")
 public class Answer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
+    private Date createdAt;
     private Long writerId;
     private Long questionId;
+    private Date updatedAt;
+    @Column(columnDefinition = "LONGTEXT")
     private String contents;
     private boolean deleted = false;
+
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -80,12 +93,30 @@ public class Answer {
         this.deleted = deleted;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
+                ", createdAt=" + createdAt +
                 ", writerId=" + writerId +
                 ", questionId=" + questionId +
+                ", updatedAt=" + updatedAt +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
