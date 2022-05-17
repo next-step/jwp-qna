@@ -32,21 +32,33 @@ public class Answer extends BaseEntity {
         this.contents = AnswerBuilder.contents;
     }
 
+    public static AnswerBuilder builder(User writer, Question question) {
+        return new AnswerBuilder(writer, question);
+    }
+
     public static class AnswerBuilder {
         private Long id;
         private final Long writerId;
         private final Long questionId;
         private String contents;
 
-        public AnswerBuilder(User writer, Question question) {
-            if (Objects.isNull(writer)) {
-                throw new UnAuthorizedException("작성자 정보가 없습니다.");
-            }
+        private AnswerBuilder(User writer, Question question) {
+            validateWriterNotNull(writer);
+            validateQuestionNotNull(question);
+            this.writerId = writer.getId();
+            this.questionId = question.getId();
+        }
+
+        private void validateQuestionNotNull(Question question) {
             if (Objects.isNull(question)) {
                 throw new NotFoundException("질문 정보가 없습니다.");
             }
-            this.writerId = writer.getId();
-            this.questionId = question.getId();
+        }
+
+        private void validateWriterNotNull(User writer) {
+            if (Objects.isNull(writer)) {
+                throw new UnAuthorizedException("작성자 정보가 없습니다.");
+            }
         }
 
         public AnswerBuilder id(long id) {

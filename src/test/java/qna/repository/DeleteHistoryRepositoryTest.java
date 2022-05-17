@@ -19,13 +19,13 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
 
-    static final DeleteHistory D1 = new DeleteHistory.DeleteHistoryBuilder()
+    static final DeleteHistory D1 = DeleteHistory.builder()
             .contentType(ContentType.QUESTION)
             .contentId(QuestionRepositoryTest.Q1.getId())
             .deletedById(QuestionRepositoryTest.Q1.getWriterId())
             .createDate(LocalDateTime.now())
             .build();
-    static final DeleteHistory D2 = new DeleteHistory.DeleteHistoryBuilder()
+    static final DeleteHistory D2 = DeleteHistory.builder()
             .contentType(ContentType.ANSWER)
             .contentId(AnswerRepositoryTest.A1.getId())
             .deletedById(AnswerRepositoryTest.A1.getWriterId())

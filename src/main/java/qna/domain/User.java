@@ -35,6 +35,10 @@ public class User extends BaseEntity {
         this.email = userBuilder.email;
     }
 
+    public static UserBuilder builder(String userId, String password, String name) {
+        return new UserBuilder(userId, password, name);
+    }
+
     public static class UserBuilder {
         private Long id;
         private final String userId;
@@ -42,7 +46,7 @@ public class User extends BaseEntity {
         private final String name;
         private String email;
 
-        public UserBuilder(String userId, String password, String name) {
+        private UserBuilder(String userId, String password, String name) {
             this.userId = userId;
             this.password = password;
             this.name = name;

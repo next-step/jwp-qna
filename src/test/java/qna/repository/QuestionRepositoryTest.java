@@ -18,15 +18,15 @@ public class QuestionRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 
-    public static final Question Q1 = new Question.QuestionBuilder("title1")
+    public static final Question Q1 = Question.builder("title1")
             .contents("contents1")
             .build()
             .writeBy(UserRepositoryTest.JAVAJIGI);
-    public static final Question Q2 = new Question.QuestionBuilder("title2")
+    public static final Question Q2 = Question.builder("title2")
             .contents("contents2")
             .build()
             .writeBy(UserRepositoryTest.SANJIGI);
-    public static final Question Q3 = new Question.QuestionBuilder("title3")
+    public static final Question Q3 = Question.builder("title3")
             .contents("contents3")
             .build()
             .writeBy(UserRepositoryTest.SANJIGI);

@@ -29,12 +29,16 @@ public class Question extends BaseEntity {
         this.contents = questionBuilder.contents;
     }
 
+    public static QuestionBuilder builder(String title) {
+        return new QuestionBuilder(title);
+    }
+
     public static class QuestionBuilder {
         private Long id;
         private final String title;
         private String contents;
 
-        public QuestionBuilder(String title) {
+        private QuestionBuilder(String title) {
             this.title = title;
         }
 

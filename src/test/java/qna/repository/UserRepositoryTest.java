@@ -17,11 +17,11 @@ public class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
-    public static final User JAVAJIGI = new User.UserBuilder("javajigi", "password", "name")
+    public static final User JAVAJIGI = User.builder("javajigi", "password", "name")
             .id(1L)
             .email("javajigi@slipp.net")
             .build();
-    public static final User SANJIGI = new User.UserBuilder("sanjigi", "password", "name")
+    public static final User SANJIGI = User.builder("sanjigi", "password", "name")
             .id(2L)
             .email("sanjigi@slipp.net")
             .build();

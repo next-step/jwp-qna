@@ -18,13 +18,13 @@ import qna.domain.Answer;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class AnswerRepositoryTest {
-    static final Answer A1 = new Answer.AnswerBuilder(UserRepositoryTest.JAVAJIGI, QuestionRepositoryTest.Q1)
+    static final Answer A1 = Answer.builder(UserRepositoryTest.JAVAJIGI, QuestionRepositoryTest.Q1)
             .contents("Answers Contents1")
             .build();
-    static final Answer A2 = new Answer.AnswerBuilder(UserRepositoryTest.SANJIGI, QuestionRepositoryTest.Q1)
+    static final Answer A2 = Answer.builder(UserRepositoryTest.SANJIGI, QuestionRepositoryTest.Q1)
             .contents("Answers Contents2")
             .build();
-    static final Answer A3 = new Answer.AnswerBuilder(UserRepositoryTest.SANJIGI, QuestionRepositoryTest.Q1)
+    static final Answer A3 = Answer.builder(UserRepositoryTest.SANJIGI, QuestionRepositoryTest.Q1)
             .contents("Answers Contents3")
             .build();
 
@@ -74,7 +74,7 @@ class AnswerRepositoryTest {
     @DisplayName("Writer 가 없을 때 UnAuthorizedException 발생 테스트")
     @Test
     void unAuthorizedException() {
-        assertThatThrownBy(() -> new Answer.AnswerBuilder(null, QuestionRepositoryTest.Q1)
+        assertThatThrownBy(() -> Answer.builder(null, QuestionRepositoryTest.Q1)
                 .contents("Answers Contents1")
                 .build())
                 .isInstanceOf(UnAuthorizedException.class)
@@ -84,7 +84,7 @@ class AnswerRepositoryTest {
     @DisplayName("Question 이 없을 때 UnAuthorizedException 발생 테스트")
     @Test
     void notFoundException() {
-        assertThatThrownBy(() -> new Answer.AnswerBuilder(UserRepositoryTest.JAVAJIGI, null)
+        assertThatThrownBy(() -> Answer.builder(UserRepositoryTest.JAVAJIGI, null)
                 .contents("Answers Contents1")
                 .build())
                 .isInstanceOf(NotFoundException.class)

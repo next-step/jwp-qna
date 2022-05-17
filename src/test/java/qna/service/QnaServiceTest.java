@@ -44,12 +44,12 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() {
-        question = new Question.QuestionBuilder("title1")
+        question = Question.builder("title1")
                 .id(1L)
                 .contents("contents1")
                 .build()
                 .writeBy(UserRepositoryTest.JAVAJIGI);
-        answer = new Answer.AnswerBuilder(UserRepositoryTest.JAVAJIGI, question)
+        answer = Answer.builder(UserRepositoryTest.JAVAJIGI, question)
                 .id(1L)
                 .contents("Answers Contents1")
                 .build();
@@ -90,7 +90,7 @@ class QnaServiceTest {
 
     @Test
     public void deleteHavingContentsOfOther() {
-        Answer answer2 = new Answer.AnswerBuilder(UserRepositoryTest.SANJIGI, QuestionRepositoryTest.Q1)
+        Answer answer2 = Answer.builder(UserRepositoryTest.SANJIGI, QuestionRepositoryTest.Q1)
                 .id(2L)
                 .contents("Answers Contents1")
                 .build();
@@ -106,13 +106,13 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory.DeleteHistoryBuilder()
+                DeleteHistory.builder()
                         .contentType(ContentType.QUESTION)
                         .contentId(question.getId())
                         .deletedById(question.getWriterId())
                         .createDate(LocalDateTime.now())
                         .build(),
-                new DeleteHistory.DeleteHistoryBuilder()
+                DeleteHistory.builder()
                         .contentType(ContentType.ANSWER)
                         .contentId(answer.getId())
                         .deletedById(answer.getWriterId())

@@ -54,7 +54,7 @@ public class QnaService {
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         question.setDeleted(true);
-        deleteHistories.add(new DeleteHistory.DeleteHistoryBuilder()
+        deleteHistories.add(DeleteHistory.builder()
                 .contentType(ContentType.QUESTION)
                 .contentId(questionId)
                 .deletedById(question.getWriterId())
@@ -62,7 +62,7 @@ public class QnaService {
                 .build());
         for (Answer answer : answers) {
             answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory.DeleteHistoryBuilder()
+            deleteHistories.add(DeleteHistory.builder()
                     .contentType(ContentType.ANSWER)
                     .contentId(answer.getId())
                     .deletedById(answer.getWriterId())

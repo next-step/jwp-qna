@@ -30,13 +30,17 @@ public class DeleteHistory {
         this.createDate = deleteHistoryBuilder.createDate;
     }
 
+    public static DeleteHistoryBuilder builder() {
+        return new DeleteHistoryBuilder();
+    }
+
     public static class DeleteHistoryBuilder {
         private ContentType contentType;
         private Long contentId;
         private Long deletedById;
         private LocalDateTime createDate = LocalDateTime.now();
 
-        public DeleteHistoryBuilder() {
+        private DeleteHistoryBuilder() {
         }
 
         public DeleteHistoryBuilder contentType(ContentType contentType) {
