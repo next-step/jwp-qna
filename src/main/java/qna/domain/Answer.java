@@ -72,7 +72,7 @@ public class Answer extends BaseDateTimeEntity{
         this.id = id;
     }
 
-    public User getWriter(){
+    public User getWriter() {
         return this.writer;
     }
 

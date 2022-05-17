@@ -30,7 +30,7 @@ public class QuestionTest {
     private UserRepository userRepository;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         User user1 = userRepository.save(UserTest.JAVAJIGI);
         User user2 = userRepository.save(UserTest.SANJIGI);
 
