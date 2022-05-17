@@ -42,6 +42,10 @@ public class Question extends BaseTime {
     protected Question() {
     }
 
+    public void setWriter(User writer) {
+        this.writer = writer;
+    }
+
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;

@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,7 +29,7 @@ public class User extends BaseTime {
     @Column(length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "writer")
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions;
 
     protected User() {
@@ -44,6 +45,11 @@ public class User extends BaseTime {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public void addQuestion(Question question){
+        questions.add(question);
+        question.setWriter(this);
     }
 
     public void update(User loginUser, User target) {
