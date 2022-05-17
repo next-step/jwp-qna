@@ -1,10 +1,29 @@
 package qna.domain;
 
-public class Question {
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "question")
+public class Question extends BaseDateTimeEntity{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
+    @Lob
+    @Column(name = "contents")
     private String contents;
+    @Column(name = "writer_id")
     private Long writerId;
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
     public Question(String title, String contents) {
@@ -16,6 +35,8 @@ public class Question {
         this.title = title;
         this.contents = contents;
     }
+
+    protected Question() {}
 
     public Question writeBy(User writer) {
         this.writerId = writer.getId();
@@ -70,6 +91,10 @@ public class Question {
         this.deleted = deleted;
     }
 
+    public void delete() {
+        this.deleted = true;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -79,5 +104,22 @@ public class Question {
                 ", writerId=" + writerId +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Question question = (Question) o;
+        return Objects.equals(getId(), question.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }
