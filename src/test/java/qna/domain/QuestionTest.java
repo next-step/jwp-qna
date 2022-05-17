@@ -19,14 +19,14 @@ public class QuestionTest {
 
     @Test
     void findByDeletedFalse() {
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
+        Question q1 = questionRepository.save(Q1);
+        Question q2 = questionRepository.save(Q2);
 
         List<Question> actual = questionRepository.findByDeletedFalse();
 
         assertAll(
                 () -> assertThat(actual.size()).isEqualTo(2),
-                () -> assertThat(actual).containsExactly(Q1, Q2)
+                () -> assertThat(actual).containsExactly(q1, q2)
         );
     }
 }

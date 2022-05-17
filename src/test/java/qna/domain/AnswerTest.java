@@ -20,7 +20,7 @@ public class AnswerTest {
         Answer expected = A1;
         Answer actual = answerRepository.save(expected);
         assertAll(
-                () -> assertThat(actual).isEqualTo(expected)
+                () -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted())
         );
     }
 }
