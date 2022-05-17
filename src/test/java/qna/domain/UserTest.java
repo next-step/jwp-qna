@@ -27,7 +27,6 @@ public class UserTest {
     @Test
     void 사용자_조회() {
         User user = userRepository.save(JAVAJIGI);
-        userRepository.save(user);
 
         User expected = userRepository.findByUserId(user.getUserId()).get();
         assertThat(user).isEqualTo(expected);
