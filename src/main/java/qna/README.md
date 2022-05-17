@@ -151,6 +151,6 @@ add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
 
 ## 기능 구현 사항
-- [ ] 엔티티 매핑
+- [x] 엔티티 매핑
 - [ ] 레포지토리 테스트 작성
 
