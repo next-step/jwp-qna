@@ -51,8 +51,12 @@ class AnswerRepositoryTest {
     void sameEntity() {
         final Answer saved = repository.save(A1);
         final Answer answer = repository.findById(saved.getId()).get();
-        assertThat(answer.getId()).isEqualTo(saved.getId());
-        assertThat(answer).isEqualTo(saved);
+        assertAll(
+                () -> assertThat(answer.getId()).isEqualTo(saved.getId()),
+                () -> assertThat(answer).isEqualTo(saved),
+                () -> assertThat(answer.getQuestion()).isEqualTo(A1.getQuestion()),
+                () -> assertThat(answer.getWriter()).isEqualTo(A1.getWriter())
+        );
     }
 
     @DisplayName("Answer에 대한 Question을 변경")

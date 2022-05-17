@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import qna.config.QnaDataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.FixtureAnswer.A1;
 import static qna.domain.FixtureDeleteHistory.DH_A1;
 import static qna.domain.FixtureDeleteHistory.DH_Q1;
@@ -53,7 +54,9 @@ class DeleteHistoryRepositoryTest {
     void sameEntity() {
         final DeleteHistory saved = repository.save(DH_Q1);
         final DeleteHistory deleteHistory = repository.findById(saved.getId()).get();
-        assertThat(deleteHistory.getId()).isEqualTo(saved.getId());
-        assertThat(deleteHistory).isEqualTo(saved);
+        assertAll(
+                () -> assertThat(deleteHistory.getId()).isEqualTo(saved.getId()),
+                () -> assertThat(deleteHistory).isEqualTo(saved)
+        );
     }
 }
