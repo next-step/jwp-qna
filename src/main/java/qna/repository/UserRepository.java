@@ -1,6 +1,7 @@
-package qna.domain;
+package qna.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import qna.repository.entity.User;
 
 import java.util.Optional;
 
