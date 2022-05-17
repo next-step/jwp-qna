@@ -18,4 +18,14 @@ public class BaseDateTimeEntity {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    protected BaseDateTimeEntity() {}
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 }
