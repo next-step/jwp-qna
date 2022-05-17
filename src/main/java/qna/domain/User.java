@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,13 +31,13 @@ public class User extends BaseTime {
     private String email;
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Question> questions;
+    private List<Question> questions = new ArrayList<>();
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answers;
+    private List<Answer> answers = new ArrayList<>();
 
     @OneToMany(mappedBy = "deletedBy", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DeleteHistory> deleteHistories;
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected User() {
     }
