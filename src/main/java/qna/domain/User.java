@@ -71,7 +71,6 @@ public class User extends BaseEntity {
         if (!matchUserId(loginUser.userId)) {
             throw new UnAuthorizedException();
         }
-
         if (!matchPassword(target.password)) {
             throw new UnAuthorizedException();
         }
