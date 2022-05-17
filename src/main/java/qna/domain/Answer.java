@@ -18,7 +18,7 @@ public class Answer {
     private Long writerId;
     private Long questionId;
     private Date updatedAt;
-    @Column(columnDefinition = "LONGTEXT")
+    @Lob
     private String contents;
     private boolean deleted = false;
 
