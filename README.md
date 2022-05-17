@@ -22,4 +22,4 @@
 ### 2단계 - 연관 관계 매핑
 - [X] Question 엔티티 연관관계 매핑, 외래키 연결
 - [X] Answer 엔티티 연관관계 매핑, 외래키 연결
-- [ ] DeleteHistory 연관관계 매핑, 외래키 연결
+- [X] DeleteHistory 연관관계 매핑, 외래키 연결
