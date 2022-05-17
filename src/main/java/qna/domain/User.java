@@ -1,19 +1,36 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import qna.exception.UnAuthorizedException;
 
 import java.util.Objects;
+import qna.common.BaseEntity;
 
-public class User {
+@Entity
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 20, nullable = false, unique = true)
     private String userId;
+
+    @Column(length = 20, nullable = false)
     private String password;
+
+    @Column(length = 20, nullable = false)
     private String name;
+
+    @Column(length = 50)
     private String email;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -111,6 +128,25 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(userId, user.userId)
+                && Objects.equals(password, user.password) && Objects.equals(name, user.name)
+                && Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email);
     }
 
     private static class GuestUser extends User {

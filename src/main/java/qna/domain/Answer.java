@@ -1,16 +1,33 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
+import qna.common.BaseEntity;
 
-public class Answer {
+@Entity
+public class Answer extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Lob
+    private String contents;
     private Long writerId;
     private Long questionId;
-    private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -84,10 +101,29 @@ public class Answer {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
+                ", contents='" + contents + '\'' +
                 ", writerId=" + writerId +
                 ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Answer answer = (Answer) o;
+        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents,
+                answer.contents) && Objects.equals(writerId, answer.writerId) && Objects.equals(
+                questionId, answer.questionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contents, writerId, questionId, deleted);
     }
 }
