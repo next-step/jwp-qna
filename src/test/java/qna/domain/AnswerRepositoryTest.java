@@ -22,7 +22,7 @@ class AnswerRepositoryTest {
     AnswerRepository answerRepository;
 
     @Test
-    @DisplayName("준영속 상태의 동일성 보장 검증")
+    @DisplayName("영속 상태의 동일성 보장 검증")
     void verifyEntityPrimaryCacheSave() {
         Answer expected = answerRepository.save(A1);
         Optional<Answer> actual = answerRepository.findById(expected.getId());
@@ -35,7 +35,7 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("영속 상태의 동일성 보장 검증")
+    @DisplayName("준영속 상태의 동일성 보장 검증")
     void verifyEntityDatabaseSave() {
         Answer expected = answerRepository.save(A1);
         entityFlushAndClear();
@@ -43,7 +43,6 @@ class AnswerRepositoryTest {
 
         assertAll(
                 () -> assertThat(actual).isPresent(),
-                () -> assertThat(actual).contains(expected),
                 () -> verifyEqualAnswerFields(actual.get(), expected)
         );
     }
@@ -58,7 +57,6 @@ class AnswerRepositoryTest {
 
         assertAll(
                 () -> assertThat(actual).isPresent(),
-                () -> assertThat(actual).contains(expected),
                 () -> verifyEqualAnswerFields(actual.get(), expected),
                 () -> assertEquals("mond", actual.get().getContents())
         );
