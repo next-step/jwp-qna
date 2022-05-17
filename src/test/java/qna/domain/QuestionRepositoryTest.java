@@ -1,10 +1,14 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.QuestionTest.Q1;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.persistence.PersistenceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,5 +91,29 @@ class QuestionRepositoryTest {
                 () -> assertThat(q1.getCreatedAt()).isEqualTo(q2.getCreatedAt()),
                 () -> assertThat(q1.getUpdatedAt()).isEqualTo(q2.getUpdatedAt())
         );
+    }
+
+    @Test
+    @DisplayName("타이틀의 길이가 100자를 넘어가면 PersistenceException이 발생")
+    void setTitleOverLength() {
+        Question expected = questionRepository.save(Q1);
+        String overTitle = Stream.generate(() -> "mond")
+                .limit(26)
+                .collect(Collectors.joining());
+        expected.setTitle(overTitle);
+
+        assertThatExceptionOfType(PersistenceException.class)
+                .isThrownBy(this::entityFlushAndClear);
+
+    }
+
+    @Test
+    @DisplayName("타이틀을 null 값으로 설정시 PersistenceException이 발생")
+    void setTitleNull() {
+        Question expected = questionRepository.save(Q1);
+        expected.setTitle(null);
+
+        assertThatExceptionOfType(PersistenceException.class)
+                .isThrownBy(this::entityFlushAndClear);
     }
 }
