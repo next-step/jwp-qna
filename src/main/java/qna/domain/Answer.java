@@ -2,10 +2,14 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -18,12 +22,15 @@ public class Answer extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
     private Long questionId;
     @Lob
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id",foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
     protected Answer() {
     }
@@ -43,13 +50,16 @@ public class Answer extends BaseTime {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
+        this.writer = writer;
         this.questionId = question.getId();
         this.contents = contents;
     }
+    public void setWriter(User writer) {
+        this.writer = writer;
+    }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -65,11 +75,7 @@ public class Answer extends BaseTime {
     }
 
     public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+        return writer.getId();
     }
 
     public Long getQuestionId() {
@@ -100,7 +106,7 @@ public class Answer extends BaseTime {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId()+
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +

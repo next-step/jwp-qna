@@ -32,6 +32,9 @@ public class User extends BaseTime {
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions;
 
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers;
+
     protected User() {
     }
 
@@ -50,6 +53,11 @@ public class User extends BaseTime {
     public void addQuestion(Question question){
         questions.add(question);
         question.setWriter(this);
+    }
+
+    public void addAnswer(Answer answer){
+        answers.add(answer);
+        answer.setWriter(this);
     }
 
     public void update(User loginUser, User target) {
