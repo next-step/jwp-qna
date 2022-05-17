@@ -1,6 +1,4 @@
-package qna.domain;
-
-import qna.repository.entity.Question;
+package qna.repository.entity;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);

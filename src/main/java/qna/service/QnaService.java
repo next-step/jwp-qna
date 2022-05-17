@@ -9,10 +9,7 @@ import qna.NotFoundException;
 import qna.domain.*;
 import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
-import qna.repository.entity.Answer;
-import qna.repository.entity.DeleteHistory;
-import qna.repository.entity.Question;
-import qna.repository.entity.User;
+import qna.repository.entity.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

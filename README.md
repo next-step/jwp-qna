@@ -8,7 +8,7 @@
   - [x] Question 엔티티 매핑
   - [x] Answer 엔티티 매핑
   - [x] DeleteHistory 엔티티 매핑
-- [ ] @DataJpaTest를 사용하여 학습 테스트를 해 본다.
+- [x] @DataJpaTest를 사용하여 학습 테스트를 해 본다.
 
 ### DDL
 ```sql
