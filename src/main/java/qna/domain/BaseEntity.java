@@ -8,6 +8,6 @@ import java.time.LocalDateTime;
 public class BaseEntity {
     @Column(name = "CREATED_AT", nullable = false)
     private LocalDateTime createdAt;
-    @Column(name = "UPDATED_AT", nullable = false)
+    @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
 }
