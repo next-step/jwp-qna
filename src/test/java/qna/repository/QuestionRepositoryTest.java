@@ -43,7 +43,7 @@ public class QuestionRepositoryTest {
         );
     }
 
-    @DisplayName("질문 ID 로 조회 테스트")
+    @DisplayName("삭제되지 않은 질문 조회 테스트")
     @Test
     void findByDeletedFalse() {
         questionRepository.save(Q1);
@@ -64,7 +64,7 @@ public class QuestionRepositoryTest {
         assertThat(questions).hasSize(2);
     }
 
-    @DisplayName("ID로 조회 테스트")
+    @DisplayName("삭제되지 않은 질문을 ID로 조회하는 테스트")
     @Test
     void findByIdAndDeletedFalse() {
         Question question = questionRepository.save(Q1);
