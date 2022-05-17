@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 
 @MappedSuperclass
 public class BaseEntity {
-    @Column(name = "CREATED_AT")
+    @Column(name = "CREATED_AT", nullable = false)
     private LocalDateTime createdAt;
-    @Column(name = "UPDATED_AT")
+    @Column(name = "UPDATED_AT", nullable = false)
     private LocalDateTime updatedAt;
 }
