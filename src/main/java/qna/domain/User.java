@@ -54,17 +54,17 @@ public class User extends BaseTime {
         this.email = email;
     }
 
-    public void addQuestion(Question question){
+    public void addQuestion(Question question) {
         questions.add(question);
         question.setWriter(this);
     }
 
-    public void addAnswer(Answer answer){
+    public void addAnswer(Answer answer) {
         answers.add(answer);
         answer.setWriter(this);
     }
 
-    public void addDeletedHistory(DeleteHistory deleteHistory){
+    public void addDeletedHistory(DeleteHistory deleteHistory) {
         deleteHistories.add(deleteHistory);
         deleteHistory.setDeletedBy(this);
     }

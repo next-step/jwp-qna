@@ -30,10 +30,10 @@ public class Question extends BaseTime {
     private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id",foreignKey = @ForeignKey(name = "fk_question_writer"))
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
 
     public Question(String title, String contents) {
@@ -95,7 +95,7 @@ public class Question extends BaseTime {
         return writer.getId();
     }
 
-    public User getWriter(){
+    public User getWriter() {
         return writer;
     }
 

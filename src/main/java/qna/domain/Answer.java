@@ -28,11 +28,11 @@ public class Answer extends BaseTime {
     private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id",foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id",foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
     protected Answer() {
@@ -57,6 +57,7 @@ public class Answer extends BaseTime {
         this.question = question;
         this.contents = contents;
     }
+
     public void setWriter(User writer) {
         this.writer = writer;
     }
@@ -85,7 +86,7 @@ public class Answer extends BaseTime {
         return writer.getId();
     }
 
-    public User getWriter(){
+    public User getWriter() {
         return writer;
     }
 
@@ -109,7 +110,7 @@ public class Answer extends BaseTime {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writer.getId()+
+                ", writerId=" + writer.getId() +
                 ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
