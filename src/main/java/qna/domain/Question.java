@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,7 +34,7 @@ public class Question extends BaseTime {
     private User writer;
 
     @OneToMany(mappedBy = "question",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Answer> answers;
+    private List<Answer> answers = new ArrayList<>();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -92,6 +93,10 @@ public class Question extends BaseTime {
 
     public Long getWriterId() {
         return writer.getId();
+    }
+
+    public User getWriter(){
+        return writer;
     }
 
     public boolean isDeleted() {

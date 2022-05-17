@@ -35,6 +35,9 @@ public class User extends BaseTime {
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers;
 
+    @OneToMany(mappedBy = "deletedBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DeleteHistory> deleteHistories;
+
     protected User() {
     }
 
@@ -58,6 +61,11 @@ public class User extends BaseTime {
     public void addAnswer(Answer answer){
         answers.add(answer);
         answer.setWriter(this);
+    }
+
+    public void addDeletedHistory(DeleteHistory deleteHistory){
+        deleteHistories.add(deleteHistory);
+        deleteHistory.setDeletedBy(this);
     }
 
     public void update(User loginUser, User target) {

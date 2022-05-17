@@ -85,6 +85,10 @@ public class Answer extends BaseTime {
         return writer.getId();
     }
 
+    public User getWriter(){
+        return writer;
+    }
+
     public String getContents() {
         return contents;
     }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
+import qna.domain.User;
 
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
@@ -18,7 +19,8 @@ class DeleteHistoryRepositoryTest {
 
     @Test
     void save() {
-        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+        User deletedBy = new User(1L, "ul8415", "1234", "홍길동", "step@next.com");
+        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, deletedBy, LocalDateTime.now());
 
         DeleteHistory actual = deleteHistoryRepository.save(expected);
 
