@@ -5,8 +5,8 @@ import static qna.domain.FixtureQuestion.Q1;
 
 public final class FixtureDeleteHistory {
 
-    public static final DeleteHistory DH_A1 = new AnswerDeleteHistory(A1);
-    public static final DeleteHistory DH_Q1 = new QuestionDeleteHistory(Q1);
+    public static final DeleteHistory DH_A1 = DeleteHistory.ofAnswer(A1);
+    public static final DeleteHistory DH_Q1 = DeleteHistory.ofQuestion(Q1);
 
     private FixtureDeleteHistory() {
     }

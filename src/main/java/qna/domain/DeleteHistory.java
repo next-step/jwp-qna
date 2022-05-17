@@ -5,8 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class DeleteHistory {
+public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,6 +24,14 @@ public abstract class DeleteHistory {
         this.deletedById = deletedById;
     }
 
+    public static DeleteHistory ofAnswer(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId());
+    }
+
+    public static DeleteHistory ofQuestion(Question question) {
+        return new DeleteHistory(ContentType.ANSWER, question.getId(), question.getWriterId());
+    }
+
     public Long getId() {
         return id;
     }
@@ -35,9 +42,9 @@ public abstract class DeleteHistory {
         if (o == null || getClass() != o.getClass()) return false;
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+               contentType == that.contentType &&
+               Objects.equals(contentId, that.contentId) &&
+               Objects.equals(deletedById, that.deletedById);
     }
 
     @Override
@@ -48,10 +55,11 @@ public abstract class DeleteHistory {
     @Override
     public String toString() {
         return "DeleteHistory{" +
-                "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", createDate=" + createDate +
-                '}';
+               "id=" + id +
+               ", contentType=" + contentType +
+               ", contentId=" + contentId +
+               ", deletedById=" + deletedById +
+               ", createDate=" + createDate +
+               '}';
     }
 }
