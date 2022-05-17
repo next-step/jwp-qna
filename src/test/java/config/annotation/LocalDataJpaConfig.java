@@ -1,4 +1,4 @@
-package qna.annotation;
+package config.annotation;
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
