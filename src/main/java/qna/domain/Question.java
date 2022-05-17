@@ -31,7 +31,7 @@ public class Question extends BaseEntity {
 
     public static class QuestionBuilder {
         private Long id;
-        private String title;
+        private final String title;
         private String contents;
 
         public QuestionBuilder(String title) {
@@ -78,24 +78,12 @@ public class Question extends BaseEntity {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public boolean isDeleted() {

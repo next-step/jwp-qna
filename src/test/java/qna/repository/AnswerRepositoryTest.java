@@ -1,6 +1,7 @@
 package qna.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
 import qna.domain.Answer;
 
 @DataJpaTest
@@ -66,5 +69,25 @@ class AnswerRepositoryTest {
         Answer answer = answerRepository.save(A1);
         Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(answer.getId());
         assertThat(actual.orElse(null)).isEqualTo(answer);
+    }
+
+    @DisplayName("Writer 가 없을 때 UnAuthorizedException 발생 테스트")
+    @Test
+    void unAuthorizedException() {
+        assertThatThrownBy(() -> new Answer.AnswerBuilder(null, QuestionRepositoryTest.Q1)
+                .contents("Answers Contents1")
+                .build())
+                .isInstanceOf(UnAuthorizedException.class)
+                .hasMessageContaining("작성자 정보가 없습니다.");
+    }
+
+    @DisplayName("Question 이 없을 때 UnAuthorizedException 발생 테스트")
+    @Test
+    void notFoundException() {
+        assertThatThrownBy(() -> new Answer.AnswerBuilder(UserRepositoryTest.JAVAJIGI, null)
+                .contents("Answers Contents1")
+                .build())
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("질문 정보가 없습니다.");
     }
 }

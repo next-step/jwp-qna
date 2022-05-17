@@ -34,17 +34,16 @@ public class Answer extends BaseEntity {
 
     public static class AnswerBuilder {
         private Long id;
-        private Long writerId;
-        private Long questionId;
+        private final Long writerId;
+        private final Long questionId;
         private String contents;
-        private boolean deleted = false;
 
         public AnswerBuilder(User writer, Question question) {
             if (Objects.isNull(writer)) {
-                throw new UnAuthorizedException();
+                throw new UnAuthorizedException("작성자 정보가 없습니다.");
             }
             if (Objects.isNull(question)) {
-                throw new NotFoundException();
+                throw new NotFoundException("질문 정보가 없습니다.");
             }
             this.writerId = writer.getId();
             this.questionId = question.getId();
@@ -85,24 +84,8 @@ public class Answer extends BaseEntity {
         return writerId;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {

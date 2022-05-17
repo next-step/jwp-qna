@@ -15,7 +15,7 @@ import qna.domain.DeleteHistory;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class DeleteHistoryRepositoryTest {
+class DeleteHistoryRepositoryTest {
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
 
