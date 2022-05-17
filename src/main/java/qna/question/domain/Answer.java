@@ -1,5 +1,6 @@
 package qna.question.domain;
 
+import common.entity.BasicEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -7,15 +8,12 @@ import qna.question.exception.NotFoundException;
 import qna.user.exception.UnAuthorizedException;
 import qna.user.domain.User;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Answer {
+public class Answer extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,8 +22,10 @@ public class Answer {
 
     private Long questionId;
 
+    @Lob
     private String contents;
 
+    @Column(nullable = false)
     private boolean deleted = false;
 
     @Builder
