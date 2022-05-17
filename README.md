@@ -70,7 +70,7 @@ alter table user
     - id : GenerateType.IDENTITY
     - created_by : NOT NULL
     - deleted : NOT NULL
-  - [ ] `@DataJpaTest` 사용하여 테스트 코드 작성
+  - [x] `@DataJpaTest` 사용하여 테스트 코드 작성
 - **delete_history 테이블**
   - [x] Entity 매핑
     - id : GenerateType.IDENTITY

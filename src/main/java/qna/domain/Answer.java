@@ -20,7 +20,6 @@ public class Answer extends BaseEntity {
 
     @Lob
     private String contents;
-
     private Long writerId;
     private Long questionId;
 
@@ -102,10 +101,29 @@ public class Answer extends BaseEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
+                ", contents='" + contents + '\'' +
                 ", writerId=" + writerId +
                 ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Answer answer = (Answer) o;
+        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents,
+                answer.contents) && Objects.equals(writerId, answer.writerId) && Objects.equals(
+                questionId, answer.questionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contents, writerId, questionId, deleted);
     }
 }
