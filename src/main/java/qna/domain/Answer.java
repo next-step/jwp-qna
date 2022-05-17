@@ -22,7 +22,6 @@ public class Answer extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long questionId;
     @Lob
     private String contents;
     @Column(nullable = false)
@@ -31,6 +30,10 @@ public class Answer extends BaseTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id",foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id",foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     protected Answer() {
     }
@@ -51,11 +54,15 @@ public class Answer extends BaseTime {
         }
 
         this.writer = writer;
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
     public void setWriter(User writer) {
         this.writer = writer;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public boolean isOwner(User writer) {
@@ -63,7 +70,7 @@ public class Answer extends BaseTime {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -76,14 +83,6 @@ public class Answer extends BaseTime {
 
     public Long getWriterId() {
         return writer.getId();
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
     }
 
     public String getContents() {
@@ -107,7 +106,7 @@ public class Answer extends BaseTime {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writer.getId()+
-                ", questionId=" + questionId +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
