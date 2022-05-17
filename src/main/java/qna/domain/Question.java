@@ -1,20 +1,56 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+
+@Entity
+public class Question extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(length = 100, nullable = false)
     private String title;
+    @Lob
     private String contents;
     private Long writerId;
+    @Column(nullable = false)
     private boolean deleted = false;
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    protected Question() {
     }
 
-    public Question(Long id, String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
+    private Question(QuestionBuilder questionBuilder) {
+        this.id = questionBuilder.id;
+        this.title = questionBuilder.title;
+        this.contents = questionBuilder.contents;
+    }
+
+    public static class QuestionBuilder {
+        private Long id;
+        private final String title;
+        private String contents;
+
+        public QuestionBuilder(String title) {
+            this.title = title;
+        }
+
+        public QuestionBuilder id(long id) {
+            this.id = id;
+            return this;
+        }
+
+        public QuestionBuilder contents(String contents) {
+            this.contents = contents;
+            return this;
+        }
+
+        public Question build() {
+            return new Question(this);
+        }
     }
 
     public Question writeBy(User writer) {
@@ -42,24 +78,12 @@ public class Question {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public boolean isDeleted() {
