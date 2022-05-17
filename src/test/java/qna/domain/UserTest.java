@@ -34,11 +34,11 @@ public class UserTest {
 
     @Test
     void 사용자_수정() {
-        User user = userRepository.save(JAVAJIGI);
-        userRepository.flush();
+        User user = new User("donghee.han", "password", "donghee", "donghee@slipp.net");
+        userRepository.save(user);
 
-        user.setName("donghee");
-        user.setEmail("donghee.han@test.com");
+        user.setName("haha");
+        user.setEmail("haha@test.com");
         userRepository.save(user);
 
         User expected = userRepository.findByUserId(user.getUserId()).get();
@@ -47,12 +47,10 @@ public class UserTest {
 
     @Test
     void 사용자_삭제() {
-        User user = userRepository.save(JAVAJIGI);
+        User user = new User("donghee.han", "password", "donghee", "donghee@slipp.net");
         userRepository.save(user);
-        userRepository.flush();
 
         userRepository.delete(user);
-
         Optional<User> find = userRepository.findByUserId(user.getUserId());
         assertThat(find.isPresent()).isFalse();
     }
