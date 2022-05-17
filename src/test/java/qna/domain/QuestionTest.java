@@ -1,6 +1,12 @@
 package qna.domain;
 
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question.QuestionBuilder("title1")
+            .contents("contents1")
+            .build()
+            .writeBy(UserTest.JAVAJIGI);
+    public static final Question Q2 = new Question.QuestionBuilder("title2")
+            .contents("contents2")
+            .build()
+            .writeBy(UserTest.SANJIGI);
 }

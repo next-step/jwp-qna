@@ -23,14 +23,34 @@ public class Question extends BaseEntity {
     protected Question() {
     }
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    private Question(QuestionBuilder questionBuilder) {
+        this.id = questionBuilder.id;
+        this.title = questionBuilder.title;
+        this.contents = questionBuilder.contents;
     }
 
-    public Question(Long id, String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
+    public static class QuestionBuilder {
+        private Long id;
+        private String title;
+        private String contents;
+
+        public QuestionBuilder(String title) {
+            this.title = title;
+        }
+
+        public QuestionBuilder id(long id) {
+            this.id = id;
+            return this;
+        }
+
+        public QuestionBuilder contents(String contents) {
+            this.contents = contents;
+            return this;
+        }
+
+        public Question build() {
+            return new Question(this);
+        }
     }
 
     public Question writeBy(User writer) {

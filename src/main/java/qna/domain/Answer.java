@@ -25,24 +25,44 @@ public class Answer extends BaseEntity {
     protected Answer() {
     }
 
-    protected Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+    private Answer(AnswerBuilder AnswerBuilder) {
+        this.id = AnswerBuilder.id;
+        this.writerId = AnswerBuilder.writerId;
+        this.questionId = AnswerBuilder.questionId;
+        this.contents = AnswerBuilder.contents;
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+    public static class AnswerBuilder {
+        private Long id;
+        private Long writerId;
+        private Long questionId;
+        private String contents;
+        private boolean deleted = false;
 
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
+        public AnswerBuilder(User writer, Question question) {
+            if (Objects.isNull(writer)) {
+                throw new UnAuthorizedException();
+            }
+            if (Objects.isNull(question)) {
+                throw new NotFoundException();
+            }
+            this.writerId = writer.getId();
+            this.questionId = question.getId();
         }
 
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
+        public AnswerBuilder id(long id) {
+            this.id = id;
+            return this;
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
-        this.contents = contents;
+        public AnswerBuilder contents(String contents) {
+            this.contents = contents;
+            return this;
+        }
+
+        public Answer build() {
+            return new Answer(this);
+        }
     }
 
     public boolean isOwner(User writer) {

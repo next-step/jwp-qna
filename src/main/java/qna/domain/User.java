@@ -1,13 +1,12 @@
 package qna.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import qna.UnAuthorizedException;
-
-import java.util.Objects;
 
 @Entity
 public class User extends BaseEntity {
@@ -28,16 +27,40 @@ public class User extends BaseEntity {
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
+    private User(UserBuilder userBuilder) {
+        this.id = userBuilder.id;
+        this.userId = userBuilder.userId;
+        this.password = userBuilder.password;
+        this.name = userBuilder.name;
+        this.email = userBuilder.email;
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+    public static class UserBuilder {
+        private Long id;
+        private String userId;
+        private String password;
+        private String name;
+        private String email;
+
+        public UserBuilder(String userId, String password, String name) {
+            this.userId = userId;
+            this.password = password;
+            this.name = name;
+        }
+
+        public UserBuilder id(long id) {
+            this.id = id;
+            return this;
+        }
+
+        public UserBuilder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public User build() {
+            return new User(this);
+        }
     }
 
     public void update(User loginUser, User target) {
