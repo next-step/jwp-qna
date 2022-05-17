@@ -68,7 +68,7 @@ class AnswerRepositoryTest {
     @DisplayName("저장 및 물리 삭제 후 해당 id로 검색")
     void saveAndPhysicalDeleteThenFindById() {
         Answer expected = answerRepository.save(A1);
-        answerRepository.delete(A1);
+        answerRepository.delete(expected);
         entityFlushAndClear();
         Optional<Answer> actual = answerRepository.findById(expected.getId());
 
