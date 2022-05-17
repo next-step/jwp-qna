@@ -27,7 +27,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("Question 도메인 생성 테스트")
-    void generate01(){
+    void generate01() {
         // given && when
         Question q1 = questionRepository.save(Q1);
         Question q2 = questionRepository.save(Q2);
@@ -48,7 +48,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("삭제되지 않은 Question 도메인 목록을 조회한다.")
-    void find01(){
+    void find01() {
         // given && when
         Q1.delete();
         questionRepository.save(Q1);

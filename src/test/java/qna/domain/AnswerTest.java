@@ -28,7 +28,7 @@ public class AnswerTest {
 
     @Test
     @DisplayName("Answer 도메인 생성 테스트")
-    void generate01(){
+    void generate01() {
         // given && when
         Answer a1 = answerRepository.save(A1);
         Answer a2 = answerRepository.save(A2);
@@ -49,7 +49,7 @@ public class AnswerTest {
 
     @Test
     @DisplayName("AnswerId를 기준으로 삭제되지 않은 Answer 도메인을 조회한다.")
-    void find01(){
+    void find01() {
         // given && when
         A1.delete();
         Answer a1 = answerRepository.save(A1);
@@ -72,7 +72,7 @@ public class AnswerTest {
 
     @Test
     @DisplayName("QuestionId를 기준으로 삭제되지 않은 Answer를 조회한다.")
-    void find02(){
+    void find02() {
         // given && when
         A1.delete();
         Answer a1 = answerRepository.save(A1);

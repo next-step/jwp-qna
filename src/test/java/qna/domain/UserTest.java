@@ -25,7 +25,7 @@ public class UserTest {
 
     @Test
     @DisplayName("User 도메인 생성 테스트")
-    void generate01(){
+    void generate01() {
         // given & when
         User javajigi = userRepository.save(JAVAJIGI);
         User sanjigi = userRepository.save(SANJIGI);
