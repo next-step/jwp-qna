@@ -1,20 +1,43 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import qna.config.QnaDataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.FixtureAnswer.A1;
 import static qna.domain.FixtureQuestion.Q1;
-import static qna.domain.FixtureUser.HEOWC;
+import static qna.domain.FixtureQuestion.Q2;
+import static qna.domain.FixtureUser.*;
 
 @QnaDataJpaTest
 class AnswerRepositoryTest {
 
     @Autowired
     private AnswerRepository repository;
+
+    @BeforeAll
+    static void setUp(@Autowired UserRepository userRepository,
+                      @Autowired QuestionRepository questionRepository) {
+        userRepository.deleteAll();
+        userRepository.save(JAVAJIGI);
+        userRepository.save(SANJIGI);
+        userRepository.save(HEOWC);
+        questionRepository.deleteAll();
+        questionRepository.save(Q1);
+        questionRepository.save(Q2);
+    }
+
+    @AfterAll
+    static void destroy(@Autowired UserRepository userRepository,
+                        @Autowired QuestionRepository questionRepository) {
+        questionRepository.deleteAll();
+        userRepository.deleteAll();
+    }
 
     @DisplayName("save하면 id 자동 생성")
     @Test
@@ -34,10 +57,17 @@ class AnswerRepositoryTest {
 
     @DisplayName("Answer에 대한 Question을 변경")
     @Test
-    void toQuestion() {
+    void toQuestion(@Autowired QuestionRepository questionRepository) {
+        final Question savedQuestion = questionRepository.save(new Question("3", "3"));
         final Answer answer = new Answer(HEOWC, Q1, "dummy");
-        answer.toQuestion(new Question(3L, "3", "3"));
+        answer.toQuestion(savedQuestion);
+
         final Answer saved = repository.save(answer);
-        assertThat(saved.getQuestion().getId()).isEqualTo(3L);
+        final Question question = saved.getQuestion();
+        assertAll(
+                () -> assertThat(question).isNotEqualTo(Q1),
+                () -> assertThat(question.getTitle()).isEqualTo("3"),
+                () -> assertThat(question.getContents()).isEqualTo("3")
+        );
     }
 }

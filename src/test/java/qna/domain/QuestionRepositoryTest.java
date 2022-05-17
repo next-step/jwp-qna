@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,13 +9,26 @@ import qna.config.QnaDataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.FixtureQuestion.Q1;
-import static qna.domain.FixtureUser.HEOWC;
+import static qna.domain.FixtureUser.*;
 
 @QnaDataJpaTest
 class QuestionRepositoryTest {
 
     @Autowired
     private QuestionRepository repository;
+
+    @BeforeAll
+    static void setUp(@Autowired UserRepository userRepository) {
+        userRepository.deleteAll();
+        userRepository.save(JAVAJIGI);
+        userRepository.save(SANJIGI);
+        userRepository.save(HEOWC);
+    }
+
+    @AfterAll
+    static void destroy(@Autowired UserRepository userRepository) {
+        userRepository.deleteAll();
+    }
 
     @DisplayName("save하면 id 자동 생성")
     @Test
