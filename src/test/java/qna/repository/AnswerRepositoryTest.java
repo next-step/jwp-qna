@@ -31,11 +31,11 @@ class AnswerRepositoryTest {
     @DisplayName("저장 테스트")
     @Test
     void save() {
-        Answer actual = answerRepository.save(A1);
+        Answer answer = answerRepository.save(A1);
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriterId()).isEqualTo(A1.getWriterId()),
-                () -> assertThat(actual.getContents()).isEqualTo(A1.getContents())
+                () -> assertThat(answer.getId()).isNotNull(),
+                () -> assertThat(answer.getWriterId()).isEqualTo(A1.getWriterId()),
+                () -> assertThat(answer.getContents()).isEqualTo(A1.getContents())
         );
     }
 
@@ -45,8 +45,8 @@ class AnswerRepositoryTest {
         answerRepository.save(A1);
         answerRepository.save(A2);
         answerRepository.save(A3);
-        List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(QuestionRepositoryTest.Q1.getId());
-        assertThat(actual).hasSize(3);
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionRepositoryTest.Q1.getId());
+        assertThat(answers).hasSize(3);
     }
 
     @DisplayName("delete 가 잘 되었는지 테스트")
@@ -54,8 +54,8 @@ class AnswerRepositoryTest {
     void delete() {
         answerRepository.save(A1);
         answerRepository.save(A2);
-        Answer a3 = answerRepository.save(A3);
-        answerRepository.delete(a3);
+        Answer answer = answerRepository.save(A3);
+        answerRepository.delete(answer);
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionRepositoryTest.Q1.getId());
         assertThat(answers).hasSize(2);
     }
