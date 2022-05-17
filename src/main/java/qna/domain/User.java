@@ -2,18 +2,38 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
-public class User {
+@Entity
+public class User extends Auditing {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
+    @Size(max = 20)
+    @Column(unique = true)
     private String userId;
+
+    @NotNull
+    @Size(max = 20)
     private String password;
+
+    @NotNull
+    @Size(max = 20)
     private String name;
+
+    @Email
+    @Size(max = 50)
     private String email;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -110,6 +130,8 @@ public class User {
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", createdAt='" + getCreatedAt() + '\'' +
+                ", updatedAt='" + getUpdatedAt() + '\'' +
                 '}';
     }
 
