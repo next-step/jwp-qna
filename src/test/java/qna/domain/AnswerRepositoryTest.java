@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +15,30 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 class AnswerRepositoryTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    private static Answer A1;
+    private static Answer A2;
 
     @PersistenceContext
     private EntityManager em;
 
     @Autowired
     private AnswerRepository answerRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @BeforeEach
+    void setUp() {
+        User user1 = userRepository.save(UserTest.JAVAJIGI);
+        User user2 = userRepository.save(UserTest.SANJIGI);
+        Question question = questionRepository.save(QuestionTest.Q1.writeBy(user1));
+
+        A1 = new Answer(user1, question, "Answers Contents1");
+        A2 = new Answer(user2, question, "Answers Contents2");
+    }
 
     @Test
     @DisplayName("Answer 도메인 생성 테스트")
@@ -79,7 +96,7 @@ class AnswerRepositoryTest {
 
         // then
         List<Answer> answersByQuestionId = answerRepository.findByQuestionIdAndDeletedFalse(
-            a1.getQuestionId());
+            a1.getQuestion().getId());
 
         assertAll(
             () -> assertThat(answersByQuestionId).hasSize(1),

@@ -76,7 +76,7 @@ public class AnswerTest {
         A1.toQuestion(question);
 
         // then
-        assertThat(A1.getQuestionId()).isEqualTo(questionId);
+        assertThat(A1.getQuestion()).isEqualTo(question);
     }
 
     @ParameterizedTest
@@ -110,18 +110,7 @@ public class AnswerTest {
         Answer answer = new Answer(user, QuestionTest.Q1, "contents");
 
         // then
-        assertThat(answer.getWriterId()).isEqualTo(writerId);
-    }
-
-    @ParameterizedTest
-    @ValueSource(longs = {1L, 2L, 3L, 4L})
-    @DisplayName("setWriterId 메소드를 이용해 Answer를 작성한 User의 id 값을 변경할 수 있다.")
-    void public_method_06(long writerId) {
-        // given & when
-        A1.setWriterId(writerId);
-
-        // then
-        assertThat(A1.getWriterId()).isEqualTo(writerId);
+        assertThat(answer.getWriter()).isEqualTo(user);
     }
 
     @ParameterizedTest
@@ -133,18 +122,7 @@ public class AnswerTest {
         Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
 
         // then
-        assertThat(answer.getQuestionId()).isEqualTo(questionId);
-    }
-
-    @ParameterizedTest
-    @ValueSource(longs = {1L, 2L, 3L, 4L})
-    @DisplayName("setQuestionId 메소드를 이용해 Question의 id 값을 변경 할 수 있다.")
-    void public_method_08(long questionId) {
-        // given & when
-        A1.setQuestionId(questionId);
-
-        // then
-        assertThat(A1.getQuestionId()).isEqualTo(questionId);
+        assertThat(answer.getQuestion()).isEqualTo(question);
     }
 
     @ParameterizedTest
