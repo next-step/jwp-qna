@@ -2,10 +2,14 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import qna.domain.time.BaseTime;
 
 @Entity
@@ -18,9 +22,12 @@ public class Question extends BaseTime {
     private String title;
     @Lob
     private String contents;
-    private Long writerId;
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id",foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -36,12 +43,12 @@ public class Question extends BaseTime {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -73,11 +80,7 @@ public class Question extends BaseTime {
     }
 
     public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+        return writer.getId();
     }
 
     public boolean isDeleted() {
@@ -94,7 +97,7 @@ public class Question extends BaseTime {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
