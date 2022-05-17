@@ -10,7 +10,8 @@ public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String contentType;
+    @Enumerated(value = EnumType.STRING)
+    private ContentType contentType;
     private Long contentId;
     private Long deletedById;
     private LocalDateTime createDate = LocalDateTime.now();
@@ -18,7 +19,7 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(String contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
@@ -31,7 +32,7 @@ public class DeleteHistory {
         if (o == null || getClass() != o.getClass()) return false;
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(contentType, that.contentType) &&
+                contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
                 Objects.equals(deletedById, that.deletedById);
     }
