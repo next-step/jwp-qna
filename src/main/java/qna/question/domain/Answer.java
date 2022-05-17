@@ -3,6 +3,7 @@ package qna.question.domain;
 import common.entity.BasicEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import qna.question.exception.NotFoundException;
 import qna.user.exception.UnAuthorizedException;
@@ -12,6 +13,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Answer extends BasicEntity {
     @Id
@@ -53,24 +55,8 @@ public class Answer extends BasicEntity {
         this.questionId = question.getId();
     }
 
-    public long getId() {
-        // fixme - 제거 방법 찾기
-        return this.id;
-    }
-
-    public long getWriterId() {
-        // fixme - 제거 방법 찾기
-        return this.writerId;
-    }
-
-    public boolean isDeleted() {
-        // fixme - 제거 방법 찾기
-        return this.deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        // fixme - 제거 방법 찾기
-        this.deleted = deleted;
+    public void answerDelete() {
+        this.deleted = true;
     }
 
     @Override

@@ -6,10 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import qna.question.exception.CannotDeleteException;
+import qna.annotation.LocalDataJpaConfig;
 import qna.question.domain.*;
-import qna.question.service.DeleteHistoryService;
-import qna.question.service.QnaService;
+import qna.question.exception.CannotDeleteException;
 import qna.user.domain.UserTest;
 
 import java.time.LocalDateTime;
@@ -22,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@LocalDataJpaConfig
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
     @Mock

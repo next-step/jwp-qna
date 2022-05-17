@@ -3,12 +3,14 @@ package qna.question.domain;
 import common.entity.BasicEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import qna.user.domain.User;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Question extends BasicEntity {
     @Id
@@ -46,24 +48,8 @@ public class Question extends BasicEntity {
         answer.toQuestion(this);
     }
 
-    public long getId() {
-        return this.id;
-        // fixme - 제거 방법 찾기
-    }
-
-    public long getWriterId() {
-        // fixme - 제거 방법 찾기
-        return this.writerId;
-    }
-
-    public boolean isDeleted() {
-        // fixme - 제거 방법 찾기
-        return this.deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        // fixme - 제거 방법 찾기
-        this.deleted = deleted;
+    public void questionDelete() {
+        this.deleted = true;
     }
 
     @Override

@@ -3,6 +3,7 @@ package qna.user.domain;
 import common.entity.BasicEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import qna.user.exception.UnAuthorizedException;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BasicEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
@@ -72,11 +74,6 @@ public class User extends BasicEntity {
 
     public boolean isGuestUser() {
         return false;
-    }
-
-    public long getId() {
-        return this.id;
-        // fixme - 제거 방법 찾기
     }
 
     @Override
