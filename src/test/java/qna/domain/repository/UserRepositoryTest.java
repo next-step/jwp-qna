@@ -41,10 +41,10 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("특정 Id를 조회 한다.")
+    @DisplayName("특정 UserId를 조회 한다.")
     void read() {
         //when
-        User findUser1 = repository.findById(JAVAJIGI.getId()).get();
+        User findUser1 = repository.findByUserId(JAVAJIGI.getUserId()).get();
 
         //then
         assertThat(findUser1.getName()).isEqualTo(JAVAJIGI.getName());
@@ -52,9 +52,9 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("특정 Id의 레코드를 업데이트 한다.")
+    @DisplayName("특정 UserIdId의 레코드를 업데이트 한다.")
     void update() {
-        User findUser = repository.findById(JAVAJIGI.getId()).get();
+        User findUser = repository.findByUserId(JAVAJIGI.getUserId()).get();
 
         User target = new User(1L, "javajigi",
                 "password", "updated_name",
@@ -65,7 +65,7 @@ class UserRepositoryTest {
         em.flush();
         em.clear();
 
-        User updatedFindUser = repository.findById(JAVAJIGI.getId()).get();
+        User updatedFindUser = repository.findByUserId(JAVAJIGI.getUserId()).get();
 
         assertAll(
                 () -> assertThat(updatedFindUser.getName()).isEqualTo("updated_name"),
