@@ -38,6 +38,6 @@ class AnswerRepositoryTest {
         final Answer answer = new Answer(HEOWC, Q1, "dummy");
         answer.toQuestion(new Question(3L, "3", "3"));
         final Answer saved = repository.save(answer);
-        assertThat(saved.getQuestionId()).isEqualTo(3L);
+        assertThat(saved.getQuestion().getId()).isEqualTo(3L);
     }
 }
