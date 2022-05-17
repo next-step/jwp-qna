@@ -1,4 +1,6 @@
-package qna.domain;
+package qna.repository.entity;
+
+import qna.domain.ContentType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
