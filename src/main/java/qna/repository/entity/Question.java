@@ -1,11 +1,30 @@
-package qna.domain;
+package qna.repository.entity;
 
-public class Question {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "question")
+public class Question extends AuditTimeBaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+
+    @Lob
     private String contents;
-    private Long writerId;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column(length = 100, nullable = false)
+    private String title;
+
+    private Long writerId;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -15,6 +34,9 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    public Question() {
     }
 
     public Question writeBy(User writer) {
@@ -74,10 +96,12 @@ public class Question {
     public String toString() {
         return "Question{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", getCreatedAt()=" + getCreatedAt() +
                 ", deleted=" + deleted +
+                ", title='" + title + '\'' +
+                ", getUpdatedAt()=" + getUpdatedAt() +
+                ", writerId=" + writerId +
                 '}';
     }
 }

@@ -1,19 +1,39 @@
-package qna.domain;
-
-import qna.UnAuthorizedException;
+package qna.repository.entity;
 
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import qna.exception.UnAuthorizedException;
 
-public class User {
+@Entity
+@Table(name = "user")
+public class User extends AuditTimeBaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
     private String email;
 
-    private User() {
+    @Column(length = 20, nullable = false)
+    private String name;
+
+    @Column(length = 20, nullable = false)
+    private String password;
+
+    @Column(length = 20, nullable = false, unique = true)
+    private String userId;
+
+    public User() {
+    }
+
+    public User(String name, String password, String userId) {
+        this(null, userId, password, name, null);
     }
 
     public User(String userId, String password, String name, String email) {
@@ -106,10 +126,12 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
+                ", getCreatedAt()=" + getCreatedAt() +
                 ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", getUpdatedAt()=" + getUpdatedAt() +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 

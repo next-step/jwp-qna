@@ -1,16 +1,32 @@
-package qna.domain;
-
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+package qna.repository.entity;
 
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
 
-public class Answer {
+@Entity
+@Table(name = "answer")
+public class Answer extends AuditTimeBaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+
+    @Lob
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    private Long questionId;
+
+    private Long writerId;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -30,6 +46,9 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
+    }
+
+    public Answer() {
     }
 
     public boolean isOwner(User writer) {
@@ -84,10 +103,12 @@ public class Answer {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
+                ", questionId=" + questionId +
+                ", writerId=" + writerId +
+                ", getCreatedAt()=" + getCreatedAt() +
+                ", getUpdatedAt()=" + getUpdatedAt() +
                 '}';
     }
 }
