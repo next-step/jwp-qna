@@ -56,4 +56,5 @@ add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 - [x] MySql 방언을 사용한다.
 - [x] 동적 쿼리 로그를 볼 수 있다.
 - [x] 엔티티 매핑 정보를 수정한다.
+- [x] Repository를 이용한 단위테스트를 완성한다.
 
