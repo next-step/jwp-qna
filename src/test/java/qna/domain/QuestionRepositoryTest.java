@@ -20,25 +20,29 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
-    private Question question;
+    @Autowired
+    private UserRepository userRepository;
+
+    private Long questionId;
 
     @BeforeEach
     void setup() {
-        question = questionRepository.save(Q1);
-        questionRepository.save(Q2);
+        User javaJigi = userRepository.save(UserTest.JAVAJIGI);
+        User sanJigi = userRepository.save(UserTest.SANJIGI);
+        questionId = questionRepository.save(new Question(Q1.getTitle(), Q1.getContents()).writeBy(javaJigi)).getId();
+        questionRepository.save(new Question(Q2.getTitle(), Q2.getContents()).writeBy(sanJigi));
     }
 
     @DisplayName("해당 ID로 삭제상태가 아닌 질문을 찾는다.")
     @Test
     void findByIdAndDeletedFalse() {
-        Long questionId = question.getId();
         Optional<Question> byId = questionRepository.findByIdAndDeletedFalse(questionId);
         Question question = byId.orElse(null);
         assertAll(
             () -> assertEquals(questionId, question.getId()),
             () -> assertEquals("contents1", question.getContents()),
             () -> assertEquals("title1", question.getTitle()),
-            () -> assertEquals(1L, question.getWriterId()),
+            () -> assertThat(question.getWriter()).isNotNull(),
             () -> assertThat(question.isDeleted()).isFalse()
         );
     }
