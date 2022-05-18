@@ -15,8 +15,7 @@ public class QuestionTest {
 
     @Test
     void 질문을_작성하면_작성한_사용자에게_할당되어야_한다() {
-        Question question = Question.builder()
-                .build();
+        Question question = new Question();
 
         question.writeBy(UserTest.JAVAJIGI);
 
@@ -25,8 +24,7 @@ public class QuestionTest {
 
     @Test
     void 질문_작성자_여부를_확인하는_기능은_정상_동작해야_한다() {
-        Question question = Question.builder()
-                .build();
+        Question question = new Question();
 
         question.writeBy(UserTest.JAVAJIGI);
 
@@ -36,8 +34,7 @@ public class QuestionTest {
 
     @Test
     void 질문을_삭제하면_삭제_여부가_true_이어야_한다() {
-        Question question = Question.builder()
-                .build();
+        Question question = new Question();
 
         assertThat(question.isDeleted()).isFalse();
 

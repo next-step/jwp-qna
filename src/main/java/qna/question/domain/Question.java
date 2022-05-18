@@ -1,17 +1,11 @@
 package qna.question.domain;
 
 import common.entity.BasicEntity;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import qna.user.domain.User;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Question extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +22,12 @@ public class Question extends BasicEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Builder
+    protected Question() {}
+
+    public Question(String title, String contents) {
+        this(null, title, contents);
+    }
+
     public Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
@@ -50,6 +49,18 @@ public class Question extends BasicEntity {
 
     public void questionDelete() {
         this.deleted = true;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public Long getWriterId() {
+        return this.writerId;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
     }
 
     @Override

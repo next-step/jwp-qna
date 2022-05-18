@@ -1,20 +1,14 @@
 package qna.question.domain;
 
 import common.entity.BasicEntity;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import qna.question.exception.NotFoundException;
-import qna.user.exception.UnAuthorizedException;
 import qna.user.domain.User;
+import qna.user.exception.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Answer extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +24,10 @@ public class Answer extends BasicEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Builder
+    public Answer(User writer, Question question, String contents) {
+        this(null, writer, question, contents);
+    }
+
     public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
@@ -47,6 +44,8 @@ public class Answer extends BasicEntity {
         this.contents = contents;
     }
 
+    protected Answer() {}
+
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
     }
@@ -57,6 +56,22 @@ public class Answer extends BasicEntity {
 
     public void answerDelete() {
         this.deleted = true;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public Long getWriterId() {
+        return this.writerId;
+    }
+
+    public Long getQuestionId() {
+        return this.questionId;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
     }
 
     @Override

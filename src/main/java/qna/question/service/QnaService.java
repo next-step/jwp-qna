@@ -1,6 +1,5 @@
 package qna.question.service;
 
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,13 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class QnaService {
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
-    private final QuestionRepository questionRepository;
-    private final AnswerRepository answerRepository;
-    private final DeleteHistoryService deleteHistoryService;
+    private QuestionRepository questionRepository;
+    private AnswerRepository answerRepository;
+    private DeleteHistoryService deleteHistoryService;
+
+    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
+        this.questionRepository = questionRepository;
+        this.answerRepository = answerRepository;
+        this.deleteHistoryService = deleteHistoryService;
+    }
 
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {

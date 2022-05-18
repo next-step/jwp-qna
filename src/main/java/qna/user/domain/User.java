@@ -1,18 +1,12 @@
 package qna.user.domain;
 
 import common.entity.BasicEntity;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import qna.user.exception.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BasicEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -33,7 +27,12 @@ public class User extends BasicEntity {
     @Column(length = 50)
     private String email;
 
-    @Builder
+    protected User() {}
+
+    public User(String userId, String password, String name, String email) {
+        this(null, userId, password, name, email);
+    }
+
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
         this.userId = userId;
@@ -74,6 +73,10 @@ public class User extends BasicEntity {
 
     public boolean isGuestUser() {
         return false;
+    }
+
+    public Long getId() {
+        return this.id;
     }
 
     @Override
