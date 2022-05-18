@@ -94,4 +94,4 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL57Dialect
 - [X] user
 - [X] question
 - [X] answer
-- [ ] delete_history
+- [X] delete_history
