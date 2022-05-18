@@ -132,7 +132,7 @@ alter table question
   - [x] Entity 수정
   - [ ] 테스트 코드 추가
 - **delete_history 테이블**
-  - [ ] Entity 수정
+  - [x] Entity 수정
   - [ ] 테스트 코드 추가
 - **question 테이블**
   - [ ] Entity 수정
