@@ -34,8 +34,8 @@ public class UserTest {
         em.clear();
 
         // then
-        Optional<User> findJavajigi = userRepository.findByUserId(javajigi.getUserId());
-        Optional<User> findSanjigi = userRepository.findByUserId(sanjigi.getUserId());
+        Optional<User> findJavajigi = userRepository.findByUserId(javajigi.userId());
+        Optional<User> findSanjigi = userRepository.findByUserId(sanjigi.userId());
 
         assertAll(
             () -> assertTrue(findJavajigi.isPresent()),

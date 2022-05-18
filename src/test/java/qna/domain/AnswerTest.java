@@ -76,7 +76,7 @@ public class AnswerTest {
         A1.toQuestion(question);
 
         // then
-        assertThat(A1.getQuestion()).isEqualTo(question);
+        assertThat(A1.question()).isEqualTo(question);
     }
 
     @ParameterizedTest
@@ -87,18 +87,7 @@ public class AnswerTest {
         Answer answer = new Answer(id, UserTest.JAVAJIGI, QuestionTest.Q1, "contents");
 
         // then
-        assertThat(answer.getId()).isEqualTo(id);
-    }
-
-    @ParameterizedTest
-    @ValueSource(longs = {1L, 2L, 3L, 4L})
-    @DisplayName("setId 메소드를 이용해 Answer의 id 값을 변경할 수 있다.")
-    void public_method_04(long id) {
-        // given & when
-        A1.setId(id);
-
-        // then
-        assertThat(A1.getId()).isEqualTo(id);
+        assertThat(answer.id()).isEqualTo(id);
     }
 
     @ParameterizedTest
@@ -110,7 +99,7 @@ public class AnswerTest {
         Answer answer = new Answer(user, QuestionTest.Q1, "contents");
 
         // then
-        assertThat(answer.getWriter()).isEqualTo(user);
+        assertThat(answer.writer()).isEqualTo(user);
     }
 
     @ParameterizedTest
@@ -122,7 +111,7 @@ public class AnswerTest {
         Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
 
         // then
-        assertThat(answer.getQuestion()).isEqualTo(question);
+        assertThat(answer.question()).isEqualTo(question);
     }
 
     @ParameterizedTest
@@ -133,7 +122,7 @@ public class AnswerTest {
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, contents);
 
         // then
-        assertThat(answer.getContents()).isEqualTo(contents);
+        assertTrue(answer.isEqualsContents(contents));
     }
 
     @ParameterizedTest
@@ -141,10 +130,10 @@ public class AnswerTest {
     @DisplayName("setContents 메소드를 이용해 Answer의 Contents 값을 변경 할 수 있다.")
     void public_method_10(String contents) {
         // given & when
-        A1.setContents(contents);
+        A1.changeContents(contents);
 
         // then
-        assertThat(A1.getContents()).isEqualTo(contents);
+        assertTrue(A1.isEqualsContents(contents));
     }
 
     @Test
@@ -159,7 +148,7 @@ public class AnswerTest {
     @DisplayName("setDeleted 메소드를 이용해 Answer의 삭제 여부를 변경할 수 있다.")
     void public_method_11(boolean deleted) {
         // given & when
-        A1.setDeleted(deleted);
+        A1.changeDeleted(deleted);
 
         // then
         assertThat(A1.isDeleted()).isEqualTo(deleted);

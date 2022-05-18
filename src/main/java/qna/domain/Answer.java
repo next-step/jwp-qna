@@ -64,40 +64,32 @@ public class Answer extends BaseDateTimeEntity{
         this.question = question;
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getWriter() {
+    public User writer() {
         return this.writer;
     }
 
-    public Question getQuestion() {
+    public Question question() {
         return this.question;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void changeDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
-    public void delete() {
-        this.deleted = true;
+    public void changeContents(String contents) {
+        this.contents = contents;
+    }
+
+    public boolean isEqualsContents(String contents) {
+        return this.contents.equals(contents);
     }
 
     @Override
@@ -120,11 +112,11 @@ public class Answer extends BaseDateTimeEntity{
             return false;
         }
         Answer answer = (Answer) o;
-        return Objects.equals(getId(), answer.getId());
+        return Objects.equals(id(), answer.id());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(id());
     }
 }

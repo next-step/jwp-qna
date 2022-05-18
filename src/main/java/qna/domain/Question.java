@@ -56,11 +56,11 @@ public class Question extends BaseDateTimeEntity{
         answer.toQuestion(this);
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
-    public User getWriter() {
+    public User writer() {
         return this.writer;
     }
 
@@ -68,12 +68,8 @@ public class Question extends BaseDateTimeEntity{
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void changeDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public void delete() {
-        this.deleted = true;
     }
 
     @Override
@@ -96,11 +92,11 @@ public class Question extends BaseDateTimeEntity{
             return false;
         }
         Question question = (Question) o;
-        return Objects.equals(getId(), question.getId());
+        return Objects.equals(id(), question.id());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(id());
     }
 }

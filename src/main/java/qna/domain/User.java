@@ -75,20 +75,12 @@ public class User extends BaseDateTimeEntity{
         return false;
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public String userId() {
+        return this.userId;
     }
 
     @Override
@@ -111,12 +103,12 @@ public class User extends BaseDateTimeEntity{
             return false;
         }
         User user = (User) o;
-        return Objects.equals(getId(), user.getId());
+        return Objects.equals(id(), user.id());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(id());
     }
 
     private static class GuestUser extends User {

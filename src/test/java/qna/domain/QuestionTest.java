@@ -49,8 +49,8 @@ public class QuestionTest {
         em.clear();
 
         // then
-        Optional<Question> findQ1 = questionRepository.findById(q1.getId());
-        Optional<Question> findQ2 = questionRepository.findById(q2.getId());
+        Optional<Question> findQ1 = questionRepository.findById(q1.id());
+        Optional<Question> findQ2 = questionRepository.findById(q2.id());
 
         assertAll(
             () -> assertTrue(findQ1.isPresent()),
@@ -63,7 +63,7 @@ public class QuestionTest {
     @DisplayName("삭제되지 않은 Question 도메인 목록을 조회한다.")
     void find01() {
         // given && when
-        Q1.delete();
+        Q1.changeDeleted(true);
         questionRepository.save(Q1);
         Question q2 = questionRepository.save(Q2);
 

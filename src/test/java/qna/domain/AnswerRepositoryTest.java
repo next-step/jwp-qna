@@ -51,8 +51,8 @@ class AnswerRepositoryTest {
         em.clear();
 
         // then
-        Optional<Answer> findA1 = answerRepository.findById(a1.getId());
-        Optional<Answer> findA2 = answerRepository.findById(a2.getId());
+        Optional<Answer> findA1 = answerRepository.findById(a1.id());
+        Optional<Answer> findA2 = answerRepository.findById(a2.id());
 
         assertAll(
             () -> assertTrue(findA1.isPresent()),
@@ -65,7 +65,7 @@ class AnswerRepositoryTest {
     @DisplayName("AnswerId를 기준으로 삭제되지 않은 Answer 도메인을 조회한다.")
     void find01() {
         // given && when
-        A1.delete();
+        A1.changeDeleted(true);
         Answer a1 = answerRepository.save(A1);
         Answer a2 = answerRepository.save(A2);
 
@@ -73,8 +73,8 @@ class AnswerRepositoryTest {
         em.clear();
 
         // then
-        Optional<Answer> findA1 = answerRepository.findByIdAndDeletedFalse(a1.getId());
-        Optional<Answer> findA2 = answerRepository.findByIdAndDeletedFalse(a2.getId());
+        Optional<Answer> findA1 = answerRepository.findByIdAndDeletedFalse(a1.id());
+        Optional<Answer> findA2 = answerRepository.findByIdAndDeletedFalse(a2.id());
 
         assertAll(
             () -> assertFalse(findA1.isPresent()),
@@ -87,7 +87,7 @@ class AnswerRepositoryTest {
     @DisplayName("QuestionId를 기준으로 삭제되지 않은 Answer를 조회한다.")
     void find02() {
         // given && when
-        A1.delete();
+        A1.changeDeleted(true);
         Answer a1 = answerRepository.save(A1);
         Answer a2 = answerRepository.save(A2);
 
@@ -96,7 +96,7 @@ class AnswerRepositoryTest {
 
         // then
         List<Answer> answersByQuestionId = answerRepository.findByQuestionIdAndDeletedFalse(
-            a1.getQuestion().getId());
+            a1.question().id());
 
         assertAll(
             () -> assertThat(answersByQuestionId).hasSize(1),
