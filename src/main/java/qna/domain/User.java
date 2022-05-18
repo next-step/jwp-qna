@@ -2,6 +2,9 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import qna.UnAuthorizedException;
@@ -10,9 +13,12 @@ import java.util.Objects;
 
 @Entity
 @Table(name="user", uniqueConstraints = @UniqueConstraint(columnNames = {"userId"}))
-public class User extends BaseEntity{
+public class User extends BaseAuditingEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(length = 50)
     private String email;
     @Column(length = 20, nullable = false)
@@ -30,7 +36,7 @@ public class User extends BaseEntity{
     }
 
     public User(Long id, String userId, String password, String name, String email) {
-        setId(id);
+        this.id=id;
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -65,6 +71,14 @@ public class User extends BaseEntity{
 
         return name.equals(target.name) &&
                 email.equals(target.email);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public boolean isGuestUser() {
@@ -106,11 +120,11 @@ public class User extends BaseEntity{
     @Override
     public String toString() {
         return "User{" +
-                "id=" + getId() +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
+                "id=" + id +
                 ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 

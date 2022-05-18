@@ -3,4 +3,5 @@
   - 주어진 DDL에 맞게 리포지토리 클래스 작성
   - DataJpaTest로 테스트를 작성한다.
 
-#
+# 1단계 리뷰 반영
+  - [X] BaseEntity에서 id제외하기
