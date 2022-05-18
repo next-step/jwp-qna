@@ -5,3 +5,4 @@
 
 # 1단계 리뷰 반영
   - [X] BaseEntity에서 id제외하기
+  - [X] Exception 패키지 생성 
