@@ -29,7 +29,6 @@ public class UserRepositoryTest {
     void findByUserId_test() {
         // when
         User user = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
-
         // then
         assertAll(
                 () -> assertThat(user).isNotNull(),

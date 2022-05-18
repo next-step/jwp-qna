@@ -19,10 +19,8 @@ public class QuestionRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 
-    Question question;
-
     @Test
-    @DisplayName("삭제가 되지않은 질문리스트 검색하고 반환된 리스트 길이는 2이다.")
+    @DisplayName("삭제가 false인 질문리스트 길이는 2이다.")
     void findByDeletedFalse_test() {
         //given
         questionRepository.save(QuestionTest.Q1);
@@ -33,7 +31,7 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제 되지않은 질문중에서 질문 아이디로 검색하여 질문 객체를 반환한다.")
+    @DisplayName("질문 아이디로 삭제가 false인 객체를 검색하여 질문 객체를 반환한다.")
     void findByIdAndDeletedFalse() {
         //given
         questionRepository.save(QuestionTest.Q2);
