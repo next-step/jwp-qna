@@ -68,7 +68,11 @@ public class Question extends BaseDateTimeEntity{
         return deleted;
     }
 
-    public void changeDeleted(boolean deleted) {
+    public void toDeleted(){
+        this.changeDeleted(true);
+    }
+
+    private void changeDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 

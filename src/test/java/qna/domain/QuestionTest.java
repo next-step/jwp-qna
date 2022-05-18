@@ -63,7 +63,7 @@ public class QuestionTest {
     @DisplayName("삭제되지 않은 Question 도메인 목록을 조회한다.")
     void find01() {
         // given && when
-        Q1.changeDeleted(true);
+        Q1.toDeleted();
         questionRepository.save(Q1);
         Question q2 = questionRepository.save(Q2);
 
