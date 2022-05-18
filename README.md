@@ -84,8 +84,14 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL57Dialect
 - [X] question
 - [X] user
 
-### 엔티티에 생성 테스트
+### 엔티티 테스트
+- [X] user
+- [X] question
+- [X] answer
+- [X] delete_history
+
+### 서비스 테스트
+- [ ] user
+- [ ] question
 - [ ] answer
 - [ ] delete_history
-- [ ] question
-- [ ] user
