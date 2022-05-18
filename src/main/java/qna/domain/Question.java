@@ -45,7 +45,9 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
+        if (!answers.contains(answer)) {
+            answers.add(answer);
+        }
         answer.setQuestion(this);
     }
 

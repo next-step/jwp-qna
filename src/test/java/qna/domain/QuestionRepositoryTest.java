@@ -1,10 +1,18 @@
 package qna.domain;
 
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import qna.config.QnaDataJpaTest;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -49,5 +57,21 @@ class QuestionRepositoryTest {
         final Question question = new Question("question", "question").writeBy(user);
         final Question saved = repository.save(question.writeBy(HEOWC));
         assertThat(saved.getWriter()).isEqualTo(HEOWC);
+    }
+
+    @DisplayName("지연 로딩으로 인한 초기화 여부 확인")
+    @Test
+    void lazyLoading(@Autowired UserRepository userRepository,
+                     @Autowired PlatformTransactionManager transactionManager) {
+        final TransactionTemplate template = new TransactionTemplate(transactionManager);
+        template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        final Long id = template.execute(status -> {
+            final User savedUser = userRepository.save(new User("lazyloading", "1234", "lazyloading",
+                                                         "lazyloading@example.com"));
+            final Question question = new Question("question", "question").writeBy(savedUser);
+            return repository.save(question).getId();
+        });
+        final List<Answer> answers = repository.getOne(id).getAnswers();
+        assertThat(Hibernate.isInitialized(answers)).isFalse();
     }
 }
