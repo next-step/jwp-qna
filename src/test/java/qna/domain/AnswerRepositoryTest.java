@@ -34,7 +34,7 @@ class AnswerRepositoryTest {
     void setUp() {
         User user1 = userRepository.save(UserTest.JAVAJIGI);
         User user2 = userRepository.save(UserTest.SANJIGI);
-        Question question = questionRepository.save(QuestionTest.Q1.writeBy(user1));
+        Question question = questionRepository.save(QuestionRepositoryTest.Q1.writeBy(user1));
 
         A1 = new Answer(user1, question, "Answers Contents1");
         A2 = new Answer(user2, question, "Answers Contents2");

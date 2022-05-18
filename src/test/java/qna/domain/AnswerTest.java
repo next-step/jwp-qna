@@ -15,14 +15,14 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionRepositoryTest.Q1, "Answers Contents1");
+    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionRepositoryTest.Q1, "Answers Contents2");
 
     @Test
     @DisplayName("Answer 도메인을 정상적으로 생성할 수 있다.")
     void generate01() {
         // given & when
-        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Contents");
+        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionRepositoryTest.Q1, "Contents");
 
         // then
         assertNotNull(answer);
@@ -32,7 +32,7 @@ public class AnswerTest {
     @DisplayName("Answer 도메인 생성시 user 정보가 없는 경우 UnAuthorizedException이 발생한다.")
     void generate_exception_01() {
         // given & when & then
-        assertThatThrownBy(() -> new Answer(null, QuestionTest.Q1, "Contents"))
+        assertThatThrownBy(() -> new Answer(null, QuestionRepositoryTest.Q1, "Contents"))
             .isInstanceOf(UnAuthorizedException.class);
     }
 
@@ -84,7 +84,7 @@ public class AnswerTest {
     @DisplayName("getId 메소드를 이용해 Answer의 id 값을 조회할 수 있다.")
     void public_method_03(long id) {
         // given & when
-        Answer answer = new Answer(id, UserTest.JAVAJIGI, QuestionTest.Q1, "contents");
+        Answer answer = new Answer(id, UserTest.JAVAJIGI, QuestionRepositoryTest.Q1, "contents");
 
         // then
         assertThat(answer.id()).isEqualTo(id);
@@ -107,7 +107,7 @@ public class AnswerTest {
     @DisplayName("getContents 메소드를 이용해 Answer의 Contents 값을 조회 할 수 있다.")
     void public_method_09(String contents) {
         // given & when
-        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, contents);
+        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionRepositoryTest.Q1, contents);
 
         // then
         assertTrue(answer.isEqualsContents(contents));
