@@ -6,3 +6,6 @@
 # 1단계 리뷰 반영
   - [X] BaseEntity에서 id제외하기
   - [X] Exception 패키지 생성 
+  - [X] Test 클래스에 @DirtiesContext 제거
+  - [X] 테스트 실행시 @EnableJpaAuditing 적용되도록 변경
+  - 
