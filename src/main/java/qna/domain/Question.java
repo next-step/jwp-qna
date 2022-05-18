@@ -6,7 +6,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import qna.common.BaseEntity;
 
@@ -22,7 +24,10 @@ public class Question extends BaseEntity {
 
     @Lob
     private String contents;
-    private Long writerId;
+
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User user;
 
     @OneToOne(mappedBy = "question")
     private Answer answer;
@@ -44,12 +49,12 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.user = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.user.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -80,12 +85,8 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return user;
     }
 
     public boolean isDeleted() {
@@ -102,7 +103,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", user=" + user +
                 ", answer=" + answer +
                 ", deleted=" + deleted +
                 '}';
@@ -118,12 +119,12 @@ public class Question extends BaseEntity {
         }
         Question question = (Question) o;
         return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
-                question.title) && Objects.equals(contents, question.contents) && Objects.equals(
-                writerId, question.writerId) && Objects.equals(answer, question.answer);
+                question.title) && Objects.equals(contents, question.contents) && Objects.equals(user,
+                question.user) && Objects.equals(answer, question.answer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writerId, answer, deleted);
+        return Objects.hash(id, title, contents, user, answer, deleted);
     }
 }

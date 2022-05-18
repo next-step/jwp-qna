@@ -35,10 +35,10 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deleter, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-//        this.deletedById = deletedById;
+        this.user = deleter;
         this.createDate = createDate;
     }
 
@@ -53,10 +53,10 @@ public class DeleteHistory {
     public Long getContentId() {
         return contentId;
     }
-//
-//    public Long getDeletedById() {
-//        return deletedById;
-//    }
+
+    public User getDeleter() {
+        return user;
+    }
 
     public LocalDateTime getCreateDate() {
         return createDate;

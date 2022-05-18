@@ -24,7 +24,7 @@ class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+        deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
     }
 
     @Test
@@ -62,7 +62,7 @@ class DeleteHistoryRepositoryTest {
                 () -> assertThat(dh1.getId()).isEqualTo(dh2.getId()),
                 () -> assertThat(dh1.getContentId()).isEqualTo(dh2.getContentId()),
                 () -> assertThat(dh1.getContentType()).isEqualTo(dh2.getContentType()),
-                () -> assertThat(dh1.getDeletedById()).isEqualTo(dh2.getDeletedById()),
+                () -> assertThat(dh1.getDeleter()).isEqualTo(dh2.getDeleter()),
                 () -> assertThat(dh1.getCreateDate()).isEqualTo(dh2.getCreateDate())
         );
     }
