@@ -1,12 +1,16 @@
-package qna.repository.entity;
+package qna.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
@@ -24,9 +28,13 @@ public class Answer extends AuditTimeBaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -43,8 +51,8 @@ public class Answer extends AuditTimeBaseEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
@@ -52,11 +60,11 @@ public class Answer extends AuditTimeBaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -67,20 +75,20 @@ public class Answer extends AuditTimeBaseEntity {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriterId(User writer) {
+        this.writer = writer;
     }
 
     public Long getQuestionId() {
-        return questionId;
+        return question.getId();
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setQuestionId(Question question) {
+        this.question = question;
     }
 
     public String getContents() {
@@ -105,8 +113,8 @@ public class Answer extends AuditTimeBaseEntity {
                 "id=" + id +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
-                ", questionId=" + questionId +
-                ", writerId=" + writerId +
+                ", question_id=" + question.getId() +
+                ", writer_id=" + writer.getId() +
                 ", getCreatedAt()=" + getCreatedAt() +
                 ", getUpdatedAt()=" + getUpdatedAt() +
                 '}';

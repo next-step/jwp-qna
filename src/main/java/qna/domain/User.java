@@ -1,4 +1,4 @@
-package qna.repository.entity;
+package qna.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
@@ -29,9 +29,6 @@ public class User extends AuditTimeBaseEntity {
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
-    public User() {
-    }
-
     public User(String name, String password, String userId) {
         this(null, userId, password, name, null);
     }
@@ -46,6 +43,9 @@ public class User extends AuditTimeBaseEntity {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public User() {
     }
 
     public void update(User loginUser, User target) {
@@ -133,6 +133,25 @@ public class User extends AuditTimeBaseEntity {
                 ", getUpdatedAt()=" + getUpdatedAt() +
                 ", userId='" + userId + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(email, user.email)
+                && Objects.equals(name, user.name) && Objects.equals(password, user.password)
+                && Objects.equals(userId, user.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, name, password, userId);
     }
 
     private static class GuestUser extends User {

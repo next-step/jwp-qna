@@ -11,12 +11,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.repository.entity.User;
+import qna.domain.User;
 
 @DataJpaTest
 public class UserRepositoryTest {
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+    public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
+    public static final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
 
     @Autowired
     private UserRepository userRepository;
