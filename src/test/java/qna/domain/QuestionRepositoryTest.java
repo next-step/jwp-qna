@@ -14,11 +14,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
     public static final Question Q1 = new Question("title1", "contents1");
     public static final Question Q2 = new Question("title2", "contents2");
+
+    private User user1;
+    private User user2;
 
     @PersistenceContext
     private EntityManager em;
@@ -31,8 +35,8 @@ public class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        User user1 = userRepository.save(UserTest.JAVAJIGI);
-        User user2 = userRepository.save(UserTest.SANJIGI);
+        user1 = userRepository.save(UserTest.JAVAJIGI);
+        user2 = userRepository.save(UserTest.SANJIGI);
 
         Q1.writeBy(user1);
         Q2.writeBy(user2);
@@ -61,9 +65,9 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("삭제되지 않은 Question 도메인 목록을 조회한다.")
-    void find01() {
+    void find01() throws CannotDeleteException {
         // given && when
-        Q1.toDeleted();
+        Q1.toDeleted(user1);
         questionRepository.save(Q1);
         Question q2 = questionRepository.save(Q2);
 
