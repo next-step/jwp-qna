@@ -20,7 +20,8 @@ public class UserTest {
 	@DisplayName("아이디 값이 존재하지않는 생성 테스트")
 	void create_none_id_test() {
 		User eastStar1129 = new User("eastStar1129", "password", "JangDongGyu", "eaststar1129@abcd.com");
-		assertAll(() -> assertNull(eastStar1129.getId()), () -> assertEquals(eastStar1129.getUserId(), "eastStar1129"),
+		assertAll(() -> assertNull(eastStar1129.getId()), 
+				() -> assertEquals(eastStar1129.getUserId(), "eastStar1129"),
 				() -> assertTrue(eastStar1129.matchPassword("password")),
 				() -> assertEquals(eastStar1129.getName(), "JangDongGyu"),
 				() -> assertEquals(eastStar1129.getEmail(), "eaststar1129@abcd.com"));
@@ -29,10 +30,14 @@ public class UserTest {
 	@Test
 	@DisplayName("생성 테스트")
 	void create_test() {
-		assertAll(() -> assertEquals(JAVAJIGI.getId(), 1L), () -> assertEquals(JAVAJIGI.getUserId(), "javajigi"),
-				() -> assertTrue(JAVAJIGI.matchPassword("password")), () -> assertEquals(JAVAJIGI.getName(), "name"),
-				() -> assertEquals(JAVAJIGI.getEmail(), "javajigi@slipp.net"), () -> assertEquals(SANJIGI.getId(), 2L),
-				() -> assertEquals(SANJIGI.getUserId(), "sanjigi"), () -> assertTrue(SANJIGI.matchPassword("password")),
+		assertAll(() -> assertEquals(JAVAJIGI.getId(), 1L), 
+				() -> assertEquals(JAVAJIGI.getUserId(), "javajigi"),
+				() -> assertTrue(JAVAJIGI.matchPassword("password")), 
+				() -> assertEquals(JAVAJIGI.getName(), "name"),
+				() -> assertEquals(JAVAJIGI.getEmail(), "javajigi@slipp.net"), 
+				() -> assertEquals(SANJIGI.getId(), 2L),
+				() -> assertEquals(SANJIGI.getUserId(), "sanjigi"), 
+				() -> assertTrue(SANJIGI.matchPassword("password")),
 				() -> assertEquals(SANJIGI.getName(), "name"),
 				() -> assertEquals(SANJIGI.getEmail(), "sanjigi@slipp.net"));
 	}
