@@ -80,8 +80,12 @@ public class Answer extends BaseDateTimeEntity{
         return deleted;
     }
 
-    public void changeDeleted(boolean deleted) {
+    private void changeDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void toDeleted(){
+        this.changeDeleted(true);
     }
 
     public void changeContents(String contents) {

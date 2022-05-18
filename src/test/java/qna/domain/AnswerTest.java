@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -131,14 +132,13 @@ public class AnswerTest {
         assertFalse(A1.isDeleted());
     }
 
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    @DisplayName("setDeleted 메소드를 이용해 Answer의 삭제 여부를 변경할 수 있다.")
-    void public_method_11(boolean deleted) {
+    @Test
+    @DisplayName("toDeleted() 메소드를 이용해 Answer를 삭제 할 수 있다.")
+    void public_method_12() {
         // given & when
-        A1.changeDeleted(deleted);
+        A1.toDeleted();
 
-        // then
-        assertThat(A1.isDeleted()).isEqualTo(deleted);
+        //then
+        assertTrue(A1.isDeleted());
     }
 }

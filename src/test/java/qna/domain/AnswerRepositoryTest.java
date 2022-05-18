@@ -65,7 +65,7 @@ class AnswerRepositoryTest {
     @DisplayName("AnswerId를 기준으로 삭제되지 않은 Answer 도메인을 조회한다.")
     void find01() {
         // given && when
-        A1.changeDeleted(true);
+        A1.toDeleted();
         Answer a1 = answerRepository.save(A1);
         Answer a2 = answerRepository.save(A2);
 
@@ -87,7 +87,7 @@ class AnswerRepositoryTest {
     @DisplayName("QuestionId를 기준으로 삭제되지 않은 Answer를 조회한다.")
     void find02() {
         // given && when
-        A1.changeDeleted(true);
+        A1.toDeleted();
         Answer a1 = answerRepository.save(A1);
         Answer a2 = answerRepository.save(A2);
 
