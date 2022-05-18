@@ -136,7 +136,7 @@ alter table question
   - [x] 테스트 코드 추가
 - **question 테이블**
   - [x] Entity 수정
-  - [ ] 테스트 코드 추가
+  - [x] 테스트 코드 추가
 - **user 테이블**
   - [x] Entity 수정
   - [x] ~~테스트 코드 추가~~
