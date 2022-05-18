@@ -25,7 +25,7 @@ public class DeleteHistory {
     @Enumerated(STRING)
     private ContentType contentType;
 
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
 
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_user"))
     @ManyToOne(fetch = FetchType.LAZY)

@@ -10,10 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import java.time.LocalDateTime;
 
 @Entity
-public class Question {
+public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,15 +20,10 @@ public class Question {
     @Lob
     private String contents;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
     private boolean deleted = false;
 
     @Column(length = 100, nullable = false)
     private String title;
-
-    private LocalDateTime updatedAt;
 
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     @ManyToOne(fetch = FetchType.LAZY)
@@ -89,10 +83,8 @@ public class Question {
         return "Question{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
-                ", createdAt=" + createdAt +
                 ", deleted=" + deleted +
                 ", title='" + title + '\'' +
-                ", updatedAt=" + updatedAt +
                 ", writer=" + writer +
                 '}';
     }

@@ -13,11 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class Answer {
+public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,12 +25,7 @@ public class Answer {
     private String contents;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = false)
     private boolean deleted = false;
-
-    private LocalDateTime updatedAt;
 
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     @ManyToOne(fetch = FetchType.LAZY)
@@ -93,12 +87,12 @@ public class Answer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Answer answer = (Answer) o;
-        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents, answer.contents) && Objects.equals(createdAt, answer.createdAt) && Objects.equals(updatedAt, answer.updatedAt) && Objects.equals(question, answer.question) && Objects.equals(writer, answer.writer);
+        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(contents, answer.contents) && Objects.equals(question, answer.question) && Objects.equals(writer, answer.writer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contents, createdAt, deleted, updatedAt, question, writer);
+        return Objects.hash(id, contents, deleted, question, writer);
     }
 
     @Override
@@ -106,10 +100,8 @@ public class Answer {
         return "Answer{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
-                ", createdAt=" + createdAt +
                 ", deleted=" + deleted +
                 ", question=" + question +
-                ", updatedAt=" + updatedAt +
                 ", writer=" + writer +
                 '}';
     }
