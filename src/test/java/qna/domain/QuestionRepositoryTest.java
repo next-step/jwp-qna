@@ -72,4 +72,13 @@ class QuestionRepositoryTest {
         final List<Answer> answers = repository.getOne(id).getAnswers();
         assertThat(Hibernate.isInitialized(answers)).isFalse();
     }
+
+    @DisplayName("Question가 영속화되면 Answer도 영속화")
+    @Test
+    void cascadeIsPersist() {
+        final Question question = new Question("question", "question").writeBy(user);
+        final Answer answer = new Answer(user, question, "question");
+        repository.save(question);
+        assertThat(answer.getId()).isNotNull();
+    }
 }
