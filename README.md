@@ -123,7 +123,11 @@ alter table question
 
 ### 📚 TODO LIST 📚
 - 객체와 테이블 매핑 관계
-  - [ ] 객체, 테이블 매핑 관계 구조 파악 
+  - [x] 객체, 테이블 매핑 관계 구조 파악
+    - 객체 관계 구조
+      ![객체 관계구조](object_relationship.jpeg)
+    - 테이블 관계 구조
+      ![테이블 관계구조](table_relationship.jpeg)
 - **answer 테이블**
   - [ ] Entity 수정
   - [ ] 테스트 코드 추가
