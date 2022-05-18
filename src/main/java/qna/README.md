@@ -21,7 +21,7 @@ alter table question
         foreign key (writer_id)
             references user
 ```
-- [ ] 테이블간 연관 관계 매핑
+- [x] 테이블간 연관 관계 매핑
 - [ ] 레포지토리 crud 테스트 작성 
 
 ## Step1 요구 사항
