@@ -22,6 +22,7 @@ public class Answer extends BaseEntity {
     private Long id;
 
     @Lob
+    @Column
     private String contents;
 
     @ManyToOne
