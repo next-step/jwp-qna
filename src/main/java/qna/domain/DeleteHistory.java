@@ -32,6 +32,7 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id")
     private User user;
 
+    @Column
     @CreatedDate
     private LocalDateTime createDate = LocalDateTime.now();
 

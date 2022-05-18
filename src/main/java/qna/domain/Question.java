@@ -23,6 +23,7 @@ public class Question extends BaseEntity {
     private String title;
 
     @Lob
+    @Column
     private String contents;
 
     @ManyToOne
