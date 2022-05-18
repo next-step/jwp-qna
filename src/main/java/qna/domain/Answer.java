@@ -57,6 +57,10 @@ public class Answer extends BaseEntity {
         return this.writerId;
     }
 
+    public Long getQuestionId() {
+        return this.questionId;
+    }
+
     public boolean isDeleted() {
         return this.deleted;
     }

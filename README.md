@@ -65,13 +65,12 @@ alter table user
   - [x] Question
   - [x] User
 - [x] 중복되는 속성을 분리하는 BaseEntity 생성
-- [ ] 도메인 테스트 작성
-  - [ ] Answer
-  - [ ] DeleteHistory
-  - [ ] Question
-  - [ ] User
-- [ ] 리포지토리 테스트 작성
-  - [ ] Answer
-  - [ ] DeleteHistory
-  - [ ] Question
-  - [ ] User
+- [x] 도메인 테스트 작성
+  - [x] Answer
+  - [x] Question
+  - [x] User
+- [x] 리포지토리 테스트 작성
+  - [x] Answer
+  - [x] DeleteHistory
+  - [x] Question
+  - [x] User
