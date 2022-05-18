@@ -59,6 +59,14 @@ public class Question extends BasicEntity {
         return this.writerId;
     }
 
+    public String getTitle() {
+        return this.title;
+    }
+
+    public String getContents() {
+        return this.contents;
+    }
+
     public boolean isDeleted() {
         return this.deleted;
     }

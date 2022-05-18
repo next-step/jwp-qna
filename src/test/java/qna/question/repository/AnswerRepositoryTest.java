@@ -52,4 +52,15 @@ class AnswerRepositoryTest {
         assertThat(result.get().getQuestionId()).isEqualTo(savedAnswer.getQuestionId());
         assertThat(result.get().getContents()).isEqualTo(savedAnswer.getContents());
     }
+
+    @Test
+    void 삭제_상태인_질문_조회시_결과가_없어야_한다() {
+        Answer deletedAnswer = new Answer(writer, question, "content");
+        deletedAnswer.answerDelete();
+        Answer savedAnswer = answerRepository.save(deletedAnswer);
+
+        Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
+
+        assertThat(result.isPresent()).isFalse();
+    }
 }
