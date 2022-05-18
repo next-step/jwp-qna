@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.domain.User;
 import qna.domain.UserRepository;
-import qna.domain.UserTest;
 
 @DataJpaTest
 public class UserServiceTest {
@@ -24,14 +22,9 @@ public class UserServiceTest {
 	@Autowired
 	private UserRepository userRepository;
 
-	@BeforeEach
-	public void setUp() throws Exception {
-		UserTest.JAVAJIGI.setId(null);
-	}
-
 	@Test
 	@DisplayName("저장 후 조회 테스트")
-	void save_select_test() {
+	void save_find_test() {
 		User eaststar1129 = new User("eaststar1129", "password", "eaststar", "eaststar1129@eamil.com");
 
 		User saveUser = userRepository.save(new User("eaststar1129", "password", "eaststar", "eaststar1129@eamil.com"));
@@ -45,7 +38,7 @@ public class UserServiceTest {
 
 	@Test
 	@DisplayName("업데이트 테스트")
-	void save_test() {
+	void update_test() {
 		User eaststar1129 = new User("eaststar1129", "password", "eaststarTwo", "eaststarTwo1129@eamil.com");
 		User saveUser = userRepository.save(new User("eaststar1129", "password", "eaststar", "eaststar1129@eamil.com"));
 
