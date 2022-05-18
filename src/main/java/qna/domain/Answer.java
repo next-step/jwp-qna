@@ -3,14 +3,23 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Answer {
-    private Long id;
+@Entity
+@Table(name = "answer")
+public class Answer extends BaseEntity {
+    @Column(name = "writer_id")
     private Long writerId;
+    @Column(name = "question_id")
     private Long questionId;
+    @Lob
+    @Column(name = "contents", columnDefinition = "CLOB")
     private String contents;
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    protected Answer() {}
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -41,39 +50,15 @@ public class Answer {
     }
 
     public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        return this.id;
     }
 
     public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
+        return this.writerId;
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return this.deleted;
     }
 
     public void setDeleted(boolean deleted) {
@@ -81,13 +66,26 @@ public class Answer {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answer answer = (Answer) o;
+        return Objects.equals(this.id, answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.id);
+    }
+
+    @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
+                "id=" + this.id +
+                ", writerId=" + this.writerId +
+                ", questionId=" + this.questionId +
+                ", contents='" + this.contents + '\'' +
+                ", deleted=" + this.deleted +
                 '}';
     }
 }

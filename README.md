@@ -59,12 +59,12 @@ alter table user
 ```
 
 #### 구현 기능
-- [ ] 엔티티 매핑
-  - [ ] Answer
-  - [ ] DeleteHistory
-  - [ ] Question
-  - [ ] User
-- [ ] 중복되는 속성을 분리하는 BaseEntity 생성
+- [x] 엔티티 매핑
+  - [x] Answer
+  - [x] DeleteHistory
+  - [x] Question
+  - [x] User
+- [x] 중복되는 속성을 분리하는 BaseEntity 생성
 - [ ] 도메인 테스트 작성
   - [ ] Answer
   - [ ] DeleteHistory

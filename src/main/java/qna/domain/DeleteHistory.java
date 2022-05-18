@@ -1,20 +1,27 @@
 package qna.domain;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class DeleteHistory {
-    private Long id;
+@Entity
+@Table(name = "delete_history")
+public class DeleteHistory extends BaseEntity {
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "content_type")
     private ContentType contentType;
+    @Column(name = "content_id")
     private Long contentId;
+    @Column(name = "deleted_by_id")
     private Long deletedById;
-    private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    protected DeleteHistory() {}
+
+    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createdAt) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
-        this.createDate = createDate;
+        this.createdAt = createdAt;
     }
 
     @Override
@@ -22,25 +29,25 @@ public class DeleteHistory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+        return Objects.equals(this.id, that.id) &&
+                this.contentType == that.contentType &&
+                Objects.equals(this.contentId, that.contentId) &&
+                Objects.equals(this.deletedById, that.deletedById);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(this.id, this.contentType, this.contentId, this.deletedById);
     }
 
     @Override
     public String toString() {
         return "DeleteHistory{" +
-                "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
-                ", createDate=" + createDate +
+                "id=" + this.id +
+                ", contentType=" + this.contentType +
+                ", contentId=" + this.contentId +
+                ", deletedById=" + this.deletedById +
+                ", createdAt=" + this.createdAt +
                 '}';
     }
 }

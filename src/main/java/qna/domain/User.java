@@ -2,19 +2,24 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class User {
+@Entity
+@Table(name = "user")
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    private Long id;
+    @Column(name = "user_id", length = 20, nullable = false, unique = true)
     private String userId;
+    @Column(name = "password", length = 20, nullable = false)
     private String password;
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
+    @Column(name = "email", length = 50)
     private String email;
 
-    private User() {
-    }
+    protected User() {}
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
@@ -54,8 +59,8 @@ public class User {
             return false;
         }
 
-        return name.equals(target.name) &&
-                email.equals(target.email);
+        return this.name.equals(target.name) &&
+                this.email.equals(target.email);
     }
 
     public boolean isGuestUser() {
@@ -63,53 +68,17 @@ public class User {
     }
 
     public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+        return this.id;
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
+                "id=" + this.id +
+                ", userId='" + this.userId + '\'' +
+                ", password='" + this.password + '\'' +
+                ", name='" + this.name + '\'' +
+                ", email='" + this.email + '\'' +
                 '}';
     }
 
