@@ -99,7 +99,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedBy.getId() +
+                ", deletedBy=" + deletedBy +
                 ", createDate=" + createDate +
                 '}';
     }
