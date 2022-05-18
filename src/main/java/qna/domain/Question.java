@@ -9,7 +9,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="question")
+@Table(name = "question")
 public class Question extends BaseAuditingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class Question extends BaseAuditingEntity {
     }
 
     public Question(Long id, String title, String contents) {
-        this.id=id;
+        this.id = id;
         this.title = title;
         this.contents = contents;
     }

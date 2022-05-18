@@ -11,8 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="delete_history")
-public class DeleteHistory{
+@Table(name = "delete_history")
+public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +24,7 @@ public class DeleteHistory{
     private LocalDateTime createDate;
     private Long deletedById;
 
-    protected DeleteHistory(){
+    protected DeleteHistory() {
 
     }
 
@@ -37,8 +37,12 @@ public class DeleteHistory{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&

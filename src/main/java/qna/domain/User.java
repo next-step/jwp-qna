@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,10 +10,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import qna.exception.UnAuthorizedException;
 
-import java.util.Objects;
-
 @Entity
-@Table(name="user", uniqueConstraints = @UniqueConstraint(columnNames = {"userId"}))
+@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = {"userId"}))
 public class User extends BaseAuditingEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -36,7 +35,7 @@ public class User extends BaseAuditingEntity {
     }
 
     public User(Long id, String userId, String password, String name, String email) {
-        this.id=id;
+        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;

@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,9 +10,8 @@ import javax.persistence.Table;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
-import java.util.Objects;
 @Entity
-@Table(name = "answer" )
+@Table(name = "answer")
 public class Answer extends BaseAuditingEntity {
 
     @Id
@@ -23,7 +23,7 @@ public class Answer extends BaseAuditingEntity {
     private String contents;
     private boolean deleted = false;
 
-    protected Answer(){
+    protected Answer() {
 
     }
 
