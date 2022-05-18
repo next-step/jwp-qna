@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -51,18 +52,24 @@ class AnswerRepositoryTest {
         findAnswer.setDeleted(true);
 
         assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId()).isPresent()).isFalse();
+
+        answerRepository.deleteAll();
+        answerRepository.flush();
     }
 
     @Test
     void Answer_findByQuestionId_삭제여부_컬럼이_false인_전체_조회() {
-        Answer answer = answerRepository.save(AnswerTest.A1);
+        Answer answer = AnswerTest.A1;
+        answer.setQuestionId(1L);
+        
+        Answer result = answerRepository.save(answer);
 
-        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(AnswerTest.A1.getQuestionId())).hasSize(1);
+        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(1L)).hasSize(1);
 
-        Answer findAnswer = answerRepository.findById(answer.getId()).get();
+        Answer findAnswer = answerRepository.findById(result.getId()).get();
         findAnswer.setDeleted(true);
 
-        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(AnswerTest.A1.getQuestionId()).size()).isZero();
+        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(findAnswer.getQuestionId()).size()).isZero();
     }
 
 }
