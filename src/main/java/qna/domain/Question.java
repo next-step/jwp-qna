@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import qna.common.BaseEntity;
 
 @Entity
@@ -22,6 +23,9 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
     private Long writerId;
+
+    @OneToOne(mappedBy = "question")
+    private Answer answer;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -49,7 +53,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        this.answer = answer;
     }
 
     public Long getId() {
@@ -99,6 +103,7 @@ public class Question extends BaseEntity {
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", writerId=" + writerId +
+                ", answer=" + answer +
                 ", deleted=" + deleted +
                 '}';
     }
@@ -114,11 +119,11 @@ public class Question extends BaseEntity {
         Question question = (Question) o;
         return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
                 question.title) && Objects.equals(contents, question.contents) && Objects.equals(
-                writerId, question.writerId);
+                writerId, question.writerId) && Objects.equals(answer, question.answer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writerId, deleted);
+        return Objects.hash(id, title, contents, writerId, answer, deleted);
     }
 }

@@ -96,8 +96,7 @@ class AnswerRepositoryTest {
     private void verifyEqualAnswerFields(Answer a1, Answer a2) {
         assertAll(
                 () -> assertThat(a1.getId()).isEqualTo(a2.getId()),
-                () -> assertThat(a1.getQuestionId()).isEqualTo(a2.getQuestionId()),
-                () -> assertThat(a1.getWriterId()).isEqualTo(a2.getWriterId()),
+                () -> assertThat(a1.getWriter()).isEqualTo(a2.getWriter()),
                 () -> assertThat(a1.getContents()).isEqualTo(a2.getContents()),
                 () -> assertThat(a1.getCreatedAt()).isEqualTo(a2.getCreatedAt()),
                 () -> assertThat(a1.getUpdatedAt()).isEqualTo(a2.getUpdatedAt())

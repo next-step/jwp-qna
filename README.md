@@ -129,7 +129,7 @@ alter table question
     - 테이블 관계 구조
       ![테이블 관계구조](table_relationship.jpeg)
 - **answer 테이블**
-  - [ ] Entity 수정
+  - [x] Entity 수정
   - [ ] 테스트 코드 추가
 - **delete_history 테이블**
   - [ ] Entity 수정
