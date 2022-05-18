@@ -22,7 +22,7 @@ alter table question
             references user
 ```
 - [x] 테이블간 연관 관계 매핑
-- [ ] 레포지토리 crud 테스트 작성 
+- [x] 레포지토리 crud 테스트 작성 
 
 ## Step1 요구 사항
 - QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
