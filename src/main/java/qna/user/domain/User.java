@@ -79,6 +79,22 @@ public class User extends BasicEntity {
         return this.id;
     }
 
+    public String getUserId() {
+        return this.userId;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
     @Override
     public String toString() {
         return "User{" +
