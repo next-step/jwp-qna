@@ -30,16 +30,12 @@ public class UserTest {
 	@Test
 	@DisplayName("생성 테스트")
 	void create_test() {
-		assertAll(() -> assertEquals(JAVAJIGI.getId(), 1L), 
-				() -> assertEquals(JAVAJIGI.getUserId(), "javajigi"),
-				() -> assertTrue(JAVAJIGI.matchPassword("password")), 
-				() -> assertEquals(JAVAJIGI.getName(), "name"),
-				() -> assertEquals(JAVAJIGI.getEmail(), "javajigi@slipp.net"), 
-				() -> assertEquals(SANJIGI.getId(), 2L),
-				() -> assertEquals(SANJIGI.getUserId(), "sanjigi"), 
-				() -> assertTrue(SANJIGI.matchPassword("password")),
-				() -> assertEquals(SANJIGI.getName(), "name"),
-				() -> assertEquals(SANJIGI.getEmail(), "sanjigi@slipp.net"));
+		User eastStar1129 = new User(3L, "eastStar1129", "password", "JangDongGyu", "eaststar1129@abcd.com");
+		assertAll(() -> assertEquals(eastStar1129.getId(), 3L),
+				() -> assertEquals(eastStar1129.getUserId(), "eastStar1129"),
+				() -> assertTrue(eastStar1129.matchPassword("password")),
+				() -> assertEquals(eastStar1129.getName(), "JangDongGyu"),
+				() -> assertEquals(eastStar1129.getEmail(), "eaststar1129@abcd.com"));
 	}
 
 	@Test
@@ -60,12 +56,11 @@ public class UserTest {
 		assertAll(() -> assertTrue(JAVAJIGI.equalsNameAndEmail(javajigiLogin)),
 				() -> assertFalse(JAVAJIGI.equalsNameAndEmail(eastStar1129)));
 	}
-	
+
 	@Test
 	@DisplayName("게스트 유저 테스트")
 	void is_guest_user() {
 		User guestUser = User.GUEST_USER;
-		assertAll(() -> assertFalse(JAVAJIGI.isGuestUser()), 
-				() -> assertTrue(guestUser.isGuestUser()));
+		assertAll(() -> assertFalse(JAVAJIGI.isGuestUser()), () -> assertTrue(guestUser.isGuestUser()));
 	}
 }
