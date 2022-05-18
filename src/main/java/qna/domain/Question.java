@@ -48,6 +48,11 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
+    public Question(String title, String contents, User user) {
+        this(null, title, contents);
+        this.user = user;
+    }
+
     public Question writeBy(User writer) {
         this.user = writer;
         return this;

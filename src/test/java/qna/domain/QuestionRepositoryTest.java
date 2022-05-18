@@ -3,12 +3,13 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.QuestionTest.Q1;
+import static qna.domain.UserTest.MOND;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.PersistenceException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
 class QuestionRepositoryTest {
+    private Question question;
 
     @Autowired
     TestEntityManager testEntityManager;
@@ -24,10 +26,21 @@ class QuestionRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
+    @BeforeEach
+    void setUp() {
+        User mond = userRepository.findByUserId(MOND.getUserId())
+                .orElseGet(() -> userRepository.save(MOND));
+
+        question = new Question("title", "content", mond);
+    }
+
     @Test
     @DisplayName("영속 상태의 동일성 보장 검증")
     void verifyEntityPrimaryCacheSave() {
-        Question expected = questionRepository.save(Q1);
+        Question expected = questionRepository.save(question);
         Optional<Question> actual = questionRepository.findById(expected.getId());
 
         assertAll(
@@ -39,7 +52,7 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("준영속 상태의 동일성 보장 검증")
     void verifyEntityDatabaseSave() {
-        Question expected = questionRepository.save(Q1);
+        Question expected = questionRepository.save(question);
         entityFlushAndClear();
         Optional<Question> actual = questionRepository.findById(expected.getId());
 
@@ -52,7 +65,7 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("저장 및 물리 삭제 후 해당 id로 검색")
     void saveAndPhysicalDeleteThenFindById() {
-        Question expected = questionRepository.save(Q1);
+        Question expected = questionRepository.save(question);
         questionRepository.delete(expected);
         entityFlushAndClear();
         Optional<Question> actual = questionRepository.findById(expected.getId());
@@ -63,7 +76,7 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("저장 및 논리 삭제 후 해당 id로 검색")
     void sandAndLogicalDeleteThenFindById() {
-        Question expected = questionRepository.save(Q1);
+        Question expected = questionRepository.save(question);
         expected.setDeleted(true);
         entityFlushAndClear();
         Optional<Question> actualOfFindById = questionRepository.findById(expected.getId());
@@ -94,7 +107,7 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("타이틀의 길이가 100자를 넘어가면 PersistenceException이 발생")
     void setTitleOverLength() {
-        Question expected = questionRepository.save(Q1);
+        Question expected = questionRepository.save(question);
         String overTitle = Stream.generate(() -> "mond")
                 .limit(26)
                 .collect(Collectors.joining());
@@ -108,7 +121,7 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("타이틀을 null 값으로 설정시 PersistenceException이 발생")
     void setTitleNull() {
-        Question expected = questionRepository.save(Q1);
+        Question expected = questionRepository.save(question);
         expected.setTitle(null);
 
         assertThatExceptionOfType(PersistenceException.class)
