@@ -17,3 +17,9 @@
 - [X] Answer 엔티티 테스트코드 작성
 - [X] Answer 엔티티의 findByIdAndDeletedFalse API 에 대한 테스트 코드 작성
 - [X] Answer 엔티티의 findByQuestionIdAndDeletedFalse API 에 대한 테스트 코드 작성
+
+---
+### 2단계 - 연관 관계 매핑
+- [X] Question 엔티티 연관관계 매핑, 외래키 연결
+- [X] Answer 엔티티 연관관계 매핑, 외래키 연결
+- [X] DeleteHistory 연관관계 매핑, 외래키 연결

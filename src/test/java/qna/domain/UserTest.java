@@ -25,7 +25,7 @@ public class UserTest {
 
     @Test
     @DisplayName("User 도메인 생성 테스트")
-    void generate01(){
+    void generate01() {
         // given & when
         User javajigi = userRepository.save(JAVAJIGI);
         User sanjigi = userRepository.save(SANJIGI);
@@ -39,19 +39,9 @@ public class UserTest {
 
         assertAll(
             () -> assertTrue(findJavajigi.isPresent()),
-            () -> assertEqualsUser(javajigi, findJavajigi.get()),
+            () -> assertEquals(javajigi, findJavajigi.get()),
             () -> assertTrue(findSanjigi.isPresent()),
-            () -> assertEqualsUser(sanjigi, findSanjigi.get())
-        );
-    }
-
-    private void assertEqualsUser(User expect, User actual) {
-        assertAll(
-            () -> assertEquals(expect.getId(), actual.getId()),
-            () -> assertEquals(expect.getPassword(), actual.getPassword()),
-            () -> assertEquals(expect.getUserId(), actual.getUserId()),
-            () -> assertEquals(expect.getEmail(), actual.getEmail()),
-            () -> assertEquals(expect.getName(), actual.getName())
+            () -> assertEquals(sanjigi, findSanjigi.get())
         );
     }
 }
