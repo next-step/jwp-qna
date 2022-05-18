@@ -55,14 +55,15 @@ class QuestionRepositoryTest {
 
     @Test
     void Question_삭제여부_컬럼이_false인_전체_조회() {
-        Question question = questionRepository.save(QuestionTest.Q1);
+        Question question1 = questionRepository.save(QuestionTest.Q1);
+        questionRepository.save(QuestionTest.Q2);
 
-        assertThat(questionRepository.findByIdAndDeletedFalse(question.getId()).get()).isEqualTo(question);
+        assertThat(questionRepository.findByDeletedFalse()).hasSize(2);
 
-        Question findQuestion = questionRepository.findById(question.getId()).get();
+        Question findQuestion = questionRepository.findById(question1.getId()).get();
         findQuestion.setDeleted(true);
 
-        assertThat(questionRepository.findByIdAndDeletedFalse(question.getId()).isPresent()).isFalse();
+        assertThat(questionRepository.findByDeletedFalse()).hasSize(1);
     }
 
 }
