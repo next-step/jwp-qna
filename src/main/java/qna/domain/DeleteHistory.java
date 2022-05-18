@@ -10,6 +10,7 @@ public class DeleteHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated
     private ContentType contentType;
 
     private Long contentId;
