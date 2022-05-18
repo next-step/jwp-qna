@@ -1,6 +1,7 @@
 package qna.repository;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -24,6 +25,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("userId로 검색하여 user객체를 반환한다")
     void findByUserId_test() {
         // when
         User user = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
