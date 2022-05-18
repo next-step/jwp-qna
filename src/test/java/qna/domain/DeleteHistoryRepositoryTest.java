@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.domain.UserTest.MOND;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -22,9 +23,15 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
-        deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
+        User mond = userRepository.findByUserId(MOND.getUserId())
+                .orElseGet(() -> userRepository.save(MOND));
+
+        deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, mond, LocalDateTime.now());
     }
 
     @Test

@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import org.springframework.data.annotation.CreatedDate;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 public class DeleteHistory {
@@ -20,9 +21,11 @@ public class DeleteHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
+    @Column
     private Long contentId;
 
     @ManyToOne
@@ -36,6 +39,9 @@ public class DeleteHistory {
     }
 
     public DeleteHistory(ContentType contentType, Long contentId, User deleter, LocalDateTime createDate) {
+        if (Objects.isNull(deleter)) {
+            throw new UnAuthorizedException();
+        }
         this.contentType = contentType;
         this.contentId = contentId;
         this.user = deleter;
