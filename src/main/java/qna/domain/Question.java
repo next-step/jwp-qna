@@ -48,6 +48,12 @@ public class Question {
         this.contents = contents;
     }
 
+    public Question(String title, String contents, boolean deleted) {
+        this.title = title;
+        this.contents = contents;
+        this.deleted = deleted;
+    }
+
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
