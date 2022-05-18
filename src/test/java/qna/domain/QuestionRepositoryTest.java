@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,7 @@ public class QuestionRepositoryTest {
     @DisplayName("삭제되지 않은 Question 도메인 목록을 조회한다.")
     void find01() throws CannotDeleteException {
         // given && when
-        Q1.toDeleted(user1);
+        Q1.toDeleted(user1, Lists.newArrayList());
         questionRepository.save(Q1);
         Question q2 = questionRepository.save(Q2);
 
