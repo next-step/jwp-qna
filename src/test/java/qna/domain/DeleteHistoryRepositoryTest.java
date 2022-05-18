@@ -15,11 +15,15 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @DisplayName("삭제 이력을 저장한다.")
     @Test
     void save() {
+        User javaJigi = userRepository.save(UserTest.JAVAJIGI);
         DeleteHistory deleteHistory
-            = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+            = new DeleteHistory(ContentType.QUESTION, 1L, javaJigi, LocalDateTime.now());
         DeleteHistory history = deleteHistoryRepository.save(deleteHistory);
         assertAll(
             () -> assertThat(history).isNotNull()
