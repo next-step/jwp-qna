@@ -1,5 +1,7 @@
 package qna.domain;
 
+import static qna.constants.ExceptionMessage.*;
+
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
+import qna.constants.ExceptionMessage;
 
 @Entity
 @Table(name = "question")
@@ -68,8 +72,15 @@ public class Question extends BaseDateTimeEntity{
         return deleted;
     }
 
-    public void toDeleted(){
+    public void toDeleted(User loginUser) throws CannotDeleteException {
+        validateDeleteAuthority(loginUser);
         this.changeDeleted(true);
+    }
+
+    private void validateDeleteAuthority(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(String.format(INVALID_DELETE_QUESTION_BECAUSE_NON_MATCH_WRITER_USER, loginUser.userId()));
+        }
     }
 
     private void changeDeleted(boolean deleted) {
