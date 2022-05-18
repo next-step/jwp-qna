@@ -90,6 +90,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
