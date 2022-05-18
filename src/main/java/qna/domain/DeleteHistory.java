@@ -30,7 +30,7 @@ public class DeleteHistory {
     @ManyToOne
     private User user;
 
-    public DeleteHistory() {
+    protected DeleteHistory() {
 
     }
 

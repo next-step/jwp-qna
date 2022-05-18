@@ -40,7 +40,7 @@ public class Answer {
     @ManyToOne
     private User writer;
 
-    public Answer() {
+    protected Answer() {
     }
 
     public Answer(User writer, Question question, String contents) {

@@ -36,7 +36,7 @@ public class User {
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
-    public User() {
+    protected User() {
 
     }
 

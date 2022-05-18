@@ -34,7 +34,7 @@ public class Question {
     @ManyToOne
     private User writer;
 
-    public Question() {
+    protected Question() {
 
     }
 
