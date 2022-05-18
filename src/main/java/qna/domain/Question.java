@@ -1,5 +1,6 @@
 package qna.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,7 +21,7 @@ public class Question extends BaseEntity {
     private String title;
     @Lob
     private String contents;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
     @Column(nullable = false)

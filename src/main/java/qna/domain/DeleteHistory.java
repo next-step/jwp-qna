@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -21,7 +22,7 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
     private Long contentId;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "DELETED_BY_ID", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
     private LocalDateTime createDate = LocalDateTime.now();
@@ -83,12 +84,13 @@ public class DeleteHistory {
             return false;
         }
         DeleteHistory that = (DeleteHistory) o;
-        return id.equals(that.id);
+        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(
+                contentId, that.contentId) && Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, contentType, contentId, deletedBy);
     }
 
     @Override
