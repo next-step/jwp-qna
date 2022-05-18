@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -53,15 +52,14 @@ class AnswerRepositoryTest {
 
         assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId()).isPresent()).isFalse();
 
-        answerRepository.deleteAll();
-        answerRepository.flush();
     }
 
     @Test
     void Answer_findByQuestionId_삭제여부_컬럼이_false인_전체_조회() {
+        AnswerTest.A1.setDeleted(false);
         Answer answer = AnswerTest.A1;
         answer.setQuestionId(1L);
-        
+
         Answer result = answerRepository.save(answer);
 
         assertThat(answerRepository.findByQuestionIdAndDeletedFalse(1L)).hasSize(1);
