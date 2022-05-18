@@ -3,14 +3,28 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+public class Answer extends Auditing {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long writerId;
+
     private Long questionId;
+
+    @Lob
     private String contents;
+
+    @NotNull
     private boolean deleted = false;
+
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -88,6 +102,8 @@ public class Answer {
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
+                ", createdAt='" + getCreatedAt() + '\'' +
+                ", updatedAt='" + getUpdatedAt() + '\'' +
                 '}';
     }
 }

@@ -1,11 +1,29 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Entity
+public class Question extends Auditing {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
+    @Size(max = 100)
     private String title;
+
+    @Lob
     private String contents;
+
     private Long writerId;
+
+    @NotNull
     private boolean deleted = false;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -78,6 +96,8 @@ public class Question {
                 ", contents='" + contents + '\'' +
                 ", writerId=" + writerId +
                 ", deleted=" + deleted +
+                ", createdAt='" + getCreatedAt() + '\'' +
+                ", updatedAt='" + getUpdatedAt() + '\'' +
                 '}';
     }
 }
