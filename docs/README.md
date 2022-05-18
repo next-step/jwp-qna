@@ -1,3 +1,4 @@
+### 엔티티 매핑
 QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
 - 아래의 DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
 - @DataJpaTest를 사용하여 학습 테스트를 해 본다.
@@ -50,7 +51,6 @@ alter table user
 add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
 
-### JPA
 - [x] BaseEntity 상속과 Auduit 기능을 추가한다.
 - [x] application.yml 설정 파일을 이용한다.
 - [x] MySql 방언을 사용한다.
@@ -58,3 +58,55 @@ add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 - [x] 엔티티 매핑 정보를 수정한다.
 - [x] Repository를 이용한 단위테스트를 완성한다.
 
+
+### 연관관계 매핑
+요구 사항
+- QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
+- 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+
+H2
+```sql
+alter table answer
+add constraint fk_answer_to_question
+foreign key (question_id)
+references question
+
+alter table answer
+add constraint fk_answer_writer
+foreign key (writer_id)
+references user
+
+alter table delete_history
+add constraint fk_delete_history_to_user
+foreign key (deleted_by_id)
+references user
+
+alter table question
+add constraint fk_question_writer
+foreign key (writer_id)
+references user
+```
+
+MySQL
+```sql
+alter table answer
+add constraint fk_answer_to_question
+foreign key (question_id)
+references question (id)
+
+alter table answer
+add constraint fk_answer_writer
+foreign key (writer_id)
+references user (id)
+
+alter table delete_history
+add constraint fk_delete_history_to_user
+foreign key (deleted_by_id)
+references user (id)
+
+alter table question
+add constraint fk_question_writer
+foreign key (writer_id)
+references user (id)
+```
+- 엔티티들의 연관관계를 매핑한다.
