@@ -21,6 +21,7 @@ public class DeleteHistory {
     private Long contentId;
     @Column
     private Long deletedById;
+    @Column
     @CreatedDate
     private LocalDateTime createDate;
 
