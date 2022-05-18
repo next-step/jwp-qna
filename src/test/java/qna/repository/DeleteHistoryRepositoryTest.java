@@ -22,13 +22,13 @@ class DeleteHistoryRepositoryTest {
     static final DeleteHistory D1 = DeleteHistory.builder()
             .contentType(ContentType.QUESTION)
             .contentId(QuestionRepositoryTest.Q1.getId())
-            .deletedById(QuestionRepositoryTest.Q1.getWriterId())
+            .deletedBy(QuestionRepositoryTest.Q1.getWriter())
             .createDate(LocalDateTime.now())
             .build();
     static final DeleteHistory D2 = DeleteHistory.builder()
             .contentType(ContentType.ANSWER)
             .contentId(AnswerRepositoryTest.A1.getId())
-            .deletedById(AnswerRepositoryTest.A1.getWriterId())
+            .deletedBy(AnswerRepositoryTest.A1.getWriter())
             .createDate(LocalDateTime.now())
             .build();
 

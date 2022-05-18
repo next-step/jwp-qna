@@ -5,9 +5,13 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class DeleteHistory {
@@ -17,7 +21,9 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
     private Long contentId;
-    private Long deletedById;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DELETED_BY_ID", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedBy;
     private LocalDateTime createDate = LocalDateTime.now();
 
     protected DeleteHistory() {
@@ -26,7 +32,7 @@ public class DeleteHistory {
     private DeleteHistory(DeleteHistoryBuilder deleteHistoryBuilder) {
         this.contentType = deleteHistoryBuilder.contentType;
         this.contentId = deleteHistoryBuilder.contentId;
-        this.deletedById = deleteHistoryBuilder.deletedById;
+        this.deletedBy = deleteHistoryBuilder.deletedBy;
         this.createDate = deleteHistoryBuilder.createDate;
     }
 
@@ -37,7 +43,7 @@ public class DeleteHistory {
     public static class DeleteHistoryBuilder {
         private ContentType contentType;
         private Long contentId;
-        private Long deletedById;
+        private User deletedBy;
         private LocalDateTime createDate = LocalDateTime.now();
 
         private DeleteHistoryBuilder() {
@@ -53,8 +59,8 @@ public class DeleteHistory {
             return this;
         }
 
-        public DeleteHistoryBuilder deletedById(Long deletedById) {
-            this.deletedById = deletedById;
+        public DeleteHistoryBuilder deletedBy(User deletedBy) {
+            this.deletedBy = deletedBy;
             return this;
         }
 
@@ -77,15 +83,12 @@ public class DeleteHistory {
             return false;
         }
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id);
     }
 
     @Override
@@ -94,7 +97,6 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
                 ", createDate=" + createDate +
                 '}';
     }
