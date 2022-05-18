@@ -49,8 +49,12 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
+    public void setQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().remove(this);
+        }
         this.question = question;
+        question.getAnswers().add(this);
     }
 
     public Long getId() {

@@ -1,7 +1,6 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +8,6 @@ import qna.config.QnaDataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.FixtureAnswer.A1;
-import static qna.domain.FixtureQuestion.Q1;
-import static qna.domain.FixtureQuestion.Q2;
-import static qna.domain.FixtureUser.*;
 
 @QnaDataJpaTest
 class AnswerRepositoryTest {
@@ -20,56 +15,50 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository repository;
 
-    @BeforeAll
-    static void setUp(@Autowired UserRepository userRepository,
-                      @Autowired QuestionRepository questionRepository) {
-        userRepository.deleteAll();
-        userRepository.save(JAVAJIGI);
-        userRepository.save(SANJIGI);
-        userRepository.save(HEOWC);
-        questionRepository.deleteAll();
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
-    }
+    private Question question;
+    private User user;
 
-    @AfterAll
-    static void destroy(@Autowired UserRepository userRepository,
-                        @Autowired QuestionRepository questionRepository) {
-        questionRepository.deleteAll();
+    @BeforeEach
+    void setUp(@Autowired QuestionRepository questionRepository,
+               @Autowired UserRepository userRepository) {
+        repository.deleteAll();
         userRepository.deleteAll();
+        user = userRepository.save(new User("answer", "1234", "answer", "answer@example.com"));
+        questionRepository.deleteAll();
+        question = questionRepository.save(new Question("answer", "answer").writeBy(user));
     }
 
     @DisplayName("save하면 id 자동 생성")
     @Test
     void save() {
-        final Answer answer = repository.save(A1);
+        final Answer answer = repository.save(new Answer(user, question, "answer"));
         assertThat(answer.getId()).isNotNull();
     }
 
     @DisplayName("저장한 엔티티와 동일한 id로 조회한 엔티티는 동일성 보장")
     @Test
     void sameEntity() {
-        final Answer saved = repository.save(A1);
+        final Answer saved = repository.save(new Answer(user, question, "answer"));
         final Answer answer = repository.findById(saved.getId()).get();
         assertAll(
                 () -> assertThat(answer.getId()).isEqualTo(saved.getId()),
                 () -> assertThat(answer).isEqualTo(saved),
-                () -> assertThat(answer.getQuestion()).isEqualTo(A1.getQuestion()),
-                () -> assertThat(answer.getWriter()).isEqualTo(A1.getWriter())
+                () -> assertThat(answer.getQuestion()).isEqualTo(saved.getQuestion()),
+                () -> assertThat(answer.getWriter()).isEqualTo(saved.getWriter())
         );
     }
 
     @DisplayName("Answer에 대한 Question을 변경")
     @Test
-    void toQuestion(@Autowired QuestionRepository questionRepository) {
-        final Question savedQuestion = questionRepository.save(new Question("3", "3"));
-        final Answer answer = new Answer(HEOWC, Q1, "dummy");
-        answer.toQuestion(savedQuestion);
+    void setQuestion(@Autowired QuestionRepository questionRepository) {
+        final Question savedQuestion = questionRepository.save(new Question("3", "3").writeBy(user));
+        final Answer answer = new Answer(user, question, "answer");
+        answer.setQuestion(savedQuestion);
 
         final Answer saved = repository.save(answer);
         final Question question = saved.getQuestion();
         assertAll(
-                () -> assertThat(question).isNotEqualTo(Q1),
+                () -> assertThat(question).isEqualTo(savedQuestion),
                 () -> assertThat(question.getTitle()).isEqualTo("3"),
                 () -> assertThat(question.getContents()).isEqualTo("3")
         );
