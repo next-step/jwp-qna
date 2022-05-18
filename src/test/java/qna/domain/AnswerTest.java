@@ -92,18 +92,6 @@ public class AnswerTest {
 
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L, 3L, 4L})
-    @DisplayName("getWriterId 메소드를 이용해 Answer를 작성한 User의 id 값을 조회할 수 있다.")
-    void public_method_05(long writerId) {
-        // given & when
-        User user = new User(writerId, "javajigi", "password", "name", "javajigi@slipp.net");
-        Answer answer = new Answer(user, QuestionTest.Q1, "contents");
-
-        // then
-        assertThat(answer.writer()).isEqualTo(user);
-    }
-
-    @ParameterizedTest
-    @ValueSource(longs = {1L, 2L, 3L, 4L})
     @DisplayName("getQuestionId 메소드를 이용해 Question의 id 값을 조회할 수 있다.")
     void public_method_07(long questionId) {
         // given & when
