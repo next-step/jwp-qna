@@ -70,6 +70,10 @@ public class Answer extends BasicEntity {
         return this.questionId;
     }
 
+    public String getContents() {
+        return this.contents;
+    }
+
     public boolean isDeleted() {
         return this.deleted;
     }

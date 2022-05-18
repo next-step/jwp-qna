@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import qna.question.domain.*;
 import qna.question.exception.CannotDeleteException;
 import qna.question.exception.NotFoundException;
+import qna.question.repository.AnswerRepository;
+import qna.question.repository.QuestionRepository;
 import qna.user.domain.User;
 
 import java.time.LocalDateTime;

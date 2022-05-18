@@ -1,15 +1,15 @@
 package qna.question.service;
 
-import config.annotation.LocalDataJpaConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.question.domain.*;
 import qna.question.exception.CannotDeleteException;
+import qna.question.repository.AnswerRepository;
+import qna.question.repository.QuestionRepository;
 import qna.user.domain.UserTest;
 
 import java.time.LocalDateTime;
@@ -22,8 +22,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@LocalDataJpaConfig
-@DataJpaTest
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
 
