@@ -2,9 +2,13 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.sun.istack.NotNull;
@@ -23,11 +27,13 @@ public class Question extends DatedAtEntity {
 	private String title;
 	@Column(name = "contents")
 	private String contents;
-	@Column(name = "writer_id")
-	private Long writerId;
 	@NotNull
 	@Column(name = "deleted")
 	private boolean deleted = false;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+	private User writer;
 
 	public Question(String title, String contents) {
 		this(null, title, contents);
@@ -40,12 +46,12 @@ public class Question extends DatedAtEntity {
 	}
 
 	public Question writeBy(User writer) {
-		this.writerId = writer.getId();
+		this.writer = writer;
 		return this;
 	}
 
 	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
+		return this.writer.equals(writer);
 	}
 
 	public void addAnswer(Answer answer) {
@@ -76,12 +82,8 @@ public class Question extends DatedAtEntity {
 		this.contents = contents;
 	}
 
-	public Long getWriterId() {
-		return writerId;
-	}
-
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
+	public User getWriter() {
+		return writer;
 	}
 
 	public boolean isDeleted() {
@@ -95,6 +97,6 @@ public class Question extends DatedAtEntity {
 	@Override
 	public String toString() {
 		return "Question{" + "id=" + id + ", title='" + title + '\'' + ", contents='" + contents + '\'' + ", writerId="
-				+ writerId + ", deleted=" + deleted + '}';
+				+ writer.getId() + ", deleted=" + deleted + '}';
 	}
 }
