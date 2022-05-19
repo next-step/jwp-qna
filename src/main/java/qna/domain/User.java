@@ -2,6 +2,7 @@ package qna.domain;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -29,11 +31,11 @@ public class User {
     private String email;
 
     @CreatedDate
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     protected User() {
@@ -123,6 +125,22 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override
