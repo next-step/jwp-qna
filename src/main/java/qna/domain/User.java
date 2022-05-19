@@ -1,19 +1,33 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import qna.exception.UnAuthorizedException;
 
-public class User {
+@Entity
+@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = {"userId"}))
+public class User extends BaseAuditingEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+    @Column(length = 50)
     private String email;
+    @Column(length = 20, nullable = false)
+    private String name;
+    @Column(length = 20, nullable = false)
+    private String password;
+    @Column(length = 20, nullable = false)
+    private String userId;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -58,16 +72,16 @@ public class User {
                 email.equals(target.email);
     }
 
-    public boolean isGuestUser() {
-        return false;
-    }
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public boolean isGuestUser() {
+        return false;
     }
 
     public String getUserId() {
@@ -106,10 +120,10 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 
