@@ -68,7 +68,7 @@ public class QuestionRepositoryTest {
     @DisplayName("삭제되지 않은 Question 도메인 목록을 조회한다.")
     void find01() throws CannotDeleteException {
         // given && when
-        Q1.toDeleted(user1, Lists.newArrayList());
+        Q1.toDeleted(user1);
         questionRepository.save(Q1);
         Question q2 = questionRepository.save(Q2);
 

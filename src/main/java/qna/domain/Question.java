@@ -3,9 +3,12 @@ package qna.domain;
 import static qna.constants.ExceptionMessage.INVALID_DELETE_QUESTION_BECAUSE_ANSWER_WRITER_NON_MATCH;
 import static qna.constants.ExceptionMessage.INVALID_DELETE_QUESTION_BECAUSE_NON_MATCH_WRITER_USER;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -35,6 +38,8 @@ public class Question extends BaseDateTimeEntity{
     private User writer;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+    @Embedded
+    private final Answers answers = Answers.createEmpty();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -59,6 +64,7 @@ public class Question extends BaseDateTimeEntity{
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long id() {
@@ -73,22 +79,19 @@ public class Question extends BaseDateTimeEntity{
         return deleted;
     }
 
-    public void toDeleted(User loginUser, List<Answer> answers) throws CannotDeleteException {
+    public DeleteHistories toDeleted(User loginUser) throws CannotDeleteException {
         validateDeleteAuthority(loginUser);
-        validateDeleteAnswersAuthority(loginUser, answers);
         this.changeDeleted(true);
+
+        return generateDeleteHistories(loginUser);
     }
 
-    private void validateDeleteAnswersAuthority(User owner, List<Answer> answers) throws CannotDeleteException {
-        for (Answer answer : answers) {
-            validateDeleteAnswerAuthority(owner, answer);
-        }
-    }
+    private DeleteHistories generateDeleteHistories(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.ofQuestion(id, loginUser));
+        deleteHistories.addAll(this.answers.deleteAll(loginUser));
 
-    private void validateDeleteAnswerAuthority(User owner, Answer answer) throws CannotDeleteException {
-        if (!answer.isOwner(owner)) {
-            throw new CannotDeleteException(String.format(INVALID_DELETE_QUESTION_BECAUSE_ANSWER_WRITER_NON_MATCH, owner.userId()));
-        }
+        return DeleteHistories.of(deleteHistories);
     }
 
     private void validateDeleteAuthority(User loginUser) throws CannotDeleteException {
