@@ -1,8 +1,11 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -13,17 +16,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "userId", unique = true, nullable = false)
+    @Column(name = "userId", unique = true, nullable = false, length = 20)
     private String userId;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false, length = 20)
     private String password;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", length = 50)
     private String email;
+
+    @CreatedDate
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     protected User() {
     }
