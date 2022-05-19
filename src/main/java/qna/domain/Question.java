@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import qna.common.BaseEntity;
 
 @Entity
@@ -30,8 +32,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id")
     private User user;
 
-    @OneToOne(mappedBy = "question")
-    private Answer answer;
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -64,7 +66,14 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        this.answer = answer;
+        this.answers.add(answer);
+        if (answer.getQuestion() != this) {
+            answer.setQuestion(this);
+        }
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public Long getId() {
@@ -110,7 +119,7 @@ public class Question extends BaseEntity {
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", user=" + user +
-                ", answer=" + answer +
+                ", answers=" + answers +
                 ", deleted=" + deleted +
                 '}';
     }
@@ -126,11 +135,11 @@ public class Question extends BaseEntity {
         Question question = (Question) o;
         return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
                 question.title) && Objects.equals(contents, question.contents) && Objects.equals(user,
-                question.user) && Objects.equals(answer, question.answer);
+                question.user) && Objects.equals(answers, question.answers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, user, answer, deleted);
+        return Objects.hash(id, title, contents, user, answers, deleted);
     }
 }

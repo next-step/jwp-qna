@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import qna.common.BaseEntity;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
@@ -29,7 +28,7 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "writer_id")
     private User user;
 
-    @OneToOne
+    @ManyToOne
     private Question question;
 
     @Column(nullable = false)
@@ -84,6 +83,9 @@ public class Answer extends BaseEntity {
 
     public void setQuestion(Question question) {
         this.question = question;
+        if (!this.question.getAnswers().contains(this)) {
+            this.question.getAnswers().add(this);
+        }
     }
 
     public String getContents() {
