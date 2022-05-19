@@ -21,7 +21,6 @@ class UserRepositoryTest {
     void teat_save() {
         //given & when
         User savedUser = userRepository.save(UserTest.JAVAJIGI);
-        userRepository.flush();
         Optional<User> findUser = userRepository.findById(savedUser.getId());
         //then
         assertAll(
@@ -35,7 +34,6 @@ class UserRepositoryTest {
     void teat_findByUserId() {
         //given
         User savedUser = userRepository.save(UserTest.JAVAJIGI);
-        userRepository.flush();
         //when
         Optional<User> findUser = userRepository.findByUserId(savedUser.getUserId());
         //then

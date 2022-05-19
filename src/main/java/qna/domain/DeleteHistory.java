@@ -6,7 +6,10 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "delete_history")
-public class DeleteHistory extends BaseEntity {
+public class DeleteHistory {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected Long id;
     @Enumerated(value = EnumType.STRING)
     @Column(name = "content_type")
     private ContentType contentType;
@@ -14,14 +17,16 @@ public class DeleteHistory extends BaseEntity {
     private Long contentId;
     @Column(name = "deleted_by_id")
     private Long deletedById;
+    @Column(name = "create_date")
+    protected LocalDateTime createDate;
 
     protected DeleteHistory() {}
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createdAt) {
+    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
-        this.createdAt = createdAt;
+        this.createDate = createDate;
     }
 
     public Long getId() {
@@ -51,7 +56,7 @@ public class DeleteHistory extends BaseEntity {
                 ", contentType=" + this.contentType +
                 ", contentId=" + this.contentId +
                 ", deletedById=" + this.deletedById +
-                ", createdAt=" + this.createdAt +
+                ", createDate=" + this.createDate +
                 '}';
     }
 }

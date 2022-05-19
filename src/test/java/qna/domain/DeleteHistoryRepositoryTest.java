@@ -29,7 +29,6 @@ class DeleteHistoryRepositoryTest {
         DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), user.getId(), LocalDateTime.now());
         //when
         DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
-        deleteHistoryRepository.flush();
         Optional<DeleteHistory> findDeleteHistory = deleteHistoryRepository.findById(savedDeleteHistory.getId());
         //then
         assertAll(

@@ -21,7 +21,6 @@ class AnswerRepositoryTest {
     void teat_save() {
         //given & when
         Answer savedAnswer = answerRepository.save(AnswerTest.A1);
-        answerRepository.flush();
         Optional<Answer> findAnswer = answerRepository.findById(savedAnswer.getId());
         //then
         assertAll(
@@ -37,7 +36,6 @@ class AnswerRepositoryTest {
         AnswerTest.A1.setDeleted(true);
         Answer deletedAnswer = answerRepository.save(AnswerTest.A1);
         Answer savedAnswer = answerRepository.save(AnswerTest.A2);
-        answerRepository.flush();
         //when
         List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(deletedAnswer.getQuestionId());
         //then
@@ -54,7 +52,6 @@ class AnswerRepositoryTest {
         AnswerTest.A1.setDeleted(true);
         Answer deletedAnswer = answerRepository.save(AnswerTest.A1);
         Answer savedAnswer = answerRepository.save(AnswerTest.A2);
-        answerRepository.flush();
         //when
         Optional<Answer> findAnswer1 = answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId());
         Optional<Answer> findAnswer2 = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
