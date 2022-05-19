@@ -44,8 +44,12 @@ public class Station {
         return line;
     }
 
-    public void setLine(final Line line) {
+    public void setLine(Line line) {
+        if (Objects.nonNull(this.line)) {
+            this.line.getStations().remove(this);
+        }
         this.line = line;
+        line.getStations().add(this);
     }
 
     public void setId(Long id) {

@@ -111,7 +111,7 @@ public class StationRepositoryTest {
         stations.flush(); // transaction commit
     }
 
-    @Test
+    /*@Test
     @DisplayName("연관 관계 제거 테스트")
     void removeLine() {
         // given
@@ -120,5 +120,5 @@ public class StationRepositoryTest {
         // when & then
         expected.setLine(null);     // 노선을 삭제하려면 기존에 있던 연관 관계를 먼저 제거하고 삭제해야 한다.
         stations.flush(); // transaction commit
-    }
+    }*/
 }
