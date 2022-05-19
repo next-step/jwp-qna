@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -14,6 +15,7 @@ class UserRepositoryTest {
     UserRepository userRepository;
 
     @Test
+    @DisplayName("저장이 잘 되는지 테스트")
     void save() {
         User expected = new User("yulmucha", "1234", "Yul", "yul@google.com");
         User actual = userRepository.save(expected);
@@ -27,6 +29,7 @@ class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("userId로 잘 찾아지는지 테스트")
     void findByUserId() {
         String expected = "yulmucha";
         userRepository.save(new User(expected, "1234", "yul", "yul@google.com"));

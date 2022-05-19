@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,6 +16,7 @@ class DeleteHistoryRepositoryTest {
     @Autowired DeleteHistoryRepository deleteHistoryRepository;
 
     @Test
+    @DisplayName("저장이 잘 되는지 테스트")
     void save() {
         DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, 7L, 8L, LocalDateTime.now());
         DeleteHistory actual = deleteHistoryRepository.save(expected);

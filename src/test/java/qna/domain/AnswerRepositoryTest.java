@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,6 +14,7 @@ public class AnswerRepositoryTest {
     @Autowired AnswerRepository answerRepository;
 
     @Test
+    @DisplayName("저장이 잘 되는지 테스트")
     void save() {
         Answer expected = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
         Answer actual = answerRepository.save(expected);
