@@ -14,12 +14,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DeleteHistoryRepositoryTest {
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    QuestionRepository questionRepository;
 
     DeleteHistory deleteHistory;
+    User writer;
+    Question question;
 
     @BeforeEach
     void setUp() {
-        deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 1L, now());
+        writer = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        userRepository.save(writer);
+        question = new Question("title1", "contents1").writeBy(writer);
+        questionRepository.save(question);
+        deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), now());
         deleteHistoryRepository.save(deleteHistory);
     }
 
