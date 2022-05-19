@@ -50,7 +50,7 @@ public class AnswerServiceTest {
 		assertAll(() -> assertNotNull(findAnswer), 
 				() -> assertNotNull(findAnswer.get().getId()), 
 				() -> assertTrue(findAnswer.get().isOwner(tester)),
-				() -> assertEquals(findAnswer.get().getQuestionId(), question.getId()),
+				() -> assertEquals(findAnswer.get().getQuestion(), question),
 				() -> assertEquals(findAnswer.get().getContents(), "Answer Contents"),
 				() -> assertNotNull(findAnswer.get().getCreatedAt()));
 	}

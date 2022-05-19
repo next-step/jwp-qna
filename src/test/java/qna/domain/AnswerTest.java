@@ -42,7 +42,7 @@ public class AnswerTest {
 		Answer answer = new Answer(user, question, "Answers Contents");
 		assertAll(() -> assertNull(answer.getId()), 
 				() -> assertTrue(answer.isOwner(user)),
-				() -> assertEquals(answer.getQuestionId(), question.getId()),
+				() -> assertEquals(answer.getQuestion(), question),
 				() -> assertEquals(answer.getContents(), "Answers Contents"));
 	}
 
@@ -52,7 +52,7 @@ public class AnswerTest {
 		Answer answer = new Answer(3L, user, question, "Answers Contents");
 		assertAll(() -> assertEquals(answer.getId(), 3L), 
 				() -> assertTrue(answer.isOwner(user)),
-				() -> assertEquals(answer.getQuestionId(), question.getId()),
+				() -> assertEquals(answer.getQuestion(), question),
 				() -> assertEquals(answer.getContents(), "Answers Contents"));
 	}
 
@@ -61,6 +61,6 @@ public class AnswerTest {
 	void question_add_answer_test() {
 		Answer answer = new Answer(user, question, "Answers Contents");
 		question.addAnswer(answer);
-		assertEquals(answer.getQuestionId(), question.getId());
+		assertEquals(answer.getQuestion(), question);
 	}
 }
