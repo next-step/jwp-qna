@@ -24,20 +24,19 @@ class UserRepositoryTest {
     UserRepository userRepository;
 
     @Test
-    @DisplayName("준영속 상태의 동일성 보장 검증")
+    @DisplayName("영속 상태의 동일성 보장 검증")
     void verifyEntityPrimaryCacheSave() {
         User expected = userRepository.save(JAVAJIGI);
         Optional<User> actual = userRepository.findById(expected.getId());
 
         assertAll(
                 () -> assertThat(actual).isPresent(),
-                () -> assertThat(actual).contains(expected),
                 () -> verifyEqualUserFields(actual.get(), expected)
         );
     }
 
     @Test
-    @DisplayName("영속 상태의 동일성 보장 검증")
+    @DisplayName("준영속 상태의 동일성 보장 검증")
     void verifyEntityDatabaseSave() {
         User expected = userRepository.save(JAVAJIGI);
         entityFlushAndClear();
@@ -45,7 +44,6 @@ class UserRepositoryTest {
 
         assertAll(
                 () -> assertThat(actual).isPresent(),
-                () -> assertThat(actual).contains(expected),
                 () -> verifyEqualUserFields(actual.get(), expected)
         );
     }
