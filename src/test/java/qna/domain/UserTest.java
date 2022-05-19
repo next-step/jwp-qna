@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 
 public class UserTest {
 	public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");

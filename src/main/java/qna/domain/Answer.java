@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -12,9 +11,9 @@ import javax.persistence.Table;
 
 import com.sun.istack.NotNull;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
 import qna.domain.common.DatedAtEntity;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 @Table(name = "answer")
@@ -32,11 +31,6 @@ public class Answer extends DatedAtEntity {
 	@NotNull
 	@Column(name = "deleted")
 	private boolean deleted = false;
-	@NotNull
-	@Column(name = "created_at")
-	private LocalDateTime createdAt;
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
 
 	public Answer(User writer, Question question, String contents) {
 		this(null, writer, question, contents);

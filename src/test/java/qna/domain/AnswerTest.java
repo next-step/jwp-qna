@@ -10,8 +10,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
 
 public class AnswerTest {
 	public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");

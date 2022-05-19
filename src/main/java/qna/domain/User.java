@@ -12,8 +12,8 @@ import javax.persistence.UniqueConstraint;
 
 import com.sun.istack.NotNull;
 
-import qna.UnAuthorizedException;
 import qna.domain.common.DatedAtEntity;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 @Table(name = "user", uniqueConstraints = {
