@@ -13,6 +13,9 @@ class StationRepositoryTest {
     @Autowired
     private StationRepository stations;
 
+    @Autowired
+    private LineRepository lines;
+
 
     @Test
     void save() {
@@ -51,7 +54,9 @@ class StationRepositoryTest {
 
     @Test
     void removeLine() {
-        final Station station = stations.findByName("교대역");
+        final Line saveLine = lines.save(new Line("3호선"));
+        final Station station = stations.save(new Station("교대역"));
+        station.setLine(saveLine);
         station.removeLine();
         //커밋을 찍는다
         stations.flush();
