@@ -30,5 +30,7 @@ public class UserRepositoryTest {
         userRepository.save(expected);
         List<User> actual = userRepository.findAll();
         assertThat(actual.get(0).getUserId()).isNotNull();
+        assertThat(actual.get(0).getCreatedAt()).isNotNull();
+        System.out.println(actual.get(0).toString());
     }
 }
