@@ -1,12 +1,17 @@
 package qna.domain;
 
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -15,38 +20,54 @@ public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
     @Lob
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
+    @ManyToOne(optional = false, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
+    @ManyToOne(optional = false, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "QUESTION_ID", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     protected Answer() {
     }
 
     private Answer(AnswerBuilder AnswerBuilder) {
         this.id = AnswerBuilder.id;
-        this.writerId = AnswerBuilder.writerId;
-        this.questionId = AnswerBuilder.questionId;
+        this.writer = AnswerBuilder.writer;
+        this.question = AnswerBuilder.question;
         this.contents = AnswerBuilder.contents;
+    }
+
+    public static AnswerBuilder builder(User writer, Question question) {
+        return new AnswerBuilder(writer, question);
     }
 
     public static class AnswerBuilder {
         private Long id;
-        private final Long writerId;
-        private final Long questionId;
+        private final User writer;
+        private final Question question;
         private String contents;
 
-        public AnswerBuilder(User writer, Question question) {
-            if (Objects.isNull(writer)) {
-                throw new UnAuthorizedException("작성자 정보가 없습니다.");
-            }
+        private AnswerBuilder(User writer, Question question) {
+            validateWriterNotNull(writer);
+            validateQuestionNotNull(question);
+            this.writer = writer;
+            this.question = question;
+        }
+
+        private void validateQuestionNotNull(Question question) {
             if (Objects.isNull(question)) {
                 throw new NotFoundException("질문 정보가 없습니다.");
             }
-            this.writerId = writer.getId();
-            this.questionId = question.getId();
+        }
+
+        private void validateWriterNotNull(User writer) {
+            if (Objects.isNull(writer)) {
+                throw new UnAuthorizedException("작성자 정보가 없습니다.");
+            }
         }
 
         public AnswerBuilder id(long id) {
@@ -65,11 +86,11 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -80,8 +101,8 @@ public class Answer extends BaseEntity {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public String getContents() {
@@ -100,8 +121,8 @@ public class Answer extends BaseEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

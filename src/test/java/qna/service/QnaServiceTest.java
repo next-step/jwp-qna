@@ -20,10 +20,9 @@ import qna.domain.Answer;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
+import qna.domain.User;
 import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
-import qna.repository.QuestionRepositoryTest;
-import qna.repository.UserRepositoryTest;
 
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
@@ -39,18 +38,24 @@ class QnaServiceTest {
     @InjectMocks
     private QnaService qnaService;
 
-    private Question question;
-    private Answer answer;
+    Question question;
+    Answer answer;
+    User javajigi;
+    User sanjigi;
 
     @BeforeEach
     public void setUp() {
-        question = new Question.QuestionBuilder("title1")
-                .id(1L)
+        javajigi = User.builder("javajigi", "password", "name")
+                .email("javajigi@slipp.net")
+                .build();
+        sanjigi = User.builder("sanjigi", "password", "name")
+                .email("sanjigi@slipp.net")
+                .build();
+        question = Question.builder("title1")
                 .contents("contents1")
                 .build()
-                .writeBy(UserRepositoryTest.JAVAJIGI);
-        answer = new Answer.AnswerBuilder(UserRepositoryTest.JAVAJIGI, question)
-                .id(1L)
+                .writeBy(javajigi);
+        answer = Answer.builder(javajigi, question)
                 .contents("Answers Contents1")
                 .build();
         question.addAnswer(answer);
@@ -62,7 +67,7 @@ class QnaServiceTest {
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
         assertThat(question.isDeleted()).isFalse();
-        qnaService.deleteQuestion(UserRepositoryTest.JAVAJIGI, question.getId());
+        qnaService.deleteQuestion(javajigi, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
         verifyDeleteHistories();
@@ -72,7 +77,7 @@ class QnaServiceTest {
     public void deleteQuestionOtherWriter() {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(UserRepositoryTest.SANJIGI, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(sanjigi, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
@@ -81,7 +86,7 @@ class QnaServiceTest {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
-        qnaService.deleteQuestion(UserRepositoryTest.JAVAJIGI, question.getId());
+        qnaService.deleteQuestion(javajigi, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
@@ -90,8 +95,11 @@ class QnaServiceTest {
 
     @Test
     public void deleteHavingContentsOfOther() {
-        Answer answer2 = new Answer.AnswerBuilder(UserRepositoryTest.SANJIGI, QuestionRepositoryTest.Q1)
-                .id(2L)
+        Question q1 = Question.builder("title1")
+                .contents("contents1")
+                .build()
+                .writeBy(javajigi);
+        Answer answer2 = Answer.builder(sanjigi, q1)
                 .contents("Answers Contents1")
                 .build();
         question.addAnswer(answer2);
@@ -100,22 +108,22 @@ class QnaServiceTest {
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(
                 Arrays.asList(answer, answer2));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(UserRepositoryTest.JAVAJIGI, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(javajigi, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory.DeleteHistoryBuilder()
+                DeleteHistory.builder()
                         .contentType(ContentType.QUESTION)
                         .contentId(question.getId())
-                        .deletedById(question.getWriterId())
+                        .deletedBy(question.getWriter())
                         .createDate(LocalDateTime.now())
                         .build(),
-                new DeleteHistory.DeleteHistoryBuilder()
+                DeleteHistory.builder()
                         .contentType(ContentType.ANSWER)
                         .contentId(answer.getId())
-                        .deletedById(answer.getWriterId())
+                        .deletedBy(answer.getWriter())
                         .createDate(LocalDateTime.now())
                         .build()
         );

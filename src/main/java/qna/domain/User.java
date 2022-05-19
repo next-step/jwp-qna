@@ -1,11 +1,15 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import qna.UnAuthorizedException;
 
 @Entity
@@ -23,6 +27,12 @@ public class User extends BaseEntity {
     private String name;
     @Column(length = 50)
     private String email;
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Question> questions = new ArrayList<>();
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers = new ArrayList<>();
+    @OneToMany(mappedBy = "deletedBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected User() {
     }
@@ -35,6 +45,10 @@ public class User extends BaseEntity {
         this.email = userBuilder.email;
     }
 
+    public static UserBuilder builder(String userId, String password, String name) {
+        return new UserBuilder(userId, password, name);
+    }
+
     public static class UserBuilder {
         private Long id;
         private final String userId;
@@ -42,7 +56,7 @@ public class User extends BaseEntity {
         private final String name;
         private String email;
 
-        public UserBuilder(String userId, String password, String name) {
+        private UserBuilder(String userId, String password, String name) {
             this.userId = userId;
             this.password = password;
             this.name = name;
@@ -67,7 +81,6 @@ public class User extends BaseEntity {
         if (!matchUserId(loginUser.userId)) {
             throw new UnAuthorizedException();
         }
-
         if (!matchPassword(target.password)) {
             throw new UnAuthorizedException();
         }
@@ -101,6 +114,10 @@ public class User extends BaseEntity {
         return id;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -126,6 +143,25 @@ public class User extends BaseEntity {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getUserId(), user.getUserId())
+                && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getName(),
+                user.getName()) && Objects.equals(getEmail(), user.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getUserId(), getPassword(), getName(), getEmail());
     }
 
     private static class GuestUser extends User {

@@ -1,11 +1,16 @@
 package qna.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Question extends BaseEntity {
@@ -16,7 +21,9 @@ public class Question extends BaseEntity {
     private String title;
     @Lob
     private String contents;
-    private Long writerId;
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -29,12 +36,16 @@ public class Question extends BaseEntity {
         this.contents = questionBuilder.contents;
     }
 
+    public static QuestionBuilder builder(String title) {
+        return new QuestionBuilder(title);
+    }
+
     public static class QuestionBuilder {
         private Long id;
         private final String title;
         private String contents;
 
-        public QuestionBuilder(String title) {
+        private QuestionBuilder(String title) {
             this.title = title;
         }
 
@@ -54,12 +65,12 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -82,8 +93,8 @@ public class Question extends BaseEntity {
         return contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -100,7 +111,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }
