@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -18,6 +20,10 @@ public class Station {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "line_id")
+    private Line line;
 
     public Station(String name) {
         this.name = name;
@@ -32,6 +38,14 @@ public class Station {
 
     public String getName() {
         return name;
+    }
+
+    public Line getLine() {
+        return line;
+    }
+
+    public void setLine(final Line line) {
+        this.line = line;
     }
 
     public void setId(Long id) {

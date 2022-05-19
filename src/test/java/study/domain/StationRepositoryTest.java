@@ -14,6 +14,9 @@ public class StationRepositoryTest {
     @Autowired
     private StationRepository stations;
 
+    @Autowired
+    private LineRepository lines;
+
     @Test
     @DisplayName("지하철역 저장 테스트")
     void save() {
@@ -71,5 +74,51 @@ public class StationRepositoryTest {
         // then
         assertThat(station2).isNotNull();
         assertThat(station3).isNull();
+    }
+
+    @Test
+    @DisplayName("연관 관계 설정 및 저장 테스트")
+    void saveWithLine() {
+        // given
+        Station expected = new Station("잠실역");
+        //expected.setLine(new Line("2호선"));        // JPA에서 엔티티를 저장할 때 연관된 모든 엔티티는 영속 상태여야 한다.
+        expected.setLine(lines.save(new Line("2호선")));
+
+        // when & then
+        Station actual = stations.save(expected);
+        stations.flush(); // transaction commit
+    }
+
+    @Test
+    @DisplayName("조회 테스트")
+    void findByNameWithLine() {
+        // given & when
+        Station actual = stations.findByName("교대역");
+
+        // then
+        assertThat(actual).isNotNull();
+        assertThat(actual.getLine().getName()).isEqualTo("3호선");
+    }
+
+    @Test
+    @DisplayName("수정 테스트")
+    void updateWithLine() {
+        // given
+        Station expected = stations.findByName("교대역");
+
+        // when & then
+        expected.setLine(lines.save(new Line("2호선")));
+        stations.flush(); // transaction commit
+    }
+
+    @Test
+    @DisplayName("연관 관계 제거 테스트")
+    void removeLine() {
+        // given
+        Station expected = stations.findByName("교대역");
+
+        // when & then
+        expected.setLine(null);     // 노선을 삭제하려면 기존에 있던 연관 관계를 먼저 제거하고 삭제해야 한다.
+        stations.flush(); // transaction commit
     }
 }
