@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -21,6 +22,7 @@ public class Answer {
 
     private Long questionId;
 
+    @Lob
     private String contents;
 
     @Column(nullable = false)
