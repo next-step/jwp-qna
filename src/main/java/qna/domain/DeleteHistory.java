@@ -31,7 +31,7 @@ public class DeleteHistory {
     }
 
     public static DeleteHistory ofQuestion(Question question) {
-        return new DeleteHistory(ContentType.ANSWER, question.getId(), question.getWriter());
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter());
     }
 
     public Long getId() {
