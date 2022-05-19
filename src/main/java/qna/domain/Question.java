@@ -17,7 +17,8 @@ public class Question extends Auditing {
     @Lob
     private String contents;
 
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User writer;
 
     @NotNull
     private boolean deleted = false;
@@ -36,12 +37,12 @@ public class Question extends Auditing {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -72,12 +73,8 @@ public class Question extends Auditing {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -91,11 +88,11 @@ public class Question extends Auditing {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
+                "id=" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
+                ", writer=" + writer + '\'' +
+                ", deleted=" + deleted + '\'' +
                 ", createdAt='" + getCreatedAt() + '\'' +
                 ", updatedAt='" + getUpdatedAt() + '\'' +
                 '}';
