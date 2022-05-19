@@ -33,7 +33,7 @@ public class DeleteHistory {
 
     protected DeleteHistory() {}
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
