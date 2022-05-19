@@ -10,7 +10,7 @@ public class DeleteHistories {
         this.elements = elements;
     }
 
-    public static DeleteHistories of(List<DeleteHistory> elements){
+    public static DeleteHistories of(List<DeleteHistory> elements) {
         return new DeleteHistories(elements);
     }
 
