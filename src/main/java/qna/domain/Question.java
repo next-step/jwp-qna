@@ -1,10 +1,18 @@
 package qna.domain;
 
-public class Question {
-    private Long id;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+
+@Entity
+public class Question extends BaseEntity {
+    @Column(length = 100, nullable = false)
     private String title;
+    @Lob
+    @Column(columnDefinition = "CLOB")
     private String contents;
     private Long writerId;
+    @Column(nullable = false)
     private boolean deleted = false;
 
     public Question(String title, String contents) {
@@ -15,6 +23,10 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    protected Question() {
+
     }
 
     public Question writeBy(User writer) {
