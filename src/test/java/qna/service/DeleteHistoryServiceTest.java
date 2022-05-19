@@ -34,12 +34,12 @@ public class DeleteHistoryServiceTest {
 
 	@Autowired
 	private AnswerRepository answerRepository;
-	
+
 	@Autowired
 	private DeleteHistoryRepository deleteHistoryRepository;
 
 	private DeleteHistoryService deleteHistoryService;
-	
+
 	@BeforeEach
 	void setup() {
 		deleteHistoryService = new DeleteHistoryService(deleteHistoryRepository);
@@ -62,13 +62,13 @@ public class DeleteHistoryServiceTest {
 		Answer saveAnswer = answerRepository.save(answer);
 		Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswer.getId());
 
-		DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, findAnswer.get().getId(),
-				deleter.getId(), LocalDateTime.now());
+		DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, findAnswer.get().getId(), deleter,
+				LocalDateTime.now());
 		deleteHistoryService.save(deleteHistory);
 		List<DeleteHistory> findDeleteHistorys = deleteHistoryRepository.findAll();
 		assertEquals(findDeleteHistorys.size(), 1);
 	}
-	
+
 	@Test
 	@DisplayName("리스트 저장 후 조회 테스트")
 	void saveAll_find_test() {
@@ -86,15 +86,15 @@ public class DeleteHistoryServiceTest {
 		Answer saveAnswer = answerRepository.save(answer);
 		Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswer.getId());
 
-		DeleteHistory deleteHistory1 = new DeleteHistory(ContentType.ANSWER, findAnswer.get().getId(),
-				deleter.getId(), LocalDateTime.now());
-		
-		DeleteHistory deleteHistory2 = new DeleteHistory(ContentType.QUESTION, findQuestion.get().getId(),
-				deleter.getId(), LocalDateTime.now());
+		DeleteHistory deleteHistory1 = new DeleteHistory(ContentType.ANSWER, findAnswer.get().getId(), deleter,
+				LocalDateTime.now());
+
+		DeleteHistory deleteHistory2 = new DeleteHistory(ContentType.QUESTION, findQuestion.get().getId(), deleter,
+				LocalDateTime.now());
 		List<DeleteHistory> deleteHistorys = new ArrayList<>();
 		deleteHistorys.add(deleteHistory1);
 		deleteHistorys.add(deleteHistory2);
-		
+
 		deleteHistoryService.saveAll(deleteHistorys);
 		List<DeleteHistory> findDeleteHistorys = deleteHistoryRepository.findAll();
 		assertEquals(findDeleteHistorys.size(), 2);

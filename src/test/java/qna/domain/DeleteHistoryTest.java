@@ -11,8 +11,8 @@ public class DeleteHistoryTest {
 	@Test
 	@DisplayName("생성 테스트")
 	void create() {
-		assertAll(() -> new DeleteHistory(ContentType.ANSWER, AnswerTest.A1.getId(), UserTest.JAVAJIGI.getId(),LocalDateTime.now()),
-				() -> new DeleteHistory(ContentType.QUESTION, QuestionTest.Q1.getId(), UserTest.SANJIGI.getId(),LocalDateTime.now()));
+		assertAll(() -> new DeleteHistory(ContentType.ANSWER, AnswerTest.A1.getId(), UserTest.JAVAJIGI,LocalDateTime.now()),
+				() -> new DeleteHistory(ContentType.QUESTION, QuestionTest.Q1.getId(), UserTest.SANJIGI,LocalDateTime.now()));
 	}
 	
 }
