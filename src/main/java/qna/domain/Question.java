@@ -91,7 +91,7 @@ public class Question extends Auditing {
                 "id=" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writer=" + writer + '\'' +
+                ", writerId=" + writer.getId() + '\'' +
                 ", deleted=" + deleted + '\'' +
                 ", createdAt='" + getCreatedAt() + '\'' +
                 ", updatedAt='" + getUpdatedAt() + '\'' +
