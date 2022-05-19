@@ -1,6 +1,4 @@
-package study.domain;
-
-import static org.junit.jupiter.api.Assertions.*;
+package subway.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-class LineStationTest {
+class LineStationRepositoryTest {
 
     @Autowired
     private LineStationRepository lineStations;

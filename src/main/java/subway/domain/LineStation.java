@@ -1,4 +1,4 @@
-package study.domain;
+package subway.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

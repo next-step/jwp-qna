@@ -1,4 +1,4 @@
-package study.domain;
+package subway.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,7 +19,7 @@ class LineRepositoryTest {
 
     @Test
     @DisplayName("조회 테스트")
-    void findById() {
+    void findByName() {
         // given & when
         Line line = lines.findByName("3호선");
 
@@ -32,7 +32,7 @@ class LineRepositoryTest {
     void nonAssociationSave() {
         // given
         Line expected = new Line("2호선");
-        expected.addStation(new Station("잠실역"));
+        expected.addStation(new Station("잠실역"));    // station이 영속화가 되지 않음. 연관 관계 형성 안됨
 
         // when & then
         lines.save(expected);

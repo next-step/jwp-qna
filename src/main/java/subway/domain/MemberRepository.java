@@ -1,4 +1,4 @@
-package study.domain;
+package subway.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

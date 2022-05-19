@@ -1,4 +1,4 @@
-package study.domain;
+package subway.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -21,10 +21,10 @@ public class StationRepositoryTest {
     @DisplayName("지하철역 저장 테스트")
     void save() {
         // given
-        Station expected = new Station("잠실역");
+        final Station expected = new Station("잠실역");
 
         // when
-        Station actual = stations.save(expected);
+        final Station actual = stations.save(expected);
 
         // then
         assertAll(
@@ -41,7 +41,7 @@ public class StationRepositoryTest {
         stations.save(new Station(expected));
 
         // when
-        String actual = stations.findByName(expected).getName();
+        final String actual = stations.findByName(expected).getName();
 
         // then
         assertThat(actual).isEqualTo(expected);
@@ -51,13 +51,14 @@ public class StationRepositoryTest {
     @DisplayName("동일성 보장 맛보기")
     void identity() {
         // given
-        Station station1 = stations.save(new Station("잠실역"));
+        final Station station1 = stations.save(new Station("잠실역"));
 
         // when
-        Station station2 = stations.findById(station1.getId()).get();
+        final Station station2 = stations.findById(station1.getId()).get();
 
         // then
         assertThat(station1 == station2).isTrue();
+        assertThat(station1).isSameAs(station2);
     }
 
     @Test
@@ -93,7 +94,7 @@ public class StationRepositoryTest {
     @DisplayName("조회 테스트")
     void findByNameWithLine() {
         // given & when
-        Station actual = stations.findByName("교대역");
+        final Station actual = stations.findByName("교대역");
 
         // then
         assertThat(actual).isNotNull();
@@ -104,7 +105,7 @@ public class StationRepositoryTest {
     @DisplayName("수정 테스트")
     void updateWithLine() {
         // given
-        Station expected = stations.findByName("교대역");
+        final Station expected = stations.findByName("교대역");
 
         // when & then
         expected.setLine(lines.save(new Line("2호선")));

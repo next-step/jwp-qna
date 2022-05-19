@@ -1,4 +1,4 @@
-package study.domain;
+package subway.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
@@ -12,7 +12,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "station")
+@Table(name = "station")    // 생략 시 엔티티 클래스 이름과 같은 테이블로 매핑
 public class Station {
 
     @Id
@@ -26,20 +26,20 @@ public class Station {
     @JoinColumn(name = "line_id")
     private Line line;
 
-    // 주 테이블에 외래 키
+    /* //주 테이블에 외래 키
     @OneToOne
     @JoinColumn(name = "line_station_id")
-    private LineStation lineStation;
-
-    /* 대상 테이블에 외래 키
-    @OneToOne(mappedBy = "station")
     private LineStation lineStation;*/
 
-    public Station(String name) {
+    // 대상 테이블에 외래 키
+    @OneToOne(mappedBy = "station")
+    private LineStation lineStation;
+
+    public Station(final String name) {
         this.name = name;
     }
 
-    public Station(String name, LineStation lineStation) {
+    public Station(final String name, final LineStation lineStation) {
         this.name = name;
         this.lineStation = lineStation;
     }
@@ -59,7 +59,8 @@ public class Station {
         return line;
     }
 
-    public void setLine(Line line) {
+    public void setLine(final Line line) {
+        //line.addStation(this); //-> 무한루프
         if (Objects.nonNull(this.line)) {
             this.line.getStations().remove(this);
         }
@@ -83,33 +84,7 @@ public class Station {
         return this;
     }
 
-    public void changeName(String name) {
+    public void changeName(final String name) {
         this.name = name;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Station station = (Station) o;
-        return Objects.equals(id, station.id) && Objects.equals(name, station.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
-    }
-
-    @Override
-    public String toString() {
-        return "Station{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
-
 }
