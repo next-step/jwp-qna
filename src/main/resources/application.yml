@@ -13,3 +13,11 @@ spring:
         #dialect: org.hibernate.dialect.MySQL57Dialect
     hibernate:
       ddl-auto: create
+  output:
+    ansi:
+      enabled: always
+logging:
+  level:
+    org.hibernate.type: trace
+
+
