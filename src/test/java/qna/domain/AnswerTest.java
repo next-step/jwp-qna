@@ -54,19 +54,6 @@ public class AnswerTest {
             .isInstanceOf(UnAuthorizedException.class);
     }
 
-    @Test
-    @DisplayName("isOnwer 메소드를 이용해 작성자와 동일한지 확인할 수 있다.")
-    void public_method_01() {
-        // given && when
-        User writer = UserTest.JAVAJIGI;
-
-        // then
-        assertAll(
-            () -> assertTrue(A1.isOwner(writer)),
-            () -> assertFalse(A2.isOwner(writer))
-        );
-    }
-
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L, 3L, 4L})
     @DisplayName("toQuestion 메소드를 이용해 Answer에 Question을 할당할 수 있다.")
@@ -119,5 +106,13 @@ public class AnswerTest {
 
         //then
         assertTrue(A1.isDeleted());
+    }
+
+    @Test
+    @DisplayName("본인이 작성한 답변이 아니면 toDeleted() 메소드 결과로 CannotDeleteException 이 발생한다.")
+    void public_method_13() {
+        // given & when & then
+        assertThatThrownBy(() -> A1.toDeleted(UserTest.SANJIGI))
+            .isInstanceOf(CannotDeleteException.class);
     }
 }

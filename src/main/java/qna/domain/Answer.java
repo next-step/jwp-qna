@@ -58,10 +58,6 @@ public class Answer extends BaseDateTimeEntity{
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void toQuestion(Question question) {
         this.question = question;
     }
@@ -82,10 +78,6 @@ public class Answer extends BaseDateTimeEntity{
         return deleted;
     }
 
-    private void changeDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public DeleteHistory toDeleted(User owner) throws CannotDeleteException {
         validateDeleteAnswerAuthority(owner);
         this.changeDeleted(true);
@@ -97,6 +89,14 @@ public class Answer extends BaseDateTimeEntity{
         if (!this.isOwner(owner)) {
             throw new CannotDeleteException(String.format(INVALID_DELETE_QUESTION_BECAUSE_ANSWER_WRITER_NON_MATCH, owner.userId()));
         }
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    private void changeDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override
