@@ -33,4 +33,12 @@ public class UserRepositoryTest {
         assertThat(actual.get(0).getCreatedAt()).isNotNull();
         System.out.println(actual.get(0).toString());
     }
+
+    @Test
+    void findByUserId() {
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
+        User actual = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId()).get();
+        assertThat(actual.getUserId()).isEqualTo(UserTest.JAVAJIGI.getUserId());
+    }
 }
