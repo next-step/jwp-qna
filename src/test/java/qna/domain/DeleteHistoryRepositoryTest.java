@@ -23,7 +23,7 @@ class DeleteHistoryRepositoryTest {
     void save() {
         User javaJigi = userRepository.save(UserTest.JAVAJIGI);
         DeleteHistory deleteHistory
-            = new DeleteHistory(ContentType.QUESTION, 1L, javaJigi, LocalDateTime.now());
+            = new DeleteHistory(ContentType.QUESTION, 1L, javaJigi);
         DeleteHistory history = deleteHistoryRepository.save(deleteHistory);
         assertAll(
             () -> assertThat(history).isNotNull()
