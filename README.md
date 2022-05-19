@@ -44,4 +44,14 @@
 - [X] 질문 삭제 시 답변 데이터도 삭제될 수 있도록 질문 삭제 관련 처리
 
 질문과 답변 삭제 이력에 대한 정보를 DeleteHistory를 활용해 남긴다.
-- [ ] 질문과 답변 삭제에 대한 로직 수행 시 DeleteHistory를 저장한다.
+- [X] 질문과 답변 삭제에 대한 로직 수행 시 DeleteHistory를 저장한다.
+
+Answer 도메인의 삭제 기능 리팩토링
+- [X] Answer 도메인의 유효성 검증 주체를 가져온다.
+- [X] 삭제에 대한 결과로 DeleteHistory 반환 
+
+Question, Answer 도메인간의 연관관계 리팩토링
+- [X] Answers 일급 컬랙션 생성 및 Question 도메인과 연관관계에 의한 연관관계 편의 메소드 처리
+- [X] DeleteHistories 일급 컬랙션 생성
+
+
