@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -25,8 +26,22 @@ public class Station {
     @JoinColumn(name = "line_id")
     private Line line;
 
+    // 주 테이블에 외래 키
+    @OneToOne
+    @JoinColumn(name = "line_station_id")
+    private LineStation lineStation;
+
+    /* 대상 테이블에 외래 키
+    @OneToOne(mappedBy = "station")
+    private LineStation lineStation;*/
+
     public Station(String name) {
         this.name = name;
+    }
+
+    public Station(String name, LineStation lineStation) {
+        this.name = name;
+        this.lineStation = lineStation;
     }
 
     protected Station() {
@@ -54,6 +69,14 @@ public class Station {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public LineStation getLineStation() {
+        return lineStation;
+    }
+
+    public void setLineStation(LineStation lineStation) {
+        this.lineStation = lineStation;
     }
 
     public Station get() {
