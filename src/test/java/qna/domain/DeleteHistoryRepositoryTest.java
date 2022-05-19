@@ -3,6 +3,8 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.domain.ContentType.ANSWER;
+import static qna.domain.ContentType.QUESTION;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -19,10 +21,10 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
-    DeleteHistory d1 = new DeleteHistory(ContentType.ANSWER, 0L, 1L,
+    DeleteHistory d1 = new DeleteHistory(ANSWER, 0L, 1L,
             LocalDateTime.of(2022, Month.APRIL, 1, 10, 10));
 
-    DeleteHistory d2 = new DeleteHistory(ContentType.QUESTION, 0L, 1L,
+    DeleteHistory d2 = new DeleteHistory(QUESTION, 0L, 1L,
             LocalDateTime.of(2021, Month.APRIL, 1, 10, 10));
 
 
@@ -48,7 +50,7 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("컨텐츠 타입별 조회")
     void findByContentType() {
         deleteHistoryRepository.saveAll(Arrays.asList(d1, d2));
-        assertThat(deleteHistoryRepository.findByContentType(ContentType.ANSWER))
+        assertThat(deleteHistoryRepository.findByContentType(ANSWER))
                 .contains(d1);
     }
 
@@ -70,10 +72,10 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("삭제이력변경")
     void update() {
         DeleteHistory save = deleteHistoryRepository.save(d1);
-        save.changeContentType(ContentType.QUESTION);
+        save.changeContentType(QUESTION);
 
         assertThat(deleteHistoryRepository.findById(save.getId()).get().getContentType())
-                .isEqualTo(ContentType.QUESTION);
+                .isEqualTo(QUESTION);
     }
 
 
