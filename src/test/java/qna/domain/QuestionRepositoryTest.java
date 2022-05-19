@@ -37,7 +37,7 @@ class QuestionRepositoryTest {
 
     @Test
     void 수정() {
-        question.setContents("content111");
+        question.edit("content111");
         Question findQuestion = questionRepository.findById(question.getId()).get();
         assertThat(findQuestion.getContents()).isEqualTo("content111");
     }

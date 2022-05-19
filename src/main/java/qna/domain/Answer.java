@@ -68,7 +68,7 @@ public class Answer extends Auditing {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void edit(String contents) {
         this.contents = contents;
     }
 
@@ -76,7 +76,7 @@ public class Answer extends Auditing {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void delete(boolean deleted) {
         this.deleted = deleted;
     }
 

@@ -94,7 +94,7 @@ public class User extends Auditing {
         return name;
     }
 
-    public void setName(String name) {
+    public void rename(String name) {
         this.name = name;
     }
 

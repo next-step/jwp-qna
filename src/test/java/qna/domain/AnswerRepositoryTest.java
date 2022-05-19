@@ -39,7 +39,7 @@ class AnswerRepositoryTest {
 
     @Test
     void 수정() {
-        answer.setContents("Contents11");
+        answer.edit("Contents11");
         Answer findAnswer = answerRepository.findById(answer.getId()).get();
         assertThat(findAnswer.getContents()).isEqualTo("Contents11");
     }
