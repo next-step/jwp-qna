@@ -44,7 +44,7 @@ public class Answer extends Auditing {
         }
 
         this.writer = writer;
-        this.question = question;
+        toQuestion(question);
         this.contents = contents;
     }
 
@@ -53,7 +53,15 @@ public class Answer extends Auditing {
     }
 
     public void toQuestion(Question question) {
+        if (this.question != null) {
+            this.question.getAnswers().remove(this);
+        }
         this.question = question;
+        this.question.getAnswers().add(this);
+    }
+
+    public Question getQuestion() {
+        return question;
     }
 
     public Long getId() {

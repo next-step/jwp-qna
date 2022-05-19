@@ -3,6 +3,8 @@ package qna.domain;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Question extends Auditing {
@@ -19,6 +21,9 @@ public class Question extends Auditing {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     @NotNull
     private boolean deleted = false;
@@ -47,6 +52,10 @@ public class Question extends Auditing {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public Long getId() {
