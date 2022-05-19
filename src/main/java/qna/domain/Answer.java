@@ -1,5 +1,8 @@
 package qna.domain;
 
+import static qna.constants.ExceptionMessage.INVALID_DELETE_QUESTION_BECAUSE_ANSWER_WRITER_NON_MATCH;
+
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,10 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-
-import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
@@ -84,16 +86,17 @@ public class Answer extends BaseDateTimeEntity{
         this.deleted = deleted;
     }
 
-    public void toDeleted(){
+    public DeleteHistory toDeleted(User owner) throws CannotDeleteException {
+        validateDeleteAnswerAuthority(owner);
         this.changeDeleted(true);
+
+        return DeleteHistory.ofAnswer(this.id, owner);
     }
 
-    public void changeContents(String contents) {
-        this.contents = contents;
-    }
-
-    public boolean isEqualsContents(String contents) {
-        return this.contents.equals(contents);
+    private void validateDeleteAnswerAuthority(User owner) throws CannotDeleteException {
+        if (!this.isOwner(owner)) {
+            throw new CannotDeleteException(String.format(INVALID_DELETE_QUESTION_BECAUSE_ANSWER_WRITER_NON_MATCH, owner.userId()));
+        }
     }
 
     @Override
