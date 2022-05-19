@@ -11,16 +11,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class AnswerRepositoryTest {
-    static final User writer = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    static final Question question = new Question(1L, "title1", "contents1").writeBy(writer);
-
     @Autowired
     AnswerRepository answerRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    QuestionRepository questionRepository;
 
     Answer answer;
+    User writer;
+    Question question;
 
     @BeforeEach
     void setUp() {
+        writer = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        userRepository.save(writer);
+        question = new Question("title1", "contents1").writeBy(writer);
+        questionRepository.save(question);
         answer = new Answer(writer, question, "Answers Contents1");
         answerRepository.save(answer);
     }
