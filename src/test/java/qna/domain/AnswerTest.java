@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -103,28 +104,6 @@ public class AnswerTest {
         assertThat(answer.question()).isEqualTo(question);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"a", "b", "c"})
-    @DisplayName("getContents 메소드를 이용해 Answer의 Contents 값을 조회 할 수 있다.")
-    void public_method_09(String contents) {
-        // given & when
-        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionRepositoryTest.Q1, contents);
-
-        // then
-        assertTrue(answer.isEqualsContents(contents));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"a", "b", "c"})
-    @DisplayName("setContents 메소드를 이용해 Answer의 Contents 값을 변경 할 수 있다.")
-    void public_method_10(String contents) {
-        // given & when
-        A1.changeContents(contents);
-
-        // then
-        assertTrue(A1.isEqualsContents(contents));
-    }
-
     @Test
     @DisplayName("isDeleted 메소드를 이용해 Answer가 삭제 되었는지 확인할 수 있다.")
     void public_method_11() {
@@ -134,9 +113,9 @@ public class AnswerTest {
 
     @Test
     @DisplayName("toDeleted() 메소드를 이용해 Answer를 삭제 할 수 있다.")
-    void public_method_12() {
+    void public_method_12() throws CannotDeleteException {
         // given & when
-        A1.toDeleted();
+        A1.toDeleted(UserTest.JAVAJIGI);
 
         //then
         assertTrue(A1.isDeleted());
