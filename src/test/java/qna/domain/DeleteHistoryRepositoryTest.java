@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -29,7 +28,7 @@ class DeleteHistoryRepositoryTest {
         userRepository.save(writer);
         question = new Question("title1", "contents1").writeBy(writer);
         questionRepository.save(question);
-        deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), now());
+        deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter());
         deleteHistoryRepository.save(deleteHistory);
     }
 
