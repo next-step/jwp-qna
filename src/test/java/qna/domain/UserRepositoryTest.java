@@ -36,4 +36,14 @@ class UserRepositoryTest {
         String actual = userRepository.findByUserId(expected).get().getUserId();
         assertThat(actual).isEqualTo(expected);
     }
+
+    @Test
+    @DisplayName("개체를 저장한 후 다시 가져왔을 때 기존의 개체와 동일한지 테스트")
+    void findById() {
+        User user = new User("yulmucha", "1234", "yul", "yul@google.com");
+        User savedUser = userRepository.save(user);
+
+        User foundUser = userRepository.findById(savedUser.getId()).get();
+        assertThat(foundUser).isEqualTo(user);
+    }
 }

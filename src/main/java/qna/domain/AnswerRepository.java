@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
+    Optional<Answer> findById(Long aLong);
+
     List<Answer> findByQuestionIdAndDeletedFalse(Long questionId);
 
     Optional<Answer> findByIdAndDeletedFalse(Long id);

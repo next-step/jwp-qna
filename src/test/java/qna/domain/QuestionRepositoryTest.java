@@ -24,4 +24,14 @@ class QuestionRepositoryTest {
                 () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
         );
     }
+
+    @Test
+    @DisplayName("개체를 저장한 후 다시 가져왔을 때 기존의 개체와 동일한지 테스트")
+    void findById() {
+        Question question = new Question("제목1", "내용1");
+        Question savedQuestion = questionRepository.save(question);
+
+        Question foundQuestion = questionRepository.findById(savedQuestion.getId()).get();
+        assertThat(foundQuestion).isEqualTo(question);
+    }
 }
