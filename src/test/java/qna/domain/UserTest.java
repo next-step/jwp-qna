@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -43,6 +44,13 @@ public class UserTest {
     }
 
     @Test
+    @DisplayName("User select 테스트")
+    void select() {
+        Optional<User> actual = userRepository.findByUserId(JAVAJIGI.getUserId());
+        assertThat(actual.get().getId()).isEqualTo(saveJAVAJIGI.getId());
+    }
+
+    @Test
     @DisplayName("이름과 이메일이 같은지 테스트")
     @Order(2)
     void equalsNameAndEmail() {
@@ -70,6 +78,15 @@ public class UserTest {
         userRepository.flush();
         assertThat(target.getEmail()).isEqualTo(saveJAVAJIGI.getEmail());
         assertThat(target.getName()).isEqualTo(saveJAVAJIGI.getName());
+    }
+
+    @Test
+    @Order(Integer.MAX_VALUE)
+    @DisplayName("User delete 테스트")
+    void delete() {
+        userRepository.delete(saveJAVAJIGI);
+        Optional<User> actual = userRepository.findById(saveJAVAJIGI.getId());
+        assertThat(actual.isPresent()).isFalse();
     }
 
 }
