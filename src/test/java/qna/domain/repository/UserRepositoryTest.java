@@ -8,30 +8,39 @@ import static qna.domain.UserTest.SANJIGI;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 import qna.domain.User;
 
 @DataJpaTest
+@DirtiesContext
 class UserRepositoryTest {
 
     @Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
 
     @PersistenceContext
     EntityManager em;
 
+    private User javajigi;
+    private User sanjigi;
+
+    @BeforeEach
+    void before() {
+        //given
+        javajigi = userRepository.save(JAVAJIGI);
+        sanjigi = userRepository.save(SANJIGI);
+    }
+
     @Test
     @DisplayName("저장한 테스트 데이터를 모두 조회 한다.")
     void findAll() {
-        //given
-        repository.save(JAVAJIGI);
-        repository.save(SANJIGI);
-
         //when
-        List<User> users = repository.findAll();
+        List<User> users = userRepository.findAll();
 
         //then
         assertThat(users).hasSize(2);
@@ -40,41 +49,32 @@ class UserRepositoryTest {
     @Test
     @DisplayName("특정 UserId를 조회 한다.")
     void read() {
-        //given
-        repository.save(JAVAJIGI);
-
         //when
-        User findUser1 = repository.findByUserId(JAVAJIGI.getUserId()).get();
+        User findUser1 = userRepository.findByUserId(javajigi.getUserId()).get();
         em.flush();
         em.clear();
 
         //then
-        assertThat(findUser1.getName()).isEqualTo(JAVAJIGI.getName());
+        assertThat(findUser1.getName()).isEqualTo(javajigi.getName());
     }
 
     @Test
     @DisplayName("특정 Id를 조회 한다.")
     void read_id() {
-        //given
-        User save = repository.save(JAVAJIGI);
-
         //when
-        User findUser = repository.findById(save.getId()).get();
+        User findUser = userRepository.findById(javajigi.getId()).get();
         em.flush();
         em.clear();
 
         //then
-        assertThat(findUser.getName()).isEqualTo(save.getName());
+        assertThat(findUser.getName()).isEqualTo(javajigi.getName());
     }
 
     @Test
     @DisplayName("특정 UserIdId의 레코드를 업데이트 한다.")
     void update() {
-        //given
-        User save = repository.save(JAVAJIGI);
-
         //when
-        User findUser = repository.findByUserId(save.getUserId()).get();
+        User findUser = userRepository.findByUserId(javajigi.getUserId()).get();
 
         User target = new User(1L, "javajigi",
                 "password", "updated_name",
@@ -85,7 +85,7 @@ class UserRepositoryTest {
         em.flush();
         em.clear();
 
-        User updatedFindUser = repository.findByUserId(save.getUserId()).get();
+        User updatedFindUser = userRepository.findByUserId(javajigi.getUserId()).get();
 
         //then
         assertAll(
@@ -97,11 +97,8 @@ class UserRepositoryTest {
     @Test
     @DisplayName("특정 Id의 레코드를 업데이트 한다.")
     void update_id() {
-        //given
-        User save = repository.save(JAVAJIGI);
-
         //when
-        User findUser = repository.findById(save.getId()).get();
+        User findUser = userRepository.findById(javajigi.getId()).get();
 
         User target = new User(1L, "javajigi",
                 "password", "updated_name",
@@ -112,7 +109,7 @@ class UserRepositoryTest {
         em.flush();
         em.clear();
 
-        User updatedFindUser = repository.findById(save.getId()).get();
+        User updatedFindUser = userRepository.findById(javajigi.getId()).get();
 
         //then
         assertAll(
@@ -124,15 +121,12 @@ class UserRepositoryTest {
     @Test
     @DisplayName("모든 테스트 데이터를 삭제 한다.")
     void delete() {
-        //given
-        repository.save(JAVAJIGI);
-        repository.save(SANJIGI);
-
         //when
-        assertThat(repository.count()).isEqualTo(2);
-        repository.deleteAll();
+        assertThat(userRepository.count()).isEqualTo(2);
+
+        userRepository.deleteAll();
 
         //then
-        assertThat(repository.count()).isZero();
+        assertThat(userRepository.count()).isZero();
     }
 }
