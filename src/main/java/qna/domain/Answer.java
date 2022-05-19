@@ -4,21 +4,16 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer {
+public class Answer extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
     private Long writerId;
     private Long questionId;
-    private LocalDateTime updatedAt;
     @Lob
     private String contents;
     private boolean deleted = false;
@@ -94,30 +89,12 @@ public class Answer {
         this.deleted = deleted;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", createdAt=" + createdAt +
                 ", writerId=" + writerId +
                 ", questionId=" + questionId +
-                ", updatedAt=" + updatedAt +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
