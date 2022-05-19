@@ -1,19 +1,50 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
+    @Column(columnDefinition = "varchar(50)")
     private String email;
 
-    private User() {
+    @Column(columnDefinition = "varchar(20)", nullable = false)
+    private String name;
+
+    @Column(columnDefinition = "varchar(20)", nullable = false)
+    private String password;
+
+    @Column(columnDefinition = "varchar(20)", unique = true)
+    private String userId;
+
+    @CreatedDate
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column
+    private LocalDateTime updatedAt;
+
+    public User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -106,10 +137,12 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", userId='" + userId + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 
