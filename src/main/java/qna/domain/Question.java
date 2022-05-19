@@ -1,6 +1,9 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Question extends BaseEntity {
@@ -11,8 +14,13 @@ public class Question extends BaseEntity {
     private String title;
     @Lob
     private String contents;
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -28,16 +36,23 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        if (!answers.contains(answer)) {
+            answers.add(answer);
+        }
+        answer.setQuestion(this);
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public Long getId() {
@@ -52,8 +67,8 @@ public class Question extends BaseEntity {
         return contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -65,12 +80,29 @@ public class Question extends BaseEntity {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Question question = (Question) o;
+        return deleted == question.deleted &&
+                Objects.equals(id, question.id) &&
+                Objects.equals(title, question.title) &&
+                Objects.equals(contents, question.contents) &&
+                Objects.equals(writer, question.writer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writer, deleted);
+    }
+
+    @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
