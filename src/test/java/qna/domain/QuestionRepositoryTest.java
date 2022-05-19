@@ -33,4 +33,12 @@ public class QuestionRepositoryTest {
         assertThat(actual.get(0).getCreatedAt()).isNotNull();
         System.out.println(actual.get(0).toString());
     }
+
+    @Test
+    void findByDeletedFalse() {
+        Question expected = new Question("제목", "내용");
+        questionRepository.save(expected);
+        List<Question> actual = questionRepository.findByDeletedFalse();
+        assertThat(actual.get(0).getContents()).isNotNull();
+    }
 }
