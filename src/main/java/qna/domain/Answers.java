@@ -21,6 +21,7 @@ public class Answers {
 
     public List<DeleteHistory> delete(User loginUser) {
         return answers.stream()
+                .filter(answer -> !answer.isDeleted())
                 .map(answer -> answer.delete(loginUser))
                 .collect(Collectors.toList());
     }
