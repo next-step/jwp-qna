@@ -1,10 +1,13 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
@@ -28,6 +31,15 @@ public class User extends BaseEntity {
 
     @Column(length = 50)
     private String email;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "deletedBy")
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected User() {}
 
@@ -117,6 +129,38 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void addQuestion(Question question) {
+        this.questions.add(question);
+        if (question.getWriter() != this) {
+            question.setWriter(this);
+        }
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
+        if (answer.getWriter() != this) {
+            answer.setWriter(this);
+        }
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
+    }
+
+    public void addDeleteHistory(DeleteHistory deleteHistory) {
+        this.deleteHistories.add(deleteHistory);
+        if (deleteHistory.getDeletedBy() != this) {
+            deleteHistory.setDeletedBy(this);
+        }
+    }
     @Override
     public String toString() {
         return "User{" +
