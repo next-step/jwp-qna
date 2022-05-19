@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -104,5 +105,10 @@ public class Answer extends BaseEntity {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
+    }
+
+    public DeleteHistory delete() {
+        setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 }
