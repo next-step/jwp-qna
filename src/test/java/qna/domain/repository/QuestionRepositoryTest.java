@@ -82,7 +82,7 @@ class QuestionRepositoryTest {
     void update() {
         //when
         Question findQuestion = questionRepository.findByTitle(q1.getTitle()).get();
-        findQuestion.setContents("updated content");
+        findQuestion.updateContents("updated content");
 
         em.flush();
         em.clear();
@@ -97,7 +97,7 @@ class QuestionRepositoryTest {
     void update_id() {
         //when
         Question findQuestion = questionRepository.findById(q1.getId()).get();
-        findQuestion.setContents("updated content");
+        findQuestion.updateContents("updated content");
 
         em.flush();
         em.clear();

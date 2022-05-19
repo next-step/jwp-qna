@@ -89,7 +89,7 @@ class AnswerRepositoryTest {
         Answer findAnswer = answerRepository.findById(a1.getId()).get();
 
         //when
-        findAnswer.setContents("updated content");
+        findAnswer.updateContents("updated content");
 
         em.flush();
         em.clear();
@@ -105,7 +105,7 @@ class AnswerRepositoryTest {
         //when
         Answer findAnswer = answerRepository.findByContentsEquals(a1.getContents()).get();
 
-        findAnswer.setContents("updated content");
+        findAnswer.updateContents("updated content");
 
         Answer updatedAnswer = answerRepository.findByContentsEquals("updated content").get();
 
