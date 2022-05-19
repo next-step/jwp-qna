@@ -1,7 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,9 +9,11 @@ import javax.persistence.Table;
 
 import com.sun.istack.NotNull;
 
+import qna.domain.common.DatedAtEntity;
+
 @Entity
 @Table(name = "question")
-public class Question {
+public class Question extends DatedAtEntity {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,11 +28,6 @@ public class Question {
 	@NotNull
 	@Column(name = "deleted")
 	private boolean deleted = false;
-	@NotNull
-	@Column(name = "created_at")
-	private LocalDateTime createdAt;
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
 
 	public Question(String title, String contents) {
 		this(null, title, contents);

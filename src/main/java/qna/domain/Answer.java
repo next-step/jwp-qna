@@ -14,10 +14,11 @@ import com.sun.istack.NotNull;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.common.DatedAtEntity;
 
 @Entity
 @Table(name = "answer")
-public class Answer {
+public class Answer extends DatedAtEntity {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

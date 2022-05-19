@@ -41,6 +41,7 @@ public class QuestionServiceTest {
 				() -> assertNotNull(findQuestion.get().getId()), 
 				() -> assertEquals(findQuestion.get().getTitle(), "title"),
 				() -> assertEquals(findQuestion.get().getContents(), "Question contents"), 
-				() -> assertTrue(findQuestion.get().isOwner(eaststar1129)));
+				() -> assertTrue(findQuestion.get().isOwner(eaststar1129)),
+				() -> assertNotNull(findQuestion.get().getCreatedAt()));
 	}
 }

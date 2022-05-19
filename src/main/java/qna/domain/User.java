@@ -1,8 +1,5 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
-
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -15,9 +12,13 @@ import javax.persistence.UniqueConstraint;
 
 import com.sun.istack.NotNull;
 
+import qna.UnAuthorizedException;
+import qna.domain.common.DatedAtEntity;
+
 @Entity
-@Table(name = "user", uniqueConstraints = {@UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = {"user_id"})})
-public class User {
+@Table(name = "user", uniqueConstraints = {
+		@UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = { "user_id" }) })
+public class User extends DatedAtEntity {
 	public static final GuestUser GUEST_USER = new GuestUser();
 
 	@Id
@@ -35,11 +36,6 @@ public class User {
 	private String name;
 	@Column(name = "email")
 	private String email;
-	@NotNull
-	@Column(name = "created_at")
-	private LocalDateTime createdAt;
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
 
 	private User() {
 	}

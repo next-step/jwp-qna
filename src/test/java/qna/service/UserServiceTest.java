@@ -35,7 +35,8 @@ public class UserServiceTest {
 		assertAll(() -> assertNotNull(saveUser), () -> assertNotNull(findUser.get().getId()),
 				() -> assertEquals(findUser.get().getUserId(), "eaststar1129"),
 				() -> assertTrue(findUser.get().matchPassword("password")),
-				() -> assertTrue(findUser.get().equalsNameAndEmail(eaststar1129)));
+				() -> assertTrue(findUser.get().equalsNameAndEmail(eaststar1129)),
+				() -> assertNotNull(findUser.get().getCreatedAt()));
 	}
 	
 	@Test
