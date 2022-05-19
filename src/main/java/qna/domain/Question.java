@@ -18,7 +18,7 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    public Question() {
+    protected Question() {
 
     }
 
