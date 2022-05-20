@@ -116,4 +116,8 @@ public class Answer extends BaseTime {
                 ", deleted=" + deleted +
                 '}';
     }
+
+    public void delete(User loginUser) {
+
+    }
 }
