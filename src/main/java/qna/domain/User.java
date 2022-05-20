@@ -9,9 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import qna.UnAuthorizedException;
 
+
+
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends AuditEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
