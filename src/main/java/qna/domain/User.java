@@ -1,22 +1,18 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class User {
+@Table
+public class User extends Auditing {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -36,16 +32,6 @@ public class User {
     @Column(columnDefinition = "varchar(20)", unique = true)
     private String userId;
 
-    @CreatedDate
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column
-    private LocalDateTime updatedAt;
-
-    public User() {
-    }
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
@@ -57,6 +43,9 @@ public class User {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    protected User() {
     }
 
     public void update(User loginUser, User target) {
@@ -144,6 +133,19 @@ public class User {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(email, user.email) && Objects.equals(name, user.name) && Objects.equals(password, user.password) && Objects.equals(userId, user.userId) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, name, password, userId, createdAt, updatedAt);
     }
 
     private static class GuestUser extends User {

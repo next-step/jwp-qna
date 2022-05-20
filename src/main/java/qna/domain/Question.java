@@ -1,49 +1,40 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import java.time.LocalDateTime;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Question {
+@Table
+public class Question extends Auditing {
 
+    @OneToMany(mappedBy = "question")
+    private final List<Answer> answers = new ArrayList<>();
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column
     @Lob
     private String contents;
-
     @Column(nullable = false)
     private boolean deleted = false;
-
     @Column(columnDefinition = "varchar(100)", nullable = false)
     private String title;
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User writer;
 
-    @Column
-    private Long writerId;
-
-    @CreatedDate
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column
-    private LocalDateTime updatedAt;
-
-    public Question() {
+    protected Question() {
     }
 
     public Question(String title, String contents) {
@@ -57,16 +48,21 @@ public class Question {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
+    }
+
+    public List<Answer> getAnswers() {
+        return this.answers;
     }
 
     public Long getId() {
@@ -93,12 +89,12 @@ public class Question {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -116,7 +112,7 @@ public class Question {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 ", title='" + title + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
