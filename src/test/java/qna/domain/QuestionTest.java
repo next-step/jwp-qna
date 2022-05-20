@@ -37,16 +37,16 @@ public class QuestionTest {
     @Test
     @DisplayName("작성자가 삭제시 DeleteHistory 생성")
     void deleteTest3() throws CannotDeleteException {
-        List<DeleteHistory> deleteHistoryList = Q1.delete(JAVAJIGI);
-        assertNotNull(deleteHistoryList);
+        List<DeleteHistory> deleteHistories = Q1.delete(JAVAJIGI);
+        assertNotNull(deleteHistories);
     }
 
     @Test
     @DisplayName("작성자가 Question과 Answer 삭제시 DeleteHistory 생성")
     void deleteTest4() throws CannotDeleteException {
         Q1.addAnswer(A1);
-        List<DeleteHistory> deleteHistoryList = Q1.delete(JAVAJIGI);
-        assertThat(deleteHistoryList).hasSize(2);
+        List<DeleteHistory> deleteHistories = Q1.delete(JAVAJIGI);
+        assertThat(deleteHistories).hasSize(2);
     }
 
 }

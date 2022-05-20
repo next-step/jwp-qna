@@ -42,7 +42,7 @@ class AnswersTest {
         Answers answers = Answers.createNewInstance();
         answers.addAnswer(A1);
 
-        List<DeleteHistory> deleteHistoryList = answers.deleteAll(JAVAJIGI);
-        assertThat(deleteHistoryList).isNotNull();
+        List<DeleteHistory> deleteHistories = answers.deleteAll(JAVAJIGI);
+        assertThat(deleteHistories).isNotNull();
     }
 }

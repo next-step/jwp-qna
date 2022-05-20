@@ -33,10 +33,10 @@ public class Answers {
     }
 
     public List<DeleteHistory> deleteAll(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistoryList = new ArrayList<>();
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : answers) {
-            deleteHistoryList.add(answer.delete(loginUser));
+            deleteHistories.add(answer.delete(loginUser));
         }
-        return deleteHistoryList;
+        return deleteHistories;
     }
 }
