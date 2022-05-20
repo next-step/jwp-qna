@@ -14,8 +14,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import org.hibernate.annotations.DynamicUpdate;
 import qna.domain.time.BaseTime;
 
+@DynamicUpdate
 @Entity
 public class Question extends BaseTime {
 
@@ -116,5 +118,9 @@ public class Question extends BaseTime {
                 ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 }
