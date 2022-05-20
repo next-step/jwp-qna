@@ -7,17 +7,21 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "answer")
 public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "writer_id")
     private Long writerId;
+    @Column(name = "question_id")
     private Long questionId;
 
     @Lob
+    @Column(name = "contents")
     private String contents;
-    @Column(nullable = false)
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
     protected Answer() {
