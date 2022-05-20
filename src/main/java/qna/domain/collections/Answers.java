@@ -10,6 +10,8 @@ import qna.domain.Answer;
 @Embeddable
 public class Answers {
 
+    private static final int NONE = 0;
+
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
 
@@ -17,7 +19,22 @@ public class Answers {
         answers.add(answer);
     }
 
-    public boolean isEmpty() {
-        return answers.isEmpty();
+    public boolean hasAnswer(){
+        return !hasNotAnswer();
+    }
+
+    private boolean hasNotAnswer() {
+        int deletedCount = NONE;
+        for (Answer answer : answers) {
+            deletedCount = getNonDeletedCount(deletedCount, answer);
+        }
+        return deletedCount == answers.size();
+    }
+
+    private int getNonDeletedCount(int deletedCount, Answer answer) {
+        if (answer.isDeleted()) {
+            deletedCount++;
+        }
+        return deletedCount;
     }
 }
