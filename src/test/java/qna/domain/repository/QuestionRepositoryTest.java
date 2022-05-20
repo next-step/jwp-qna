@@ -18,7 +18,7 @@ class QuestionRepositoryTest {
     @Test
     void save() {
         Question expected = new Question("JPA 잘쓰는 법", "알려주세요");
-        
+
         Question actual = questionRepository.save(expected);
 
         assertAll(

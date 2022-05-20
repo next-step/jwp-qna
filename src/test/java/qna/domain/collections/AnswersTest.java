@@ -53,14 +53,14 @@ class AnswersTest {
 
     @DisplayName("질문 작성자와 답변 작성자가 다른 경우 삭제할 수 없다.")
     @Test
-    void deleteAll_not_question_writer()  {
+    void deleteAll_not_question_writer() {
         long questionId = 1L;
         long writerId = 1L;
         Question question = questionRepository.findById(questionId).get();
         User questionWriter = userRepository.findById(writerId).get();
         Answers answers = question.getAnswers();
 
-        assertThatThrownBy(()-> answers.deleteAll(questionWriter))
+        assertThatThrownBy(() -> answers.deleteAll(questionWriter))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("[ERROR] 다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 

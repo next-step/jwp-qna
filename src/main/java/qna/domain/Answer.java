@@ -99,10 +99,10 @@ public class Answer extends BaseTime {
     }
 
     public boolean delete(User questionWriter) throws CannotDeleteException {
-        if (!writer.equals(questionWriter)){
+        if (!writer.equals(questionWriter)) {
             throw new CannotDeleteException("[ERROR] 다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
-        if(isDeleted()){
+        if (isDeleted()) {
             return false;
         }
         this.deleted = true;

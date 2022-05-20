@@ -45,13 +45,13 @@ public class QuestionTest {
 
     @DisplayName("작성자 본인이 등록한 질문이 아닌 질문은 삭제 할 수 없다.")
     @Test
-    void delete_not_writer(){
+    void delete_not_writer() {
         long questionId = 1L;
         long loginUserId = 2L;
         Question question = questionRepository.findById(questionId).get();
         User loginUser = userRepository.findById(loginUserId).get();
 
-        assertThatThrownBy(()-> question.delete(loginUser))
+        assertThatThrownBy(() -> question.delete(loginUser))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("[ERROR] 작성자가 아닌 경우 삭제할 수 없습니다.");
     }

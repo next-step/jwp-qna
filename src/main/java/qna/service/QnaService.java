@@ -19,7 +19,7 @@ public class QnaService {
     private final QuestionRepository questionRepository;
     private final DeleteHistoryService deleteHistoryService;
 
-    public QnaService(QuestionRepository questionRepository,DeleteHistoryService deleteHistoryService) {
+    public QnaService(QuestionRepository questionRepository, DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;
         this.deleteHistoryService = deleteHistoryService;
     }
