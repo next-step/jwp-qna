@@ -88,6 +88,6 @@ class QnaServiceTest {
                 DeleteHistory.ofQuestion(question),
                 DeleteHistory.ofAnswer(answer)
         );
-        verify(deleteHistoryService).saveAll(deleteHistories);
+        verify(deleteHistoryService).saveAll(new DeleteHistories(deleteHistories));
     }
 }
