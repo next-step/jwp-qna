@@ -9,6 +9,18 @@ public class QuestionTest {
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Test
+    void 질문글의_작성자를_설정할_수_있어야_한다() {
+        // given
+        final Question question = new Question(1L, "title", "contents");
+
+        // when
+        question.writeBy(UserTest.JAVAJIGI);
+
+        // then
+        assertThat(question.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+    }
+
+    @Test
     void 질문글의_작성자인지_여부를_확인할_수_있어야_한다() {
         // given
         final User a1Writer = UserTest.JAVAJIGI;
@@ -25,14 +37,14 @@ public class QuestionTest {
     @Test
     void 질문글에_답변을_추가할_수_있어야_한다() {
         // given
-        final Question newQuestion = new Question(1L, "title", "contents");
+        final Question question = new Question(1L, "title", "contents");
         final Answer newAnswer = AnswerTest.A1;
 
         // when
-        newQuestion.addAnswer(newAnswer);
+        question.addAnswer(newAnswer);
 
         // then
-        assertThat(newQuestion.getId()).isEqualTo(AnswerTest.A1.getQuestionId());
+        assertThat(question.getId()).isEqualTo(AnswerTest.A1.getQuestionId());
 
         // finally
         AnswerTest.A1.toQuestion(QuestionTest.Q1);
