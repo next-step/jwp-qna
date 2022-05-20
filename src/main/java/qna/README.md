@@ -18,7 +18,7 @@
 - [X] Question 삭제 시, 다른 사람이 해당 Question에 Answer 등록 했으면 예외 처리
 - [x] Answers 일급 객체화 
 - [ ] 유효한 Question과 Answer를 이용해 DeleteHistory를 만든다.
-    - [ ] DeleteHistory 팩토리 생성자 메소드
+    - [x] DeleteHistory 정적 팩토리 메소드
     - [ ] DeleteHistory list 생성
 ## Step2 요구 사항
 

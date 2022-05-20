@@ -25,18 +25,25 @@ public class DeleteHistory {
 
     private Long contentId;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deleteUser;
 
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deleteUser, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deleteUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deleteUser = deleteUser;
         this.createDate = createDate;
+    }
+
+    public static DeleteHistory createByAnswer(Long contentId, User deleteUser) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deleteUser, LocalDateTime.now());
+    }
+
+    public static DeleteHistory createByQuestion(Long contentId, User deleteUser) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deleteUser, LocalDateTime.now());
     }
 
     protected DeleteHistory() {
