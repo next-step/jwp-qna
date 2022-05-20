@@ -43,7 +43,7 @@ public class QuestionTest {
         assertThat(actual.isDeleted()).isTrue();
     }
 
-    @DisplayName("등록된 질문을 삭제한다.(작성자가 본인이 아닌 경우)")
+    @DisplayName("작성자 본인이 등록한 질문이 아닌 질문은 삭제 할 수 없다.")
     @Test
     void delete_not_writer(){
         long questionId = 1L;
@@ -56,16 +56,4 @@ public class QuestionTest {
                 .hasMessage("[ERROR] 작성자가 아닌 경우 삭제할 수 없습니다.");
     }
 
-    @DisplayName("답변이 있는 질문은 삭제 하는 경우 검증")
-    @Test
-    void delete_exist_answer(){
-        long questionId = 1L;
-        long writerId = 1L;
-        Question question = questionRepository.findById(questionId).get();
-        User writer = userRepository.findById(writerId).get();
-
-        assertThatThrownBy(()-> question.delete(writer))
-                .isInstanceOf(CannotDeleteException.class)
-                .hasMessage("[ERROR] 답변이 있는 경우 삭제할 수 없습니다.");
-    }
 }
