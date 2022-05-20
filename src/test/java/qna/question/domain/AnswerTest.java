@@ -21,8 +21,8 @@ public class AnswerTest {
 
         answer.toQuestion(QuestionTest.savedQuestion1);
 
-        assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.savedQuestion1.getId());
-        assertThat(answer.getQuestionId()).isNotEqualTo(QuestionTest.savedQuestion2.getId());
+        assertThat(answer.getQuestion()).isEqualTo(QuestionTest.savedQuestion1);
+        assertThat(answer.getQuestion()).isNotEqualTo(QuestionTest.savedQuestion2);
     }
 
     @Test
