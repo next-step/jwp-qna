@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:h2:~/test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+    username: sa
+    initialization-mode: never
+
+  h2:
+    console:
+      enabled: true
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        #dialect: org.hibernate.dialect.MySQL57Dialect
+    hibernate:
+      ddl-auto: create
+  output:
+    ansi:
+      enabled: always
+logging:
+  level:
+    org.hibernate.type: trace
+
+
+
