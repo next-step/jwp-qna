@@ -28,10 +28,11 @@ public class Answers {
         }
     }
 
-    public void removeAll(User loginUser) {
+    public List<DeleteHistory> removeAll(User loginUser) {
         for (Answer answer : answers) {
             answer.delete(loginUser);
         }
+        return null;
     }
 
     public List<Answer> get() {
