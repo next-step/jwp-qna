@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -111,7 +112,7 @@ public class Answer extends BaseEntity {
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         validateAuthority(loginUser);
         this.updateDeleted();
-        return DeleteHistory.createByAnswer(id, loginUser);
+        return DeleteHistory.createByAnswer(id, loginUser, LocalDateTime.now());
     }
 
     private void updateDeleted() {

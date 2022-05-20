@@ -2,7 +2,9 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -29,7 +31,7 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deleteUser;
 
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
 
     private DeleteHistory(ContentType contentType, Long contentId, User deleteUser, LocalDateTime createDate) {
         this.contentType = contentType;
@@ -38,12 +40,12 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    public static DeleteHistory createByAnswer(Long contentId, User deleteUser) {
-        return new DeleteHistory(ContentType.ANSWER, contentId, deleteUser, LocalDateTime.now());
+    public static DeleteHistory createByAnswer(Long contentId, User deleteUser, LocalDateTime createDate) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deleteUser, createDate);
     }
 
-    public static DeleteHistory createByQuestion(Long contentId, User deleteUser) {
-        return new DeleteHistory(ContentType.QUESTION, contentId, deleteUser, LocalDateTime.now());
+    public static DeleteHistory createByQuestion(Long contentId, User deleteUser, LocalDateTime createDate) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deleteUser, createDate);
     }
 
     protected DeleteHistory() {
@@ -52,8 +54,12 @@ public class DeleteHistory {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&

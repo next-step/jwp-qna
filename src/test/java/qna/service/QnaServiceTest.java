@@ -1,5 +1,6 @@
 package qna.service;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -87,8 +88,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                DeleteHistory.createByQuestion(question.getId(), question.getWriter()),
-                DeleteHistory.createByAnswer(question.getId(), question.getWriter())
+                DeleteHistory.createByQuestion(question.getId(), question.getWriter(), LocalDateTime.now()),
+                DeleteHistory.createByAnswer(question.getId(), question.getWriter(), LocalDateTime.now())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

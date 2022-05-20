@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -67,7 +68,7 @@ public class Question extends BaseEntity {
 
     private List<DeleteHistory> generateDeleteHistories(User loginUser) throws CannotDeleteException {
         List<DeleteHistory> deleteHistoryList = new ArrayList<>();
-        deleteHistoryList.add(DeleteHistory.createByQuestion(id, loginUser));
+        deleteHistoryList.add(DeleteHistory.createByQuestion(id, loginUser, LocalDateTime.now()));
         deleteHistoryList.addAll(answers.deleteAll(loginUser));
         return deleteHistoryList;
     }
