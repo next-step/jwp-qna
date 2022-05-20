@@ -14,9 +14,13 @@ public class Answer extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     @Lob
     private String contents;
@@ -39,19 +43,19 @@ public class Answer extends BasicEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     protected Answer() {}
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public void answerDelete() {
@@ -62,12 +66,12 @@ public class Answer extends BasicEntity {
         return this.id;
     }
 
-    public Long getWriterId() {
-        return this.writerId;
+    public User getWriter() {
+        return this.writer;
     }
 
-    public Long getQuestionId() {
-        return this.questionId;
+    public Question getQuestion() {
+        return this.question;
     }
 
     public String getContents() {
@@ -82,8 +86,8 @@ public class Answer extends BasicEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writerId=" + writer +
+                ", questionId=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
