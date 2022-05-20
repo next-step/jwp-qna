@@ -70,10 +70,6 @@ public class Answer extends BaseTime {
         return true;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     public void setQuestion(Question question) {
         this.question = question;
     }

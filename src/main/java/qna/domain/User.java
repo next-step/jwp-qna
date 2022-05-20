@@ -76,6 +76,10 @@ public class User extends BaseTime {
         return false;
     }
 
+    public boolean isNotSameUser(User loginUser) {
+        return !this.equals(loginUser);
+    }
+
     public Long getId() {
         return id;
     }
@@ -114,10 +118,6 @@ public class User extends BaseTime {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
-    }
-
-    public boolean isNotSameUser(User loginUser) {
-        return !this.equals(loginUser);
     }
 
     private static class GuestUser extends User {
