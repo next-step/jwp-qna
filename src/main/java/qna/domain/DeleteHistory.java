@@ -39,9 +39,7 @@ public class DeleteHistory {
     }
 
     public DeleteHistory(DeleteHistoryContent deleteHistoryContent, User deleter) {
-        if (Objects.isNull(deleter)) {
-            throw new UnAuthorizedException();
-        }
+        nullCheckContentAndUser(deleteHistoryContent, deleter);
         this.deleteHistoryContent = deleteHistoryContent;
         this.deleter = deleter;
     }
@@ -53,20 +51,30 @@ public class DeleteHistory {
         return deleteHistories;
     }
 
-    private static DeleteHistory mergeQuestion(Question question) {
+    static DeleteHistory mergeQuestion(Question question) {
         question.changeDeleteStatus();
         return new DeleteHistory(DeleteHistoryContent.removeQuestion(question), question.getWriter());
     }
 
-    private static List<DeleteHistory> mergeAnswers(Answers answers) {
+    static List<DeleteHistory> mergeAnswers(Answers answers) {
         return answers.list().stream()
                 .map(DeleteHistory::mergeAnswer)
                 .collect(Collectors.toList());
     }
 
-    private static DeleteHistory mergeAnswer(Answer answer) {
+    static DeleteHistory mergeAnswer(Answer answer) {
         answer.changeDeleteStatus();
         return new DeleteHistory(DeleteHistoryContent.removeAnswer(answer), answer.getWriter());
+    }
+
+    private void nullCheckContentAndUser(DeleteHistoryContent deleteHistoryContent, User deleter) {
+        if (Objects.isNull(deleteHistoryContent)) {
+            throw new IllegalArgumentException("삭제 콘텐츠 정보가 존재하지 않습니다.");
+        }
+
+        if (Objects.isNull(deleter)) {
+            throw new UnAuthorizedException("유저 정보가 존재하지 않습니다.");
+        }
     }
 
     public Long getId() {
