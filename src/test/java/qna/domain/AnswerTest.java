@@ -3,6 +3,7 @@ package qna.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.NotFoundException;
+import qna.UnAuthorizedException;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -26,6 +27,14 @@ public class AnswerTest {
         //given & when & then
         assertThatThrownBy(() -> new Answer(UserTest.JAVAJIGI, null, "Answers Contents"))
                 .isInstanceOf(NotFoundException.class);
+    }
+
+    @DisplayName("Answer 도메인 생성 시 User 가 null 이면 UnAuthorizedException")
+    @Test
+    void test_null_user() {
+        //given & when & then
+        assertThatThrownBy(() -> new Answer(null, QuestionTest.Q1, "Answers Contents"))
+                .isInstanceOf(UnAuthorizedException.class);
     }
 
     @DisplayName("소유자 확인")

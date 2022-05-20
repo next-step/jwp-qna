@@ -106,13 +106,14 @@ alter table question
 #### 구현 기능
 - [ ] 연관 관계 매핑
   - [x] Answer - Question
-  - [ ] Answer - User
+  - [x] Answer - User
   - [ ] DeleteHistory - User
   - [ ] Question - User
 - [ ] 리포지토리 테스트 작성
   - [x] Answer - Question
-  - [ ] Answer - User
+  - [x] Answer - User
   - [ ] DeleteHistory - User
   - [ ] Question - User
 - [ ] 도메인 테스트 작성
-  - [x] Answer
+  - [x] Answer - Question
+  - [x] Answer - User

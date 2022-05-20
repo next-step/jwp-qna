@@ -20,12 +20,16 @@ class AnswerRepositoryTest {
     private AnswerRepository answerRepository;
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
+        User javajigi = userRepository.save(UserTest.JAVAJIGI);
+        User sanjigi = userRepository.save(UserTest.SANJIGI);
         Question question = questionRepository.save(QuestionTest.Q1);
-        answer1 = new Answer(UserTest.JAVAJIGI, question, "Answers Contents1");
-        answer2 = new Answer(UserTest.SANJIGI, question, "Answers Contents2");
+        answer1 = new Answer(javajigi, question, "Answers Contents1");
+        answer2 = new Answer(sanjigi, question, "Answers Contents2");
     }
 
     @DisplayName("Answer 생성")
