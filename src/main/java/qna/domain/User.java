@@ -1,14 +1,10 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import org.hibernate.Hibernate;
 import qna.exception.UnAuthorizedException;
 
@@ -31,15 +27,6 @@ public class User extends BaseTime {
     @Column(length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Question> questions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "deletedBy", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DeleteHistory> deleteHistories = new ArrayList<>();
-
     protected User() {
     }
 
@@ -53,21 +40,6 @@ public class User extends BaseTime {
         this.password = password;
         this.name = name;
         this.email = email;
-    }
-
-    public void addQuestion(Question question) {
-        questions.add(question);
-        question.setWriter(this);
-    }
-
-    public void addAnswer(Answer answer) {
-        answers.add(answer);
-        answer.setWriter(this);
-    }
-
-    public void addDeletedHistory(DeleteHistory deleteHistory) {
-        deleteHistories.add(deleteHistory);
-        deleteHistory.setDeletedBy(this);
     }
 
     public void update(User loginUser, User target) {
