@@ -57,7 +57,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answer.setQuestion(this);
         this.answers.add(answer);
     }
 

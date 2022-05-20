@@ -34,7 +34,6 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "question_id")
     private Question question;
 
-
     @ManyToOne
     @JoinColumn(name = "writer_id")
     private User writer;
@@ -66,10 +65,6 @@ public class Answer extends BaseEntity {
         return this.writer.getId().equals(writer.getId());
     }
 
-    public void toQuestion(Question question) {
-        this.question = question;
-    }
-
     public Long getId() {
         return id;
     }
@@ -80,6 +75,10 @@ public class Answer extends BaseEntity {
 
     public Question getQuestion() {
         return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public String getContents() {
