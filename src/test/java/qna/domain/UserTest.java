@@ -1,6 +1,51 @@
 package qna.domain;
 
+import org.junit.jupiter.api.Test;
+import qna.UnAuthorizedException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 public class UserTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+
+    @Test
+    void 이름과_이메일을_변경한다() {
+        // given
+        User loginUser = new User();
+        loginUser.setUserId("javajigi");
+
+        User target = new User("javajigi", "password", "mj", "mj@com");
+        // when
+        JAVAJIGI.update(loginUser, target);
+        // then
+        assertThat(JAVAJIGI.equalsNameAndEmail(target)).isTrue();
+    }
+
+    @Test
+    void 회원정보를_업데이트할_때_userId가_같지_않으면_예외가_발생한다() {
+        // given
+        User loginUser = new User();
+        loginUser.setUserId("java");
+
+        User target = new User();
+        // when and then
+        assertThatThrownBy(() ->
+            JAVAJIGI.update(loginUser, target)
+        ).isInstanceOf(UnAuthorizedException.class);
+    }
+
+    @Test
+    void 회원정보를_업데이트할_때_password가_같지_않으면_예외가_발생한다() {
+        // given
+        User loginUser = new User();
+        loginUser.setUserId("javajigi");
+
+        User target = new User("javajigi", "pass", "mj", "mj@com");
+        // when and then
+        assertThatThrownBy(() ->
+                JAVAJIGI.update(loginUser, target)
+        ).isInstanceOf(UnAuthorizedException.class);
+    }
 }
