@@ -30,8 +30,8 @@ public class QuestionTest {
     @DisplayName("등록된 질문을 삭제한다.(작성자가 본인일 경우)")
     @Test
     void delete() throws CannotDeleteException {
-        long questionId = 1L;
-        long writerId = 1L;
+        long questionId = 4L;
+        long writerId = 3L;
         Question question = questionRepository.findById(questionId).get();
         User writer = userRepository.findById(writerId).get();
 

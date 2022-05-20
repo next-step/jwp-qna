@@ -1,9 +1,7 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -13,8 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import org.hibernate.annotations.DynamicUpdate;
+import qna.domain.collections.Answers;
 import qna.domain.time.BaseTime;
 import qna.exception.CannotDeleteException;
 
@@ -36,8 +34,8 @@ public class Question extends BaseTime {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -125,6 +123,9 @@ public class Question extends BaseTime {
         if(!writer.equals(loginUser)){
             throw new CannotDeleteException("[ERROR] 작성자가 아닌 경우 삭제할 수 없습니다.");
         }
-        deleted = true;
+        if(!answers.isEmpty()){
+            throw new CannotDeleteException("[ERROR] 답변이 있는 경우 삭제할 수 없습니다.");
+        }
+        this.deleted = true;
     }
 }
