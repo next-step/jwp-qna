@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.transaction.annotation.Transactional;
 import qna.domain.repository.QuestionRepository;
 import qna.domain.repository.UserRepository;
 import qna.exception.CannotDeleteException;
@@ -55,5 +54,18 @@ public class QuestionTest {
         assertThatThrownBy(()-> question.delete(loginUser))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("[ERROR] 작성자가 아닌 경우 삭제할 수 없습니다.");
+    }
+
+    @DisplayName("답변이 있는 질문은 삭제 하는 경우 검증")
+    @Test
+    void delete_exist_answer(){
+        long questionId = 1L;
+        long writerId = 1L;
+        Question question = questionRepository.findById(questionId).get();
+        User writer = userRepository.findById(writerId).get();
+
+        assertThatThrownBy(()-> question.delete(writer))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("[ERROR] 답변이 있는 경우 삭제할 수 없습니다.");
     }
 }
