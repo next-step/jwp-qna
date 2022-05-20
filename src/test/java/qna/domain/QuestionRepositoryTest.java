@@ -10,8 +10,6 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 import qna.config.QnaDataJpaTest;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.FixtureUser.HEOWC;
@@ -69,8 +67,8 @@ class QuestionRepositoryTest {
             final Question question = new Question("question", "question").writeBy(savedUser);
             return repository.save(question).getId();
         });
-        final List<Answer> answers = repository.getOne(id).getAnswers();
-        assertThat(Hibernate.isInitialized(answers)).isFalse();
+        final Answers answers = repository.getOne(id).getAnswers();
+        assertThat(Hibernate.isInitialized(answers.get())).isFalse();
     }
 
     @DisplayName("Question가 영속화되면 Answer도 영속화")

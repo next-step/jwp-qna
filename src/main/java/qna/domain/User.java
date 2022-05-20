@@ -12,23 +12,27 @@ public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 20, nullable = false, unique = true)
-    private String userId;
-    @Column(length = 20, nullable = false)
-    private String password;
-    @Column(length = 20, nullable = false)
-    private String name;
-    @Column(length = 50)
-    private String email;
+    @Embedded
+    private UserId userId;
+    @Embedded
+    private Password password;
+    @Embedded
+    private UserName name;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
+        this(null, new UserId(userId), new Password(password), new UserName(name), new Email(email));
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
+    public User(UserId userId, String password, String name, String email) {
+        this(null, userId, new Password(password), new UserName(name), new Email(email));
+    }
+
+    protected User(Long id, UserId userId, Password password, UserName name, Email email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -49,11 +53,11 @@ public class User extends BaseEntity {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    private boolean matchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
+    public boolean matchPassword(Password targetPassword) {
         return this.password.equals(targetPassword);
     }
 
@@ -74,19 +78,19 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
-    public String getPassword() {
+    public Password getPassword() {
         return password;
     }
 
-    public String getName() {
+    public UserName getName() {
         return name;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 

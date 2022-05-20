@@ -1,8 +1,8 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -10,17 +10,17 @@ public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 100, nullable = false)
-    private String title;
-    @Lob
-    private String contents;
+    @Embedded
+    private Title title;
+    @Embedded
+    private Contents contents;
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -31,8 +31,8 @@ public class Question extends BaseEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
-        this.contents = contents;
+        this.title = new Title(title);
+        this.contents = new Contents(contents);
     }
 
     public Question writeBy(User writer) {
@@ -45,13 +45,11 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if (!answers.contains(answer)) {
-            answers.add(answer);
-        }
+        answers.add(answer);
         answer.setQuestion(this);
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -59,11 +57,11 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 

@@ -59,8 +59,8 @@ class AnswerRepositoryTest {
         final Question question = saved.getQuestion();
         assertAll(
                 () -> assertThat(question).isEqualTo(savedQuestion),
-                () -> assertThat(question.getTitle()).isEqualTo("3"),
-                () -> assertThat(question.getContents()).isEqualTo("3")
+                () -> assertThat(question.getTitle()).isEqualTo(new Title("3")),
+                () -> assertThat(question.getContents()).isEqualTo(new Contents("3"))
         );
     }
 }
