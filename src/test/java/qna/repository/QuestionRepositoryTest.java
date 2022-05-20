@@ -10,6 +10,7 @@ import qna.domain.Question;
 import qna.domain.QuestionTest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -36,13 +37,12 @@ public class QuestionRepositoryTest {
         //given
         questionRepository.save(QuestionTest.Q2);
         //when
-        Question question = questionRepository.findByIdAndDeletedFalse(QuestionTest.Q2.getId()).get();
+        Optional<Question> question = questionRepository.findByIdAndDeletedFalse(QuestionTest.Q2.getId());
         //then
         assertAll(
-                () -> assertThat(question).isNotNull(),
-                () -> assertThat(question.getTitle()).isEqualTo(QuestionTest.Q2.getTitle()),
-                () -> assertThat(question.getContents()).isEqualTo(QuestionTest.Q2.getContents()),
-                () -> assertThat(question.getWriterId()).isEqualTo(QuestionTest.Q2.getWriterId())
+                () -> assertThat(question.isPresent()).isTrue(),
+                () -> assertThat(question.get() == QuestionTest.Q2).isTrue()
         );
+
     }
 }

@@ -8,6 +8,7 @@ import qna.domain.Answer;
 import qna.domain.AnswerTest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -34,12 +35,11 @@ public class AnswerRepositoryTest {
         //given
         answerRepository.save(AnswerTest.A2);
         //when
-        Answer answer = answerRepository.findByIdAndDeletedFalse(AnswerTest.A2.getId()).get();
+        Optional<Answer> answer = answerRepository.findByIdAndDeletedFalse(AnswerTest.A2.getId());
         //then
         assertAll(
-                () -> assertThat(answer).isNotNull(),
-                () -> assertThat(answer.getId()).isEqualTo(AnswerTest.A2.getId()),
-                () -> assertThat(answer.getContents()).isEqualTo(AnswerTest.A2.getContents())
+                () -> assertThat(answer.isPresent()).isTrue(),
+                () -> assertThat(answer.get() == AnswerTest.A2).isTrue()
         );
     }
 }
