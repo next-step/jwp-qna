@@ -55,4 +55,18 @@ public class AnswerTest {
                 .hasMessage("[ERROR] 작성자가 아닌 경우 삭제할 수 없습니다.");
 
     }
+
+    @DisplayName("질문 작성자가 아닌 경우 답변을 삭제 할 수 없다.")
+    @Test
+    void delete_not_question_writer(){
+        long answerId = 1L;
+        long loginUserId = 2L;
+        Answer answer = answerRepository.findById(answerId).get();
+        User loginUser = userRepository.findById(loginUserId).get();
+
+        assertThatThrownBy(()-> answer.delete(loginUser))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("[ERROR] 다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+
+    }
 }
