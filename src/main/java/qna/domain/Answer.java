@@ -99,12 +99,12 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public boolean isDeleted() {
-        return deleted;
+    public void delete() {
+        this.deleted = true;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public boolean isDeleted() {
+        return deleted;
     }
 
     @Override

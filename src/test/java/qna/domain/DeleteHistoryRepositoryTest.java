@@ -2,11 +2,10 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.domain.QuestionTest.Q1;
 import static qna.domain.UserTest.MOND;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +23,15 @@ class DeleteHistoryRepositoryTest {
     DeleteHistoryRepository deleteHistoryRepository;
 
     @Autowired
+    QuestionRepository questionRepository;
+
+    @Autowired
     UserRepository userRepository;
-
-    @BeforeEach
-    void setUp() {
-        User mond = userRepository.findByUserId(MOND.getUserId())
-                .orElseGet(() -> userRepository.save(MOND));
-
-        deleteHistory = new DeleteHistory(new DeleteHistoryContent(ContentType.QUESTION, 1L), mond, LocalDateTime.now());
-    }
 
     @Test
     @DisplayName("영속 상태의 동일성 보장 검증")
     void verifyEntityPrimaryCacheSave() {
+        initUserAndQuestion();
         DeleteHistory expected = deleteHistoryRepository.save(deleteHistory);
         Optional<DeleteHistory> actual = deleteHistoryRepository.findById(expected.getId());
 
@@ -49,6 +44,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("준영속 상태의 동일성 보장 검증")
     void verifyEntityDatabaseSave() {
+        initUserAndQuestion();
         DeleteHistory expected = deleteHistoryRepository.save(deleteHistory);
         entityFlushAndClear();
         Optional<DeleteHistory> actual = deleteHistoryRepository.findById(expected.getId());
@@ -57,6 +53,14 @@ class DeleteHistoryRepositoryTest {
                 () -> assertThat(actual).isPresent(),
                 () -> verifyEqualDeleteHistoryFields(actual.get(), expected)
         );
+    }
+
+    private void initUserAndQuestion() {
+        User mond = userRepository.findByUserId(MOND.getUserId())
+                .orElseGet(() -> userRepository.save(MOND));
+        Question question = questionRepository.findById(Q1.getId())
+                .orElseGet(() -> questionRepository.save(Q1));
+        deleteHistory = new DeleteHistory(DeleteHistoryContent.removeQuestion(question), mond);
     }
 
     private void entityFlushAndClear() {

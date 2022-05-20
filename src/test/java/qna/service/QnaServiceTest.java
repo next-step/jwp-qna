@@ -5,9 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,9 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.Answers;
-import qna.domain.ContentType;
-import qna.domain.DeleteHistory;
-import qna.domain.DeleteHistoryContent;
+import qna.domain.DeleteHistories;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.QuestionTest;
@@ -99,12 +95,8 @@ class QnaServiceTest {
     }
 
     private void verifyDeleteHistories() {
-        List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(new DeleteHistoryContent(ContentType.QUESTION, question.getId()),
-                        question.getWriter(), LocalDateTime.now()),
-                new DeleteHistory(new DeleteHistoryContent(ContentType.ANSWER, answer.getId()), answer.getWriter(),
-                        LocalDateTime.now())
-        );
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(question, new Answers(Arrays.asList(answer)));
         verify(deleteHistoryService).saveAll(deleteHistories);
     }
 }

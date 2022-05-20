@@ -29,18 +29,17 @@ public class DeleteHistory {
 
     @Column
     @CreatedDate
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
 
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(DeleteHistoryContent deleteHistoryContent, User deleter, LocalDateTime createDate) {
-        if (Objects.isNull(deleter)) {
+    public DeleteHistory(DeleteHistoryContent deleteHistoryContent, User writer) {
+        if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
         this.deleteHistoryContent = deleteHistoryContent;
-        this.user = deleter;
-        this.createDate = createDate;
+        this.user = writer;
     }
 
     public Long getId() {

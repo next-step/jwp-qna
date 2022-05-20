@@ -98,7 +98,7 @@ class AnswerRepositoryTest {
     @DisplayName("저장 및 논리 삭제 후 해당 id로 검색")
     void sandAndLogicalDeleteThenFindById() {
         Answer expected = answerRepository.save(answer);
-        expected.setDeleted(true);
+        expected.delete();
         entityFlushAndClear();
         Optional<Answer> actualOfFindById = answerRepository.findById(expected.getId());
         Optional<Answer> actualOfFindByIdAndDeletedFalse = answerRepository.findByIdAndDeletedFalse(expected.getId());

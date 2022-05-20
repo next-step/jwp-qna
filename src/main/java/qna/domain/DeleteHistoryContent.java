@@ -19,9 +19,17 @@ public class DeleteHistoryContent {
     protected DeleteHistoryContent() {
     }
 
-    public DeleteHistoryContent(ContentType contentType, Long contentId) {
+    private DeleteHistoryContent(ContentType contentType, Long removeContentId) {
         this.contentType = contentType;
-        this.contentId = contentId;
+        this.contentId = removeContentId;
+    }
+
+    public static DeleteHistoryContent removeQuestion(Question question) {
+        return new DeleteHistoryContent(ContentType.QUESTION, question.getId());
+    }
+
+    public static DeleteHistoryContent removeAnswer(Answer answer) {
+        return new DeleteHistoryContent(ContentType.ANSWER, answer.getId());
     }
 
     public ContentType getContentType() {
