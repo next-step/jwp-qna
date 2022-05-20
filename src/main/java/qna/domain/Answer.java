@@ -108,9 +108,10 @@ public class Answer extends BaseEntity {
                 '}';
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         validateAuthority(loginUser);
         this.updateDeleted();
+        return DeleteHistory.createByAnswer(id, loginUser);
     }
 
     private void updateDeleted() {

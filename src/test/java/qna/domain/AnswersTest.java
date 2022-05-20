@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static qna.domain.AnswerTest.A1;
 import static qna.domain.AnswerTest.A2;
+import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
@@ -32,5 +34,15 @@ class AnswersTest {
         assertThatThrownBy(
                 () -> answers.deleteAll(SANJIGI)
         ).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    @DisplayName("Answers deleteAll 메소드는 DeleteHistory 리스트를 반환한다.")
+    void deleteAllTest2() throws CannotDeleteException {
+        Answers answers = Answers.createNewInstance();
+        answers.addAnswer(A1);
+
+        List<DeleteHistory> deleteHistoryList = answers.deleteAll(JAVAJIGI);
+        assertThat(deleteHistoryList).isNotNull();
     }
 }

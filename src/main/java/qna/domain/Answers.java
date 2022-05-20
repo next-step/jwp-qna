@@ -32,9 +32,11 @@ public class Answers {
         return answers;
     }
 
-    public void deleteAll(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleteAll(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistoryList = new ArrayList<>();
         for (Answer answer : answers) {
-            answer.delete(loginUser);
+            deleteHistoryList.add(answer.delete(loginUser));
         }
+        return deleteHistoryList;
     }
 }
