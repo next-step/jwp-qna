@@ -26,11 +26,11 @@ public class AnswerTest {
     @Autowired
     private EntityManager entityManager;
 
-    @DisplayName("작성자가 본인인 경우 답변을 삭제한다.")
+    @DisplayName("질문 작성자 & 답변자가 본인인 경우 답변을 삭제한다.")
     @Test
     void delete() throws CannotDeleteException {
-        long answerId = 1L;
-        long writerId = 1L;
+        long answerId = 4L;
+        long writerId = 3L;
         Answer answer = answerRepository.findById(answerId).get();
         User writer = userRepository.findById(writerId).get();
 
@@ -60,7 +60,7 @@ public class AnswerTest {
     @Test
     void delete_not_question_writer(){
         long answerId = 1L;
-        long loginUserId = 2L;
+        long loginUserId = 1L;
         Answer answer = answerRepository.findById(answerId).get();
         User loginUser = userRepository.findById(loginUserId).get();
 
