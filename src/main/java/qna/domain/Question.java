@@ -114,4 +114,8 @@ public class Question extends BaseEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
+    public void updateTitle(String newTitle) {
+        this.title = newTitle;
+    }
 }
