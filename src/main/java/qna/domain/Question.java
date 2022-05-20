@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table
@@ -63,6 +64,12 @@ public class Question extends BaseEntity {
 
     public List<Answer> getAnswers() {
         return this.answers;
+    }
+
+    public List<Answer> getNotDeletedAnswers() {
+        return this.answers.stream()
+                .filter(a -> !a.isDeleted())
+                .collect(Collectors.toList());
     }
 
     public Long getId() {
