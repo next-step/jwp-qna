@@ -120,7 +120,7 @@ public class Question extends BaseTime {
                 '}';
     }
 
-    public void delete() {
+    public void delete(User loginUser) {
         this.deleted = true;
     }
 }
