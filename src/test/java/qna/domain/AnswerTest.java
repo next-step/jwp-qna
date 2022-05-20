@@ -28,7 +28,7 @@ public class AnswerTest {
 
     @DisplayName("작성자가 본인인 경우 답변을 삭제한다.")
     @Test
-    void delete(){
+    void delete() throws CannotDeleteException {
         long answerId = 1L;
         long writerId = 1L;
         Answer answer = answerRepository.findById(answerId).get();

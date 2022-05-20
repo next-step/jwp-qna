@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
@@ -117,7 +118,10 @@ public class Answer extends BaseTime {
                 '}';
     }
 
-    public void delete(User loginUser) {
-
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (!writer.equals(loginUser)){
+            throw new CannotDeleteException("[ERROR] 작성자가 아닌 경우 삭제할 수 없습니다.");
+        }
+        this.deleted = true;
     }
 }
