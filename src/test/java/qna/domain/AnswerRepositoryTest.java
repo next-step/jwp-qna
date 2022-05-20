@@ -19,25 +19,26 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
-    private Answer deletedAnswer;
-    private Answer answer;
+    private User writer1;
+    private User writer2;
+    private Question question;
 
     @BeforeEach
     void setUp() {
-        User writer1 = testEntityManager.persist(new User("javajigi", "password", "name", "javajigi@slipp.net"));
-        User writer2 = testEntityManager.persist(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
-        Question question = testEntityManager.persist(new Question("title1", "contents1").writeBy(writer1));
-
-        deletedAnswer = new Answer(writer1, question, "Answers Contents1");
-        deletedAnswer.setDeleted(true);
-        answer = new Answer(writer2, question, "Answers Contents2");
-
-        answerRepository.save(deletedAnswer);
-        answerRepository.save(answer);
+        writer1 = testEntityManager.persist(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        writer2 = testEntityManager.persist(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
+        question = testEntityManager.persist(new Question("title1", "contents1").writeBy(writer1));
     }
 
     @Test
     void findByIdAndDeletedFalse() {
+        Answer deletedAnswer = new Answer(writer1, question, "Answers Contents1");
+        deletedAnswer.setDeleted(true);
+        Answer answer = new Answer(writer2, question, "Answers Contents2");
+
+        answerRepository.save(deletedAnswer);
+        answerRepository.save(answer);
+
         assertThat(answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId())).isEmpty();
         assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId())).hasValue(answer);
     }
