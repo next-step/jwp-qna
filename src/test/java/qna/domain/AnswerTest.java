@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AnswerTest {
@@ -24,5 +25,13 @@ public class AnswerTest {
         assertThatThrownBy(() ->
                 new Answer(1L, UserTest.JAVAJIGI, null, "test")
         ).isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 내가_작성한_댓글인지_확인한다() {
+        // when
+        boolean result = A1.isOwner(UserTest.JAVAJIGI);
+        // then
+        assertThat(result).isTrue();
     }
 }
