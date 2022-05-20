@@ -108,7 +108,7 @@ alter table question
   - [x] Answer - Question
   - [x] Answer - User
   - [ ] DeleteHistory - User
-  - [ ] Question - User
+  - [x] Question - User
 - [ ] 리포지토리 테스트 작성
   - [x] Answer - Question
   - [x] Answer - User

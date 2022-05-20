@@ -27,9 +27,10 @@ class AnswerRepositoryTest {
     void setUp() {
         User javajigi = userRepository.save(UserTest.JAVAJIGI);
         User sanjigi = userRepository.save(UserTest.SANJIGI);
-        Question question = questionRepository.save(QuestionTest.Q1);
-        answer1 = new Answer(javajigi, question, "Answers Contents1");
-        answer2 = new Answer(sanjigi, question, "Answers Contents2");
+        Question question = new Question("title", "contents").writeBy(javajigi);
+        questionRepository.save(question);
+        this.answer1 = new Answer(javajigi, question, "Answers Contents1");
+        this.answer2 = new Answer(sanjigi, question, "Answers Contents2");
     }
 
     @DisplayName("Answer 생성")
