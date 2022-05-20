@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.QuestionTest.Q2;
+import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.domain.Question;
+import qna.domain.User;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -23,7 +26,14 @@ public class QuestionRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private void saveQuestion() {
+        User savedJavaJiGi = userRepository.save(JAVAJIGI);
+        User savedSanJiGi = userRepository.save(SANJIGI);
+        Q1.setWriter(savedJavaJiGi);
+        Q2.setWriter(savedSanJiGi);
         questionRepository.save(Q1);
         questionRepository.save(Q2);
     }
@@ -31,6 +41,8 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("데이터를 저장한다.")
     void save_test() {
+        User javaJiGi = userRepository.save(JAVAJIGI);
+        Q1.setWriter(javaJiGi);
         Question save = questionRepository.save(Q1);
         assertAll(
                 () -> assertThat(save.getId()).isNotNull(),
@@ -75,5 +87,18 @@ public class QuestionRepositoryTest {
         saveQuestion();
         questionRepository.deleteAll();
         assertThat(questionRepository.findAll().size()).isZero();
+    }
+
+    @Test
+    @DisplayName("양방향 연관관계를 확인한다.")
+    void relation_test() {
+        saveQuestion();
+        Optional<Question> questionOptional = questionRepository.findById(Q1.getId());
+        questionOptional.ifPresent(question -> {
+            assertAll(
+                    () -> assertThat(question.getTitle()).isEqualTo("title1"),
+                    () -> assertThat(question.getWriter().getQuestions().get(0).getTitle()).isEqualTo("title1")
+            );
+        });
     }
 }
