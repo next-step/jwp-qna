@@ -29,7 +29,7 @@ class QuestionRepositoryTest {
     @Test
     void update_이후_select() {
         // given
-        final Question question = new Question("title", "contends");
+        final Question question = new Question("title", "contents");
         repository.save(question);
         final User newWriter = UserTest.JAVAJIGI;
 
@@ -44,8 +44,10 @@ class QuestionRepositoryTest {
     @Test
     void 삭제되지_않은_질문글들을_조회할_수_있어야_한다() {
         // given
-        repository.save(QuestionTest.Q1);
-        repository.save(QuestionTest.Q2);
+        final Question question1 = new Question("title1", "contents1");
+        final Question question2 = new Question("title2", "contents2");
+        repository.save(question1);
+        repository.save(question2);
 
         // when
         final List<Question> questions = repository.findByDeletedFalse();
@@ -57,13 +59,14 @@ class QuestionRepositoryTest {
     @Test
     void 삭제되지_않은_질문글을_질문글_아이디로_조회할_수_있어야_한다() {
         // given
-        repository.save(QuestionTest.Q1);
+        final Question question = new Question("title", "contents");
+        repository.save(question);
 
         // when
-        final Question question = repository.findByIdAndDeletedFalse(QuestionTest.Q1.getId()).get();
+        final Question selected = repository.findByIdAndDeletedFalse(question.getId()).get();
 
         // then
-        assertThat(question).isNotNull();
-        assertThat(question).isEqualTo(QuestionTest.Q1);
+        assertThat(selected).isNotNull();
+        assertThat(selected).isEqualTo(question);
     }
 }

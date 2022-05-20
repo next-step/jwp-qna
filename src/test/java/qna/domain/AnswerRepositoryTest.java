@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -16,10 +17,17 @@ class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    final Question question = new Question("title", "contents");
+
+    @BeforeEach
+    void setUp() {
+        questionRepository.save(question);
+    }
+
     @Test
     void insert_이후_select() {
         // given
-        final Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "answer");
+        final Answer answer = new Answer(UserTest.JAVAJIGI, question, "answer");
 
         // when
         answerRepository.save(answer);
@@ -32,9 +40,10 @@ class AnswerRepositoryTest {
     @Test
     void update_이후_select() {
         // given
-        final Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "answer");
+        final Answer answer = new Answer(UserTest.JAVAJIGI, question, "answer");
         answerRepository.save(answer);
-        final Question newQuestion = QuestionTest.Q2;
+        final Question newQuestion = new Question("new title", "new contents");
+        ;
 
         // when
         answer.toQuestion(newQuestion);
@@ -47,14 +56,13 @@ class AnswerRepositoryTest {
     @Test
     void 질문글의_아이디로_삭제되지_않은_답변들을_조회할_수_있어야_한다() {
         // given
-        questionRepository.save(QuestionTest.Q1);
-        final Answer answer1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "answer1");
-        final Answer answer2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "answer2");
+        final Answer answer1 = new Answer(UserTest.JAVAJIGI, question, "answer1");
+        final Answer answer2 = new Answer(UserTest.SANJIGI, question, "answer2");
         answerRepository.save(answer1);
         answerRepository.save(answer2);
 
         // when
-        final List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        final List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
         // then
         assertThat(answers.containsAll(Arrays.asList(answer1, answer2))).isTrue();
