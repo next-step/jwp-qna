@@ -7,6 +7,7 @@ import qna.CannotDeleteException;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.AnswerTest.createAnswer;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
@@ -35,7 +36,7 @@ public class QuestionTest {
     @Test
     void delete_성공_질문자_답변자_같음() {
         Question question = createQuestion(1L, UserTest.JAVAJIGI, false);
-        Answer answer = createAnswer(2L, question, false);
+        Answer answer = createAnswer(2L, UserTest.JAVAJIGI, question, false);
         question.addAnswer(answer);
 
         assertThat(question.delete()).containsExactly(
@@ -78,19 +79,13 @@ public class QuestionTest {
     @Test
     void getNotDeletedAnswers() {
         Question question = createQuestion(1L, UserTest.JAVAJIGI, false);
-        Answer answer = createAnswer(2L, question, false);
-        Answer deletedAnswer = createAnswer(3L, question, true);
+        Answer answer = createAnswer(2L, UserTest.JAVAJIGI, question, false);
+        Answer deletedAnswer = createAnswer(3L, UserTest.JAVAJIGI, question, true);
 
         question.addAnswer(answer);
         question.addAnswer(deletedAnswer);
 
         assertThat(question.getNotDeletedAnswers()).containsExactly(answer);
-    }
-
-    private Answer createAnswer(Long id, Question question, boolean deleted) {
-        Answer answer = new Answer(id, UserTest.JAVAJIGI, question, "answer content1");
-        answer.setDeleted(deleted);
-        return answer;
     }
 
 }

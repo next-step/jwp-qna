@@ -5,21 +5,27 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.QuestionTest.createQuestion;
 
 public class AnswerTest {
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
-    @Test
-    void delete() {
-        Answer answer = createAnswer();
-        assertThat(answer.isDeleted()).isFalse();
-        assertThat(answer.delete()).isEqualTo(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        assertThat(answer.isDeleted()).isTrue();
+    public static Answer createAnswer(Long id, User writer, Question question, boolean deleted) {
+        Answer answer = new Answer(id, writer, question, "answer content1");
+        answer.setDeleted(deleted);
+        return answer;
     }
 
-    private Answer createAnswer() {
-        return new Answer(1L, UserTest.JAVAJIGI, createQuestion(UserTest.JAVAJIGI, false), "answer content1");
+    public static Answer createAnswer(User writer, Question question, boolean deleted) {
+        Answer answer = new Answer(writer, question, "answer content1");
+        answer.setDeleted(deleted);
+        return answer;
+    }
+
+    @Test
+    void delete() {
+        Answer answer = createAnswer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, false);
+        assertThat(answer.delete()).isEqualTo(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+        assertThat(answer.isDeleted()).isTrue();
     }
 }

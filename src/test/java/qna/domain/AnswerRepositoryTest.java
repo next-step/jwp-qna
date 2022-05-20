@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.AnswerTest.createAnswer;
 import static qna.domain.UserTest.createUser;
 
 @DataJpaTest
@@ -37,12 +38,6 @@ class AnswerRepositoryTest {
 
     private Question createQuestion(User writer) {
         return new Question("title1", "contents1").writeBy(writer);
-    }
-
-    private Answer createAnswer(User writer, Question question, boolean deleted) {
-        Answer answer = new Answer(writer, question, "Answers Contents1");
-        answer.setDeleted(deleted);
-        return answer;
     }
 
 }
