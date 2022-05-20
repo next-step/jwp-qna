@@ -28,7 +28,13 @@ public class Answers {
         }
     }
 
-    List<Answer> get() {
+    public void removeAll(User loginUser) {
+        for (Answer answer : answers) {
+            answer.delete(loginUser);
+        }
+    }
+
+    public List<Answer> get() {
         return answers;
     }
 }
