@@ -74,12 +74,24 @@ public class Question extends BaseEntity {
     }
 
     public DeleteHistories delete(User loginUser) {
+        validateOwner(loginUser);
+        deleted = true;
+        return createDeleteHistories(loginUser);
+    }
+
+    private DeleteHistories createDeleteHistories(User loginUser) {
+        DeleteHistories deleteHistories = new DeleteHistories(DeleteHistory.ofQuestion(this));
+        return deleteHistories.merge(deleteAnswers(loginUser));
+    }
+
+    private DeleteHistories deleteAnswers(User loginUser) {
+        return answers.removeAll(loginUser);
+    }
+
+    private void validateOwner(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        deleted = true;
-        DeleteHistories deleteHistories = new DeleteHistories(DeleteHistory.ofQuestion(this));
-        return deleteHistories.merge(answers.removeAll(loginUser));
     }
 
     @Override
