@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -30,7 +32,7 @@ public class Question extends BaseEntity {
     private String contents;
 
     @Embedded
-    private Answers answers;
+    private Answers answers = Answers.createNewInstance();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -57,10 +59,16 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         validateAuthority(loginUser);
         this.updateDeleted();
-        answers.deleteAll(loginUser);
+        return generateDeleteHistories(loginUser);
+    }
+
+    private List<DeleteHistory> generateDeleteHistories(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistoryList = new ArrayList<>();
+        deleteHistoryList.add(DeleteHistory.createByQuestion(id, loginUser));
+        return deleteHistoryList;
     }
 
     private void updateDeleted() {
