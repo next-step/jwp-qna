@@ -11,8 +11,9 @@ import java.util.Objects;
 public class Answer extends BaseEntity {
     @Column(name = "writer_id")
     private Long writerId;
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
     @Lob
     @Column(name = "contents", columnDefinition = "CLOB")
     private String contents;
@@ -37,7 +38,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -46,7 +47,7 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -57,8 +58,8 @@ public class Answer extends BaseEntity {
         return this.writerId;
     }
 
-    public Long getQuestionId() {
-        return this.questionId;
+    public Question getQuestion() {
+        return this.question;
     }
 
     public boolean isDeleted() {
@@ -87,7 +88,7 @@ public class Answer extends BaseEntity {
         return "Answer{" +
                 "id=" + this.id +
                 ", writerId=" + this.writerId +
-                ", questionId=" + this.questionId +
+                ", question=" + this.question +
                 ", contents='" + this.contents + '\'' +
                 ", deleted=" + this.deleted +
                 '}';

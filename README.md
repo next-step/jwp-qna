@@ -105,13 +105,14 @@ alter table question
 
 #### 구현 기능
 - [ ] 연관 관계 매핑
-  - [ ] Answer - Question
+  - [x] Answer - Question
   - [ ] Answer - User
   - [ ] DeleteHistory - User
   - [ ] Question - User
 - [ ] 리포지토리 테스트 작성
-  - [ ] Answer - Question
+  - [x] Answer - Question
   - [ ] Answer - User
   - [ ] DeleteHistory - User
   - [ ] Question - User
 - [ ] 도메인 테스트 작성
+  - [x] Answer
