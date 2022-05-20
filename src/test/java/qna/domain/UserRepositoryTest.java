@@ -14,6 +14,14 @@ class UserRepositoryTest {
     private UserRepository userRepository;
 
     @Test
+    void user_전체_조회() {
+        userRepository.save(UserTest.SANJIGI);
+        userRepository.save(UserTest.JAVAJIGI);
+
+        assertThat(userRepository.findAll()).hasSize(2);
+    }
+
+    @Test
     void user_저장() {
         User user = UserTest.JAVAJIGI;
         User result = userRepository.save(user);
@@ -22,14 +30,6 @@ class UserRepositoryTest {
                 () -> assertThat(result.getId()).isNotNull(),
                 () -> assertThat(result.getName()).isEqualTo(user.getName())
         );
-    }
-
-    @Test
-    void user_전체_조회() {
-        userRepository.save(UserTest.JAVAJIGI);
-        userRepository.save(UserTest.SANJIGI);
-
-        assertThat(userRepository.findAll()).hasSize(2);
     }
 
     @Test
