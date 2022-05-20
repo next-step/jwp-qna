@@ -77,6 +77,9 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public void delete(User loginUser) {
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
