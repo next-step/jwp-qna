@@ -21,37 +21,34 @@ public class UserTest {
     @Test
     void 사용자_생성() {
         User saved = userRepository.save(JAVAJIGI);
-        assertThat(saved).isEqualTo(JAVAJIGI);
+        assertThat(saved).isNotNull();
     }
 
     @Test
     void 사용자_조회() {
-        User user = userRepository.save(JAVAJIGI);
-
-        User expected = userRepository.findByUserId(user.getUserId()).get();
-        assertThat(user).isEqualTo(expected);
+        userRepository.save(JAVAJIGI);
+        Optional<User> user = userRepository.findByUserId(JAVAJIGI.getUserId());
+        assertThat(user.get()).isNotNull();
     }
 
     @Test
     void 사용자_수정() {
-        User user = new User("donghee.han", "password", "donghee", "donghee@slipp.net");
+        User user = userRepository.save(new User("donghee.han", "password", "donghee", "donghee@slipp.net"));
+
+        user.setName("han");
+        user.setEmail("han@slipp.net");
         userRepository.save(user);
 
-        user.setName("haha");
-        user.setEmail("haha@test.com");
-        userRepository.save(user);
-
-        User expected = userRepository.findByUserId(user.getUserId()).get();
-        assertThat(user).isEqualTo(expected);
+        User actual = userRepository.findByUserId(user.getUserId()).get();
+        assertThat(actual.getName()).isEqualTo("han");
+        assertThat(actual.getEmail()).isEqualTo("han@slipp.net");
     }
 
     @Test
     void 사용자_삭제() {
-        User user = new User("donghee.han", "password", "donghee", "donghee@slipp.net");
-        userRepository.save(user);
-
+        User user = userRepository.save(new User("donghee.han", "password", "donghee", "donghee@slipp.net"));
         userRepository.delete(user);
-        Optional<User> find = userRepository.findByUserId(user.getUserId());
-        assertThat(find.isPresent()).isFalse();
+        Optional<User> actual = userRepository.findByUserId(user.getUserId());
+        assertThat(actual.isPresent()).isFalse();
     }
 }
