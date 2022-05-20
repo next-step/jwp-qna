@@ -78,10 +78,6 @@ public class Answer extends BaseTime {
         return id;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
-    }
-
     public User getWriter() {
         return writer;
     }

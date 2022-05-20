@@ -28,7 +28,7 @@ class DeleteHistoryRepositoryTest {
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getContentType()).isEqualTo(expected.getContentType()),
-                () -> assertThat(actual.getDeletedById()).isEqualTo(expected.getDeletedById())
+                () -> assertThat(actual.getDeletedBy().getId()).isEqualTo(expected.getDeletedBy().getId())
         );
     }
 

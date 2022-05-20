@@ -66,8 +66,8 @@ public class DeleteHistory {
         return contentType;
     }
 
-    public Long getDeletedById() {
-        return deletedBy.getId();
+    public User getDeletedBy() {
+        return deletedBy;
     }
 
     @Override

@@ -29,7 +29,7 @@ class AnswerRepositoryTest {
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
-                () -> assertThat(actual.getWriterId()).isEqualTo(user.getId())
+                () -> assertThat(actual.getWriter().getId()).isEqualTo(user.getId())
         );
     }
 
