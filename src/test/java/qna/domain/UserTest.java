@@ -1,7 +1,12 @@
 package qna.domain;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import qna.UnAuthorizedException;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,4 +53,28 @@ public class UserTest {
                 JAVAJIGI.update(loginUser, target)
         ).isInstanceOf(UnAuthorizedException.class);
     }
+
+    @ParameterizedTest
+    @MethodSource
+    void 이름과_이메일이_같은지_확인한다(User target, boolean expected) {
+        // when
+        boolean result = JAVAJIGI.equalsNameAndEmail(target);
+        // then
+        assertThat(result).isEqualTo(expected);
+    }
+
+    static Stream<Arguments> 이름과_이메일이_같은지_확인한다() {
+        return Stream.of(
+                Arguments.of(
+                        new User("javajigi", "pass", "mj", "mj@com"),
+                        false
+                ),
+                Arguments.of(
+                        new User("javajigi", "pass","name", "javajigi@slipp.net"),
+                        true
+                )
+        );
+    }
+
+
 }
