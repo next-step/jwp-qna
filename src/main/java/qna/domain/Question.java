@@ -13,11 +13,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
+import qna.UnAuthorizedException;
 import qna.domain.base.BaseEntity;
 
 @Entity
 public class Question extends BaseEntity {
 
+    public static final String NO_AUTHORITY_ERROR = "권한이 없습니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -54,6 +57,21 @@ public class Question extends BaseEntity {
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        validateAuthority(loginUser);
+        this.updateDeleted();
+    }
+
+    private void updateDeleted() {
+        this.deleted = true;
+    }
+
+    private void validateAuthority(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(NO_AUTHORITY_ERROR);
+        }
     }
 
 
