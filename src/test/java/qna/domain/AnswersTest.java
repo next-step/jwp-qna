@@ -15,7 +15,7 @@ class AnswersTest {
     @Test
     @DisplayName("Answers add 테스트")
     void inputTest() {
-        Answers answers = Answers.create();
+        Answers answers = Answers.createNewInstance();
         answers.addAnswer(A1);
         answers.addAnswer(A2);
 
@@ -25,7 +25,7 @@ class AnswersTest {
     @Test
     @DisplayName("Answers 내에 작성작가 아닌 다른 사람이 삭제시 예외 처리")
     void deleteAllTest() {
-        Answers answers = Answers.create();
+        Answers answers = Answers.createNewInstance();
         answers.addAnswer(A1);
         answers.addAnswer(A2);
 

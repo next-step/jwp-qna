@@ -20,7 +20,7 @@ public class Answers {
 
     }
 
-    public static Answers create() {
+    public static Answers createNewInstance() {
         return new Answers(new ArrayList<>());
     }
 
