@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -8,6 +7,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.QuestionTest.createQuestion;
+import static qna.domain.UserTest.createUser;
 
 @DataJpaTest
 @EnableJpaAuditing
@@ -19,29 +20,21 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
-    private Question deleteQuestion;
-    private Question question;
-
-    @BeforeEach
-    void setUp() {
-        User writer1 = testEntityManager.persist(new User("javajigi", "password", "name", "javajigi@slipp.net"));
-        User writer2 = testEntityManager.persist(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
-
-        deleteQuestion = new Question("title1", "contents1").writeBy(writer1);
-        deleteQuestion.setDeleted(true);
-        question = new Question("title2", "contents2").writeBy(writer2);
-
-        questionRepository.save(deleteQuestion);
-        questionRepository.save(question);
-    }
-
     @Test
     void findByDeletedFalse() {
+        User writer1 = testEntityManager.persist(createUser("javajigi"));
+        Question deleteQuestion = questionRepository.save(createQuestion(writer1, true));
+        Question question = questionRepository.save(createQuestion(writer1, false));
+
         assertThat(questionRepository.findByDeletedFalse()).containsExactly(question);
     }
 
     @Test
     void findByIdAndDeletedFalse() {
+        User writer1 = testEntityManager.persist(createUser("javajigi"));
+        Question deleteQuestion = questionRepository.save(createQuestion(writer1, true));
+        Question question = questionRepository.save(createQuestion(writer1, false));
+
         assertThat(questionRepository.findByIdAndDeletedFalse(deleteQuestion.getId())).isEmpty();
         assertThat(questionRepository.findByIdAndDeletedFalse(question.getId())).hasValue(question);
     }

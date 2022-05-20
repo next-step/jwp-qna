@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -8,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.UserTest.createUser;
 
 @DataJpaTest
 @EnableJpaAuditing
@@ -19,28 +19,30 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
-    private User writer1;
-    private User writer2;
-    private Question question;
-
-    @BeforeEach
-    void setUp() {
-        writer1 = testEntityManager.persist(new User("javajigi", "password", "name", "javajigi@slipp.net"));
-        writer2 = testEntityManager.persist(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
-        question = testEntityManager.persist(new Question("title1", "contents1").writeBy(writer1));
-    }
-
     @Test
     void findByIdAndDeletedFalse() {
-        Answer deletedAnswer = new Answer(writer1, question, "Answers Contents1");
-        deletedAnswer.setDeleted(true);
-        Answer answer = new Answer(writer2, question, "Answers Contents2");
+        User writer1 = testEntityManager.persist(createUser("javajigi"));
+        User writer2 = testEntityManager.persist(createUser("sanjigi"));
+        Question question = testEntityManager.persist(createQuestion(writer1));
+
+        Answer deletedAnswer = createAnswer(writer1, question, true);
+        Answer answer = createAnswer(writer2, question, false);
 
         answerRepository.save(deletedAnswer);
         answerRepository.save(answer);
 
         assertThat(answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId())).isEmpty();
         assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId())).hasValue(answer);
+    }
+
+    private Question createQuestion(User writer) {
+        return new Question("title1", "contents1").writeBy(writer);
+    }
+
+    private Answer createAnswer(User writer, Question question, boolean deleted) {
+        Answer answer = new Answer(writer, question, "Answers Contents1");
+        answer.setDeleted(deleted);
+        return answer;
     }
 
 }
