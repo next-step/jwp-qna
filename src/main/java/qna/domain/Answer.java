@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -103,5 +104,20 @@ public class Answer extends BaseEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        validateAuthority(loginUser);
+        this.updateDeleted();
+    }
+
+    private void updateDeleted() {
+        this.deleted = true;
+    }
+
+    private void validateAuthority(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("작성자가 달라서 지울 수 없습니다.");
+        }
     }
 }
