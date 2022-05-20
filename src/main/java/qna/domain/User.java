@@ -4,11 +4,18 @@ import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
@@ -26,6 +33,11 @@ public class User extends BaseEntity {
     }
 
     public User(String userId, String password, String name, String email) {
+        this(null, userId, password, name, email);
+    }
+
+    public User(Long id, String userId, String password, String name, String email) {
+        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -67,7 +79,7 @@ public class User extends BaseEntity {
     }
 
     public Long getId() {
-        return super.getId();
+        return id;
     }
 
     public String getUserId() {
@@ -105,7 +117,7 @@ public class User extends BaseEntity {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + super.getId() +
+                "id=" + id +
                 ", userId='" + userId + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +

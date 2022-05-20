@@ -5,11 +5,18 @@ import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Lob;
 import java.util.Objects;
 
 @Entity
 public class Answer extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private Long writerId;
 
@@ -25,6 +32,12 @@ public class Answer extends BaseEntity {
     }
 
     public Answer(User writer, Question question, String contents) {
+        this(null, writer, question, contents);
+    }
+
+    public Answer(Long id, User writer, Question question, String contents) {
+        this.id = id;
+
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -47,7 +60,7 @@ public class Answer extends BaseEntity {
     }
 
     public Long getId() {
-        return super.getId();
+        return id;
     }
 
     public Long getWriterId() {
@@ -69,7 +82,7 @@ public class Answer extends BaseEntity {
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + super.getId() +
+                "id=" + id +
                 ", writerId=" + writerId +
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
