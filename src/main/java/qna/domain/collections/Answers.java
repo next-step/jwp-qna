@@ -12,18 +12,37 @@ import qna.exception.CannotDeleteException;
 @Embeddable
 public class Answers {
 
-    private static final int NONE = 0;
-
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
+
+    public Answers(){
+    }
+    public Answers(List<Answer> answers) {
+        this.answers = answers;
+    }
 
     public void add(Answer answer) {
         answers.add(answer);
     }
 
-    public void deleteAll(User questionWriter) throws CannotDeleteException {
+    public Answers deleteAll(User questionWriter) throws CannotDeleteException {
+        List<Answer> deleteAnswers = new ArrayList<>();
         for (Answer answer : answers){
+            addDeleteAnswers(deleteAnswers, answer);
+        }
+        for (Answer answer : deleteAnswers){
             answer.delete(questionWriter);
         }
+        return new Answers(deleteAnswers);
+    }
+
+    private void addDeleteAnswers(List<Answer> needDeleteAnswers, Answer answer) {
+        if(!answer.isDeleted()){
+            needDeleteAnswers.add(answer);
+        }
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 }
