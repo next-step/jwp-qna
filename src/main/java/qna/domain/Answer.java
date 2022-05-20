@@ -82,6 +82,9 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public void delete(User loginUser) {
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
