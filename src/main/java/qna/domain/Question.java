@@ -1,8 +1,7 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -12,9 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import qna.CannotDeleteException;
-import qna.UnAuthorizedException;
 import qna.domain.base.BaseEntity;
 
 @Entity
@@ -31,8 +28,8 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -62,9 +59,7 @@ public class Question extends BaseEntity {
     public void delete(User loginUser) throws CannotDeleteException {
         validateAuthority(loginUser);
         this.updateDeleted();
-        for (Answer answer : answers) {
-            answer.delete(loginUser);
-        }
+        answers.deleteAll(loginUser);
     }
 
     private void updateDeleted() {
@@ -84,7 +79,7 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-        this.answers.add(answer);
+        this.answers.addAnswer(answer);
     }
 
     public Long getId() {
