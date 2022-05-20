@@ -40,7 +40,7 @@ class QuestionRepositoryTest {
     @DisplayName("삭제되지 않은 Quesetion 조회")
     @Test
     void findByIdAndDeletedFalse() {
-        Question question = questionRepository.findByIdAndDeletedFalse(1L).get();
+        Question question = questionRepository.findByIdAndDeletedFalse(3L).get();
 
         assertAll(
                 () -> assertThat(question.isDeleted()).isFalse(),

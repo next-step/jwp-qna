@@ -36,7 +36,7 @@ class AnswerRepositoryTest {
     @DisplayName("Question ID 기준으로 삭제되지 않은 Answer 목록조회")
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(1L);
+        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(3L);
 
         for (Answer answer : answerList) {
             assertThat(answer.getId()).isNotNull();
@@ -47,12 +47,12 @@ class AnswerRepositoryTest {
     @DisplayName("삭제되지 않은 Answer 조회")
     @Test
     void findByIdAndDeletedFalse() {
-        Answer answer = answerRepository.findByIdAndDeletedFalse(1L).get();
+        Answer answer = answerRepository.findByIdAndDeletedFalse(3L).get();
 
         assertAll(
                 () -> assertThat(answer.getContents()).isEqualTo("더워서 패딩은 아닌 것 같아요"),
                 () -> assertThat(answer.isDeleted()).isFalse(),
-                () -> assertThat(answerRepository.findByIdAndDeletedFalse(2L)).isNotPresent()
+                () -> assertThat(answerRepository.findByIdAndDeletedFalse(4L)).isNotPresent()
         );
 
     }
