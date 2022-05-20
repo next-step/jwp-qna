@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import org.hibernate.annotations.DynamicUpdate;
 import qna.domain.time.BaseTime;
+import qna.exception.CannotDeleteException;
 
 @DynamicUpdate
 @Entity
@@ -120,7 +121,10 @@ public class Question extends BaseTime {
                 '}';
     }
 
-    public void delete(User loginUser) {
-        this.deleted = true;
+    public void delete(User loginUser) throws CannotDeleteException {
+        if(!writer.equals(loginUser)){
+            throw new CannotDeleteException("[ERROR] 작성자가 아닌 경우 삭제할 수 없습니다.");
+        }
+        deleted = true;
     }
 }

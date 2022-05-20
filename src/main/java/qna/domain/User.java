@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import org.hibernate.Hibernate;
 import qna.exception.UnAuthorizedException;
 
 import java.util.Objects;
@@ -148,11 +149,11 @@ public class User extends BaseTime {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
             return false;
         }
         User user = (User) o;
-        return Objects.equals(id, user.id);
+        return Objects.equals(id, user.getId());
     }
 
     @Override
