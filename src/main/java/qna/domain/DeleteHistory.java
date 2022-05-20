@@ -14,8 +14,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class DeleteHistory {
 
     @Id
@@ -31,21 +34,22 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deleteUser;
 
+    @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime createDate;
 
-    private DeleteHistory(ContentType contentType, Long contentId, User deleteUser, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deleteUser) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deleteUser = deleteUser;
-        this.createDate = createDate;
     }
 
-    public static DeleteHistory createByAnswer(Long contentId, User deleteUser, LocalDateTime createDate) {
-        return new DeleteHistory(ContentType.ANSWER, contentId, deleteUser, createDate);
+    public static DeleteHistory createByAnswer(Long contentId, User deleteUser) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deleteUser);
     }
 
-    public static DeleteHistory createByQuestion(Long contentId, User deleteUser, LocalDateTime createDate) {
-        return new DeleteHistory(ContentType.QUESTION, contentId, deleteUser, createDate);
+    public static DeleteHistory createByQuestion(Long contentId, User deleteUser) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deleteUser);
     }
 
     protected DeleteHistory() {
