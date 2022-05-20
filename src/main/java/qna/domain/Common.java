@@ -10,7 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class Common {
+public abstract class Common {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
