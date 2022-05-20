@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.junit.jupiter.api.Test;
+import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,5 +16,13 @@ public class AnswerTest {
         assertThatThrownBy(() ->
                 new Answer(1L, null, QuestionTest.Q1, "test")
         ).isInstanceOf(UnAuthorizedException.class);
+    }
+
+    @Test
+    void 질문이_null일_경우_예외가_발생한다() {
+        // when and then
+        assertThatThrownBy(() ->
+                new Answer(1L, UserTest.JAVAJIGI, null, "test")
+        ).isInstanceOf(NotFoundException.class);
     }
 }
