@@ -17,7 +17,7 @@ class AnswerRepositoryTest {
     private QuestionRepository questionRepository;
 
     @Test
-    void 새로운_Answer_객체가_insert_된_후에_조회되어야_한다() {
+    void insert_이후_select() {
         // given
         final Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "answer");
 
@@ -30,11 +30,10 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    void Answer_객체를_update_한_뒤_조회하면_수정된_내용이_반영되어있어야_한다() {
+    void update_이후_select() {
         // given
         final Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "answer");
         answerRepository.save(answer);
-        answerRepository.flush();
         final Question newQuestion = QuestionTest.Q2;
 
         // when
