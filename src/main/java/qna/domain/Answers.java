@@ -28,12 +28,12 @@ public class Answers {
         }
     }
 
-    public List<DeleteHistory> removeAll(User loginUser) {
+    public DeleteHistories removeAll(User loginUser) {
         final List<DeleteHistory> deleteHistories = new ArrayList<>(answers.size());
         for (Answer answer : answers) {
             deleteHistories.add(answer.delete(loginUser));
         }
-        return deleteHistories;
+        return new DeleteHistories(deleteHistories);
     }
 
     public List<Answer> get() {
