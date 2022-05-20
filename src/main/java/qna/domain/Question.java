@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import qna.common.BaseEntity;
+import qna.exception.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -28,7 +29,7 @@ public class Question extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "writer_id")
-    private User user;
+    private User writer;
 
     @Embedded
     private Answers answers = new Answers();
@@ -49,18 +50,20 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Question(String title, String contents, User user) {
+    public Question(String title, String contents, User writer) {
         this(null, title, contents);
-        this.user = user;
+        this.writer = writer;
     }
 
     public Question writeBy(User writer) {
-        this.user = writer;
+        this.writer = writer;
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.user.equals(writer);
+    public void validateRemovable(User user) throws CannotDeleteException {
+        if (!this.writer.equals(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public void addAnswer(Answer answer) {
@@ -99,7 +102,7 @@ public class Question extends BaseEntity {
     }
 
     public User getWriter() {
-        return user;
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -116,7 +119,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", user=" + user +
+                ", user=" + writer +
                 ", answers=" + answers +
                 ", deleted=" + deleted +
                 '}';
@@ -132,12 +135,12 @@ public class Question extends BaseEntity {
         }
         Question question = (Question) o;
         return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
-                question.title) && Objects.equals(contents, question.contents) && Objects.equals(user,
-                question.user) && Objects.equals(answers, question.answers);
+                question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer,
+                question.writer) && Objects.equals(answers, question.answers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, user, answers, deleted);
+        return Objects.hash(id, title, contents, writer, answers, deleted);
     }
 }
