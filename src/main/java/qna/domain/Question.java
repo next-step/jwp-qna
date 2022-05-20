@@ -128,4 +128,8 @@ public class Question extends BaseTime {
         }
         this.deleted = true;
     }
+
+    public Answers getAnswers() {
+        return answers;
+    }
 }

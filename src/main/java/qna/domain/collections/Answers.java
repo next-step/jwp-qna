@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import qna.domain.Answer;
+import qna.domain.User;
 
 @Embeddable
 public class Answers {
@@ -36,5 +37,9 @@ public class Answers {
             deletedCount++;
         }
         return deletedCount;
+    }
+
+    public void deleteAll(User questionWriter) {
+
     }
 }
