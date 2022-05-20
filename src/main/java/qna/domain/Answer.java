@@ -78,10 +78,6 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public DeleteHistory delete(User loginUser) {
         validateOwner(loginUser);
         deleted = true;
