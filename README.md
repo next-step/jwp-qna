@@ -132,7 +132,7 @@ alter table question
 - 객체와 테이블 매핑 관계
   - [x] 객체, 테이블 매핑 관계 구조 파악
     - 객체 관계 구조
-      ![객체 관계구조](object_relationship.jpeg)
+      ![객체 관계구조](object_relationship_step2.jpeg)
     - 테이블 관계 구조
       ![테이블 관계구조](table_relationship.jpeg)
 - **answer 테이블**
@@ -218,7 +218,8 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
 
 ### 📚 TODO LIST 📚
 - 객체 관계 구조 수정
-  - [ ] 객체 관계 구조
+  - [x] 객체 관계 구조 개선
+    ![객체 관계구조](object_relationship_step3.jpeg)
 - 질문 삭제하기 리팩토링
   - [ ] 서비스 레이어링 리팩토링
   - [ ] 불필요한 메소드 정리
