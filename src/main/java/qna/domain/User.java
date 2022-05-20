@@ -116,6 +116,10 @@ public class User extends BaseTime {
                 '}';
     }
 
+    public boolean isNotSameUser(User loginUser) {
+        return !this.equals(loginUser);
+    }
+
     private static class GuestUser extends User {
         @Override
         public boolean isGuestUser() {
