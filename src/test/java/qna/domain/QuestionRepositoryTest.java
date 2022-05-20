@@ -14,15 +14,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class QuestionRepositoryTest {
-    static final User writer = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-
     @Autowired
     QuestionRepository questionRepository;
+    @Autowired
+    UserRepository userRepository;
 
     Question question;
+    User writer;
 
     @BeforeEach
     void setUp() {
+        writer = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        userRepository.save(writer);
         question = new Question("title1", "contents1").writeBy(writer);
         questionRepository.save(question);
     }
@@ -34,7 +37,7 @@ class QuestionRepositoryTest {
 
     @Test
     void 수정() {
-        question.setContents("content111");
+        question.edit("content111");
         Question findQuestion = questionRepository.findById(question.getId()).get();
         assertThat(findQuestion.getContents()).isEqualTo("content111");
     }

@@ -33,7 +33,7 @@ class UserRepositoryTest {
 
     @Test
     void 수정() {
-        user.setName("name1");
+        user.rename("name1");
         User findUser = userRepository.findById(user.getId()).get();
         assertThat(findUser.getName()).isEqualTo("name1");
     }

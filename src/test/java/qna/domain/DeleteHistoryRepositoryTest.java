@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -14,12 +13,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DeleteHistoryRepositoryTest {
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    QuestionRepository questionRepository;
 
     DeleteHistory deleteHistory;
+    User writer;
+    Question question;
 
     @BeforeEach
     void setUp() {
-        deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 1L, now());
+        writer = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        userRepository.save(writer);
+        question = new Question("title1", "contents1").writeBy(writer);
+        questionRepository.save(question);
+        deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter());
         deleteHistoryRepository.save(deleteHistory);
     }
 

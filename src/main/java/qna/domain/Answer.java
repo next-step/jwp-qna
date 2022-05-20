@@ -13,9 +13,11 @@ public class Answer extends Auditing {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User writer;
 
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Question question;
 
     @Lob
     private String contents;
@@ -41,48 +43,40 @@ public class Answer extends Auditing {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        toQuestion(question);
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        if (this.question != null) {
+            this.question.getAnswers().remove(this);
+        }
+        this.question = question;
+        this.question.getAnswers().add(this);
+    }
+
+    public Question getQuestion() {
+        return question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public User getWriter() {
+        return writer;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void edit(String contents) {
         this.contents = contents;
     }
 
@@ -90,7 +84,7 @@ public class Answer extends Auditing {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void delete(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -98,8 +92,8 @@ public class Answer extends Auditing {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writerId=" + writer.getId() +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 ", createdAt='" + getCreatedAt() + '\'' +
