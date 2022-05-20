@@ -1,8 +1,5 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
-
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -15,9 +12,13 @@ import javax.persistence.UniqueConstraint;
 
 import com.sun.istack.NotNull;
 
+import qna.domain.common.DatedAtEntity;
+import qna.exception.UnAuthorizedException;
+
 @Entity
-@Table(name = "user", uniqueConstraints = {@UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = {"user_id"})})
-public class User {
+@Table(name = "user", uniqueConstraints = {
+		@UniqueConstraint(name = "UK_a3imlf41l37utmxiquukk8ajc", columnNames = { "user_id" }) })
+public class User extends DatedAtEntity {
 	public static final GuestUser GUEST_USER = new GuestUser();
 
 	@Id
@@ -25,7 +26,7 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotNull
-	@Column(name = "userId", unique = true)
+	@Column(name = "user_id", unique = true)
 	private String userId;
 	@NotNull
 	@Column(name = "password")
@@ -35,11 +36,6 @@ public class User {
 	private String name;
 	@Column(name = "email")
 	private String email;
-	@NotNull
-	@Column(name = "created_at")
-	private LocalDateTime createdAt;
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
 
 	private User() {
 	}
@@ -127,6 +123,31 @@ public class User {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 
 	@Override

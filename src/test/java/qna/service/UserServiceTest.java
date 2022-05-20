@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import qna.domain.User;
 import qna.domain.UserRepository;
@@ -33,7 +35,18 @@ public class UserServiceTest {
 		assertAll(() -> assertNotNull(saveUser), () -> assertNotNull(findUser.get().getId()),
 				() -> assertEquals(findUser.get().getUserId(), "eaststar1129"),
 				() -> assertTrue(findUser.get().matchPassword("password")),
-				() -> assertTrue(findUser.get().equalsNameAndEmail(eaststar1129)));
+				() -> assertTrue(findUser.get().equalsNameAndEmail(eaststar1129)),
+				() -> assertNotNull(findUser.get().getCreatedAt()));
+	}
+	
+	@Test
+	@DisplayName("유니크 컬럼 user_id 중복값 에러 테스트")
+	void save_unique_user_id_test() {
+		User eaststar1129 = new User("eaststar1129", "password", "eaststar", "eaststar1129@eamil.com");
+		User eaststar1129Two = new User("eaststar1129", "password", "eaststar", "eaststar1129@eamil.com");
+
+		userRepository.save(eaststar1129);
+		assertThrows(DataIntegrityViolationException.class, () -> userRepository.save(eaststar1129Two));
 	}
 
 	@Test

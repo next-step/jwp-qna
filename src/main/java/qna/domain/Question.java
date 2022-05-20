@@ -1,19 +1,23 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.sun.istack.NotNull;
 
+import qna.domain.common.DatedAtEntity;
+
 @Entity
 @Table(name = "question")
-public class Question {
+public class Question extends DatedAtEntity {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,16 +27,13 @@ public class Question {
 	private String title;
 	@Column(name = "contents")
 	private String contents;
-	@Column(name = "writer_id")
-	private Long writerId;
 	@NotNull
 	@Column(name = "deleted")
 	private boolean deleted = false;
-	@NotNull
-	@Column(name = "created_at")
-	private LocalDateTime createdAt;
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+	private User writer;
 
 	public Question(String title, String contents) {
 		this(null, title, contents);
@@ -45,12 +46,12 @@ public class Question {
 	}
 
 	public Question writeBy(User writer) {
-		this.writerId = writer.getId();
+		this.writer = writer;
 		return this;
 	}
 
 	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
+		return this.writer.equals(writer);
 	}
 
 	public void addAnswer(Answer answer) {
@@ -81,12 +82,8 @@ public class Question {
 		this.contents = contents;
 	}
 
-	public Long getWriterId() {
-		return writerId;
-	}
-
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
+	public User getWriter() {
+		return writer;
 	}
 
 	public boolean isDeleted() {
@@ -98,8 +95,33 @@ public class Question {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Question other = (Question) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		return "Question{" + "id=" + id + ", title='" + title + '\'' + ", contents='" + contents + '\'' + ", writerId="
-				+ writerId + ", deleted=" + deleted + '}';
+				+ writer.getId() + ", deleted=" + deleted + '}';
 	}
 }
