@@ -1,11 +1,7 @@
 package qna.domain;
 
-import static qna.constants.ExceptionMessage.INVALID_DELETE_QUESTION_BECAUSE_ANSWER_WRITER_NON_MATCH;
 import static qna.constants.ExceptionMessage.INVALID_DELETE_QUESTION_BECAUSE_NON_MATCH_WRITER_USER;
 
-import java.sql.Array;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -81,7 +77,7 @@ public class Question extends BaseDateTimeEntity{
 
     public DeleteHistories toDeleted(User loginUser) throws CannotDeleteException {
         validateDeleteAuthority(loginUser);
-        this.changeDeleted(true);
+        this.deleted(true);
 
         return generateDeleteHistories(loginUser);
     }
@@ -99,7 +95,7 @@ public class Question extends BaseDateTimeEntity{
         }
     }
 
-    private void changeDeleted(boolean deleted) {
+    private void deleted(boolean deleted) {
         this.deleted = deleted;
     }
 
