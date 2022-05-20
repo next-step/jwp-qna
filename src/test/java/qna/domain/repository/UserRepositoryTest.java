@@ -17,7 +17,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import qna.domain.User;
 
 @DataJpaTest
-@DirtiesContext
 class UserRepositoryTest {
 
     @Autowired
