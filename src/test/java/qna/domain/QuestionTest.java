@@ -40,4 +40,13 @@ public class QuestionTest {
         List<DeleteHistory> deleteHistoryList = Q1.delete(JAVAJIGI);
         assertNotNull(deleteHistoryList);
     }
+
+    @Test
+    @DisplayName("작성자가 Question과 Answer 삭제시 DeleteHistory 생성")
+    void deleteTest4() throws CannotDeleteException {
+        Q1.addAnswer(A1);
+        List<DeleteHistory> deleteHistoryList = Q1.delete(JAVAJIGI);
+        assertThat(deleteHistoryList).hasSize(2);
+    }
+
 }
