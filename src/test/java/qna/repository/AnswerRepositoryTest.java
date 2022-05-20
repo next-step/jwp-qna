@@ -1,11 +1,11 @@
 package qna.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.AnswerTest.A1;
 import static qna.domain.AnswerTest.A2;
 import static qna.domain.QuestionTest.Q1;
+import static qna.domain.QuestionTest.Q2;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
@@ -20,6 +20,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.domain.Answer;
+import qna.domain.Question;
+import qna.domain.User;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -33,19 +35,44 @@ public class AnswerRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    private User savedJavaJiGi;
+    private User savedSanJiGi;
+    private Question savedQ1;
+    private Answer savedAnswerA1;
+
     private void saveAnswer() {
-        userRepository.save(JAVAJIGI);
-        userRepository.save(SANJIGI);
-        questionRepository.save(Q1);
-        answerRepository.save(A1);
+        setWriterInQuestion();
+        setUserAndQuestionInAnswer(savedJavaJiGi, savedSanJiGi);
+        savedAnswerA1 = answerRepository.save(A1);
         answerRepository.save(A2);
     }
 
+    private void setWriterInQuestion() {
+        savedJavaJiGi = userRepository.save(JAVAJIGI);
+        savedSanJiGi = userRepository.save(SANJIGI);
+        Q1.setWriter(savedJavaJiGi);
+        Q2.setWriter(savedSanJiGi);
+        savedQ1 = questionRepository.save(Q1);
+    }
+
+    private void setUserAndQuestionInAnswer(User savedJavaJiGi, User savedSanJiGi) {
+        A1.setQuestion(savedQ1);
+        A1.setWriter(savedJavaJiGi);
+        A2.setQuestion(savedQ1);
+        A2.setWriter(savedSanJiGi);
+    }
+
+    private void setAnswer(User user, Question question) {
+
+    }
     @Test
     @DisplayName("데이터를 저장한다.")
     void save_test() {
-        userRepository.save(JAVAJIGI);
-        questionRepository.save(Q1);
+        User savedJavaJiGi = userRepository.save(JAVAJIGI);
+        Q1.setWriter(savedJavaJiGi);
+        Question savedQ1 = questionRepository.save(Q1);
+        A1.setQuestion(savedQ1);
+        A1.setWriter(savedJavaJiGi);
         Answer save = answerRepository.save(A1);
         assertAll(
                 () -> assertThat(save.getId()).isNotNull(),
@@ -65,7 +92,7 @@ public class AnswerRepositoryTest {
     @DisplayName("Id로 데이터를 조회한다.")
     void find_by_id_test() {
         saveAnswer();
-        Optional<Answer> answerOptional = answerRepository.findByIdAndDeletedFalse(Q1.getId());
+        Optional<Answer> answerOptional = answerRepository.findByIdAndDeletedFalse(savedQ1.getId());
         answerOptional.ifPresent(answer -> {
             assertAll(
                     () -> assertThat(answer.getContents()).isEqualTo("Answers Contents1"),
@@ -80,7 +107,7 @@ public class AnswerRepositoryTest {
     @DisplayName("QuestionId로 조회한다.")
     void find_By_Question_Id_Deleted_False_test() {
         saveAnswer();
-        List<Answer> questionIdAndDeletedFalse = answerRepository.findByQuestionIdAndDeletedFalse(1L);
+        List<Answer> questionIdAndDeletedFalse = answerRepository.findByQuestionIdAndDeletedFalse(savedQ1.getId());
         assertThat(questionIdAndDeletedFalse.size()).isEqualTo(2);
     }
 
@@ -96,12 +123,11 @@ public class AnswerRepositoryTest {
     @DisplayName("양방향 연관관계를 확인한다.")
     void relation_test() {
         saveAnswer();
-        Optional<Answer> answerOptional = answerRepository.findById(1L);
+        Optional<Answer> answerOptional = answerRepository.findById(savedAnswerA1.getId());
         answerOptional.ifPresent(answer -> {
             assertAll(
                     () -> assertThat(answer.getContents()).isEqualTo("Answers Contents1"),
-                    () -> assertThat(answer.getWriter().getAnswers().get(0).getContents()).isEqualTo("Answers Contents1"),
-                    () -> assertThat(answer.getQuestion().getAnswers().get(0).getContents()).isEqualTo("Answers Contents1")
+                    () -> assertThat(answer.getWriter().getAnswers().get(0).getContents()).isEqualTo("Answers Contents1")
             );
         });
     }
