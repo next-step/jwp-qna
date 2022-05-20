@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -20,6 +21,9 @@ public class Question extends BaseEntity {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers;
 
     protected Question() {
 
