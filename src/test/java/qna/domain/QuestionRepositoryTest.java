@@ -7,8 +7,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -39,8 +37,7 @@ class QuestionRepositoryTest {
 
     @Test
     void findByDeletedFalse() {
-        List<Question> byDeletedFalse = questionRepository.findByDeletedFalse();
-        assertThat(byDeletedFalse).containsExactly(question);
+        assertThat(questionRepository.findByDeletedFalse()).containsExactly(question);
     }
 
     @Test
