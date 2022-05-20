@@ -1,5 +1,8 @@
 package qna.domain;
 
+import static qna.constants.ExceptionMessage.INVALID_DELETE_QUESTION_BECAUSE_ANSWER_WRITER_NON_MATCH;
+
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,10 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-
-import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
@@ -56,48 +58,45 @@ public class Answer extends BaseDateTimeEntity{
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void toQuestion(Question question) {
         this.question = question;
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getWriter() {
+    public User writer() {
         return this.writer;
     }
 
-    public Question getQuestion() {
+    public Question question() {
         return this.question;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory toDeleted(User owner) throws CannotDeleteException {
+        validateDeleteAnswerAuthority(owner);
+        this.changeDeleted(true);
+
+        return DeleteHistory.ofAnswer(this.id, owner);
     }
 
-    public void delete() {
-        this.deleted = true;
+    private void validateDeleteAnswerAuthority(User owner) throws CannotDeleteException {
+        if (!this.isOwner(owner)) {
+            throw new CannotDeleteException(String.format(INVALID_DELETE_QUESTION_BECAUSE_ANSWER_WRITER_NON_MATCH, owner.userId()));
+        }
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    private void changeDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override
@@ -120,11 +119,11 @@ public class Answer extends BaseDateTimeEntity{
             return false;
         }
         Answer answer = (Answer) o;
-        return Objects.equals(getId(), answer.getId());
+        return Objects.equals(id(), answer.id());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(id());
     }
 }

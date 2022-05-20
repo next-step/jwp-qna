@@ -1,7 +1,10 @@
 package qna.domain;
 
+import static qna.constants.ExceptionMessage.INVALID_DELETE_QUESTION_BECAUSE_NON_MATCH_WRITER_USER;
+
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -12,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
@@ -30,6 +34,8 @@ public class Question extends BaseDateTimeEntity{
     private User writer;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+    @Embedded
+    private final Answers answers = Answers.createEmpty();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -48,19 +54,20 @@ public class Question extends BaseDateTimeEntity{
         return this;
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
-    public User getWriter() {
+    public User writer() {
         return this.writer;
     }
 
@@ -68,12 +75,28 @@ public class Question extends BaseDateTimeEntity{
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistories toDeleted(User loginUser) throws CannotDeleteException {
+        validateDeleteAuthority(loginUser);
+        this.deleted(true);
+
+        return generateDeleteHistories(loginUser);
     }
 
-    public void delete() {
-        this.deleted = true;
+    private DeleteHistories generateDeleteHistories(User loginUser) throws CannotDeleteException {
+        DeleteHistories deleteHistories = DeleteHistories.empty();
+        deleteHistories.add(DeleteHistory.ofQuestion(id, loginUser));
+        deleteHistories.merge(this.answers.deleteAll(loginUser));
+        return deleteHistories;
+    }
+
+    private void validateDeleteAuthority(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(String.format(INVALID_DELETE_QUESTION_BECAUSE_NON_MATCH_WRITER_USER, loginUser.userId()));
+        }
+    }
+
+    private void deleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override
@@ -96,11 +119,11 @@ public class Question extends BaseDateTimeEntity{
             return false;
         }
         Question question = (Question) o;
-        return Objects.equals(getId(), question.getId());
+        return Objects.equals(id(), question.id());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(id());
     }
 }

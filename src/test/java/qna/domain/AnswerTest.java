@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,18 +12,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionRepositoryTest.Q1, "Answers Contents1");
+    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionRepositoryTest.Q1, "Answers Contents2");
 
     @Test
     @DisplayName("Answer 도메인을 정상적으로 생성할 수 있다.")
     void generate01() {
         // given & when
-        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Contents");
+        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionRepositoryTest.Q1, "Contents");
 
         // then
         assertNotNull(answer);
@@ -32,7 +34,7 @@ public class AnswerTest {
     @DisplayName("Answer 도메인 생성시 user 정보가 없는 경우 UnAuthorizedException이 발생한다.")
     void generate_exception_01() {
         // given & when & then
-        assertThatThrownBy(() -> new Answer(null, QuestionTest.Q1, "Contents"))
+        assertThatThrownBy(() -> new Answer(null, QuestionRepositoryTest.Q1, "Contents"))
             .isInstanceOf(UnAuthorizedException.class);
     }
 
@@ -52,19 +54,6 @@ public class AnswerTest {
             .isInstanceOf(UnAuthorizedException.class);
     }
 
-    @Test
-    @DisplayName("isOnwer 메소드를 이용해 작성자와 동일한지 확인할 수 있다.")
-    void public_method_01() {
-        // given && when
-        User writer = UserTest.JAVAJIGI;
-
-        // then
-        assertAll(
-            () -> assertTrue(A1.isOwner(writer)),
-            () -> assertFalse(A2.isOwner(writer))
-        );
-    }
-
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L, 3L, 4L})
     @DisplayName("toQuestion 메소드를 이용해 Answer에 Question을 할당할 수 있다.")
@@ -76,7 +65,7 @@ public class AnswerTest {
         A1.toQuestion(question);
 
         // then
-        assertThat(A1.getQuestion()).isEqualTo(question);
+        assertThat(A1.question()).isEqualTo(question);
     }
 
     @ParameterizedTest
@@ -84,33 +73,10 @@ public class AnswerTest {
     @DisplayName("getId 메소드를 이용해 Answer의 id 값을 조회할 수 있다.")
     void public_method_03(long id) {
         // given & when
-        Answer answer = new Answer(id, UserTest.JAVAJIGI, QuestionTest.Q1, "contents");
+        Answer answer = new Answer(id, UserTest.JAVAJIGI, QuestionRepositoryTest.Q1, "contents");
 
         // then
-        assertThat(answer.getId()).isEqualTo(id);
-    }
-
-    @ParameterizedTest
-    @ValueSource(longs = {1L, 2L, 3L, 4L})
-    @DisplayName("setId 메소드를 이용해 Answer의 id 값을 변경할 수 있다.")
-    void public_method_04(long id) {
-        // given & when
-        A1.setId(id);
-
-        // then
-        assertThat(A1.getId()).isEqualTo(id);
-    }
-
-    @ParameterizedTest
-    @ValueSource(longs = {1L, 2L, 3L, 4L})
-    @DisplayName("getWriterId 메소드를 이용해 Answer를 작성한 User의 id 값을 조회할 수 있다.")
-    void public_method_05(long writerId) {
-        // given & when
-        User user = new User(writerId, "javajigi", "password", "name", "javajigi@slipp.net");
-        Answer answer = new Answer(user, QuestionTest.Q1, "contents");
-
-        // then
-        assertThat(answer.getWriter()).isEqualTo(user);
+        assertThat(answer.id()).isEqualTo(id);
     }
 
     @ParameterizedTest
@@ -122,29 +88,7 @@ public class AnswerTest {
         Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
 
         // then
-        assertThat(answer.getQuestion()).isEqualTo(question);
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"a", "b", "c"})
-    @DisplayName("getContents 메소드를 이용해 Answer의 Contents 값을 조회 할 수 있다.")
-    void public_method_09(String contents) {
-        // given & when
-        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, contents);
-
-        // then
-        assertThat(answer.getContents()).isEqualTo(contents);
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"a", "b", "c"})
-    @DisplayName("setContents 메소드를 이용해 Answer의 Contents 값을 변경 할 수 있다.")
-    void public_method_10(String contents) {
-        // given & when
-        A1.setContents(contents);
-
-        // then
-        assertThat(A1.getContents()).isEqualTo(contents);
+        assertThat(answer.question()).isEqualTo(question);
     }
 
     @Test
@@ -154,14 +98,21 @@ public class AnswerTest {
         assertFalse(A1.isDeleted());
     }
 
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    @DisplayName("setDeleted 메소드를 이용해 Answer의 삭제 여부를 변경할 수 있다.")
-    void public_method_11(boolean deleted) {
+    @Test
+    @DisplayName("toDeleted() 메소드를 이용해 Answer를 삭제 할 수 있다.")
+    void public_method_12() throws CannotDeleteException {
         // given & when
-        A1.setDeleted(deleted);
+        A1.toDeleted(UserTest.JAVAJIGI);
 
-        // then
-        assertThat(A1.isDeleted()).isEqualTo(deleted);
+        //then
+        assertTrue(A1.isDeleted());
+    }
+
+    @Test
+    @DisplayName("본인이 작성한 답변이 아니면 toDeleted() 메소드 결과로 CannotDeleteException 이 발생한다.")
+    void public_method_13() {
+        // given & when & then
+        assertThatThrownBy(() -> A1.toDeleted(UserTest.SANJIGI))
+            .isInstanceOf(CannotDeleteException.class);
     }
 }
