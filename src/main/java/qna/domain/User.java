@@ -30,8 +30,6 @@ public class User extends Auditing {
     @Column(columnDefinition = "varchar(20)", unique = true)
     private String userId;
 
-    public User() {
-    }
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
@@ -43,6 +41,9 @@ public class User extends Auditing {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    protected User() {
     }
 
     public void update(User loginUser, User target) {

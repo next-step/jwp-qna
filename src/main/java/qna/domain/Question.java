@@ -28,7 +28,7 @@ public class Question extends Auditing {
     @Column
     private Long writerId;
 
-    public Question() {
+    protected Question() {
     }
 
     public Question(String title, String contents) {
