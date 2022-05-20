@@ -104,16 +104,18 @@ alter table question
 ```
 
 #### 구현 기능
-- [ ] 연관 관계 매핑
+- [x] 연관 관계 매핑
   - [x] Answer - Question
   - [x] Answer - User
-  - [ ] DeleteHistory - User
+  - [x] DeleteHistory - User
   - [x] Question - User
-- [ ] 리포지토리 테스트 작성
+- [x] 리포지토리 테스트 작성
   - [x] Answer - Question
   - [x] Answer - User
-  - [ ] DeleteHistory - User
-  - [ ] Question - User
-- [ ] 도메인 테스트 작성
+  - [x] DeleteHistory - User
+  - [x] Question - User
+- [x] 도메인 테스트 작성
   - [x] Answer - Question
   - [x] Answer - User
+  - [x] DeleteHistory - User
+  - [x] Question - User
