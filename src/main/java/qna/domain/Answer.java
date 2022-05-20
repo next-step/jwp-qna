@@ -1,18 +1,29 @@
 package qna.domain;
 
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
-
-public class Answer {
+@Entity
+@Table(name = "answer")
+public class Answer extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long writerId;
     private Long questionId;
     private String contents;
     private boolean deleted = false;
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer() {
+    }
+
+    Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
 
@@ -88,6 +99,8 @@ public class Answer {
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
+                ", createdAt=" + super.getCreatedAt() +
+                ", modifiedAt=" + super.getModifiedAt() +
                 '}';
     }
 }
