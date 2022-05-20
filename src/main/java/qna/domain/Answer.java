@@ -118,10 +118,14 @@ public class Answer extends BaseTime {
                 '}';
     }
 
-    public void delete(User questionWriter) throws CannotDeleteException {
+    public boolean delete(User questionWriter) throws CannotDeleteException {
         if (!writer.equals(questionWriter)){
             throw new CannotDeleteException("[ERROR] 다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
+        if(isDeleted()){
+            return false;
+        }
         this.deleted = true;
+        return true;
     }
 }
