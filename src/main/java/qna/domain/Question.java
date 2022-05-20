@@ -17,7 +17,8 @@ import qna.domain.base.BaseEntity;
 @Entity
 public class Question extends BaseEntity {
 
-    public static final String NO_AUTHORITY_ERROR = "권한이 없습니다.";
+    private static final String NO_AUTHORITY_ERROR = "질문을 삭제할 권한이 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -71,7 +72,6 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException(NO_AUTHORITY_ERROR);
         }
     }
-
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);

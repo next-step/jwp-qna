@@ -19,6 +19,8 @@ import qna.domain.base.BaseEntity;
 @Entity
 public class Answer extends BaseEntity {
 
+    private static final String MATCHING_WRITER_ERROR = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -117,7 +119,7 @@ public class Answer extends BaseEntity {
 
     private void validateAuthority(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("작성자가 달라서 지울 수 없습니다.");
+            throw new CannotDeleteException(MATCHING_WRITER_ERROR);
         }
     }
 }
