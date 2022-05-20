@@ -10,7 +10,7 @@
 - 질문과 답변 삭제 이력에 대한 정보를 DeleteHistory를 활용해 남긴다.
 
 ### 구현 사항
-- [ ] Question, Answer 간 양방향 연관관계를 매핑 한다.
+- [x] Question, Answer 간 양방향 연관관계를 매핑 한다.
 - [ ] Question에 Answer를 등록 할 수 있다.
 - [ ] loginUser 가 Question 의 writer와 같은지 검증
 - [ ] loginUser 가 Answer 의 writer와 같은지 검증

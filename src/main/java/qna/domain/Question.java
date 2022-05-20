@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import qna.domain.base.BaseEntity;
 
 @Entity
@@ -24,6 +26,9 @@ public class Question extends BaseEntity {
 
     @Lob
     private String contents;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
