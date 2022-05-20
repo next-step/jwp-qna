@@ -224,5 +224,5 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
   - [x] 서비스 레이어링 리팩토링
   - [x] 불필요한 메소드 정리
 - STEP2 리뷰 확인
-  - [ ] 리뷰 사항 반영
+  - [x] 리뷰 사항 반영
 ---

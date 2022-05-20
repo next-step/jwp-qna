@@ -31,7 +31,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("영속 상태의 동일성 보장 검증")
     void verifyEntityPrimaryCacheSave() {
-        initUserAndQuestion();
+        initUserAndQuestionSetting();
         DeleteHistory expected = deleteHistoryRepository.save(deleteHistory);
         Optional<DeleteHistory> actual = deleteHistoryRepository.findById(expected.getId());
 
@@ -44,7 +44,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("준영속 상태의 동일성 보장 검증")
     void verifyEntityDatabaseSave() {
-        initUserAndQuestion();
+        initUserAndQuestionSetting();
         DeleteHistory expected = deleteHistoryRepository.save(deleteHistory);
         entityFlushAndClear();
         Optional<DeleteHistory> actual = deleteHistoryRepository.findById(expected.getId());
@@ -55,7 +55,7 @@ class DeleteHistoryRepositoryTest {
         );
     }
 
-    private void initUserAndQuestion() {
+    private void initUserAndQuestionSetting() {
         User mond = userRepository.findByUserId(MOND.getUserId())
                 .orElseGet(() -> userRepository.save(MOND));
         Question question = questionRepository.findById(Q1.getId())

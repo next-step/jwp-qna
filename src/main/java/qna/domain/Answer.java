@@ -72,7 +72,7 @@ public class Answer extends BaseEntity {
     public void mappingQuestion(Question question) {
         this.question = question;
         if (!question.getAnswers().contains(this)) {
-            question.getAnswers().add(this);
+            question.addAnswer(this);
         }
     }
 
