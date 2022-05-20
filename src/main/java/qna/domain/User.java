@@ -12,7 +12,7 @@ import java.util.Objects;
 
 @Entity
 @Table
-public class User extends Auditing {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id

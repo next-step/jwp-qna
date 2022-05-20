@@ -15,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Table
-public class Question extends Auditing {
+public class Question extends BaseEntity {
 
     @OneToMany(mappedBy = "question")
     private final List<Answer> answers = new ArrayList<>();

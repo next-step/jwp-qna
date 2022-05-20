@@ -10,14 +10,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.Table;
 import javax.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
 @Table
-public class Answer extends Auditing {
+public class Answer extends BaseEntity {
 
     @Id
     @Column(nullable = false)
