@@ -1,7 +1,10 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -25,7 +28,7 @@ public class DeleteHistory {
 
     @ManyToOne
     @JoinColumn(name = "deleted_by_id")
-    private User user;
+    private User deleter;
 
     @Column
     @CreatedDate
@@ -34,12 +37,35 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(DeleteHistoryContent deleteHistoryContent, User writer) {
-        if (Objects.isNull(writer)) {
+    public DeleteHistory(DeleteHistoryContent deleteHistoryContent, User deleter) {
+        if (Objects.isNull(deleter)) {
             throw new UnAuthorizedException();
         }
         this.deleteHistoryContent = deleteHistoryContent;
-        this.user = writer;
+        this.deleter = deleter;
+    }
+
+    public static List<DeleteHistory> mergeQuestionAndLinkedAnswer(Question question, Answers answers) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(mergeQuestion(question));
+        deleteHistories.addAll(mergeAnswers(answers));
+        return deleteHistories;
+    }
+
+    private static DeleteHistory mergeQuestion(Question question) {
+        question.changeDeleteStatus();
+        return new DeleteHistory(DeleteHistoryContent.removeQuestion(question), question.getWriter());
+    }
+
+    private static List<DeleteHistory> mergeAnswers(Answers answers) {
+        return answers.list().stream()
+                .map(DeleteHistory::mergeAnswer)
+                .collect(Collectors.toList());
+    }
+
+    private static DeleteHistory mergeAnswer(Answer answer) {
+        answer.changeDeleteStatus();
+        return new DeleteHistory(DeleteHistoryContent.removeAnswer(answer), answer.getWriter());
     }
 
     public Long getId() {
@@ -51,7 +77,7 @@ public class DeleteHistory {
     }
 
     public User getDeleter() {
-        return user;
+        return deleter;
     }
 
     public LocalDateTime getCreateDate() {
@@ -63,7 +89,7 @@ public class DeleteHistory {
         return "DeleteHistory{" +
                 "id=" + id +
                 ", deleteHistoryContent=" + deleteHistoryContent +
-                ", user=" + user +
+                ", deleter=" + deleter +
                 ", createDate=" + createDate +
                 '}';
     }
@@ -78,12 +104,12 @@ public class DeleteHistory {
         }
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) && Objects.equals(deleteHistoryContent,
-                that.deleteHistoryContent) && Objects.equals(user, that.user) && Objects.equals(
+                that.deleteHistoryContent) && Objects.equals(deleter, that.deleter) && Objects.equals(
                 createDate, that.createDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, deleteHistoryContent, user, createDate);
+        return Objects.hash(id, deleteHistoryContent, deleter, createDate);
     }
 }

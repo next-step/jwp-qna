@@ -1,18 +1,15 @@
 package qna.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import qna.exception.UnAuthorizedException;
-
-import java.util.Objects;
 import qna.common.BaseEntity;
 
 @Entity
 public class User extends BaseEntity {
-    public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,40 +40,6 @@ public class User extends BaseEntity {
         this.password = password;
         this.name = name;
         this.email = email;
-    }
-
-    public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException();
-        }
-
-        this.name = target.name;
-        this.email = target.email;
-    }
-
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
-    }
-
-    public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
-    }
-
-    public boolean equalsNameAndEmail(User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
-
-        return name.equals(target.name) &&
-                email.equals(target.email);
-    }
-
-    public boolean isGuestUser() {
-        return false;
     }
 
     public Long getId() {
@@ -139,12 +102,5 @@ public class User extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, userId, password, name, email);
-    }
-
-    private static class GuestUser extends User {
-        @Override
-        public boolean isGuestUser() {
-            return true;
-        }
     }
 }

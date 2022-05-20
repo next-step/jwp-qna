@@ -43,16 +43,8 @@ public class Answer extends BaseEntity {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
+        nullCheckUserAndQuestion(writer, question);
         this.id = id;
-
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
-
         this.writer = writer;
         this.question = question;
         this.contents = contents;
@@ -76,10 +68,10 @@ public class Answer extends BaseEntity {
         return question;
     }
 
-    public void setQuestion(Question question) {
+    public void mappingQuestion(Question question) {
         this.question = question;
-        if (!this.question.getAnswers().contains(this)) {
-            this.question.getAnswers().add(this);
+        if (!question.getAnswers().contains(this)) {
+            question.getAnswers().add(this);
         }
     }
 
@@ -87,12 +79,22 @@ public class Answer extends BaseEntity {
         return contents;
     }
 
-    public void delete() {
+    public void changeDeleteStatus() {
         this.deleted = true;
     }
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    private void nullCheckUserAndQuestion(User writer, Question question) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
+
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
     }
 
     @Override

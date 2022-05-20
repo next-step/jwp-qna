@@ -37,7 +37,7 @@ class AnswerRepositoryTest {
         User srugi = userRepository.findByUserId(SRUGI.getUserId())
                 .orElseGet(() -> userRepository.save(SRUGI));
 
-        Question question = new Question("question title", "question contents", mond);
+        Question question = new Question("question title", "question contents").writeBy(mond);
         Question actualQuestion = questionRepository.save(question);
         answer = new Answer(srugi, actualQuestion, "answer contents");
     }
@@ -72,7 +72,7 @@ class AnswerRepositoryTest {
     @DisplayName("엔티티 컨텐츠가 반영되는지 검증")
     void verifyUpdateEntity() {
         Answer expected = answerRepository.save(answer);
-        expected.delete();
+        expected.changeDeleteStatus();
         entityFlushAndClear();
         Optional<Answer> actual = answerRepository.findById(expected.getId());
 
@@ -98,7 +98,7 @@ class AnswerRepositoryTest {
     @DisplayName("저장 및 논리 삭제 후 해당 id로 검색")
     void sandAndLogicalDeleteThenFindById() {
         Answer expected = answerRepository.save(answer);
-        expected.delete();
+        expected.changeDeleteStatus();
         entityFlushAndClear();
         Optional<Answer> actualOfFindById = answerRepository.findById(expected.getId());
         Optional<Answer> actualOfFindByIdAndDeletedFalse = answerRepository.findByIdAndDeletedFalse(expected.getId());

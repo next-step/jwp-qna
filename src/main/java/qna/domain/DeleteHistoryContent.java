@@ -32,14 +32,6 @@ public class DeleteHistoryContent {
         return new DeleteHistoryContent(ContentType.ANSWER, answer.getId());
     }
 
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public Long getContentId() {
-        return contentId;
-    }
-
     @Override
     public String toString() {
         return "DeleteHistoryContent{" +

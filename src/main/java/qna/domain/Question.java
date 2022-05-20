@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.util.Objects;
+import java.util.stream.Stream;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -50,11 +51,6 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Question(String title, String contents, User writer) {
-        this(null, title, contents);
-        this.writer = writer;
-    }
-
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
@@ -69,8 +65,14 @@ public class Question extends BaseEntity {
     public void addAnswer(Answer answer) {
         this.answers.add(answer);
         if (answer.getQuestion() != this) {
-            answer.setQuestion(this);
+            answer.mappingQuestion(this);
         }
+    }
+
+    public DeleteHistories toDeleteHistories(User loginUser) throws CannotDeleteException {
+        validateRemovable(loginUser);
+        this.answers.validateExistOtherAnswer(loginUser);
+        return new DeleteHistories(DeleteHistory.mergeQuestionAndLinkedAnswer(this, this.getAnswers()));
     }
 
     public Answers getAnswers() {
@@ -79,10 +81,6 @@ public class Question extends BaseEntity {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -105,7 +103,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public void changeDeleteStatus() {
         this.deleted = true;
     }
 
