@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,7 +15,19 @@ public class DeleteHistories {
         return new DeleteHistories(elements);
     }
 
+    public static DeleteHistories empty() {
+        return new DeleteHistories(new ArrayList<>());
+    }
+
     public List<DeleteHistory> findReadOnlyElements() {
         return Collections.unmodifiableList(this.elements);
+    }
+
+    public void add(DeleteHistory deleteHistory) {
+        this.elements.add(deleteHistory);
+    }
+
+    public void merge(DeleteHistories deleteHistories) {
+        this.elements.addAll(deleteHistories.findReadOnlyElements());
     }
 }

@@ -1,9 +1,9 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
@@ -41,11 +41,11 @@ class AnswersTest {
         answers.add(AnswerTest.A1);
 
         // when
-        List<DeleteHistory> deleteHistories = answers.deleteAll(UserTest.JAVAJIGI);
+        DeleteHistories deleteHistories = answers.deleteAll(UserTest.JAVAJIGI);
 
         // then
         assertAll(
-            () -> assertThat(deleteHistories).hasSize(2)
+            () -> assertThat(deleteHistories.findReadOnlyElements()).hasSize(2)
         );
     }
 }

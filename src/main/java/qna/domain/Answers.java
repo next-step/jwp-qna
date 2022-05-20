@@ -24,12 +24,12 @@ public class Answers {
         return new Answers(new ArrayList<>());
     }
 
-    public List<DeleteHistory> deleteAll(User owner) throws CannotDeleteException {
+    public DeleteHistories deleteAll(User owner) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : this.elements) {
             deleteHistories.add(answer.toDeleted(owner));
         }
-        return deleteHistories;
+        return DeleteHistories.of(deleteHistories);
     }
 
     public void add(Answer elements) {
