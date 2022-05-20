@@ -1,11 +1,13 @@
 package qna.question.repository;
 
 import config.annotation.LocalDataJpaConfig;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import qna.question.domain.Answer;
 import qna.question.domain.Question;
 import qna.user.domain.User;
+import qna.user.repository.UserRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,8 +21,20 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
-    private final User writer = new User(1L, "userId", "password", "name", "email");
-    private final Question question = new Question(1L, "title", "content");
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private User writer;
+    private Question question;
+
+    @BeforeEach
+    void setUp() {
+        writer = userRepository.save(new User("userId", "password", "name", "email"));
+        question = questionRepository.save(new Question("title", "content"));
+    }
 
     @Test
     void 삭제_상태를_제외한_질문_답변_조회_테스트() {
@@ -31,7 +45,7 @@ class AnswerRepositoryTest {
                 new Answer(writer, question, "content4")
         ));
 
-        List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+        List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(1L);
 
         assertThat(result.size()).isGreaterThanOrEqualTo(result.size());
         for (Answer answer : answers) {
@@ -48,8 +62,8 @@ class AnswerRepositoryTest {
 
         assertThat(result.isPresent()).isTrue();
         assertThat(result.get().getId()).isEqualTo(savedAnswer.getId());
-        assertThat(result.get().getWriterId()).isEqualTo(savedAnswer.getWriterId());
-        assertThat(result.get().getQuestionId()).isEqualTo(savedAnswer.getQuestionId());
+        assertThat(result.get().getWriter()).isEqualTo(savedAnswer.getWriter());
+        assertThat(result.get().getQuestion()).isEqualTo(savedAnswer.getQuestion());
         assertThat(result.get().getContents()).isEqualTo(savedAnswer.getContents());
     }
 
