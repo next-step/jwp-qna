@@ -74,7 +74,5 @@ public class AnswerTest {
 
         final Answer expected = answerRepository.findById(answer.getId()).get();
         assertThat(expected.isDeleted()).isTrue();
-
-
     }
 }
