@@ -36,7 +36,7 @@ class AnswersTest {
 
     @DisplayName("질문 작성자와 답변들의 작성자가 모두 동일할 경우 전체 답변을 삭제한다.")
     @Test
-    void deleteAll()  {
+    void deleteAll() throws CannotDeleteException {
         long questionId = 4L;
         long writerId = 3L;
         Question question = questionRepository.findById(questionId).get();

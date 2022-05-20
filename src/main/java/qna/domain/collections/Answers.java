@@ -7,6 +7,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import qna.domain.Answer;
 import qna.domain.User;
+import qna.exception.CannotDeleteException;
 
 @Embeddable
 public class Answers {
@@ -39,7 +40,9 @@ public class Answers {
         return deletedCount;
     }
 
-    public void deleteAll(User questionWriter) {
-
+    public void deleteAll(User questionWriter) throws CannotDeleteException {
+        for (Answer answer : answers){
+            answer.delete(questionWriter);
+        }
     }
 }
