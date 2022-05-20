@@ -21,25 +21,6 @@ public class Answers {
         answers.add(answer);
     }
 
-    public boolean hasAnswer(){
-        return !hasNotAnswer();
-    }
-
-    private boolean hasNotAnswer() {
-        int deletedCount = NONE;
-        for (Answer answer : answers) {
-            deletedCount = getNonDeletedCount(deletedCount, answer);
-        }
-        return deletedCount == answers.size();
-    }
-
-    private int getNonDeletedCount(int deletedCount, Answer answer) {
-        if (answer.isDeleted()) {
-            deletedCount++;
-        }
-        return deletedCount;
-    }
-
     public void deleteAll(User questionWriter) throws CannotDeleteException {
         for (Answer answer : answers){
             answer.delete(questionWriter);

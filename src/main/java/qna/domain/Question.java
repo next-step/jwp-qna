@@ -123,9 +123,7 @@ public class Question extends BaseTime {
         if(!writer.equals(loginUser)){
             throw new CannotDeleteException("[ERROR] 작성자가 아닌 경우 삭제할 수 없습니다.");
         }
-        if(answers.hasAnswer()){
-            throw new CannotDeleteException("[ERROR] 답변이 있는 경우 삭제할 수 없습니다.");
-        }
+        answers.deleteAll(writer);
         this.deleted = true;
     }
 
