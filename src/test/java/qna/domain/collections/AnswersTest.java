@@ -44,7 +44,6 @@ class AnswersTest {
         Answers answers = question.getAnswers();
 
         answers.deleteAll(writer);
-
         entityManager.flush();
         entityManager.clear();
 
