@@ -31,9 +31,6 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    List<Answer> answers = new ArrayList<>();
-
     protected Question() {}
 
     public Question(String title, String contents) {
@@ -53,13 +50,6 @@ public class Question extends BaseEntity {
 
     public boolean isOwner(User writer) {
         return this.writer.getId().equals(writer.getId());
-    }
-
-    public void addAnswer(Answer answer) {
-        this.answers.add(answer);
-        if (answer.getQuestion() != this) {
-            answer.setQuestion(this);
-        }
     }
 
     public Long getId() {
@@ -104,10 +94,6 @@ public class Question extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
     }
 
     @Override

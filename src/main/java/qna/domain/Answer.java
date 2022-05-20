@@ -87,13 +87,7 @@ public class Answer extends BaseEntity {
     }
 
     public void setQuestion(Question question) {
-        if (this.question != null) {
-            this.question.getAnswers().remove(this);
-        }
         this.question = question;
-        if (!question.getAnswers().contains(this)) {
-            question.getAnswers().add(this);
-        }
     }
 
     public String getContents() {
