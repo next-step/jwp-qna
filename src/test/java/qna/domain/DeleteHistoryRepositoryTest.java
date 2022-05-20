@@ -31,7 +31,7 @@ class DeleteHistoryRepositoryTest {
         User mond = userRepository.findByUserId(MOND.getUserId())
                 .orElseGet(() -> userRepository.save(MOND));
 
-        deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, mond, LocalDateTime.now());
+        deleteHistory = new DeleteHistory(new DeleteHistoryContent(ContentType.QUESTION, 1L), mond, LocalDateTime.now());
     }
 
     @Test
@@ -67,8 +67,7 @@ class DeleteHistoryRepositoryTest {
     private void verifyEqualDeleteHistoryFields(DeleteHistory dh1, DeleteHistory dh2) {
         assertAll(
                 () -> assertThat(dh1.getId()).isEqualTo(dh2.getId()),
-                () -> assertThat(dh1.getContentId()).isEqualTo(dh2.getContentId()),
-                () -> assertThat(dh1.getContentType()).isEqualTo(dh2.getContentType()),
+                () -> assertThat(dh1.contentInformation()).isEqualTo(dh2.contentInformation()),
                 () -> assertThat(dh1.getDeleter()).isEqualTo(dh2.getDeleter()),
                 () -> assertThat(dh1.getCreateDate()).isEqualTo(dh2.getCreateDate())
         );

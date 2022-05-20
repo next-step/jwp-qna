@@ -3,9 +3,8 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,12 +20,8 @@ public class DeleteHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private ContentType contentType;
-
-    @Column
-    private Long contentId;
+    @Embedded
+    private DeleteHistoryContent deleteHistoryContent;
 
     @ManyToOne
     @JoinColumn(name = "deleted_by_id")
@@ -39,12 +34,11 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deleter, LocalDateTime createDate) {
+    public DeleteHistory(DeleteHistoryContent deleteHistoryContent, User deleter, LocalDateTime createDate) {
         if (Objects.isNull(deleter)) {
             throw new UnAuthorizedException();
         }
-        this.contentType = contentType;
-        this.contentId = contentId;
+        this.deleteHistoryContent = deleteHistoryContent;
         this.user = deleter;
         this.createDate = createDate;
     }
@@ -53,12 +47,8 @@ public class DeleteHistory {
         return id;
     }
 
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public Long getContentId() {
-        return contentId;
+    public DeleteHistoryContent contentInformation() {
+        return this.deleteHistoryContent;
     }
 
     public User getDeleter() {
@@ -73,8 +63,7 @@ public class DeleteHistory {
     public String toString() {
         return "DeleteHistory{" +
                 "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
+                ", deleteHistoryContent=" + deleteHistoryContent +
                 ", user=" + user +
                 ", createDate=" + createDate +
                 '}';
@@ -89,13 +78,13 @@ public class DeleteHistory {
             return false;
         }
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(
-                contentId, that.contentId) && Objects.equals(user, that.user) && Objects.equals(
+        return Objects.equals(id, that.id) && Objects.equals(deleteHistoryContent,
+                that.deleteHistoryContent) && Objects.equals(user, that.user) && Objects.equals(
                 createDate, that.createDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, user, createDate);
+        return Objects.hash(id, deleteHistoryContent, user, createDate);
     }
 }

@@ -31,7 +31,7 @@ public class Question extends BaseEntity {
     private User user;
 
     @Embedded
-    private Answers answers;
+    private Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
