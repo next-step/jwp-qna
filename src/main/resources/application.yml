@@ -11,4 +11,4 @@ spring:
     properties:
       dialect: org.hibernate.dialect.MySQL57Dialect
       hibernate:
-        format:_sql: true
+        format_sql: true
