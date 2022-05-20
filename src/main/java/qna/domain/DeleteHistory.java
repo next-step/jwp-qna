@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import qna.domain.collections.DeleteHistories;
 
 @Entity
 public class DeleteHistory {
@@ -36,6 +37,10 @@ public class DeleteHistory {
     }
 
     protected DeleteHistory() {
+    }
+
+    public static DeleteHistories createDeleteHistories(Question question) {
+        return new DeleteHistories();
     }
 
     public void setDeletedBy(User deletedBy) {
