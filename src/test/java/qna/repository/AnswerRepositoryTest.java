@@ -1,4 +1,4 @@
-package qna.domain.repository;
+package qna.repository;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -6,13 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
 import qna.domain.AnswerTest;
-import qna.repository.AnswerRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -26,11 +24,7 @@ class AnswerRepositoryTest {
 
         List<Answer> results = answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestionId());
 
-        assertAll(
-                () -> assertThat(results).hasSize(1),
-                () -> assertThat(results).contains(answer),
-                () -> assertThat(results.get(0)).isSameAs(answer)
-        );
+        assertThat(results.get(0)).isSameAs(answer);
     }
 
     @Test

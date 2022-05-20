@@ -1,4 +1,4 @@
-package qna.domain.repository;
+package qna.repository;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Question;
 import qna.domain.QuestionTest;
-import qna.repository.QuestionRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,11 +24,7 @@ class QuestionRepositoryTest {
 
         List<Question> results = questionRepository.findByDeletedFalse();
 
-        Assertions.assertAll(
-                () -> assertThat(results).hasSize(1),
-                () -> assertThat(results).contains(question),
-                () -> assertThat(results.get(0)).isSameAs(question)
-        );
+        assertThat(results.get(0)).isSameAs(question);
     }
 
     @Test
