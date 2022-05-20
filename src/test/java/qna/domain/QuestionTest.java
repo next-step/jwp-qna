@@ -1,6 +1,8 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static qna.domain.AnswerTest.A2;
+import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
 import org.junit.jupiter.api.DisplayName;
@@ -19,4 +21,12 @@ public class QuestionTest {
         ).isInstanceOf(CannotDeleteException.class);
     }
 
+    @Test
+    @DisplayName("Question 작성자와 Answer 작성자가 다르면 Question 삭제 시 예외 발생")
+    void deleteTest2() {
+        Q1.addAnswer(A2);
+        assertThatThrownBy(
+                () -> Q1.delete(JAVAJIGI)
+        ).isInstanceOf(CannotDeleteException.class);
+    }
 }

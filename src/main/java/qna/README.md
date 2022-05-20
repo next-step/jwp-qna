@@ -13,9 +13,9 @@
 - [x] Question, Answer 간 양방향 연관관계를 매핑 한다.
 - [x] Question 삭제 시, loginUser 가 Question 의 writer와 다르면 예외 처리
 - [x] 검증 후 deleted 를 true로 변경(Question)
-- [ ] loginUser 가 Answer 의 writer와 같은지 검증
-- [ ] 검증 후 deleted 를 true로 변경(Answer)
-- [ ] Question 삭제 시, 다른 사람이 해당 Question에 Answer 등록 했으면 예외 처리
+- [x] loginUser 가 Answer 의 writer와 같은지 검증
+- [x] 검증 후 deleted 를 true로 변경(Answer)
+- [X] Question 삭제 시, 다른 사람이 해당 Question에 Answer 등록 했으면 예외 처리
 - [ ] 유효한 Question과 Answer를 이용해 DeleteHistory를 만든다.
 
 ## Step2 요구 사항
