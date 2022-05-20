@@ -30,16 +30,16 @@ public class QuestionTest {
 
     @Test
     void 질문_조회() {
-        userRepository.save(UserTest.JAVAJIGI);
-        Question actualQuestion = questionRepository.save(new Question("제목", "내용").writeBy(UserTest.JAVAJIGI));
+        final User user1 = userRepository.save(new User("donghee.han", "password", "donghee", "donghee@slipp.net"));
+        final Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(user1));
 
-        Question expected = questionRepository.findById(actualQuestion.getId()).get();
-        assertThat(expected).isNotNull();
-        assertThat(expected.getTitle()).isEqualTo("제목");
-        assertThat(expected.getContents()).isEqualTo("내용");
+        Question question2 = questionRepository.findById(question1.getId()).get();
+        assertThat(question2).isNotNull();
+        assertThat(question2.getTitle()).isEqualTo("제목");
+        assertThat(question2.getContents()).isEqualTo("내용");
 
-        User actual = userRepository.findById(expected.getWriterId()).get();
-        assertThat(actual).isEqualTo(UserTest.JAVAJIGI);
+        User user2 = userRepository.findById(question2.getWriterId()).get();
+        assertThat(user2).isEqualTo(user1);
     }
 
     @Test
