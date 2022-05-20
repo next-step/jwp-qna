@@ -27,11 +27,11 @@ public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
-    @DisplayName("등록된 질문을 삭제한다.(작성자가 본인일 경우)")
+    @DisplayName("작성자 본인이 등록한 질문을 삭제한다.(답변없는 경우)")
     @Test
-    void delete() throws CannotDeleteException {
-        long questionId = 4L;
-        long writerId = 3L;
+    void delete_no_answer() throws CannotDeleteException {
+        long questionId = 5L;
+        long writerId = 5L;
         Question question = questionRepository.findById(questionId).get();
         User writer = userRepository.findById(writerId).get();
 
