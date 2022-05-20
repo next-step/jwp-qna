@@ -32,7 +32,7 @@ public class Question extends BaseEntity {
     private String contents;
 
     @Embedded
-    private Answers answers = Answers.createNewInstance();
+    private Answers answers = Answers.createEmptyNewInstance();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))

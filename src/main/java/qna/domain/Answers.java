@@ -10,18 +10,13 @@ import qna.CannotDeleteException;
 public class Answers {
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers;
-
-    private Answers(List<Answer> answers) {
-        this.answers = answers;
-    }
+    private List<Answer> answers = new ArrayList<>();
 
     protected Answers() {
-
     }
 
-    public static Answers createNewInstance() {
-        return new Answers(new ArrayList<>());
+    public static Answers createEmptyNewInstance() {
+        return new Answers();
     }
 
     public void addAnswer(Answer answer) {

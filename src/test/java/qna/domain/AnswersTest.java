@@ -17,7 +17,7 @@ class AnswersTest {
     @Test
     @DisplayName("Answers add 테스트")
     void inputTest() {
-        Answers answers = Answers.createNewInstance();
+        Answers answers = Answers.createEmptyNewInstance();
         answers.addAnswer(A1);
         answers.addAnswer(A2);
 
@@ -27,7 +27,7 @@ class AnswersTest {
     @Test
     @DisplayName("Answers 내에 작성작가 아닌 다른 사람이 삭제시 예외 처리")
     void deleteAllTest() {
-        Answers answers = Answers.createNewInstance();
+        Answers answers = Answers.createEmptyNewInstance();
         answers.addAnswer(A1);
         answers.addAnswer(A2);
 
@@ -39,7 +39,7 @@ class AnswersTest {
     @Test
     @DisplayName("Answers deleteAll 메소드는 DeleteHistory 리스트를 반환한다.")
     void deleteAllTest2() throws CannotDeleteException {
-        Answers answers = Answers.createNewInstance();
+        Answers answers = Answers.createEmptyNewInstance();
         answers.addAnswer(A1);
 
         List<DeleteHistory> deleteHistories = answers.deleteAll(JAVAJIGI);
