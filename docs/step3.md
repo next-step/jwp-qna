@@ -94,6 +94,6 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
 ## 기능 목록
 
 - [x] 원시값 포장/일급컬렉션 사용
-- [ ] QnaService에서 Question 분리
+- [x] QnaService에서 Question 분리
 - [ ] QnaService에서 Answer 분리
 - [ ] QnaService에서 DeleteHistory 분리
