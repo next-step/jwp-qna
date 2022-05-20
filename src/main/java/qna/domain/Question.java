@@ -1,9 +1,8 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import qna.common.BaseEntity;
 
 @Entity
@@ -32,8 +30,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id")
     private User user;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -72,8 +70,8 @@ public class Question extends BaseEntity {
         }
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public Answers getAnswers() {
+        return this.answers;
     }
 
     public Long getId() {
