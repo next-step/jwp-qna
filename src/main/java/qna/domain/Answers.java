@@ -29,10 +29,11 @@ public class Answers {
     }
 
     public List<DeleteHistory> removeAll(User loginUser) {
+        final List<DeleteHistory> deleteHistories = new ArrayList<>(answers.size());
         for (Answer answer : answers) {
-            answer.delete(loginUser);
+            deleteHistories.add(answer.delete(loginUser));
         }
-        return null;
+        return deleteHistories;
     }
 
     public List<Answer> get() {
