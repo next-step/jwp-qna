@@ -16,4 +16,12 @@ public class QuestionTest {
         // then
         assertThat(result.getWriterId()).isEqualTo(2L);
     }
+
+    @Test
+    void 내가_작성한_질문인지_확인한다() {
+        // when
+        boolean result = Q2.isOwner(UserTest.SANJIGI);
+        // then
+        assertThat(result).isTrue();
+    }
 }
