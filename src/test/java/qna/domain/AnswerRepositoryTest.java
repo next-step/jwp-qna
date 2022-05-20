@@ -72,14 +72,14 @@ class AnswerRepositoryTest {
     @DisplayName("엔티티 컨텐츠가 반영되는지 검증")
     void verifyUpdateEntity() {
         Answer expected = answerRepository.save(answer);
-        expected.setContents("mond");
+        expected.delete();
         entityFlushAndClear();
         Optional<Answer> actual = answerRepository.findById(expected.getId());
 
         assertAll(
                 () -> assertThat(actual).isPresent(),
                 () -> verifyEqualAnswerFields(actual.get(), expected),
-                () -> assertEquals("mond", actual.get().getContents())
+                () -> assertThat(actual.get().isDeleted()).isTrue()
         );
     }
 
