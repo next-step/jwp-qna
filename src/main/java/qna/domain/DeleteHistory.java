@@ -69,16 +69,8 @@ public class DeleteHistory {
         return contentType;
     }
 
-    public Long getContentId() {
-        return contentId;
-    }
-
     public Long getDeletedById() {
         return deletedBy.getId();
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
     }
 
     @Override
