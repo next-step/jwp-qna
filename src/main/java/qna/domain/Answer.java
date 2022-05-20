@@ -1,4 +1,4 @@
-package qna.domain.entity;
+package qna.domain;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -99,5 +99,29 @@ public class Answer extends BaseTimeEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Answer answer = (Answer) o;
+
+        if (deleted != answer.deleted) return false;
+        if (id != null ? !id.equals(answer.id) : answer.id != null) return false;
+        if (contents != null ? !contents.equals(answer.contents) : answer.contents != null) return false;
+        if (questionId != null ? !questionId.equals(answer.questionId) : answer.questionId != null) return false;
+        return writerId != null ? writerId.equals(answer.writerId) : answer.writerId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (contents != null ? contents.hashCode() : 0);
+        result = 31 * result + (questionId != null ? questionId.hashCode() : 0);
+        result = 31 * result + (writerId != null ? writerId.hashCode() : 0);
+        result = 31 * result + (deleted ? 1 : 0);
+        return result;
     }
 }

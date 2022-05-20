@@ -1,4 +1,4 @@
-package qna.domain.entity;
+package qna.domain;
 
 import javax.persistence.*;
 
