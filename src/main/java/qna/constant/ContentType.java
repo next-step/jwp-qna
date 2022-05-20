@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.constant;
 
 public enum ContentType {
     QUESTION, ANSWER
