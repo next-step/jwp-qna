@@ -5,9 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import java.util.List;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableJpaAuditing
@@ -53,29 +50,13 @@ public class QuestionTest {
     }
 
     @Test
-    void 질문_삭제_영속성_컨텍스트_DB() {
-        Question question = questionRepository.save(new Question("제목", "내용").writeBy(UserTest.SANJIGI));
-        List<Question> list = questionRepository.findByTitle("제목");
-        assertThat(list).hasSize(1);
+    void 질문_삭제() {
+        final Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(UserTest.SANJIGI));
 
-        questionRepository.delete(question);
-
-        // 영속성 컨텍스트에서 '쓰기 지연 저장소'에서 DB로 SQL 쿼리를 실행하도록 키가 아닌 Title로 한번 조회한다.
-        Question deleted = questionRepository.findByTitle("제목").get(0);
-
-        // Soft Delete가 정상 동작하여 deleted 컬럼이 true로 업데이트된다.
-        assertThat(deleted.isDeleted()).isTrue();
-    }
-
-    @Test
-    void 질문_삭제_영속성_컨텍스트() {
-        Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(UserTest.SANJIGI));
-
-        // Soft Delete로 deleted가 true가 되는 것을 기대한다.
         questionRepository.delete(question1);
+        questionRepository.flush();
 
-        // 하지만 영속성 컨텍스트에서 가져온 데이터가 존재하지 않는다.
-        Optional<Question> expected = questionRepository.findById(question1.getId());
-        assertThat(expected).isEmpty();
+        final Question expected = questionRepository.findById(question1.getId()).get();
+        assertThat(expected.isDeleted()).isTrue();
     }
 }
