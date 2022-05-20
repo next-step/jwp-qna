@@ -1,6 +1,8 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import qna.domain.collections.Answers;
 import qna.domain.collections.DeleteHistories;
 
 @Entity
@@ -29,6 +32,12 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
 
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+        this.deletedBy = deletedBy;
+    }
+
     public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
@@ -39,8 +48,13 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public static DeleteHistories createDeleteHistories(Question question) {
-        return new DeleteHistories();
+    public static DeleteHistories createDeleteHistories(Question question,Answers deletedAnswers) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION,question.getId(),question.getWriter()));
+        for (Answer answer : deletedAnswers.getAnswers()){
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER,answer.getId(),answer.getWriter()));
+        }
+        return new DeleteHistories(deleteHistories);
     }
 
     public void setDeletedBy(User deletedBy) {

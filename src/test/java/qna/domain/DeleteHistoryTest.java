@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.collections.Answers;
 import qna.domain.collections.DeleteHistories;
 import qna.domain.repository.QuestionRepository;
 import qna.exception.CannotDeleteException;
@@ -22,14 +23,15 @@ class DeleteHistoryTest {
     @DisplayName("질문 삭제(답변 포함)에 대한 히스토리 리스트를 생성한다.")
     @Test
     void createDeleteHistories() throws CannotDeleteException {
-        long questionId = 4L;
+        long questionId = 6L;
         Question question = questionRepository.findById(questionId).get();
         User writer = question.getWriter();
-        question.delete(writer);
+        Answers deletedAnswers = question.delete(writer);
 
-        DeleteHistories deleteHistories = DeleteHistory.createDeleteHistories(question);
+        DeleteHistories deleteHistories = DeleteHistory.createDeleteHistories(question,deletedAnswers);
+
         List<DeleteHistory> actual = deleteHistories.getDeleteHistories();
-        assertThat(actual).hasSize(3);
+        assertThat(actual).hasSize(2);
     }
 
 }
