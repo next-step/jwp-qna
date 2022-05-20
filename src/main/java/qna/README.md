@@ -16,6 +16,7 @@
 - [x] loginUser 가 Answer 의 writer와 같은지 검증
 - [x] 검증 후 deleted 를 true로 변경(Answer)
 - [X] Question 삭제 시, 다른 사람이 해당 Question에 Answer 등록 했으면 예외 처리
+- [ ] Answers 일급 객체화 
 - [ ] 유효한 Question과 Answer를 이용해 DeleteHistory를 만든다.
 
 ## Step2 요구 사항
