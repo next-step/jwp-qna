@@ -221,8 +221,8 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
   - [x] 객체 관계 구조 개선
     ![객체 관계구조](object_relationship_step3.jpeg)
 - 질문 삭제하기 리팩토링
-  - [ ] 서비스 레이어링 리팩토링
-  - [ ] 불필요한 메소드 정리
+  - [x] 서비스 레이어링 리팩토링
+  - [x] 불필요한 메소드 정리
 - STEP2 리뷰 확인
   - [ ] 리뷰 사항 반영
 ---

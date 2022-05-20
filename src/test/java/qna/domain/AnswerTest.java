@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.QuestionTest.Q2;
 import static qna.domain.UserTest.JAVAJIGI;
@@ -27,14 +28,16 @@ class AnswerTest {
     @DisplayName("유저 정보가 없으면 UnAuthorizedException이 발생")
     void inputNullUserThenUnAuthorizedException() {
         assertThatExceptionOfType(UnAuthorizedException.class)
-                .isThrownBy(() -> new Answer(null, Q1, "contents"));
+                .isThrownBy(() -> new Answer(null, Q1, "contents"))
+                .withMessage("유저 정보가 존재하지 않습니다.");
     }
 
     @Test
     @DisplayName("질문 정보가 없으면 NotFoundException이 발생")
     void inputNullQuestionThenNotFoundException() {
         assertThatExceptionOfType(NotFoundException.class)
-                .isThrownBy(() -> new Answer(JAVAJIGI, null, "contents"));
+                .isThrownBy(() -> new Answer(JAVAJIGI, null, "contents"))
+                .withMessage("질문 정보가 존재하지 않습니다.");
     }
 
     @Test
@@ -43,7 +46,10 @@ class AnswerTest {
         Answer answer = new Answer(JAVAJIGI, Q1, "contents");
         answer.mappingQuestion(Q2);
 
-        assertThat(answer.getQuestion()).isEqualTo(Q2);
+        assertAll(
+                () -> assertThat(answer.getQuestion()).isEqualTo(Q2),
+                () -> assertThat(Q2.getAnswers().contains(answer)).isTrue()
+        );
     }
 
     @Test

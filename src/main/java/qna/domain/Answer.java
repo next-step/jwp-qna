@@ -90,11 +90,11 @@ public class Answer extends BaseEntity {
 
     private void nullCheckUserAndQuestion(User writer, Question question) {
         if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException("유저 정보가 존재하지 않습니다.");
         }
 
         if (Objects.isNull(question)) {
-            throw new NotFoundException();
+            throw new NotFoundException("질문 정보가 존재하지 않습니다.");
         }
     }
 
