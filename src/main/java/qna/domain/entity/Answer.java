@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.entity;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
