@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableJpaAuditing
@@ -52,6 +54,8 @@ public class QuestionTest {
     @Test
     void 질문_삭제() {
         final Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(UserTest.SANJIGI));
+        final List<Question> list = questionRepository.findByDeletedFalse();
+        assertThat(list).hasSize(1);
 
         questionRepository.delete(question1);
         questionRepository.flush();

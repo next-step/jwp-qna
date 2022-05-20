@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,10 +66,15 @@ public class AnswerTest {
     @Test
     void 댓글_삭제() {
         final Answer answer = answerRepository.save(new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "댓글 작성"));
+        final Optional<Answer> find = answerRepository.findByIdAndDeletedFalse(answer.getId());
+        assertThat(find).isNotEmpty();
+
         answerRepository.delete(answer);
         answerRepository.flush();
 
         final Answer expected = answerRepository.findById(answer.getId()).get();
         assertThat(expected.isDeleted()).isTrue();
+
+
     }
 }
