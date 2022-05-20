@@ -9,6 +9,7 @@ import static qna.domain.UserTest.SANJIGI;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
@@ -43,6 +44,14 @@ class AnswerTest {
         answer.mappingQuestion(Q2);
 
         assertThat(answer.getQuestion()).isEqualTo(Q2);
+    }
+
+    @Test
+    @DisplayName("답변 작성자와 로그인한 유저가 다른 경우 삭제가 불가능해 CannotDeleteException이 발생")
+    void validateRemovableThenCannotDeleteException() {
+        Answer answer = new Answer(JAVAJIGI, Q1, "contents");
+        assertThatExceptionOfType(CannotDeleteException.class)
+                .isThrownBy(() -> answer.validateRemovable(SANJIGI));
     }
 
     @Test

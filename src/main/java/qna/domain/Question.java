@@ -71,7 +71,7 @@ public class Question extends BaseEntity {
 
     public DeleteHistories toDeleteHistories(User loginUser) throws CannotDeleteException {
         validateRemovable(loginUser);
-        this.answers.validateExistOtherAnswer(loginUser);
+        this.answers.validateExistAnswerByOtherUser(loginUser);
         return new DeleteHistories(DeleteHistory.mergeQuestionAndLinkedAnswer(this, this.getAnswers()));
     }
 

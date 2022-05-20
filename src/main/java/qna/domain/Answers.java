@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import qna.exception.CannotDeleteException;
@@ -29,9 +30,26 @@ public class Answers {
         return this.answers.contains(answer);
     }
 
-    public void validateExistOtherAnswer(User loginUser) throws CannotDeleteException {
+    public void validateExistAnswerByOtherUser(User loginUser) throws CannotDeleteException {
         for (Answer answer : this.answers) {
             answer.validateRemovable(loginUser);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Answers answers1 = (Answers) o;
+        return Objects.equals(answers, answers1.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(answers);
     }
 }
