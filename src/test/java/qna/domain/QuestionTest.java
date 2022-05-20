@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableJpaAuditing
@@ -23,52 +26,56 @@ public class QuestionTest {
     void 질문_등록() {
         Question question = new Question("제목", "내용").writeBy(UserTest.JAVAJIGI);
         Question saved = questionRepository.save(question);
-        assertThat(saved).isEqualTo(question);
+        assertThat(saved.getId()).isNotNull();
     }
 
     @Test
     void 질문_조회() {
-        User saved = userRepository.save(UserTest.JAVAJIGI);
-        Question savedQuestion = new Question("제목", "내용").writeBy(UserTest.JAVAJIGI);
-        questionRepository.save(savedQuestion);
+        userRepository.save(UserTest.JAVAJIGI);
+        Question actualQuestion = questionRepository.save(new Question("제목", "내용").writeBy(UserTest.JAVAJIGI));
 
-        Question foundQuestion = questionRepository.findById(savedQuestion.getId()).get();
-        assertThat(foundQuestion).isEqualTo(savedQuestion);
+        Question expected = questionRepository.findById(actualQuestion.getId()).get();
+        assertThat(expected).isNotNull();
+        assertThat(expected.getTitle()).isEqualTo("제목");
+        assertThat(expected.getContents()).isEqualTo("내용");
 
-        User foundUser = userRepository.findById(foundQuestion.getWriterId()).get();
-        assertThat(foundUser.getUserId()).isEqualTo(UserTest.JAVAJIGI.getUserId());
+        User actual = userRepository.findById(expected.getWriterId()).get();
+        assertThat(actual).isEqualTo(UserTest.JAVAJIGI);
     }
 
     @Test
     void 질문_수정() {
-        Question question = new Question("제목", "내용").writeBy(UserTest.JAVAJIGI);
-        questionRepository.save(question);
-        questionRepository.flush();
+        Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(UserTest.SANJIGI));
+        question1.updateTitle("수정 제목");
 
-        String expectedTitle = "제목 수정";
-        String expectedContents = "내용 수정";
-
-        question.setTitle(expectedTitle);
-        question.setContents(expectedContents);
-        questionRepository.save(question);
-        questionRepository.flush();
-
-        Question found = questionRepository.findById(question.getId()).get();
-        assertThat(found.getTitle()).isEqualTo(expectedTitle);
-        assertThat(found.getContents()).isEqualTo(expectedContents);
+        Question question2 = questionRepository.findByTitle("수정 제목").get(0);
+        assertThat(question2).isNotNull();
     }
 
     @Test
-    void 질문_삭제() {
-        Question question = new Question("제목", "내용").writeBy(UserTest.JAVAJIGI);
-        Question saved = questionRepository.save(question);
-        assertThat(saved.isDeleted()).isFalse();
-        questionRepository.flush();
+    void 질문_삭제_영속성_컨텍스트_DB() {
+        Question question = questionRepository.save(new Question("제목", "내용").writeBy(UserTest.SANJIGI));
+        List<Question> list = questionRepository.findByTitle("제목");
+        assertThat(list).hasSize(1);
 
-        questionRepository.delete(saved);
-        questionRepository.flush();
+        questionRepository.delete(question);
 
-        Question found = questionRepository.findById(saved.getId()).get();
-        assertThat(found.isDeleted()).isTrue();
+        // 영속성 컨텍스트에서 '쓰기 지연 저장소'에서 DB로 SQL 쿼리를 실행하도록 키가 아닌 Title로 한번 조회한다.
+        Question deleted = questionRepository.findByTitle("제목").get(0);
+
+        // Soft Delete가 정상 동작하여 deleted 컬럼이 true로 업데이트된다.
+        assertThat(deleted.isDeleted()).isTrue();
+    }
+
+    @Test
+    void 질문_삭제_영속성_컨텍스트() {
+        Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(UserTest.SANJIGI));
+
+        // Soft Delete로 deleted가 true가 되는 것을 기대한다.
+        questionRepository.delete(question1);
+
+        // 하지만 영속성 컨텍스트에서 가져온 데이터가 존재하지 않는다.
+        Optional<Question> expected = questionRepository.findById(question1.getId());
+        assertThat(expected).isEmpty();
     }
 }
