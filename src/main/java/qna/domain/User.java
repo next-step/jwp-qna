@@ -9,7 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 
 import java.util.Objects;
 import qna.domain.time.BaseTime;
