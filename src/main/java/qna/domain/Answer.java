@@ -20,7 +20,7 @@ public class Answer {
     @Lob
     private String contents;
     @Column(nullable = false)
-    private LocalDateTime createAt;
+    private LocalDateTime createAt = LocalDateTime.now();
     @Column(nullable = false)
     private boolean deleted = false;
     private Long questionId;
