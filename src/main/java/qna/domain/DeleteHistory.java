@@ -65,7 +65,7 @@ public class DeleteHistory {
         if (!(o instanceof DeleteHistory)) return false;
         DeleteHistory deleteHistory = (DeleteHistory) o;
         if (id != null && Objects.equals(id, deleteHistory.getId())) return true;
-        return Objects.equals(id, deleteHistory.getId()) && contentType == deleteHistory.getContentType() && Objects.equals(contentId, deleteHistory.getContentId()) && Objects.equals(deletedBy, deleteHistory.getDeletedBy()) && Objects.equals(createDate, deleteHistory.getCreateDate());
+        return Objects.equals(id, deleteHistory.getId()) && contentType == deleteHistory.getContentType() && Objects.equals(contentId, deleteHistory.getContentId()) && Objects.equals(deletedBy, deleteHistory.getDeletedBy()) && Objects.equals(createDate.getSecond(), deleteHistory.getCreateDate().getSecond());
     }
 
     @Override
