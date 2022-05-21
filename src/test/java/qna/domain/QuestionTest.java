@@ -27,9 +27,25 @@ class QuestionTest {
     }
 
     @Test
+    void 답변_삭제() throws CannotDeleteException {
+        question.writeBy(loginUser);
+        question.deleteBy(loginUser);
+        assertThat(question.isDeleted()).isTrue();
+    }
+
+    @Test
     void 다른_사람이_쓴_글_삭제_불가() {
         User otherUser = new User(2L, "geunhwanlee", "password", "gunan", "gunan@gmail.com");
         question.writeBy(otherUser);
+        assertThatThrownBy(() -> question.deleteBy(loginUser))
+                .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void 다른_사람이_쓴_답변_존재하면_삭제_불가() {
+        User otherUser = new User(2L, "geunhwanlee", "password", "gunan", "gunan@gmail.com");
+        question.writeBy(loginUser);
+        new Answer(1L, otherUser, question, "Answers Contents2");
         assertThatThrownBy(() -> question.deleteBy(loginUser))
                 .isInstanceOf(CannotDeleteException.class);
     }
