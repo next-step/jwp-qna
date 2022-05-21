@@ -5,21 +5,23 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Table(name = "delete_history")
 public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "content_type")
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
-    @Column(name = "CONTENT_ID")
+    @Column(name = "content_id")
     private Long contentId;
 
-    @Column(name = "DELETED_BY_ID")
+    @Column(name = "deleted_by_id")
     private Long deletedById;
 
-    @Column(name = "CREATE_DATE")
+    @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
     public DeleteHistory() {

@@ -1,12 +1,12 @@
 package qna.domain;
 
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "question")
 @SQLDelete(sql = "update question set deleted = true where id = ?")
 public class Question extends BaseEntity {
 
@@ -20,7 +20,7 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    @Column(name = "WRITER_ID")
+    @Column(name = "writer_id")
     private Long writerId;
 
     private boolean deleted = false;

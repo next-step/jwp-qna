@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "user")
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -13,7 +14,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "USER_ID", length = 20, unique = true, nullable = false)
+    @Column(name = "user_id", length = 20, unique = true, nullable = false)
     private String userId;
 
     @Column(length = 20, nullable = false)

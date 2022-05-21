@@ -1,5 +1,6 @@
 package qna.domain;
 
+import jdk.jfr.Name;
 import org.hibernate.annotations.SQLDelete;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -8,16 +9,17 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "answer")
 @SQLDelete(sql = "update answer set deleted = true where id = ?")
 public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "WRITER_ID")
+    @Column(name = "writer_id")
     private Long writerId;
 
-    @Column(name = "QUESTION_ID")
+    @Column(name = "question_id")
     private Long questionId;
 
     @Lob
