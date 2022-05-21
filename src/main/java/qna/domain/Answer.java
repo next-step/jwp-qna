@@ -59,15 +59,11 @@ public class Answer extends BaseTime {
         this.contents = contents;
     }
 
-    public boolean delete(User questionWriter) throws CannotDeleteException {
+    public void delete(User questionWriter) throws CannotDeleteException {
         if (writer.isNotSameUser(questionWriter)) {
             throw new CannotDeleteException("[ERROR] 다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
-        if (isDeleted()) {
-            return false;
-        }
         this.deleted = true;
-        return true;
     }
 
     public void setQuestion(Question question) {

@@ -54,15 +54,4 @@ class AnswerTest {
 
     }
 
-    @DisplayName("답변이 이미 삭제 되어 있는 경우 false를 반환한다.")
-    @Test
-    void delete_already_deleted() throws CannotDeleteException {
-        long answerId = 8L;
-        long writerId = 1L;
-        Answer answer = answerRepository.findById(answerId).get();
-        User writer = userRepository.findById(writerId).get();
-
-        assertThat(answer.delete(writer)).isFalse();
-    }
-
 }
