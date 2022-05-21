@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -14,11 +13,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import qna.domain.timegenerator.TimeGenerator;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 public class DeleteHistory {
 
     @Id
@@ -34,22 +31,26 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deleteUser;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private LocalDateTime createDate;
 
-    private DeleteHistory(ContentType contentType, Long contentId, User deleteUser) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deleteUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deleteUser = deleteUser;
+        this.createDate = createDate;
     }
 
-    public static DeleteHistory createByAnswer(Long contentId, User deleteUser) {
-        return new DeleteHistory(ContentType.ANSWER, contentId, deleteUser);
+    public static DeleteHistory createByAnswer(Long contentId, User deleteUser, TimeGenerator generator) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deleteUser, generator.now());
     }
 
-    public static DeleteHistory createByQuestion(Long contentId, User deleteUser) {
-        return new DeleteHistory(ContentType.QUESTION, contentId, deleteUser);
+    public static DeleteHistory createByQuestion(Long contentId, User deleteUser, TimeGenerator generator) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deleteUser, generator.now());
+    }
+
+    public boolean equalsCreateDate(LocalDateTime createDate) {
+        return this.createDate.equals(createDate);
     }
 
     protected DeleteHistory() {

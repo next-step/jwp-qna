@@ -12,11 +12,19 @@ public class Answers {
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
+    private Answers(List<Answer> answers) {
+        this.answers = answers;
+    }
+
     protected Answers() {
     }
 
     public static Answers createEmptyNewInstance() {
         return new Answers();
+    }
+
+    public static Answers from(List<Answer> answers) {
+        return new Answers(answers);
     }
 
     public void addAnswer(Answer answer) {

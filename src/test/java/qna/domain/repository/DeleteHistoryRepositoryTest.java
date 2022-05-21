@@ -1,8 +1,10 @@
 package qna.domain.repository;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static qna.domain.UserTest.JAVAJIGI;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +25,10 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("DeleteHistory 저장 테스트")
     void createTest() {
         User save = userRepository.save(JAVAJIGI);
-        DeleteHistory deleteHistory = DeleteHistory.createByQuestion(1L, save);
+        DeleteHistory deleteHistory = DeleteHistory.createByQuestion(1L, save,
+                () -> LocalDateTime.of(2022, 5, 22, 0, 0, 0));
         DeleteHistory saved = deleteHistoryRepository.save(deleteHistory);
         assertNotNull(saved);
+        assertTrue(saved.equalsCreateDate(LocalDateTime.of(2022, 5, 22, 0, 0, 0)));
     }
 }

@@ -12,9 +12,9 @@ import javax.persistence.ManyToOne;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-
 import java.util.Objects;
 import qna.domain.base.BaseEntity;
+import qna.domain.timegenerator.TimeGeneratorImpl;
 
 @Entity
 public class Answer extends BaseEntity {
@@ -111,7 +111,7 @@ public class Answer extends BaseEntity {
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         validateAuthority(loginUser);
         this.updateDeleted();
-        return DeleteHistory.createByAnswer(id, loginUser);
+        return DeleteHistory.createByAnswer(id, loginUser, new TimeGeneratorImpl());
     }
 
     private void updateDeleted() {

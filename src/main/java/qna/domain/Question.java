@@ -15,6 +15,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import qna.CannotDeleteException;
 import qna.domain.base.BaseEntity;
+import qna.domain.timegenerator.TimeGeneratorImpl;
 
 @Entity
 public class Question extends BaseEntity {
@@ -67,7 +68,7 @@ public class Question extends BaseEntity {
 
     private List<DeleteHistory> generateDeleteHistories(User loginUser) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(DeleteHistory.createByQuestion(id, loginUser));
+        deleteHistories.add(DeleteHistory.createByQuestion(id, loginUser, new TimeGeneratorImpl()));
         deleteHistories.addAll(answers.deleteAll(loginUser));
         return deleteHistories;
     }
