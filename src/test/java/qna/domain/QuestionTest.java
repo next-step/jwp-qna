@@ -55,7 +55,7 @@ class QuestionTest {
         question.writeBy(loginUser);
         Answer answer = new Answer(1L, loginUser, question, "Answers Contents2");
         List<DeleteHistory> deleteHistories = question.deleteWithAnswersBy(loginUser);
-        assertThat(deleteHistories).containsExactly(
+        assertThat(deleteHistories).containsOnly(
                 new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()),
                 new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter())
         );
