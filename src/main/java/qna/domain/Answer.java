@@ -1,6 +1,5 @@
 package qna.domain;
 
-import jdk.jfr.Name;
 import org.hibernate.annotations.SQLDelete;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
