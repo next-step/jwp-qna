@@ -52,10 +52,10 @@ class AnswerRepositoryTest {
     @Test
     void 변경감지() {
         // given
-        Answer answer = answerRepository.save(A1);
-        answer.setContents("update");
+        Answer saved = answerRepository.save(A1);
+        saved.setContents("update");
         // when
-        Optional<Answer> result = answerRepository.findById(A1.getId());
+        Optional<Answer> result = answerRepository.findById(saved.getId());
         // then
         assertThat(result)
                 .map(Answer::getContents)
