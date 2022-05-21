@@ -35,18 +35,8 @@ public class DeleteHistory {
     public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        setDeletedBy(deletedBy);
-        this.createDate = createDate;
-    }
-
-    public void setDeletedBy(User deletedBy) {
-        if (this.deletedBy != null) {
-            this.deletedBy.getDeleteHistories().remove(this);
-        }
         this.deletedBy = deletedBy;
-        if (!deletedBy.getDeleteHistories().contains(this)) {
-            deletedBy.getDeleteHistories().add(this);
-        }
+        this.createDate = createDate;
     }
 
     public User getDeletedBy() {

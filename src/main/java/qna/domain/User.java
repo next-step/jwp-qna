@@ -38,9 +38,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "writer")
     private final List<Answer> answers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "deletedBy")
-    private final List<DeleteHistory> deleteHistories = new ArrayList<>();
-
     protected User() {}
 
     public User(String userId, String password, String name, String email) {
@@ -136,7 +133,7 @@ public class User extends BaseEntity {
     public void addQuestion(Question question) {
         this.questions.add(question);
         if (question.getWriter() != this) {
-            question.setWriter(this);
+            question.writeBy(this);
         }
     }
 
@@ -148,17 +145,6 @@ public class User extends BaseEntity {
         this.answers.add(answer);
         if (answer.getWriter() != this) {
             answer.setWriter(this);
-        }
-    }
-
-    public List<DeleteHistory> getDeleteHistories() {
-        return deleteHistories;
-    }
-
-    public void addDeleteHistory(DeleteHistory deleteHistory) {
-        this.deleteHistories.add(deleteHistory);
-        if (deleteHistory.getDeletedBy() != this) {
-            deleteHistory.setDeletedBy(this);
         }
     }
 
@@ -204,13 +190,12 @@ public class User extends BaseEntity {
                 Objects.equals(name, user.name) &&
                 Objects.equals(email, user.email) &&
                 Objects.equals(questions, user.questions) &&
-                Objects.equals(answers, user.answers) &&
-                Objects.equals(deleteHistories, user.deleteHistories);
+                Objects.equals(answers, user.answers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email, questions, answers, deleteHistories);
+        return Objects.hash(id, userId, password, name, email, questions, answers);
     }
 
     private static class GuestUser extends User {

@@ -79,7 +79,7 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public void setWriter(User writer) {
+    private void setWriter(User writer) {
         if (this.writer != null) {
             this.writer.removeQuestion(this);
         }
