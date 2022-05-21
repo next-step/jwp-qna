@@ -1,6 +1,7 @@
 package qna.repository.entity;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity()
 @Table(name = "question")
@@ -13,8 +14,9 @@ public class Question extends BaseDateTimeEntity {
     @Lob()
     @Column(name = "contents")
     private String contents;
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
@@ -31,12 +33,12 @@ public class Question extends BaseDateTimeEntity {
     protected Question() {}
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -67,12 +69,8 @@ public class Question extends BaseDateTimeEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -89,8 +87,20 @@ public class Question extends BaseDateTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return Objects.equals(id, question.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
