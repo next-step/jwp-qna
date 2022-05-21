@@ -51,7 +51,9 @@ class DeleteHistoryRepositoryTest {
 
     @Test
     void 댓글_삭제_이력() {
-        final Answer answer = answerRepository.save(new Answer(UserRepositoryTest.JAVAJIGI, QuestionRepositoryTest.Q1, "댓글 내용"));
+        final User user = userRepository.save(new User("donghee", "password", "donghee", "donghee.han@slipp.net"));
+        final Question question = questionRepository.save(new Question("제목", "내용")).writeBy(user);
+        final Answer answer = answerRepository.save(new Answer(user, question, "댓글 내용"));
         repository.save(new DeleteHistory(ContentType.ANSWER, answer.getId(), 1L, LocalDateTime.now()));
 
         Optional<DeleteHistory> actual = repository.findByContentId(answer.getId());
