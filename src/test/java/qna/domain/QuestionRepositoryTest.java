@@ -57,4 +57,19 @@ class QuestionRepositoryTest {
         // then
         assertThat(result.isPresent()).isFalse();
     }
+
+    @Test
+    void 수정() {
+        // given
+        Question question = new Question("title", "contents");
+        Question saved = questionRepository.save(question);
+
+        saved.setContents("update contents");
+        // when
+        Optional<Question> result = questionRepository.findById(saved.getId());
+        // then
+        assertThat(result)
+                .map(Question::getContents)
+                .hasValue("update contents");
+    }
 }
