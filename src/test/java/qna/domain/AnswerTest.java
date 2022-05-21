@@ -2,9 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
@@ -38,18 +36,6 @@ class AnswerTest {
         assertThatExceptionOfType(NotFoundException.class)
                 .isThrownBy(() -> new Answer(JAVAJIGI, null, "contents"))
                 .withMessage("질문 정보가 존재하지 않습니다.");
-    }
-
-    @Test
-    @DisplayName("질문 연결 후 동일한지 검증")
-    void verifyMappingQuestion() {
-        Answer answer = new Answer(JAVAJIGI, Q1, "contents");
-        answer.mappingQuestion(Q2);
-
-        assertAll(
-                () -> assertThat(answer.getQuestion()).isEqualTo(Q2),
-                () -> assertThat(Q2.getAnswers().contains(answer)).isTrue()
-        );
     }
 
     @Test

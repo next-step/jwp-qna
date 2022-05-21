@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static qna.domain.AnswerTest.A1;
 import static qna.domain.AnswerTest.A2;
 import static qna.domain.UserTest.JAVAJIGI;
@@ -42,6 +43,16 @@ class AnswersTest {
         answers.add(A1);
 
         assertThat(answers.contains(A1)).isTrue();
+    }
+
+    @Test
+    @DisplayName("동일한 답변(객체)가 달릴경우 IllegalArgumentException가 발생")
+    void addSameIdOfAnswer() {
+        answers.add(A1);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> answers.add(A1))
+                .withMessage("이미 등록된 답변입니다.");
     }
 
     @Test

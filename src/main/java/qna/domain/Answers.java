@@ -21,9 +21,10 @@ public class Answers {
     }
 
     public void add(Answer answer) {
-        if (!this.answers.contains(answer)) {
-            this.answers.add(answer);
+        if (this.answers.contains(answer)) {
+            throw new IllegalArgumentException("이미 등록된 답변입니다.");
         }
+        this.answers.add(answer);
     }
 
     public List<Answer> list() {

@@ -63,10 +63,10 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        this.answers.add(answer);
         if (answer.getQuestion() != this) {
-            answer.mappingQuestion(this);
+            throw new IllegalArgumentException("현재 질문과 등록하려는 답변에 대한 질문이 일치하지 않습니다.");
         }
+        this.answers.add(answer);
     }
 
     public DeleteHistories toDeleteHistories(User loginUser) throws CannotDeleteException {
