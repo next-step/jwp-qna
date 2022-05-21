@@ -2,36 +2,57 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.AnswerTest.*;
+import static qna.domain.AnswerTest.A1;
+import static qna.domain.AnswerTest.A2;
+import static qna.domain.QuestionTest.Q1;
+import static qna.domain.QuestionTest.Q2;
 
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @DataJpaTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class AnswerRepositoryTest {
 
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @BeforeEach
+    void setUp() {
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
+        questionRepository.save(Q1);
+        questionRepository.save(Q2);
+    }
+
+
     @Test
     @DisplayName("answer id로 deleted 제거가 되지 않은것을 찾는다.")
     void findByIdAndDeletedFalse() {
-        answerRepository.save(A1);
+        final Answer a1 = answerRepository.save(A1);
         answerRepository.save(A2);
 
-        Optional<Answer> byIdAndDeletedFalse = answerRepository.findByIdAndDeletedFalse(A1.getId());
+        Optional<Answer> byIdAndDeletedFalse = answerRepository.findByIdAndDeletedFalse(a1.getId());
 
-        assertAll(()->{
+        assertAll(() -> {
             assertThat(byIdAndDeletedFalse.isPresent()).isTrue();
-            assertThat(byIdAndDeletedFalse.get()).isEqualTo(A1);
+            assertThat(byIdAndDeletedFalse.get()).isEqualTo(a1);
         });
 
     }
@@ -77,12 +98,12 @@ class AnswerRepositoryTest {
 
 
     @Test
-    @DisplayName("퀘스트 ID와 삭제되지 않은 질문들을 구한다")
-    void findByQuestionIdAndDeletedFalse() {
+    @DisplayName("삭제 되지 질문의 응답을 구한다")
+    void findByQuestionAndDeletedFalse() {
         Answer a1 = answerRepository.save(A1);
         Answer a2 = answerRepository.save(A2);
 
-        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(a1.getQuestionId()))
+        assertThat(answerRepository.findByQuestionAndDeletedFalse(a1.getQuestion()))
                 .hasSize(2);
     }
 
@@ -106,7 +127,5 @@ class AnswerRepositoryTest {
 
         assertThat(answerRepository.findById(save.getId()).isPresent()).isTrue();
     }
-
-
 
 }

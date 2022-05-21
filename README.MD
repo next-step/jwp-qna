@@ -101,8 +101,12 @@
   ```
   - 연관 관계 
     * Question 
-      * User(write) 다대일 단방향 연관관계 맵핑
-    * 
+      * write(User) 다대일 단방향 연관관계 맵핑
+      
+    * Answer
+      * write(User) 다대일 단방향 연관관계 
+      * question 다대일 단방향 연관관계
+    
   
 
 

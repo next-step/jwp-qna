@@ -6,7 +6,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -23,11 +25,13 @@ public class Answer extends AuditEntity {
     @Lob
     private String contents;
 
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -50,41 +54,29 @@ public class Answer extends AuditEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer == writer;
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public User getWriter() {
+        return writer;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
@@ -108,8 +100,8 @@ public class Answer extends AuditEntity {
         return "Answer{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
-                ", questionId=" + questionId +
-                ", writerId=" + writerId +
+                ", question=" + question +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }
