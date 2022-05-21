@@ -3,6 +3,8 @@ package qna.domain;
 import javax.persistence.*;
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 @Embeddable
 public class Contents {
 
@@ -13,7 +15,7 @@ public class Contents {
     }
 
     protected Contents(String contents) {
-        this.contents = contents;
+        this.contents = requireNonNull(contents, "contents");
     }
 
     @Override

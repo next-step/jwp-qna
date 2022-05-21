@@ -14,16 +14,13 @@ public class Question extends BaseEntity {
     private Title title;
     @Embedded
     private Contents contents;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
     private boolean deleted = false;
 
     @Embedded
     private Answers answers = new Answers();
-
-    protected Question() {
-    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -33,6 +30,9 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = new Title(title);
         this.contents = new Contents(contents);
+    }
+
+    protected Question() {
     }
 
     public Question writeBy(User writer) {
@@ -47,30 +47,6 @@ public class Question extends BaseEntity {
     public void addAnswer(Answer answer) {
         answers.add(answer);
         answer.setQuestion(this);
-    }
-
-    public Answers getAnswers() {
-        return answers;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Title getTitle() {
-        return title;
-    }
-
-    public Contents getContents() {
-        return contents;
-    }
-
-    public User getWriter() {
-        return writer;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
     }
 
     public DeleteHistories delete(User loginUser) {
@@ -120,5 +96,29 @@ public class Question extends BaseEntity {
                 ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public Answers getAnswers() {
+        return answers;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Title getTitle() {
+        return title;
+    }
+
+    public Contents getContents() {
+        return contents;
+    }
+
+    public User getWriter() {
+        return writer;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
     }
 }

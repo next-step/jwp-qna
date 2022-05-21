@@ -11,7 +11,7 @@ public class DeleteHistory {
     private Long id;
     @Embedded
     private DeleteHistoryContent deleteHistoryContent;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
     private LocalDateTime createDate = LocalDateTime.now();

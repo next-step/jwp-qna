@@ -12,10 +12,10 @@ public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
     @Embedded
@@ -78,16 +78,16 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public DeleteHistory delete(User loginUser) {
-        validateOwner(loginUser);
-        deleted = true;
-        return DeleteHistory.ofAnswer(this);
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
-    private void validateOwner(User loginUser) {
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
+        deleted = true;
+        return DeleteHistory.ofAnswer(this);
     }
 
     @Override

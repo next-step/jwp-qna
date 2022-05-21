@@ -21,9 +21,6 @@ public class User extends BaseEntity {
     @Embedded
     private Email email;
 
-    protected User() {
-    }
-
     public User(String userId, String password, String name, String email) {
         this(null, new UserId(userId), new Password(password), new UserName(name), new Email(email));
     }
@@ -38,6 +35,9 @@ public class User extends BaseEntity {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    protected User() {
     }
 
     public void update(User loginUser, User target) {
@@ -74,26 +74,6 @@ public class User extends BaseEntity {
         return false;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public UserId getUserId() {
-        return userId;
-    }
-
-    public Password getPassword() {
-        return password;
-    }
-
-    public UserName getName() {
-        return name;
-    }
-
-    public Email getEmail() {
-        return email;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -120,6 +100,26 @@ public class User extends BaseEntity {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public UserId getUserId() {
+        return userId;
+    }
+
+    public Password getPassword() {
+        return password;
+    }
+
+    public UserName getName() {
+        return name;
+    }
+
+    public Email getEmail() {
+        return email;
     }
 
     private static class GuestUser extends User {
