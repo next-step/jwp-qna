@@ -25,7 +25,9 @@ public class UserRepositoryTest {
     @Test
     void 사용자_조회() {
         User save = userRepository.save(createTestUser());
+
         Optional<User> find = userRepository.findByUserId(save.getUserId());
+
         assertThat(find.get()).isNotNull();
     }
 
@@ -45,7 +47,9 @@ public class UserRepositoryTest {
     @Test
     void 사용자_삭제() {
         User user = userRepository.save(createTestUser());
+
         userRepository.delete(user);
+
         Optional<User> actual = userRepository.findByUserId(user.getUserId());
         assertThat(actual.isPresent()).isFalse();
     }

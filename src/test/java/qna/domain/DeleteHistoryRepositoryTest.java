@@ -35,6 +35,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     void 삭제_이력_조회() {
         final DeleteHistory expected = repository.save(H1);
+
         final Optional<DeleteHistory> actual = repository.findById(expected.getId());
         assertThat(actual).isNotEmpty();
     }
@@ -43,6 +44,7 @@ class DeleteHistoryRepositoryTest {
     void 질문_삭제_이력() {
         final User user = userRepository.save(new User("donghee", "password", "donghee", "donghee.han@slipp.net"));
         final Question question = questionRepository.save(new Question("제목", "내용")).writeBy(user);
+
         repository.save(new DeleteHistory(ContentType.QUESTION, question.getId(), 1L, LocalDateTime.now()));
 
         Optional<DeleteHistory> actual = repository.findByContentId(question.getId());
@@ -54,6 +56,7 @@ class DeleteHistoryRepositoryTest {
         final User user = userRepository.save(new User("donghee", "password", "donghee", "donghee.han@slipp.net"));
         final Question question = questionRepository.save(new Question("제목", "내용")).writeBy(user);
         final Answer answer = answerRepository.save(new Answer(user, question, "댓글 내용"));
+
         repository.save(new DeleteHistory(ContentType.ANSWER, answer.getId(), 1L, LocalDateTime.now()));
 
         Optional<DeleteHistory> actual = repository.findByContentId(answer.getId());

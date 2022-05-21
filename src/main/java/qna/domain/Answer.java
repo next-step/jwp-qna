@@ -17,8 +17,9 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "writer_id")
     private User writer;
 
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     @Lob
     private String contents;
@@ -44,7 +45,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -53,7 +54,7 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -72,12 +73,12 @@ public class Answer extends BaseEntity {
         this.writer = writer;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public String getContents() {
@@ -101,7 +102,7 @@ public class Answer extends BaseEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writer=" + writer +
-                ", questionId=" + questionId +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

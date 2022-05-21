@@ -27,7 +27,9 @@ public class AnswerRepositoryTest {
     void 댓글_등록() {
         final User user = createTestUser();
         final Question question = createTestQuestion();
+
         final Answer answer = answerRepository.save(createTestAnswer(user, question));
+
         assertThat(answer).isNotNull();
     }
 
@@ -35,7 +37,9 @@ public class AnswerRepositoryTest {
     void 댓글_조회() {
         final User user = createTestUser();
         final Question question = createTestQuestion();
+
         final Answer expected = answerRepository.save(createTestAnswer(user, question));
+
         final Answer actual = answerRepository.findById(expected.getId()).get();
         assertThat(actual).isNotNull();
     }
@@ -43,6 +47,7 @@ public class AnswerRepositoryTest {
     @Test
     void 질문으로_댓글_조회() {
         final User user = createTestUser();
+
         final Question question = createTestQuestion();
         answerRepository.save(createTestAnswer(user, question));
 
@@ -54,6 +59,7 @@ public class AnswerRepositoryTest {
     void 사용자로_댓글_조회() {
         final User user = createTestUser();
         final Question question = createTestQuestion();
+
         answerRepository.save(createTestAnswer(user, question));
 
         List<Answer> answers = answerRepository.findByWriterId(user.getId());
@@ -64,7 +70,9 @@ public class AnswerRepositoryTest {
     void 댓글_수정() {
         final User user = createTestUser();
         final Question question = createTestQuestion();
+
         final Answer answer = answerRepository.save(createTestAnswer(user, question));
+
         answer.setContents("댓글 수정");
         assertThat(answer.getContents()).isEqualTo("댓글 수정");
     }
@@ -74,6 +82,7 @@ public class AnswerRepositoryTest {
         final User user = createTestUser();
         final Question question = createTestQuestion();
         final Answer answer = answerRepository.save(createTestAnswer(user, question));
+
         answerRepository.delete(answer);
 
         final Optional<Answer> actual = answerRepository.findById(answer.getId());

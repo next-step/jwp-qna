@@ -24,7 +24,9 @@ public class QuestionRepositoryTest {
     void 질문_등록() {
         final User user = userRepository.save(UserRepositoryTest.JAVAJIGI);
         final Question question = new Question("제목", "내용").writeBy(user);
+
         final Question saved = questionRepository.save(question);
+
         assertThat(saved.getId()).isNotNull();
     }
 
@@ -34,6 +36,7 @@ public class QuestionRepositoryTest {
         final Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(user));
 
         final Question question2 = questionRepository.findById(question1.getId()).get();
+
         assertThat(question2).isNotNull();
         assertThat(question2.getTitle()).isEqualTo("제목");
         assertThat(question2.getContents()).isEqualTo("내용");
@@ -44,6 +47,7 @@ public class QuestionRepositoryTest {
     void 질문_수정() {
         final User user = userRepository.save(UserRepositoryTest.JAVAJIGI);
         final Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(user));
+
         question1.updateTitle("수정 제목");
 
         final Question question2 = questionRepository.findByTitle("수정 제목").get(0);
@@ -54,6 +58,7 @@ public class QuestionRepositoryTest {
     void 질문_삭제() {
         final User user = userRepository.save(UserRepositoryTest.JAVAJIGI);
         final Question question = questionRepository.save(new Question("제목", "내용").writeBy(user));
+
         questionRepository.delete(question);
 
         final Optional<Question> actual = questionRepository.findById(question.getId());
