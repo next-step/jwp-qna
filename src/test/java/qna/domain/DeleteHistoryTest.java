@@ -22,6 +22,6 @@ public class DeleteHistoryTest {
         DeleteHistory history = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
         DeleteHistory deleteHistory = deleteHistoryRepository.save(history);
         List<DeleteHistory> deleteHistoryList = deleteHistoryRepository.findByContentType(ContentType.ANSWER);
-        assertThat(deleteHistoryList.size()).isEqualTo(1);
+        assertThat(deleteHistoryList).contains(deleteHistory);
     }
 }
