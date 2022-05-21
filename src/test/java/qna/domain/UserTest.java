@@ -29,7 +29,7 @@ public class UserTest {
         assertThat(JAVAJIGI.equalsNameAndEmail(SANJIGI)).isTrue();
     }
 
-    @DisplayName("업데이트 시 로그인 사용자가 동일하지 않을 경우 예외 처리")
+    @DisplayName("업데이트 시 로그인 사용자가 동일하지 않을 경우 오류")
     @Test
     void test_not_equals_login_user() {
         //given & when & then
@@ -37,7 +37,7 @@ public class UserTest {
                 .isInstanceOf(UnAuthorizedException.class);
     }
 
-    @DisplayName("업데이트 시 타겟 사용자와 비밀번호가 동일하지 않을 경우 예외 처리")
+    @DisplayName("업데이트 시 타겟 사용자와 비밀번호가 동일하지 않을 경우 오류")
     @Test
     void test_not_equals_password_target_user() {
         //given & when & then

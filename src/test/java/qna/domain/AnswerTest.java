@@ -21,7 +21,7 @@ public class AnswerTest {
         assertThat(answer).isNotNull();
     }
 
-    @DisplayName("Answer 도메인 생성 시 Question 이 null 이면 예외 처리")
+    @DisplayName("Question 이 없을 경우 Answer 생성 불가")
     @Test
     void test_null_question() {
         //given & when & then
@@ -29,7 +29,7 @@ public class AnswerTest {
                 .isInstanceOf(NotFoundException.class);
     }
 
-    @DisplayName("Answer 도메인 생성 시 User 가 null 이면 예외 처리")
+    @DisplayName("User 가 없으면 Answer 생성 불가")
     @Test
     void test_null_user() {
         //given & when & then

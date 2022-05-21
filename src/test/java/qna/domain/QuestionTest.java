@@ -21,7 +21,7 @@ public class QuestionTest {
         assertThat(question).isNotNull();
     }
 
-    @DisplayName("Question 도메인 생성 후 작성자(writer)가 null 이면 예외 처리")
+    @DisplayName("Question 의 작성자(writer)가 없으면 오류")
     @Test
     void test_null_user() {
         //given & when & then
