@@ -1,5 +1,6 @@
 package qna.domain;
 
+import net.bytebuddy.build.ToStringPlugin;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -120,7 +121,7 @@ public class Answer extends BaseEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writer.getId() +
-                ", question=" + question +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
