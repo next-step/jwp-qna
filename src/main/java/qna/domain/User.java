@@ -31,11 +31,6 @@ public class User extends BaseAuditingEntity {
     }
 
     public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
-    }
-
-    public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -74,10 +69,6 @@ public class User extends BaseAuditingEntity {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public boolean isGuestUser() {
