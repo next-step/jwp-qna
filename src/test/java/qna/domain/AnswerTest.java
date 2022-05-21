@@ -1,66 +1,79 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import qna.annotation.DataJpaTestIncludeAuditing;
 
 @DataJpaTestIncludeAuditing
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-
     @Autowired
     private AnswerRepository answerRepository;
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    private Question question;
+
+    private User javajigi;
+    private User sanjigi;
+
+    @BeforeEach
+    void persistRelatedEntities(){
+        javajigi = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        sanjigi = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        userRepository.save(javajigi);
+        userRepository.save(sanjigi);
+
+        question =  new Question("title1", "contents1").writeBy(javajigi);
+        questionRepository.save(question);
+    }
 
     @Test
-    void save_테스트() {
-        Answer managed = answerRepository.save(A1);
-        Assertions.assertAll(
-                () -> assertThat(managed.getContents().equals(A1.getContents())).isTrue()
-        );
+    void save_테스트(){
+        Answer newAnswer = new Answer(javajigi, question, "Answers Contents1");
+        Answer managedAnswer = answerRepository.save(newAnswer);
+        assertThat(newAnswer).isSameAs(managedAnswer);
+        assertThat(managedAnswer.getId()).isNotNull();
     }
 
     @Test
     void findById_테스트() {
-        Answer savedA1 = answerRepository.save(A1);
-        Optional<Answer> a1 = answerRepository.findById(savedA1.getId());
-        assertThat(a1.isPresent()).isTrue();
-        assertThat(a1.get() == savedA1).isTrue();
+        Answer managedAnswer = answerRepository.save(new Answer(javajigi, question, "Answers Contents1"));
+        Optional<Answer> foundAnswer = answerRepository.findById(managedAnswer.getId());
+        assertThat(foundAnswer.isPresent()).isTrue();
+        assertThat(foundAnswer.get() == managedAnswer).isTrue();
     }
 
     @Test
     void deleteById_테스트() {
-        Answer savedA1 = answerRepository.save(A1);
-        answerRepository.deleteById(savedA1.getId());
-        Optional<Answer> a1 = answerRepository.findById(savedA1.getId());
-        assertThat(a1.isPresent()).isFalse();
+        Answer managedAnswer = answerRepository.save(new Answer(javajigi, question, "Answers Contents1"));
+        answerRepository.deleteById(managedAnswer.getId());
+        Optional<Answer> answer = answerRepository.findById(managedAnswer.getId());
+        assertThat(answer.isPresent()).isFalse();
     }
 
     @Test
     void findByIdAndDeletedFalse_테스트() {
-        Answer savedA1 = answerRepository.save(A1);
-        Answer savedA2 = answerRepository.save(A2);
-        savedA1.setDeleted(true);
-        Optional<Answer> a1 = answerRepository.findByIdAndDeletedFalse(savedA1.getId());
-        Optional<Answer> a2 = answerRepository.findByIdAndDeletedFalse(savedA2.getId());
+        Answer managedAnswer1 = answerRepository.save(new Answer(javajigi, question, "Answers Contents1"));
+        Answer managedAnswer2 = answerRepository.save(new Answer(sanjigi, question, "Answers Contents2"));
+        managedAnswer1.setDeleted(true);
+        Optional<Answer> a1 = answerRepository.findByIdAndDeletedFalse(managedAnswer1.getId());
+        Optional<Answer> a2 = answerRepository.findByIdAndDeletedFalse(managedAnswer2.getId());
         assertThat(a1.isPresent()).isFalse();
         assertThat(a2.isPresent()).isTrue();
-        assertThat(a2.get() == savedA2).isTrue();
     }
 
     @Test
     void findByQuestionIdAndDeletedFalse_테스트() {
-        Answer savedA1 = answerRepository.save(A1);
-        Answer savedA2 = answerRepository.save(A2);
-        questionRepository.save(QuestionTest.Q1);
-        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
-        assertThat(answerList).containsExactly(savedA1, savedA2);
+        Answer managedAnswer1 = answerRepository.save(new Answer(javajigi, question, "Answers Contents1"));
+        Answer managedAnswer2 = answerRepository.save(new Answer(sanjigi, question, "Answers Contents2"));
+        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+        assertThat(answerList).containsExactly(managedAnswer1, managedAnswer2);
     }
 }
