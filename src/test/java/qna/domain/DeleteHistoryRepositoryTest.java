@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableJpaAuditing
 @DataJpaTest
-class DeleteHistoryTest {
+class DeleteHistoryRepositoryTest {
     public static final DeleteHistory H1 = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
     public static final DeleteHistory H2 = new DeleteHistory(ContentType.QUESTION, 2L, 2L, LocalDateTime.now());
 
@@ -40,7 +40,7 @@ class DeleteHistoryTest {
 
     @Test
     void 질문_삭제_이력() {
-        final Question question = questionRepository.save(QuestionTest.Q1);
+        final Question question = questionRepository.save(QuestionRepositoryTest.Q1);
         repository.save(new DeleteHistory(ContentType.QUESTION, question.getId(), 1L, LocalDateTime.now()));
 
         Optional<DeleteHistory> actual = repository.findByContentId(question.getId());
@@ -49,7 +49,7 @@ class DeleteHistoryTest {
 
     @Test
     void 댓글_삭제_이력() {
-        final Answer answer = answerRepository.save(new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "댓글 내용"));
+        final Answer answer = answerRepository.save(new Answer(UserRepositoryTest.JAVAJIGI, QuestionRepositoryTest.Q1, "댓글 내용"));
         repository.save(new DeleteHistory(ContentType.ANSWER, answer.getId(), 1L, LocalDateTime.now()));
 
         Optional<DeleteHistory> actual = repository.findByContentId(answer.getId());

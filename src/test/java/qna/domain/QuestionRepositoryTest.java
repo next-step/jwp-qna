@@ -11,9 +11,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableJpaAuditing
 @DataJpaTest
-public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+public class QuestionRepositoryTest {
+    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserRepositoryTest.JAVAJIGI);
+    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserRepositoryTest.SANJIGI);
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -23,7 +23,7 @@ public class QuestionTest {
 
     @Test
     void 질문_등록() {
-        Question question = new Question("제목", "내용").writeBy(UserTest.JAVAJIGI);
+        Question question = new Question("제목", "내용").writeBy(UserRepositoryTest.JAVAJIGI);
         Question saved = questionRepository.save(question);
         assertThat(saved.getId()).isNotNull();
     }
@@ -44,7 +44,7 @@ public class QuestionTest {
 
     @Test
     void 질문_수정() {
-        Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(UserTest.SANJIGI));
+        Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(UserRepositoryTest.SANJIGI));
         question1.updateTitle("수정 제목");
 
         Question question2 = questionRepository.findByTitle("수정 제목").get(0);
@@ -53,7 +53,7 @@ public class QuestionTest {
 
     @Test
     void 질문_삭제() {
-        final Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(UserTest.SANJIGI));
+        final Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(UserRepositoryTest.SANJIGI));
         final List<Question> list = questionRepository.findByDeletedFalse();
         assertThat(list).hasSize(1);
 
