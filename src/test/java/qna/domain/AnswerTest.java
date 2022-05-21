@@ -26,4 +26,12 @@ public class AnswerTest {
                 () -> assertThat(expected.getDeleted()).isNotNull()
         );
     }
+
+    @DisplayName("저장값 비교하기")
+    @Test
+    void identityTest() {
+        Answer expected = answers.save(A1);
+        Answer answer = answers.findById(A1.getId()).get();
+        assertThat(expected).isSameAs(answer);
+    }
 }
