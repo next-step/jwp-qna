@@ -22,7 +22,7 @@ public class QuestionRepositoryTest {
 
     @Test
     void 질문_등록() {
-        final User user = userRepository.save(UserRepositoryTest.JAVAJIGI);
+        final User user = userRepository.save(createTestUser());
         final Question question = new Question("제목", "내용").writeBy(user);
 
         final Question saved = questionRepository.save(question);
@@ -32,7 +32,7 @@ public class QuestionRepositoryTest {
 
     @Test
     void 질문_조회() {
-        final User user = userRepository.save(UserRepositoryTest.JAVAJIGI);
+        final User user = userRepository.save(createTestUser());
         final Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(user));
 
         final Question question2 = questionRepository.findById(question1.getId()).get();
@@ -45,7 +45,7 @@ public class QuestionRepositoryTest {
 
     @Test
     void 질문_수정() {
-        final User user = userRepository.save(UserRepositoryTest.JAVAJIGI);
+        final User user = userRepository.save(createTestUser());
         final Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(user));
 
         question1.updateTitle("수정 제목");
@@ -56,12 +56,16 @@ public class QuestionRepositoryTest {
 
     @Test
     void 질문_삭제() {
-        final User user = userRepository.save(UserRepositoryTest.JAVAJIGI);
+        final User user = userRepository.save(createTestUser());
         final Question question = questionRepository.save(new Question("제목", "내용").writeBy(user));
 
         questionRepository.delete(question);
 
         final Optional<Question> actual = questionRepository.findById(question.getId());
         assertThat(actual.isPresent()).isFalse();
+    }
+
+    private User createTestUser() {
+        return new User("donghee.han", "password", "donghee", "donghee.han@slipp.net");
     }
 }

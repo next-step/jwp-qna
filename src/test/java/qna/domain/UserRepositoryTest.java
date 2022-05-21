@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,6 +16,9 @@ public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Test
     void 사용자_생성() {
@@ -52,6 +56,16 @@ public class UserRepositoryTest {
 
         Optional<User> actual = userRepository.findByUserId(user.getUserId());
         assertThat(actual.isPresent()).isFalse();
+    }
+
+    @Test
+    void 사용자_질문_리스트_조회() {
+        final User user = userRepository.save(createTestUser());
+        questionRepository.save(new Question("제목", "내용").writeBy(user));
+
+        final User actual = userRepository.findById(user.getId()).get();
+
+        assertThat(actual.getQuestions()).hasSize(1);
     }
 
     private User createTestUser() {
