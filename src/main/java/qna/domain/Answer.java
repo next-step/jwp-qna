@@ -87,15 +87,15 @@ public class Answer extends Auditing {
         return deleted;
     }
 
-    public void delete(boolean deleted) {
-        this.deleted = deleted;
+    private void delete() {
+        this.deleted = true;
     }
 
     public DeleteHistory deleteBy(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
         }
-        delete(true);
+        delete();
         return new DeleteHistory(ANSWER, id, writer);
     }
 

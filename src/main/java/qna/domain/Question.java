@@ -82,8 +82,8 @@ public class Question extends Auditing {
         return deleted;
     }
 
-    public void delete(boolean deleted) {
-        this.deleted = deleted;
+    private void delete() {
+        this.deleted = true;
     }
 
     public List<DeleteHistory> deleteBy(User loginUser) throws CannotDeleteException {
@@ -91,7 +91,7 @@ public class Question extends Auditing {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        delete(true);
+        delete();
         deleteHistories.add(new DeleteHistory(QUESTION, id, writer));
         for (Answer answer : answers) {
             deleteHistories.add(answer.deleteBy(loginUser));
