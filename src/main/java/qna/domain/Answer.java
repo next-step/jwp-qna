@@ -1,18 +1,39 @@
 package qna.domain;
 
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
-
-public class Answer {
+@Entity
+@Table(name = "answer")
+public class Answer extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "question_id")
     private Long questionId;
+
+    @Column(name = "contents")
     private String contents;
+
+    @Column(name = "deleted")
     private boolean deleted = false;
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer() {
+    }
+
+    Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
 
@@ -44,32 +65,16 @@ public class Answer {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public Long getQuestionId() {
         return questionId;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
@@ -88,6 +93,8 @@ public class Answer {
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
+                ", createdAt=" + super.getCreatedAt() +
+                ", modifiedAt=" + super.getModifiedAt() +
                 '}';
     }
 }
