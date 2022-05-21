@@ -5,9 +5,9 @@
 - [x] delete_history 
     - [x] Entity를 작성한다.
     - [x] 학습테스트를 작성한다.
-- [] question Entity
+- [x] question Entity
     - [x] Entity를 작성한다.
-    - [] 학습테스트를 작성한다.
+    - [x] 학습테스트를 작성한다.
 - [] user Entity
     - [x] Entity를 작성한다.
     - [] 학습테스트를 작성한다.
