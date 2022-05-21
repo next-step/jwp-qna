@@ -53,8 +53,8 @@ class AnswerTest {
     @DisplayName("다른 사람의 답변 삭제시 예외 테스트")
     @Test
     void deleteAnswerOtherWriter() {
-        assertThatThrownBy(() -> question.delete(sanjigi))
+        assertThatThrownBy(() -> answer.delete(javajigi))
                 .isInstanceOf(CannotDeleteException.class)
-                .hasMessage("질문을 삭제할 권한이 없습니다.");
+                .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }
