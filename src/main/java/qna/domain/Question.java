@@ -1,8 +1,11 @@
 package qna.domain;
 
+import org.hibernate.Hibernate;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "question")
@@ -101,6 +104,21 @@ public class Question extends BaseEntity {
 
     public void setAnswers(List<Answer> answers) {
         this.answers = answers;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (!(o instanceof Question)) return false;
+        Question question = (Question) o;
+        if (id != null && Objects.equals(id, question.getId())) return true;
+        return deleted == question.isDeleted() && Objects.equals(id, question.getId()) && Objects.equals(title, question.getTitle()) && Objects.equals(contents, question.getContents()) && Objects.equals(writer, question.getWriter()) && Objects.equals(answers, question.getAnswers());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writer, deleted, answers);
     }
 
     @Override

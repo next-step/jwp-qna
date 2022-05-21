@@ -1,5 +1,7 @@
 package qna.domain;
 
+import javassist.expr.Instanceof;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -44,20 +46,31 @@ public class DeleteHistory {
         return deletedBy;
     }
 
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedBy, that.deletedBy);
+        if (o == null) return false;
+        if (!(o instanceof DeleteHistory)) return false;
+        DeleteHistory deleteHistory = (DeleteHistory) o;
+        if (id != null && Objects.equals(id, deleteHistory.getId())) return true;
+        return Objects.equals(id, deleteHistory.getId()) && contentType == deleteHistory.getContentType() && Objects.equals(contentId, deleteHistory.getContentId()) && Objects.equals(deletedBy, deleteHistory.getDeletedBy()) && Objects.equals(createDate, deleteHistory.getCreateDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedBy);
+        return Objects.hash(id, contentType, contentId, deletedBy, createDate);
     }
 
     @Override
