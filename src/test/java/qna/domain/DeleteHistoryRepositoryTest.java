@@ -3,14 +3,12 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@EnableJpaAuditing
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
     public static final DeleteHistory H1 = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
