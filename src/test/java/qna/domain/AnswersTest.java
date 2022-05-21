@@ -43,11 +43,11 @@ class AnswersTest {
                 .contents("Answers Contents1")
                 .build();
         answer2 = Answer.builder(sanjigi, question)
-                .id(1L)
+                .id(2L)
                 .contents("Answers Contents1")
                 .build();
-        answer3 = Answer.builder(sanjigi, question)
-                .id(1L)
+        answer3 = Answer.builder(javajigi, question)
+                .id(3L)
                 .contents("Answers Contents1")
                 .build();
         deleteHistory1 = DeleteHistory.builder()
@@ -78,8 +78,11 @@ class AnswersTest {
     @DisplayName("다른 사람의 답변 삭제시 예외 테스트")
     @Test
     void deleteAnswerOtherWriter() {
-        assertThatThrownBy(() -> question.delete(sanjigi))
+        this.answers.add(answer1);
+        this.answers.add(answer3);
+        Answers answers = Answers.valueOf(this.answers);
+        assertThatThrownBy(() -> answers.delete(sanjigi))
                 .isInstanceOf(CannotDeleteException.class)
-                .hasMessage("질문을 삭제할 권한이 없습니다.");
+                .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }
