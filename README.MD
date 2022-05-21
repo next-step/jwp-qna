@@ -101,11 +101,20 @@
   ```
   - 연관 관계 
     * Question 
-      * write(User) 다대일 단방향 연관관계 맵핑
+      * writer(User) 다대일 단방향 연관관계 맵핑
       
     * Answer
-      * write(User) 다대일 단방향 연관관계 
+      * writer(User) 다대일 단방향 연관관계 
       * question 다대일 단방향 연관관계
+    
+    * DeleteHistory
+      deletedUser(User) 다대일 단방향 연관 관계
+  
+  - 생각해보기 
+    - deleteHistory 엔티티인 경우 컨텐츠 타입에 따라 삭제히스토리가 저장이 되는데
+      JPA 기능으로 deleted 필드를 감지하여 데이터를 저장 할 수 있을까?? 
+      
+  
     
   
 
