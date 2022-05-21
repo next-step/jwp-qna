@@ -99,6 +99,11 @@
         references user
   
   ```
+  - 연관 관계 
+    * Question 
+      * User(write) 다대일 단방향 연관관계 맵핑
+    * 
+  
 
 
 
