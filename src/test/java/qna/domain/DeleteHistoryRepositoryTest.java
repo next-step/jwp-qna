@@ -23,6 +23,9 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     void 삭제_이력_저장() {
         final DeleteHistory expected = repository.save(H1);
@@ -38,7 +41,8 @@ class DeleteHistoryRepositoryTest {
 
     @Test
     void 질문_삭제_이력() {
-        final Question question = questionRepository.save(QuestionRepositoryTest.Q1);
+        final User user = userRepository.save(new User("donghee", "password", "donghee", "donghee.han@slipp.net"));
+        final Question question = questionRepository.save(new Question("제목", "내용")).writeBy(user);
         repository.save(new DeleteHistory(ContentType.QUESTION, question.getId(), 1L, LocalDateTime.now()));
 
         Optional<DeleteHistory> actual = repository.findByContentId(question.getId());
