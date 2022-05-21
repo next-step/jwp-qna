@@ -86,7 +86,7 @@ public class Question extends Auditing {
         this.deleted = true;
     }
 
-    public List<DeleteHistory> deleteBy(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleteWithAnswersBy(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
