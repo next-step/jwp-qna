@@ -51,4 +51,15 @@ class UserRepositoryTest {
                 userRepository.saveAll(Arrays.asList(user, duplicateUser))
         ).isInstanceOf(DataIntegrityViolationException.class);
     }
+
+    @Test
+    void password_길이가_20이_넘으면_예외가_발생한다() {
+        // given
+        String password = "If the password_length is over 20, an exception is raised";
+        User user = new User("unique", password, "name", "email");
+        // when
+        assertThatThrownBy(() ->
+                userRepository.save(user)
+        ).isInstanceOf(DataIntegrityViolationException.class);
+    }
 }
