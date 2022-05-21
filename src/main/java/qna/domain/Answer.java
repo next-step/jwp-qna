@@ -70,11 +70,6 @@ public class Answer extends BaseEntity {
             }
         }
 
-        public AnswerBuilder id(long id) {
-            this.id = id;
-            return this;
-        }
-
         public AnswerBuilder contents(String contents) {
             this.contents = contents;
             return this;

@@ -1,15 +1,11 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import qna.UnAuthorizedException;
 
 @Entity
@@ -27,12 +23,6 @@ public class User extends BaseEntity {
     private String name;
     @Column(length = 50)
     private String email;
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Question> questions = new ArrayList<>();
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answers = new ArrayList<>();
-    @OneToMany(mappedBy = "deletedBy", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected User() {
     }
@@ -60,11 +50,6 @@ public class User extends BaseEntity {
             this.userId = userId;
             this.password = password;
             this.name = name;
-        }
-
-        public UserBuilder id(long id) {
-            this.id = id;
-            return this;
         }
 
         public UserBuilder email(String email) {
@@ -116,10 +101,6 @@ public class User extends BaseEntity {
 
     public String getUserId() {
         return userId;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getPassword() {
