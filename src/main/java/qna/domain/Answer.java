@@ -58,6 +58,16 @@ public class Answer extends BaseEntity {
             this.question = question;
         }
 
+        public AnswerBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public AnswerBuilder contents(String contents) {
+            this.contents = contents;
+            return this;
+        }
+
         private void validateQuestionNotNull(Question question) {
             if (Objects.isNull(question)) {
                 throw new NotFoundException("질문 정보가 없습니다.");
@@ -68,11 +78,6 @@ public class Answer extends BaseEntity {
             if (Objects.isNull(writer)) {
                 throw new UnAuthorizedException("작성자 정보가 없습니다.");
             }
-        }
-
-        public AnswerBuilder contents(String contents) {
-            this.contents = contents;
-            return this;
         }
 
         public Answer build() {

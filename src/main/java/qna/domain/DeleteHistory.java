@@ -31,6 +31,7 @@ public class DeleteHistory {
     }
 
     private DeleteHistory(DeleteHistoryBuilder deleteHistoryBuilder) {
+        this.id = deleteHistoryBuilder.id;
         this.contentType = deleteHistoryBuilder.contentType;
         this.contentId = deleteHistoryBuilder.contentId;
         this.deletedBy = deleteHistoryBuilder.deletedBy;
@@ -42,12 +43,18 @@ public class DeleteHistory {
     }
 
     public static class DeleteHistoryBuilder {
+        private Long id;
         private ContentType contentType;
         private Long contentId;
         private User deletedBy;
         private LocalDateTime createDate = LocalDateTime.now();
 
         private DeleteHistoryBuilder() {
+        }
+
+        public DeleteHistoryBuilder id(Long id) {
+            this.id = id;
+            return this;
         }
 
         public DeleteHistoryBuilder contentType(ContentType contentType) {

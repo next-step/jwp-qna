@@ -52,6 +52,11 @@ public class User extends BaseEntity {
             this.name = name;
         }
 
+        public UserBuilder id(long id) {
+            this.id = id;
+            return this;
+        }
+
         public UserBuilder email(String email) {
             this.email = email;
             return this;

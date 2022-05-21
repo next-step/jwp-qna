@@ -49,6 +49,11 @@ public class Question extends BaseEntity {
             this.title = title;
         }
 
+        public QuestionBuilder id(long id) {
+            this.id = id;
+            return this;
+        }
+
         public QuestionBuilder contents(String contents) {
             this.contents = contents;
             return this;
