@@ -8,6 +8,7 @@ import java.util.Objects;
 
 @Entity
 public class User {
+    @Transient
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
