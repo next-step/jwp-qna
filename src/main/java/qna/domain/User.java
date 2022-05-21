@@ -3,11 +3,10 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class User {
+public class User extends CUDateEntity {
     @Transient
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -21,11 +20,6 @@ public class User {
     private String name;
     private String email;
 
-    @Column(name = "CREATED_AT" , nullable = false)
-    private final LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(name = "UPDATED_AT")
-    private LocalDateTime updatedAt;
     protected User() {
     }
 

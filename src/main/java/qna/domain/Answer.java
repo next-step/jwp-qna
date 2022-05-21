@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class Answer {
+public class Answer extends CUDateEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,12 +24,6 @@ public class Answer {
 
     @Column(nullable = false)
     private boolean deleted = false;
-
-    @Column(name = "CREATED_AT" , nullable = false)
-    private final LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(name = "UPDATED_AT")
-    private LocalDateTime updatedAt;
 
     protected Answer() {
     }
