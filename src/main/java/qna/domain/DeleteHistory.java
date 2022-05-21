@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-//@AttributeOverride(name = "f2", column = @Column(name = "f2_col", insertable = false, updatable = false)
 public class DeleteHistory {
 
     @Id
