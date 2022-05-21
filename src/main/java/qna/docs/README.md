@@ -1,7 +1,7 @@
 ## TODOLIST
-- [] answer
+- [x] answer
     - [x] Entity를 작성한다.
-    - [] 학습테스트를 작성한다.
+    - [x] 학습테스트를 작성한다.
 - [] delete_history 
     - [x] Entity를 작성한다.
     - [] 학습테스트를 작성한다.
