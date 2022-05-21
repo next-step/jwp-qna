@@ -69,6 +69,10 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
