@@ -8,7 +8,7 @@
 - [x] question Entity
     - [x] Entity를 작성한다.
     - [x] 학습테스트를 작성한다.
-- [] user Entity
+- [x] user Entity
     - [x] Entity를 작성한다.
-    - [] 학습테스트를 작성한다.
+    - [x] 학습테스트를 작성한다.
 - [x] JPA Audit을 활용한 BaseTimeEntity 적용
