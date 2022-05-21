@@ -1,11 +1,32 @@
 package qna.domain;
 
-public class Question {
+import org.hibernate.annotations.SQLDelete;
+
+import javax.persistence.*;
+import java.util.Objects;
+
+@Entity
+@Table(name = "question")
+@SQLDelete(sql = "update question set deleted = true where id = ?")
+public class Question extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 100, nullable = false)
     private String title;
+
+    @Lob
     private String contents;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
     private boolean deleted = false;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -71,6 +92,19 @@ public class Question {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return Objects.equals(id, question.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
@@ -79,5 +113,9 @@ public class Question {
                 ", writerId=" + writerId +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public void updateTitle(String newTitle) {
+        this.title = newTitle;
     }
 }
