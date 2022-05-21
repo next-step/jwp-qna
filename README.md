@@ -11,3 +11,8 @@
 - [X] 질문을 표현한 Question 엔티티 클래스
 - [X] 답변을 표현한 Answer 엔티티 클래스
 - [X] 삭제 이력을 표현한 DeleteHistory 엔티티 클래스
+
+- [X] User 관련 CRUD 기능을 제공하는 UserRepository 클래스
+- [X] Question 관련 CRUD 기능을 제공하는 QuestionRepository 클래스
+- [X] Answer 관련 CRUD 기능을 제공하는 AnswerRepository 클래스
+- [X] DeleteHistory 관련 CRUD 기능을 제공하는 DeleteHistoryRepository 클래스
