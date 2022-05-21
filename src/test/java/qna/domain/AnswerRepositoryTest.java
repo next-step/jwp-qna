@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.UserTest.MOND;
 import static qna.domain.UserTest.SRUGI;
 
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -86,7 +87,7 @@ class AnswerRepositoryTest {
 
     @Test
     @DisplayName("저장 및 논리 삭제 후 해당 id로 검색")
-    void sandAndLogicalDeleteThenFindById() {
+    void saveAndLogicalDeleteThenFindById() {
         initUserAndQuestionSetting();
         Answer expected = answerRepository.save(answer);
         expected.delete();
@@ -98,6 +99,18 @@ class AnswerRepositoryTest {
                 () -> assertThat(actualOfFindById).isPresent(),
                 () -> assertThat(actualOfFindByIdAndDeletedFalse).isNotPresent()
         );
+    }
+
+    @Test
+    @DisplayName("저장 및 논리 삭제 후 Question id로 검색시 결과값이 존재하지 않는지 검증")
+    void verifyDeleteAnswerThenNotResult() {
+        initUserAndQuestionSetting();
+        Answer expected = answerRepository.save(this.answer);
+        expected.delete();
+        entityFlushAndClear();
+
+        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestion().getId());
+        assertThat(answerList).isEmpty();
     }
 
     private void initUserAndQuestionSetting() {
