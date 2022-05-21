@@ -29,7 +29,7 @@ class QuestionTest {
     }
 
     @Test
-    void 질문_삭제() throws CannotDeleteException {
+    void 질문_삭제() {
         question.writeBy(loginUser);
         question.deleteWithAnswersBy(loginUser);
         assertThat(question.isDeleted()).isTrue();
@@ -53,7 +53,7 @@ class QuestionTest {
     }
 
     @Test
-    void 질문_삭제_이력() throws CannotDeleteException {
+    void 질문_삭제_이력() {
         question.writeBy(loginUser);
         Answer answer = new Answer(1L, loginUser, question, "Answers Contents2");
         List<DeleteHistory> deleteHistories = question.deleteWithAnswersBy(loginUser);

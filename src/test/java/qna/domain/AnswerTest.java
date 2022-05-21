@@ -26,7 +26,7 @@ class AnswerTest {
     }
 
     @Test
-    void 답변_삭제() throws CannotDeleteException {
+    void 답변_삭제() {
         answer.deleteBy(loginUser);
         assertThat(answer.isDeleted()).isTrue();
     }
@@ -40,7 +40,7 @@ class AnswerTest {
     }
 
     @Test
-    void 답변_삭제_이력() throws CannotDeleteException {
+    void 답변_삭제_이력() {
         DeleteHistory deleteHistory = answer.deleteBy(loginUser);
         assertThat(deleteHistory).isEqualTo(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()));
     }

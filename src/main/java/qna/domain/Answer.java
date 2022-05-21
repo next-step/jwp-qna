@@ -91,7 +91,7 @@ public class Answer extends Auditing {
         this.deleted = true;
     }
 
-    public DeleteHistory deleteBy(User loginUser) throws CannotDeleteException {
+    public DeleteHistory deleteBy(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
         }
