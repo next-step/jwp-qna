@@ -7,15 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @DataJpaTest
 public class DeleteHistoryTest {
-    DeleteHistory deletedHistory;
+    private DeleteHistory deletedHistory;
+
     @Autowired
-    DeleteHistoryRepository deleteHistoryRepository;
+    private DeleteHistoryRepository deleteHistoryRepository;
 
     @BeforeEach
     void setUp() {
@@ -33,7 +34,8 @@ public class DeleteHistoryTest {
     @Test
     void findByContentTypeTest() {
         DeleteHistory deleteHistory = deleteHistoryRepository.save(deletedHistory);
-        List<DeleteHistory> deleteHistoryList = deleteHistoryRepository.findByContentType(ContentType.ANSWER);
-        assertThat(deleteHistoryList).contains(deleteHistory);
+        Optional<DeleteHistory> isDeleteHistory = deleteHistoryRepository.findById(deletedHistory.getId());
+        assertThat(isDeleteHistory.isPresent()).isTrue();
+        assertThat(isDeleteHistory.get()).isSameAs(deleteHistory);
     }
 }
