@@ -42,29 +42,10 @@ public class QnaService {
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
         deleteHistoryService.save(question.delete(loginUser));
-
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
-        }
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.setDeleted(true);
-        deleteHistories.add(DeleteHistory.builder()
-                .contentType(ContentType.QUESTION)
-                .contentId(questionId)
-                .deletedBy(question.getWriter())
-                .createDate(LocalDateTime.now())
-                .build());
         for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(DeleteHistory.builder()
-                    .contentType(ContentType.ANSWER)
-                    .contentId(answer.getId())
-                    .deletedBy(answer.getWriter())
-                    .createDate(LocalDateTime.now())
-                    .build());
+            deleteHistories.add(answer.delete(loginUser));
         }
         deleteHistoryService.saveAll(deleteHistories);
     }
