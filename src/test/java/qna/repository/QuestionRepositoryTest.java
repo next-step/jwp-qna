@@ -10,7 +10,7 @@ import qna.domain.QuestionTest;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -26,7 +26,7 @@ public class QuestionRepositoryTest {
         //when
         List<Question> questions = questionRepository.findByDeletedFalse();
         //then
-        assertThat(questions.size()).isEqualTo(1);
+        assertThat(questions).hasSize(1);
     }
 
     @Test
