@@ -45,4 +45,16 @@ class QuestionRepositoryTest {
         // then
         assertThat(result).isNotNull();
     }
+
+    @Test
+    void 삭제() {
+        // given
+        Question question = new Question("title", "contents");
+        Question saved = questionRepository.save(question);
+        // when
+        questionRepository.deleteById(saved.getId());
+        Optional<Question> result = questionRepository.findById(saved.getId());
+        // then
+        assertThat(result.isPresent()).isFalse();
+    }
 }
