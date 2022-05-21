@@ -27,7 +27,7 @@ class QuestionTest {
     }
 
     @Test
-    void 답변_삭제() throws CannotDeleteException {
+    void 질문_삭제() throws CannotDeleteException {
         question.writeBy(loginUser);
         question.deleteBy(loginUser);
         assertThat(question.isDeleted()).isTrue();

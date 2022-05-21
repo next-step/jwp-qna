@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -86,6 +87,13 @@ public class Answer extends Auditing {
 
     public void delete(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void deleteBy(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
+        }
+        delete(true);
     }
 
     @Override
