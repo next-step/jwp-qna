@@ -40,7 +40,6 @@ class QnaServiceTest {
     public void setUp() {
         question = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
         answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
-        question.addAnswer(answer);
     }
 
     @Test
@@ -75,8 +74,7 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() {
-        Answer answer2 = new Answer(2L, SANJIGI, Q1, "Answers Contents1");
-        question.addAnswer(answer2);
+        Answer answer2 = new Answer(2L, SANJIGI, question, "Answers Contents1");
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 

@@ -54,10 +54,6 @@ public class Question extends Auditing {
         return this.writer.equals(writer);
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
-
     List<Answer> getAnswers() {
         return answers.getAnswers();
     }

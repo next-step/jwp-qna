@@ -21,9 +21,7 @@ class QuestionTest {
 
     @Test
     void 답변_추가() {
-        Question before = new Question(2L, "title2", "contents2");
-        Answer answer = new Answer(1L, loginUser, before, "Answers Contents2");
-        question.addAnswer(answer);
+        Answer answer = new Answer(1L, loginUser, question, "Answers Contents2");
         assertThat(question.getAnswers()).containsExactly(answer);
         assertThat(answer.getQuestion()).isSameAs(question);
     }
