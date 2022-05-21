@@ -1,5 +1,6 @@
 package qna.domain.repository;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static qna.domain.UserTest.JAVAJIGI;
 
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +24,7 @@ class DeleteHistoryRepositoryTest {
     void createTest() {
         User save = userRepository.save(JAVAJIGI);
         DeleteHistory deleteHistory = DeleteHistory.createByQuestion(1L, save);
-        deleteHistoryRepository.save(deleteHistory);
+        DeleteHistory saved = deleteHistoryRepository.save(deleteHistory);
+        assertNotNull(saved);
     }
 }
