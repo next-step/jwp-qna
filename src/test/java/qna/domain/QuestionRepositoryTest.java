@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,14 +51,10 @@ public class QuestionRepositoryTest {
 
     @Test
     void 질문_삭제() {
-        final Question question1 = questionRepository.save(new Question("제목", "내용").writeBy(UserRepositoryTest.SANJIGI));
-        final List<Question> list = questionRepository.findByDeletedFalse();
-        assertThat(list).hasSize(1);
+        final Question question = questionRepository.save(new Question("제목", "내용").writeBy(UserRepositoryTest.SANJIGI));
+        questionRepository.delete(question);
 
-        questionRepository.delete(question1);
-        questionRepository.flush();
-
-        final Question expected = questionRepository.findById(question1.getId()).get();
-        assertThat(expected.isDeleted()).isTrue();
+        final Optional<User> actual = userRepository.findById(question.getId());
+        assertThat(actual.isPresent()).isFalse();
     }
 }

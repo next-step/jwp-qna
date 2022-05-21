@@ -1,13 +1,10 @@
 package qna.domain;
 
-import org.hibernate.annotations.SQLDelete;
-
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "question")
-@SQLDelete(sql = "update question set deleted = true where id = ?")
 public class Question extends BaseEntity {
 
     @Id

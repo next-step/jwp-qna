@@ -64,13 +64,9 @@ public class AnswerRepositoryTest {
     @Test
     void 댓글_삭제() {
         final Answer answer = answerRepository.save(new Answer(UserRepositoryTest.JAVAJIGI, QuestionRepositoryTest.Q1, "댓글 작성"));
-        final Optional<Answer> find = answerRepository.findByIdAndDeletedFalse(answer.getId());
-        assertThat(find).isNotEmpty();
-
         answerRepository.delete(answer);
-        answerRepository.flush();
 
-        final Answer expected = answerRepository.findById(answer.getId()).get();
-        assertThat(expected.isDeleted()).isTrue();
+        final Optional<Answer> actual = answerRepository.findById(answer.getId());
+        assertThat(actual.isPresent()).isFalse();
     }
 }
