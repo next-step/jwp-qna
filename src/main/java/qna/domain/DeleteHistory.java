@@ -5,9 +5,12 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -16,22 +19,26 @@ public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long contentId;
 
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
     private LocalDateTime createDate;
-    private Long deletedById;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "deleted_by_id")
+    private User deletedByUser;
 
     protected DeleteHistory() {
 
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedByUser = deletedByUser;
         this.createDate = createDate;
     }
 
@@ -44,15 +51,12 @@ public class DeleteHistory {
             return false;
         }
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+        return contentId.equals(that.contentId) && contentType == that.contentType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(contentId, contentType);
     }
 
     @Override
@@ -61,7 +65,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + deletedByUser.getId() +
                 ", createDate=" + createDate +
                 '}';
     }

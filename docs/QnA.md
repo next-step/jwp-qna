@@ -26,8 +26,9 @@
      - [X] QuestionTest
      - [X] UserTest
    - [X] QnaServiceTest의 Mock Repository 제거 후 JpaRepository로 변경
- - [ ] Question에서 시작하는 연관관계 매핑
- - [ ] User에서 시작하는 연관관계 매핑
+ - [X] Question에서 시작하는 연관관계 매핑
+   - 연관관계 편의메서드 작성
+ - [X] DeleteHistory에서 시작하는 연관관계 매핑
 
 # 리뷰 내용 반영
 ## 1단계 

@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,10 +21,10 @@ public class Answer extends BaseAuditingEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY ,optional = false)
     private User writer;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY ,optional = false)
     private Question question;
 
     @Lob
@@ -63,6 +64,7 @@ public class Answer extends BaseAuditingEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
+        question.getAnswers().add(this);
     }
 
     public String getContents() {
