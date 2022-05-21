@@ -2,6 +2,7 @@ package qna.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table
@@ -16,7 +17,10 @@ public class Question {
     @Column(columnDefinition = "text")
     private String contents;
 
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User user;
+
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -26,6 +30,9 @@ public class Question {
 
     @Column
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "answerId")
+    private List<Question> questions;
 
     protected Question() {
 
@@ -41,13 +48,13 @@ public class Question {
         this.contents = contents;
     }
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+    public Question writeBy(User user) {
+        this.user = user;
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+    public boolean isOwner(User user) {
+        return this.user.getId().equals(user.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -78,12 +85,12 @@ public class Question {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getUser() {
+        return user;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public boolean isDeleted() {
@@ -100,8 +107,11 @@ public class Question {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", user=" + user +
                 ", deleted=" + deleted +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", questions=" + questions +
                 '}';
     }
 }
