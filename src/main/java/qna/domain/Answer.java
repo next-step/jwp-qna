@@ -3,21 +3,33 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 public class Answer {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "WRITER_ID")
     private Long writerId;
+
+    @Column(name = "QUESTION_ID")
     private Long questionId;
+
+    @Lob
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    @Column(name = "CREATED_AT" , nullable = false)
+    private final LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "UPDATED_AT")
+    private LocalDateTime updatedAt;
 
     public Answer() {
     }
@@ -102,7 +114,7 @@ public class Answer {
     }
 
     public LocalDateTime getCreateAt() {
-        return LocalDateTime.now();
+        return this.createdAt;
     }
 
     public boolean getDeleted() {
