@@ -20,6 +20,8 @@
    - [X] 테스트코드에만 사용되던 User 생성자 제거 (identity 키생성 전략에선 필요없음)
    - [ ] 테스트 클래스의 테스트 픽스처 상수 제거 ( 테스트 메서드에서 작업한 내역들이 해당 픽스처에 남아 있는 문제 )
      - [X] AnswerTest
+     - [X] QuestionTest
+     - [ ] UserTest
 # 리뷰 내용 반영
 ## 1단계 
   - [X] BaseEntity에서 id제외하기
