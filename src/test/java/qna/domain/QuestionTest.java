@@ -21,13 +21,13 @@ public class QuestionTest {
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Autowired
-    QuestionRepository questions;
+    private QuestionRepository questionRepository;
 
     @DisplayName("동등성 비교테스트")
     @Test
     void identityTest() {
-        Question savedQuestion = questions.save(Q1);
-        Optional<Question> isQuestion = questions.findById(savedQuestion.getId());
+        Question savedQuestion = questionRepository.save(Q1);
+        Optional<Question> isQuestion = questionRepository.findById(savedQuestion.getId());
         assertThat(isQuestion.isPresent()).isTrue();
         assertThat(isQuestion.get()).isSameAs(savedQuestion);
     }
@@ -36,8 +36,8 @@ public class QuestionTest {
     @ParameterizedTest
     @MethodSource("provideQuestion")
     void findByWriterTest(final Question question) {
-        questions.saveAll(Arrays.asList(Q1, Q2));
-        List<Question> questionList = questions.findByWriterId(question.getWriterId());
+        questionRepository.saveAll(Arrays.asList(Q1, Q2));
+        List<Question> questionList = questionRepository.findByWriterId(question.getWriterId());
         assertThat(questionList.stream().mapToLong(Question::getWriterId).distinct().count()).isEqualTo(1);
     }
 

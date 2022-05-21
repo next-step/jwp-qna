@@ -17,13 +17,13 @@ public class UserTest {
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
     @Autowired
-    UserRepository users;
+    private UserRepository userRepository;
 
     @DisplayName("동등성 비교테스트")
     @Test
     void identityTest() {
-        final User savedUser = users.save(UserTest.JAVAJIGI);
-        Optional<User> isUser = users.findByUserId(savedUser.getUserId());
+        final User savedUser = userRepository.save(UserTest.JAVAJIGI);
+        Optional<User> isUser = userRepository.findByUserId(savedUser.getUserId());
         assertThat(isUser.isPresent()).isTrue();
         assertThat(isUser.get()).isSameAs(savedUser);
     }
@@ -31,8 +31,8 @@ public class UserTest {
     @DisplayName("User 찾기 테스트")
     @Test
     void findByUserId() {
-        List<User> savedUser = users.saveAll(Arrays.asList(UserTest.SANJIGI, UserTest.JAVAJIGI));
-        Optional<User> isUser = users.findByUserId(UserTest.JAVAJIGI.getUserId());
+        List<User> savedUser = userRepository.saveAll(Arrays.asList(UserTest.SANJIGI, UserTest.JAVAJIGI));
+        Optional<User> isUser = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId());
         assertThat(isUser.isPresent()).isTrue();
         assertThat(savedUser).contains(isUser.get());
     }

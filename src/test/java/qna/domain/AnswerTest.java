@@ -20,7 +20,7 @@ public class AnswerTest {
 
 
     @Autowired
-    AnswerRepository answers;
+    private AnswerRepository answerRepository;
 
     @BeforeEach
     void setUp() {
@@ -31,7 +31,7 @@ public class AnswerTest {
     @DisplayName("create_at, deleted 필드 값을 null 을 가질수 없다.")
     @Test
     void createTest() {
-        Answer expected = answers.save(A1);
+        Answer expected = answerRepository.save(A1);
         assertAll(
                 () -> assertThat(expected.getCreatedAt()).isNotNull(),
                 () -> assertThat(expected.getUpdatedAt()).isNotNull()
@@ -41,9 +41,9 @@ public class AnswerTest {
     @DisplayName("저장값 비교하기")
     @Test
     void identityTest() {
-        Answer expected = answers.save(A1);
-        answers.flush();
-        Answer answer = answers.findById(A1.getId()).get();
+        Answer expected = answerRepository.save(A1);
+        answerRepository.flush();
+        Answer answer = answerRepository.findById(A1.getId()).get();
         assertThat(expected).isSameAs(answer);
     }
 
@@ -51,9 +51,9 @@ public class AnswerTest {
     @DisplayName("변경하기 ")
     @Test
     void updateTest(){
-        Answer savedAnswer = answers.save(A1);
+        Answer savedAnswer = answerRepository.save(A1);
         savedAnswer.setContents("Answers change");
-        Optional<Answer> isSavedAnswer = answers.findByIdAndDeletedFalse(savedAnswer.getId());
+        Optional<Answer> isSavedAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
         assertThat(isSavedAnswer.isPresent()).isTrue();
         assertThat(isSavedAnswer.get().getContents()).isEqualTo(savedAnswer.getContents());
     }
@@ -61,8 +61,8 @@ public class AnswerTest {
     @DisplayName("동일 질문 이고 삭제가 안된 정보 가져오기 테스트")
     @Test
     void getSameQuestionListTest() {
-        answers.saveAll(Arrays.asList(A1, A2));
-        List<Answer> byQuestionIdAndDeletedFalse = answers.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        answerRepository.saveAll(Arrays.asList(A1, A2));
+        List<Answer> byQuestionIdAndDeletedFalse = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
         assertThat(byQuestionIdAndDeletedFalse).contains(A1, A2);
     }
 }
