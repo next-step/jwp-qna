@@ -57,7 +57,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public Long getId() {
@@ -74,11 +74,11 @@ public class Answer extends BaseEntity {
 
     public void setWriter(User writer) {
         if (this.writer != null) {
-            this.writer.getAnswers().remove(this);
+            this.writer.removeAnswer(this);
         }
         this.writer = writer;
-        if (!writer.getAnswers().contains(this)) {
-            writer.getAnswers().add(this);
+        if (!writer.isWriteAnswer(this)) {
+            writer.addAnswer(this);
         }
     }
 

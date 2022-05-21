@@ -1,7 +1,5 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Question extends BaseEntity {
@@ -82,10 +79,12 @@ public class Question extends BaseEntity {
 
     public void setWriter(User writer) {
         if (this.writer != null) {
-            this.writer.getQuestions().remove(this);
+            this.writer.removeQuestion(this);
         }
         this.writer = writer;
-        writer.getQuestions().add(this);
+        if (!writer.isWriteQuestion(this)) {
+            writer.addQuestion(this);
+        }
     }
 
     public boolean isDeleted() {

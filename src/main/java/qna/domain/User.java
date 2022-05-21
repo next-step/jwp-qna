@@ -33,13 +33,13 @@ public class User extends BaseEntity {
     private String email;
 
     @OneToMany(mappedBy = "writer")
-    private List<Question> questions = new ArrayList<>();
+    private final List<Question> questions = new ArrayList<>();
 
     @OneToMany(mappedBy = "writer")
-    private List<Answer> answers = new ArrayList<>();
+    private final List<Answer> answers = new ArrayList<>();
 
     @OneToMany(mappedBy = "deletedBy")
-    private List<DeleteHistory> deleteHistories = new ArrayList<>();
+    private final List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected User() {}
 
@@ -161,6 +161,23 @@ public class User extends BaseEntity {
             deleteHistory.setDeletedBy(this);
         }
     }
+
+    public void removeAnswer(Answer answer) {
+        this.answers.remove(answer);
+    }
+
+    public boolean isWriteAnswer(Answer answer) {
+        return this.answers.contains(answer);
+    }
+
+    public void removeQuestion(Question question) {
+        this.questions.remove(question);
+    }
+
+    public boolean isWriteQuestion(Question question) {
+        return this.questions.contains(question);
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -170,6 +187,30 @@ public class User extends BaseEntity {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id) &&
+                Objects.equals(userId, user.userId) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(name, user.name) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(questions, user.questions) &&
+                Objects.equals(answers, user.answers) &&
+                Objects.equals(deleteHistories, user.deleteHistories);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email, questions, answers, deleteHistories);
     }
 
     private static class GuestUser extends User {
