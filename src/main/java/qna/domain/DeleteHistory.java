@@ -35,7 +35,7 @@ public class DeleteHistory {
     private User deleteUser;
 
     @CreatedDate
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createDate;
 
     private DeleteHistory(ContentType contentType, Long contentId, User deleteUser) {
