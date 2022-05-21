@@ -154,14 +154,12 @@ public class User extends BaseEntity {
             return false;
         }
         User user = (User) o;
-        return Objects.equals(getId(), user.getId()) && Objects.equals(getUserId(), user.getUserId())
-                && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getName(),
-                user.getName()) && Objects.equals(getEmail(), user.getEmail());
+        return Objects.equals(getId(), user.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUserId(), getPassword(), getName(), getEmail());
+        return Objects.hash(getId());
     }
 
     private static class GuestUser extends User {
