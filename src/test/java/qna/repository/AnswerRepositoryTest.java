@@ -103,7 +103,8 @@ class AnswerRepositoryTest {
         final Answer expected = answerRepository.save(AnswerTest.A1);
 
         // when
-        final Answer actual = answerRepository.findByIdAndDeletedFalse(expected.getId()).orElseThrow(IllegalArgumentException::new);
+        final Answer actual = answerRepository.findByIdAndDeletedFalse(expected.getId())
+                .orElseThrow(IllegalArgumentException::new);
 
         // then
         assertThat(expected).isEqualTo(actual);

@@ -1,13 +1,10 @@
 package qna.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
-import org.aspectj.lang.annotation.After;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -43,7 +40,8 @@ class QuestionRepositoryTest {
 
         // when
         question.setWriterId(UserTest.SANJIGI.getId());
-        final Question actual = questionRepository.findById(question.getId()).orElseThrow(IllegalArgumentException::new);
+        final Question actual = questionRepository.findById(question.getId())
+                .orElseThrow(IllegalArgumentException::new);
 
         // then
         assertThat(actual.getWriterId()).isNotEqualTo(expected);
@@ -69,7 +67,8 @@ class QuestionRepositoryTest {
         final Question expected = questionRepository.save(QuestionTest.Q1);
 
         // when
-        final Question actual = questionRepository.findById(expected.getId()).orElseThrow(IllegalArgumentException::new);
+        final Question actual = questionRepository.findById(expected.getId())
+                .orElseThrow(IllegalArgumentException::new);
 
         // then
         assertThat(actual).isEqualTo(expected);
@@ -94,7 +93,8 @@ class QuestionRepositoryTest {
         final Question question = questionRepository.save(QuestionTest.Q1);
 
         // when
-        final Question actual = questionRepository.findByIdAndDeletedFalse(question.getId()).orElseThrow(IllegalArgumentException::new);
+        final Question actual = questionRepository.findByIdAndDeletedFalse(question.getId())
+                .orElseThrow(IllegalArgumentException::new);
 
         // then
         assertThat(question).isEqualTo(actual);
