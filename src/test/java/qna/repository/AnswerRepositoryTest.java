@@ -35,69 +35,56 @@ public class AnswerRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    private User savedJavaJiGi;
-    private User savedSanJiGi;
-    private Question savedQ1;
-    private Answer savedAnswerA1;
+    private User user;
+    private Question question;
+    private Answer save;
+
+    private void saveUser() {
+        user = userRepository.save(new User("mellow", "1234", "mazinga", "mazinga@example.com"));
+    }
+
+    private void saveQuestion() {
+        question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
+    }
 
     private void saveAnswer() {
-        setWriterInQuestion();
-        setUserAndQuestionInAnswer(savedJavaJiGi, savedSanJiGi);
-        savedAnswerA1 = answerRepository.save(A1);
-        answerRepository.save(A2);
+        save = answerRepository.save(new Answer(user, question, "Answers Contents1"));
     }
 
-    private void setWriterInQuestion() {
-        savedJavaJiGi = userRepository.save(JAVAJIGI);
-        savedSanJiGi = userRepository.save(SANJIGI);
-        Q1.setWriter(savedJavaJiGi);
-        Q2.setWriter(savedSanJiGi);
-        savedQ1 = questionRepository.save(Q1);
-    }
-
-    private void setUserAndQuestionInAnswer(User savedJavaJiGi, User savedSanJiGi) {
-        A1.setQuestion(savedQ1);
-        A1.setWriter(savedJavaJiGi);
-        A2.setQuestion(savedQ1);
-        A2.setWriter(savedSanJiGi);
-    }
-
-    private void setAnswer(User user, Question question) {
-
-    }
     @Test
     @DisplayName("데이터를 저장한다.")
     void save_test() {
-        User savedJavaJiGi = userRepository.save(JAVAJIGI);
-        Q1.setWriter(savedJavaJiGi);
-        Question savedQ1 = questionRepository.save(Q1);
-        A1.setQuestion(savedQ1);
-        A1.setWriter(savedJavaJiGi);
-        Answer save = answerRepository.save(A1);
+        saveUser();
+        saveQuestion();
+        saveAnswer();
         assertAll(
                 () -> assertThat(save.getId()).isNotNull(),
-                () -> assertThat(save.getContents()).isEqualTo(A1.getContents())
+                () -> assertThat(save.getContents()).isEqualTo("Answers Contents1")
         );
     }
 
     @Test
     @DisplayName("데이터를 모두 조회한다.")
     void find_all_test() {
+        saveUser();
+        saveQuestion();
         saveAnswer();
         List<Answer> answers = answerRepository.findAll();
-        assertThat(answers.size()).isEqualTo(2);
+        assertThat(answers.size()).isEqualTo(1);
     }
 
     @Test
     @DisplayName("Id로 데이터를 조회한다.")
     void find_by_id_test() {
+        saveUser();
+        saveQuestion();
         saveAnswer();
-        Optional<Answer> answerOptional = answerRepository.findByIdAndDeletedFalse(savedQ1.getId());
+        Optional<Answer> answerOptional = answerRepository.findByIdAndDeletedFalse(save.getId());
         answerOptional.ifPresent(answer -> {
             assertAll(
                     () -> assertThat(answer.getContents()).isEqualTo("Answers Contents1"),
-                    () -> assertThat(answer.getQuestion().getId()).isNotNull(),
-                    () -> assertThat(answer.getWriter().getId()).isNotNull(),
+                    () -> assertThat(answer.getQuestion()).isNotNull(),
+                    () -> assertThat(answer.getWriter()).isNotNull(),
                     () -> assertThat(answer.isDeleted()).isFalse()
             );
         });
@@ -106,14 +93,18 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("QuestionId로 조회한다.")
     void find_By_Question_Id_Deleted_False_test() {
+        saveUser();
+        saveQuestion();
         saveAnswer();
-        List<Answer> questionIdAndDeletedFalse = answerRepository.findByQuestionIdAndDeletedFalse(savedQ1.getId());
-        assertThat(questionIdAndDeletedFalse.size()).isEqualTo(2);
+        List<Answer> questionIdAndDeletedFalse = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+        assertThat(questionIdAndDeletedFalse.size()).isEqualTo(1);
     }
 
     @Test
     @DisplayName("전체 데이터를 삭제한다.")
     void delete_all_test() {
+        saveUser();
+        saveQuestion();
         saveAnswer();
         answerRepository.deleteAll();
         assertThat(answerRepository.findAll().size()).isZero();
@@ -122,12 +113,14 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("양방향 연관관계를 확인한다.")
     void relation_test() {
+        saveUser();
+        saveQuestion();
         saveAnswer();
-        Optional<Answer> answerOptional = answerRepository.findById(savedAnswerA1.getId());
+        Optional<Answer> answerOptional = answerRepository.findById(save.getId());
         answerOptional.ifPresent(answer -> {
             assertAll(
-                    () -> assertThat(answer.getContents()).isEqualTo("Answers Contents1"),
-                    () -> assertThat(answer.getWriter().getAnswers().get(0).getContents()).isEqualTo("Answers Contents1")
+                    () -> assertThat(answer.getWriter()).isEqualTo(user),
+                    () -> assertThat(user.getAnswers()).contains(answer)
             );
         });
     }

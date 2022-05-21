@@ -29,21 +29,22 @@ public class QuestionRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    private User user;
+    private Question save;
+
+    private void saveUser() {
+        user = userRepository.save(new User("mellow", "1234", "mazinga", "mazinga@example.com"));
+    }
+
     private void saveQuestion() {
-        User savedJavaJiGi = userRepository.save(JAVAJIGI);
-        User savedSanJiGi = userRepository.save(SANJIGI);
-        Q1.setWriter(savedJavaJiGi);
-        Q2.setWriter(savedSanJiGi);
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
+        save = questionRepository.save(new Question("title1", "contents1").writeBy(user));
     }
 
     @Test
     @DisplayName("데이터를 저장한다.")
     void save_test() {
-        User javaJiGi = userRepository.save(JAVAJIGI);
-        Q1.setWriter(javaJiGi);
-        Question save = questionRepository.save(Q1);
+        saveUser();
+        saveQuestion();
         assertAll(
                 () -> assertThat(save.getId()).isNotNull(),
                 () -> assertThat(save.getTitle()).isEqualTo("title1"),
@@ -54,24 +55,27 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("전체 데이터를 조회한다.")
     void find_all_test() {
+        saveUser();
         saveQuestion();
         List<Question> all = questionRepository.findAll();
-        assertThat(all.size()).isEqualTo(2);
+        assertThat(all.size()).isEqualTo(1);
     }
 
     @Test
     @DisplayName("deleted로 데이터를 조회한다.")
     void find_by_deleted_test() {
+        saveUser();
         saveQuestion();
         List<Question> questions = questionRepository.findByDeletedFalse();
-        assertThat(questions.size()).isEqualTo(2);
+        assertThat(questions.size()).isEqualTo(1);
     }
 
     @Test
     @DisplayName("id와 deleted로 데이터를 조회한다.")
     void find_by_id_and_deleted_test() {
+        saveUser();
         saveQuestion();
-        Optional<Question> questionOptional = questionRepository.findByIdAndDeletedFalse(Q1.getId());
+        Optional<Question> questionOptional = questionRepository.findByIdAndDeletedFalse(save.getId());
         questionOptional.ifPresent(question -> {
             assertAll(
                     () -> assertThat(question.getTitle()).isEqualTo("title1"),
@@ -84,6 +88,7 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("전체 데이터를 삭제한다.")
     void delete_all_test() {
+        saveUser();
         saveQuestion();
         questionRepository.deleteAll();
         assertThat(questionRepository.findAll().size()).isZero();
@@ -92,12 +97,13 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("양방향 연관관계를 확인한다.")
     void relation_test() {
+        saveUser();
         saveQuestion();
-        Optional<Question> questionOptional = questionRepository.findById(Q1.getId());
+        Optional<Question> questionOptional = questionRepository.findById(save.getId());
         questionOptional.ifPresent(question -> {
             assertAll(
-                    () -> assertThat(question.getTitle()).isEqualTo("title1"),
-                    () -> assertThat(question.getWriter().getQuestions().get(0).getTitle()).isEqualTo("title1")
+                    () -> assertThat(question.getWriter()).isEqualTo(user),
+                    () -> assertThat(user.getQuestions()).contains(question)
             );
         });
     }
