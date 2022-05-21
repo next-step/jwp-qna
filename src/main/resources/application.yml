@@ -2,7 +2,7 @@
 spring:
   datasource:
     hikari:
-      jdbc-url: jdbc:h2:mem:testdb;
+      jdbc-url: jdbc:h2:mem:testdb;MODE=MYSQL
       username: sa
   h2:
     console:
@@ -11,4 +11,5 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.MySQL57Dialect
     show-sql: true
