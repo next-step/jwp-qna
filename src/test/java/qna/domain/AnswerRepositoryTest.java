@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -47,4 +48,18 @@ class AnswerRepositoryTest {
                 )
         );
     }
+
+    @Test
+    void 변경감지() {
+        // given
+        Answer answer = answerRepository.save(A1);
+        answer.setContents("update");
+        // when
+        Optional<Answer> result = answerRepository.findById(A1.getId());
+        // then
+        assertThat(result)
+                .map(Answer::getContents)
+                .hasValue("update");
+    }
+
 }
