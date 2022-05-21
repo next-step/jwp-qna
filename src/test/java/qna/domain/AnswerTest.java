@@ -60,7 +60,7 @@ public class AnswerTest {
         Answer savedA1 = answerRepository.save(A1);
         Answer savedA2 = answerRepository.save(A2);
         questionRepository.save(QuestionTest.Q1);
-        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(savedA1.getQuestionId());
+        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
         assertThat(answerList).containsExactly(savedA1, savedA2);
     }
 }

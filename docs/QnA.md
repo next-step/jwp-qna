@@ -14,10 +14,14 @@
   - DeleteHistory : Question = 1 : 1 (필요시 추후 매핑)
   - DeleteHistory : User = N : 1 (단방향, 외래키관리자 = DeleteHistory)
 
+# 작업로그
+ - [X] Answer에서 시작하는 연관관계 매핑
+ - [ ] 테스트 클래스에 있는 static 테스트 픽스처 제거   
+ - 
 # 리뷰 내용 반영
 ## 1단계 
   - [X] BaseEntity에서 id제외하기
   - [X] Exception 패키지 생성 
   - [X] Test 클래스에 @DirtiesContext 제거
   - [X] 테스트 실행시 @EnableJpaAuditing 적용되도록 변경
-  - 
+
