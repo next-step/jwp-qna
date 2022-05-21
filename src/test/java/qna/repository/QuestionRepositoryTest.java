@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.repository.entity.Question;
+import qna.repository.entity.User;
+import qna.repository.entity.UserTest;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,18 +22,22 @@ import static qna.repository.entity.QuestionTest.Q2;
 class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
-    private Question question;
+    @Autowired
+    private UserRepository userRepository;
+
+    private Long questionId;
 
     @BeforeEach
     void setup() {
-        question = questionRepository.save(Q1);
-        questionRepository.save(Q2);
+        User javajigi = userRepository.save(UserTest.JAVAJIGI);
+        User sanjigi = userRepository.save(UserTest.SANJIGI);
+        questionId = questionRepository.save(new Question(Q1.getTitle(), Q1.getContents()).writeBy(javajigi)).getId();
+        questionRepository.save(new Question(Q2.getTitle(), Q2.getContents()).writeBy(sanjigi));
     }
 
     @Test()
     @DisplayName("정상 상태의 질문을 ID로 찾는다")
     void findByIdAndDeletedFalse() {
-        Long questionId = question.getId();
         Optional<Question> find = questionRepository.findByIdAndDeletedFalse(questionId);
         Question question = find.orElse(null);
 
@@ -39,7 +45,7 @@ class QuestionRepositoryTest {
                 () -> assertEquals(questionId, question.getId()),
                 () -> assertEquals("contents1", question.getContents()),
                 () -> assertEquals("title1", question.getTitle()),
-                () -> assertEquals(1L, question.getWriterId()),
+                () -> assertThat(question.getWriter()).isNotNull(),
                 () -> assertThat(question.isDeleted()).isFalse()
         );
     }
