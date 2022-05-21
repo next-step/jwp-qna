@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -20,9 +22,18 @@ public class UserTest {
     @DisplayName("동등성 비교테스트")
     @Test
     void identityTest() {
-        final User savedUser = users.save(JAVAJIGI);
+        final User savedUser = users.save(UserTest.JAVAJIGI);
         Optional<User> isUser = users.findByUserId(savedUser.getUserId());
         assertThat(isUser.isPresent()).isTrue();
         assertThat(isUser.get()).isSameAs(savedUser);
+    }
+
+    @DisplayName("User 찾기 테스트")
+    @Test
+    void findByUserId() {
+        List<User> savedUser = users.saveAll(Arrays.asList(UserTest.SANJIGI, UserTest.JAVAJIGI));
+        Optional<User> isUser = users.findByUserId(UserTest.JAVAJIGI.getUserId());
+        assertThat(isUser.isPresent()).isTrue();
+        assertThat(savedUser).contains(isUser.get());
     }
 }
