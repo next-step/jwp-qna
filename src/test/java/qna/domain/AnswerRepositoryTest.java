@@ -1,7 +1,6 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,11 +8,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.annotation.DirtiesContext;
 
-@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @DataJpaTest
 class AnswerRepositoryTest {
+    
     @Autowired
     private AnswerRepository answerRepository;
 
@@ -21,11 +19,12 @@ class AnswerRepositoryTest {
     @Test
     void save() {
         //given & when
-        final Answer actual = answerRepository.save(AnswerTest.A1);
+        final Answer expected = answerRepository.save(AnswerTest.A1);
+        final Optional<Answer> actual = answerRepository.findById(expected.getId());
 
         //then
         assertThat(actual).isNotNull();
-        assertThat(actual.equals(AnswerTest.A1)).isTrue();
+        assertThat(actual.get()).isSameAs(expected);
     }
 
     @DisplayName("id로 Answer 조회")
