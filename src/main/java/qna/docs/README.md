@@ -5,9 +5,10 @@
 - [] delete_history 
     - [x] Entity를 작성한다.
     - [] 학습테스트를 작성한다.
-- [] question Entity를 매핑한다.
+- [] question Entity
     - [x] Entity를 작성한다.
     - [] 학습테스트를 작성한다.
-- [] user Entity를 매핑한다.
+- [] user Entity
     - [x] Entity를 작성한다.
     - [] 학습테스트를 작성한다.
+- [x] JPA Audit을 활용한 BaseTimeEntity 적용

@@ -10,7 +10,7 @@ import qna.UnAuthorizedException;
 import java.util.Objects;
 
 @Entity
-public class User {
+public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
