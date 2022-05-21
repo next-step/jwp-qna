@@ -56,15 +56,6 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
-        if (this.question != null) {
-            this.question.getAnswers().remove(this);
-        }
-
-        this.question = question;
-        question.getAnswers().add(this);
-    }
-
     public Long getId() {
         return id;
     }
