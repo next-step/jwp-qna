@@ -89,6 +89,10 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
+    public void delete() {
+        deleted = true;
+    }
+
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
