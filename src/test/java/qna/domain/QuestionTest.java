@@ -14,13 +14,16 @@ public class QuestionTest {
     @Autowired
     QuestionRepository questionRepository;
 
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question(1L,"title1", "contents1").writeBy(UserTest.JAVAJIGI);
+    public static final Question Q2 = new Question(2L,"title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @BeforeEach
     public void init(){
         UserTest.JAVAJIGI.setId(null);
         UserTest.SANJIGI.setId(null);
+
+        Q1.setId(null);
+        Q2.setId(null);
 
     }
 
@@ -48,5 +51,12 @@ public class QuestionTest {
         Question q1Saved = questionRepository.save(Q1);
         assertThat(q1Saved.getCreatedAt()).isNotNull();
         assertThat(q1Saved.getUpdatedAt()).isNotNull();
+    }
+
+    @Test
+    public void cascadePersist(){
+        assertThat(Q1.getWriter().getId()).isNull();
+        Question q1Saved = questionRepository.save(Q1);
+        assertThat(q1Saved.getWriter().getId()).isNotNull();
     }
 }
