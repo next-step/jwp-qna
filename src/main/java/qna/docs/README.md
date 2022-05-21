@@ -1,0 +1,13 @@
+## TODOLIST
+- [] answer
+    - [x] Entity를 작성한다.
+    - [] 학습테스트를 작성한다.
+- [] delete_history 
+    - [x] Entity를 작성한다.
+    - [] 학습테스트를 작성한다.
+- [] question Entity를 매핑한다.
+    - [x] Entity를 작성한다.
+    - [] 학습테스트를 작성한다.
+- [] user Entity를 매핑한다.
+    - [x] Entity를 작성한다.
+    - [] 학습테스트를 작성한다.
