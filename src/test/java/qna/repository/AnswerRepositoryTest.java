@@ -154,7 +154,7 @@ class AnswerRepositoryTest {
             Question 연관관계_question = result.getQuestion();
 
             assertThat(연관관계_question).isNotNull();
-            assertThat(연관관계_question.getId()).isEqualTo(writer.getId());
+            assertThat(연관관계_question.getId()).isEqualTo(question.getId());
         }
     }
 }
