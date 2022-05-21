@@ -2,6 +2,7 @@ package subway.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,16 @@ class LineRepositoryTest {
 
     @Autowired
     private LineRepository lines;
+
+    @BeforeEach
+    void setup() {
+        Line line = new Line("3호선");
+        lines.save(line);
+
+        Station station = new Station("교대역");
+        station.setLine(line);
+        stations.save(station);
+    }
 
     @Test
     @DisplayName("조회 테스트")
