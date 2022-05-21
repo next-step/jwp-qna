@@ -56,4 +56,12 @@ public class DeleteHistory {
                 ", createDate=" + createDate +
                 '}';
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
 }
