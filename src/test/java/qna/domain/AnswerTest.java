@@ -53,9 +53,9 @@ public class AnswerTest {
     void updateTest(){
         Answer savedAnswer = answers.save(A1);
         savedAnswer.setContents("Answers change");
-        Optional<Answer> isAnswer = answers.findByContents("Answers change");
-        assertThat(isAnswer.isPresent()).isTrue();
-        assertThat(isAnswer.get().getContents()).isEqualTo(savedAnswer.getContents());
+        Optional<Answer> isSavedAnswer = answers.findByIdAndDeletedFalse(savedAnswer.getId());
+        assertThat(isSavedAnswer.isPresent()).isTrue();
+        assertThat(isSavedAnswer.get().getContents()).isEqualTo(savedAnswer.getContents());
     }
 
     @DisplayName("동일 질문 이고 삭제가 안된 정보 가져오기 테스트")
