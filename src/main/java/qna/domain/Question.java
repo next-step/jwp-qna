@@ -26,11 +26,6 @@ public class Question extends BaseAuditingEntity {
     }
 
     public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
-        this.id = id;
         this.title = title;
         this.contents = contents;
     }
@@ -42,10 +37,6 @@ public class Question extends BaseAuditingEntity {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public boolean isOwner(User writer) {

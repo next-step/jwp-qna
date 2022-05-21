@@ -16,18 +16,18 @@
 
 # 작업로그
  - [X] Answer에서 시작하는 연관관계 매핑
- - [ ] 테스트 코드 리팩토링
-   - [ ] 테스트코드에만 사용되던 생성자 제거 (identity 키생성 전략에선 필요없음)
+ - [X] 테스트 코드 리팩토링
+   - [X] 테스트코드에만 사용되던 생성자 제거 (identity 키생성 전략에선 필요없음)
      - [X] User
-     - [ ] Answer
-     - [ ] Question
+     - [X] Answer
+     - [X] Question
    - [X] 테스트 클래스의 테스트 픽스처 상수 제거 ( 테스트 메서드에서 작업한 내역들이 해당 픽스처에 남아 있는 문제 )
      - [X] AnswerTest
      - [X] QuestionTest
      - [X] UserTest
+   - [X] QnaServiceTest의 Mock Repository 제거 후 JpaRepository로 변경
  - [ ] Question에서 시작하는 연관관계 매핑
  - [ ] User에서 시작하는 연관관계 매핑
- - [ ] QnaServiceTest의 Mock Repository 제거 후 JpaRepository로 변경
 
 # 리뷰 내용 반영
 ## 1단계 
