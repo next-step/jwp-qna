@@ -1,6 +1,28 @@
 package qna.domain;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+
+@DataJpaTest
 public class UserTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+
+    @Autowired
+    UserRepository users;
+
+    @DisplayName("동등성 비교테스트")
+    @Test
+    void identityTest() {
+        final User savedUser = users.save(JAVAJIGI);
+        Optional<User> isUser = users.findByUserId(savedUser.getUserId());
+        assertThat(isUser.isPresent()).isTrue();
+        assertThat(isUser.get()).isSameAs(savedUser);
+    }
 }
