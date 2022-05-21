@@ -66,23 +66,25 @@ class AnswerRepositoryTest {
         );
     }
 
-    @DisplayName("질문 ID 로 조회 테스트")
+    @DisplayName("저장된 답변들중 해당 질문에 달린 답변만 잘 조회되는지 테스트")
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        answerRepository.save(answer1);
+        Answer answer = answerRepository.save(answer1);
         answerRepository.save(answer2);
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
-        assertThat(answers).hasSize(1);
+        assertAll(
+                () -> assertThat(answers).hasSize(1),
+                () -> assertThat(answers.get(0)).isEqualTo(answer)
+        );
     }
 
     @DisplayName("delete 가 잘 되었는지 테스트")
     @Test
     void delete() {
-        answerRepository.save(answer1);
-        Answer answer = answerRepository.save(answer2);
+        Answer answer = answerRepository.save(answer1);
         answerRepository.delete(answer);
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
-        assertThat(answers).hasSize(1);
+        assertThat(answers).hasSize(0);
     }
 
     @DisplayName("ID로 조회 테스트")
