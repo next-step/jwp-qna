@@ -21,6 +21,14 @@ public class DeleteHistoryTest {
     void identityTest() {
         DeleteHistory history = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
         DeleteHistory deleteHistory = deleteHistoryRepository.save(history);
+        assertThat(history).isSameAs(deleteHistory);
+    }
+
+    @DisplayName("검색 테스트")
+    @Test
+    void findByContentTypeTest() {
+        DeleteHistory history = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
+        DeleteHistory deleteHistory = deleteHistoryRepository.save(history);
         List<DeleteHistory> deleteHistoryList = deleteHistoryRepository.findByContentType(ContentType.ANSWER);
         assertThat(deleteHistoryList).contains(deleteHistory);
     }
