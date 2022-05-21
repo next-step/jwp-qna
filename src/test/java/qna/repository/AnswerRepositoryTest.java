@@ -17,7 +17,7 @@ class AnswerRepositoryTest {
     private AnswerRepository answerRepository;
 
     @Test
-    @DisplayName("답변 등록 테스트")
+    @DisplayName("답변이 정상적으로 등록되었는지 확인 테스트")
     void save() {
         answerRepository.save(A1);
         answerRepository.save(A2);
