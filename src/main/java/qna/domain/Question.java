@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -80,6 +82,13 @@ public class Question extends Auditing {
 
     public void delete(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void deleteBy(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        delete(true);
     }
 
     @Override
