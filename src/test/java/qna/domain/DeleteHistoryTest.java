@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DeleteHistoryTest {
-    @DisplayName("Answer 도메인 생성")
+    @DisplayName("DeleteHistory 도메인 생성")
     @Test
     void test_new() {
         //given & when
