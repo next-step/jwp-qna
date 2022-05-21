@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import qna.config.JpaAuditingConfig;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +37,18 @@ class UserRepositoryTest {
         User user = new User(null, "password", "name", "email");
         // when
         assertThatThrownBy(() ->
-            userRepository.save(user)
+                userRepository.save(user)
+        ).isInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @Test
+    void userId는_중복으로_저장될_수_없다() {
+        // given
+        User user = new User("unique", "password", "name", "email");
+        User duplicateUser = new User("unique", "password", "name", "email");
+        // when
+        assertThatThrownBy(() ->
+                userRepository.saveAll(Arrays.asList(user, duplicateUser))
         ).isInstanceOf(DataIntegrityViolationException.class);
     }
 }
