@@ -27,4 +27,15 @@ class BaseEntityTest {
         assertThat(result.createdAt()).isBefore(LocalDateTime.now());
     }
 
+    @Test
+    void 엔티티가_수정되면_수정일이_갱신된다() {
+        // given
+        Answer answer = new Answer();
+        Answer result = answerRepository.save(answer);
+        result.setContents("contents");
+        // when
+        answerRepository.flush();
+        // then
+        assertThat(result.createdAt()).isBefore(result.updatedAt());
+    }
 }
