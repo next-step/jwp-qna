@@ -26,6 +26,9 @@ public class Answer extends BaseTimeEntity{
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
+    protected Answer() {
+    }
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
