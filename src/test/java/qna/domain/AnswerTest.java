@@ -14,8 +14,8 @@ public class AnswerTest {
     @Autowired
     AnswerRepository answerRepository;
 
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+    public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @BeforeEach
     public void init() {
@@ -25,7 +25,8 @@ public class AnswerTest {
         QuestionTest.Q1.setId(null);
         QuestionTest.Q2.setId(null);
 
-
+        A1.setId(null);
+        A2.setId(null);
     }
 
     @Test
@@ -63,5 +64,15 @@ public class AnswerTest {
         //then
         assertThat(answerSaved.getCreatedAt()).isNotNull();
         assertThat(answerSaved.getUpdatedAt()).isNotNull();
+    }
+
+    @Test
+    public void cascadePersist() {
+        assertThat(A1.getWriter().getId()).isNull();
+        assertThat(A1.getQuestion().getId()).isNull();
+
+        answerRepository.save(A1);
+        assertThat(A1.getWriter().getId()).isNotNull();
+        assertThat(A1.getQuestion().getId()).isNotNull();
     }
 }
