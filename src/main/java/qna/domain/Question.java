@@ -26,8 +26,8 @@ public class Question extends Auditing {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     @NotNull
     private boolean deleted = false;
@@ -58,15 +58,15 @@ public class Question extends Auditing {
         answer.toQuestion(this);
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    List<Answer> getAnswers() {
+        return answers.getAnswers();
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getContents() {
+    String getContents() {
         return contents;
     }
 
@@ -90,12 +90,10 @@ public class Question extends Auditing {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
         delete();
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(new DeleteHistory(QUESTION, id, writer));
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.deleteBy(loginUser));
-        }
+        deleteHistories.addAll(answers.deleteBy(loginUser));
         return deleteHistories;
     }
 
