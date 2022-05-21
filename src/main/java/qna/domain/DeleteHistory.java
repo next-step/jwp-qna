@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import qna.domain.timegenerator.TimeGenerator;
 
 @Entity
 public class DeleteHistory {
@@ -25,18 +27,30 @@ public class DeleteHistory {
 
     private Long contentId;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deleteUser;
 
-    private LocalDateTime createDate = LocalDateTime.now();
+    @Column(nullable = false)
+    private LocalDateTime createDate;
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deleteUser, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deleteUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deleteUser = deleteUser;
         this.createDate = createDate;
+    }
+
+    public static DeleteHistory createByAnswer(Long contentId, User deleteUser, TimeGenerator generator) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deleteUser, generator.now());
+    }
+
+    public static DeleteHistory createByQuestion(Long contentId, User deleteUser, TimeGenerator generator) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deleteUser, generator.now());
+    }
+
+    public LocalDateTime getCreateDate() {
+        return this.createDate;
     }
 
     protected DeleteHistory() {
@@ -45,8 +59,12 @@ public class DeleteHistory {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&

@@ -1,6 +1,9 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -10,10 +13,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 import qna.domain.base.BaseEntity;
+import qna.domain.timegenerator.TimeGeneratorImpl;
 
 @Entity
 public class Question extends BaseEntity {
+
+    private static final String NO_AUTHORITY_ERROR = "질문을 삭제할 권한이 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +31,9 @@ public class Question extends BaseEntity {
 
     @Lob
     private String contents;
+
+    @Embedded
+    private Answers answers = Answers.createEmptyNewInstance();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -50,12 +60,36 @@ public class Question extends BaseEntity {
         return this;
     }
 
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        validateAuthority(loginUser);
+        this.updateDeleted();
+        return generateDeleteHistories(loginUser);
+    }
+
+    private List<DeleteHistory> generateDeleteHistories(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.createByQuestion(id, loginUser, new TimeGeneratorImpl()));
+        deleteHistories.addAll(answers.deleteAll(loginUser));
+        return deleteHistories;
+    }
+
+    private void updateDeleted() {
+        this.deleted = true;
+    }
+
+    private void validateAuthority(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(NO_AUTHORITY_ERROR);
+        }
+    }
+
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.addAnswer(answer);
     }
 
     public Long getId() {
@@ -80,10 +114,6 @@ public class Question extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

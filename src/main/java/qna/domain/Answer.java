@@ -9,14 +9,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-
 import java.util.Objects;
 import qna.domain.base.BaseEntity;
+import qna.domain.timegenerator.TimeGeneratorImpl;
 
 @Entity
 public class Answer extends BaseEntity {
+
+    private static final String MATCHING_WRITER_ERROR = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -103,5 +106,21 @@ public class Answer extends BaseEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        validateAuthority(loginUser);
+        this.updateDeleted();
+        return DeleteHistory.createByAnswer(id, loginUser, new TimeGeneratorImpl());
+    }
+
+    private void updateDeleted() {
+        this.deleted = true;
+    }
+
+    private void validateAuthority(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(MATCHING_WRITER_ERROR);
+        }
     }
 }
