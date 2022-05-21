@@ -3,7 +3,7 @@ package qna.domain;
 import javax.persistence.*;
 
 @Entity
-public class Question extends CUDateEntity {
+public class Question extends CreatedUpdatedDateEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(length = 100, nullable = false)

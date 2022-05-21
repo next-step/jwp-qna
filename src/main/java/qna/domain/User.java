@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class User extends CUDateEntity {
+public class User extends CreatedUpdatedDateEntity {
     @Transient
     public static final GuestUser GUEST_USER = new GuestUser();
 
