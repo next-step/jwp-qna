@@ -1,4 +1,4 @@
-package qna.domain;
+package subway.domain;
 
 import javax.persistence.*;
 
