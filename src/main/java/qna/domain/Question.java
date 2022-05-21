@@ -8,6 +8,8 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
+import static qna.domain.ContentType.QUESTION;
+
 @Entity
 public class Question extends Auditing {
     @Id
@@ -84,14 +86,17 @@ public class Question extends Auditing {
         this.deleted = deleted;
     }
 
-    public void deleteBy(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleteBy(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        for (Answer answer : answers) {
-            answer.deleteBy(loginUser);
-        }
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         delete(true);
+        deleteHistories.add(new DeleteHistory(QUESTION, id, writer));
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.deleteBy(loginUser));
+        }
+        return deleteHistories;
     }
 
     @Override

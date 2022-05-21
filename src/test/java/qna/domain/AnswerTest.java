@@ -38,4 +38,10 @@ class AnswerTest {
         assertThatThrownBy(() -> otherAnswer.deleteBy(loginUser))
                 .isInstanceOf(CannotDeleteException.class);
     }
+
+    @Test
+    void 답변_삭제_이력() throws CannotDeleteException {
+        DeleteHistory deleteHistory = answer.deleteBy(loginUser);
+        assertThat(deleteHistory).isEqualTo(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()));
+    }
 }

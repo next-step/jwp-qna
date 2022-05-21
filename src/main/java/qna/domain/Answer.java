@@ -8,6 +8,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
+import static qna.domain.ContentType.ANSWER;
+
 @Entity
 public class Answer extends Auditing {
     @Id
@@ -89,11 +91,12 @@ public class Answer extends Auditing {
         this.deleted = deleted;
     }
 
-    public void deleteBy(User loginUser) throws CannotDeleteException {
+    public DeleteHistory deleteBy(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
         }
         delete(true);
+        return new DeleteHistory(ANSWER, id, writer);
     }
 
     @Override

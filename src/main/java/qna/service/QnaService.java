@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
-import qna.domain.*;
+import qna.domain.DeleteHistory;
+import qna.domain.Question;
+import qna.domain.QuestionRepository;
+import qna.domain.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,12 +18,10 @@ public class QnaService {
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
     private QuestionRepository questionRepository;
-    private AnswerRepository answerRepository;
     private DeleteHistoryService deleteHistoryService;
 
-    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
+    public QnaService(QuestionRepository questionRepository, DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;
-        this.answerRepository = answerRepository;
         this.deleteHistoryService = deleteHistoryService;
     }
 
@@ -34,15 +34,7 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
-
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.deleteBy(loginUser);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter()));
-        for (Answer answer : answers) {
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()));
-        }
+        List<DeleteHistory> deleteHistories = question.deleteBy(loginUser);
         deleteHistoryService.saveAll(deleteHistories);
     }
 }

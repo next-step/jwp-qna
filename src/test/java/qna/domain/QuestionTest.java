@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -48,5 +50,16 @@ class QuestionTest {
         new Answer(1L, otherUser, question, "Answers Contents2");
         assertThatThrownBy(() -> question.deleteBy(loginUser))
                 .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void 질문_삭제_이력() throws CannotDeleteException {
+        question.writeBy(loginUser);
+        Answer answer = new Answer(1L, loginUser, question, "Answers Contents2");
+        List<DeleteHistory> deleteHistories = question.deleteBy(loginUser);
+        assertThat(deleteHistories).containsExactly(
+                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()),
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter())
+        );
     }
 }
