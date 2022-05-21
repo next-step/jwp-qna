@@ -128,4 +128,23 @@ class AnswerRepositoryTest {
         assertThat(answerRepository.findById(save.getId()).isPresent()).isTrue();
     }
 
+    @Test
+    @DisplayName("답변을 저장한다.")
+    void saveAnswer() {
+        final User testUser = userRepository.save(
+                new User("userId", "password", "name", "email"));
+        final Question q1 = new Question("title1", "contents1").writeBy(testUser);
+
+        q1.addAnswer(new Answer(testUser, q1, "답변1"));
+        q1.addAnswer(new Answer(testUser, q1, "답변2"));
+        q1.addAnswer(new Answer(testUser, q1, "답변3"));
+
+        userRepository.save(testUser);
+        questionRepository.save(q1);
+
+        final Optional<Question> findQ1 = questionRepository.findByIdAndDeletedFalse(q1.getId());
+
+        assertThat(findQ1).isPresent();
+        assertThat(findQ1.get().getAnswers()).hasSize(3);
+    }
 }

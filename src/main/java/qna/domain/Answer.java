@@ -100,7 +100,7 @@ public class Answer extends AuditEntity {
         return "Answer{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
-                ", question=" + question +
+                ", question=" + question.getId() +
                 ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';

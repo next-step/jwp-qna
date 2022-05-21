@@ -102,10 +102,11 @@
   - 연관 관계 
     * Question 
       * writer(User) 다대일 단방향 연관관계 맵핑
+      * answers(Answer) 다대일 양방향 연관관계   
       
     * Answer
       * writer(User) 다대일 단방향 연관관계 
-      * question 다대일 단방향 연관관계
+      * question 다대일 양방향 연관관계
     
     * DeleteHistory
       deletedUser(User) 다대일 단방향 연관 관계
