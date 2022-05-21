@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
-public class QuestionTest {
+class QuestionTest {
     Question question;
     User sanjigi;
     User javajigi;
@@ -47,9 +47,7 @@ public class QuestionTest {
 
     @DisplayName("다른 작성자의 질문 삭제시 예외 테스트")
     @Test
-    void deleteQuestionOtherWriter() throws CannotDeleteException {
-        assertThat(question.delete(javajigi)).isEqualTo(deleteHistory);
-        assertThat(question.isDeleted()).isTrue();
+    void deleteQuestionOtherWriter() {
         assertThatThrownBy(() -> question.delete(sanjigi))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("질문을 삭제할 권한이 없습니다.");
