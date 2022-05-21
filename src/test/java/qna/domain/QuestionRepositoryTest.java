@@ -35,4 +35,14 @@ class QuestionRepositoryTest {
                         .hasValue("contents")
         );
     }
+
+    @Test
+    void 저장() {
+        // given
+        Question question = new Question("title", "contents");
+        // when
+        Question result = questionRepository.save(question);
+        // then
+        assertThat(result).isNotNull();
+    }
 }
