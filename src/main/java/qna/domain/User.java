@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends BaseTimeEntity{
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -26,12 +26,6 @@ public class User {
 
     @Column(name="email", length = 50)
     private String email;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 
     private User() {
     }
