@@ -88,8 +88,6 @@ public class Question extends BaseAuditingEntity {
         return this.writer.equals(writer);
     }
 
-
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -108,5 +106,4 @@ public class Question extends BaseAuditingEntity {
                 ", deleted=" + deleted +
                 '}';
     }
-
 }

@@ -6,7 +6,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -21,10 +20,10 @@ public class Answer extends BaseAuditingEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY ,optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User writer;
 
-    @ManyToOne(fetch = FetchType.LAZY ,optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Question question;
 
     @Lob
