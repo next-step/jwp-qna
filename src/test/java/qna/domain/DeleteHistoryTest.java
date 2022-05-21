@@ -26,9 +26,9 @@ class DeleteHistoryTest {
         long questionId = 6L;
         Question question = questionRepository.findById(questionId).get();
         User writer = question.getWriter();
-        Answers deletedAnswers = question.delete(writer);
+        question.delete(writer);
 
-        DeleteHistories deleteHistories = DeleteHistory.createDeleteHistories(question, deletedAnswers);
+        DeleteHistories deleteHistories = DeleteHistory.createDeleteHistories(question);
 
         List<DeleteHistory> actual = deleteHistories.getDeleteHistories();
         assertThat(actual).hasSize(2);

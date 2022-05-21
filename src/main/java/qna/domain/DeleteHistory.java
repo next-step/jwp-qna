@@ -49,10 +49,11 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public static DeleteHistories createDeleteHistories(Question question, Answers deletedAnswers) {
+    public static DeleteHistories createDeleteHistories(Question question) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()));
-        for (Answer answer : deletedAnswers.getAnswers()) {
+        Answers answers = question.getAnswers();
+        for (Answer answer : answers.getDeletedAnswers()) {
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()));
         }
         return new DeleteHistories(deleteHistories);

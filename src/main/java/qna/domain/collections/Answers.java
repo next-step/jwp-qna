@@ -1,7 +1,10 @@
 package qna.domain.collections;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -11,6 +14,9 @@ import qna.exception.CannotDeleteException;
 
 @Embeddable
 public class Answers {
+
+    private static final String DELETED_HISTORY_KEY = "DELETED_HISTORY";
+    private static final Map<String,List<Answer>> ANSWERS_CACHE = new HashMap<>();
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
@@ -26,7 +32,7 @@ public class Answers {
         answers.add(answer);
     }
 
-    public Answers deleteAll(User questionWriter) throws CannotDeleteException {
+    public void deleteAll(User questionWriter) throws CannotDeleteException {
         List<Answer> deleteAnswers = new ArrayList<>();
         for (Answer answer : answers) {
             addDeleteAnswers(deleteAnswers, answer);
@@ -34,7 +40,7 @@ public class Answers {
         for (Answer answer : deleteAnswers) {
             answer.delete(questionWriter);
         }
-        return new Answers(deleteAnswers);
+        ANSWERS_CACHE.put(DELETED_HISTORY_KEY,deleteAnswers);
     }
 
     private void addDeleteAnswers(List<Answer> needDeleteAnswers, Answer answer) {
@@ -43,7 +49,7 @@ public class Answers {
         }
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public List<Answer> getDeletedAnswers() {
+        return ANSWERS_CACHE.getOrDefault(DELETED_HISTORY_KEY, Collections.emptyList());
     }
 }
