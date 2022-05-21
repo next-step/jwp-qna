@@ -16,6 +16,7 @@ public class Question {
     @Column(columnDefinition = "text")
     private String contents;
 
+    @Column
     private Long writerId;
 
     @Column(nullable = false)
