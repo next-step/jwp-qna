@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -46,5 +48,13 @@ public class AnswerTest {
         Optional<Answer> isAnswer = answers.findByContents("Answers change");
         assertThat(isAnswer.isPresent()).isTrue();
         assertThat(isAnswer.get().getContents()).isEqualTo(savedAnswer.getContents());
+    }
+
+    @DisplayName("동일 질문 이고 삭제가 안된 정보 가져오기 테스트")
+    @Test
+    void getSameQuestionListTest() {
+        answers.saveAll(Arrays.asList(A1, A2));
+        List<Answer> byQuestionIdAndDeletedFalse = answers.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        assertThat(byQuestionIdAndDeletedFalse).contains(A1, A2);
     }
 }
