@@ -9,6 +9,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import qna.config.JpaAuditingConfig;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -103,5 +105,15 @@ class QuestionRepositoryTest {
                         true
                 )
         );
+    }
+
+    @Test
+    void 삭제되지_않은_질문들을_조회한다() {
+        // given
+        questionRepository.saveAll(Arrays.asList(Q1, Q2));
+        // when
+        List<Question> result = questionRepository.findByDeletedFalse();
+        // then
+        assertThat(result).hasSize(2);
     }
 }
