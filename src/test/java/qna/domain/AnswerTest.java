@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,18 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static Answer A1;
+    public static Answer A2;
 
 
     @Autowired
     AnswerRepository answers;
+
+    @BeforeEach
+    void setUp() {
+        A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    }
 
     @DisplayName("create_at, deleted 필드 값을 null 을 가질수 없다.")
     @Test
@@ -35,6 +42,7 @@ public class AnswerTest {
     @Test
     void identityTest() {
         Answer expected = answers.save(A1);
+        answers.flush();
         Answer answer = answers.findById(A1.getId()).get();
         assertThat(expected).isSameAs(answer);
     }
