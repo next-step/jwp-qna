@@ -18,20 +18,20 @@ public class UserRepositoryTest {
 
     @Test
     void 사용자_생성() {
-        User saved = userRepository.save(JAVAJIGI);
+        User saved = userRepository.save(createTestUser());
         assertThat(saved).isNotNull();
     }
 
     @Test
     void 사용자_조회() {
-        userRepository.save(JAVAJIGI);
-        Optional<User> user = userRepository.findByUserId(JAVAJIGI.getUserId());
-        assertThat(user.get()).isNotNull();
+        User save = userRepository.save(createTestUser());
+        Optional<User> find = userRepository.findByUserId(save.getUserId());
+        assertThat(find.get()).isNotNull();
     }
 
     @Test
     void 사용자_수정() {
-        User user = userRepository.save(new User("donghee.han", "password", "donghee", "donghee@slipp.net"));
+        User user = userRepository.save(createTestUser());
 
         user.setName("han");
         user.setEmail("han@slipp.net");
@@ -44,9 +44,13 @@ public class UserRepositoryTest {
 
     @Test
     void 사용자_삭제() {
-        User user = userRepository.save(new User("donghee.han", "password", "donghee", "donghee@slipp.net"));
+        User user = userRepository.save(createTestUser());
         userRepository.delete(user);
         Optional<User> actual = userRepository.findByUserId(user.getUserId());
         assertThat(actual.isPresent()).isFalse();
+    }
+
+    private User createTestUser() {
+        return new User("donghee.han", "password", "donghee", "donghee.han@slipp.net");
     }
 }
