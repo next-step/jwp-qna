@@ -1,9 +1,13 @@
 package qna.domain;
 
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 import qna.config.QnaDataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,8 +63,27 @@ class AnswerRepositoryTest {
         final Question question = saved.getQuestion();
         assertAll(
                 () -> assertThat(question).isEqualTo(savedQuestion),
-                () -> assertThat(question.getTitle()).isEqualTo("3"),
-                () -> assertThat(question.getContents()).isEqualTo("3")
+                () -> assertThat(question.getTitle()).isEqualTo(new Title("3")),
+                () -> assertThat(question.getContents()).isEqualTo(new Contents("3"))
         );
+    }
+
+    @DisplayName("지연 로딩으로 인한 초기화 여부 확인")
+    @Test
+    void lazyLoading(@Autowired QuestionRepository questionRepository,
+                     @Autowired UserRepository userRepository,
+                     @Autowired PlatformTransactionManager transactionManager) {
+        final TransactionTemplate template = new TransactionTemplate(transactionManager);
+        template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        final Long id = template.execute(status -> {
+            final User savedUser = userRepository.save(new User("lazyloading", "1234", "lazyloading",
+                    "lazyloading@example.com"));
+            final Question savedQuestion = questionRepository.save(new Question("question", "question")
+                    .writeBy(savedUser));
+            final Answer answer = new Answer(savedUser, savedQuestion, "answer");
+            return repository.save(answer).getId();
+        });
+        final Question question = repository.getOne(id).getQuestion();
+        assertThat(Hibernate.isInitialized(question)).isFalse();
     }
 }

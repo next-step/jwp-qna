@@ -1,8 +1,8 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -10,20 +10,17 @@ public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 100, nullable = false)
-    private String title;
-    @Lob
-    private String contents;
-    @ManyToOne
+    @Embedded
+    private Title title;
+    @Embedded
+    private Contents contents;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
-    private List<Answer> answers = new ArrayList<>();
-
-    protected Question() {
-    }
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -31,8 +28,11 @@ public class Question extends BaseEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
-        this.contents = contents;
+        this.title = new Title(title);
+        this.contents = new Contents(contents);
+    }
+
+    protected Question() {
     }
 
     public Question writeBy(User writer) {
@@ -45,38 +45,29 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if (!answers.contains(answer)) {
-            answers.add(answer);
-        }
+        answers.add(answer);
         answer.setQuestion(this);
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public DeleteHistories delete(User loginUser) {
+        validateOwner(loginUser);
+        deleted = true;
+        return createDeleteHistories(loginUser);
     }
 
-    public Long getId() {
-        return id;
+    private DeleteHistories createDeleteHistories(User loginUser) {
+        DeleteHistories deleteHistories = new DeleteHistories(DeleteHistory.ofQuestion(this));
+        return deleteHistories.merge(deleteAnswers(loginUser));
     }
 
-    public String getTitle() {
-        return title;
+    private DeleteHistories deleteAnswers(User loginUser) {
+        return answers.removeAll(loginUser);
     }
 
-    public String getContents() {
-        return contents;
-    }
-
-    public User getWriter() {
-        return writer;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    private void validateOwner(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     @Override
@@ -105,5 +96,29 @@ public class Question extends BaseEntity {
                 ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public Answers getAnswers() {
+        return answers;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Title getTitle() {
+        return title;
+    }
+
+    public Contents getContents() {
+        return contents;
+    }
+
+    public User getWriter() {
+        return writer;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
     }
 }

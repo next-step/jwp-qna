@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -11,14 +12,14 @@ public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
     private boolean deleted = false;
 
     protected Answer() {
@@ -42,7 +43,7 @@ public class Answer extends BaseEntity {
         this.writer = writer;
         this.question = question;
         question.addAnswer(this);
-        this.contents = contents;
+        this.contents = new Contents(contents);
     }
 
     public boolean isOwner(User writer) {
@@ -69,7 +70,7 @@ public class Answer extends BaseEntity {
         return question;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
@@ -79,6 +80,14 @@ public class Answer extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        deleted = true;
+        return DeleteHistory.ofAnswer(this);
     }
 
     @Override
