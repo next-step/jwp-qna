@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -33,5 +35,16 @@ public class AnswerTest {
         Answer expected = answers.save(A1);
         Answer answer = answers.findById(A1.getId()).get();
         assertThat(expected).isSameAs(answer);
+    }
+
+
+    @DisplayName("변경하기 ")
+    @Test
+    void updateTest(){
+        Answer savedAnswer = answers.save(A1);
+        savedAnswer.setContents("Answers change");
+        Optional<Answer> isAnswer = answers.findByContents("Answers change");
+        assertThat(isAnswer.isPresent()).isTrue();
+        assertThat(isAnswer.get().getContents()).isEqualTo(savedAnswer.getContents());
     }
 }
