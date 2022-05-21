@@ -52,7 +52,7 @@ public class DeleteHistory {
     }
 
     static DeleteHistory mergeQuestion(Question question) {
-        question.changeDeleteStatus();
+        question.delete();
         return new DeleteHistory(DeleteHistoryContent.removeQuestion(question), question.getWriter());
     }
 
@@ -63,7 +63,7 @@ public class DeleteHistory {
     }
 
     static DeleteHistory mergeAnswer(Answer answer) {
-        answer.changeDeleteStatus();
+        answer.delete();
         return new DeleteHistory(DeleteHistoryContent.removeAnswer(answer), answer.getWriter());
     }
 
@@ -112,13 +112,12 @@ public class DeleteHistory {
             return false;
         }
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) && Objects.equals(deleteHistoryContent,
-                that.deleteHistoryContent) && Objects.equals(deleter, that.deleter) && Objects.equals(
-                createDate, that.createDate);
+        return Objects.equals(id, that.id) && Objects.equals(deleteHistoryContent, that.deleteHistoryContent)
+                && Objects.equals(deleter.getId(), that.deleter.getId()) && Objects.equals(createDate, that.createDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, deleteHistoryContent, deleter, createDate);
+        return Objects.hash(id, deleteHistoryContent, deleter.getId(), createDate);
     }
 }

@@ -72,7 +72,7 @@ class QuestionRepositoryTest {
     void sandAndLogicalDeleteThenFindById() {
         initUserSetting();
         Question expected = questionRepository.save(question);
-        expected.changeDeleteStatus();
+        expected.delete();
         entityFlushAndClear();
         Optional<Question> actualOfFindById = questionRepository.findById(expected.getId());
         Optional<Question> actualOfFindByIdAndDeletedFalse = questionRepository.findByIdAndDeletedFalse(
@@ -82,6 +82,39 @@ class QuestionRepositoryTest {
                 () -> assertThat(actualOfFindById).isPresent(),
                 () -> assertThat(actualOfFindByIdAndDeletedFalse).isNotPresent()
         );
+    }
+
+    @Test
+    @DisplayName("타이틀의 길이가 100자를 넘어가면 PersistenceException이 발생")
+    void setTitleOverLength() {
+        initUserSetting();
+        Question expected = questionRepository.save(question);
+        String overTitle = Stream.generate(() -> "mond")
+                .limit(26)
+                .collect(Collectors.joining());
+        expected.setTitle(overTitle);
+
+        assertThatExceptionOfType(PersistenceException.class)
+                .isThrownBy(this::entityFlushAndClear);
+
+    }
+
+    @Test
+    @DisplayName("타이틀을 null 값으로 설정시 PersistenceException이 발생")
+    void setTitleNull() {
+        initUserSetting();
+        Question expected = questionRepository.save(question);
+        expected.setTitle(null);
+
+        assertThatExceptionOfType(PersistenceException.class)
+                .isThrownBy(this::entityFlushAndClear);
+    }
+
+    private void initUserSetting() {
+        User mond = userRepository.findByUserId(MOND.getUserId())
+                .orElseGet(() -> userRepository.save(MOND));
+
+        question = new Question("title", "content").writeBy(mond);
     }
 
     private void entityFlushAndClear() {
@@ -97,36 +130,5 @@ class QuestionRepositoryTest {
                 () -> assertThat(q1.getCreatedAt()).isEqualTo(q2.getCreatedAt()),
                 () -> assertThat(q1.getUpdatedAt()).isEqualTo(q2.getUpdatedAt())
         );
-    }
-
-    private void initUserSetting() {
-        User mond = userRepository.findByUserId(MOND.getUserId())
-                .orElseGet(() -> userRepository.save(MOND));
-
-        question = new Question("title", "content").writeBy(mond);
-    }
-
-    @Test
-    @DisplayName("타이틀의 길이가 100자를 넘어가면 PersistenceException이 발생")
-    void setTitleOverLength() {
-        Question expected = questionRepository.save(question);
-        String overTitle = Stream.generate(() -> "mond")
-                .limit(26)
-                .collect(Collectors.joining());
-        expected.setTitle(overTitle);
-
-        assertThatExceptionOfType(PersistenceException.class)
-                .isThrownBy(this::entityFlushAndClear);
-
-    }
-
-    @Test
-    @DisplayName("타이틀을 null 값으로 설정시 PersistenceException이 발생")
-    void setTitleNull() {
-        Question expected = questionRepository.save(question);
-        expected.setTitle(null);
-
-        assertThatExceptionOfType(PersistenceException.class)
-                .isThrownBy(this::entityFlushAndClear);
     }
 }

@@ -64,7 +64,7 @@ class AnswerTest {
     @DisplayName("삭제 상태 값 변경 후 바뀌었는지 확인")
     void verifyChangeDeleteStatus() {
         Answer answer = new Answer(JAVAJIGI, Q1, "contents");
-        answer.changeDeleteStatus();
+        answer.delete();
 
         assertThat(answer.isDeleted()).isTrue();
     }

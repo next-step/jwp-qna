@@ -103,7 +103,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void changeDeleteStatus() {
+    public void delete() {
         this.deleted = true;
     }
 
@@ -128,13 +128,14 @@ public class Question extends BaseEntity {
             return false;
         }
         Question question = (Question) o;
-        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
-                question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer,
-                question.writer) && Objects.equals(answers, question.answers);
+        return deleted == question.deleted && Objects.equals(id, question.id) &&
+                Objects.equals(title, question.title) && Objects.equals(contents, question.contents) &&
+                Objects.equals(writer.getId(), question.writer.getId()) &&
+                Objects.equals(answers, question.answers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writer, answers, deleted);
+        return Objects.hash(id, title, contents, writer.getId(), answers, deleted);
     }
 }

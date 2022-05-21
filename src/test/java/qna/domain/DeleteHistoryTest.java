@@ -18,7 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.exception.UnAuthorizedException;
 
-class DeleteHistoryTest {
+public class DeleteHistoryTest {
 
     @Test
     @DisplayName("객체 검증 비교")

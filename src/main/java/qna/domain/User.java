@@ -99,6 +99,6 @@ public class User extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email);
+        return Objects.hash(id, userId);
     }
 }

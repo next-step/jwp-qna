@@ -61,7 +61,7 @@ class AnswerRepositoryTest {
     void verifyUpdateEntity() {
         initUserAndQuestionSetting();
         Answer expected = answerRepository.save(answer);
-        expected.changeDeleteStatus();
+        expected.delete();
         entityFlushAndClear();
         Optional<Answer> actual = answerRepository.findById(expected.getId());
 
@@ -89,7 +89,7 @@ class AnswerRepositoryTest {
     void sandAndLogicalDeleteThenFindById() {
         initUserAndQuestionSetting();
         Answer expected = answerRepository.save(answer);
-        expected.changeDeleteStatus();
+        expected.delete();
         entityFlushAndClear();
         Optional<Answer> actualOfFindById = answerRepository.findById(expected.getId());
         Optional<Answer> actualOfFindByIdAndDeletedFalse = answerRepository.findByIdAndDeletedFalse(expected.getId());

@@ -6,6 +6,7 @@ import static qna.domain.AnswerTest.A1;
 import static qna.domain.AnswerTest.A2;
 import static qna.domain.UserTest.JAVAJIGI;
 
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,9 @@ class AnswersTest {
     @Test
     @DisplayName("객체 생성 확인")
     void verifyAnswers() {
-        assertThat(answers).isEqualTo(new Answers());
+        answers.add(A1);
+
+        assertThat(answers).isEqualTo(new Answers(Collections.singletonList(A1)));
     }
 
     @Test
