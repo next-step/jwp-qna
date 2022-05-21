@@ -106,12 +106,4 @@ public class Answer extends CreatedUpdatedDateEntity {
                 ", deleted=" + deleted +
                 '}';
     }
-
-    public LocalDateTime getCreateAt() {
-        return this.createdAt;
-    }
-
-    public boolean getDeleted() {
-        return this.deleted;
-    }
 }

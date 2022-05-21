@@ -33,8 +33,8 @@ public class AnswerTest {
     void createTest() {
         Answer expected = answers.save(A1);
         assertAll(
-                () -> assertThat(expected.getCreateAt()).isNotNull(),
-                () -> assertThat(expected.getDeleted()).isNotNull()
+                () -> assertThat(expected.getCreatedAt()).isNotNull(),
+                () -> assertThat(expected.getUpdatedAt()).isNotNull()
         );
     }
 
