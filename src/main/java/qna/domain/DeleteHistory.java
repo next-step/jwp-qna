@@ -49,8 +49,8 @@ public class DeleteHistory {
         return new DeleteHistory(ContentType.QUESTION, contentId, deleteUser, generator.now());
     }
 
-    public boolean equalsCreateDate(LocalDateTime createDate) {
-        return this.createDate.equals(createDate);
+    public LocalDateTime getCreateDate() {
+        return this.createDate;
     }
 
     protected DeleteHistory() {

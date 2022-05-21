@@ -29,6 +29,6 @@ class DeleteHistoryRepositoryTest {
                 () -> LocalDateTime.of(2022, 5, 22, 0, 0, 0));
         DeleteHistory saved = deleteHistoryRepository.save(deleteHistory);
         assertNotNull(saved);
-        assertTrue(saved.equalsCreateDate(LocalDateTime.of(2022, 5, 22, 0, 0, 0)));
+        assertTrue(saved.getCreateDate().equals(LocalDateTime.of(2022, 5, 22, 0, 0, 0)));
     }
 }
