@@ -24,8 +24,32 @@ public class QuestionTest {
     }
 
     @Test
-    void delete_다른사람이_쓴_답변() {
+    void delete_다른사람이_쓴_질문() {
         assertThatThrownBy(() -> Q1.delete(UserTest.SANJIGI))
                 .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void delete_이미_삭제된_질문() {
+        Question question = new Question(3L, "title", "contenst").writeBy(UserTest.JAVAJIGI);
+        question.delete(UserTest.JAVAJIGI);
+
+        assertThatThrownBy(() -> question.delete(UserTest.JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void addAnswer_답변이_null_일때() {
+        assertThatThrownBy(() -> Q1.addAnswer(null))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void addAnswer_다른_질문의_답변_추가() {
+        Question Q3 = new Question(3L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Answer answer = new Answer(Q3.getWriter(), Q3, "contents");
+
+        assertThatThrownBy(() -> Q1.addAnswer(answer))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
