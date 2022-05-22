@@ -85,4 +85,4 @@ alter table question
 - [X] Answer -> Question : ManyToOne 연관관계 매핑 
 - [X] Answer -> User : ManyToOne 연관관계 매핑 
 - [X] DeleteHistory -> User : ManyToOne 연관관계 매핑 
-- [] Question -> User : ManyToOne 연관관계 매핑 
+- [X] Question -> User : ManyToOne 연관관계 매핑 

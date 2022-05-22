@@ -27,9 +27,9 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     void beforeEach() {
-        questionRepository.save(QuestionTest.Q1);
         userRepository.save(UserTest.JAVAJIGI);
         userRepository.save(UserTest.SANJIGI);
+        questionRepository.save(QuestionTest.Q1);
     }
 
     @DisplayName("Answer 저장")
