@@ -9,8 +9,6 @@ import qna.repository.entity.DeleteHistory;
 import qna.repository.entity.User;
 import qna.repository.entity.UserTest;
 
-import java.time.LocalDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -24,7 +22,7 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("삭제 이력을 저장한다")
     void save() {
         User javajigi = userRepository.save(UserTest.JAVAJIGI);
-        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, javajigi, LocalDateTime.now());
+        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, javajigi);
         DeleteHistory actual = deleteHistoryRepository.save(expected);
 
         assertThat(expected).isEqualTo(actual);
