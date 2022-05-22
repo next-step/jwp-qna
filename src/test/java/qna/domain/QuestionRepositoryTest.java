@@ -23,7 +23,7 @@ class QuestionRepositoryTest {
     @Test
     void findByDeletedFalse() {
         User writer1 = testEntityManager.persist(createUser("javajigi"));
-        Question deleteQuestion = questionRepository.save(createQuestion(writer1, true));
+        questionRepository.save(createQuestion(writer1, true));
         Question question = questionRepository.save(createQuestion(writer1, false));
 
         assertThat(questionRepository.findByDeletedFalse()).containsExactly(question);

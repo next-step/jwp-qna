@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.AnswerTest.createAnswer;
+import static qna.domain.QuestionTest.createQuestion;
 import static qna.domain.UserTest.createUser;
 
 @DataJpaTest
@@ -24,7 +25,7 @@ class AnswerRepositoryTest {
     void findByIdAndDeletedFalse() {
         User writer1 = testEntityManager.persist(createUser("javajigi"));
         User writer2 = testEntityManager.persist(createUser("sanjigi"));
-        Question question = testEntityManager.persist(createQuestion(writer1));
+        Question question = testEntityManager.persist(createQuestion(writer1, false));
 
         Answer deletedAnswer = createAnswer(writer1, question, true);
         Answer answer = createAnswer(writer2, question, false);
@@ -34,10 +35,6 @@ class AnswerRepositoryTest {
 
         assertThat(answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId())).isEmpty();
         assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId())).hasValue(answer);
-    }
-
-    private Question createQuestion(User writer) {
-        return new Question("title1", "contents1").writeBy(writer);
     }
 
 }
