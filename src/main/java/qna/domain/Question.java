@@ -51,8 +51,24 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
+        validateAnswer(answer);
+
+        if (Objects.nonNull(this.answers)) {
+            answers.remove(answer);
+        }
+
         answer.toQuestion(this);
         answers.add(answer);
+    }
+
+    private void validateAnswer(Answer answer) {
+        if (Objects.isNull(answer)) {
+            throw new IllegalArgumentException("추가하려는 답변이 존재하지 않습니다.");
+        }
+
+        if (!Objects.equals(id, answer.getQuestion().getId())) {
+            throw new IllegalArgumentException("다른질문의 답변입니다.");
+        }
     }
 
     public Long getId() {
@@ -69,6 +85,7 @@ public class Question extends BaseTimeEntity {
 
     public List<DeleteHistory> delete(User loginUser) {
         validateOwner(loginUser);
+        validateDeleted();
 
         this.deleted = true;
 
@@ -82,6 +99,12 @@ public class Question extends BaseTimeEntity {
     private void validateOwner(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private void validateDeleted() {
+        if (deleted) {
+            throw new CannotDeleteException("이미 삭제된 질문입니다.");
         }
     }
 
