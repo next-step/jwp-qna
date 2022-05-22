@@ -11,6 +11,11 @@
    1. Id 컬럼, Id 생성전략 필수
    2. 기본생성자 필요
    3. @Table, @Column 등 애노테이션 활용
+3. 다대일 연관관계 매핑
+   1. Answer -> Question
+   2. Answer -> User
+   3. DeleteHistory -> User
+   4. Question -> User
 
 ###2. 리포지토리 클래스
 1. 리포지토리 목록
