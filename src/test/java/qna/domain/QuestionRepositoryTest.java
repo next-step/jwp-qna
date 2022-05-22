@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.annotation.QnaDataJpaTest;
 
 import java.util.Arrays;
@@ -25,6 +26,8 @@ class QuestionRepositoryTest {
     private QuestionRepository questionRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private TestEntityManager em;
 
     @BeforeEach
     void before() {
@@ -36,20 +39,21 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    void id로_조회() {
+    void id로_Many_To_One_관계_조회() {
         // given
-        Question question = new Question("title", "contents");
-        Question saved = questionRepository.save(question);
+        User user = userRepository.save(question1.getWriter());
+        Question saved = questionRepository.save(question1);
+        em.clear();
         // when
         Optional<Question> result = questionRepository.findById(saved.getId());
         // then
         assertAll(
                 () -> assertThat(result)
                         .map(Question::getTitle)
-                        .hasValue("title"),
+                        .hasValue("title1"),
                 () -> assertThat(result)
-                        .map(Question::getContents)
-                        .hasValue("contents")
+                        .map(Question::getWriter)
+                        .isNotNull()
         );
     }
 
