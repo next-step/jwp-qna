@@ -1,6 +1,11 @@
 package qna.repository.entity;
 
+import qna.CannotDeleteException;
+import qna.domain.ContentType;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity()
@@ -19,6 +24,8 @@ public class Question extends BaseDateTimeEntity {
     private User writer;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -43,6 +50,7 @@ public class Question extends BaseDateTimeEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
@@ -75,6 +83,26 @@ public class Question extends BaseDateTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public List<DeleteHistory> delete(User loginUser) {
+        System.out.println(loginUser.toString());
+        System.out.println(this.writer.toString());
+        checkOwnership(loginUser);
+
+        this.deleted = true;
+
+        List<DeleteHistory> histories = new ArrayList<>();
+        histories.add(new DeleteHistory(ContentType.QUESTION, id, writer));
+        histories.addAll(answers.delete(loginUser));
+
+        return histories;
+    }
+
+    private void checkOwnership(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public void setDeleted(boolean deleted) {
