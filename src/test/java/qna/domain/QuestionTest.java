@@ -16,14 +16,14 @@ public class QuestionTest {
 
     @Test
     void delete() throws CannotDeleteException {
-        List<DeleteHistory> expect = Q1.delete(UserTest.JAVAJIGI);
+        DeleteHistories expect = Q1.delete(UserTest.JAVAJIGI);
         DeleteHistory result = new DeleteHistory(ContentType.QUESTION, Q1.getId(), Q1.getWriter(), LocalDateTime.now());
 
         assertAll(
                 () -> assertThat(Q1.isDeleted()).isEqualTo(true),
-                () -> assertThat(expect.get(0).getContentId()).isEqualTo(result.getContentId()),
-                () -> assertThat(expect.get(0).getDeletedBy()).isEqualTo(result.getDeletedBy()),
-                () -> assertThat(expect.get(0).getContentType()).isEqualTo(result.getContentType())
+                () -> assertThat(expect.getHistories().get(0).getContentId()).isEqualTo(result.getContentId()),
+                () -> assertThat(expect.getHistories().get(0).getDeletedBy()).isEqualTo(result.getDeletedBy()),
+                () -> assertThat(expect.getHistories().get(0).getContentType()).isEqualTo(result.getContentType())
         );
     }
 
