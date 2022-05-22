@@ -5,14 +5,13 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table
 public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    @Enumerated( EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
     @Column
