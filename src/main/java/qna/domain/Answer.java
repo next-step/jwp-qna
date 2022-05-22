@@ -1,16 +1,25 @@
 package qna.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
-public class Answer {
-    private Long id;
+@Entity
+public class Answer extends BaseEntity {
     private Long writerId;
     private Long questionId;
+    @Lob
+    @Column(columnDefinition = "CLOB")
     private String contents;
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
