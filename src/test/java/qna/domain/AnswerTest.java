@@ -54,8 +54,12 @@ public class AnswerTest {
 
     @Test
     void delete_이미_삭제된_답변() {
-        A1.delete(UserTest.JAVAJIGI);
-        assertThatThrownBy(() -> A1.delete(UserTest.JAVAJIGI))
+        Question question = new Question(1L, "title", "contenst");
+        Answer answer = new Answer(1L, UserTest.JAVAJIGI, question, "contenst");
+
+        answer.delete(UserTest.JAVAJIGI);
+
+        assertThatThrownBy(() -> answer.delete(UserTest.JAVAJIGI))
                 .isInstanceOf(CannotDeleteException.class);
     }
 }

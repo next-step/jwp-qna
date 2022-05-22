@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 class QnaServiceTest {
     @Mock
     private QuestionRepository questionRepository;
-    
+
     @Mock
     private DeleteHistoryService deleteHistoryService;
 
@@ -72,7 +72,7 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
+        Answer answer2 = new Answer(2L, UserTest.SANJIGI, question, "Answers Contents1");
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
