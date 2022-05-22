@@ -22,4 +22,14 @@ class AnswersTest {
         final Answers answers = new Answers(Arrays.asList(new Answer(bUser, aUserQuestion, "댓글 내용")));
         assertThat(answers.isQuestionDeletePossible(aUser)).isFalse();
     }
+
+    @Test
+    void 댓글_질문_정보를_업데이트() {
+        final Answers answers = new Answers(Arrays.asList(new Answer(aUser, aUserQuestion, "댓글 내용")));
+        aUserQuestion.setDeleted(true);
+        answers.updateQuestion(aUserQuestion);
+        for (Answer answer : answers.getList()) {
+            assertThat(answer.getQuestion().isDeleted()).isTrue();
+        }
+    }
 }

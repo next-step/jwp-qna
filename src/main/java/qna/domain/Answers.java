@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Answers {
@@ -17,5 +18,13 @@ public class Answers {
     public boolean isQuestionDeletePossible(User user) {
         return list.stream()
                 .allMatch(answer -> answer.isOwner(user));
+    }
+
+    public void updateQuestion(Question update) {
+        list.forEach(answer -> answer.toQuestion(update));
+    }
+
+    public List<Answer> getList() {
+        return list;
     }
 }
