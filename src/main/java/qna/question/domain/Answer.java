@@ -1,6 +1,7 @@
 package qna.question.domain;
 
 import common.entity.BasicEntity;
+import qna.question.exception.CannotDeleteException;
 import qna.question.exception.NotFoundException;
 import qna.user.domain.User;
 import qna.user.exception.UnAuthorizedException;
@@ -58,7 +59,11 @@ public class Answer extends BasicEntity {
         this.question = question;
     }
 
-    public void answerDelete() {
+    public void answerDelete(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+
         this.deleted = true;
     }
 

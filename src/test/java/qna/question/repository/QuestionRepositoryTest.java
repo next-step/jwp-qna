@@ -4,6 +4,7 @@ import config.annotation.LocalDataJpaConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import qna.question.domain.Question;
+import qna.question.domain.RelatedAnswersByQuestion;
 import qna.question.exception.CannotDeleteException;
 import qna.user.domain.User;
 import qna.user.repository.UserRepository;
@@ -14,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.user.domain.UserTest.JAVAJIGI;
 
 @LocalDataJpaConfig
 class QuestionRepositoryTest {
@@ -63,7 +63,7 @@ class QuestionRepositoryTest {
         User user = userRepository.save(new User("userId", "password", "name", "email"));
         Question deletedQuestion = new Question("title", "content").writeBy(user);
         Question savedQuestion = questionRepository.save(deletedQuestion);
-        savedQuestion.deleteQuestionWithRelatedAnswer(user, Collections.emptyList());
+        savedQuestion.deleteQuestionWithRelatedAnswer(user, new RelatedAnswersByQuestion(Collections.emptyList()));
 
         Optional<Question> result = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
 

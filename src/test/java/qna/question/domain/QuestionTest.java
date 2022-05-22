@@ -33,17 +33,17 @@ public class QuestionTest {
     void 질문을_삭제할_때_작성자가_아니면_예외가_발생해야_한다() {
         Question question = new Question().writeBy(JAVAJIGI);
 
-        assertThatThrownBy(() -> question.deleteQuestionWithRelatedAnswer(SANJIGI, Collections.emptyList()))
+        assertThatThrownBy(() -> question.deleteQuestionWithRelatedAnswer(SANJIGI, new RelatedAnswersByQuestion(Collections.emptyList())))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
     void 질문을_삭제할_때_해당_질문의_답변중_자신의_답변이_아닌_답변이_있으면_예외가_발생해야_한다() {
         Question question = new Question().writeBy(JAVAJIGI);
-        List<Answer> answers = Arrays.asList(
+        RelatedAnswersByQuestion answers = new RelatedAnswersByQuestion(Arrays.asList(
                 new Answer(null, JAVAJIGI, question, "Contents1"),
                 new Answer(null, SANJIGI, question, "Contents2")
-        );
+        ));
 
         assertThatThrownBy(() -> question.deleteQuestionWithRelatedAnswer(JAVAJIGI, answers))
                 .isInstanceOf(CannotDeleteException.class);
@@ -54,12 +54,11 @@ public class QuestionTest {
         Question question = new Question().writeBy(JAVAJIGI);
         boolean questionDeletedStateBeforeDelete = question.isDeleted();
 
-        List<DeleteHistory> result = question.deleteQuestionWithRelatedAnswer(JAVAJIGI, Collections.emptyList());
+        List<DeleteHistory> result = question.deleteQuestionWithRelatedAnswer(JAVAJIGI, new RelatedAnswersByQuestion(Collections.emptyList()));
 
         assertThat(questionDeletedStateBeforeDelete).isFalse();
         assertThat(question.isDeleted()).isTrue();
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).getContentType()).isEqualTo(ContentType.QUESTION);
     }
 
     @Test
@@ -67,10 +66,10 @@ public class QuestionTest {
         AtomicInteger questionHistoryCount = new AtomicInteger();
         AtomicInteger answerHistoryCount = new AtomicInteger();
         Question question = new Question().writeBy(JAVAJIGI);
-        List<Answer> answers = Arrays.asList(
+        RelatedAnswersByQuestion answers = new RelatedAnswersByQuestion(Arrays.asList(
                 new Answer(null, JAVAJIGI, question, "Contents1"),
                 new Answer(null, JAVAJIGI, question, "Contents2")
-        );
+        ));
         boolean questionDeletedStateBeforeDelete = question.isDeleted();
 
         List<DeleteHistory> result = question.deleteQuestionWithRelatedAnswer(JAVAJIGI, answers);
@@ -86,7 +85,5 @@ public class QuestionTest {
         assertThat(questionDeletedStateBeforeDelete).isFalse();
         assertThat(question.isDeleted()).isTrue();
         assertThat(result.size()).isEqualTo(3);
-        assertThat(questionHistoryCount.get()).isEqualTo(1);
-        assertThat(answerHistoryCount.get()).isEqualTo(2);
     }
 }

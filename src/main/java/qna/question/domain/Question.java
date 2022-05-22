@@ -46,34 +46,11 @@ public class Question extends BasicEntity {
     }
 
     public List<DeleteHistory> deleteQuestionWithRelatedAnswer(
-            User loginUser, List<Answer> relatedAnswers
+            User loginUser, RelatedAnswersByQuestion relatedAnswers
     ) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-        for (Answer relatedAnswer : relatedAnswers) {
-            isAnswerPossibleDelete(loginUser, relatedAnswer);
-        }
-
-        return deleteAndReturnHistories(relatedAnswers);
-    }
-
-    private void isAnswerPossibleDelete(User loginUser, Answer relatedAnswer) throws CannotDeleteException {
-        if (!relatedAnswer.isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
-    }
-
-    private List<DeleteHistory> deleteAndReturnHistories(List<Answer> relatedAnswers) {
         List<DeleteHistory> result = new ArrayList<>();
-        LocalDateTime now = LocalDateTime.now();
-
-        this.questionDelete();
-        result.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, now));
-        for (Answer answer : relatedAnswers) {
-            answer.answerDelete();
-            result.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), now));
-        }
+        this.deleteAndCreateHistory(result, loginUser);
+        relatedAnswers.deleteAndCreateHistory(result, loginUser);
 
         return result;
     }
@@ -106,7 +83,16 @@ public class Question extends BasicEntity {
         return this.writer.getId().equals(writer.getId());
     }
 
-    private void questionDelete() {
+    private void deleteAndCreateHistory(List<DeleteHistory> histories, User loginUser) throws CannotDeleteException {
+        this.questionDelete(loginUser);
+        histories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
+    }
+
+    private void questionDelete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
         this.deleted = true;
     }
 
