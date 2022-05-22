@@ -1,6 +1,6 @@
 package qna.domain;
 
-import entity.BaseTimeEntity;
+import qna.base.BaseTimeEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

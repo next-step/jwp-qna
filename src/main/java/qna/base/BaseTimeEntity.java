@@ -1,4 +1,4 @@
-package entity;
+package qna.base;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
