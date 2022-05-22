@@ -98,15 +98,8 @@ public class User extends BaseEntity {
         return email;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+    public boolean isEquals(User writer) {
+        return Objects.equals(this.id, writer.getId());
     }
 
     private static class GuestUser extends User {
