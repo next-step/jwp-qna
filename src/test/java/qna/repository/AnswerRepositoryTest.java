@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
 import qna.domain.AnswerRepository;
-import qna.domain.QuestionTest;
+import qna.domain.Question;
+import qna.domain.QuestionRepository;
 import qna.domain.User;
 import qna.domain.UserRepository;
 
@@ -20,15 +21,20 @@ class AnswerRepositoryTest {
     private AnswerRepository answers;
 
     @Autowired
+    private QuestionRepository questions;
+
+    @Autowired
     private UserRepository users;
 
     private User user;
+    private Question question;
     private Answer answer;
 
     @BeforeEach
     void setup() {
         user = users.save(new User("sykim", "password", "sykim", "sykim@sykim.com"));
-        answer = answers.save(new Answer(user, QuestionTest.Q1, "answer1"));
+        question = questions.save(new Question("title1", "contents1").writeBy(user));
+        answer = answers.save(new Answer(user, question, "answer1"));
     }
 
     @Test
