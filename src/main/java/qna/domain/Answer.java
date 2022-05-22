@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,11 +26,11 @@ public class Answer extends AuditEntity {
     @Lob
     private String contents;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User writer;
 
@@ -60,7 +61,7 @@ public class Answer extends AuditEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer == writer;
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
