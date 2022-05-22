@@ -14,7 +14,7 @@ class QuestionTest {
         final Question question = new Question("제목", "내용").writeBy(questionUser);
 
         assertThatThrownBy(() -> {
-            question.delete(loginUser);
+            question.delete(loginUser, null);
         }).isInstanceOf(CannotDeleteException.class);
     }
 }
