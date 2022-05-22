@@ -51,4 +51,11 @@ public class AnswerTest {
         assertThatThrownBy(() -> A1.delete(UserTest.SANJIGI))
                 .isInstanceOf(CannotDeleteException.class);
     }
+
+    @Test
+    void delete_이미_삭제된_답변() {
+        A1.delete(UserTest.JAVAJIGI);
+        assertThatThrownBy(() -> A1.delete(UserTest.JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class);
+    }
 }
