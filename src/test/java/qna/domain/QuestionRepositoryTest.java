@@ -41,7 +41,7 @@ class QuestionRepositoryTest {
     @Test
     void id로_Many_To_One_관계_조회() {
         // given
-        User user = userRepository.save(question1.getWriter());
+        userRepository.save(question1.getWriter());
         Question saved = questionRepository.save(question1);
         em.clear();
         // when
@@ -71,7 +71,7 @@ class QuestionRepositoryTest {
     @Test
     void 삭제() {
         // given
-        User user = userRepository.save(question1.getWriter());
+        userRepository.save(question1.getWriter());
         Question saved = questionRepository.save(question1);
         // when
         questionRepository.deleteById(saved.getId());
@@ -83,16 +83,24 @@ class QuestionRepositoryTest {
     @Test
     void 수정() {
         // given
-        Question question = new Question("title", "contents");
-        Question saved = questionRepository.save(question);
+        userRepository.save(question1.getWriter());
+        User reWriteUser = userRepository.save(question2.getWriter());
+        Question saved = questionRepository.save(question1);
 
         saved.writeContents("update contents");
+        saved.writeBy(reWriteUser);
+        em.flush();
         // when
         Optional<Question> result = questionRepository.findById(saved.getId());
         // then
-        assertThat(result)
-                .map(Question::getContents)
-                .hasValue("update contents");
+        assertAll(
+                () -> assertThat(result)
+                        .map(Question::getContents)
+                        .hasValue("update contents"),
+                () -> assertThat(result)
+                        .map(Question::getWriter)
+                        .hasValue(reWriteUser)
+        );
     }
 
     @ParameterizedTest
