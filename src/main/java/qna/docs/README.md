@@ -19,5 +19,5 @@
     - [x] user 단방향 매핑
   - [] delete_history
     - [] user 단방향 매핑
-  - [] question
-    - [] user 단방향 매핑
+  - [x] question
+    - [x] user 단방향 매핑
