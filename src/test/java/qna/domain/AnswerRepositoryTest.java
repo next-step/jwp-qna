@@ -67,7 +67,10 @@ class AnswerRepositoryTest {
     @Test
     void 변경감지() {
         // given
+        userRepository.save(answer1.getWriter());
+        questionRepository.save(answer1.getQuestion());
         Answer saved = answerRepository.save(answer1);
+
         saved.writeContents("update");
         // when
         Optional<Answer> result = answerRepository.findById(saved.getId());
