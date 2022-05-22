@@ -56,8 +56,8 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public boolean isNotOwner(User writer) {
+        return !this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -97,7 +97,7 @@ public class Question extends BaseEntity {
     }
 
     private void validateDelete(User loginUser) throws CannotDeleteException {
-        if (!this.isOwner(loginUser)) {
+        if (isNotOwner(loginUser)) {
             throw new CannotDeleteException(IS_NOT_OWNER);
         }
     }

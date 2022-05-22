@@ -65,8 +65,8 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public boolean isNotOwner(User writer) {
+        return !this.writer.equals(writer);
     }
 
     public Long getId() {
@@ -100,7 +100,7 @@ public class Answer extends BaseEntity {
     }
 
     private void validateDelete(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
+        if (isNotOwner(loginUser)) {
             throw new CannotDeleteException(THERE_ARE_OTHER_WRITER_ANSWER);
         }
 
