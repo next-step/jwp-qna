@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
-import qna.domain.AnswerTest;
 import qna.domain.QuestionTest;
 import qna.domain.UserTest;
 
@@ -19,66 +19,76 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    private Answer answer;
+
+    @BeforeEach
+    void setUp() {
+        answer = new Answer(3L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents3");
+    }
+
     @Test
     void save() {
-        // given & when
-        final Answer actual = answerRepository.save(AnswerTest.A1);
+        // given
+        final Answer expected = new Answer(4L, UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents4");
+
+        // when
+        final Answer actual = answerRepository.save(expected);
 
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriterId()).isEqualTo(AnswerTest.A1.getId()),
-                () -> assertThat(actual.getQuestionId()).isEqualTo(AnswerTest.A1.getQuestionId()),
-                () -> assertThat(actual.getContents()).isEqualTo(AnswerTest.A1.getContents())
+                () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
+                () -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId()),
+                () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
         );
     }
 
     @Test
     void findById() {
         // given
-        final Answer expected = answerRepository.save(AnswerTest.A1);
+        final Answer expected = answerRepository.save(answer);
 
         // when
         final Answer actual = answerRepository.findById(expected.getId()).orElseThrow(IllegalArgumentException::new);
 
         // then
-        assertThat(expected).isEqualTo(actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void findAll() {
         // given
-        final Answer answer1 = answerRepository.save(AnswerTest.A1);
-        final Answer answer2 = answerRepository.save(AnswerTest.A2);
+        final Answer expected = answerRepository.save(answer);
 
+        // when
         final List<Answer> actual = answerRepository.findAll();
 
         // then
-        assertThat(actual).hasSize(2);
+        assertThat(actual).hasSize(1);
     }
 
     @Test
     void update() {
         // given
-        final Answer answer = answerRepository.save(AnswerTest.A1);
-        final long expected = answer.getWriterId();
+        final Answer expected = answerRepository.save(answer);
+        final String contents = expected.getContents();
 
         // when
-        answer.setWriterId(UserTest.SANJIGI.getId());
-        final Answer actual = answerRepository.findById(answer.getId()).orElseThrow(IllegalArgumentException::new);
+        expected.setContents(contents + " new");
+        final Answer actual = answerRepository.findById(expected.getId()).orElseThrow(IllegalArgumentException::new);
 
         // then
-        assertThat(expected).isNotEqualTo(actual.getWriterId());
+        assertThat(actual.getContents()).isNotEqualTo(contents);
     }
 
     @Test
     void delete() {
         // given
-        final Answer answer = answerRepository.save(AnswerTest.A1);
+        final Answer expected = answerRepository.save(answer);
 
         // when
-        answerRepository.deleteById(answer.getId());
-        final Optional<Answer> actual = answerRepository.findById(answer.getId());
+        answerRepository.deleteById(expected.getId());
+        final Optional<Answer> actual = answerRepository.findById(expected.getId());
 
         // then
         assertThat(actual).isEmpty();
@@ -87,26 +97,51 @@ class AnswerRepositoryTest {
     @Test
     void findByQuestionIdAndDeletedFalse() {
         // given
-        final Answer answer = answerRepository.save(AnswerTest.A1);
-        final Answer answer2 = answerRepository.save(AnswerTest.A2);
+        final Answer expected = answerRepository.save(answer);
 
         // when
-        final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestionId());
 
         // then
-        assertThat(actual).hasSize(2);
+        assertThat(actual).hasSize(1);
+    }
+
+    @Test
+    void findByQuestionIdAndDeletedFalseSetDeletedTrue() {
+        // given
+        final Answer expected = answerRepository.save(answer);
+
+        // when
+        expected.setDeleted(true);
+        final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestionId());
+
+        // then
+        assertThat(actual).hasSize(0);
     }
 
     @Test
     void findByIdAndDeletedFalse() {
         // given
-        final Answer expected = answerRepository.save(AnswerTest.A1);
+        final Answer expected = answerRepository.save(answer);
 
         // when
         final Answer actual = answerRepository.findByIdAndDeletedFalse(expected.getId())
                 .orElseThrow(IllegalArgumentException::new);
 
         // then
-        assertThat(expected).isEqualTo(actual);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void findByIdAndDeletedFalseSetDeletedTrue() {
+        // given
+        final Answer expected = answerRepository.save(answer);
+
+        // when
+        expected.setDeleted(true);
+        final Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(expected.getId());
+
+        // then
+        assertThat(actual).isEmpty();
     }
 }
