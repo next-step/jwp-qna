@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -38,7 +39,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer == writer;
+        return Objects.equals(this.writer, writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -48,7 +49,7 @@ public class Question extends BaseTimeEntity {
     public Long getId() {
         return id;
     }
-    
+
     public User getWriter() {
         return writer;
     }
