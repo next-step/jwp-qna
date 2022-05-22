@@ -13,11 +13,11 @@
       - [x] Entity를 작성한다.
       - [x] 학습테스트를 작성한다.
   - [x] JPA Audit을 활용한 BaseTimeEntity 적용
-- [] 연관관계 매핑
+- [x] 연관관계 매핑
   - [x] answer
     - [x] question 단방향 매핑
     - [x] user 단방향 매핑
-  - [] delete_history
-    - [] user 단방향 매핑
+  - [x] delete_history
+    - [x] user 단방향 매핑
   - [x] question
     - [x] user 단방향 매핑
