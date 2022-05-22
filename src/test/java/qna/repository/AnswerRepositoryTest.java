@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.AnswerTest.A1;
 import static qna.domain.AnswerTest.A2;
 import static qna.domain.QuestionTest.Q1;
+import static qna.domain.QuestionTest.Q2;
+import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +20,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import qna.domain.Answer;
+import qna.domain.Question;
+import qna.domain.User;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -24,39 +29,62 @@ public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private User user;
+    private Question question;
+    private Answer save;
+
+    private void saveUser() {
+        user = userRepository.save(new User("mellow", "1234", "mazinga", "mazinga@example.com"));
+    }
+
+    private void saveQuestion() {
+        question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
+    }
+
     private void saveAnswer() {
-        answerRepository.save(A1);
-        answerRepository.save(A2);
+        save = answerRepository.save(new Answer(user, question, "Answers Contents1"));
     }
 
     @Test
     @DisplayName("데이터를 저장한다.")
     void save_test() {
-        Answer save = answerRepository.save(A1);
+        saveUser();
+        saveQuestion();
+        saveAnswer();
         assertAll(
                 () -> assertThat(save.getId()).isNotNull(),
-                () -> assertThat(save.getContents()).isEqualTo(A1.getContents())
+                () -> assertThat(save.getContents()).isEqualTo("Answers Contents1")
         );
     }
 
     @Test
     @DisplayName("데이터를 모두 조회한다.")
     void find_all_test() {
+        saveUser();
+        saveQuestion();
         saveAnswer();
         List<Answer> answers = answerRepository.findAll();
-        assertThat(answers.size()).isEqualTo(2);
+        assertThat(answers.size()).isEqualTo(1);
     }
 
     @Test
     @DisplayName("Id로 데이터를 조회한다.")
     void find_by_id_test() {
+        saveUser();
+        saveQuestion();
         saveAnswer();
-        Optional<Answer> answerOptional = answerRepository.findByIdAndDeletedFalse(Q1.getId());
+        Optional<Answer> answerOptional = answerRepository.findByIdAndDeletedFalse(save.getId());
         answerOptional.ifPresent(answer -> {
             assertAll(
                     () -> assertThat(answer.getContents()).isEqualTo("Answers Contents1"),
-                    () -> assertThat(answer.getQuestionId()).isNull(),
-                    () -> assertThat(answer.getWriterId()).isNull(),
+                    () -> assertThat(answer.getQuestion()).isNotNull(),
+                    () -> assertThat(answer.getWriter()).isNotNull(),
                     () -> assertThat(answer.isDeleted()).isFalse()
             );
         });
@@ -65,16 +93,35 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("QuestionId로 조회한다.")
     void find_By_Question_Id_Deleted_False_test() {
+        saveUser();
+        saveQuestion();
         saveAnswer();
-        List<Answer> questionIdAndDeletedFalse = answerRepository.findByQuestionIdAndDeletedFalse(null);
-        assertThat(questionIdAndDeletedFalse.size()).isEqualTo(2);
+        List<Answer> questionIdAndDeletedFalse = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+        assertThat(questionIdAndDeletedFalse.size()).isEqualTo(1);
     }
 
     @Test
     @DisplayName("전체 데이터를 삭제한다.")
     void delete_all_test() {
+        saveUser();
+        saveQuestion();
         saveAnswer();
         answerRepository.deleteAll();
         assertThat(answerRepository.findAll().size()).isZero();
+    }
+
+    @Test
+    @DisplayName("양방향 연관관계를 확인한다.")
+    void relation_test() {
+        saveUser();
+        saveQuestion();
+        saveAnswer();
+        Optional<Answer> answerOptional = answerRepository.findById(save.getId());
+        answerOptional.ifPresent(answer -> {
+            assertAll(
+                    () -> assertThat(answer.getWriter()).isEqualTo(user),
+                    () -> assertThat(user.getAnswers()).contains(answer)
+            );
+        });
     }
 }

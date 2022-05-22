@@ -1,10 +1,13 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
@@ -28,6 +31,12 @@ public class User extends BaseEntity {
 
     @Column(length = 50)
     private String email;
+
+    @OneToMany(mappedBy = "writer")
+    private final List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
+    private final List<Answer> answers = new ArrayList<>();
 
     protected User() {}
 
@@ -117,6 +126,44 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void addQuestion(Question question) {
+        this.questions.add(question);
+        if (question.getWriter() != this) {
+            question.writeBy(this);
+        }
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
+        if (answer.getWriter() != this) {
+            answer.setWriter(this);
+        }
+    }
+
+    public void removeAnswer(Answer answer) {
+        this.answers.remove(answer);
+    }
+
+    public boolean isWriteAnswer(Answer answer) {
+        return this.answers.contains(answer);
+    }
+
+    public void removeQuestion(Question question) {
+        this.questions.remove(question);
+    }
+
+    public boolean isWriteQuestion(Question question) {
+        return this.questions.contains(question);
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -126,6 +173,29 @@ public class User extends BaseEntity {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id) &&
+                Objects.equals(userId, user.userId) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(name, user.name) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(questions, user.questions) &&
+                Objects.equals(answers, user.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email, questions, answers);
     }
 
     private static class GuestUser extends User {
