@@ -2,10 +2,8 @@ package qna.domain;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
-import qna.config.JpaAuditingConfig;
+import qna.annotation.QnaDataJpaTest;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -14,8 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static qna.domain.UserTest.JAVAJIGI;
 
-@DataJpaTest
-@Import(JpaAuditingConfig.class)
+@QnaDataJpaTest
 class UserRepositoryTest {
 
     @Autowired
