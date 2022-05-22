@@ -1,32 +1,25 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-public class DeleteHistory {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
+@Entity
+public class DeleteHistory extends BaseEntity {
     private Long contentId;
 
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
-
-    private LocalDateTime createDate = LocalDateTime.now();
 
     private Long deletedById;
 
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
-        this.createDate = createDate;
     }
 
     @Override
@@ -45,14 +38,4 @@ public class DeleteHistory {
         return Objects.hash(id, contentType, contentId, deletedById);
     }
 
-    @Override
-    public String toString() {
-        return "DeleteHistory{" +
-                "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
-                ", createDate=" + createDate +
-                '}';
-    }
 }

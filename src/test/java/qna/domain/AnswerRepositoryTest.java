@@ -34,8 +34,8 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("작성자 key로 답글 조회")
     void findByWriterId() {
-        assertThat(answers.findByWriterId(UserTest.JAVAJIGI.getId())).isEqualTo(answer1);
-        assertThat(answers.findByWriterId(UserTest.SANJIGI.getId())).isEqualTo(answer2);
+        assertThat(answers.findByCreatorId(UserTest.JAVAJIGI.getId())).isEqualTo(answer1);
+        assertThat(answers.findByCreatorId(UserTest.SANJIGI.getId())).isEqualTo(answer2);
     }
 
     @Test
@@ -43,6 +43,6 @@ class AnswerRepositoryTest {
         Answer answer = new Answer(UserTest.IU, QuestionTest.Q1, "안녕");
         Answer save = answers.save(answer);
         assertThat(save).isNotNull();
-        System.out.println(answers.findByWriterId(UserTest.IU.getId()));
+        System.out.println(answers.findByCreatorId(UserTest.IU.getId()));
     }
 }

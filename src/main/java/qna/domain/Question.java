@@ -1,29 +1,18 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
+//@AttributeOverride(name="creatorId", column = @Column(name="writer_id"))
 @Entity
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Question extends BaseEntity {
     @Lob
     private String contents;
-
-    @Column(nullable = false)
-    private LocalDateTime createAt = LocalDateTime.now();
 
     @Column(nullable = false)
     private boolean deleted = false;
 
     @Column(nullable = false, length = 100)
     private String title;
-
-    private LocalDateTime updatedAt;
-
-    private Long writerId;
 
     protected Question() {
     }
@@ -39,12 +28,12 @@ public class Question {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.creatorId = writer.getId();
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.creatorId.equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -59,28 +48,12 @@ public class Question {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public Long getWriterId() {
-        return writerId;
+        return creatorId;
     }
 
     public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+        this.creatorId = writerId;
     }
 
     public boolean isDeleted() {
@@ -97,7 +70,7 @@ public class Question {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + creatorId +
                 ", deleted=" + deleted +
                 '}';
     }

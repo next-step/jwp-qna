@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
     List<Answer> findByQuestionIdAndDeletedFalse(Long questionId);
 
-    Answer findByWriterId(Long id);
+    Answer findByCreatorId(Long id);
 
     Answer findByContents(String contents);
 

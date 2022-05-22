@@ -4,28 +4,18 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
+@AttributeOverride(name="creatorId", column = @Column(name = "writer_id"))
 @Entity
-public class Answer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Answer extends BaseEntity {
 
     @Lob
     private String contents;
 
-    @Column(nullable = false)
-    private final LocalDateTime createAt = LocalDateTime.now();
-
     private boolean deleted = false;
 
     private Long questionId;
-
-    private LocalDateTime updatedAt;
-
-    private Long writerId;
 
     public Answer() {
     }
@@ -45,13 +35,14 @@ public class Answer {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
+        this.creatorId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return true;
+        //return this.creatorId.equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
@@ -60,10 +51,6 @@ public class Answer {
 
     public Long getId() {
         return id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
     }
 
     public Long getQuestionId() {
@@ -82,14 +69,4 @@ public class Answer {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
-    }
 }
