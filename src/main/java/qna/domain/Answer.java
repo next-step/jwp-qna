@@ -18,6 +18,7 @@ public class Answer {
     private User user;
 
     @ManyToOne
+    @JoinColumn(name = "question_id")
     private Question question;
 
     @Column
