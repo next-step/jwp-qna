@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "delete_history")
@@ -28,7 +29,7 @@ public class DeleteHistory {
     @Column(name = "deleted_by_id")
     private Long deletedById;
 
-    @Column(name = "create_date")
+    @CreatedDate
     private LocalDateTime createDate = LocalDateTime.now();
 
     protected DeleteHistory() {
