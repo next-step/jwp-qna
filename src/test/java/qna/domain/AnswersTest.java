@@ -68,7 +68,7 @@ class AnswersTest {
 
     @DisplayName("로그인 유저로 답변들 제거 테스트")
     @Test
-    void delete() throws CannotDeleteException {
+    void delete() {
         this.answers.add(answer1);
         this.answers.add(answer2);
         Answers answers = Answers.valueOf(this.answers);

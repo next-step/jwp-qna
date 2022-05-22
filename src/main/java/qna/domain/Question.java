@@ -67,7 +67,7 @@ public class Question extends BaseEntity {
         }
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) {
         validateOwnerSameUser(loginUser);
         this.setDeleted(true);
         return DeleteHistory.builder()
@@ -78,7 +78,7 @@ public class Question extends BaseEntity {
                 .build();
     }
 
-    private void validateOwnerSameUser(User loginUser) throws CannotDeleteException {
+    private void validateOwnerSameUser(User loginUser) {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }

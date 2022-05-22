@@ -130,7 +130,7 @@ references user (id)
 - 리팩터링을 완료한 후에도 src/test/java 디렉터리의 qna.service.QnaServiceTest의 모든 테스트가 통과해야 한다.
 ```java
 @Transactional
-public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
+public void deleteQuestion(User loginUser, Long questionId) {
 Question question = findQuestionById(questionId);
 if (!question.isOwner(loginUser)) {
 throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
