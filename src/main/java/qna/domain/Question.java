@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.UnAuthorizedException;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -11,8 +13,9 @@ public class Question extends BaseEntity {
     @Lob
     @Column(name = "contents", columnDefinition = "CLOB")
     private String contents;
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
@@ -29,12 +32,16 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
+
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -45,8 +52,8 @@ public class Question extends BaseEntity {
         return this.id;
     }
 
-    public Long getWriterId() {
-        return this.writerId;
+    public User getWriter() {
+        return this.writer;
     }
 
     public boolean isDeleted() {
@@ -76,7 +83,7 @@ public class Question extends BaseEntity {
                 "id=" + this.id +
                 ", title='" + this.title + '\'' +
                 ", contents='" + this.contents + '\'' +
-                ", writerId=" + this.writerId +
+                ", writer=" + this.writer +
                 ", deleted=" + this.deleted +
                 '}';
     }

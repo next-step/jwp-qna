@@ -24,16 +24,17 @@ class DeleteHistoryRepositoryTest {
     @Test
     void teat_save() {
         //given
-        Question question = questionRepository.save(QuestionTest.Q1);
-        User user = userRepository.save(UserTest.JAVAJIGI);
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), user.getId(), LocalDateTime.now());
+        User javajigi = userRepository.save(UserTest.JAVAJIGI);
+        Question question = new Question("title", "contents").writeBy(javajigi);
+        questionRepository.save(question);
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), javajigi, LocalDateTime.now());
         //when
-        DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
-        Optional<DeleteHistory> findDeleteHistory = deleteHistoryRepository.findById(savedDeleteHistory.getId());
+        deleteHistoryRepository.save(deleteHistory);
+        Optional<DeleteHistory> findDeleteHistory = deleteHistoryRepository.findById(deleteHistory.getId());
         //then
         assertAll(
                 () -> assertThat(findDeleteHistory.isPresent()).isTrue(),
-                () -> assertThat(savedDeleteHistory.equals(findDeleteHistory.get())).isTrue()
+                () -> assertThat(deleteHistory.equals(findDeleteHistory.get())).isTrue()
         );
     }
 }

@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,19 +9,31 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class QuestionRepositoryTest {
+    private Question question1;
+    private Question question2;
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @BeforeEach
+    void setUp() {
+        User javajigi = userRepository.save(UserTest.JAVAJIGI);
+        User sanjigi = userRepository.save(UserTest.SANJIGI);
+        this.question1 = new Question("title1", "contents1").writeBy(javajigi);
+        this.question2 = new Question("title2", "contents2").writeBy(sanjigi);
+    }
 
     @DisplayName("Question 생성")
     @Test
     void teat_save() {
         //given & when
-        Question savedQuestion = questionRepository.save(QuestionTest.Q1);
+        Question savedQuestion = questionRepository.save(this.question1);
         Optional<Question> findQuestion = questionRepository.findById(savedQuestion.getId());
         //then
         assertAll(
@@ -33,9 +46,9 @@ class QuestionRepositoryTest {
     @Test
     void teat_findByDeletedFalse() {
         //given
-        QuestionTest.Q1.setDeleted(true);
-        questionRepository.save(QuestionTest.Q1);
-        Question savedQuestion = questionRepository.save(QuestionTest.Q2);
+        this.question1.setDeleted(true);
+        questionRepository.save(this.question1);
+        Question savedQuestion = questionRepository.save(this.question2);
         //when
         List<Question> findQuestions = questionRepository.findByDeletedFalse();
         //then
@@ -49,9 +62,9 @@ class QuestionRepositoryTest {
     @Test
     void teat_findByIdAndDeletedFalse() {
         //given
-        QuestionTest.Q1.setDeleted(true);
-        Question deletedQuestion = questionRepository.save(QuestionTest.Q1);
-        Question savedQuestion = questionRepository.save(QuestionTest.Q2);
+        this.question1.setDeleted(true);
+        Question deletedQuestion = questionRepository.save(this.question1);
+        Question savedQuestion = questionRepository.save(this.question2);
         //when
         Optional<Question> findDeletedQuestions = questionRepository.findByIdAndDeletedFalse(deletedQuestion.getId());
         Optional<Question> findSavedQuestions = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
