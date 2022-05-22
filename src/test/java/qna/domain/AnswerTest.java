@@ -59,6 +59,6 @@ public class AnswerTest {
         // when
         answer2.toQuestion(question);
         // then
-        assertThat(answer2.getQuestionId()).isEqualTo(question.getId());
+        assertThat(answer2.getQuestion()).isEqualTo(question);
     }
 }

@@ -43,6 +43,6 @@ public class QuestionTest {
         // when
         question.addAnswer(answer);
         // then
-        assertThat(answer.getQuestionId()).isEqualTo(3L);
+        assertThat(answer.getQuestion()).isEqualTo(question);
     }
 }
