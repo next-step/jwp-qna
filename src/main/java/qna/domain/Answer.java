@@ -10,8 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.exception.CannotDeleteException;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
 
 import java.util.Objects;
 import qna.domain.time.BaseTime;
@@ -58,32 +59,19 @@ public class Answer extends BaseTime {
         this.contents = contents;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
+    public void delete(User questionWriter) throws CannotDeleteException {
+        if (writer.isNotSameUser(questionWriter)) {
+            throw new CannotDeleteException("[ERROR] 다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.deleted = true;
     }
 
     public void setQuestion(Question question) {
         this.question = question;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
-    public void toQuestion(Question question) {
-        this.question = question;
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writer.getId();
     }
 
     public User getWriter() {
@@ -94,16 +82,8 @@ public class Answer extends BaseTime {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -116,4 +96,5 @@ public class Answer extends BaseTime {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }

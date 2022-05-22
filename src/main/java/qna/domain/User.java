@@ -1,15 +1,12 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import qna.UnAuthorizedException;
+import org.hibernate.Hibernate;
+import qna.exception.UnAuthorizedException;
 
 import java.util.Objects;
 import qna.domain.time.BaseTime;
@@ -30,15 +27,6 @@ public class User extends BaseTime {
     @Column(length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Question> questions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "deletedBy", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DeleteHistory> deleteHistories = new ArrayList<>();
-
     protected User() {
     }
 
@@ -52,21 +40,6 @@ public class User extends BaseTime {
         this.password = password;
         this.name = name;
         this.email = email;
-    }
-
-    public void addQuestion(Question question) {
-        questions.add(question);
-        question.setWriter(this);
-    }
-
-    public void addAnswer(Answer answer) {
-        answers.add(answer);
-        answer.setWriter(this);
-    }
-
-    public void addDeletedHistory(DeleteHistory deleteHistory) {
-        deleteHistories.add(deleteHistory);
-        deleteHistory.setDeletedBy(this);
     }
 
     public void update(User loginUser, User target) {
@@ -103,44 +76,20 @@ public class User extends BaseTime {
         return false;
     }
 
-    public Long getId() {
-        return id;
+    public boolean isNotSameUser(User loginUser) {
+        return !this.equals(loginUser);
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @Override
@@ -148,11 +97,11 @@ public class User extends BaseTime {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
             return false;
         }
         User user = (User) o;
-        return Objects.equals(id, user.id);
+        return Objects.equals(id, user.getId());
     }
 
     @Override

@@ -18,7 +18,7 @@ class QuestionRepositoryTest {
     @Test
     void save() {
         Question expected = new Question("JPA 잘쓰는 법", "알려주세요");
-        
+
         Question actual = questionRepository.save(expected);
 
         assertAll(
@@ -40,7 +40,7 @@ class QuestionRepositoryTest {
     @DisplayName("삭제되지 않은 Quesetion 조회")
     @Test
     void findByIdAndDeletedFalse() {
-        Question question = questionRepository.findByIdAndDeletedFalse(1L).get();
+        Question question = questionRepository.findByIdAndDeletedFalse(3L).get();
 
         assertAll(
                 () -> assertThat(question.isDeleted()).isFalse(),
