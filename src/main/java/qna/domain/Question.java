@@ -1,10 +1,11 @@
 package qna.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,11 +31,11 @@ public class Question extends AuditEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
@@ -57,7 +58,7 @@ public class Question extends AuditEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer == writer;
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -94,8 +95,9 @@ public class Question extends AuditEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return Collections.unmodifiableList(answers);
     }
+
 
     @Override
     public String toString() {
