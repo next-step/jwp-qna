@@ -63,9 +63,11 @@ public class UserRepositoryTest {
         final User user = userRepository.save(createTestUser());
         questionRepository.save(new Question("제목", "내용").writeBy(user));
 
-        final User actual = userRepository.findById(user.getId()).get();
+        final User actualUser = userRepository.findByUserId(user.getUserId()).get();
 
-        assertThat(actual.getQuestions()).hasSize(1);
+        Question actualQuation = actualUser.getQuestions().get(0);
+        assertThat(actualQuation.getTitle()).isEqualTo("제목");
+        assertThat(actualQuation.getContents()).isEqualTo("내용");
     }
 
     private User createTestUser() {
