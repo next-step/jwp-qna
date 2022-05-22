@@ -37,8 +37,9 @@ public class AnswerTest {
     @Test
     @DisplayName("Question 변경 확인")
     void Answer_toQuestion() {
-        A1.toQuestion(QuestionTest.Q2);
-        assertThat(A1.getQuestion()).isEqualTo(QuestionTest.Q2);
+        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        answer.toQuestion(QuestionTest.Q2);
+        assertThat(answer.getQuestion()).isEqualTo(QuestionTest.Q2);
     }
 
 }
