@@ -35,6 +35,7 @@ class AnswerRepositoryTest {
         List<Answer> answers = answerRepository.findAll();
 
         assertThat(answers).hasSize(2);
+        assertThat(answers).contains(answer1, answer2);
     }
 
     @DisplayName("삭제되지 않은 Answer id로 조회")
@@ -58,8 +59,7 @@ class AnswerRepositoryTest {
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(Q1.getId());
 
         assertThat(answers).hasSize(2);
-        assertThat(answer1.getQuestionId()).isEqualTo(Q1.getId());
-        assertThat(answer2.getQuestionId()).isEqualTo(Q1.getId());
+        assertThat(answers).contains(answer1, answer2);
     }
 
 }

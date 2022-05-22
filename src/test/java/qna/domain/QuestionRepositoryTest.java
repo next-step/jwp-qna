@@ -46,6 +46,7 @@ class QuestionRepositoryTest {
         List<Question> questions = questionRepository.findByDeletedFalse();
 
         assertThat(questions).hasSize(2);
+        assertThat(questions).contains(question1, question2);
     }
 
 }
