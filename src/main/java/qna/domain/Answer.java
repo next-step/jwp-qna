@@ -93,8 +93,21 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    protected void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        validateDelete(loginUser);
+        deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    }
+
+    private void validateDelete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(THERE_ARE_OTHER_WRITER_ANSWER);
+        }
+
     }
 
     public boolean isNotDeleted() {
@@ -112,18 +125,5 @@ public class Answer extends BaseEntity {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
-    }
-
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
-        validateDelete(loginUser);
-        deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
-    }
-
-    private void validateDelete(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException(THERE_ARE_OTHER_WRITER_ANSWER);
-        }
-
     }
 }

@@ -89,20 +89,6 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                ", answers=" + answers +
-                ", title='" + title + '\'' +
-                ", writer=" + writer +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
-    }
-
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         validateDelete(loginUser);
         List<DeleteHistory> deleteHistories = new ArrayList<>();
@@ -118,5 +104,19 @@ public class Question extends BaseEntity {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException(IS_NOT_OWNER);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", contents='" + contents + '\'' +
+                ", deleted=" + deleted +
+                ", answers=" + answers +
+                ", title='" + title + '\'' +
+                ", writer=" + writer +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }
