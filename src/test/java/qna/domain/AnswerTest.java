@@ -35,7 +35,7 @@ class AnswerTest {
     }
 
     @Test
-    @DisplayName("게시자 확인")
+    @DisplayName("게시자 확인 - 다른 게시자")
     void isNotOwner() {
         assertThat(A1.isNotOwner(UserTest.SANJIGI)).isTrue();
     }

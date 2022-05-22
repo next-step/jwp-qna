@@ -70,13 +70,13 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) {
         this.validateOwner(loginUser);
         this.setDeleted(true);
         return this.toDeleteHistory(loginUser);
     }
 
-    private void validateOwner(User loginUser) throws CannotDeleteException {
+    private void validateOwner(User loginUser) {
         if (this.isNotOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
