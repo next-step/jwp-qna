@@ -82,18 +82,6 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    void Answer_findByQuestionId_삭제여부_컬럼이_false인_전체_조회() {
-        Answer result = answerRepository.save(new Answer(writer, question, "Answers Contents1"));
-
-        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(result.getQuestion().getId())).hasSize(1);
-
-        Answer findAnswer = answerRepository.findById(result.getId()).get();
-        findAnswer.setDeleted(true);
-
-        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(findAnswer.getQuestion().getId()).size()).isZero();
-    }
-
-    @Test
     void question_연관관계_맵핑_검증() {
         Answer answer = answerRepository.save(new Answer(writer, question, "Answers Contents1"));
         Answer findAnswer = answerRepository.findById(answer.getId()).get();
