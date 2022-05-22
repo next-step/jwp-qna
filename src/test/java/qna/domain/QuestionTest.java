@@ -17,7 +17,7 @@ public class QuestionTest {
         question.writeBy(UserTest.JAVAJIGI);
 
         // then
-        assertThat(question.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+        assertThat(question.getWriter()).isEqualTo(UserTest.JAVAJIGI);
     }
 
     @Test

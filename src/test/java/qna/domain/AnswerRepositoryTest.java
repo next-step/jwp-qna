@@ -20,8 +20,8 @@ class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
-    final User writer1 = new User("wrtier1", "password1", "name1", "email1");
-    final User writer2 = new User("wrtier2", "password2", "name2", "email2");
+    final User writer1 = new User("writer1", "password1", "name1", "email1");
+    final User writer2 = new User("writer2", "password2", "name2", "email2");
     final Question question = new Question("title", "contents");
 
     @BeforeEach
