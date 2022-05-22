@@ -24,22 +24,22 @@ public class QuestionTest {
     }
 
     @Test
-    void delete_성공() {
+    void delete_성공() throws CannotDeleteException {
         Question question = createQuestion(1L, UserTest.JAVAJIGI, false);
 
-        assertThat(question.delete()).containsExactly(
+        assertThat(question.delete(UserTest.JAVAJIGI)).containsExactly(
                 new DeleteHistory(ContentType.QUESTION, question.getId(), UserTest.JAVAJIGI, LocalDateTime.now())
         );
         assertThat(question.isDeleted()).isTrue();
     }
 
     @Test
-    void delete_성공_질문자_답변자_같음() {
+    void delete_성공_질문자_답변자_같음() throws CannotDeleteException {
         Question question = createQuestion(1L, UserTest.JAVAJIGI, false);
         Answer answer = createAnswer(2L, UserTest.JAVAJIGI, question, false);
         question.addAnswer(answer);
 
-        assertThat(question.delete()).containsExactly(
+        assertThat(question.delete(UserTest.JAVAJIGI)).containsExactly(
                 new DeleteHistory(ContentType.QUESTION, question.getId(), UserTest.JAVAJIGI, LocalDateTime.now()),
                 new DeleteHistory(ContentType.ANSWER, answer.getId(), UserTest.JAVAJIGI, LocalDateTime.now())
         );
@@ -48,21 +48,11 @@ public class QuestionTest {
     }
 
     @Test
-    void validateDelete_성공() throws CannotDeleteException {
-        Question question = createQuestion(1L, UserTest.JAVAJIGI, false);
-
-        question.addAnswer(new Answer(UserTest.JAVAJIGI, question, "테스트1"));
-        question.addAnswer(new Answer(UserTest.JAVAJIGI, question, "테스트2"));
-
-        question.validateDelete(UserTest.JAVAJIGI);
-    }
-
-    @Test
     void validateDelete_다른사람이_쓴_글은_삭제할_수_없다() {
         Question question = createQuestion(1L, UserTest.JAVAJIGI, false);
 
         Assertions.assertThatExceptionOfType(CannotDeleteException.class)
-                .isThrownBy(() -> question.validateDelete(UserTest.SANJIGI));
+                .isThrownBy(() -> question.delete(UserTest.SANJIGI));
     }
 
     @Test
@@ -72,7 +62,7 @@ public class QuestionTest {
         question.addAnswer(new Answer(UserTest.SANJIGI, question, "테스트"));
 
         Assertions.assertThatExceptionOfType(CannotDeleteException.class)
-                .isThrownBy(() -> question.validateDelete(UserTest.JAVAJIGI));
+                .isThrownBy(() -> question.delete(UserTest.JAVAJIGI));
 
     }
 

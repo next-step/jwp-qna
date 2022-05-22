@@ -78,7 +78,7 @@ public class Answer extends BaseEntity {
         return question;
     }
 
-    public void setQuestion(Question question) {
+    public void updateQuestion(Question question) {
         this.question = question;
     }
 
