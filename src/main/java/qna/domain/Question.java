@@ -27,7 +27,7 @@ public class Question extends BaseEntity {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id,     String title, String contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -39,7 +39,7 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
