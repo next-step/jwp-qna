@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table
 public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +19,8 @@ public class Answer {
     @Column
     private Long questionId;
 
-    @Column(columnDefinition = "text")
+    @Column
+    @Lob
     private String contents;
 
     @Column(nullable = false)
