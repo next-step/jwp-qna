@@ -1,7 +1,6 @@
 package qna.domain;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,23 +15,11 @@ class QuestionRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 
-    @BeforeEach
-    void initialize(){
-        QuestionTest.Q1.setDeleted(true);
-    }
-
-    @Test
-    @DisplayName("Question 저장")
-    void save(){
-        Question saved = questionRepository.save(QuestionTest.Q1);
-        assertThat(saved.getId()).isNotNull();
-    }
-
     @Test
     @DisplayName("Question을 DeletedFalse로 조회")
     void Question_조회_byDeletedFalse(){
-        questionRepository.save(QuestionTest.Q1);
-        Question questionDeletedFalse = questionRepository.save(QuestionTest.Q2);
+        generateQuestionDeletedTrue();
+        Question questionDeletedFalse = questionRepository.save(QuestionTest.Q1);
         List<Question> questions = questionRepository.findByDeletedFalse();
         assertThat(questions).containsExactly(questionDeletedFalse);
     }
@@ -40,13 +27,19 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("Question을 Id, DeletedFalse로 조회")
     void Question_조회_byId_DeletedFalse(){
-        Question questionDeletedTrue = questionRepository.save(QuestionTest.Q1);
-        Question questionDeletedFalse = questionRepository.save(QuestionTest.Q2);
+        Question questionDeletedTrue = generateQuestionDeletedTrue();
+        Question questionDeletedFalse = questionRepository.save(QuestionTest.Q1);
         Assertions.assertAll(
                 () -> assertThat(questionRepository.findByIdAndDeletedFalse(questionDeletedTrue.getId()))
                         .isEmpty(),
                 () -> assertThat(questionRepository.findByIdAndDeletedFalse(questionDeletedFalse.getId())).get()
-                        .isEqualTo(QuestionTest.Q2)
+                        .isEqualTo(questionDeletedFalse)
         );
+    }
+
+    private Question generateQuestionDeletedTrue() {
+        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        question.setDeleted(true);
+        return questionRepository.save(question);
     }
 }
