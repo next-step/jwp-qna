@@ -22,7 +22,7 @@ public class QuestionTest {
         // when
         Question result = question.writeBy(user);
         // then
-        assertThat(result.getWriterId()).isEqualTo(2L);
+        assertThat(result.getWriter()).isEqualTo(user);
     }
 
     @Test
