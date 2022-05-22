@@ -27,6 +27,8 @@ class QuestionRepositoryTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private AnswerRepository answerRepository;
+    @Autowired
     private TestEntityManager em;
 
     @BeforeEach
@@ -137,5 +139,30 @@ class QuestionRepositoryTest {
         List<Question> result = questionRepository.findByDeletedFalse();
         // then
         assertThat(result).hasSize(2);
+    }
+
+    @Test
+    void 질문에_달린_답변들을_조회한다() {
+        // given
+        saveAnswer();
+        // when
+        Optional<Question> result = questionRepository.findById(question1.getId());
+        // then
+        assertThat(result)
+                .map(question -> question.getAnswers().size())
+                .hasValue(2);
+    }
+
+    private void saveAnswer() {
+        userRepository.save(question1.getWriter());
+        Question saved = questionRepository.save(question1);
+
+        User minje = new User("minje", "password", "minje", "minje@com");
+        User suzy = new User("suzy", "password", "suzy", "suzy@com");
+        userRepository.saveAll(Arrays.asList(minje, suzy));
+
+        Answer answerOfMinje = new Answer(minje, saved, "good!");
+        Answer answerOfSuzy = new Answer(suzy, saved, "bad!");
+        answerRepository.saveAll(Arrays.asList(answerOfMinje, answerOfSuzy));
     }
 }
