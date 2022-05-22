@@ -2,6 +2,7 @@ package qna.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 public class DeleteHistory {
@@ -18,7 +19,7 @@ public class DeleteHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     private User deletedByUser;
 
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
 
     protected DeleteHistory() {
     }
@@ -28,5 +29,18 @@ public class DeleteHistory {
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
         this.createDate = createDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DeleteHistory that = (DeleteHistory) o;
+        return Objects.equals(id, that.id) && Objects.equals(contentId, that.contentId) && contentType == that.contentType && Objects.equals(deletedByUser, that.deletedByUser);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contentId, contentType, deletedByUser);
     }
 }
