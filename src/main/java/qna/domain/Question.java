@@ -55,6 +55,7 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         this.answers.add(answer);
+        answer.setQuestion(this);
     }
 
     public Long getId() {
