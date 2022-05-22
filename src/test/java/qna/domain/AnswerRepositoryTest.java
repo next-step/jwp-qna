@@ -9,6 +9,7 @@ import static qna.domain.QuestionTest.Q2;
 
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,9 @@ class AnswerRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EntityManager em;
 
     @BeforeEach
     void setUp() {
@@ -135,16 +139,19 @@ class AnswerRepositoryTest {
                 new User("userId", "password", "name", "email"));
         final Question q1 = new Question("title1", "contents1").writeBy(testUser);
 
-        q1.addAnswer(new Answer(testUser, q1, "답변1"));
-        q1.addAnswer(new Answer(testUser, q1, "답변2"));
-        q1.addAnswer(new Answer(testUser, q1, "답변3"));
-
-        userRepository.save(testUser);
         questionRepository.save(q1);
+
+        answerRepository.save(new Answer(testUser, q1, "답변1"));
+        answerRepository.save(new Answer(testUser, q1, "답변2"));
+        answerRepository.save(new Answer(testUser, q1, "답변3"));
+        em.clear();
 
         final Optional<Question> findQ1 = questionRepository.findByIdAndDeletedFalse(q1.getId());
 
-        assertThat(findQ1).isPresent();
-        assertThat(findQ1.get().getAnswers()).hasSize(3);
+
+        assertAll(
+                () -> assertThat(findQ1).isPresent(),
+                () -> assertThat(findQ1.get().getAnswers()).hasSize(3)
+        );
     }
 }

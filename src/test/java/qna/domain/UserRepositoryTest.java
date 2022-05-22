@@ -11,8 +11,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 @DataJpaTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class UserRepositoryTest {
 
     @Autowired
@@ -26,10 +28,10 @@ class UserRepositoryTest {
 
         final List<User> users = userRepository.findAll();
 
-        assertAll(()-> {
-           assertThat(users).hasSize(2);
-           assertThat(users).contains(javaUser, sanUser);
-        });
+        assertAll(
+                () -> assertThat(users).hasSize(2),
+                () -> assertThat(users).contains(javaUser, sanUser)
+        );
     }
 
     @Test
@@ -51,10 +53,10 @@ class UserRepositoryTest {
 
         final Optional<User> findUser = userRepository.findByUserId(JAVAJIGI.getUserId());
 
-        assertAll(()-> {
-            assertThat(findUser.isPresent()).isTrue();
-            assertThat(findUser.get()).isEqualTo(javaUser);
-        });
+        assertAll(
+                () -> assertThat(findUser).isPresent(),
+                () -> assertThat(findUser.get()).isEqualTo(javaUser)
+        );
     }
 
 

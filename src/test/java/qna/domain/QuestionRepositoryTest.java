@@ -57,10 +57,10 @@ class QuestionRepositoryTest {
 
         final Optional<Question> findQ1 = questionRepository.findById(q1.getId());
 
-        assertAll(() -> {
-            assertThat(findQ1.isPresent()).isTrue();
-            assertThat(findQ1.get().getContents()).isEqualTo("변경데이터");
-        });
+        assertAll(
+                () -> assertThat(findQ1).isPresent(),
+                () -> assertThat(findQ1.get().getContents()).isEqualTo("변경데이터")
+        );
     }
 
     @Test
@@ -100,10 +100,10 @@ class QuestionRepositoryTest {
         Optional<Question> findQ1 = questionRepository.findByIdAndDeletedFalse(q1.getId());
         Optional<Question> findQ2 = questionRepository.findByIdAndDeletedFalse(q2.getId());
 
-        assertAll(() -> {
-            assertThat(findQ1.isPresent()).isFalse();
-            assertThat(findQ2.isPresent()).isTrue();
-        });
+        assertAll(
+            () -> assertThat(findQ1).isNotPresent(),
+            () -> assertThat(findQ2).isPresent()
+        );
     }
 
     @Test
@@ -116,7 +116,9 @@ class QuestionRepositoryTest {
 
         final Optional<Question> findQuestion = questionRepository.findById(question.getId());
 
-        assertThat(findQuestion.isPresent()).isTrue();
-        assertThat(findQuestion.get().isOwner(testUser)).isTrue();
+        assertAll(
+                () -> assertThat(findQuestion).isPresent(),
+                () ->  assertThat(findQuestion.get().isOwner(testUser)).isTrue()
+        );
     }
 }

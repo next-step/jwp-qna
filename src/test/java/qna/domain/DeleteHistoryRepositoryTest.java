@@ -37,8 +37,8 @@ class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        userRepository.save(JAVAJIGI);
-        userRepository.save(SANJIGI);
+        userRepository.saveAndFlush(JAVAJIGI);
+        userRepository.saveAndFlush(SANJIGI);
     }
 
 
@@ -46,10 +46,10 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("삭제이력저장")
     void save() {
         DeleteHistory save = deleteHistoryRepository.save(d1);
-        assertAll(()-> {
-            assertThat(deleteHistoryRepository.findById(save.getId()).isPresent()).isTrue();
-            assertThat(deleteHistoryRepository.findById(save.getId()).get()).isEqualTo(save);
-        });
+        assertAll(
+                () -> assertThat(deleteHistoryRepository.findById(save.getId()).isPresent()).isTrue(),
+                () -> assertThat(deleteHistoryRepository.findById(save.getId()).get()).isEqualTo(save)
+        );
     }
 
     @Test
@@ -78,11 +78,12 @@ class DeleteHistoryRepositoryTest {
         DeleteHistory d1History = deleteHistoryRepository.save(d1);
         DeleteHistory d2History  = deleteHistoryRepository.save(d2);
 
-        deleteHistoryRepository.delete(d1);
-        assertAll(() -> {
-            assertThat(deleteHistoryRepository.count()).isEqualTo(1);
-            assertThat(deleteHistoryRepository.findById(d1History.getId()).isPresent()).isFalse();
-        });
+        deleteHistoryRepository.delete(d2);
+
+        assertAll(
+                () -> assertThat(deleteHistoryRepository.findById(d1History.getId())).isPresent(),
+                () -> assertThat(deleteHistoryRepository.count()).isEqualTo(1)
+        );
     }
 
 
@@ -95,8 +96,5 @@ class DeleteHistoryRepositoryTest {
         assertThat(deleteHistoryRepository.findById(save.getId()).get().getContentType())
                 .isEqualTo(QUESTION);
     }
-
-
-
 
 }
