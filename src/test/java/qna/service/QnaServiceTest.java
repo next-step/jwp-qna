@@ -75,7 +75,6 @@ class QnaServiceTest {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Collections.emptyList());
         assertThat(question.isDeleted()).isFalse();
-        LocalDateTime now = LocalDateTime.now();
         qnaService.deleteQuestion(javajigi, question.getId(), now);
         assertThat(question.isDeleted()).isTrue();
         verifyDeleteHistoriesAtDeleteSuccessNoneAnswer(now);
@@ -97,7 +96,6 @@ class QnaServiceTest {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(
                 Collections.singletonList(answer));
-        LocalDateTime now = LocalDateTime.now();
         qnaService.deleteQuestion(javajigi, question.getId(), now);
         assertThat(question.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
@@ -115,7 +113,6 @@ class QnaServiceTest {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(this.question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(
                 Arrays.asList(this.answer, answer));
-        LocalDateTime now = LocalDateTime.now();
         assertThatThrownBy(() -> qnaService.deleteQuestion(javajigi, question.getId(), now))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
