@@ -20,6 +20,10 @@ class AnswerRepositoryTest {
 
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeAll
     static void before() {
@@ -38,6 +42,8 @@ class AnswerRepositoryTest {
     void id를_넘겨주어_deleted가_false인_answer를_찾는다(Answer answer, boolean expected) {
         // given
         answer2.delete();
+        userRepository.save(answer.getWriter());
+        questionRepository.save(answer.getQuestion());
         Answer saved = answerRepository.save(answer);
         // when
         Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(saved.getId());
