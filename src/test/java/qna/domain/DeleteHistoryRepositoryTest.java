@@ -15,11 +15,15 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @DisplayName("삭제내역을 저장한다.")
     @Test
     void save() {
         //given
-        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, 1L, null);
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, user, null);
         final DeleteHistory expected = deleteHistoryRepository.save(deleteHistory);
 
         //when
