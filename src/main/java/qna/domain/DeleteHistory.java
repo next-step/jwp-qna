@@ -42,6 +42,10 @@ public class DeleteHistory {
     public DeleteHistory() {
     }
 
+    public static DeleteHistory of(ContentType contentType, Long contentId, User writer) {
+        return new DeleteHistory(contentType, contentId, writer, LocalDateTime.now());
+    }
+
     public Long getId() {
         return id;
     }
