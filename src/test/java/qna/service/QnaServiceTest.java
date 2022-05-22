@@ -83,8 +83,12 @@ class QnaServiceTest {
     @DisplayName("다른 작성자의 질문 삭제시 예외 테스트")
     @Test
     public void deleteQuestionOtherWriter() {
+        Answer answer = Answer.builder(sanjigi, question)
+                .contents("Answers Contents1")
+                .build();
+        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(
+                Collections.singletonList(answer));
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-
         assertThatThrownBy(() -> qnaService.deleteQuestion(sanjigi, question.getId(), now))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("질문을 삭제할 권한이 없습니다.");
