@@ -16,6 +16,7 @@
 - [x] 연관관계 매핑
   - [x] answer
     - [x] question 단방향 매핑
+    - [x] question 양방향 매핑
     - [x] user 단방향 매핑
   - [x] delete_history
     - [x] user 단방향 매핑

@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -26,6 +29,9 @@ public class Question extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
@@ -54,6 +60,10 @@ public class Question extends BaseTimeEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public Long getId() {

@@ -57,14 +57,6 @@ public class AnswerRepositoryTest {
         assertThat(finded).isNotNull();
     }
 
-    @DisplayName("Question 조회")
-    @Test
-    void findByQuestionAndDeletedFalse() {
-        final Answer saved = answerRepository.save(AnswerTest.A1);
-        final Answer finded = answerRepository.findByQuestionAndDeletedFalse(QuestionTest.Q1).get(0);
-        assertThat(finded).isNotNull();
-    }
-
     @DisplayName("Contents 변경")
     @Test
     void updateContents() {
