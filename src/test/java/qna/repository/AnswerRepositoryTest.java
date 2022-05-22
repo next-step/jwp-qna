@@ -82,11 +82,11 @@ class AnswerRepositoryTest {
             List<Answer> answers = answerRepository.findAll();
             answerRepository.delete(answer);
 
-            List<Answer> deleted_answers = answerRepository.findAll();
+            List<Answer> deletedAnswers = answerRepository.findAll();
 
             assertAll(
                 () -> assertThat(answers).hasSize(2),
-                () -> assertThat(deleted_answers).hasSize(1)
+                () -> assertThat(deletedAnswers).hasSize(1)
             );
         }
     }
