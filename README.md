@@ -31,3 +31,4 @@
 - [X] DeleteHistory(의존 관계 주인) → User 다대일 관계로 참조
 
 - [X] User → Question 일대다 관계로 참조
+- [X] User → DeleteHistory 일대다 관계로 참조

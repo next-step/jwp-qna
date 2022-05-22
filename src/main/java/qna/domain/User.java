@@ -31,6 +31,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "writer")
     List<Question> questions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "deleteUser")
+    List<DeleteHistory> deleteHistories = new ArrayList<>();
+
     protected User() {
     }
 
@@ -84,24 +87,12 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getName() {
@@ -124,8 +115,8 @@ public class User extends BaseEntity {
         return questions;
     }
 
-    public void setQuestions(List<Question> questions) {
-        this.questions = questions;
+    public List<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
     }
 
     @Override
