@@ -52,7 +52,7 @@ public class AnswerTest {
     void update_toQuestion() {
         saveA1.toQuestion(QuestionTest.Q1);
         answerRepository.flush();
-        assertThat(QuestionTest.Q1.getId()).isEqualTo(saveA1.getQuestionId());
+        assertThat(QuestionTest.Q1.getId()).isEqualTo(saveA1.getQuestion().getId());
     }
 
     @Test

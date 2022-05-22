@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.repository.QuestionRepository;
+import qna.repository.UserRepository;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -29,10 +30,14 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private Question saveQ1;
 
     @BeforeAll
     void setUp() {
+        userRepository.save(UserTest.JAVAJIGI);
         saveQ1 = questionRepository.save(Q1);
     }
 
@@ -65,14 +70,14 @@ public class QuestionTest {
     void update_writeBy() {
         Question actual = saveQ1.writeBy(UserTest.JAVAJIGI);
         questionRepository.flush();
-        assertThat(actual.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+        assertThat(actual.getWriter()).isEqualTo(UserTest.JAVAJIGI);
     }
 
     @Test
     @DisplayName("addAnswer 테스트")
     void addAnswer() {
         saveQ1.addAnswer(AnswerTest.A1);
-        assertThat(AnswerTest.A1.getWriterId()).isEqualTo(saveQ1.getId());
+        assertThat(AnswerTest.A1.getWriter().getId()).isEqualTo(saveQ1.getId());
     }
 
     @Test
