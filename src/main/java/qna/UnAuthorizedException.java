@@ -1,7 +1,7 @@
 package qna;
 
 public class UnAuthorizedException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8696160553739152576L;
 
     public UnAuthorizedException() {
         super();

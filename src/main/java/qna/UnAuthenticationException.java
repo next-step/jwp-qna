@@ -1,7 +1,7 @@
 package qna;
 
 public class UnAuthenticationException extends Exception {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7701775678237007719L;
 
     public UnAuthenticationException() {
         super();
