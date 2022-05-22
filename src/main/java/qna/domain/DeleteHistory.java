@@ -42,11 +42,11 @@ public class DeleteHistory {
 
         DeleteHistory that = (DeleteHistory) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (contentType != that.contentType) return false;
-        if (contentId != null ? !contentId.equals(that.contentId) : that.contentId != null) return false;
-        if (remover != null ? !remover.equals(that.remover) : that.remover != null) return false;
-        return createDate != null ? createDate.equals(that.createDate) : that.createDate == null;
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
