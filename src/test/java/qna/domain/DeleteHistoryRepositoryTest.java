@@ -18,7 +18,8 @@ class DeleteHistoryRepositoryTest {
     @Test
     void id로_조회한다() {
         // given
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+        User user = new User(1L, "user1", "password", "name", "user1@com");
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, user, LocalDateTime.now());
         DeleteHistory saved = deleteHistoryRepository.save(deleteHistory);
         // when
         Optional<DeleteHistory> result = deleteHistoryRepository.findById(saved.getId());
