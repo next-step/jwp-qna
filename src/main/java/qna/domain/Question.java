@@ -1,10 +1,21 @@
 package qna.domain;
 
-public class Question {
+import org.springframework.lang.Nullable;
+
+import javax.persistence.*;
+
+@Entity
+public class Question extends BaseEntity{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(length = 100)
+    @Nullable
     private String title;
+    @Lob
     private String contents;
     private Long writerId;
+    @Nullable
     private boolean deleted = false;
 
     public Question(String title, String contents) {
@@ -15,6 +26,10 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+
+    protected Question() {
+
     }
 
     public Question writeBy(User writer) {
