@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 @Embeddable
 public class Answers {
 
-    @OneToMany(mappedBy = "answer")
+    @OneToMany(mappedBy = "question")
     private List<Answer> values = new ArrayList<>();
 
     protected Answers() {
