@@ -15,8 +15,6 @@ import qna.UnAuthorizedException;
         @UniqueConstraint(columnNames = {"user_id"})
 })
 public class User extends BaseEntity {
-    public static final GuestUser GUEST_USER = new GuestUser();
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -63,6 +61,10 @@ public class User extends BaseEntity {
 
     private boolean matchUserId(String userId) {
         return this.userId.equals(userId);
+    }
+
+    public boolean matchUserId(User user) {
+        return this.matchUserId(user.getUserId());
     }
 
     public boolean matchPassword(String targetPassword) {
@@ -131,12 +133,5 @@ public class User extends BaseEntity {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
-    }
-
-    private static class GuestUser extends User {
-        @Override
-        public boolean isGuestUser() {
-            return true;
-        }
     }
 }
