@@ -3,14 +3,28 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Answer {
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
+public class Answer extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    @Column(name = "writer_id")
     private Long writerId;
+    @Column(name = "question_id")
     private Long questionId;
+    @Lob
+    @Column(name = "contents")
     private String contents;
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -44,31 +58,19 @@ public class Answer {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public Long getQuestionId() {
         return questionId;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void writeContents(String contents) {
         this.contents = contents;
     }
 
@@ -76,8 +78,8 @@ public class Answer {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        deleted = true;
     }
 
     @Override
