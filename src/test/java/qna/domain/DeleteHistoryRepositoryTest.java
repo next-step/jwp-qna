@@ -27,7 +27,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     void 삭제_이력_저장() {
         final User user = userRepository.save(createTestUser());
-        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, user, LocalDateTime.now());
+        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, LocalDateTime.now()).deleteBy(user);
         final DeleteHistory expected = repository.save(deleteHistory);
 
         assertThat(expected).isNotNull();
@@ -36,7 +36,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     void 삭제_이력_조회() {
         final User user = userRepository.save(createTestUser());
-        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, user, LocalDateTime.now());
+        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, LocalDateTime.now()).deleteBy(user);
         final DeleteHistory expected = repository.save(deleteHistory);
 
         final Optional<DeleteHistory> actual = repository.findById(expected.getId());
@@ -48,7 +48,7 @@ class DeleteHistoryRepositoryTest {
     void 질문_삭제_이력() {
         final User user = userRepository.save(createTestUser());
         final Question question = new Question(1L, "질문", "내용");
-        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), user, LocalDateTime.now());
+        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), LocalDateTime.now()).deleteBy(user);
 
         repository.save(deleteHistory);
 
@@ -62,7 +62,7 @@ class DeleteHistoryRepositoryTest {
         final Question question = questionRepository.save(new Question("제목", "내용")).writeBy(user);
         final Answer answer = answerRepository.save(new Answer(user, question, "댓글 내용"));
 
-        repository.save(new DeleteHistory(ContentType.ANSWER, answer.getId(), user, LocalDateTime.now()));
+        repository.save(new DeleteHistory(ContentType.ANSWER, answer.getId(), LocalDateTime.now())).deleteBy(user);
 
         Optional<DeleteHistory> actual = repository.findByContentId(answer.getId());
         assertThat(actual).isNotEmpty();

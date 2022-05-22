@@ -28,11 +28,28 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deleteUser, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deleteUser = deleteUser;
         this.createDate = createDate;
+    }
+
+    public DeleteHistory deleteBy(User user) {
+        this.deleteUser = user;
+        user.getDeleteHistories().add(this);
+        return this;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public User getDeleteUser() {
+        return deleteUser;
     }
 
     @Override
