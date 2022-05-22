@@ -71,6 +71,7 @@ public class Answer extends BaseTimeEntity {
 
     public DeleteHistory delete(User loginUser) {
         validateOwner(loginUser);
+        validateDelete();
 
         this.deleted = true;
 
@@ -80,6 +81,12 @@ public class Answer extends BaseTimeEntity {
     private void validateOwner(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
+    private void validateDelete() {
+        if (deleted) {
+            throw new CannotDeleteException("이미 삭제된 답변입니다.");
         }
     }
 
