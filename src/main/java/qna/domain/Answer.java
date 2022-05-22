@@ -94,6 +94,10 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public boolean isNotDeleted() {
+        return !deleted;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +

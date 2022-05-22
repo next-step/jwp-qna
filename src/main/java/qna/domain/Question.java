@@ -71,7 +71,7 @@ public class Question extends BaseEntity {
 
     public List<Answer> getNotDeletedAnswers() {
         return this.answers.stream()
-                .filter(a -> !a.isDeleted())
+                .filter(Answer::isNotDeleted)
                 .collect(Collectors.toList());
     }
 
