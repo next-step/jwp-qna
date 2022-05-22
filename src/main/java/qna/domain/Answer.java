@@ -3,6 +3,7 @@ package qna.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -11,10 +12,14 @@ import java.util.Objects;
 @Entity
 public class Answer extends BaseEntity {
     private Long writerId;
-    private Long questionId;
+
+    @ManyToOne
+    private Question question;
+
     @Lob
     @Column(columnDefinition = "CLOB")
     private String contents;
+
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -37,7 +42,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -46,7 +51,7 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -65,12 +70,8 @@ public class Answer extends BaseEntity {
         this.writerId = writerId;
     }
 
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
@@ -94,7 +95,7 @@ public class Answer extends BaseEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
