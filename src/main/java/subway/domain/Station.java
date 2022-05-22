@@ -47,5 +47,6 @@ public class Station {
 
     public void changeLine(Line line) {
         this.line = line;
+        line.getStations().add(this); // line.addStation(this)의 경우 StackOverflowError 발생
     }
 }

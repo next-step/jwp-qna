@@ -52,4 +52,20 @@ class LineRepositoryTest {
         expected.changeLine(null);
         stations.flush(); // transaction commit
     }
+
+    @DisplayName("객체를 양방향으로 참조하려면 단방향 연관관계를 2개 만들어야 한다")
+    @Test
+    void findByName() {
+        Line line = lines.findByName("3호선");
+        assertThat(line.getStations()).hasSize(1);
+    }
+
+    @DisplayName("연관 관계의 주인만이 외래 키를 등록, 수정, 삭제할 수 있다")
+    @Test
+    void save() {
+        Line expected = new Line("2호선");
+        expected.addStation(stations.save(new Station("잠실역")));
+        lines.save(expected);
+        lines.flush(); // transaction commit
+    }
 }
