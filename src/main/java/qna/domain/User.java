@@ -41,6 +41,10 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
+    public void addAnswer(Answer answer) {
+        answer.writeBy(this);
+    }
+
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.userId)) {
             throw new UnAuthorizedException();
@@ -79,24 +83,12 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getName() {

@@ -20,3 +20,12 @@
 - [X] Question 관련 CRUD 기능을 제공하는 QuestionRepository 클래스
 - [X] Answer 관련 CRUD 기능을 제공하는 AnswerRepository 클래스
 - [X] DeleteHistory 관련 CRUD 기능을 제공하는 DeleteHistoryRepository 클래스
+
+## 2단계 - 연관 관계 매핑
+
+## 기능 목록
+
+- [X] Question(의존 관계 주인) → User 다대일 관계로 참조
+- [X] Answer(의존 관계 주인) → User 다대일 관계로 참조
+- [X] Answer(의존 관계 주인) → Question 다대일 관계로 참조
+- [X] DeleteHistory(의존 관계 주인) → User 다대일 관계로 참조
