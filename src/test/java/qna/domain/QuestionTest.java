@@ -1,26 +1,36 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    private Question question;
+
+    @BeforeEach
+    void before() {
+        User user = new User(1L, "user1", "password", "name", "user1@com");
+
+        question = new Question("title1", "contents1").writeBy(user);
+    }
 
     @Test
     void 작성자를_설정한다() {
         Question question = new Question("title", "contents");
+        User user = new User(2L, "user2", "password", "name", "user2@com");
         // when
-        Question result = question.writeBy(UserTest.SANJIGI);
+        Question result = question.writeBy(user);
         // then
         assertThat(result.getWriterId()).isEqualTo(2L);
     }
 
     @Test
     void 내가_작성한_질문인지_확인한다() {
+        // given
+        User user = new User(1L, "user1", "password", "name", "user1@com");
         // when
-        boolean result = Q2.isOwner(UserTest.SANJIGI);
+        boolean result = question.isOwner(user);
         // then
         assertThat(result).isTrue();
     }

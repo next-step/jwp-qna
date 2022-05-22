@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -14,14 +15,23 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
 
 @QnaDataJpaTest
 class QuestionRepositoryTest {
+    private Question question1;
+    private Question question2;
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @BeforeEach
+    void before() {
+        User user1 = new User(1L, "user1", "password", "name", "user1@com");
+        User user2 = new User(2L, "user2", "password", "name", "user2@com");
+
+        question1 = new Question("title1", "contents1").writeBy(user1);
+        question2 = new Question("title2", "contents2").writeBy(user2);
+    }
 
     @Test
     void id로_조회() {
@@ -79,27 +89,26 @@ class QuestionRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource(value = "question과_기댓값을_리턴한다")
-    void id로_삭제되지_않은_질문_찾기(Question question, boolean expected) {
+    @MethodSource(value = "question을_리턴한다")
+    void id로_삭제되지_않은_질문_찾기(Question question) {
         // given
+        question.delete();
         Question saved = questionRepository.save(question);
         // when
         Optional<Question> result = questionRepository.findByIdAndDeletedFalse(saved.getId());
         // then
-        assertThat(result.isPresent()).isEqualTo(expected);
+        assertThat(result.isPresent()).isFalse();
     }
 
-    static Stream<Arguments> question과_기댓값을_리턴한다() {
-        Q1.delete();
-
+    static Stream<Arguments> question을_리턴한다() {
         return Stream.of(
                 Arguments.of(
-                        Q1,
+                        new Question("title1", "contents1"),
                         false
                 ),
                 Arguments.of(
-                        Q2,
-                        true
+                        new Question("title2", "contents2"),
+                        false
                 )
         );
     }
@@ -107,7 +116,7 @@ class QuestionRepositoryTest {
     @Test
     void 삭제되지_않은_질문들을_조회한다() {
         // given
-        questionRepository.saveAll(Arrays.asList(Q1, Q2));
+        questionRepository.saveAll(Arrays.asList(question1, question2));
         // when
         List<Question> result = questionRepository.findByDeletedFalse();
         // then

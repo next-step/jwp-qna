@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static qna.domain.UserTest.JAVAJIGI;
 
 @QnaDataJpaTest
 class UserRepositoryTest {
@@ -21,9 +20,10 @@ class UserRepositoryTest {
     @Test
     void userId로_user를_조회한다() {
         // given
-        userRepository.save(JAVAJIGI);
+        User user = new User("mj", "password", "name", "email");
+        userRepository.save(user);
         // when
-        Optional<User> result = userRepository.findByUserId(JAVAJIGI.getUserId());
+        Optional<User> result = userRepository.findByUserId(user.getUserId());
         // then
         assertThat(result.isPresent()).isTrue();
     }
