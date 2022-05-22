@@ -45,6 +45,22 @@ class AnswerRepositoryTest {
     }
 
     @Test
+    @DisplayName("Question 연관관계 테스트")
+    void Answer_to_Question() {
+        em.clear();
+        Optional<Answer> optionalAnswer = answerRepository.findById(this.answer.getId());
+        assertThat(optionalAnswer.get().getQuestion().getId()).isEqualTo(question.getId());
+    }
+
+    @Test
+    @DisplayName("User(writer) 연관관계 테스트")
+    void Answer_to_Writer() {
+        em.clear();
+        Optional<Answer> optionalAnswer = answerRepository.findById(this.answer.getId());
+        assertThat(optionalAnswer.get().getWriter().getId()).isEqualTo(writer.getId());
+    }
+
+    @Test
     @DisplayName("삭제되지 않은 상태의 answer를 id 기준으로 검색")
     void Answer_findByIdAndDeletedFalse() {
         em.clear();
