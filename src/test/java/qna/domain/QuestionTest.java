@@ -44,7 +44,7 @@ public class QuestionTest {
         question.addAnswer(newAnswer);
 
         // then
-        assertThat(question.getId()).isEqualTo(AnswerTest.A1.getQuestionId());
+        assertThat(question).isEqualTo(AnswerTest.A1.getQuestion());
 
         // finally
         AnswerTest.A1.toQuestion(QuestionTest.Q1);

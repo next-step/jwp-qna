@@ -31,7 +31,7 @@ public class AnswerTest {
         A2.toQuestion(newQuestion);
 
         // then
-        assertThat(A2.getQuestionId()).isEqualTo(newQuestion.getId());
+        assertThat(A2.getQuestion()).isEqualTo(newQuestion);
 
         // finally
         A2.toQuestion(QuestionTest.Q1);
