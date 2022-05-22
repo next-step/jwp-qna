@@ -21,9 +21,9 @@ class AnswerRepositoryTest {
     @DisplayName("Answer 저장")
     @Test
     void save() {
-        final Answer expected = answerRepository.save(A1);
+        final Answer actual = answerRepository.save(A1);
 
-        assertThat(expected.getId()).isNotNull();
+        assertThat(actual.getId()).isNotNull();
     }
 
     @DisplayName("Answer 전체 조회")
