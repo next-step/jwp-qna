@@ -83,6 +83,6 @@ alter table question
 ```
 ## TODO
 - [X] Answer -> Question : ManyToOne 연관관계 매핑 
-- [] Answer -> User : ManyToOne 연관관계 매핑 
+- [X] Answer -> User : ManyToOne 연관관계 매핑 
 - [] DeleteHistory -> User : ManyToOne 연관관계 매핑 
 - [] Question -> User : ManyToOne 연관관계 매핑 

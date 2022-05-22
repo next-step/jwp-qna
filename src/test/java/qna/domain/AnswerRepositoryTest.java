@@ -22,9 +22,14 @@ class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void beforeEach() {
         questionRepository.save(QuestionTest.Q1);
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
     }
 
     @DisplayName("Answer 저장")
