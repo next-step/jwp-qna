@@ -1,6 +1,7 @@
 package subway.domain;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "station")
@@ -46,7 +47,10 @@ public class Station {
     }
 
     public void changeLine(Line line) {
+        if (Objects.nonNull(this.line)) {
+            this.line.getStations().remove(this);
+        }
         this.line = line;
-        line.getStations().add(this); // line.addStation(this)의 경우 StackOverflowError 발생
+        line.getStations().add(this);
     }
 }
