@@ -71,8 +71,8 @@ class QuestionRepositoryTest {
     @Test
     void 삭제() {
         // given
-        Question question = new Question("title", "contents");
-        Question saved = questionRepository.save(question);
+        User user = userRepository.save(question1.getWriter());
+        Question saved = questionRepository.save(question1);
         // when
         questionRepository.deleteById(saved.getId());
         Optional<Question> result = questionRepository.findById(saved.getId());
