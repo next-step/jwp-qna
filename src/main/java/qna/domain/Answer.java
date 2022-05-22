@@ -5,6 +5,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.Objects;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -31,6 +32,8 @@ public class Answer extends BaseTimeEntity {
     private Question question;
     @Lob
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Answer() {
