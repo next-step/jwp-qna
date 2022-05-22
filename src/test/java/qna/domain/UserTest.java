@@ -52,7 +52,7 @@ public class UserTest {
     }
 
     @ParameterizedTest
-    @MethodSource
+    @MethodSource(value = "user와_결과값을_리턴한다")
     void 이름과_이메일이_같은지_확인한다(User target, boolean expected) {
         // when
         boolean result = JAVAJIGI.equalsNameAndEmail(target);
@@ -60,7 +60,7 @@ public class UserTest {
         assertThat(result).isEqualTo(expected);
     }
 
-    static Stream<Arguments> 이름과_이메일이_같은지_확인한다() {
+    static Stream<Arguments> user와_결과값을_리턴한다() {
         return Stream.of(
                 Arguments.of(
                         new User("javajigi", "pass", "mj", "mj@com"),

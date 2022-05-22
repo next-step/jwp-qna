@@ -79,7 +79,7 @@ class QuestionRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource
+    @MethodSource(value = "question과_기댓값을_리턴한다")
     void id로_삭제되지_않은_질문_찾기(Question question, boolean expected) {
         // given
         Question saved = questionRepository.save(question);
@@ -89,7 +89,7 @@ class QuestionRepositoryTest {
         assertThat(result.isPresent()).isEqualTo(expected);
     }
 
-    static Stream<Arguments> id로_삭제되지_않은_질문_찾기() {
+    static Stream<Arguments> question과_기댓값을_리턴한다() {
         Q1.delete();
 
         return Stream.of(

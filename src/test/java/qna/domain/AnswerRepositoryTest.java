@@ -21,7 +21,7 @@ class AnswerRepositoryTest {
     private AnswerRepository answerRepository;
 
     @ParameterizedTest
-    @MethodSource
+    @MethodSource("answer와_기댓값을_리턴한다")
     void id를_넘겨주어_deleted가_false인_answer를_찾는다(Answer answer, boolean expected) {
         // given
         Answer saved = answerRepository.save(answer);
@@ -31,7 +31,7 @@ class AnswerRepositoryTest {
         assertThat(result.isPresent()).isEqualTo(expected);
     }
 
-    static Stream<Arguments> id를_넘겨주어_deleted가_false인_answer를_찾는다() {
+    static Stream<Arguments> answer와_기댓값을_리턴한다() {
         A2.delete();
 
         return Stream.of(
