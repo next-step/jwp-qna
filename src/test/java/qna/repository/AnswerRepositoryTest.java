@@ -1,5 +1,6 @@
 package qna.repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +29,20 @@ public class AnswerRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    private User user;
+    private Question question;
+
+    @BeforeEach
+    void setUp() {
+        user = userRepository.save(JAVAJIGI);
+        question = questionRepository.save(new Question(Q1.getTitle(), Q1.getContents()).writeBy(user));
+    }
+
     @Test
-    @DisplayName("질문아이디로 검색하여 answer객체 리스트를 반환한다.")
+    @DisplayName("질문객체로 검색하여 answer객체 리스트를 반환한다.")
     void findByQuestionIdAndDeletedFalse_test() {
         //given
-        User user = userRepository.save(JAVAJIGI);
-        Question question = questionRepository.save(new Question(Q1.getTitle(), Q1.getContents()).writeBy(user));
-        Answer answer = answerRepository.save(new Answer(user, question, A1.getContents()));
+        answerRepository.save(new Answer(user, question, A1.getContents()));
         //when
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
         //then
@@ -43,10 +51,19 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("답변아이디로 검색하여 answer객체를 반환한다.")
+    void findByQuestionAndDeletedFalse_test() {
+        //given
+        answerRepository.save(new Answer(user, question, A1.getContents()));
+        //when
+        List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(question);
+        //then
+        assertThat(answers).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("답변아이디로 검색하여 answer객체를 반환한다.")
     void findByIdAndDeletedFalse_test() {
         //given
-        User user = userRepository.save(JAVAJIGI);
-        Question question = questionRepository.save(new Question(Q1.getTitle(), Q1.getContents()).writeBy(user));
         Answer answer = answerRepository.save(new Answer(user, question, A1.getContents()));
         //when
         Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(answer.getId());
