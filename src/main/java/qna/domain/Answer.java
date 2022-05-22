@@ -24,11 +24,11 @@ public class Answer extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "FK_Answer_User"))
+    @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
     @ManyToOne(fetch = LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "QUESTION_ID", foreignKey = @ForeignKey(name = "FK_Answer_Question"))
+    @JoinColumn(name = "QUESTION_ID", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
     @Lob
     private String contents;
