@@ -64,7 +64,6 @@ public class Answer extends BaseEntity {
 
     public Answer toQuestion(Question question) {
         this.question = question;
-        question.getAnswers().add(this);
         return this;
     }
 

@@ -29,4 +29,3 @@
 - [X] Answer(의존 관계 주인) → User 다대일 관계로 참조
 - [X] Answer(의존 관계 주인) → Question 다대일 관계로 참조
 - [X] DeleteHistory(의존 관계 주인) → User 다대일 관계로 참조
-- [X] Question → Answer 일대다 관계로 참조
