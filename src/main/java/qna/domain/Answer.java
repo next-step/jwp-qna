@@ -1,11 +1,14 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
+
+import static qna.domain.ContentType.ANSWER;
 
 @Entity
 public class Answer extends Auditing {
@@ -84,8 +87,16 @@ public class Answer extends Auditing {
         return deleted;
     }
 
-    public void delete(boolean deleted) {
-        this.deleted = deleted;
+    private void delete() {
+        this.deleted = true;
+    }
+
+    public DeleteHistory deleteBy(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
+        }
+        delete();
+        return new DeleteHistory(ANSWER, id, writer);
     }
 
     @Override
