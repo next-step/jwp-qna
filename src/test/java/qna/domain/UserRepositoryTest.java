@@ -62,30 +62,6 @@ public class UserRepositoryTest {
         assertThat(actual.isPresent()).isFalse();
     }
 
-    @Test
-    void 사용자_질문_리스트_조회() {
-        final User user = userRepository.save(createTestUser());
-        questionRepository.save(new Question("제목", "내용").writeBy(user));
-
-        final User actualUser = userRepository.findByUserId(user.getUserId()).get();
-
-        Question actualQuation = actualUser.getQuestions().get(0);
-        assertThat(actualQuation.getTitle()).isEqualTo("제목");
-        assertThat(actualQuation.getContents()).isEqualTo("내용");
-    }
-
-    @Test
-    void 사용자_삭제_리스트_조회() {
-        final User user = userRepository.save(createTestUser());
-        final Question question = questionRepository.save(new Question("제목", "내용").writeBy(user));
-        deleteHistoryRepository.save(new DeleteHistory(ContentType.QUESTION, question.getId(), LocalDateTime.now())).deleteBy(user);
-
-        final User actualUser = userRepository.findByUserId(user.getUserId()).get();
-
-        final DeleteHistory deleteHistory = actualUser.getDeleteHistories().get(0);
-        assertThat(deleteHistory.getContentId()).isEqualTo(question.getId());
-    }
-
     private User createTestUser() {
         return new User("donghee.han", "password", "donghee", "donghee.han@slipp.net");
     }

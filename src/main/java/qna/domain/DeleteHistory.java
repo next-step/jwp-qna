@@ -36,7 +36,6 @@ public class DeleteHistory {
 
     public DeleteHistory deleteBy(User user) {
         this.deleteUser = user;
-        user.getDeleteHistories().add(this);
         return this;
     }
 

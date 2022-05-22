@@ -70,7 +70,6 @@ public class Answer extends BaseEntity {
 
     public Answer writeBy(User user) {
         this.writer = user;
-        user.getAnswers().add(this);
         return this;
     }
 

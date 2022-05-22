@@ -28,15 +28,6 @@ public class User extends BaseEntity {
     @Column(length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "writer")
-    List<Question> questions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "writer")
-    List<Answer> answers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "deleteUser")
-    List<DeleteHistory> deleteHistories = new ArrayList<>();
-
     protected User() {
     }
 
@@ -116,18 +107,6 @@ public class User extends BaseEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public List<Question> getQuestions() {
-        return questions;
-    }
-
-    public List<DeleteHistory> getDeleteHistories() {
-        return deleteHistories;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
     }
 
     @Override
