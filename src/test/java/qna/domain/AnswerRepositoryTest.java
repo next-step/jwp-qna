@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.AnswerTest.createAnswer;
@@ -22,7 +23,7 @@ class AnswerRepositoryTest {
     private AnswerRepository answerRepository;
 
     @Test
-    void findByIdAndDeletedFalse() {
+    void findByIdAndDeletedFalse() throws CannotDeleteException {
         User writer1 = testEntityManager.persist(createUser("javajigi"));
         User writer2 = testEntityManager.persist(createUser("sanjigi"));
         Question question = testEntityManager.persist(createQuestion(writer1, false));

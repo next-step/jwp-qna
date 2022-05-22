@@ -13,13 +13,15 @@ public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
-    public static Question createQuestion(User writer, boolean deleted) {
+    public static Question createQuestion(User writer, boolean deleted) throws CannotDeleteException {
         return createQuestion(null, writer, deleted);
     }
 
-    public static Question createQuestion(Long id, User writer, boolean deleted) {
+    public static Question createQuestion(Long id, User writer, boolean deleted) throws CannotDeleteException {
         Question question = new Question(id, "title1", "contents1").writeBy(writer);
-        question.setDeleted(deleted);
+        if (deleted) {
+            question.delete(writer);
+        }
         return question;
     }
 
@@ -48,7 +50,7 @@ public class QuestionTest {
     }
 
     @Test
-    void validateDelete_다른사람이_쓴_글은_삭제할_수_없다() {
+    void validateDelete_다른사람이_쓴_글은_삭제할_수_없다() throws CannotDeleteException {
         Question question = createQuestion(1L, UserTest.JAVAJIGI, false);
 
         Assertions.assertThatExceptionOfType(CannotDeleteException.class)
@@ -56,7 +58,7 @@ public class QuestionTest {
     }
 
     @Test
-    void validateDelete_답변_중_다른_사람이_쓴_글은_삭제할_수_없다() {
+    void validateDelete_답변_중_다른_사람이_쓴_글은_삭제할_수_없다() throws CannotDeleteException {
         Question question = createQuestion(1L, UserTest.JAVAJIGI, false);
 
         question.addAnswer(new Answer(UserTest.SANJIGI, question, "테스트"));

@@ -12,16 +12,16 @@ public class AnswerTest {
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
-    public static Answer createAnswer(Long id, User writer, Question question, boolean deleted) {
+    public static Answer createAnswer(Long id, User writer, Question question, boolean deleted) throws CannotDeleteException {
         Answer answer = new Answer(id, writer, question, "answer content1");
-        answer.setDeleted(deleted);
+        if (deleted) {
+            answer.delete(writer);
+        }
         return answer;
     }
 
-    public static Answer createAnswer(User writer, Question question, boolean deleted) {
-        Answer answer = new Answer(writer, question, "answer content1");
-        answer.setDeleted(deleted);
-        return answer;
+    public static Answer createAnswer(User writer, Question question, boolean deleted) throws CannotDeleteException {
+        return createAnswer(null, writer, question, deleted);
     }
 
     @Test
@@ -33,7 +33,7 @@ public class AnswerTest {
     }
 
     @Test
-    void delete_본인답변이_아닌_경우() {
+    void delete_본인답변이_아닌_경우() throws CannotDeleteException {
         Answer answer = createAnswer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, false);
 
         Assertions.assertThatExceptionOfType(CannotDeleteException.class)

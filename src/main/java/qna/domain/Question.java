@@ -85,10 +85,6 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    protected void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         validateDelete(loginUser);
         List<DeleteHistory> deleteHistories = new ArrayList<>();

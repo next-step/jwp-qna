@@ -93,10 +93,6 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    protected void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         validateDelete(loginUser);
         deleted = true;
