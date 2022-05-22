@@ -1,6 +1,9 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,17 +11,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table
-public class Question extends Auditing {
+public class Question extends BaseEntity {
 
-    @OneToMany(mappedBy = "question")
-    private final List<Answer> answers = new ArrayList<>();
+    public static final String IS_NOT_OWNER = "질문을 삭제할 권한이 없습니다.";
+    @Embedded
+    private final Answers answers = new Answers();
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,57 +56,50 @@ public class Question extends Auditing {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public boolean isNotOwner(User writer) {
+        return !this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-        this.answers.add(answer);
-    }
-
-    public List<Answer> getAnswers() {
-        return this.answers;
+        answer.updateQuestion(this);
+        this.answers.addAnswer(answer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        validateDelete(loginUser);
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(answers.deleteAll(loginUser));
+
+        return deleteHistories;
+    }
+
+    private void validateDelete(User loginUser) throws CannotDeleteException {
+        if (isNotOwner(loginUser)) {
+            throw new CannotDeleteException(IS_NOT_OWNER);
+        }
     }
 
     @Override
@@ -111,6 +108,7 @@ public class Question extends Auditing {
                 "id=" + id +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
+                ", answers=" + answers +
                 ", title='" + title + '\'' +
                 ", writer=" + writer +
                 ", createdAt=" + createdAt +

@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -10,14 +11,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.Table;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table
-public class Answer extends Auditing {
+public class Answer extends BaseEntity {
+
+    public static final String THERE_ARE_OTHER_WRITER_ANSWER = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @Id
     @Column(nullable = false)
@@ -34,7 +37,6 @@ public class Answer extends Auditing {
     @ManyToOne
     @JoinColumn(name = "question_id")
     private Question question;
-
 
     @ManyToOne
     @JoinColumn(name = "writer_id")
@@ -63,35 +65,23 @@ public class Answer extends Auditing {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
-    public void toQuestion(Question question) {
-        this.question = question;
+    public boolean isNotOwner(User writer) {
+        return !this.writer.equals(writer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
     }
 
     public Question getQuestion() {
         return question;
     }
 
-    public void setQuestion(Question question) {
+    public void updateQuestion(Question question) {
         this.question = question;
     }
 
@@ -99,16 +89,25 @@ public class Answer extends Auditing {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        validateDelete(loginUser);
+        deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    }
+
+    private void validateDelete(User loginUser) throws CannotDeleteException {
+        if (isNotOwner(loginUser)) {
+            throw new CannotDeleteException(THERE_ARE_OTHER_WRITER_ANSWER);
+        }
+
+    }
+
+    public boolean isNotDeleted() {
+        return !deleted;
     }
 
     @Override
