@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,13 +15,17 @@ public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "title", length = 100, nullable = false)
     private String title;
+
     @Lob
     @Column(name = "contents")
     private String contents;
+
     @Column(name = "writer_id")
     private Long writerId;
+
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
@@ -89,6 +94,24 @@ public class Question extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Question question = (Question) o;
+        return deleted == question.deleted && Objects.equals(title, question.title) && Objects.equals(
+                contents, question.contents) && Objects.equals(writerId, question.writerId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, contents, writerId, deleted);
     }
 
     @Override
