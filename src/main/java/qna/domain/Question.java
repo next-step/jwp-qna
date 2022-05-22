@@ -2,6 +2,9 @@ package qna.domain;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -18,6 +21,8 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+    @OneToMany(fetch = LAZY, mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
@@ -71,13 +76,25 @@ public class Question extends BaseEntity {
         this.deleted = true;
     }
 
+    public void remove(Answer answer) {
+        answers.remove(answer);
+    }
+
+    public void add(Answer answer) {
+        answers.add(answer);
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writer=" + writer +
+                ", writer=" + writer.getUserId() +
                 ", deleted=" + deleted +
                 '}';
     }

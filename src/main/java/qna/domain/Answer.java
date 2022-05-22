@@ -45,7 +45,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
-        this.question = question;
+        toQuestion(question);
         this.contents = contents;
     }
 
@@ -81,12 +81,20 @@ public class Answer extends BaseEntity {
         deleted = true;
     }
 
+    // 연관 관계 편의 메서드
+    private void toQuestion(Question question) {
+        if (this.question != null) {
+            question.remove(this);
+        }
+        this.question = question;
+        question.add(this);
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writer=" + writer +
-                ", question=" + question +
+                ", writer=" + writer.getUserId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
