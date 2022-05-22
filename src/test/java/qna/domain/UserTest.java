@@ -33,7 +33,7 @@ public class UserTest {
         User loginUser = new User("java", "pass", "mj", "mj@com");
 
         User target = new User();
-        // when and then
+        // when & then
         assertThatThrownBy(() ->
             JAVAJIGI.update(loginUser, target)
         ).isInstanceOf(UnAuthorizedException.class);
@@ -45,7 +45,7 @@ public class UserTest {
         User loginUser = new User("javajigi", "pass", "mj", "mj@com");
 
         User target = new User("javajigi", "pass", "mj", "mj@com");
-        // when and then
+        // when & then
         assertThatThrownBy(() ->
                 JAVAJIGI.update(loginUser, target)
         ).isInstanceOf(UnAuthorizedException.class);

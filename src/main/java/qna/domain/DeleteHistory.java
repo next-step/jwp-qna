@@ -8,7 +8,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 public class DeleteHistory {
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @Enumerated(EnumType.STRING)
     @Column(name = "content_type")

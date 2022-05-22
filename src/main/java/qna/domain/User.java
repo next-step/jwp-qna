@@ -13,7 +13,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @Column(name = "user_id", unique = true, nullable = false, length = 20)
     private String userId;

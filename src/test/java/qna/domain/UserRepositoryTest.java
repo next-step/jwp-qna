@@ -35,7 +35,7 @@ class UserRepositoryTest {
     void userId가_null인_user를_저장하면_예외가_발생한다() {
         // given
         User user = new User(null, "password", "name", "email");
-        // when
+        // when & then
         assertThatThrownBy(() ->
                 userRepository.save(user)
         ).isInstanceOf(DataIntegrityViolationException.class);
@@ -46,7 +46,7 @@ class UserRepositoryTest {
         // given
         User user = new User("unique", "password", "name", "email");
         User duplicateUser = new User("unique", "password", "name", "email");
-        // when
+        // when & then
         assertThatThrownBy(() ->
                 userRepository.saveAll(Arrays.asList(user, duplicateUser))
         ).isInstanceOf(DataIntegrityViolationException.class);
@@ -57,7 +57,7 @@ class UserRepositoryTest {
         // given
         String password = "If the password_length is over 20, an exception is raised";
         User user = new User("unique", password, "name", "email");
-        // when
+        // when & then
         assertThatThrownBy(() ->
                 userRepository.save(user)
         ).isInstanceOf(DataIntegrityViolationException.class);

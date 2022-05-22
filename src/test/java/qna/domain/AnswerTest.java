@@ -13,7 +13,7 @@ public class AnswerTest {
 
     @Test
     void 작성자가_null일_경우_예외가_발생한다() {
-        // when and then
+        // when & then
         assertThatThrownBy(() ->
                 new Answer(1L, null, QuestionTest.Q1, "test")
         ).isInstanceOf(UnAuthorizedException.class);
@@ -21,7 +21,7 @@ public class AnswerTest {
 
     @Test
     void 질문이_null일_경우_예외가_발생한다() {
-        // when and then
+        // when & then
         assertThatThrownBy(() ->
                 new Answer(1L, UserTest.JAVAJIGI, null, "test")
         ).isInstanceOf(NotFoundException.class);

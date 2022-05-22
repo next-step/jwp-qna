@@ -6,7 +6,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 public class Question extends BaseEntity {
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @Column(name = "title", length = 100, nullable = false)
     private String title;
