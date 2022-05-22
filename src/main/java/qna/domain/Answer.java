@@ -29,6 +29,10 @@ public class Answer extends BaseEntity {
     protected Answer() {
     }
 
+    public Answer(String contents) {
+        this.contents = contents;
+    }
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
@@ -53,8 +57,16 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
+    public Answer toQuestion(Question question) {
         this.question = question;
+        question.getAnswers().add(this);
+        return this;
+    }
+
+    public Answer writeBy(User user) {
+        this.writer = user;
+        user.getAnswers().add(this);
+        return this;
     }
 
     public void updateContents(String contents) {

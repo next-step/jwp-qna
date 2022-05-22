@@ -32,3 +32,5 @@
 
 - [X] User → Question 일대다 관계로 참조
 - [X] User → DeleteHistory 일대다 관계로 참조
+- [X] User → Answer 일대다 관계로 참조
+- [X] Question → Answer 일대다 관계로 참조

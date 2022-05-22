@@ -31,6 +31,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "writer")
     List<Question> questions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "writer")
+    List<Answer> answers = new ArrayList<>();
+
     @OneToMany(mappedBy = "deleteUser")
     List<DeleteHistory> deleteHistories = new ArrayList<>();
 
@@ -47,6 +50,10 @@ public class User extends BaseEntity {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public void addAnswer(Answer answer) {
+        answer.writeBy(this);
     }
 
     public void update(User loginUser, User target) {
@@ -117,6 +124,10 @@ public class User extends BaseEntity {
 
     public List<DeleteHistory> getDeleteHistories() {
         return deleteHistories;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override

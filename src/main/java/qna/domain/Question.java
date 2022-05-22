@@ -1,6 +1,8 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -20,6 +22,9 @@ public class Question extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "writer_id")
     private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     private boolean deleted = false;
 
@@ -72,6 +77,10 @@ public class Question extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override
