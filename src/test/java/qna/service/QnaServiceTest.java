@@ -109,8 +109,6 @@ class QnaServiceTest {
                 .contents("Answers Contents1")
                 .build();
         question.addAnswer(answer);
-
-        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(this.question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(
                 Arrays.asList(this.answer, answer));
         assertThatThrownBy(() -> qnaService.deleteQuestion(javajigi, question.getId(), now))
