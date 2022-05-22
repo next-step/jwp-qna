@@ -73,7 +73,7 @@ public class AnswerRepositoryTest {
 
         final Answer answer = answerRepository.save(createTestAnswer(user, question));
 
-        answer.setContents("댓글 수정");
+        answer.updateContents("댓글 수정");
         assertThat(answer.getContents()).isEqualTo("댓글 수정");
     }
 
