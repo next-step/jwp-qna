@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -14,9 +15,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-public class DeleteHistory {
+@EntityListeners(AuditingEntityListener.class)
+public class DeleteHistory{
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -29,9 +33,17 @@ public class DeleteHistory {
     @JoinColumn(name = "DELETE_BY_ID", foreignKey = @ForeignKey(name = "FK_DeleteHistory_User"))
     private User deletedById;
 
+    @CreatedDate
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedById) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+        this.deletedById = deletedById;
+    }
+
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedById,
+        LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
@@ -70,5 +82,25 @@ public class DeleteHistory {
             ", deletedById=" + deletedById +
             ", createDate=" + createDate +
             '}';
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public User getDeletedById() {
+        return deletedById;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
     }
 }
