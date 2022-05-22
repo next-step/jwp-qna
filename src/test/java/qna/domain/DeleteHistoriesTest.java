@@ -14,7 +14,7 @@ class DeleteHistoriesTest {
     @Test
     @DisplayName("객체 검증 비교")
     void verifyDeleteHistories() {
-        DeleteHistoryContent deleteHistoryContent = DeleteHistoryContent.removeQuestion(Q1);
+        DeleteHistoryContent deleteHistoryContent = DeleteHistoryContent.remove(Q1);
         List<DeleteHistory> deleteHistoryList = Collections.singletonList(
                 new DeleteHistory(deleteHistoryContent, JAVAJIGI));
         DeleteHistories deleteHistories = new DeleteHistories(deleteHistoryList);

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
-import qna.exception.CannotDeleteException;
 
 @Embeddable
 public class Answers {
@@ -35,7 +34,7 @@ public class Answers {
         return this.answers.contains(answer);
     }
 
-    public void validateExistAnswerByOtherUser(User loginUser) throws CannotDeleteException {
+    public void validateRemovable(User loginUser) {
         for (Answer answer : this.answers) {
             answer.validateRemovable(loginUser);
         }

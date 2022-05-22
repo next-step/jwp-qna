@@ -60,7 +60,7 @@ class DeleteHistoryRepositoryTest {
                 .orElseGet(() -> userRepository.save(MOND));
         Question question = questionRepository.findById(Q2.writeBy(mond).getId())
                 .orElseGet(() -> questionRepository.save(Q2.writeBy(mond)));
-        deleteHistory = new DeleteHistory(DeleteHistoryContent.removeQuestion(question), mond);
+        deleteHistory = new DeleteHistory(DeleteHistoryContent.remove(question), mond);
     }
 
     private void entityFlushAndClear() {

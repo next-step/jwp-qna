@@ -23,7 +23,7 @@ public class DeleteHistoryTest {
     @Test
     @DisplayName("객체 검증 비교")
     void verifyDeleteHistory() {
-        DeleteHistoryContent deleteHistoryContent = DeleteHistoryContent.removeQuestion(Q1);
+        DeleteHistoryContent deleteHistoryContent = DeleteHistoryContent.remove(Q1);
         DeleteHistory deleteHistory = new DeleteHistory(deleteHistoryContent, JAVAJIGI);
 
         assertThat(deleteHistory).isEqualTo(new DeleteHistory(deleteHistoryContent, JAVAJIGI));
@@ -40,7 +40,7 @@ public class DeleteHistoryTest {
     @Test
     @DisplayName("유저 정보가 없으면 UnAuthorizedException이 발생")
     void inputNullDeleter() {
-        DeleteHistoryContent deleteHistoryContent = DeleteHistoryContent.removeQuestion(Q1);
+        DeleteHistoryContent deleteHistoryContent = DeleteHistoryContent.remove(Q1);
 
         assertThatThrownBy(() -> new DeleteHistory(deleteHistoryContent, null))
                 .isInstanceOf(UnAuthorizedException.class)
@@ -50,7 +50,7 @@ public class DeleteHistoryTest {
     @Test
     @DisplayName("삭제할 질문이 타입이랑 아이디가 제대로 나왔는지 검증")
     void verifyMergeQuestion() {
-        DeleteHistoryContent expected = DeleteHistoryContent.removeQuestion(Q1);
+        DeleteHistoryContent expected = DeleteHistoryContent.remove(Q1);
         DeleteHistory actual = mergeQuestion(Q1);
 
         assertAll(
@@ -62,7 +62,7 @@ public class DeleteHistoryTest {
     @Test
     @DisplayName("삭제할 답변이 타입이랑 아이디가 제대로 나왔는지 검증")
     void verifyMergeAnswer() {
-        DeleteHistoryContent expected = DeleteHistoryContent.removeAnswer(A1);
+        DeleteHistoryContent expected = DeleteHistoryContent.remove(A1);
         DeleteHistory actual = DeleteHistory.mergeAnswer(A1);
 
         assertAll(

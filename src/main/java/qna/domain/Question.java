@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -13,6 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import qna.common.BaseEntity;
 import qna.exception.CannotDeleteException;
+import qna.exception.NotFoundException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -56,23 +58,34 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public void validateRemovable(User user) throws CannotDeleteException {
+    public void validateRemovable(User user) {
+        validateDeleted();
+        validateWriter(user);
+    }
+
+    private void validateDeleted() {
+        if (this.deleted) {
+            throw new NotFoundException("이미 삭제된 질문입니다.");
+        }
+    }
+
+    private void validateWriter(User user) {
         if (!this.writer.equals(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
     }
 
     public void addAnswer(Answer answer) {
-        if (answer.getQuestion() != this) {
+        if (answer.getQuestion().getId() != this.getId()) {
             throw new IllegalArgumentException("현재 질문과 등록하려는 답변에 대한 질문이 일치하지 않습니다.");
         }
         this.answers.add(answer);
     }
 
-    public DeleteHistories toDeleteHistories(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleteQuestion(User loginUser) {
         validateRemovable(loginUser);
-        this.answers.validateExistAnswerByOtherUser(loginUser);
-        return new DeleteHistories(DeleteHistory.mergeQuestionAndLinkedAnswer(this, this.getAnswers()));
+        validateAnswerRemovable(loginUser);
+        return DeleteHistory.mergeQuestionAndLinkedAnswer(this, this.getAnswers());
     }
 
     public Answers getAnswers() {
@@ -105,6 +118,10 @@ public class Question extends BaseEntity {
 
     public void delete() {
         this.deleted = true;
+    }
+
+    private void validateAnswerRemovable(User loginUser) {
+        this.answers.validateRemovable(loginUser);
     }
 
     @Override

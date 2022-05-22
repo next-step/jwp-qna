@@ -39,6 +39,16 @@ class AnswerTest {
     }
 
     @Test
+    @DisplayName("이미 삭제한 답변일 경우 NotFoundException이 발생")
+    void validateRemovableThenNotFoundException() {
+        Answer answer = new Answer(JAVAJIGI, Q1, "contents");
+        answer.delete();
+        assertThatExceptionOfType(NotFoundException.class)
+                .isThrownBy(() -> answer.validateRemovable(JAVAJIGI))
+                .withMessage("이미 삭제된 답변입니다.");
+    }
+
+    @Test
     @DisplayName("답변 작성자와 로그인한 유저가 다른 경우 삭제가 불가능해 CannotDeleteException이 발생")
     void validateRemovableThenCannotDeleteException() {
         Answer answer = new Answer(JAVAJIGI, Q1, "contents");

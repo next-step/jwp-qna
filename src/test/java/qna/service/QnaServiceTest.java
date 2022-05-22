@@ -6,6 +6,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static qna.domain.UserTest.JAVAJIGI;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,10 +17,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.domain.Answer;
 import qna.domain.DeleteHistories;
+import qna.domain.DeleteHistory;
+import qna.domain.DeleteHistoryContent;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.QuestionTest;
-import qna.domain.User;
 import qna.domain.UserTest;
 import qna.exception.CannotDeleteException;
 
@@ -37,21 +40,21 @@ class QnaServiceTest {
     private Answer answer;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         question = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
         answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
     }
 
     @Test
-    public void delete_성공() throws Exception {
+    public void delete_성공() {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
         assertThat(question.isDeleted()).isFalse();
         qnaService.deleteQuestion(JAVAJIGI, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
-        verifyDeleteHistories(JAVAJIGI);
+        verifyDeleteHistories();
     }
 
     @Test
@@ -63,14 +66,14 @@ class QnaServiceTest {
     }
 
     @Test
-    public void delete_성공_질문자_답변자_같음() throws Exception {
+    public void delete_성공_질문자_답변자_같음() {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
         qnaService.deleteQuestion(JAVAJIGI, question.getId());
 
         assertThat(question.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
-        verifyDeleteHistories(JAVAJIGI);
+        verifyDeleteHistories();
     }
 
     @Test
@@ -84,8 +87,11 @@ class QnaServiceTest {
                 .isInstanceOf(CannotDeleteException.class);
     }
 
-    private void verifyDeleteHistories(User loginUser) throws CannotDeleteException {
-        DeleteHistories deleteHistories = question.toDeleteHistories(loginUser);
-        verify(deleteHistoryService).saveAll(deleteHistories);
+    private void verifyDeleteHistories() throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = Arrays.asList(
+                new DeleteHistory(DeleteHistoryContent.remove(question), question.getWriter()),
+                new DeleteHistory(DeleteHistoryContent.remove(answer), answer.getWriter())
+        );
+        verify(deleteHistoryService).saveAll(new DeleteHistories(deleteHistories));
     }
 }

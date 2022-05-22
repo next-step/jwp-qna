@@ -53,7 +53,7 @@ public class DeleteHistory {
 
     static DeleteHistory mergeQuestion(Question question) {
         question.delete();
-        return new DeleteHistory(DeleteHistoryContent.removeQuestion(question), question.getWriter());
+        return new DeleteHistory(DeleteHistoryContent.remove(question), question.getWriter());
     }
 
     static List<DeleteHistory> mergeAnswers(Answers answers) {
@@ -64,7 +64,7 @@ public class DeleteHistory {
 
     static DeleteHistory mergeAnswer(Answer answer) {
         answer.delete();
-        return new DeleteHistory(DeleteHistoryContent.removeAnswer(answer), answer.getWriter());
+        return new DeleteHistory(DeleteHistoryContent.remove(answer), answer.getWriter());
     }
 
     private void nullCheckContentAndUser(DeleteHistoryContent deleteHistoryContent, User deleter) {

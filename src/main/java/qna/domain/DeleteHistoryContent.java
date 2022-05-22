@@ -24,11 +24,11 @@ public class DeleteHistoryContent {
         this.contentId = removeContentId;
     }
 
-    public static DeleteHistoryContent removeQuestion(Question question) {
+    public static DeleteHistoryContent remove(Question question) {
         return new DeleteHistoryContent(ContentType.QUESTION, question.getId());
     }
 
-    public static DeleteHistoryContent removeAnswer(Answer answer) {
+    public static DeleteHistoryContent remove(Answer answer) {
         return new DeleteHistoryContent(ContentType.ANSWER, answer.getId());
     }
 

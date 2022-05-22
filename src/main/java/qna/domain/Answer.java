@@ -51,7 +51,18 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public void validateRemovable(User user) throws CannotDeleteException {
+    public void validateRemovable(User user) {
+        validateDeleted();
+        validateWriter(user);
+    }
+
+    private void validateDeleted() {
+        if (this.deleted) {
+            throw new NotFoundException("이미 삭제된 답변입니다.");
+        }
+    }
+
+    private void validateWriter(User user) {
         if (!this.writer.equals(user)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }

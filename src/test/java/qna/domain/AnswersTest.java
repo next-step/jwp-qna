@@ -4,8 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
+import static qna.domain.QuestionTest.Q1;
 import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,10 +59,10 @@ class AnswersTest {
     @Test
     @DisplayName("답변 목록에 자기 자신 외 다른 유저의 답변이 있으면 CannotDeleteException이 발생")
     void existAnswerByOtherUserThenCannotDeleteException() {
-        answers.add(A1);
-        answers.add(A2);
+        answers.add(new Answer(JAVAJIGI, Q1, "Answers Contents1"));
+        answers.add(new Answer(SANJIGI, Q1, "Answers Contents2"));
 
         assertThatExceptionOfType(CannotDeleteException.class)
-                .isThrownBy(() -> answers.validateExistAnswerByOtherUser(JAVAJIGI));
+                .isThrownBy(() -> answers.validateRemovable(JAVAJIGI));
     }
 }
