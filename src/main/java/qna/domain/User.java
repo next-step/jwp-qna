@@ -1,11 +1,13 @@
 package qna.domain;
 
+import org.hibernate.Hibernate;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "user")
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -13,13 +15,13 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false, unique = true)
+    @Column(name = "user_id", length = 20, nullable = false, unique = true)
     private String userId;
-    @Column(length = 20, nullable = false)
+    @Column(name = "password", length = 20, nullable = false)
     private String password;
-    @Column(length = 20, nullable = false)
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
-    @Column(length = 50)
+    @Column(name = "email", length = 50)
     private String email;
 
     protected User() {
@@ -110,6 +112,21 @@ public class User extends BaseEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        if (id != null && Objects.equals(id, user.getId())) return true;
+        return Objects.equals(id, user.getId()) && Objects.equals(userId, user.getUserId()) && Objects.equals(password, user.getPassword()) && Objects.equals(name, user.getName()) && Objects.equals(email, user.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email);
     }
 
     @Override
