@@ -17,7 +17,7 @@ class LineStationRepositoryTest {
     @Autowired
     StationRepository stations;
 
-    @DisplayName("")
+    @DisplayName("INSERT 이외에 불필요한 SQL이 발생하지 않는다")
     @Test
     void saveWithLineStation() {
         LineStation lineStation = lineStations.save(new LineStation());

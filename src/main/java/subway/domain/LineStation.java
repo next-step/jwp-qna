@@ -13,6 +13,10 @@ public class LineStation {
     @JoinColumn(name = "line_id")
     private Line line;
 
+    @OneToOne
+    @JoinColumn(name = "station_id")
+    private Station station;
+
     protected LineStation() {
     }
 }

@@ -49,7 +49,7 @@ class LineRepositoryTest {
     @Test
     void removeLine() {
         Station expected = stations.findByName("교대역");
-        expected.changeLine(null);
+        expected.removeLine();
         stations.flush(); // transaction commit
     }
 

@@ -19,8 +19,7 @@ public class Station {
     @JoinColumn(name = "line_id")
     private Line line;
 
-    @OneToOne
-    @JoinColumn(name = "line_station_id")
+    @OneToOne(mappedBy = "station")
     private LineStation lineStation;
 
     protected Station() {
@@ -61,5 +60,17 @@ public class Station {
         }
         this.line = line;
         line.getStations().add(this);
+    }
+
+    public void removeLine() {
+        this.line = null;
+    }
+
+    public LineStation getLineStation() {
+        return lineStation;
+    }
+
+    public void changeLineStation(LineStation lineStation) {
+        this.lineStation = lineStation;
     }
 }
