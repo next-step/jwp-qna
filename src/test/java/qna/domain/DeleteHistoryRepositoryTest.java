@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,12 +9,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
-    @Autowired DeleteHistoryRepository deleteHistoryRepository;
-    @Autowired UserRepository userRepository;
+    @Autowired
+    DeleteHistoryRepository deleteHistoryRepository;
+    @Autowired
+    UserRepository userRepository;
 
     private User user;
 

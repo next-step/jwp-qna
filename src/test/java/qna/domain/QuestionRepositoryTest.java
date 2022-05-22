@@ -13,8 +13,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class QuestionRepositoryTest {
-    @Autowired QuestionRepository questionRepository;
-    @Autowired UserRepository userRepository;
+    @Autowired
+    QuestionRepository questionRepository;
+    @Autowired
+    UserRepository userRepository;
 
     private User user;
 
