@@ -27,7 +27,8 @@ class QuestionRepositoryTest {
 
     @Test
     void select() {
-        Question question2 = questionRepository.findByIdAndDeletedFalse(1L).get();
+        System.out.println("question :: " + question.getId());
+        Question question2 = questionRepository.findByTitle("질문제목").get();
         assertThat(question).isSameAs(question2);
     }
 }

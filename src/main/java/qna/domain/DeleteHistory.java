@@ -18,7 +18,7 @@ public class DeleteHistory {
     private Long contentId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "deleted_by_id")
     private User user;
 
     @Column(nullable = false)

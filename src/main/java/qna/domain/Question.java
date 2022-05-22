@@ -2,6 +2,7 @@ package qna.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Question {
@@ -29,8 +30,8 @@ public class Question {
     @Column
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "answerId")
-    private List<Question> questions;
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers;
 
     protected Question() {
 
@@ -109,7 +110,7 @@ public class Question {
                 ", deleted=" + deleted +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", questions=" + questions +
+                ", answers=" + answers +
                 '}';
     }
 }

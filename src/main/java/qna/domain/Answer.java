@@ -17,7 +17,6 @@ public class Answer {
     @JoinColumn(name = "writer_id")
     private User user;
 
-    @Column
     @ManyToOne
     private Question question;
 
