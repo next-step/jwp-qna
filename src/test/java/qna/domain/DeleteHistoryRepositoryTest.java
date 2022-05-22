@@ -1,7 +1,6 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +34,7 @@ class DeleteHistoryRepositoryTest {
                 new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now()));
 
         // when
-        final DeleteHistory actual = deleteHistoryRepository.findById(1L).get();
+        final DeleteHistory actual = deleteHistoryRepository.findById(expected.getId()).get();
         deleteHistoryRepository.flush();
 
         // then

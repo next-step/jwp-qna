@@ -1,14 +1,13 @@
 package qna.domain;
 
-import qna.base.BaseTimeEntity;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import qna.UnAuthorizedException;
-
-import java.util.Objects;
+import qna.base.BaseTimeEntity;
 
 @Entity
 public class User extends BaseTimeEntity {
