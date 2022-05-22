@@ -66,16 +66,4 @@ public class QuestionTest {
 
     }
 
-    @Test
-    void getNotDeletedAnswers() {
-        Question question = createQuestion(1L, UserTest.JAVAJIGI, false);
-        Answer answer = createAnswer(2L, UserTest.JAVAJIGI, question, false);
-        Answer deletedAnswer = createAnswer(3L, UserTest.JAVAJIGI, question, true);
-
-        question.addAnswer(answer);
-        question.addAnswer(deletedAnswer);
-
-        assertThat(question.getNotDeletedAnswers()).containsExactly(answer);
-    }
-
 }

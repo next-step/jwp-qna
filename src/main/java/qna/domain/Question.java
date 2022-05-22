@@ -3,6 +3,7 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,19 +11,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table
 public class Question extends BaseEntity {
 
-    @OneToMany(mappedBy = "question")
-    private final List<Answer> answers = new ArrayList<>();
+    public static final String IS_NOT_OWNER = "질문을 삭제할 권한이 없습니다.";
+    @Embedded
+    private final Answers answers = new Answers();
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,17 +62,7 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.updateQuestion(this);
-        this.answers.add(answer);
-    }
-
-    public List<Answer> getAnswers() {
-        return this.answers;
-    }
-
-    public List<Answer> getNotDeletedAnswers() {
-        return this.answers.stream()
-                .filter(Answer::isNotDeleted)
-                .collect(Collectors.toList());
+        this.answers.addAnswer(answer);
     }
 
     public Long getId() {
@@ -95,7 +85,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    protected void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -105,6 +95,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
+                ", answers=" + answers +
                 ", title='" + title + '\'' +
                 ", writer=" + writer +
                 ", createdAt=" + createdAt +
@@ -116,28 +107,16 @@ public class Question extends BaseEntity {
         validateDelete(loginUser);
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-        setDeleted(true);
+        deleted = true;
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.delete());
-        }
+        deleteHistories.addAll(answers.deleteAll(loginUser));
 
         return deleteHistories;
     }
 
     private void validateDelete(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-
-        for (Answer answer : answers) {
-            raiseIfNotAnswerOwner(loginUser, answer);
-        }
-    }
-
-    private void raiseIfNotAnswerOwner(User loginUser, Answer answer) throws CannotDeleteException {
-        if (!answer.isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(IS_NOT_OWNER);
         }
     }
 }
