@@ -51,14 +51,4 @@ public class AnswerTest {
         // then
         assertThat(result).isTrue();
     }
-
-    @Test
-    void 질문을_설정한다() {
-        // given
-        Question question = new Question(2L, "title", "contents");
-        // when
-        answer2.toQuestion(question);
-        // then
-        assertThat(answer2.getQuestion()).isEqualTo(question);
-    }
 }

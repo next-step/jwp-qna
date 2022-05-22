@@ -53,10 +53,6 @@ public class Answer extends BaseEntity {
         return this.writer.matchUserId(writer.getUserId());
     }
 
-    public void toQuestion(Question question) {
-        this.question = question;
-    }
-
     public Long getId() {
         return id;
     }

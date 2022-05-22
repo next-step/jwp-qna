@@ -43,10 +43,6 @@ public class Question extends BaseEntity {
         return this.writer.getId().equals(writer.getId());
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
-
     public Long getId() {
         return id;
     }

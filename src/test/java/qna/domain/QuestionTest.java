@@ -34,15 +34,4 @@ public class QuestionTest {
         // then
         assertThat(result).isTrue();
     }
-
-    @Test
-    void 답변을_추가한다() {
-        // given
-        Question question = new Question(3L, "title", "contents");
-        Answer answer = new Answer();
-        // when
-        question.addAnswer(answer);
-        // then
-        assertThat(answer.getQuestion()).isEqualTo(question);
-    }
 }
