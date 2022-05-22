@@ -1,14 +1,23 @@
 ## TODOLIST
-- [x] answer
-    - [x] Entity를 작성한다.
-    - [x] 학습테스트를 작성한다.
-- [x] delete_history 
-    - [x] Entity를 작성한다.
-    - [x] 학습테스트를 작성한다.
-- [x] question Entity
-    - [x] Entity를 작성한다.
-    - [x] 학습테스트를 작성한다.
-- [x] user Entity
-    - [x] Entity를 작성한다.
-    - [x] 학습테스트를 작성한다.
-- [x] JPA Audit을 활용한 BaseTimeEntity 적용
+- [x] Entity 매핑
+  - [x] answer
+      - [x] Entity를 작성한다.
+      - [x] 학습테스트를 작성한다.
+  - [x] delete_history 
+      - [x] Entity를 작성한다.
+      - [x] 학습테스트를 작성한다.
+  - [x] question Entity
+      - [x] Entity를 작성한다.
+      - [x] 학습테스트를 작성한다.
+  - [x] user Entity
+      - [x] Entity를 작성한다.
+      - [x] 학습테스트를 작성한다.
+  - [x] JPA Audit을 활용한 BaseTimeEntity 적용
+- [] 연관관계 매핑
+  - [] answer
+    - [] question 단방향 매핑
+    - [] user 단방향 매핑
+  - [] delete_history
+    - [] user 단방향 매핑
+  - [] question
+    - [] user 단방향 매핑
