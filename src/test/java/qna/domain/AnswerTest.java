@@ -34,4 +34,11 @@ public class AnswerTest {
         assertThat(A1.isOwner(UserTest.JAVAJIGI)).isTrue();
     }
 
+    @Test
+    @DisplayName("Question 변경 확인")
+    void Answer_toQuestion() {
+        A1.toQuestion(QuestionTest.Q2);
+        assertThat(A1.getQuestion()).isEqualTo(QuestionTest.Q2);
+    }
+
 }
