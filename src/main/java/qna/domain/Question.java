@@ -1,10 +1,6 @@
 package qna.domain;
 
-import org.hibernate.Hibernate;
-
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -27,8 +23,8 @@ public class Question extends BaseEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
 
     protected Question() {
 
@@ -42,6 +38,7 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {
@@ -98,27 +95,30 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers() {
+    public void setWriter(User writer) {
+        this.writer = writer;
+    }
+
+    public Answers getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<Answer> answers) {
+    public void setAnswers(Answers answers) {
         this.answers = answers;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null) return false;
         if (!(o instanceof Question)) return false;
         Question question = (Question) o;
-        if (id != null && Objects.equals(id, question.getId())) return true;
-        return deleted == question.isDeleted() && Objects.equals(id, question.getId()) && Objects.equals(title, question.getTitle()) && Objects.equals(contents, question.getContents()) && Objects.equals(writer, question.getWriter()) && Objects.equals(answers, question.getAnswers());
+        if (this.id != null && Objects.equals(getId(), question.getId())) return true;
+        return isDeleted() == question.isDeleted() && Objects.equals(getId(), question.getId()) && Objects.equals(getTitle(), question.getTitle()) && Objects.equals(getContents(), question.getContents()) && Objects.equals(getWriter(), question.getWriter()) && Objects.equals(getAnswers(), question.getAnswers());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writer, deleted, answers);
+        return Objects.hash(getId(), getTitle(), getContents(), getWriter(), isDeleted(), getAnswers());
     }
 
     @Override
