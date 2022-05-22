@@ -3,25 +3,21 @@ package subway.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "station")
-public class Station {
+@Table(name = "line")
+public class Line {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "line_id")
-    private Line line;
-
-    protected Station() {
+    protected Line() {
     }
 
-    public Station(String name) {
+    public Line(String name) {
         this.name = name;
     }
 
@@ -39,13 +35,5 @@ public class Station {
 
     public void changeName(String name) {
         this.name = name;
-    }
-
-    public Line getLine() {
-        return line;
-    }
-
-    public void changeLine(Line line) {
-        this.line = line;
     }
 }
