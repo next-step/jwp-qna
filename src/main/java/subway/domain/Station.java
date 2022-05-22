@@ -19,11 +19,20 @@ public class Station {
     @JoinColumn(name = "line_id")
     private Line line;
 
+    @OneToOne
+    @JoinColumn(name = "line_station_id")
+    private LineStation lineStation;
+
     protected Station() {
     }
 
     public Station(String name) {
         this.name = name;
+    }
+
+    public Station(String name, LineStation lineStation) {
+        this.name = name;
+        this.lineStation = lineStation;
     }
 
     public Long getId() {
