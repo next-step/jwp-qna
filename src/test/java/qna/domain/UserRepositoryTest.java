@@ -22,7 +22,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("User을 UserId로 조회")
+    @DisplayName("User 조회: by UserId")
     void User_byUserId(){
         User saved = userRepository.save(UserTest.JAVAJIGI);
         Optional<User> user = userRepository.findByUserId(UserTest.JAVAJIGI.getUserId());

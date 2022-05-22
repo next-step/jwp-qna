@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -26,8 +26,15 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Question을 DeletedFalse로 조회")
-    void Question_조회_byDeletedFalse(){
+    @DisplayName("Question 저장")
+    void save(){
+        Question saved = questionRepository.save(new Question("title1", "contents1").writeBy(user));
+        assertThat(saved.getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Question 조회: by DeletedFalse")
+    void Question_조회_by_DeletedFalse(){
         generateQuestionDeletedTrue();
         Question questionDeletedFalse = questionRepository
                 .save(new Question("title1", "contents1").writeBy(user));
@@ -36,12 +43,12 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Question을 Id, DeletedFalse로 조회")
+    @DisplayName("Question 조회: by Id, DeletedFalse")
     void Question_조회_byId_DeletedFalse(){
         Question questionDeletedTrue = generateQuestionDeletedTrue();
         Question questionDeletedFalse = questionRepository
                 .save(new Question("title1", "contents1").writeBy(user));
-        Assertions.assertAll(
+        assertAll(
                 () -> assertThat(questionRepository.findByIdAndDeletedFalse(questionDeletedTrue.getId()))
                         .isEmpty(),
                 () -> assertThat(questionRepository.findByIdAndDeletedFalse(questionDeletedFalse.getId())).get()
