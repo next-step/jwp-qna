@@ -18,12 +18,16 @@ public class User extends BaseAuditingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(length = 50)
     private String email;
+
     @Column(length = 20, nullable = false)
     private String name;
+
     @Column(length = 20, nullable = false)
     private String password;
+
     @Column(length = 20, nullable = false)
     private String userId;
 
@@ -31,11 +35,6 @@ public class User extends BaseAuditingEntity {
     }
 
     public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
-    }
-
-    public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -76,10 +75,6 @@ public class User extends BaseAuditingEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public boolean isGuestUser() {
         return false;
     }
@@ -114,6 +109,23 @@ public class User extends BaseAuditingEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return userId.equals(user.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId);
     }
 
     @Override

@@ -1,24 +1,39 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "question")
 public class Question extends BaseAuditingEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(length = 100, nullable = false)
     private String title;
+
     @Lob
     private String contents;
-    private Long writerId;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Answer> answers = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private User writer;
+
     private boolean deleted = false;
 
     protected Question() {
@@ -26,34 +41,13 @@ public class Question extends BaseAuditingEntity {
     }
 
     public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
-        this.id = id;
         this.title = title;
         this.contents = contents;
     }
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
-    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
     }
 
     public String getTitle() {
@@ -72,12 +66,26 @@ public class Question extends BaseAuditingEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public List<Answer> getAnswers() {
+        return this.answers;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+        answer.toQuestion(this);
+    }
+
+    public User getWriter() {
+        return writer;
+    }
+
+    public Question writeBy(User writer) {
+        this.writer = writer;
+        return this;
+    }
+
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     public boolean isDeleted() {
@@ -94,7 +102,7 @@ public class Question extends BaseAuditingEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
