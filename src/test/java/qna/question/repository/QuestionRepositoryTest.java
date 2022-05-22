@@ -4,18 +4,26 @@ import config.annotation.LocalDataJpaConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import qna.question.domain.Question;
+import qna.question.exception.CannotDeleteException;
+import qna.user.domain.User;
+import qna.user.repository.UserRepository;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.user.domain.UserTest.JAVAJIGI;
 
 @LocalDataJpaConfig
 class QuestionRepositoryTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     void 삭제_상태가_아닌_모든_질문_조회_테스트() {
@@ -51,10 +59,11 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    void 삭제_상태인_질문_조회시_결과가_없어야_한다() {
-        Question deletedQuestion = new Question("title", "content");
-        deletedQuestion.questionDelete();;
+    void 삭제_상태인_질문_조회시_결과가_없어야_한다() throws CannotDeleteException {
+        User user = userRepository.save(new User("userId", "password", "name", "email"));
+        Question deletedQuestion = new Question("title", "content").writeBy(user);
         Question savedQuestion = questionRepository.save(deletedQuestion);
+        savedQuestion.deleteQuestionWithRelatedAnswer(user, Collections.emptyList());
 
         Optional<Question> result = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
 
