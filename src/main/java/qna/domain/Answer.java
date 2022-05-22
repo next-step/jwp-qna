@@ -30,26 +30,11 @@ public class Answer extends BaseEntity {
     }
 
     public Answer(String contents) {
-        this.contents = contents;
+        this(null, contents);
     }
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, String contents) {
         this.id = id;
-
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
-
-        this.writer = writer;
-        this.question = question;
         this.contents = contents;
     }
 

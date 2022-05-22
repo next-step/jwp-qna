@@ -39,7 +39,7 @@ class QnaServiceTest {
     @BeforeEach
     public void setUp() throws Exception {
         question = new Question(1L, "title1", "contents1").writeBy(UserRepositoryTest.JAVAJIGI);
-        answer = new Answer(1L, UserRepositoryTest.JAVAJIGI, question, "Answers Contents1");
+        answer = new Answer(1L, "Answers Contents1").toQuestion(question).writeBy(UserRepositoryTest.JAVAJIGI);
         question.addAnswer(answer);
     }
 
@@ -77,7 +77,7 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Answer answer2 = new Answer(2L, UserRepositoryTest.SANJIGI, QuestionRepositoryTest.Q1, "Answers Contents1");
+        Answer answer2 = new Answer(2L, "Answers Contents1").toQuestion(QuestionRepositoryTest.Q1).writeBy(UserRepositoryTest.SANJIGI);
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
