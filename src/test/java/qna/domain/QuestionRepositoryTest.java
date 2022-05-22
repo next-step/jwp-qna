@@ -23,11 +23,13 @@ class QuestionRepositoryTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void before() {
-        User user1 = new User(1L, "user1", "password", "name", "user1@com");
-        User user2 = new User(2L, "user2", "password", "name", "user2@com");
+        User user1 = new User("user1", "password", "name", "user1@com");
+        User user2 = new User("user2", "password", "name", "user2@com");
 
         question1 = new Question("title1", "contents1").writeBy(user1);
         question2 = new Question("title2", "contents2").writeBy(user2);
@@ -54,9 +56,10 @@ class QuestionRepositoryTest {
     @Test
     void 저장() {
         // given
-        Question question = new Question("title", "contents");
+        userRepository.save(question1.getWriter());
         // when
-        Question result = questionRepository.save(question);
+        Question result = questionRepository.save(question1);
+        questionRepository.flush();
         // then
         assertThat(result).isNotNull();
     }
@@ -116,6 +119,7 @@ class QuestionRepositoryTest {
     @Test
     void 삭제되지_않은_질문들을_조회한다() {
         // given
+        userRepository.saveAll(Arrays.asList(question1.getWriter(), question2.getWriter()));
         questionRepository.saveAll(Arrays.asList(question1, question2));
         // when
         List<Question> result = questionRepository.findByDeletedFalse();
