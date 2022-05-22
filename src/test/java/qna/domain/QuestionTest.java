@@ -40,15 +40,15 @@ class QuestionTest {
 
     @DisplayName("로그인 유저로 질문 제거 테스트")
     @Test
-    void delete() throws CannotDeleteException {
-        assertThat(question.delete(javajigi)).isEqualTo(deleteHistory);
+    void delete() {
+        assertThat(question.delete(javajigi, LocalDateTime.now())).isEqualTo(deleteHistory);
         assertThat(question.isDeleted()).isTrue();
     }
 
     @DisplayName("다른 작성자의 질문 삭제시 예외 테스트")
     @Test
     void deleteQuestionOtherWriter() {
-        assertThatThrownBy(() -> question.delete(sanjigi))
+        assertThatThrownBy(() -> question.delete(sanjigi, LocalDateTime.now()))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("질문을 삭제할 권한이 없습니다.");
     }

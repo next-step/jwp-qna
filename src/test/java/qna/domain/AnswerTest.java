@@ -45,15 +45,15 @@ class AnswerTest {
 
     @DisplayName("로그인 유저로 답변 제거 테스트")
     @Test
-    void delete() throws CannotDeleteException {
-        assertThat(answer.delete(sanjigi)).isEqualTo(deleteHistory);
+    void delete() {
+        assertThat(answer.delete(sanjigi, LocalDateTime.now())).isEqualTo(deleteHistory);
         assertThat(answer.isDeleted()).isTrue();
     }
 
     @DisplayName("다른 사람의 답변 삭제시 예외 테스트")
     @Test
     void deleteAnswerOtherWriter() {
-        assertThatThrownBy(() -> answer.delete(javajigi))
+        assertThatThrownBy(() -> answer.delete(javajigi, LocalDateTime.now()))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }

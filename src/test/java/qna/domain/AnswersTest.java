@@ -72,7 +72,7 @@ class AnswersTest {
         this.answers.add(answer1);
         this.answers.add(answer2);
         Answers answers = Answers.valueOf(this.answers);
-        assertThat(answers.delete(sanjigi)).isEqualTo(deleteHistories);
+        assertThat(answers.delete(sanjigi, LocalDateTime.now())).isEqualTo(deleteHistories);
     }
 
     @DisplayName("다른 사람의 답변 삭제시 예외 테스트")
@@ -81,7 +81,7 @@ class AnswersTest {
         this.answers.add(answer1);
         this.answers.add(answer3);
         Answers answers = Answers.valueOf(this.answers);
-        assertThatThrownBy(() -> answers.delete(sanjigi))
+        assertThatThrownBy(() -> answers.delete(sanjigi, LocalDateTime.now()))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }

@@ -67,14 +67,14 @@ public class Question extends BaseEntity {
         }
     }
 
-    public DeleteHistory delete(User loginUser) {
+    public DeleteHistory delete(User loginUser, LocalDateTime now) {
         validateOwnerSameUser(loginUser);
         this.setDeleted(true);
         return DeleteHistory.builder()
                 .contentType(ContentType.QUESTION)
                 .contentId(this.id)
                 .deletedBy(this.getWriter())
-                .createDate(LocalDateTime.now())
+                .createDate(now)
                 .build();
     }
 

@@ -1,5 +1,6 @@
 package qna.service;
 
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.NotFoundException;
@@ -29,10 +30,10 @@ public class QnaService {
     }
 
     @Transactional
-    public void deleteQuestion(User loginUser, Long questionId) {
+    public void deleteQuestion(User loginUser, Long questionId, LocalDateTime now) {
         deleteHistoryService.saveAll(
-                Answers.valueOf(answerRepository.findByQuestionIdAndDeletedFalse(questionId)).delete(loginUser));
+                Answers.valueOf(answerRepository.findByQuestionIdAndDeletedFalse(questionId)).delete(loginUser, now));
         Question question = findQuestionById(questionId);
-        deleteHistoryService.save(question.delete(loginUser));
+        deleteHistoryService.save(question.delete(loginUser, now));
     }
 }
