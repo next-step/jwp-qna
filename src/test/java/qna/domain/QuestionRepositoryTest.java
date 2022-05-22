@@ -72,7 +72,7 @@ class QuestionRepositoryTest {
         Question question = new Question("title", "contents");
         Question saved = questionRepository.save(question);
 
-        saved.setContents("update contents");
+        saved.writeContents("update contents");
         // when
         Optional<Question> result = questionRepository.findById(saved.getId());
         // then
@@ -93,7 +93,7 @@ class QuestionRepositoryTest {
     }
 
     static Stream<Arguments> id로_삭제되지_않은_질문_찾기() {
-        Q1.setDeleted(true);
+        Q1.delete();
 
         return Stream.of(
                 Arguments.of(

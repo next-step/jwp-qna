@@ -53,7 +53,7 @@ class AnswerRepositoryTest {
     void 변경감지() {
         // given
         Answer saved = answerRepository.save(A1);
-        saved.setContents("update");
+        saved.writeContents("update");
         // when
         Optional<Answer> result = answerRepository.findById(saved.getId());
         // then

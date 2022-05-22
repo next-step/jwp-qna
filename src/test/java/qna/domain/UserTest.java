@@ -18,8 +18,7 @@ public class UserTest {
     @Test
     void 이름과_이메일을_변경한다() {
         // given
-        User loginUser = new User();
-        loginUser.setUserId("javajigi");
+        User loginUser = new User("javajigi", "pass", "mj", "mj@com");
 
         User target = new User("javajigi", "password", "mj", "mj@com");
         // when
@@ -31,8 +30,7 @@ public class UserTest {
     @Test
     void 회원정보를_업데이트할_때_userId가_같지_않으면_예외가_발생한다() {
         // given
-        User loginUser = new User();
-        loginUser.setUserId("java");
+        User loginUser = new User("java", "pass", "mj", "mj@com");
 
         User target = new User();
         // when and then
@@ -44,8 +42,7 @@ public class UserTest {
     @Test
     void 회원정보를_업데이트할_때_password가_같지_않으면_예외가_발생한다() {
         // given
-        User loginUser = new User();
-        loginUser.setUserId("javajigi");
+        User loginUser = new User("javajigi", "pass", "mj", "mj@com");
 
         User target = new User("javajigi", "pass", "mj", "mj@com");
         // when and then

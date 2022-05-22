@@ -32,7 +32,7 @@ class BaseEntityTest {
         // given
         Answer answer = new Answer();
         Answer result = answerRepository.save(answer);
-        result.setContents("contents");
+        result.writeContents("contents");
         // when
         answerRepository.flush();
         // then
