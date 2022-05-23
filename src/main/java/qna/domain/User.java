@@ -3,11 +3,12 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(indexes = { @Index(name = "UK_user_id", columnList = "userId", unique = true) })
-public class User extends Time {
+public class User extends Time implements Serializable {
     public static final GuestUser GUEST_USER = new GuestUser();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
