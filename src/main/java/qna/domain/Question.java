@@ -110,4 +110,12 @@ public class Question extends AuditEntity {
                 ", answers=" + answers +
                 '}';
     }
+
+    public boolean isAbleDelete() {
+        return isNoAnswer();
+    }
+
+    private boolean isNoAnswer() {
+        return this.getAnswers().isEmpty();
+    }
 }
