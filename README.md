@@ -1,9 +1,9 @@
 ### todo
 
-- [ ] answer 엔티티 jpa 적용
-- [ ] delete_history 엔티티 jpa 적용
-- [ ] question 엔티티 jpa 적용
-- [ ] user 엔티티 jpa 적용
+- [x] answer 엔티티 jpa 적용
+- [x] delete_history 엔티티 jpa 적용
+- [x] question 엔티티 jpa 적용
+- [x] user 엔티티 jpa 적용
 - [ ] user repository test
 - [ ] answer repository test
 - [ ] question repository test
