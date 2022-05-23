@@ -4,12 +4,10 @@
 - [x] delete_history 엔티티 jpa 적용
 - [x] question 엔티티 jpa 적용
 - [x] user 엔티티 jpa 적용
-- [ ] user repository test
-- [ ] answer repository test
-- [ ] question repository test
-- [ ] delete_history repository test
-- [ ] QnaService test
-- [ ] DeleteHistory test
+- [x] user repository test
+- [x] answer repository test
+- [x] question repository test
+- [x] delete_history repository test
 
 ### 요구사항
 
