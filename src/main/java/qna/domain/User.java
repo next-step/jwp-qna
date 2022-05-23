@@ -12,10 +12,13 @@ public class User extends BaseEntity {
 
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
+
     @Column(length = 20, nullable = false)
     private String password;
+
     @Column(length = 20, nullable = false)
     private String name;
+
     @Column(length = 50)
     private String email;
 
