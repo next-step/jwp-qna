@@ -1,6 +1,7 @@
 package qna.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -57,7 +58,8 @@ class QnaServiceTest {
     }
 
     @Test
-    public void delete_성공() throws Exception {
+    @DisplayName("로그인 사용자와 질문한 사람이 같은 경우 삭제 성공")
+    public void delete_1() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question1.getId())).thenReturn(Optional.of(question1));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question1.getId())).thenReturn(Arrays.asList(answer));
 
@@ -65,10 +67,12 @@ class QnaServiceTest {
         qnaService.deleteQuestion(user1, question1.getId());
 
         assertThat(question1.isDeleted()).isTrue();
+        verifyDeleteHistories();
     }
 
     @Test
-    public void delete_다른_사람이_쓴_글() throws Exception {
+    @DisplayName("로그인 사용자와 질문한 사람이 다른 경우 삭제할 수 없음")
+    public void delete_2() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question1.getId())).thenReturn(Optional.of(question1));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(user2, question1.getId()))
@@ -76,7 +80,8 @@ class QnaServiceTest {
     }
 
     @Test
-    public void delete_성공_질문자_답변자_같음() throws Exception {
+    @DisplayName("질문자와 답변 글의 모든 답변자가 같은 경우 삭제 가능")
+    public void delete_3() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question1.getId())).thenReturn(Optional.of(question1));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question1.getId())).thenReturn(Arrays.asList(answer));
 
@@ -84,10 +89,12 @@ class QnaServiceTest {
 
         assertThat(question1.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
+        verifyDeleteHistories();
     }
 
     @Test
-    public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
+    @DisplayName("질문자와 답변자가 다른 경우 답변 삭제 불가")
+    public void delete_4() throws Exception {
         Answer answer2 = new Answer(user2, question1, "contents1");
         question1.addAnswer(answer2);
 
