@@ -40,6 +40,18 @@ public class QuestionTest {
         );
     }
 
+    @DisplayName("Question 에 답변 추가")
+    @Test
+    void test_add_answer() {
+        //given
+        Question question = new Question("title", "contents").writeBy(UserTest.JAVAJIGI);
+        //when
+        question.addAnswer(AnswerTest.A1);
+        question.addAnswer(AnswerTest.A2);
+        //then
+        assertThat(question.answersSize()).isEqualTo(2);
+    }
+
     @DisplayName("Question 삭제 시 deleted 상태 업데이트")
     @Test
     void test_delete() throws CannotDeleteException {

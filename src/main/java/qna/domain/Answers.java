@@ -32,6 +32,10 @@ public class Answers {
         this.answers.add(answer);
     }
 
+    public int size() {
+        return this.answers.size();
+    }
+
     public DeleteHistories deleteAll(User loginUser) throws CannotDeleteException {
         DeleteHistories deleteHistories = DeleteHistories.empty();
         for (Answer answer : this.answers) {

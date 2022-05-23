@@ -11,7 +11,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseEntity {
-    private static final String NOT_ANSWER_WRITER = "답변의 작성자가 아니므로 삭제할 수 없습니다.";
+    private static final String NOT_ANSWER_WRITER = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
@@ -81,11 +81,6 @@ public class Answer extends BaseEntity {
 
     public boolean isDeleted() {
         return this.deleted;
-    }
-
-    // TODO delete 구현 완료 후 삭제
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

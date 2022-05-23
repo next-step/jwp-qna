@@ -10,7 +10,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity {
-    private static final String NOT_QUESTION_WRITER = "질문의 작성자가 아니므로 삭제할 수 없습니다.";
+    private static final String NOT_QUESTION_WRITER = "질문을 삭제할 권한이 없습니다.";
 
     @Column(name = "title", length = 100, nullable = false)
     private String title;
@@ -52,6 +52,11 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.addAnswer(answer);
+    }
+
+    public int answersSize() {
+        return this.answers.size();
     }
 
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
@@ -84,11 +89,6 @@ public class Question extends BaseEntity {
 
     public boolean isDeleted() {
         return this.deleted;
-    }
-
-    // TODO delete 구현 완료 후 삭제
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
