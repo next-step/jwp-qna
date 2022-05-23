@@ -144,7 +144,7 @@ public class User extends BaseEntity {
     public void addAnswer(Answer answer) {
         this.answers.add(answer);
         if (answer.getWriter() != this) {
-            answer.setWriter(this);
+            answer.writeBy(this);
         }
     }
 

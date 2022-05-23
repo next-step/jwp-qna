@@ -53,7 +53,7 @@ public class Answer extends BaseEntity {
             throw new NotFoundException();
         }
 
-        setWriter(writer);
+        writeBy(writer);
         setQuestion(question);
         this.contents = contents;
     }
@@ -74,7 +74,7 @@ public class Answer extends BaseEntity {
         return writer;
     }
 
-    public void setWriter(User writer) {
+    public void writeBy(User writer) {
         if (this.writer != null) {
             this.writer.removeAnswer(this);
         }
