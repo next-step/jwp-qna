@@ -30,7 +30,7 @@ public class Question extends BaseTimeEntity {
     @Column(name = "deleted")
     private boolean deleted = false;
 
-    public Question() {
+    protected Question() {
     }
 
     Question(String title, String contents) {

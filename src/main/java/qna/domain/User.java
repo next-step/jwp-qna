@@ -34,7 +34,7 @@ public class User extends BaseTimeEntity {
     public User() {
     }
 
-    User(String userId, String password, String name, String email) {
+    protected User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
     }
 
