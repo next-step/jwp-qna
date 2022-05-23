@@ -10,6 +10,8 @@ import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.User;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.domain.QuestionTest.Q1;
 import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
@@ -31,7 +33,7 @@ class AnswerRepositoryTest {
     @BeforeEach
     void setUp() {
         user = userRepository.save(JAVAJIGI);
-        question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
+        question = questionRepository.save(Q1.writeBy(user));
     }
 
     @Test
@@ -52,13 +54,16 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 등록 후 조회 테스트")
     void find() {
-        Answer answer1 = answerRepository.save(new Answer(user, question, "답변입니다."));
+        Answer original = new Answer(user, question, "답변입니다.");
+        Answer result = answerRepository.save(original);
 
-        Answer answer = answerRepository.findByIdAndDeletedFalse(answer1.getId()).get();
+        Answer answer = answerRepository.findByIdAndDeletedFalse(result.getId()).get();
 
-        Assertions.assertThat(answer).isNotNull();
-        Assertions.assertThat(answer.getId()).isEqualTo(answer1.getId());
-        Assertions.assertThat(answer.isDeleted()).isFalse();
+        assertAll(
+                () -> Assertions.assertThat(answer).isNotNull(),
+                () -> Assertions.assertThat(answer.getId()).isEqualTo(result.getId()),
+                () -> Assertions.assertThat(answer.isDeleted()).isFalse()
+        );
     }
 
 }
