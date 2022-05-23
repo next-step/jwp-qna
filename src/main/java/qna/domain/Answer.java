@@ -56,7 +56,7 @@ public class Answer extends BaseEntity {
 
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException("본인이 작성한 답변이 아닌 경우 삭제할 수 없습니다.");
         }
 
         this.deleted = true;
