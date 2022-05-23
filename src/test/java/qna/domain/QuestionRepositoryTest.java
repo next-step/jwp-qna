@@ -25,12 +25,11 @@ class QuestionRepositoryTest {
         user = userRepository.save(new User("vvsungho", "1234", "윤성호", "vvsungho@gmail.com"));
         question = new Question("질문제목", "질문내용");
         question.writeBy(user);
-
-        question = questionRepository.save(question);
     }
 
     @Test
     void save() {
+        question = questionRepository.save(question);
         assertThat(question).isNotNull();
     }
 
@@ -44,5 +43,6 @@ class QuestionRepositoryTest {
     @Test
     void saveWithAnswer() {
         question.addAnswer(new Answer(user, question, "질문답변"));
+        question = questionRepository.save(question);
     }
 }

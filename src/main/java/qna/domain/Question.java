@@ -2,6 +2,7 @@ package qna.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -44,6 +45,7 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new ArrayList<>();
     }
 
     public Question writeBy(User user) {
@@ -57,6 +59,7 @@ public class Question {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
