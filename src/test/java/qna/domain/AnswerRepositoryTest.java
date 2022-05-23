@@ -16,10 +16,9 @@ class AnswerRepositoryTest {
 
     @Test
     void save() {
-        Answer answer = answers.save(AnswerTest.A1);
         answers.save(AnswerTest.A1);
+        answers.save(AnswerTest.A2);
         List<Answer> answersAll = answers.findAll();
-        assertThat(answer.getWriterId()).isEqualTo(1L);
         assertThat(answersAll).hasSize(2);
     }
 
