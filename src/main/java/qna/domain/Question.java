@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -13,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import qna.CannotDeleteException;
 
 @Entity
@@ -33,8 +33,8 @@ public class Question extends BaseEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    private final List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private final Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -68,7 +68,7 @@ public class Question extends BaseEntity {
     public List<DeleteHistory> delete(User loginUser) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(deleteQuestion(loginUser));
-        deleteHistories.addAll(deleteAnswers(loginUser));
+        deleteHistories.addAll(answers.delete(loginUser));
         return deleteHistories;
     }
 
@@ -76,12 +76,6 @@ public class Question extends BaseEntity {
         this.validateOwner(loginUser);
         this.deleted = true;
         return toDeleteHistory(loginUser);
-    }
-
-    private List<DeleteHistory> deleteAnswers(User loginUser) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        this.answers.forEach(answer -> deleteHistories.add(answer.delete(loginUser)));
-        return deleteHistories;
     }
 
     private void validateOwner(User loginUser) {
