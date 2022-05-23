@@ -1,6 +1,12 @@
 package qna.domain;
 
+import org.springframework.transaction.annotation.Transactional;
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -17,6 +23,10 @@ public class Question extends BaseTimeEntity{
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question")
+    private final List<Answer> answers = new ArrayList<>();
+    private static final String DELETE_ERROR = "질문을 삭제할 권한이 없습니다.";
 
     protected Question() {
     }
@@ -41,6 +51,7 @@ public class Question extends BaseTimeEntity{
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -82,6 +93,26 @@ public class Question extends BaseTimeEntity{
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Transactional
+    public List<DeleteHistory> delete(User deleteUser) throws CannotDeleteException {
+        if (!isOwner(deleteUser)) {
+            throw new CannotDeleteException(DELETE_ERROR);
+        }
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        this.deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
+
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(deleteUser));
+        }
+        return deleteHistories;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override
