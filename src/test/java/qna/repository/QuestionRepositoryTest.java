@@ -1,6 +1,7 @@
 package qna.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
 import qna.domain.Question;
 import qna.domain.User;
 
@@ -98,6 +100,37 @@ public class QuestionRepositoryTest {
                     () -> assertThat(question.getWriter()).isEqualTo(user),
                     () -> assertThat(user.getQuestions()).contains(question)
             );
+        });
+    }
+
+    @Test
+    @DisplayName("질문을 삭제하면, deleted 상태값이 변한다.")
+    void delete_question_test() {
+        User user = saveUser();
+        Question save = saveQuestion(user);
+        Optional<Question> questionOptional = questionRepository.findById(save.getId());
+        questionOptional.ifPresent(question -> {
+            try {
+                question.delete(user);
+            } catch (CannotDeleteException e) {
+                e.printStackTrace();
+            }
+            assertThat(question.isDeleted()).isTrue();
+        });
+    }
+
+    @Test
+    @DisplayName("로그인 사용자와 질문한 사람이 같지 않으면 에러를 반환한다.")
+    void no_owner_delete_question_test() {
+        User user = saveUser();
+        Question save = saveQuestion(user);
+        User anotherUser = new User("another", "1234", "honggildong", "honggildong@example.com");
+        Optional<Question> questionOptional = questionRepository.findById(save.getId());
+        questionOptional.ifPresent(question -> {
+            assertThatThrownBy(() -> {
+                question.delete(anotherUser);
+            }).isInstanceOf(CannotDeleteException.class)
+                    .hasMessageContainingAll("질문을 삭제할 권한이 없습니다.");
         });
     }
 }
