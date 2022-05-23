@@ -3,9 +3,12 @@ package qna.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import qna.domain.Answer;
 import qna.domain.DeleteHistory;
 import qna.domain.DeleteHistoryRepository;
+import qna.domain.Question;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,7 +20,14 @@ public class DeleteHistoryService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void saveAll(List<DeleteHistory> deleteHistories) {
+    public void save(Question question) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.create(question));
+
+        for (Answer answer : question.getAnswers()) {
+            deleteHistories.add(DeleteHistory.create(answer));
+        }
+
         deleteHistoryRepository.saveAll(deleteHistories);
     }
 
