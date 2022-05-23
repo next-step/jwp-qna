@@ -1,0 +1,2 @@
+INSERT INTO user (id, user_id, password, name, created_at) VALUES (1, 'user1', 'abcd', '안드로이드', '2022-05-23 02:30:11');
+INSERT INTO user (id, user_id, password, name, created_at) VALUES (2, 'user2', 'efgh', '터미네이터', '2022-05-24 01:37:11');
