@@ -1,5 +1,6 @@
 package qna.domain;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static qna.domain.QuestionTest.Q1;
@@ -21,15 +22,15 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class QuestionRepositoryTest {
+class QuestionRepositoryTest extends BaseRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 
     @BeforeEach
     void setUp() {
         // given
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
+        saveUsers();
+        questionRepository.saveAll(asList(Q1.writeBy(savedJavajigi), Q2.writeBy(savedSanjigi)));
     }
 
     @Test
@@ -81,11 +82,11 @@ class QuestionRepositoryTest {
     @DisplayName("writer_id 변경")
     void update() {
         // when
-        Q1.writeBy(JAVAJIGI);
+        Q1.writeBy(savedJavajigi);
         questionRepository.flush();
 
         // then
-        assertThat(Q1.getWriterId()).isEqualTo(1L);
+        assertThat(Q1.getWriter()).isEqualTo(savedJavajigi);
     }
 
     @Test
