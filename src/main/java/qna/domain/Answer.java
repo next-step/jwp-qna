@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -9,6 +10,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseEntity {
+    private static final String NOT_ANSWER_WRITER = "답변의 작성자가 아니므로 삭제할 수 없습니다.";
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
@@ -51,6 +54,17 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(NOT_ANSWER_WRITER);
+        }
+        this.deleted(Boolean.TRUE);
+    }
+
+    private void deleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public Long getId() {
         return this.id;
     }
@@ -67,6 +81,7 @@ public class Answer extends BaseEntity {
         return this.deleted;
     }
 
+    // TODO delete 구현 완료 후 삭제
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
