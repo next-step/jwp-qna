@@ -15,19 +15,28 @@ public class DeleteHistory {
     private ContentType contentType;
     @Column
     private Long contentId;
-    @Column
-    private Long deletedById;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writerId", referencedColumnName = "userId")
+    private User writer;
     @Column
     private LocalDateTime createDate;
 
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User writer) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
-        this.createDate = createDate;
+        this.writer = writer;
+        this.createDate = LocalDateTime.now();
+    }
+
+    public static DeleteHistory create(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter());
+    }
+
+    public static DeleteHistory create(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter());
     }
 
     @Override
@@ -38,12 +47,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(writer, that.writer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, writer);
     }
 
     @Override
@@ -52,7 +61,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", writer=" + writer +
                 ", createDate=" + createDate +
                 '}';
     }
