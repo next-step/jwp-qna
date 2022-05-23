@@ -46,13 +46,8 @@ public class Answer extends AuditTimeBaseEntity {
     }
 
     private Answer(Long id, String contents, Question question, User writer, boolean deleted) {
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
+        validateWriter(writer);
+        validateQuestion(question);
 
         this.id = id;
         this.contents = contents;
@@ -79,10 +74,6 @@ public class Answer extends AuditTimeBaseEntity {
         return DeleteHistory.of(ContentType.ANSWER, id, writer);
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void toQuestion(Question question) {
         this.question = question;
     }
@@ -107,8 +98,24 @@ public class Answer extends AuditTimeBaseEntity {
         return deleted;
     }
 
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
     private void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    private void validateQuestion(Question question) {
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
+    }
+
+    private void validateWriter(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
     }
 
     @Override

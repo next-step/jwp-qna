@@ -71,9 +71,7 @@ public class Question extends AuditTimeBaseEntity {
     }
 
     public DeleteHistories delete(User user) throws CannotDeleteException {
-        if (!isOwner(user)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+        validateOwner(user);
 
         setDeleted(true);
         DeleteHistories deleteHistories = new DeleteHistories();
@@ -84,13 +82,15 @@ public class Question extends AuditTimeBaseEntity {
         return deleteHistories;
     }
 
+    private void validateOwner(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -116,6 +116,10 @@ public class Question extends AuditTimeBaseEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     private void setDeleted(boolean deleted) {
