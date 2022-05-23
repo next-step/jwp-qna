@@ -45,7 +45,7 @@ public class Answer extends AuditTimeBaseEntity {
         this(id, contents, question, writer, false);
     }
 
-    public Answer(Long id, String contents, Question question, User writer, boolean deleted) {
+    private Answer(Long id, String contents, Question question, User writer, boolean deleted) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -61,7 +61,7 @@ public class Answer extends AuditTimeBaseEntity {
         this.deleted = deleted;
     }
 
-    public Answer() {
+    protected Answer() {
     }
 
     public static Answer from(Answer answer) {
@@ -69,6 +69,14 @@ public class Answer extends AuditTimeBaseEntity {
             return null;
         }
         return new Answer(answer.id, answer.contents, answer.question, answer.writer, answer.deleted);
+    }
+
+    public DeleteHistory delete(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        setDeleted(true);
+        return DeleteHistory.of(ContentType.ANSWER, id, writer);
     }
 
     public boolean isOwner(User writer) {
@@ -83,39 +91,23 @@ public class Answer extends AuditTimeBaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriterId(User writer) {
-        this.writer = writer;
     }
 
     public Long getQuestionId() {
         return question.getId();
     }
 
-    public void setQuestionId(Question question) {
-        this.question = question;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    private void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -130,13 +122,5 @@ public class Answer extends AuditTimeBaseEntity {
                 ", getCreatedAt()=" + getCreatedAt() +
                 ", getUpdatedAt()=" + getUpdatedAt() +
                 '}';
-    }
-
-    public DeleteHistory delete(User user) throws CannotDeleteException {
-        if (!isOwner(user)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
-        setDeleted(true);
-        return DeleteHistory.of(ContentType.ANSWER, getId(), getWriter());
     }
 }

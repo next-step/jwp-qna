@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -42,11 +41,11 @@ public class Question extends AuditTimeBaseEntity {
         this(id, contents, title, null, false);
     }
 
-    public Question(Long id, String title, String contents, User writer, boolean deleted) {
+    private Question(Long id, String title, String contents, User writer, boolean deleted) {
         this(id, title, contents, writer, deleted, new Answers());
     }
 
-    public Question(Long id, String title, String contents, User writer, boolean deleted, Answers answers) {
+    private Question(Long id, String title, String contents, User writer, boolean deleted, Answers answers) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -55,7 +54,7 @@ public class Question extends AuditTimeBaseEntity {
         this.answers = Answers.from(answers);
     }
 
-    public Question() {
+    protected Question() {
     }
 
     public static Question from(Question question) {
@@ -69,6 +68,20 @@ public class Question extends AuditTimeBaseEntity {
                 question.writer,
                 question.deleted,
                 question.answers);
+    }
+
+    public DeleteHistories delete(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        setDeleted(true);
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, id, getWriter()));
+
+        deleteHistories.addAll(answers.deleteAll(user));
+
+        return deleteHistories;
     }
 
     public Question writeBy(User writer) {
@@ -89,39 +102,23 @@ public class Question extends AuditTimeBaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriterId(User writer) {
-        this.writer = writer;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    private void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -134,19 +131,5 @@ public class Question extends AuditTimeBaseEntity {
                 ", title='" + title + '\'' +
                 ", writer=" + writer +
                 '}';
-    }
-
-    public DeleteHistories delete(User user) throws CannotDeleteException {
-        if (!isOwner(user)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-
-        setDeleted(true);
-        DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.add(DeleteHistory.of(ContentType.QUESTION, id, getWriter()));
-
-        deleteHistories.addAll(answers.deleteAll(user));
-
-        return deleteHistories;
     }
 }

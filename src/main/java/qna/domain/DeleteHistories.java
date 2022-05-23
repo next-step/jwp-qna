@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class DeleteHistories {
     private final List<DeleteHistory> values;
 
-    public DeleteHistories() {
+    protected DeleteHistories() {
         this(new ArrayList<>());
     }
 

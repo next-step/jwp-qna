@@ -36,7 +36,7 @@ public class DeleteHistory {
         this(null, contentType, contentId, deletedBy, createDate);
     }
 
-    public DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    private DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;
@@ -44,7 +44,7 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    public DeleteHistory() {
+    protected DeleteHistory() {
     }
 
     public static DeleteHistory from(DeleteHistory deleteHistory) {
