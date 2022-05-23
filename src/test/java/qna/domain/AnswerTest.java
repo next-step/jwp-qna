@@ -89,9 +89,10 @@ public class AnswerTest {
     void changeQuestionTest() {
         Answer savedAnswer = answerRepository.save(AnswerTest.A1);
         Question oldQuestion = savedAnswer.getQuestion();
-        Question savedQuestion = questionRepository.save(QuestionTest.Q2);
+        Question savedQuestion = questionRepository.save(QuestionTest.Q2.writeBy(userRepository.save(QuestionTest.Q2.getWriter())));
         savedAnswer.toQuestion(savedQuestion);
         assertThat(answerRepository.findById(savedAnswer.getId()).get().getQuestion()).isEqualTo(savedQuestion);
         assertThat(oldQuestion.getAnswers().contains(savedAnswer)).isFalse();
     }
+
 }

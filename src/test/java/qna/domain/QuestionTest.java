@@ -32,6 +32,7 @@ public class QuestionTest {
     @BeforeEach
     void setUp() {
         saveUserBy(answers);
+        QuestionTest.Q1.writeBy(userRepository.save(QuestionTest.Q1.getWriter()));
     }
 
     @DisplayName("동등성 비교테스트")
