@@ -80,7 +80,7 @@ public class Question extends BaseEntity {
 
         this.deleted = true;
 
-        return new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
+        return new DeleteHistory(ContentType.QUESTION, this.id, this.writer, this.getUpdatedAt());
     }
 
     public Long getId() {

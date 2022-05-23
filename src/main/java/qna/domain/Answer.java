@@ -61,7 +61,7 @@ public class Answer extends BaseEntity {
 
         this.deleted = true;
 
-        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, this.getUpdatedAt());
     }
 
     private boolean isOwner(User writer) {
