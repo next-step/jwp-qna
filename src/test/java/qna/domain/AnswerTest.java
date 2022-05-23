@@ -23,24 +23,13 @@ public class AnswerTest {
     @Autowired
     private UserRepository userRepository;
 
-    private Long javajigi_id;
-    private Long sanjigi_id;
 
     @BeforeEach
     void setUp() {
-        javajigi_id = UserTest.JAVAJIGI.getId();
         UserTest.JAVAJIGI.setId(null);
-        User save = userRepository.save(UserTest.JAVAJIGI);
-        sanjigi_id = UserTest.SANJIGI.getId();
-        UserTest.SANJIGI.setId(null);
-        User save1 = userRepository.save(UserTest.SANJIGI);
+        userRepository.save(UserTest.JAVAJIGI);
     }
 
-    @AfterEach
-    void end() {
-        UserTest.JAVAJIGI.setId(javajigi_id);
-        UserTest.SANJIGI.setId(sanjigi_id);
-    }
 
     @DisplayName("create_at, deleted 필드 값을 null 을 가질수 없다.")
     @Test
