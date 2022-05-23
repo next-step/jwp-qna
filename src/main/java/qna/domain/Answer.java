@@ -29,11 +29,11 @@ public class Answer extends BaseEntity {
     private boolean deleted = false;
 
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Question question;
 
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User writer;
 
     protected Answer() {
