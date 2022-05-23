@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -89,7 +90,13 @@ public class Answer extends BaseEntity {
     }
 
     public void setQuestion(Question question) {
+        if (this.question != null) {
+            this.question.answers.remove(this);
+        }
         this.question = question;
+        if (!question.getAnswers().contains(this)) {
+            question.addAnswer(this);
+        }
     }
 
     public String getContents() {
