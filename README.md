@@ -14,3 +14,10 @@
   * Question.java
   * User.java
     * user_id unique
+
+
+* 리뷰어 피드백(박이슬 님)
+  * 미사용 라이브러리 디펜던시 삭제
+  * JPA Auditing 기능 추천
+  * Entity 중복코드 분리
+  * ~~아이유??!?!?~~
