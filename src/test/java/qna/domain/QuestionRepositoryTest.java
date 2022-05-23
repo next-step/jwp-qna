@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 class QuestionRepositoryTest {
 
-    @Autowired QuestionRepository questionRepository;
+    @Autowired
+    QuestionRepository questionRepository;
+
+    private User user;
+
+    @BeforeEach
+    void init() {
+        user = new User(1L, "yulmucha", "password", "Yul", "yul@google.com");
+    }
 
     @Test
     @DisplayName("저장이 잘 되는지 테스트")
