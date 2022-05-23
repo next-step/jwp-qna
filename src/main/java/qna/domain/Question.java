@@ -72,7 +72,7 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public User getWriter() {
+    public User writer() {
         return writer;
     }
 

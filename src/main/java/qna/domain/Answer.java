@@ -64,7 +64,7 @@ public class Answer extends BaseEntity {
         this.id = id;
     }
 
-    public User getWriter() {
+    public User writer() {
         return writer;
     }
 
