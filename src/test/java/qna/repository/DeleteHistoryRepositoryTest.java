@@ -30,8 +30,8 @@ class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = userRepository.save(new User(1L, "mins99", "1234", "ms", "mins99@slipp.net"));
-        question = questionRepository.save(new Question(1L, "title3", "contents3").writeBy(user));
+        user = userRepository.save(new User("mins99", "1234", "ms", "mins99@slipp.net"));
+        question = questionRepository.save(new Question("title3", "contents3").writeBy(user));
     }
 
     @Test

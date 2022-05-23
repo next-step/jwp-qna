@@ -27,14 +27,14 @@ class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = userRepository.save(new User(3L, "mins99", "1234", "ms", "mins99@slipp.net"));
-        question = new Question(3L, "title3", "contents3").writeBy(user);
+        user = userRepository.save(new User("mins99", "1234", "ms", "mins99@slipp.net"));
+        question = new Question("title3", "contents3").writeBy(user);
     }
 
     @Test
     void save() {
         // given
-        final Question expected = new Question(4L, "title4", "contents4").writeBy(user);
+        final Question expected = new Question("title4", "contents4").writeBy(user);
 
         // when
         final Question actual = questionRepository.save(expected);

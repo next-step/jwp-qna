@@ -33,15 +33,15 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = userRepository.save(new User(3L, "mins99", "1234", "ms", "mins99@slipp.net"));
-        question = questionRepository.save(new Question(3L, "title3", "contents3").writeBy(user));
-        answer = new Answer(3L, user, question, "Answers Contents3");
+        user = userRepository.save(new User("mins99", "1234", "ms", "mins99@slipp.net"));
+        question = questionRepository.save(new Question("title3", "contents3").writeBy(user));
+        answer = new Answer(user, question, "Answers Contents3");
     }
 
     @Test
     void save() {
         // given
-        final Answer expected = new Answer(4L, user, question, "Answers Contents4");
+        final Answer expected = new Answer(user, question, "Answers Contents4");
 
         // when
         final Answer actual = answerRepository.save(expected);
