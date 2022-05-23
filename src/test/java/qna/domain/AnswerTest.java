@@ -30,11 +30,11 @@ public class AnswerTest {
         Question question = new Question(3L, "title3", "contents3");
         Question question2 = new Question(4L, "title4", "contents4");
         Answer answer = new Answer(3L, user, question, "Answers Contents3");
-        Long expected = answer.getQuestionId();
+        long expected = answer.getQuestion().getId();
 
         // when
         answer.toQuestion(question2);
-        Long actual = answer.getQuestionId();
+        long actual = answer.getQuestion().getId();
 
         // then
         assertThat(actual).isNotEqualTo(expected);

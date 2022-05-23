@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
-import qna.domain.QuestionTest;
-import qna.domain.UserTest;
+import qna.domain.Question;
+import qna.domain.User;
 
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -19,17 +19,29 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
     private Answer answer;
+
+    private User user;
+
+    private Question question;
 
     @BeforeEach
     void setUp() {
-        answer = new Answer(3L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents3");
+        user = userRepository.save(new User(3L, "mins99", "1234", "ms", "mins99@slipp.net"));
+        question = questionRepository.save(new Question(3L, "title3", "contents3").writeBy(user));
+        answer = new Answer(3L, user, question, "Answers Contents3");
     }
 
     @Test
     void save() {
         // given
-        final Answer expected = new Answer(4L, UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents4");
+        final Answer expected = new Answer(4L, user, question, "Answers Contents4");
 
         // when
         final Answer actual = answerRepository.save(expected);
@@ -37,8 +49,8 @@ class AnswerRepositoryTest {
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
-                () -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId()),
+                () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
+                () -> assertThat(actual.getQuestion()).isEqualTo(expected.getQuestion()),
                 () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
         );
     }
@@ -100,7 +112,7 @@ class AnswerRepositoryTest {
         final Answer expected = answerRepository.save(answer);
 
         // when
-        final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestionId());
+        final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestion().getId());
 
         // then
         assertThat(actual).hasSize(1);
@@ -113,7 +125,7 @@ class AnswerRepositoryTest {
 
         // when
         expected.setDeleted(true);
-        final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestionId());
+        final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestion().getId());
 
         // then
         assertThat(actual).hasSize(0);
