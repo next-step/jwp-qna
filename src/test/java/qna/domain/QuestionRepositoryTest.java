@@ -13,19 +13,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class QuestionRepositoryTest {
 
     @Autowired
+    UserRepository userRepository;
+    @Autowired
     QuestionRepository questionRepository;
 
     private User user;
 
     @BeforeEach
     void init() {
-        user = new User(1L, "yulmucha", "password", "Yul", "yul@google.com");
+        user = userRepository.save(new User("yulmucha", "password", "Yul", "yul@google.com"));
     }
 
     @Test
     @DisplayName("저장이 잘 되는지 테스트")
     void save() {
-        Question expected = new Question("제목1", "내용1");
+        Question expected = new Question(user, "제목1", "내용1");
         Question actual = questionRepository.save(expected);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
@@ -36,11 +38,9 @@ class QuestionRepositoryTest {
 
     @Test
     @DisplayName("개체를 저장한 후 다시 가져왔을 때 기존의 개체와 동일한지 테스트")
-    void findById() {
-        Question question = new Question("제목1", "내용1");
-        Question savedQuestion = questionRepository.save(question);
-
-        Question foundQuestion = questionRepository.findById(savedQuestion.getId()).get();
-        assertThat(foundQuestion).isEqualTo(question);
+    void identity() {
+        Question q1 = questionRepository.save(new Question(user, "제목1", "내용1"));
+        Question q2 = questionRepository.findById(q1.getId()).get();
+        assertThat(q1).isSameAs(q2);
     }
 }

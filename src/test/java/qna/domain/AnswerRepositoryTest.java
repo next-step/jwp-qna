@@ -13,6 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class AnswerRepositoryTest {
 
     @Autowired
+    UserRepository userRepository;
+    @Autowired
+    QuestionRepository questionRepository;
+    @Autowired
     AnswerRepository answerRepository;
 
     private User user;
@@ -20,8 +24,8 @@ public class AnswerRepositoryTest {
 
     @BeforeEach
     void init() {
-        user = new User(1L, "yulmucha", "password", "Yul", "yul@google.com");
-        question = new Question("title1", "contents1").writeBy(user);
+        user = userRepository.save(new User("yulmucha", "password", "Yul", "yul@google.com"));
+        question = questionRepository.save(new Question(user, "title1", "contents1"));
     }
 
     @Test
@@ -37,11 +41,9 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("개체를 저장한 후 다시 가져왔을 때 기존의 개체와 동일한지 테스트")
-    void findById() {
-        Answer answer = new Answer(user, question, "Answers Contents1");
-        Answer savedAnswer = answerRepository.save(answer);
-
-        Answer foundAnswer = answerRepository.findById(savedAnswer.getId()).get();
-        assertThat(foundAnswer).isEqualTo(answer);
+    void identity() {
+        Answer a1 = answerRepository.save(new Answer(user, question, "contents"));
+        Answer a2 = answerRepository.findById(a1.getId()).get();
+        assertThat(a1).isSameAs(a2);
     }
 }

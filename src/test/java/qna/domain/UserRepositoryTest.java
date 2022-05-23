@@ -39,11 +39,9 @@ class UserRepositoryTest {
 
     @Test
     @DisplayName("개체를 저장한 후 다시 가져왔을 때 기존의 개체와 동일한지 테스트")
-    void findById() {
-        User user = new User("yulmucha", "1234", "yul", "yul@google.com");
-        User savedUser = userRepository.save(user);
-
-        User foundUser = userRepository.findById(savedUser.getId()).get();
-        assertThat(foundUser).isEqualTo(user);
+    void identity() {
+        User u1 = userRepository.save(new User("yulmucha", "1234", "yul", "yul@google.com"));
+        User u2 = userRepository.findById(u1.getId()).get();
+        assertThat(u1).isSameAs(u2);
     }
 }
