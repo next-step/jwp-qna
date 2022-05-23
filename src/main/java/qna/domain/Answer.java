@@ -49,7 +49,7 @@ public class Answer extends CreatedUpdatedDateEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -104,7 +104,7 @@ public class Answer extends CreatedUpdatedDateEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writer +
+                ", writer=" + writer +
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
