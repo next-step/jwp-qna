@@ -11,13 +11,22 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 class QuestionRepositoryTest {
     private Question question;
+    private User user;
 
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private AnswerRepository answerRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
-        question = questionRepository.save(new Question("질문제목", "질문내용"));
+        user = userRepository.save(new User("vvsungho", "1234", "윤성호", "vvsungho@gmail.com"));
+        question = new Question("질문제목", "질문내용");
+        question.writeBy(user);
+
+        question = questionRepository.save(question);
     }
 
     @Test
@@ -30,5 +39,10 @@ class QuestionRepositoryTest {
         System.out.println("question :: " + question.getId());
         Question question2 = questionRepository.findByTitle("질문제목").get();
         assertThat(question).isSameAs(question2);
+    }
+
+    @Test
+    void saveWithAnswer() {
+        question.addAnswer(new Answer(user, question, "질문답변"));
     }
 }
