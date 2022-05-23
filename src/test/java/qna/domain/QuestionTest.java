@@ -52,4 +52,15 @@ public class QuestionTest {
         assertThatThrownBy(() -> Q1.addAnswer(answer))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void addAnswer_동일한_답변_추가() {
+        Question Q3 = new Question(3L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Answer answer = new Answer(Q3.getWriter(), Q3, "contents");
+
+        Q3.addAnswer(answer);
+        
+        assertThatThrownBy(() -> Q3.addAnswer(answer))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }

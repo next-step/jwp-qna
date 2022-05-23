@@ -51,24 +51,8 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        validateAnswer(answer);
-
-        if (Objects.nonNull(this.answers)) {
-            answers.remove(answer);
-        }
-
+        answers.add(id, answer);
         answer.toQuestion(this);
-        answers.add(answer);
-    }
-
-    private void validateAnswer(Answer answer) {
-        if (Objects.isNull(answer)) {
-            throw new IllegalArgumentException("추가하려는 답변이 존재하지 않습니다.");
-        }
-
-        if (!Objects.equals(id, answer.getQuestion().getId())) {
-            throw new IllegalArgumentException("다른질문의 답변입니다.");
-        }
     }
 
     public Long getId() {
