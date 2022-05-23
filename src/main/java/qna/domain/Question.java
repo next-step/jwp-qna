@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
@@ -8,6 +9,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "question")
 public class Question extends BaseEntity {
+    private static final String NOT_QUESTION_WRITER = "질문의 작성자가 아니므로 삭제할 수 없습니다.";
+
     @Column(name = "title", length = 100, nullable = false)
     private String title;
     @Lob
@@ -48,6 +51,17 @@ public class Question extends BaseEntity {
         answer.toQuestion(this);
     }
 
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(NOT_QUESTION_WRITER);
+        }
+        this.deleted(Boolean.TRUE);
+    }
+
+    private void deleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public Long getId() {
         return this.id;
     }
@@ -60,6 +74,7 @@ public class Question extends BaseEntity {
         return this.deleted;
     }
 
+    // TODO delete 구현 완료 후 삭제
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
