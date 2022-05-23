@@ -49,7 +49,7 @@ class AnswerRepositoryTest {
 
     @Test
     void id로_삭제되지_않은_answer조회() {
-        Answer findAnswer = answerRepository.findByIdAndDeletedFalse(1L)
+        Answer findAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId())
                 .orElseThrow(IllegalArgumentException::new);
         assertThat(findAnswer).isEqualTo(answer);
     }

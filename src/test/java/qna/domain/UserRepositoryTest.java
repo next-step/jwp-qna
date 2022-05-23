@@ -25,7 +25,7 @@ class UserRepositoryTest {
 
     @Test
     void userId로_User조회() {
-        User yangId = userRepository.findByUserId("yangId")
+        User yangId = userRepository.findByUserId(user.getUserId())
                 .orElseThrow(NotFoundException::new);
         assertThat(yangId).isEqualTo(user);
     }

@@ -10,6 +10,7 @@ import qna.NotFoundException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -18,11 +19,14 @@ class QuestionRepositoryTest {
     private QuestionRepository questionRepository;
 
     private Question question;
+    private Question deletedQuestion;
 
     @BeforeEach
     void setup() {
         question = new Question("title", "Contents");
+        deletedQuestion = new Question("deletedTitle", "deletedContents", true);
         questionRepository.save(question);
+        questionRepository.save(deletedQuestion);
     }
 
     @Test
@@ -33,8 +37,15 @@ class QuestionRepositoryTest {
 
     @Test
     void id로_삭제되지않은_question_조회() {
-        Question findQuestion = questionRepository.findByIdAndDeletedFalse(1L).orElseThrow(NotFoundException::new);
+        Question findQuestion = questionRepository.findByIdAndDeletedFalse(question.getId()).orElseThrow(NotFoundException::new);
         assertThat(findQuestion).isEqualTo(question);
+    }
+
+    @Test
+    void id값이_삭제되지않은_질문이_없으면() {
+        assertThatThrownBy(() -> questionRepository.findByIdAndDeletedFalse(deletedQuestion.getId())
+                .orElseThrow(NotFoundException::new))
+                .isInstanceOf(NotFoundException.class);
     }
 
 }

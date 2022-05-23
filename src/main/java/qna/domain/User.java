@@ -78,6 +78,9 @@ public class User extends BaseTimeEntity {
         return id;
     }
 
+    public String getUserId() {
+        return userId;
+    }
 
     @Override
     public String toString() {
