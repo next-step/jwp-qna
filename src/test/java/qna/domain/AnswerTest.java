@@ -1,14 +1,16 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-public class AnswerTest {
+class AnswerTest {
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
@@ -30,5 +32,25 @@ public class AnswerTest {
     @DisplayName("게시자 확인")
     void isOwner() {
         assertThat(A1.isOwner(UserTest.JAVAJIGI)).isTrue();
+    }
+
+    @Test
+    @DisplayName("게시자 확인 - 다른 게시자")
+    void isNotOwner() {
+        assertThat(A1.isNotOwner(UserTest.SANJIGI)).isTrue();
+    }
+
+    @Test
+    @DisplayName("삭제 - 답변 작성자와 로그인 유저가 다를 때")
+    void delete_isNotOwner() {
+        assertThatThrownBy(() -> A1.delete(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    @DisplayName("삭제 - 답변 작성자와 로그인 유저가 같을 때")
+    void delete_isOwner() {
+        assertThatCode(() -> A1.delete(UserTest.JAVAJIGI))
+                .doesNotThrowAnyException();
     }
 }

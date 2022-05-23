@@ -66,4 +66,10 @@ class AnswerRepositoryTest {
         answers.deleteById(answer.getId());
         assertThat(answers.findById(answer.getId())).isNotPresent();
     }
+
+    @Test
+    @DisplayName("질문에 포함된 답변 확인")
+    void checkAnswers() {
+        assertThat(question.getAnswers().contains(answer)).isTrue();
+    }
 }
