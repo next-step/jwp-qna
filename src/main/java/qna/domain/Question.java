@@ -1,11 +1,23 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.*;
+
+@Entity
+public class Question extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(length = 100, nullable = false)
     private String title;
+    @Lob
+    @Column(nullable = false)
     private String contents;
+    @Column(name = "writer_id")
     private Long writerId;
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    protected Question(){}
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -17,18 +29,18 @@ public class Question {
         this.contents = contents;
     }
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
+//    public Question writeBy(User writer) {
+//        this.writerId = writer.getId();
+//        return this;
+//    }
+//
+//    public boolean isOwner(User writer) {
+//        return this.writerId.equals(writer.getId());
+//    }
+//
+//    public void addAnswer(Answer answer) {
+//        answer.toQuestion(this);
+//    }
 
     public Long getId() {
         return id;
@@ -78,6 +90,8 @@ public class Question {
                 ", contents='" + contents + '\'' +
                 ", writerId=" + writerId +
                 ", deleted=" + deleted +
+                ", createAt=" + getCreateAt() +
+                ", updateAt=" + getUpdateAt() +
                 '}';
     }
 }
