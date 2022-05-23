@@ -2,9 +2,8 @@ package qna.domain;
 
 import javax.persistence.*;
 
-//@AttributeOverride(name="creatorId", column = @Column(name="writer_id"))
 @Entity
-public class Question extends BaseEntity {
+public class Question extends BaseWriterEntity {
     @Lob
     private String contents;
 
@@ -28,12 +27,12 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.creatorId = writer.getId();
+        this.writerId = writer.getId();
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.creatorId.equals(writer.getId());
+        return this.writerId.equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -48,12 +47,8 @@ public class Question extends BaseEntity {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return creatorId;
-    }
-
     public void setWriterId(Long writerId) {
-        this.creatorId = writerId;
+        this.writerId = writerId;
     }
 
     public boolean isDeleted() {
@@ -70,7 +65,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + creatorId +
+                ", writerId=" + writerId +
                 ", deleted=" + deleted +
                 '}';
     }
