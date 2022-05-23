@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -16,6 +17,7 @@ import javax.persistence.Table;
 import com.sun.istack.NotNull;
 
 import qna.domain.common.DatedAtEntity;
+import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
@@ -105,6 +107,18 @@ public class Answer extends DatedAtEntity {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+		validationAnswer(loginUser);
+		this.deleted = true;
+		return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+	}
+
+	private void validationAnswer(User loginUser) throws CannotDeleteException {
+		if (!isOwner(loginUser)) {
+			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+		}
 	}
 
 	@Override
