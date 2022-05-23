@@ -5,12 +5,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@EnableJpaAuditing
 class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answers;
@@ -34,8 +36,8 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("작성자 key로 답글 조회")
     void findByWriterId() {
-        assertThat(answers.findByCreatorId(UserTest.JAVAJIGI.getId())).isEqualTo(answer1);
-        assertThat(answers.findByCreatorId(UserTest.SANJIGI.getId())).isEqualTo(answer2);
+        assertThat(answers.findByWriterId(UserTest.JAVAJIGI.getId())).isEqualTo(answer1);
+        assertThat(answers.findByWriterId(UserTest.SANJIGI.getId())).isEqualTo(answer2);
     }
 
     @Test
@@ -43,6 +45,6 @@ class AnswerRepositoryTest {
         Answer answer = new Answer(UserTest.IU, QuestionTest.Q1, "안녕");
         Answer save = answers.save(answer);
         assertThat(save).isNotNull();
-        System.out.println(answers.findByCreatorId(UserTest.IU.getId()));
+        System.out.println(answers.findByWriterId(UserTest.IU.getId()));
     }
 }
