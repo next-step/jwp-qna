@@ -111,6 +111,23 @@ public class User extends Time {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof User)) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(user.getUserId(), getUserId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUserId());
+    }
+
+    @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
