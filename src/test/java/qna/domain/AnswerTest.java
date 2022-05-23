@@ -8,8 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "This is apple.");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q2, "Wryyyyyyyyyyyyyyy!!!!");
+    public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "This is apple.");
+    public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q2, "Wryyyyyyyyyyyyyyy!!!!");
 
     @DisplayName("Answer 객체 기본 API 테스트")
     @Test

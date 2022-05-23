@@ -3,3 +3,8 @@ INSERT INTO USER (id, user_id, password, name, created_at) VALUES (2, 'user2', '
 INSERT INTO QUESTION (id, title, contents, deleted, created_at) VALUES (1, '집', '너의 집은 어디인가', true, '2022-05-24 01:37:11');
 INSERT INTO QUESTION (id, title, contents, deleted, created_at) VALUES (2, '학교', '출신 학교는 어디인가', false, '2022-05-24 01:37:11');
 INSERT INTO QUESTION (id, title, contents, deleted, created_at) VALUES (3, '차', '버스가 보이는 화면을 선택하세요', false, '2022-05-24 01:37:11');
+INSERT INTO ANSWER (id, writer_id, question_id, contents, deleted, created_at) VALUES (1, 1, 1, '수원', true, '2022-05-24 01:37:11');
+INSERT INTO ANSWER (id, writer_id, question_id, contents, deleted, created_at) VALUES (2, 2, 2, '한국대', false, '2022-05-24 01:37:11');
+INSERT INTO ANSWER (id, writer_id, question_id, contents, deleted, created_at) VALUES (3, 1, 3, '1', false, '2022-05-24 01:37:11');
+INSERT INTO ANSWER (id, writer_id, question_id, contents, deleted, created_at) VALUES (4, 1, 3, '4', false, '2022-05-24 01:37:11');
+INSERT INTO ANSWER (id, writer_id, question_id, contents, deleted, created_at) VALUES (5, 1, 3, '5', true, '2022-05-24 01:37:11');
