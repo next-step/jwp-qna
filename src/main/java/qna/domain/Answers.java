@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
-import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
@@ -26,10 +25,10 @@ public class Answers {
         return this.answers.contains(answer);
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
-        List<Answer> deletedFalseAnswers = answers.stream().filter(answer -> !answer.isDeleted()).collect(Collectors.toList());
-        for (Answer answer : deletedFalseAnswers) {
-            answer.delete(loginUser);
-        }
+    public List<DeleteHistory> delete(User loginUser) {
+        return answers.stream()
+                .filter(answer -> !answer.isDeleted())
+                .map(answer -> answer.delete(loginUser))
+                .collect(Collectors.toList());
     }
 }

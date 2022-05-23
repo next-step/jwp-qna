@@ -18,4 +18,8 @@ public abstract class BaseEntity {
     @LastModifiedDate
     @Column(updatable = false)
     private LocalDateTime updatedAt;
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 }
