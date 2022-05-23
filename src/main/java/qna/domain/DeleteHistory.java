@@ -1,12 +1,27 @@
 package qna.domain;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@EntityListeners(AuditingEntityListener.class)
 public class DeleteHistory {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column
     private ContentType contentType;
+
+    @Column
     private Long contentId;
+
+    @Column
     private Long deletedById;
     private LocalDateTime createDate = LocalDateTime.now();
 
@@ -15,6 +30,9 @@ public class DeleteHistory {
         this.contentId = contentId;
         this.deletedById = deletedById;
         this.createDate = createDate;
+    }
+
+    protected DeleteHistory() {
     }
 
     @Override
