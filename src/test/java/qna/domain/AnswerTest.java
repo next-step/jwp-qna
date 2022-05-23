@@ -73,7 +73,7 @@ public class AnswerTest {
 
     @DisplayName("답변과 사용자 간의 다대일 단방향 테스트")
     @Test
-    void manyToOneTest() {
+    void manyToOneAnswerAndUserTest() {
         Answer savedAnswer = answerRepository.save(A1);
         assertThat(savedAnswer.getWriter()).isSameAs(UserTest.JAVAJIGI);
     }
