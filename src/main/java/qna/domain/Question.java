@@ -1,8 +1,7 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -12,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import qna.CannotDeleteException;
 
 @Entity
@@ -34,8 +32,8 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    List<Answer> answers = new ArrayList<>();
+    @Embedded
+    Answers answers;
 
     protected Question() {}
 
@@ -105,14 +103,22 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        this.answers.add(answer);
+        this.answers.addAnswer(answer);
         if (answer.getQuestion() != this) {
             answer.setQuestion(this);
         }
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
+    }
+
+    public void removeAnswer(Answer answer) {
+        this.answers.removeAnswer(answer);
+    }
+
+    public boolean hasAnswer(Answer answer) {
+        return this.answers.hasAnswer(answer);
     }
 
     public void delete(User loginUser) throws CannotDeleteException {
