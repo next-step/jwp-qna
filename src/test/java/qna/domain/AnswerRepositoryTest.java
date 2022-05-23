@@ -5,6 +5,7 @@ import static qna.domain.AnswerTest.A1;
 import static qna.domain.AnswerTest.A2;
 import static qna.domain.QuestionTest.Q1;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,22 +17,32 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class AnswerRepositoryTest {
+class AnswerRepositoryTest extends BaseRepositoryTest {
     @Autowired
     AnswerRepository answerRepository;
 
+    @Autowired
+    QuestionRepository questionRepository;
+
+    Question savedQ1;
+
+    Question savedQ2;
+
     @BeforeEach
     void setUp() {
-        // given
-        answerRepository.save(A1);
-        answerRepository.save(A2);
+        saveUsers();
+        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
+        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
+        savedQ1.addAnswer(A1);
+        savedQ2.addAnswer(A2);
+        answerRepository.saveAll(Arrays.asList(A1.writeBy(savedJavajigi), A2.writeBy(savedSanjigi)));
     }
 
     @Test
     @DisplayName("Answer 저장")
     void save() {
         // when
-        final Answer answer = answerRepository.save(new Answer(UserTest.JAVAJIGI, Q1, "Answers Contents1"));
+        final Answer answer = answerRepository.save(new Answer(savedSanjigi, Q1, "Answers Contents1"));
 
         // then
         assertThat(answer).isNotNull();
@@ -41,11 +52,11 @@ class AnswerRepositoryTest {
     @DisplayName("QuestionId 와 delete = false 인 Answer 들 조회")
     void findByQuestionIdAndDeletedFalse() {
         // when
-        final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(Q1.getId());
+        final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(savedQ1.getId());
         answerRepository.flush();
 
         // then
-        assertThat(actual).hasSize(2);
+        assertThat(actual).hasSize(1);
     }
 
     @Test
@@ -57,6 +68,17 @@ class AnswerRepositoryTest {
         // then
         assertThat(actual).isNotEmpty();
         assertThat(actual.get()).isEqualTo(A1);
+    }
+
+    @Test
+    @DisplayName("Question 에서 answer 정보 조회")
+    void getAnswer() {
+        // given
+        final Question question = questionRepository.findById(savedQ1.getId()).get();
+
+        // when & then
+        assertThat(question.getAnswers()).hasSize(1);
+        assertThat(question.getAnswers()).contains(A1);
     }
 
     @Test
