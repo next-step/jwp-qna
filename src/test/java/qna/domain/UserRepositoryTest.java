@@ -18,7 +18,7 @@ class UserRepositoryTest {
 	@Test
 	@DisplayName("User 생성")
 	void save() {
-		User expected = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+		User expected = UserTest.JAVAJIGI;
 		User actual = userRepository.save(expected);
 
 		assertAll(

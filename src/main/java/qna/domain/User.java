@@ -5,15 +5,18 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import qna.UnAuthorizedException;
 
 @Entity
-@Table(name = "user")
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -28,8 +31,9 @@ public class User {
     private String name;
     @Column(name = "email", nullable = false, length = 50)
     private String email;
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     protected User() {
     }
