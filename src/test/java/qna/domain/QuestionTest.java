@@ -17,7 +17,7 @@ public class QuestionTest {
         question.writeBy(UserTest.JAVAJIGI);
 
         // then
-        assertThat(question.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+        assertThat(question.getWriter()).isEqualTo(UserTest.JAVAJIGI);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class QuestionTest {
         question.addAnswer(newAnswer);
 
         // then
-        assertThat(question.getId()).isEqualTo(AnswerTest.A1.getQuestionId());
+        assertThat(question).isEqualTo(AnswerTest.A1.getQuestion());
 
         // finally
         AnswerTest.A1.toQuestion(QuestionTest.Q1);
