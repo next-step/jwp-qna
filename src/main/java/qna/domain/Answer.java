@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -12,10 +13,13 @@ public class Answer extends Time {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
-    private Long writerId;
-    @Column
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writerId", referencedColumnName = "userId")
+    private User writer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "questionId", referencedColumnName = "id")
+    private Question question;
     @Lob
     @Column
     private String contents;
@@ -40,17 +44,28 @@ public class Answer extends Time {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        check(loginUser);
+        deleted();
+    }
+
+    private void check(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -61,20 +76,12 @@ public class Answer extends Time {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public String getContents() {
@@ -93,12 +100,24 @@ public class Answer extends Time {
         this.deleted = deleted;
     }
 
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
+    private void deleted() {
+        this.deleted = true;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
