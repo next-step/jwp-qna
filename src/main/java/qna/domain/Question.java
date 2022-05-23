@@ -1,11 +1,18 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -24,7 +31,12 @@ public class Question extends AuditEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id")
+    private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
 
@@ -41,32 +53,25 @@ public class Question extends AuditEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
@@ -77,12 +82,8 @@ public class Question extends AuditEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -93,14 +94,20 @@ public class Question extends AuditEntity {
         this.deleted = deleted;
     }
 
+    public List<Answer> getAnswers() {
+        return Collections.unmodifiableList(answers);
+    }
+
+
     @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
                 ", deleted=" + deleted +
+                ", title='" + title + '\'' +
+                ", writer=" + writer +
+                ", answers=" + answers +
                 '}';
     }
 }
