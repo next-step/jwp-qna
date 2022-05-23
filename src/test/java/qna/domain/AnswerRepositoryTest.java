@@ -32,7 +32,7 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    void insert_이후_select() {
+    void Answer_엔티티가_DB에_저장되고_조회되어야_한다() {
         // given
         final Answer answer = new Answer(writer1, question, "answer");
 
@@ -45,7 +45,7 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    void update_이후_select() {
+    void Answer_엔티티가_수정되고_수정된_내용이_DB에서_조회되어야_한다() {
         // given
         final Answer answer = new Answer(writer1, question, "answer");
         answerRepository.save(answer);

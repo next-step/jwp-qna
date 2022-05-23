@@ -12,7 +12,7 @@ class UserRepositoryTest {
     private UserRepository repository;
 
     @Test
-    void insert_이후_select() {
+    void User_엔티티가_DB에_저장되고_조회되어야_한다() {
         // given
         final User user = new User("ttungga", "password", "old name", "old email");
 
@@ -25,7 +25,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    void update_이후_select() {
+    void User_엔티티가_수정되고_수정된_내용이_DB에서_조회되어야_한다() {
         // given
         final User user = new User("ttungga", "password", "old name", "old email");
         repository.save(user);
