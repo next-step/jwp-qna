@@ -48,6 +48,13 @@ public class User extends AuditTimeBaseEntity {
     public User() {
     }
 
+    public static User from(User user) {
+        if (Objects.isNull(user)) {
+            return null;
+        }
+        return new User(user.id, user.userId, user.password, user.name, user.email);
+    }
+
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.userId)) {
             throw new UnAuthorizedException();

@@ -4,14 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import qna.exception.CannotDeleteException;
 
-public class QuestionTest {
+class QuestionTest {
     private User writer;
     private Question question;
 
@@ -68,8 +67,8 @@ public class QuestionTest {
             question.addAnswer(answer2);
             question.addAnswer(answer3);
 
-            List<DeleteHistory> deleteHistories = question.delete(writer);
-            assertThat(deleteHistories).hasSize(4);
+            DeleteHistories deleteHistories = question.delete(writer);
+            assertThat(deleteHistories).isNotNull();
         }
     }
 
@@ -91,7 +90,6 @@ public class QuestionTest {
             Answer answer2 = new Answer(2L, user, question, "답변내용2");
             question.addAnswer(answer1);
             question.addAnswer(answer2);
-
 
             assertThatThrownBy(() -> question.delete(user)).isInstanceOf(CannotDeleteException.class);
         }

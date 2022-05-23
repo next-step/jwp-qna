@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,7 +27,7 @@ public class Answer extends AuditTimeBaseEntity {
     private String contents;
 
     @Column(nullable = false)
-    private boolean deleted = false;
+    private boolean deleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -43,8 +42,10 @@ public class Answer extends AuditTimeBaseEntity {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+        this(id, contents, question, writer, false);
+    }
 
+    public Answer(Long id, String contents, Question question, User writer, boolean deleted) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -53,12 +54,21 @@ public class Answer extends AuditTimeBaseEntity {
             throw new NotFoundException();
         }
 
-        this.writer = writer;
-        this.question = question;
+        this.id = id;
         this.contents = contents;
+        this.question = Question.from(question);
+        this.writer = User.from(writer);
+        this.deleted = deleted;
     }
 
     public Answer() {
+    }
+
+    public static Answer from(Answer answer) {
+        if (Objects.isNull(answer)) {
+            return null;
+        }
+        return new Answer(answer.id, answer.contents, answer.question, answer.writer, answer.deleted);
     }
 
     public boolean isOwner(User writer) {

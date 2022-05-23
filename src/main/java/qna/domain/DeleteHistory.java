@@ -33,13 +33,30 @@ public class DeleteHistory {
     private User deletedBy;
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+        this(null, contentType, contentId, deletedBy, createDate);
+    }
+
+    public DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+        this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedBy = deletedBy;
+        this.deletedBy = User.from(deletedBy);
         this.createDate = createDate;
     }
 
     public DeleteHistory() {
+    }
+
+    public static DeleteHistory from(DeleteHistory deleteHistory) {
+        if (Objects.isNull(deleteHistory)) {
+            return null;
+        }
+        return new DeleteHistory(
+                deleteHistory.id,
+                deleteHistory.contentType,
+                deleteHistory.contentId,
+                deleteHistory.deletedBy,
+                deleteHistory.createDate);
     }
 
     public static DeleteHistory of(ContentType contentType, Long contentId, User writer) {
