@@ -34,7 +34,7 @@ public class QuestionTest {
     @Test
     @DisplayName("삭제 - 질문 작성자와 로그인 유저가 같을 때")
     void delete_isOwner() {
-        assertThatCode(() -> Q1.delete(UserTest.JAVAJIGI))
+        assertThatCode(() -> Q2.delete(UserTest.SANJIGI))
                 .doesNotThrowAnyException();
     }
 }

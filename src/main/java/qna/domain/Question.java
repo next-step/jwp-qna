@@ -124,6 +124,10 @@ public class Question extends BaseEntity {
         this.writer = writer;
     }
 
+    public Answers getAnswers() {
+        return answers;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }

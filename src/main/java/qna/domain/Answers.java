@@ -21,4 +21,8 @@ public class Answers {
     public void add(Answer answer) {
         this.list.add(answer);
     }
+
+    public boolean contains(Answer answer) {
+        return list.contains(answer);
+    }
 }

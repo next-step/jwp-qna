@@ -57,6 +57,7 @@ public class Answer extends BaseEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+        this.question.addAnswer(this);
     }
 
     public boolean isOwner(User writer) {
@@ -136,5 +137,24 @@ public class Answer extends BaseEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Answer answer = (Answer) o;
+
+        return id.equals(answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }
