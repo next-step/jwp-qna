@@ -14,8 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import qna.CannotDeleteException;
 
 @Entity
@@ -68,17 +66,24 @@ public class Question extends Common {
     }
 
     public List<DeleteHistory> delete(User loginUser) {
-        if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+        validateDeletePermission(loginUser);
 
         List<DeleteHistory> deleteHistoryList = new ArrayList<>();
-
-        this.deleted = true;
-        deleteHistoryList.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistoryList.add(this.deleteQuestion());
         deleteHistoryList.addAll(answers.delete(loginUser));
 
         return deleteHistoryList;
+    }
+
+    private DeleteHistory deleteQuestion() {
+        this.deleted = true;
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+    }
+
+    private void validateDeletePermission(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public Long getId() {

@@ -2,7 +2,6 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
@@ -22,23 +21,6 @@ public class Answers {
 
     public void add(Answer answer) {
         this.answerList.add(answer);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Answers answers = (Answers) o;
-        return Objects.equals(answerList, answers.answerList);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(answerList);
     }
 
 }
