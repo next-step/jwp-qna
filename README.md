@@ -23,3 +23,7 @@
   * JPA Auditing 기능 추천
   * Entity 중복 컬럼 분리
   * ~~아이유??!?!?~~
+  * JPA Auditing 설정 관련 어노테이션 추가 피드백
+  * 미사용 코드 삭제
+  * 날짜필드 @LastModifiedBy -> @LastModifiedDate 변경 
+  * 요구사항과 동일하도록 DDL, Entity 설계 / 개선  
