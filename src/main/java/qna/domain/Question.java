@@ -72,10 +72,6 @@ public class Question extends CreatedUpdatedDateEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
-    }
-
 
     public User getWriter() {
         return writer;
