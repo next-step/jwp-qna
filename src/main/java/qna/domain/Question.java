@@ -1,6 +1,11 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -10,10 +15,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.transaction.Transactional;
 
 import com.sun.istack.NotNull;
 
 import qna.domain.common.DatedAtEntity;
+import qna.exception.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
@@ -34,6 +41,8 @@ public class Question extends DatedAtEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
+	@Embedded
+	private Answers answers;
 
 	public Question(String title, String contents) {
 		this(null, title, contents);
@@ -43,6 +52,7 @@ public class Question extends DatedAtEntity {
 		this.id = id;
 		this.title = title;
 		this.contents = contents;
+		answers = new Answers();
 	}
 
 	public Question writeBy(User writer) {
@@ -56,6 +66,25 @@ public class Question extends DatedAtEntity {
 
 	public void addAnswer(Answer answer) {
 		answer.toQuestion(this);
+		answers.add(answer);
+	}
+
+	@Transactional
+	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+		validationOwner(loginUser);
+		setDeleted(true);
+
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+		deleteHistories.addAll(answers.delete(loginUser));
+
+		return deleteHistories;
+	}
+
+	private void validationOwner(User loginUser) throws CannotDeleteException {
+		if (!isOwner(loginUser)) {
+			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+		}
 	}
 
 	public Long getId() {
@@ -92,6 +121,10 @@ public class Question extends DatedAtEntity {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public Answers answers() {
+		return answers;
 	}
 
 	@Override
