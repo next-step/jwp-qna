@@ -57,6 +57,8 @@ public class Answer extends BaseTimeEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+
+        addAnswerToTargetQuestion();
     }
 
     public boolean isOwner(User writer) {
@@ -64,12 +66,24 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
+        if (this.question != null) {
+            removeAnswerFromOriginQuestion();
+        }
         this.question = question;
+        addAnswerToTargetQuestion();
+
+    }
+
+    private void addAnswerToTargetQuestion() {
         this.question.getAnswers().add(this);
     }
 
     public void deleteAnswer() {
         this.deleted = true;
+        removeAnswerFromOriginQuestion();
+    }
+
+    private void removeAnswerFromOriginQuestion() {
         this.question.getAnswers().remove(this);
     }
 
