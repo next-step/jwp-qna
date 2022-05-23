@@ -16,11 +16,10 @@ public class Question {
     @Column(columnDefinition = "text")
     private String contents;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User user;
-
-
+    
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -30,7 +29,7 @@ public class Question {
     @Column
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Answer> answers;
 
     protected Question() {
