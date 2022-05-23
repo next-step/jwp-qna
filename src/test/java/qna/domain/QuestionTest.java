@@ -15,11 +15,11 @@ public class QuestionTest {
         // given
         final Question question = new Question(3L, "title3", "contents3");
         User user = new User(3L, "mins99", "1234", "ms", "mins99@slipp.net");
-        Long expected = question.getWriterId();
+        User expected = question.getWriter();
 
         // when
         final Question question2 = question.writeBy(user);
-        Long actual = question2.getWriterId();
+        User actual = question2.getWriter();
 
         // then
         assertThat(actual).isNotEqualTo(expected);
@@ -40,18 +40,18 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("addAnswer의 결과 Answer 객체의 Question ID를 변경한다")
+    @DisplayName("addAnswer의 결과 Answer 객체의 Question을 변경한다")
     void addAnswer() {
         // given
         final User user = new User(3L, "mins99", "1234", "ms", "mins99@slipp.net");
         final Question question = new Question(3L, "title3", "contents3");
         final Question question2 = new Question(4L, "title4", "contents4");
         final Answer answer = new Answer(user, question, "Answers Contents3");
-        final long expected = answer.getQuestionId();
+        final Question expected = answer.getQuestion();
 
         // when
         question2.addAnswer(answer);
-        final long actual = answer.getQuestionId();
+        final Question actual = answer.getQuestion();
 
         // then
         assertThat(actual).isNotEqualTo(expected);
