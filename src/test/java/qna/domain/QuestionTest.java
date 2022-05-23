@@ -41,7 +41,7 @@ class QuestionTest {
     void 질문_삭제_테스트() throws CannotDeleteException {
         final Answers answers = new Answers(Arrays.asList(aUserAnswer));
 
-        final List<DeleteHistory> history = aUserQuestion.delete(aUser, answers);
+        final DeleteHistories history = aUserQuestion.delete(aUser, answers);
 
         assertThat(aUserQuestion.isDeleted()).isTrue();
         history.contains(new DeleteHistory(ContentType.QUESTION, aUserQuestion.getId(), LocalDateTime.now()));
