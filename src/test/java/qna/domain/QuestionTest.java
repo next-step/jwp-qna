@@ -20,6 +20,9 @@ public class QuestionTest {
     AnswerRepository answerRepository;
 
     @Autowired
+    UserRepository userRepository;
+
+    @Autowired
     EntityManager em;
 
     public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(
@@ -72,16 +75,13 @@ public class QuestionTest {
 
     @Test
     public void oneToManyTest() {
-        questionRepository.save(Q1);
-        AnswerTest.A1.setQuestion(Q1);
-        AnswerTest.A2.setQuestion(Q1);
-
+        AnswerTest.A1.setId(null); //id가없어야 save를 하고 casecade를통한 save도 이뤄짐
+        AnswerTest.A2.setId(null);
         answerRepository.save(AnswerTest.A1);
         answerRepository.save(AnswerTest.A2);
 
-        em.clear();
-
-        Optional<Question> q1ById = questionRepository.findById(Q1.getId());
+        em.clear(); //현재 Q1은 영속성에 존재하기때문에, answers에 A1과 A2가 없음. 새로가지고와야함
+        Optional<Question> q1ById = questionRepository.findByIdAndDeletedIsFalse(Q1.getId());
         assertThat(q1ById.get().getAnswers())
             .extracting("id")
             .containsExactly(AnswerTest.A1.getId(), AnswerTest.A2.getId());
