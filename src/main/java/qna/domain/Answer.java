@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -53,7 +54,7 @@ public class Answer extends BaseEntity {
             throw new NotFoundException();
         }
 
-        setWriter(writer);
+        writeBy(writer);
         setQuestion(question);
         this.contents = contents;
     }
@@ -74,7 +75,7 @@ public class Answer extends BaseEntity {
         return writer;
     }
 
-    public void setWriter(User writer) {
+    public void writeBy(User writer) {
         if (this.writer != null) {
             this.writer.removeAnswer(this);
         }
@@ -89,7 +90,13 @@ public class Answer extends BaseEntity {
     }
 
     public void setQuestion(Question question) {
+        if (this.question != null) {
+            this.question.removeAnswer(this);
+        }
         this.question = question;
+        if (!question.hasAnswer(this)) {
+            question.addAnswer(this);
+        }
     }
 
     public String getContents() {
@@ -104,8 +111,12 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory delete(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter(), this.getUpdatedAt());
     }
 
     @Override

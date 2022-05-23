@@ -1,6 +1,10 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -10,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -30,6 +36,9 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    @Embedded
+    Answers answers;
+
     protected Question() {}
 
     public Question(String title, String contents) {
@@ -40,6 +49,7 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {
@@ -95,6 +105,40 @@ public class Question extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void addAnswer(Answer answer) {
+        this.answers.addAnswer(answer);
+        if (answer.getQuestion() != this) {
+            answer.setQuestion(this);
+        }
+    }
+
+    public void removeAnswer(Answer answer) {
+        this.answers.removeAnswer(answer);
+    }
+
+    public boolean hasAnswer(Answer answer) {
+        return this.answers.hasAnswer(answer);
+    }
+
+    public Answers getAnswers() {
+        return answers;
+    }
+
+    public List<DeleteHistory> deleteAll(User loginUser) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(delete(loginUser));
+        deleteHistories.addAll(this.answers.delete(loginUser));
+        return deleteHistories;
+    }
+
+    public DeleteHistory delete(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.deleted = true;
+        return new DeleteHistory(ContentType.QUESTION, this.id, this.writer, this.getUpdatedAt());
     }
 
     @Override
