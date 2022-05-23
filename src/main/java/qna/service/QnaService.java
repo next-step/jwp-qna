@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
-import qna.domain.*;
+import qna.domain.DeleteHistory;
+import qna.domain.Question;
+import qna.domain.User;
 import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
