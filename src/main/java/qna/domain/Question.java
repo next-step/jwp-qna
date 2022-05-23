@@ -12,6 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class Question extends BaseEntity {
@@ -30,6 +34,9 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
 
@@ -72,15 +79,34 @@ public class Question extends BaseEntity {
         return writer;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         this.deleted = true;
+        return createDeleteHistories(loginUser);
+    }
+
+    private List<DeleteHistory> createDeleteHistories(User loginUser) {
+        DeleteHistories deleteQuestionHistories = new DeleteHistories(ContentType.QUESTION, this.id, this.getWriter());
+        List<DeleteHistory> deleteAnswerHistories = makeAnswerDeleted(loginUser);
+        deleteQuestionHistories.add(deleteAnswerHistories);
+
+        return deleteQuestionHistories.getDeleteHistories();
+    }
+
+    private List<DeleteHistory> makeAnswerDeleted(User loginUser) {
+        return this.answers.stream()
+                .map(answer -> answer.delete(loginUser))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -91,6 +117,7 @@ public class Question extends BaseEntity {
                 ", deleted=" + deleted +
                 ", title='" + title + '\'' +
                 ", writer=" + writer +
+                ", answers=" + answers +
                 '}';
     }
 }
