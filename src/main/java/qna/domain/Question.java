@@ -21,6 +21,8 @@ public class Question extends BaseEntity {
     private User writer;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+    @Embedded
+    private Answers answers = Answers.empty();
 
     protected Question() {}
 
@@ -56,6 +58,7 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException(NOT_QUESTION_WRITER);
         }
         this.deleted(Boolean.TRUE);
+        this.answers.deleteAll(loginUser);
     }
 
     private void deleted(boolean deleted) {
