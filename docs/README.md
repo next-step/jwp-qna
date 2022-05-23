@@ -6,3 +6,9 @@
 
 ### 2단계 연관 관계 매핑
 - [x] 객체와 테이블 연관관계 매핑
+
+#### 도메인간 연관관계
+* Question (1) - Answer (N) => 양방향, 외래키관리자=Answer
+* User (1) - Answer (N) => 단방향. 외래키관리자=Answer
+* USer (1) - Question (N) => 단반향, 외래키관리자=Answer
+* User (1) - Question (N) => 단방향, 외래키관리자=DeleteHistory
