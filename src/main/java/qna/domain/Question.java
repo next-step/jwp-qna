@@ -3,8 +3,6 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -67,17 +65,16 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public List<DeleteHistory> delete(User loginUser) {
+    public DeleteHistories delete(User loginUser) {
         validateOwner(loginUser);
         validateDeleted();
 
         this.deleted = true;
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer));
+        DeleteHistories deleteHistories = DeleteHistories.ofQuestion(this);
         deleteHistories.addAll(answers.delete(loginUser));
 
-        return new ArrayList<>(deleteHistories);
+        return deleteHistories;
     }
 
     private void validateOwner(User loginUser) {

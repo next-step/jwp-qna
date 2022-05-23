@@ -5,12 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.NotFoundException;
-import qna.domain.DeleteHistory;
+import qna.domain.DeleteHistories;
 import qna.domain.Question;
 import qna.domain.User;
 import qna.repository.QuestionRepository;
-
-import java.util.List;
 
 @Service
 public class QnaService {
@@ -34,8 +32,8 @@ public class QnaService {
     public void deleteQuestion(User loginUser, Long questionId) {
         Question question = findQuestionById(questionId);
 
-        List<DeleteHistory> deleteHistories = question.delete(loginUser);
+        DeleteHistories deleteHistories = question.delete(loginUser);
 
-        deleteHistoryService.saveAll(deleteHistories);
+        deleteHistoryService.saveAll(deleteHistories.getDeleteHistories());
     }
 }

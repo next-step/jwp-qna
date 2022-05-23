@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -15,11 +13,13 @@ public class QuestionTest {
 
     @Test
     void delete_성공() {
-        List<DeleteHistory> deleteHistories = Q1.delete(UserTest.JAVAJIGI);
+        DeleteHistories deleteHistories = Q1.delete(UserTest.JAVAJIGI);
+
 
         Assertions.assertAll(
                 () -> assertThat(Q1.isDeleted()).isTrue(),
-                () -> assertThat(deleteHistories).containsExactly(new DeleteHistory(ContentType.QUESTION, Q1.getId(), Q1.getWriter()))
+                () -> assertThat(deleteHistories.getDeleteHistories())
+                        .containsExactly(new DeleteHistory(ContentType.QUESTION, Q1.getId(), Q1.getWriter()))
         );
     }
 
@@ -59,7 +59,7 @@ public class QuestionTest {
         Answer answer = new Answer(Q3.getWriter(), Q3, "contents");
 
         Q3.addAnswer(answer);
-        
+
         assertThatThrownBy(() -> Q3.addAnswer(answer))
                 .isInstanceOf(IllegalArgumentException.class);
     }
