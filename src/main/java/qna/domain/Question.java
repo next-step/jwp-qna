@@ -29,18 +29,18 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-//    public Question writeBy(User writer) {
-//        this.writerId = writer.getId();
-//        return this;
-//    }
-//
-//    public boolean isOwner(User writer) {
-//        return this.writerId.equals(writer.getId());
-//    }
-//
-//    public void addAnswer(Answer answer) {
-//        answer.toQuestion(this);
-//    }
+    public Question writeBy(User writer) {
+        this.writerId = writer.getId();
+        return this;
+    }
+
+    public boolean isOwner(User writer) {
+        return this.writerId.equals(writer.getId());
+    }
+
+    public void addAnswer(Answer answer) {
+        answer.toQuestion(this);
+    }
 
     public Long getId() {
         return id;
