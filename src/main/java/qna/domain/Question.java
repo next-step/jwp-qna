@@ -3,9 +3,10 @@ package qna.domain;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import qna.exception.CannotDeleteException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -31,8 +32,8 @@ public class Question extends AbstractDate {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    private List<Answer> answer = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question() {
     }
@@ -53,12 +54,12 @@ public class Question extends AbstractDate {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer newAnswer) {
         newAnswer.toQuestion(this);
-        answer.add(newAnswer);
+        answers.addAnswer(newAnswer);
     }
 
     public Long getId() {
@@ -101,12 +102,27 @@ public class Question extends AbstractDate {
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswer() {
-        return answer;
+    public List<Answer> getAnswers() {
+        return answers.getAnswers();
     }
 
-    public void setAnswer(List<Answer> answer) {
-        this.answer = answer;
+    public void setAnswers(Answers answers) {
+        this.answers = answers;
+    }
+
+
+    public void delete(User loginUser, List<DeleteHistory> deleteHistories) throws Exception {
+        validateDelete(loginUser);
+        answers.validateDelete(loginUser);
+        setDeleted(true);
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now()));
+        answers.deleteAll(loginUser, deleteHistories);
+    }
+
+    public void validateDelete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
 

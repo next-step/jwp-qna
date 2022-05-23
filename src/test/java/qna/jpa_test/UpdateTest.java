@@ -8,11 +8,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-public class AuditingTest {
+public class UpdateTest {
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -25,7 +26,7 @@ public class AuditingTest {
     private Question question;
 
     /**
-     * Auditing 학습 테스트
+     * update 학습 테스트
      **/
 
     @BeforeEach
@@ -36,16 +37,7 @@ public class AuditingTest {
     }
 
     @Test
-    @DisplayName("CreatedDate 학습 테스트")
-    void createdDateTest() {
-        Answer answer = answerRepository.save(new Answer(writer, question, "A1"));
-        LocalDateTime createTime = answer.getCreatedAt();
-        assertThat(createTime).isNotNull();
-        assertThat(createTime).isNotEqualTo(LocalDateTime.now());
-    }
-
-    @Test
-    @DisplayName("LastModifiedDate 학습 테스트")
+    @DisplayName("findAll 사용하면 update 발생")
     void LastModifiedDate() {
         Answer answer = new Answer(writer, question, "before update");
         Answer actual = answerRepository.save(answer);
@@ -54,7 +46,23 @@ public class AuditingTest {
         actual.setContents("after update");
         Answer persist = answerRepository.findAll().get(0);
         LocalDateTime after = persist.getUpdatedAt();
+        //해당 테이블에 있는 모든걸 가져와야해서 update 발생
 
         assertThat(after).isNotEqualTo(before);
+    }
+
+    @Test
+    @DisplayName("findById 사용하면 update 발생하지 않음")
+    void updateFail() {
+        Answer answer = new Answer(writer, question, "before update");
+        Answer actual = answerRepository.save(answer);
+        LocalDateTime before = actual.getCreatedAt();
+
+        actual.setContents("after update");
+        Optional<Answer> update = answerRepository.findById(actual.getId());
+        LocalDateTime after = update.get().getUpdatedAt();
+        //영속성 컨텍스트에서 관리중이어서 update 발생하지 않음
+
+        assertThat(after).isEqualTo(before);
     }
 }

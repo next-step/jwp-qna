@@ -3,10 +3,13 @@ package qna.domain;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -30,7 +33,7 @@ public class Answer extends AbstractDate {
     private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id" , foreignKey = @ForeignKey(name = "fk_answer_to_writer"))
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_to_writer"))
     private User writer;
 
     public Answer() {
@@ -102,6 +105,18 @@ public class Answer extends AbstractDate {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void delete(User loginUser, List<DeleteHistory> deleteHistories) throws CannotDeleteException {
+        validateDelete(loginUser);
+        setDeleted(true);
+        deleteHistories.add(new DeleteHistory(ContentType.ANSWER, getId(), getWriter(), LocalDateTime.now()));
+    }
+
+    public void validateDelete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 작성한 댓글은 삭제할 수 없습니다.");
+        }
     }
 
     @Override
