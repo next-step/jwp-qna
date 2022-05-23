@@ -22,7 +22,7 @@ public class Question extends BaseTimeEntity {
     @Column(length = 100, nullable = false)
     private String title;
     @ManyToOne
-    @JoinColumn(name = "writer_id",foreignKey = @ForeignKey(name = "fk_question_writer"))
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
     protected Question() {

@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,15 +40,15 @@ class AnswerRepositoryTest {
         assertThat(answer).isNotNull();
         assertThat(answer.getContents()).isEqualTo("contesnts");
     }
-    
+
     @Test
-    void questionId로_삭제되지_않은_answer들_조회(){
+    void questionId로_삭제되지_않은_answer들_조회() {
         List<Answer> byQuestionIdAndDeletedFalse = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
         assertThat(byQuestionIdAndDeletedFalse).hasSize(1);
     }
 
     @Test
-    void id로_삭제되지_않은_answer조회(){
+    void id로_삭제되지_않은_answer조회() {
         Answer findAnswer = answerRepository.findByIdAndDeletedFalse(1L)
                 .orElseThrow(IllegalArgumentException::new);
         assertThat(findAnswer).isEqualTo(answer);
