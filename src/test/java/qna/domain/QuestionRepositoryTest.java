@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,5 +51,20 @@ class QuestionRepositoryTest {
     void saveWithAnswer() {
         Answer answer2 = answerRepository.findByQuestionIdAndDeletedFalse(question.getId()).stream().findFirst().get();
         assertThat(answer2.getId()).isNotNull();
+    }
+
+    @Test
+    void deleteWithAnswer() {
+        Long questionId = question.getId();
+        Long answerId = answer.getId();
+
+        questionRepository.delete(question);
+        questionRepository.flush();
+
+        Optional<Question> deleteQuestion = questionRepository.findById(questionId);
+        Optional<Answer> deleteAnswer = answerRepository.findById(answerId);
+
+        assertThat(deleteQuestion.isPresent()).isFalse();
+        assertThat(deleteAnswer.isPresent()).isFalse();
     }
 }
