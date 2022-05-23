@@ -19,7 +19,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 public class DeleteHistory{
 
     @Id
@@ -30,10 +29,10 @@ public class DeleteHistory{
     private Long contentId;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "DELETE_BY_ID", foreignKey = @ForeignKey(name = "FK_DeleteHistory_User"))
+    @JoinColumn(name = "DELETE_BY_ID", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedById;
 
-    @CreatedDate
+
     private LocalDateTime createDate = LocalDateTime.now();
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedById) {

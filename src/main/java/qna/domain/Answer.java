@@ -24,11 +24,11 @@ public class Answer extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "FK_Answer_User"))
+    @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
     @ManyToOne(fetch = LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "QUESTION_ID", foreignKey = @ForeignKey(name = "FK_Answer_Question"))
+    @JoinColumn(name = "QUESTION_ID", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
     @Lob
     private String contents;
@@ -57,6 +57,8 @@ public class Answer extends BaseTimeEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+
+        addAnswerToTargetQuestion();
     }
 
     public boolean isOwner(User writer) {
@@ -64,9 +66,26 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
+        if (this.question != null) {
+            removeAnswerFromOriginQuestion();
+        }
         this.question = question;
+        addAnswerToTargetQuestion();
+
     }
 
+    private void addAnswerToTargetQuestion() {
+        this.question.getAnswers().add(this);
+    }
+
+    public void deleteAnswer() {
+        this.deleted = true;
+        removeAnswerFromOriginQuestion();
+    }
+
+    private void removeAnswerFromOriginQuestion() {
+        this.question.getAnswers().remove(this);
+    }
 
     public void setContents(String contents) {
         this.contents = contents;
@@ -110,7 +129,25 @@ public class Answer extends BaseTimeEntity {
 
     @Override
     public String toString() {
-        return "Answer{" + "id=" + id + ", writerId=" + writer.getId() + ", questionId=" + question.getId() + ", contents='" + contents + '\''
+        return "Answer{" + "id=" + id + ", writerId=" + writer.getId() + ", questionId="
+            + question.getId() + ", contents='" + contents + '\''
             + ", deleted=" + deleted + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Answer answer = (Answer) o;
+        return Objects.equals(id, answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

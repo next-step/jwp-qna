@@ -43,11 +43,6 @@ public class DeleteHistoryTest {
     }
 
 
-    @Test
-    public void annotingTest(){
-        DeleteHistory answerSaved = deleteHistoryRepository.save(answer);
-        assertThat(answerSaved.getCreateDate()).isNotNull();
-    }
 
     @Test
     public void cascadePersist(){
