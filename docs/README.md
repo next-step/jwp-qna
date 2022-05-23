@@ -110,9 +110,8 @@ alter table user
 - 답변은 질문 정보를 알수 있다.
 - 다대일 양방향 이며 Answer Entity 가 FK 주인 이다.
 
-- 사용자는 질문 정보들을 가지고 있다.
 - 질문은 사용자를 참조한다.
-- 다대일 양방향 이며 Question Entity 가 FK 주인 이다.
+- 다대일 단방향 이며 Question Entity 가 FK 주인 이다.
 
 - 사용자는 답변 정보들을 가지고 있다.
 - 답변은 사용자를 참조한다.
