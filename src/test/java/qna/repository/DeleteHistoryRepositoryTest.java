@@ -3,7 +3,6 @@ package qna.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static qna.domain.UserTest.JAVAJIGI;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,7 +32,7 @@ class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        deletedBy = userRepository.save(JAVAJIGI);
+        deletedBy = userRepository.save(new User(1L, "woobeen", "password", "name", "drogba02@naver.com"));
         deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, deletedBy,
             LocalDateTime.now());
         deleteHistory2 = new DeleteHistory(ContentType.ANSWER, 1L, deletedBy,
