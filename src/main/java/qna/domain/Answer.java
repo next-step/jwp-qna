@@ -4,7 +4,6 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -13,8 +12,9 @@ public class Answer extends CreatedUpdatedDateEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "WRITER_ID")
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
     @Column(name = "QUESTION_ID")
     private Long questionId;
@@ -43,13 +43,13 @@ public class Answer extends CreatedUpdatedDateEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
+        this.writer = writer;
         this.questionId = question.getId();
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
@@ -65,11 +65,15 @@ public class Answer extends CreatedUpdatedDateEntity {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return writer.getId();
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
+    }
+
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public Long getQuestionId() {
@@ -100,7 +104,7 @@ public class Answer extends CreatedUpdatedDateEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
+                ", writerId=" + writer +
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
