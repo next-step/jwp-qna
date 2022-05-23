@@ -15,11 +15,23 @@ public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
     @BeforeEach
     void init() {
-        answerRepository.saveAll(
-                Arrays.asList(AnswerTest.A1, AnswerTest.A2, AnswerTest.A3)
+        userRepository.saveAll(
+                Arrays.asList(UserTest.JAVAJIGI, UserTest.SANJIGI, UserTest.YONG)
         );
+        questionRepository.saveAll(
+                Arrays.asList(QuestionTest.Q1, QuestionTest.Q2, QuestionTest.Q3)
+        );
+//        answerRepository.saveAll(
+//                Arrays.asList(AnswerTest.A1, AnswerTest.A2, AnswerTest.A3)
+//        );
     }
 
     @Test
@@ -31,6 +43,10 @@ public class AnswerRepositoryTest {
 
     @Test
     void findByQuestionIdAndDeletedFalse() {
+        answerRepository.saveAll(
+                Arrays.asList(AnswerTest.A1, AnswerTest.A2)
+        );
+
         AnswerTest.A1.setDeleted(false);
         AnswerTest.A2.setDeleted(false);
 
@@ -41,6 +57,7 @@ public class AnswerRepositoryTest {
 
     @Test
     void findByIdAndDeletedFalse() {
+        answerRepository.save(AnswerTest.A1);
         AnswerTest.A1.setDeleted(false);
 
         final Answer answer = answerRepository.findByIdAndDeletedFalse(AnswerTest.A1.getId()).get();
