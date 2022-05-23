@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,30 +11,29 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
 public class AnswerTest {
 	public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
 	public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-	
+
 	private static User user;
 	private static Question question;
-	
+
 	@BeforeAll
 	static void setup() {
 		user = new User(1L, "eastStar1129", "password", "JangDongGyu", "eaststar1129@abcd.com");
 		question = new Question(2L, "title2", "contents2").writeBy(user);
 	}
-	
+
 	@Test
 	@DisplayName("생성 실패 테스트")
 	void create_throws_test() {
 		assertAll(
-				() -> assertThrows(UnAuthorizedException.class,
-						() -> new Answer(null, question, "Answers Contents1")),
-				() -> assertThrows(NotFoundException.class,
-						() -> new Answer(user, null, "Answers Contents1")));
+				() -> assertThrows(UnAuthorizedException.class, () -> new Answer(null, question, "Answers Contents1")),
+				() -> assertThrows(NotFoundException.class, () -> new Answer(user, null, "Answers Contents1")));
 	}
 
 	@Test
@@ -62,5 +62,19 @@ public class AnswerTest {
 		Answer answer = new Answer(user, question, "Answers Contents");
 		question.addAnswer(answer);
 		assertEquals(answer.getQuestion(), question);
+	}
+
+	@Test
+	@DisplayName("답변삭제 테스트")
+	void answer_delete_test() throws CannotDeleteException {
+		Answer answer = new Answer(user, question, "Answers Contents");
+		assertNotNull(answer.delete(user));
+	}
+
+	@Test
+	@DisplayName("답변달기 실패 테스트")
+	void answer_delete_fail_test() throws CannotDeleteException {
+		Answer answer = new Answer(user, question, "Answers Contents");
+		assertThrows(CannotDeleteException.class, () -> answer.delete(UserTest.SANJIGI));
 	}
 }
