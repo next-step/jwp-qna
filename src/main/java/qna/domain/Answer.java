@@ -16,8 +16,9 @@ public class Answer extends CreatedUpdatedDateEntity {
     @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @Column(name = "QUESTION_ID")
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "QUESTION_ID", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     @Lob
     private String contents;
@@ -44,7 +45,7 @@ public class Answer extends CreatedUpdatedDateEntity {
         }
 
         this.writer = writer;
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -53,35 +54,19 @@ public class Answer extends CreatedUpdatedDateEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writer.getId();
-    }
-
     public User getWriter() {
         return writer;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
@@ -105,7 +90,7 @@ public class Answer extends CreatedUpdatedDateEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writer=" + writer +
-                ", questionId=" + questionId +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

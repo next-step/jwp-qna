@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,11 +22,14 @@ public class AnswerTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @BeforeEach
     void setUp() {
         UserTest.JAVAJIGI.setId(null);
         userRepository.save(UserTest.JAVAJIGI);
+        A1.toQuestion(questionRepository.save(QuestionTest.Q1));
     }
 
 
@@ -46,7 +48,14 @@ public class AnswerTest {
     void identityTest() {
         Answer expected = answerRepository.save(A1);
         Answer answer = answerRepository.findById(expected.getId()).get();
-        assertThat(expected).isSameAs(answer);
+        assertAll(
+                () -> assertThat(expected.getContents()).isEqualTo(answer.getContents()),
+                () -> assertThat(expected.getId()).isEqualTo(answer.getId()),
+                () -> assertThat(expected.getUpdatedAt()).isEqualTo(answer.getUpdatedAt()),
+                () -> assertThat(expected.getCreatedAt()).isEqualTo(answer.getCreatedAt()),
+                () -> assertThat(expected.getWriter()).isEqualTo(answer.getWriter()),
+                () -> assertThat(expected.getQuestion()).isEqualTo(answer.getQuestion())
+        );
     }
 
 
@@ -67,4 +76,10 @@ public class AnswerTest {
         assertThat(savedAnswer.getWriter()).isSameAs(UserTest.JAVAJIGI);
     }
 
+    @DisplayName("Answer 와 Question 간의 다대일 관계 테스트")
+    @Test
+    void manyToOneAnswerAndQuestionTest() {
+        Answer savedAnswer = answerRepository.save(A1);
+        assertThat(savedAnswer.getQuestion()).isSameAs(A1.getQuestion());
+    }
 }
