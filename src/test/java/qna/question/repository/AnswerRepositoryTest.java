@@ -46,7 +46,7 @@ class AnswerRepositoryTest {
                 new Answer(writer, question, "content4")
         ));
 
-        List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(1L);
+        List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
         assertThat(result.size()).isGreaterThanOrEqualTo(result.size());
         for (Answer answer : answers) {

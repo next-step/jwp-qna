@@ -28,9 +28,8 @@ public class Question extends BasicEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany
-    @JoinColumn(name = "question_id")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {}
 
@@ -52,23 +51,18 @@ public class Question extends BasicEntity {
     public List<DeleteHistory> deleteQuestionWithRelatedAnswer(
             User loginUser, LocalDateTime deletedAt
     ) throws CannotDeleteException {
-        List<DeleteHistory> result = new ArrayList<>();
-
         this.delete(loginUser);
-        result.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, deletedAt));
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, this.id, this.writer, deletedAt);
+        List<DeleteHistory> answerDeleteHistories = answers.deleteAll(loginUser, deletedAt);
 
-        for (Answer answer : this.answers) {
-            answer.delete(loginUser);
-            result.add(new DeleteHistory(ContentType.ANSWER, this.id, this.writer, deletedAt));
-        }
-
-        return result;
+        return new ArrayList<DeleteHistory>() {{
+            add(deleteHistory);
+            addAll(answerDeleteHistories);
+        }};
     }
 
     public void addAnswer(Answer answer) {
-        if (!this.answers.contains(answer)) {
-            this.answers.add(answer);
-        }
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
 
