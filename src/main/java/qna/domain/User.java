@@ -18,10 +18,11 @@ public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
     @Column(length = 20, nullable = false, unique = true)
-    private String userId;
+    private String username;
 
     @Column(length = 20, nullable = false)
     private String password;
@@ -38,23 +39,26 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "writer")
     private List<Answer> answers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "deletedByUser")
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
+
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
+    public User(String username, String password, String name, String email) {
+        this(null, username, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
+    public User(Long id, String username, String password, String name, String email) {
         this.id = id;
-        this.userId = userId;
+        this.username = username;
         this.password = password;
         this.name = name;
         this.email = email;
     }
 
     public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
+        if (!matchUserId(loginUser.username)) {
             throw new UnAuthorizedException();
         }
 
@@ -67,7 +71,7 @@ public class User extends BaseEntity {
     }
 
     private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
+        return this.username.equals(userId);
     }
 
     public boolean matchPassword(String targetPassword) {
@@ -91,12 +95,12 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUsername(String userId) {
+        this.username = userId;
     }
 
     public String getPassword() {
@@ -127,7 +131,7 @@ public class User extends BaseEntity {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", userId='" + userId + '\'' +
+                ", userId='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +

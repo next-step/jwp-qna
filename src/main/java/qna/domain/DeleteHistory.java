@@ -1,5 +1,8 @@
 package qna.domain;
 
+import qna.UnAuthorizedException;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -7,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -15,6 +19,7 @@ import java.util.Objects;
 public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "delete_history_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -23,6 +28,7 @@ public class DeleteHistory {
     private Long contentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User deletedByUser;
 
     private LocalDateTime createDate = LocalDateTime.now();
@@ -33,6 +39,11 @@ public class DeleteHistory {
     public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
+
+        if (Objects.isNull(deletedByUser)) {
+            throw new UnAuthorizedException();
+        }
+
         this.deletedByUser = deletedByUser;
         this.createDate = createDate;
     }

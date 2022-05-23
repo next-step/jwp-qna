@@ -1,22 +1,27 @@
 package qna.domain;
 
+import qna.UnAuthorizedException;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Question extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "question_id")
     private Long id;
 
     @Column(length = 100, nullable = false)
@@ -26,6 +31,7 @@ public class Question extends BaseEntity {
     private String contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User writer;
 
     @OneToMany(mappedBy = "question")
@@ -43,6 +49,11 @@ public class Question extends BaseEntity {
 
     public Question(Long id, User writer, String title, String contents) {
         this.id = id;
+
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
+
         this.writer = writer;
         this.title = title;
         this.contents = contents;

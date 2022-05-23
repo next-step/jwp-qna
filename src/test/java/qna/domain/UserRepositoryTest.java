@@ -21,7 +21,7 @@ class UserRepositoryTest {
         User actual = userRepository.save(expected);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getUserId()).isEqualTo(expected.getUserId()),
+                () -> assertThat(actual.getUsername()).isEqualTo(expected.getUsername()),
                 () -> assertThat(actual.getPassword()).isEqualTo(expected.getPassword()),
                 () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
                 () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail())
@@ -33,7 +33,7 @@ class UserRepositoryTest {
     void findByUserId() {
         String expected = "yulmucha";
         userRepository.save(new User(expected, "1234", "yul", "yul@google.com"));
-        String actual = userRepository.findByUserId(expected).get().getUserId();
+        String actual = userRepository.findByUsername(expected).get().getUsername();
         assertThat(actual).isEqualTo(expected);
     }
 

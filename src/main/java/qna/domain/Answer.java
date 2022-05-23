@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import java.util.Objects;
@@ -18,12 +19,15 @@ public class Answer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "answer_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User writer;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
     private Question question;
 
     @Lob
@@ -41,7 +45,6 @@ public class Answer extends BaseEntity {
 
     public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
-
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
