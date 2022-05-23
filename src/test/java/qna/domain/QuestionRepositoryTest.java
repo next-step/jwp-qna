@@ -21,13 +21,20 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    private Answer answer;
     private Question QUESTION_FALSE;
     private Question QUESTION_TRUE;
 
     @BeforeEach
     void setUp() {
+        answer = new Answer();
+
         QUESTION_FALSE = new Question("title", "contents", false);
         QUESTION_TRUE = new Question("title", "contents", true);
+
+        QUESTION_FALSE.addAnswer(answer);
+        QUESTION_TRUE.addAnswer(answer);
+
         questionRepository.saveAll(Arrays.asList(QUESTION_FALSE, QUESTION_TRUE));
     }
 
@@ -53,5 +60,13 @@ class QuestionRepositoryTest {
     void findByIdAndDeletedFalseWithInvalidId() {
         assertThatThrownBy(() -> questionRepository.findByIdAndDeletedFalse(QUESTION_TRUE.getId())
                 .orElseThrow(NotFoundException::new)).isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void findByIdAndDeletedFalseWithValidIdWithAnswer() {
+        Question question = questionRepository.findByIdAndDeletedFalse(QUESTION_FALSE.getId())
+                .orElseThrow(NotFoundException::new);
+
+        assertThat(question).isEqualTo(QUESTION_FALSE);
     }
 }
