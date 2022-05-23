@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -58,6 +60,16 @@ public class Answer extends BaseEntity {
             this.question = question;
         }
 
+        public AnswerBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public AnswerBuilder contents(String contents) {
+            this.contents = contents;
+            return this;
+        }
+
         private void validateQuestionNotNull(Question question) {
             if (Objects.isNull(question)) {
                 throw new NotFoundException("질문 정보가 없습니다.");
@@ -70,19 +82,20 @@ public class Answer extends BaseEntity {
             }
         }
 
-        public AnswerBuilder id(long id) {
-            this.id = id;
-            return this;
-        }
-
-        public AnswerBuilder contents(String contents) {
-            this.contents = contents;
-            return this;
-        }
-
         public Answer build() {
             return new Answer(this);
         }
+    }
+
+    public DeleteHistory delete(User loginUser, LocalDateTime now) {
+        validateOwnerSameUser(loginUser);
+        this.setDeleted(true);
+        return DeleteHistory.builder()
+                .contentType(ContentType.ANSWER)
+                .contentId(this.getId())
+                .deletedBy(this.getWriter())
+                .createDate(now)
+                .build();
     }
 
     public boolean isOwner(User writer) {
@@ -95,10 +108,6 @@ public class Answer extends BaseEntity {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public User getWriter() {
@@ -115,6 +124,29 @@ public class Answer extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    private void validateOwnerSameUser(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Answer answer = (Answer) o;
+        return Objects.equals(getId(), answer.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 
     @Override

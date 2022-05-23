@@ -16,7 +16,7 @@ import qna.domain.User;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class QuestionRepositoryTest {
+class QuestionRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 

@@ -31,6 +31,7 @@ public class DeleteHistory {
     }
 
     private DeleteHistory(DeleteHistoryBuilder deleteHistoryBuilder) {
+        this.id = deleteHistoryBuilder.id;
         this.contentType = deleteHistoryBuilder.contentType;
         this.contentId = deleteHistoryBuilder.contentId;
         this.deletedBy = deleteHistoryBuilder.deletedBy;
@@ -42,12 +43,18 @@ public class DeleteHistory {
     }
 
     public static class DeleteHistoryBuilder {
+        private Long id;
         private ContentType contentType;
         private Long contentId;
         private User deletedBy;
         private LocalDateTime createDate = LocalDateTime.now();
 
         private DeleteHistoryBuilder() {
+        }
+
+        public DeleteHistoryBuilder id(Long id) {
+            this.id = id;
+            return this;
         }
 
         public DeleteHistoryBuilder contentType(ContentType contentType) {
@@ -84,13 +91,12 @@ public class DeleteHistory {
             return false;
         }
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(
-                contentId, that.contentId) && Objects.equals(deletedBy, that.deletedBy);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedBy);
+        return Objects.hash(id);
     }
 
     @Override

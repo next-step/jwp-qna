@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -64,6 +67,23 @@ public class Question extends BaseEntity {
         }
     }
 
+    public DeleteHistory delete(User loginUser, LocalDateTime now) {
+        validateOwnerSameUser(loginUser);
+        this.setDeleted(true);
+        return DeleteHistory.builder()
+                .contentType(ContentType.QUESTION)
+                .contentId(this.id)
+                .deletedBy(this.getWriter())
+                .createDate(now)
+                .build();
+    }
+
+    private void validateOwnerSameUser(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
@@ -79,10 +99,6 @@ public class Question extends BaseEntity {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -103,6 +119,23 @@ public class Question extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Question question = (Question) o;
+        return Objects.equals(getId(), question.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 
     @Override
