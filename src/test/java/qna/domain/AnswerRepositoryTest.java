@@ -33,7 +33,7 @@ class AnswerRepositoryTest {
 
     @Test
     void select() {
-        Answer answer2 = answerRepository.findByIdAndDeletedFalse(1L).get();
+        Answer answer2 = answerRepository.findByIdAndDeletedFalse(answer.getId()).get();
         assertThat(answer.getId()).isEqualTo(answer2.getId());
     }
 }
