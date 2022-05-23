@@ -37,7 +37,8 @@ class DeleteHistoryRepositoryTest {
     @Test
     void save() {
         // given
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), user, LocalDateTime.now());
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), user,
+                LocalDateTime.now());
 
         // when
         DeleteHistory actual = deleteHistoryRepository.save(deleteHistory);
