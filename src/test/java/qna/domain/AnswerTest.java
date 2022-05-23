@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -81,5 +82,16 @@ public class AnswerTest {
     void manyToOneAnswerAndQuestionTest() {
         Answer savedAnswer = answerRepository.save(A1);
         assertThat(savedAnswer.getQuestion()).isSameAs(A1.getQuestion());
+    }
+
+    @DisplayName("Question 변경시 기존 연결 고리가 끊어진다.")
+    @Test
+    void changeQuestionTest() {
+        Answer savedAnswer = answerRepository.save(AnswerTest.A1);
+        Question oldQuestion = savedAnswer.getQuestion();
+        Question savedQuestion = questionRepository.save(QuestionTest.Q2);
+        savedAnswer.toQuestion(savedQuestion);
+        assertThat(answerRepository.findById(savedAnswer.getId()).get().getQuestion()).isEqualTo(savedQuestion);
+        assertThat(oldQuestion.getAnswers().contains(savedAnswer)).isFalse();
     }
 }

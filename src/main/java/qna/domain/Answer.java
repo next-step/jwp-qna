@@ -54,11 +54,21 @@ public class Answer extends CreatedUpdatedDateEntity {
     }
 
     public void toQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().remove(this);
+        }
+        if (Objects.nonNull(question)) {
+            question.getAnswers().add(this);
+        }
         this.question = question;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public User getWriter() {

@@ -1,17 +1,15 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,6 +21,19 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private AnswerRepository answerRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private final List<Answer> answers = Arrays.asList(AnswerTest.A1, AnswerTest.A2);
+
+    @BeforeEach
+    void setUp() {
+        saveUserBy(answers);
+    }
+
     @DisplayName("동등성 비교테스트")
     @Test
     void identityTest() {
@@ -32,20 +43,46 @@ public class QuestionTest {
         assertThat(isQuestion.get()).isSameAs(savedQuestion);
     }
 
-    @DisplayName("writerID 로 검색하여 동일한 Writer 만 가져오기")
-    @ParameterizedTest
-    @MethodSource("provideQuestion")
-    void findByWriterTest(final Question question) {
-        questionRepository.saveAll(Arrays.asList(Q1, Q2));
-        List<Question> questionList = questionRepository.findByWriterId(question.getWriterId());
-        assertThat(questionList.stream().mapToLong(Question::getWriterId).distinct().count()).isEqualTo(1);
+    @DisplayName("변경 테스트")
+    @Test
+    void changeTest() {
+        Question savedQuestion = questionRepository.save(Q1);
+        savedQuestion.setContents("testContents");
+        Question changedQuestion = questionRepository.findById(savedQuestion.getId()).get();
+        assertThat(changedQuestion).isSameAs(savedQuestion);
     }
 
-    private static Stream<Arguments> provideQuestion() {
-        return Stream.of(
-                Arguments.of(Q1),
-                Arguments.of(Q2)
-        );
+    @DisplayName("Question 에 따른 Answers 를 가져 온다.")
+    @Test
+    void answersTest() {
+        Question savedQuestion = questionRepository.save(Q1);
+        saveAnswerIn(savedQuestion);
+        Question question = questionRepository.findById(savedQuestion.getId()).get();
+        assertThat(question.getAnswers()).contains(AnswerTest.A1, AnswerTest.A2);
     }
 
+    @DisplayName("Qustion 에서 질문을 지우면 연결관계가 끊어진다.")
+    @Test
+    void removeAnswerTest() {
+        Question savedQuestion = questionRepository.save(Q1);
+        List<Answer> answers1 = saveAnswerIn(savedQuestion);
+        savedQuestion.removeAnswer(answers1.get(0));
+        assertThat(savedQuestion.getAnswers().contains(answers1.get(0))).isFalse();
+        assertThat(answerRepository.findById(answers1.get(0).getId()).get().getQuestion()).isNull();
+    }
+
+    private List<Answer> saveAnswerIn(final Question question) {
+        return answers.stream().map((answer) -> {
+            answer.toQuestion(question);
+            return answerRepository.save(answer);
+        }).collect(Collectors.toList());
+    }
+
+    private void saveUserBy(List<Answer> answers) {
+        answers.forEach((answer) -> {
+            User writer = answer.getWriter();
+            writer.setId(null);
+            answer.setWriter(userRepository.save(writer));
+        });
+    }
 }

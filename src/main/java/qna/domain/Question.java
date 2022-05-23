@@ -1,6 +1,9 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Question extends CreatedUpdatedDateEntity {
@@ -14,6 +17,9 @@ public class Question extends CreatedUpdatedDateEntity {
     private Long writerId;
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question")
+    List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -79,6 +85,15 @@ public class Question extends CreatedUpdatedDateEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void removeAnswer(final Answer removeAnswer) {
+        if (Objects.equals(this,removeAnswer.getQuestion())) {
+            removeAnswer.toQuestion(null);
+        }
+    }
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override
