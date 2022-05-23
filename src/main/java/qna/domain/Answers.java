@@ -21,10 +21,10 @@ public class Answers {
         this.answers.add(answer);
     }
 
-    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         List<Answer> notDeletedAnswers = this.answers.stream().filter(answer -> !answer.isDeleted()).collect(Collectors.toList());
 
-        DeleteHistories deleteHistories = new DeleteHistories();
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : notDeletedAnswers) {
             deleteHistories.add(answer.delete(loginUser));
         }
