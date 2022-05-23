@@ -23,11 +23,19 @@ public class DeleteHistory {
 
     protected DeleteHistory() {}
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
         this.createDate = createDate;
+    }
+
+    public static DeleteHistory ofQuestion(Long questionId, User deletedBy, LocalDateTime createDate) {
+        return new DeleteHistory(ContentType.QUESTION, questionId, deletedBy, createDate);
+    }
+
+    public static DeleteHistory ofAnswer(Long answerId, User deletedBy, LocalDateTime createDate) {
+        return new DeleteHistory(ContentType.ANSWER, answerId, deletedBy, createDate);
     }
 
     public Long getId() {
@@ -42,12 +50,13 @@ public class DeleteHistory {
         return Objects.equals(this.id, that.id) &&
                 this.contentType == that.contentType &&
                 Objects.equals(this.contentId, that.contentId) &&
-                Objects.equals(this.deletedBy, that.deletedBy);
+                Objects.equals(this.deletedBy, that.deletedBy) &&
+                Objects.equals(this.createDate, that.createDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.contentType, this.contentId, this.deletedBy);
+        return Objects.hash(this.id, this.contentType, this.contentId, this.deletedBy, this.createDate);
     }
 
     @Override

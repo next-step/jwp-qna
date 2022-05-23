@@ -4,6 +4,7 @@ import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -53,16 +54,24 @@ public class Question extends BaseEntity {
         answer.toQuestion(this);
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException(NOT_QUESTION_WRITER);
         }
         this.deleted(Boolean.TRUE);
-        this.answers.deleteAll(loginUser);
+        return saveDeleteHistories(loginUser);
     }
 
     private void deleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    private DeleteHistories saveDeleteHistories(User loginUser) throws CannotDeleteException {
+        DeleteHistories deleteHistories = DeleteHistories.empty();
+        deleteHistories.addDeleteHistory(
+                DeleteHistory.ofQuestion(this.id, loginUser, LocalDateTime.now()));
+        deleteHistories.addAll(this.answers.deleteAll(loginUser));
+        return deleteHistories;
     }
 
     public Long getId() {

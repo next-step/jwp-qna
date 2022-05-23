@@ -5,6 +5,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -54,11 +55,12 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException(NOT_ANSWER_WRITER);
         }
         this.deleted(Boolean.TRUE);
+        return DeleteHistory.ofAnswer(this.id, loginUser, LocalDateTime.now());
     }
 
     private void deleted(boolean deleted) {
