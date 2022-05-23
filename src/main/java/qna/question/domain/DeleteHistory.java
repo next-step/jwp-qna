@@ -32,6 +32,10 @@ public class DeleteHistory {
 
     protected DeleteHistory() {}
 
+    public ContentType getContentType() {
+        return this.contentType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

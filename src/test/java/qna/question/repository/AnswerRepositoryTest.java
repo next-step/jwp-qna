@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import qna.question.domain.Answer;
 import qna.question.domain.Question;
+import qna.question.exception.CannotDeleteException;
 import qna.user.domain.User;
 import qna.user.repository.UserRepository;
 
@@ -45,7 +46,7 @@ class AnswerRepositoryTest {
                 new Answer(writer, question, "content4")
         ));
 
-        List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(1L);
+        List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
         assertThat(result.size()).isGreaterThanOrEqualTo(result.size());
         for (Answer answer : answers) {
@@ -63,14 +64,14 @@ class AnswerRepositoryTest {
         assertThat(result.isPresent()).isTrue();
         assertThat(result.get().getId()).isEqualTo(savedAnswer.getId());
         assertThat(result.get().getWriter()).isEqualTo(savedAnswer.getWriter());
-        assertThat(result.get().getQuestion()).isEqualTo(savedAnswer.getQuestion());
+        assertThat(result.get().getQuestionId()).isEqualTo(savedAnswer.getQuestionId());
         assertThat(result.get().getContents()).isEqualTo(savedAnswer.getContents());
     }
 
     @Test
-    void 삭제_상태인_질문_조회시_결과가_없어야_한다() {
+    void 삭제_상태인_질문_조회시_결과가_없어야_한다() throws CannotDeleteException {
         Answer deletedAnswer = new Answer(writer, question, "content");
-        deletedAnswer.answerDelete();
+        deletedAnswer.delete(writer);
         Answer savedAnswer = answerRepository.save(deletedAnswer);
 
         Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());

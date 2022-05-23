@@ -1,6 +1,7 @@
 package qna.question.domain;
 
 import common.entity.BasicEntity;
+import qna.question.exception.CannotDeleteException;
 import qna.question.exception.NotFoundException;
 import qna.user.domain.User;
 import qna.user.exception.UnAuthorizedException;
@@ -18,9 +19,8 @@ public class Answer extends BasicEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-    private Question question;
+    @Column(name = "question_id")
+    private Long questionId;
 
     @Lob
     private String contents;
@@ -44,8 +44,8 @@ public class Answer extends BasicEntity {
         }
 
         this.writer = writer;
-        this.question = question;
         this.contents = contents;
+        question.addAnswer(this);
     }
 
     protected Answer() {}
@@ -55,10 +55,14 @@ public class Answer extends BasicEntity {
     }
 
     public void toQuestion(Question question) {
-        this.question = question;
+        this.questionId = question.getId();
     }
 
-    public void answerDelete() {
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+
         this.deleted = true;
     }
 
@@ -70,8 +74,8 @@ public class Answer extends BasicEntity {
         return this.writer;
     }
 
-    public Question getQuestion() {
-        return this.question;
+    public Long getQuestionId() {
+        return this.questionId;
     }
 
     public String getContents() {
@@ -87,7 +91,7 @@ public class Answer extends BasicEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writer +
-                ", questionId=" + question +
+                ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

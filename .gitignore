@@ -36,3 +36,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+/src/main/java/subway/**
+/src/test/java/subway/**
