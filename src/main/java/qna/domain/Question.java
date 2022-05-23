@@ -16,10 +16,10 @@ public class Question {
     @Column(columnDefinition = "text")
     private String contents;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "writer_id")
     private User user;
-    
+
     @Column(nullable = false)
     private boolean deleted = false;
 
