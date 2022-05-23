@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -36,19 +38,19 @@ public class UserRepositoryTest {
         ).isInstanceOf(DataIntegrityViolationException.class);
     }
 
-//    @Test
-//    @DisplayName("생성일 / 수정일을 입력 확인")
-//    void create_update_at_check() {
-//        userRepository.save(UserTest.JAVAJIGI);
-//        LocalDateTime createAt = UserTest.JAVAJIGI.getCreatedAt();
-//        LocalDateTime updateAt = UserTest.JAVAJIGI.getUpdatedAt();
-//
-//        System.out.println(UserTest.JAVAJIGI.getCreatedAt());
-//        assertThat(createAt).isAfter(LocalDateTime.now());
-//        assertThat(updateAt).isAfter(LocalDateTime.now());
-//
-//        UserTest.JAVAJIGI.setName("김씨");
-//        LocalDateTime changeUpdateAt = UserTest.JAVAJIGI.getUpdatedAt();
-//        assertThat(updateAt).isNotEqualTo(changeUpdateAt);
-//    }
+    @Test
+    @DisplayName("생성일 / 수정일을 입력 확인")
+    void create_update_at_check() {
+        userRepository.save(UserTest.JAVAJIGI);
+        LocalDateTime createAt = UserTest.JAVAJIGI.getCreatedAt();
+        LocalDateTime updateAt = UserTest.JAVAJIGI.getUpdatedAt();
+
+        System.out.println(UserTest.JAVAJIGI.getCreatedAt());
+        assertThat(createAt).isAfter(LocalDateTime.now());
+        assertThat(updateAt).isAfter(LocalDateTime.now());
+
+        UserTest.JAVAJIGI.setName("김씨");
+        LocalDateTime changeUpdateAt = UserTest.JAVAJIGI.getUpdatedAt();
+        assertThat(updateAt).isNotEqualTo(changeUpdateAt);
+    }
 }

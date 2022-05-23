@@ -1,11 +1,11 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,8 +16,12 @@ public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void init() {
+        userRepository.save(UserTest.JAVAJIGI);
         questionRepository.saveAll(
                 Arrays.asList(QuestionTest.Q1, QuestionTest.Q2, QuestionTest.Q3)
         );
@@ -25,10 +29,11 @@ public class QuestionRepositoryTest {
 
     @Test
     void save() {
-        final Question question = questionRepository.save(new Question("title123", "contents123").writeBy(UserTest.JAVAJIGI));
-        assertThat(question).isNotNull();
-        assertThat(question.isOwner(UserTest.JAVAJIGI)).isTrue();
-        assertThat(question.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+        final User javajigi = userRepository.findById(UserTest.JAVAJIGI.getId()).get();
+        final Question question = questionRepository.save(new Question("title123", "contents123").writeBy(javajigi));
+        assertThat(question.getId()).isNotNull();
+        assertThat(question.isOwner(javajigi)).isTrue();
+        assertThat(question.getWriter()).isEqualTo(javajigi);
     }
 
     @Test
@@ -47,5 +52,10 @@ public class QuestionRepositoryTest {
         QuestionTest.Q1.setDeleted(false);
         final Question question = questionRepository.findByIdAndDeletedFalse((QuestionTest.Q1.getId())).get();
         assertThat(question).isNotNull();
+    }
+
+    @AfterEach
+    void after() {
+        questionRepository.deleteAll();
     }
 }

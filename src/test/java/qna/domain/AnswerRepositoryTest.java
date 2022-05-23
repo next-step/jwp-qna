@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -26,8 +25,8 @@ public class AnswerRepositoryTest {
     @Test
     void save() {
         final Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-        assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId());
-        assertThat(answer.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+        assertThat(answer.getQuestion()).isEqualTo(QuestionTest.Q1);
+        assertThat(answer.getWriter()).isEqualTo(UserTest.JAVAJIGI);
     }
 
     @Test
