@@ -18,9 +18,13 @@ public class DeleteHistoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
-        deletedHistory = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
+        UserTest.JAVAJIGI.setId(null);
+        deletedHistory = new DeleteHistory(ContentType.ANSWER, 1L, userRepository.save(UserTest.JAVAJIGI), LocalDateTime.now());
     }
 
     @DisplayName("identityTest 테스트")
