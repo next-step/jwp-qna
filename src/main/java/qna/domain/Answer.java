@@ -67,7 +67,7 @@ public class Answer extends BaseTimeEntity {
     }
 
 
-    public User getWriter() {
+    public User getWrittenBy() {
         return writer;
     }
 
@@ -79,7 +79,7 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void changeDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
