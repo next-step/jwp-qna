@@ -4,13 +4,12 @@ import config.annotation.LocalDataJpaConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import qna.question.domain.Question;
-import qna.question.domain.RelatedAnswersByQuestion;
 import qna.question.exception.CannotDeleteException;
 import qna.user.domain.User;
 import qna.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,10 +59,11 @@ class QuestionRepositoryTest {
 
     @Test
     void 삭제_상태인_질문_조회시_결과가_없어야_한다() throws CannotDeleteException {
+        LocalDateTime now = LocalDateTime.now();
         User user = userRepository.save(new User("userId", "password", "name", "email"));
         Question deletedQuestion = new Question("title", "content").writeBy(user);
         Question savedQuestion = questionRepository.save(deletedQuestion);
-        savedQuestion.deleteQuestionWithRelatedAnswer(user, new RelatedAnswersByQuestion(Collections.emptyList()));
+        savedQuestion.deleteQuestionWithRelatedAnswer(user, now);
 
         Optional<Question> result = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
 

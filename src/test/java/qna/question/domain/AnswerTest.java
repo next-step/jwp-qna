@@ -20,28 +20,28 @@ public class AnswerTest {
 
     @Test
     void 질문에_답변을_추가하면_답변에_해당_질문과_연결되어야_한다() {
-        Answer answer = new Answer(null, JAVAJIGI, QuestionTest.savedQuestion1, "Answers Contents1");
+        Question question = new Question(1L, "content", "title");
+        Answer answer = new Answer(null, JAVAJIGI, question, "Answers Contents1");
 
-        answer.toQuestion(QuestionTest.savedQuestion1);
+        question.addAnswer(answer);
 
-        assertThat(answer.getQuestion()).isEqualTo(QuestionTest.savedQuestion1);
-        assertThat(answer.getQuestion()).isNotEqualTo(QuestionTest.savedQuestion2);
+        assertThat(answer.getQuestionId()).isEqualTo(question.getId());
     }
 
     @Test
     void 답변을_삭제하면_해당_답변은_삭제_여부가_true_이어야_한다() throws CannotDeleteException {
-        Answer answer = new Answer(null, JAVAJIGI, QuestionTest.savedQuestion1, "Answers Contents1");
+        Answer answer = new Answer(null, JAVAJIGI, new Question(), "Answers Contents1");
 
         assertThat(answer.isDeleted()).isFalse();
 
-        answer.answerDelete(JAVAJIGI);
+        answer.delete(JAVAJIGI);
         assertThat(answer.isDeleted()).isTrue();
     }
-    
+
     @Test
     void 답변을_삭제할_때_자신이_생성한_답변이_아닌경우_예외가_발생해야_한다() {
         Answer answer = new Answer(null, JAVAJIGI, QuestionTest.savedQuestion1, "Answers Contents1");
 
-        assertThatThrownBy(() -> answer.answerDelete(SANJIGI)).isInstanceOf(CannotDeleteException.class);
+        assertThatThrownBy(() -> answer.delete(SANJIGI)).isInstanceOf(CannotDeleteException.class);
     }
 }

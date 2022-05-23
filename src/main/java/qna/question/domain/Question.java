@@ -28,6 +28,10 @@ public class Question extends BasicEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    @OneToMany
+    @JoinColumn(name = "question_id")
+    private List<Answer> answers = new ArrayList<>();
+
     protected Question() {}
 
     public Question(String title, String contents) {
@@ -46,16 +50,25 @@ public class Question extends BasicEntity {
     }
 
     public List<DeleteHistory> deleteQuestionWithRelatedAnswer(
-            User loginUser, RelatedAnswersByQuestion relatedAnswers
+            User loginUser, LocalDateTime deletedAt
     ) throws CannotDeleteException {
         List<DeleteHistory> result = new ArrayList<>();
-        this.deleteAndCreateHistory(result, loginUser);
-        relatedAnswers.deleteAndCreateHistory(result, loginUser);
+
+        this.delete(loginUser);
+        result.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, deletedAt));
+
+        for (Answer answer : this.answers) {
+            answer.delete(loginUser);
+            result.add(new DeleteHistory(ContentType.ANSWER, this.id, this.writer, deletedAt));
+        }
 
         return result;
     }
 
     public void addAnswer(Answer answer) {
+        if (!this.answers.contains(answer)) {
+            this.answers.add(answer);
+        }
         answer.toQuestion(this);
     }
 
@@ -83,12 +96,7 @@ public class Question extends BasicEntity {
         return this.writer.getId().equals(writer.getId());
     }
 
-    private void deleteAndCreateHistory(List<DeleteHistory> histories, User loginUser) throws CannotDeleteException {
-        this.questionDelete(loginUser);
-        histories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
-    }
-
-    private void questionDelete(User loginUser) throws CannotDeleteException {
+    private void delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }

@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Test;
 import qna.question.exception.CannotDeleteException;
 import qna.user.domain.UserTest;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,30 +30,31 @@ public class QuestionTest {
 
     @Test
     void 질문을_삭제할_때_작성자가_아니면_예외가_발생해야_한다() {
+        LocalDateTime now = LocalDateTime.now();
         Question question = new Question().writeBy(JAVAJIGI);
 
-        assertThatThrownBy(() -> question.deleteQuestionWithRelatedAnswer(SANJIGI, new RelatedAnswersByQuestion(Collections.emptyList())))
+        assertThatThrownBy(() -> question.deleteQuestionWithRelatedAnswer(SANJIGI, now))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
     void 질문을_삭제할_때_해당_질문의_답변중_자신의_답변이_아닌_답변이_있으면_예외가_발생해야_한다() {
+        LocalDateTime now = LocalDateTime.now();
         Question question = new Question().writeBy(JAVAJIGI);
-        RelatedAnswersByQuestion answers = new RelatedAnswersByQuestion(Arrays.asList(
-                new Answer(null, JAVAJIGI, question, "Contents1"),
-                new Answer(null, SANJIGI, question, "Contents2")
-        ));
+        question.addAnswer(new Answer(null, JAVAJIGI, question, "Contents1"));
+        question.addAnswer(new Answer(null, SANJIGI, question, "Contents2"));
 
-        assertThatThrownBy(() -> question.deleteQuestionWithRelatedAnswer(JAVAJIGI, answers))
+        assertThatThrownBy(() -> question.deleteQuestionWithRelatedAnswer(JAVAJIGI, now))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
     void 답변이_없는_질문을_질문한_사람이_삭제하면_삭제_상태로_변해야_한다() throws CannotDeleteException {
+        LocalDateTime now = LocalDateTime.now();
         Question question = new Question().writeBy(JAVAJIGI);
         boolean questionDeletedStateBeforeDelete = question.isDeleted();
 
-        List<DeleteHistory> result = question.deleteQuestionWithRelatedAnswer(JAVAJIGI, new RelatedAnswersByQuestion(Collections.emptyList()));
+        List<DeleteHistory> result = question.deleteQuestionWithRelatedAnswer(JAVAJIGI, now);
 
         assertThat(questionDeletedStateBeforeDelete).isFalse();
         assertThat(question.isDeleted()).isTrue();
@@ -63,16 +63,15 @@ public class QuestionTest {
 
     @Test
     void 답변이_질문한_사람만_존재하는_질문을_질문한_사람이_삭제하면_질문과_모든_답변이_삭제_상태로_변해야_한다() throws CannotDeleteException {
+        LocalDateTime now = LocalDateTime.now();
         AtomicInteger questionHistoryCount = new AtomicInteger();
         AtomicInteger answerHistoryCount = new AtomicInteger();
         Question question = new Question().writeBy(JAVAJIGI);
-        RelatedAnswersByQuestion answers = new RelatedAnswersByQuestion(Arrays.asList(
-                new Answer(null, JAVAJIGI, question, "Contents1"),
-                new Answer(null, JAVAJIGI, question, "Contents2")
-        ));
+        question.addAnswer(new Answer(null, JAVAJIGI, question, "Contents1"));
+        question.addAnswer(new Answer(null, JAVAJIGI, question, "Contents2"));
         boolean questionDeletedStateBeforeDelete = question.isDeleted();
 
-        List<DeleteHistory> result = question.deleteQuestionWithRelatedAnswer(JAVAJIGI, answers);
+        List<DeleteHistory> result = question.deleteQuestionWithRelatedAnswer(JAVAJIGI, now);
         result.forEach((history) -> {
             if (history.getContentType() == ContentType.QUESTION) {
                 questionHistoryCount.getAndIncrement();

@@ -19,9 +19,8 @@ public class Answer extends BasicEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-    private Question question;
+    @Column(name = "question_id")
+    private Long questionId;
 
     @Lob
     private String contents;
@@ -45,8 +44,8 @@ public class Answer extends BasicEntity {
         }
 
         this.writer = writer;
-        this.question = question;
         this.contents = contents;
+        question.addAnswer(this);
     }
 
     protected Answer() {}
@@ -56,10 +55,10 @@ public class Answer extends BasicEntity {
     }
 
     public void toQuestion(Question question) {
-        this.question = question;
+        this.questionId = question.getId();
     }
 
-    public void answerDelete(User loginUser) throws CannotDeleteException {
+    public void delete(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
@@ -75,8 +74,8 @@ public class Answer extends BasicEntity {
         return this.writer;
     }
 
-    public Question getQuestion() {
-        return this.question;
+    public Long getQuestionId() {
+        return this.questionId;
     }
 
     public String getContents() {
@@ -92,7 +91,7 @@ public class Answer extends BasicEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writer +
-                ", questionId=" + question +
+                ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
