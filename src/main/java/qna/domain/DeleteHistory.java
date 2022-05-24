@@ -21,7 +21,7 @@ public class DeleteHistory {
     private Long contentId;
 
     @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedById;
     private LocalDateTime createDate = LocalDateTime.now();
 
