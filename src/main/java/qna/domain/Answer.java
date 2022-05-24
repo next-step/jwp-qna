@@ -3,6 +3,7 @@ package qna.domain;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.consts.ErrorMessage;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -59,7 +60,7 @@ public class Answer extends BaseTimeEntity{
 
     private void validateUserToDelete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(ErrorMessage.ERROR_INVALID_USER_TO_DELETE_ANSWER);
         }
     }
 
