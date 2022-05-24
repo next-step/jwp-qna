@@ -39,7 +39,7 @@ class QnaServiceTest {
     private Answer answer;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         javaJiGi = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
         sangJiGi = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
@@ -48,7 +48,7 @@ class QnaServiceTest {
     }
 
     @Test
-    public void delete_성공() throws Exception {
+    public void delete_성공() {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
@@ -60,7 +60,7 @@ class QnaServiceTest {
     }
 
     @Test
-    public void delete_다른_사람이_쓴_글() throws Exception {
+    public void delete_다른_사람이_쓴_글() {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(sangJiGi, question.getId()))
@@ -68,7 +68,7 @@ class QnaServiceTest {
     }
 
     @Test
-    public void delete_성공_질문자_답변자_같음() throws Exception {
+    public void delete_성공_질문자_답변자_같음() {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
@@ -80,12 +80,12 @@ class QnaServiceTest {
     }
 
     @Test
-    public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
+    public void delete_답변_중_다른_사람이_쓴_글() {
         Question question = new Question("title1", "contents1").writeBy(javaJiGi);
-        Answer answer2 = new Answer(2L, sangJiGi, question, "Answers Contents1");
+        new Answer(1L, javaJiGi, question, "Answers Contents1");
+        new Answer(2L, sangJiGi, question, "Answers Contents1");
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer, answer2));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(javaJiGi, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);

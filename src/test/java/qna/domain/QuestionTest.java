@@ -40,10 +40,9 @@ public class QuestionTest {
     @Test
     void 내가_작성한_질문만_삭제할_수_있다() {
         // given
-        User user = new User(1L, "user1", "password", "name", "user1@com");
-        Question question = new Question("title", "contents").writeBy(user);
+        User loginUser = new User(1L, "user1", "password", "name", "user1@com");
         // when
-        question.delete(user);
+        question.delete(loginUser);
         // then
         assertThat(question.isDeleted()).isTrue();
     }
@@ -51,10 +50,32 @@ public class QuestionTest {
     @Test
     void 다른_사람의_질문을_삭제할_경우_예외가_발생한다() {
         // given
-        User user = new User(1L, "user1", "password", "name", "user1@com");
-        Question question = new Question("title", "contents").writeBy(user);
-
         User loginUser = new User(2L, "user1", "password", "name", "user1@com");
+        // when & then
+        assertThatThrownBy(() ->
+                question.delete(loginUser)
+        ).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void 질문에_내가_쓴_답변만_있을경우_삭제할_수_있다() {
+        // given
+        User user = new User(1L, "user1", "password", "name", "user1@com");
+        new Answer(user, question, "Answers Contents1");
+        new Answer(user, question, "Answers Contents2");
+        // when
+        question.delete(user);
+        // then
+        assertThat(question.isDeleted()).isTrue();
+    }
+
+    @Test
+    void 다른사람이_작성한_답변을_삭제할_경우_예외가_발생한다() {
+        // given
+        User writer = new User(2L, "user1", "password", "name", "user1@com");
+        new Answer(writer, question, "Answers Contents1");
+
+        User loginUser = new User(1L, "user1", "password", "name", "user1@com");
         // when & then
         assertThatThrownBy(() ->
                 question.delete(loginUser)

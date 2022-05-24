@@ -78,10 +78,27 @@ public class Question extends BaseEntity {
     }
 
     public void delete(User loginUser) {
+        canDelete(loginUser);
+        delete();
+    }
+
+    private void canDelete(User loginUser) {
+        validateDeletionPermission(loginUser);
+        validateMyAnswers(loginUser);
+    }
+
+    private void validateDeletionPermission(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        delete();
+    }
+
+    private void validateMyAnswers(User loginUser) {
+        for (Answer answer : answers) {
+            if (!answer.isOwner(loginUser)) {
+                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            }
+        }
     }
 
     public void remove(Answer answer) {
