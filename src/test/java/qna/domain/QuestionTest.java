@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 public class QuestionTest {
@@ -85,5 +87,21 @@ public class QuestionTest {
         assertThat(q1ById.get().getAnswers())
             .extracting("id")
             .containsExactly(AnswerTest.A1.getId(), AnswerTest.A2.getId());
+    }
+
+    @Test
+    public void deleteQuestionNotMineTest() {
+        Question question = new Question("title1", "contents1").writeBy(
+            UserTest.SANJIGI);
+        Answer answer = new Answer(UserTest.JAVAJIGI, question,
+            "Answers Contents1");
+        questionRepository.save(question);
+        answerRepository.save(answer);
+        System.out.println(question);
+
+        assertThatThrownBy(() -> question.delete(UserTest.JAVAJIGI)).isInstanceOf(
+                CannotDeleteException.class)
+            .hasMessage("질문을 삭제할 권한이 없습니다.");
+
     }
 }
