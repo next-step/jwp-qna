@@ -2,6 +2,7 @@ package qna.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -141,9 +142,13 @@ public class Question extends BaseTimeEntity {
         }
     }
 
-    private List<Long> getAnswerIdsForDelete(){
+    private List<Long> getAnswerIdsForDelete() {
         return answers.stream().map(answer -> answer.getId()).collect(Collectors.toList());
     }
 
+    public DeleteHistory makeDeleteHistory() {
+        return new DeleteHistory(ContentType.QUESTION, this.getId(), this.writer,
+            LocalDateTime.now());
+    }
 
 }

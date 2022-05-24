@@ -3,6 +3,7 @@ package qna.domain;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -149,5 +150,9 @@ public class Answer extends BaseTimeEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public DeleteHistory makeDeleteHistory() {
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
     }
 }
