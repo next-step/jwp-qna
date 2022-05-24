@@ -12,7 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.exception.UnAuthorizedException;
 
-public class DeleteHistoryTest {
+class DeleteHistoryTest {
 
     @Test
     @DisplayName("객체 검증 비교")

@@ -1,7 +1,5 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -13,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import org.hibernate.annotations.Where;
 import qna.common.BaseEntity;
 import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
@@ -36,6 +35,7 @@ public class Question extends BaseEntity {
     private User writer;
 
     @Embedded
+    @Where(clause = "deleted = 'false'")
     private Answers answers = new Answers();
 
     @Column(nullable = false)
@@ -83,17 +83,9 @@ public class Question extends BaseEntity {
         this.answers.add(answer);
     }
 
-    public List<DeleteHistory> delete(User loginUser) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(deleteQuestion(loginUser));
-        deleteHistories.addAll(this.answers.deleteAnswers(loginUser));
-        return deleteHistories;
-    }
-
-    public DeleteHistory deleteQuestion(User loginUser) {
+    public void delete(User loginUser) {
         validateRemovable(loginUser);
         this.deleted = true;
-        return DeleteHistory.delete(this);
     }
 
     public Answers getAnswers() {

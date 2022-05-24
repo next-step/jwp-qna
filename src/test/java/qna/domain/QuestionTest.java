@@ -28,22 +28,23 @@ public class QuestionTest {
         );
     }
 
-//    @Test
-//    @DisplayName("이미 삭제한 질문일 경우 NotFoundException이 발생")
-//    void validateRemovableThenNotFoundException() {
-//        Q1.delete();
-//        assertThatExceptionOfType(NotFoundException.class)
-//                .isThrownBy(() -> Q1.validateRemovable(JAVAJIGI))
-//                .withMessage("이미 삭제된 질문입니다.");
-//    }
+    @Test
+    @DisplayName("이미 삭제한 질문일 경우 NotFoundException이 발생")
+    void validateRemovableThenNotFoundException() {
+        Q1.delete(JAVAJIGI);
 
-//    @Test
-//    @DisplayName("질문 작성자와 로그인한 유저가 다른 경우 삭제가 불가능해 CannotDeleteException이 발생")
-//    void validateRemovableThenCannotDeleteException() {
-//        assertThatExceptionOfType(CannotDeleteException.class)
-//                .isThrownBy(() -> Q2.validateRemovable(JAVAJIGI))
-//                .withMessage("질문을 삭제할 권한이 없습니다.");
-//    }
+        assertThatExceptionOfType(NotFoundException.class)
+                .isThrownBy(() -> Q1.delete(JAVAJIGI))
+                .withMessage("이미 삭제된 질문입니다.");
+    }
+
+    @Test
+    @DisplayName("질문 작성자와 로그인한 유저가 다른 경우 삭제가 불가능해 CannotDeleteException이 발생")
+    void validateRemovableThenCannotDeleteException() {
+        assertThatExceptionOfType(CannotDeleteException.class)
+                .isThrownBy(() -> Q2.delete(JAVAJIGI))
+                .withMessage("질문을 삭제할 권한이 없습니다.");
+    }
 
     @Test
     @DisplayName("현재 질문과 등록하려는 답변의 질문이 일치하지 않는 경우 IllegalArgumentExceptiond이 발생")

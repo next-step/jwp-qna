@@ -6,8 +6,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static qna.domain.UserTest.JAVAJIGI;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,9 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.domain.Answer;
-import qna.domain.DeleteHistories;
-import qna.domain.DeleteHistory;
-import qna.domain.DeleteHistoryContent;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.QuestionTest;
@@ -87,11 +82,7 @@ class QnaServiceTest {
                 .isInstanceOf(CannotDeleteException.class);
     }
 
-    private void verifyDeleteHistories() throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(DeleteHistoryContent.remove(question), question.getWriter()),
-                new DeleteHistory(DeleteHistoryContent.remove(answer), answer.getWriter())
-        );
-        verify(deleteHistoryService).saveAll(new DeleteHistories(deleteHistories));
+    private void verifyDeleteHistories() {
+        verify(deleteHistoryService).insertDeletedQuestionAndLinkedAnswers(question.getId());
     }
 }
