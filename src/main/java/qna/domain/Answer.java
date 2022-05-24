@@ -6,7 +6,8 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity @Table
+@Entity
+@Table
 public class Answer extends Time {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +18,8 @@ public class Answer extends Time {
     @JoinColumn(
             name = "questionId",
             referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "fk_answer_to_question", value = ConstraintMode.NO_CONSTRAINT))
+            foreignKey = @ForeignKey(name = "fk_answer_to_question")
+    )
     private Question question;
     @Lob
     @Column
