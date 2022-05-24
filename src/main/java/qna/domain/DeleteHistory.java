@@ -25,6 +25,14 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
+    public static DeleteHistory ofAnswer(Long contentId, User userWhoDeleted) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, userWhoDeleted, LocalDateTime.now());
+    }
+
+    public static DeleteHistory ofQuestion(Long contentId, User userWhoDeleted) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, userWhoDeleted, LocalDateTime.now());
+    }
+
     public DeleteHistory(ContentType contentType, Long contentId, User userWhoDeleted, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
