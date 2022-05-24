@@ -5,15 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
-import static qna.domain.DeleteHistory.mergeAnswer;
-import static qna.domain.DeleteHistory.mergeQuestion;
-import static qna.domain.DeleteHistory.mergeQuestionAndLinkedAnswer;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.UserTest.JAVAJIGI;
 
-import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.exception.UnAuthorizedException;
@@ -51,7 +45,7 @@ public class DeleteHistoryTest {
     @DisplayName("삭제할 질문이 타입이랑 아이디가 제대로 나왔는지 검증")
     void verifyMergeQuestion() {
         DeleteHistoryContent expected = DeleteHistoryContent.remove(Q1);
-        DeleteHistory actual = mergeQuestion(Q1);
+        DeleteHistory actual = DeleteHistory.delete(Q1);
 
         assertAll(
                 () -> assertThat(actual.contentInformation()).isEqualTo(expected),
@@ -63,20 +57,11 @@ public class DeleteHistoryTest {
     @DisplayName("삭제할 답변이 타입이랑 아이디가 제대로 나왔는지 검증")
     void verifyMergeAnswer() {
         DeleteHistoryContent expected = DeleteHistoryContent.remove(A1);
-        DeleteHistory actual = DeleteHistory.mergeAnswer(A1);
+        DeleteHistory actual = DeleteHistory.delete(A1);
 
         assertAll(
                 () -> assertThat(actual.contentInformation()).isEqualTo(expected),
-                () -> assertThat(actual.getDeleter()).isEqualTo(Q1.getWriter())
+                () -> assertThat(actual.getDeleter()).isEqualTo(A1.getWriter())
         );
-    }
-
-    @Test
-    @DisplayName("삭제할 질문과 답변이 합쳐서 잘 나왔는지 검증")
-    void verifyMergeQuestionAndAnswer() {
-        Answers answers = new Answers(Arrays.asList(A1, A2));
-        List<DeleteHistory> deleteHistories = mergeQuestionAndLinkedAnswer(Q1, answers);
-
-        assertThat(deleteHistories).containsExactly(mergeQuestion(Q1), mergeAnswer(A1), mergeAnswer(A2));
     }
 }

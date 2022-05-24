@@ -63,6 +63,6 @@ class AnswersTest {
         answers.add(new Answer(SANJIGI, Q1, "Answers Contents2"));
 
         assertThatExceptionOfType(CannotDeleteException.class)
-                .isThrownBy(() -> answers.validateRemovable(JAVAJIGI));
+                .isThrownBy(() -> answers.deleteAnswers(JAVAJIGI));
     }
 }

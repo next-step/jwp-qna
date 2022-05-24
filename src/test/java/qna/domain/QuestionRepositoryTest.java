@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 @DataJpaTest
 class QuestionRepositoryTest {
     private Question question;
+    private User mond;
 
     @Autowired
     TestEntityManager testEntityManager;
@@ -72,7 +73,7 @@ class QuestionRepositoryTest {
     void sandAndLogicalDeleteThenFindById() {
         initUserSetting();
         Question expected = questionRepository.save(question);
-        expected.delete();
+        expected.delete(mond);
         entityFlushAndClear();
         Optional<Question> actualOfFindById = questionRepository.findById(expected.getId());
         Optional<Question> actualOfFindByIdAndDeletedFalse = questionRepository.findByIdAndDeletedFalse(
@@ -111,7 +112,7 @@ class QuestionRepositoryTest {
     }
 
     private void initUserSetting() {
-        User mond = userRepository.findByUserId(MOND.getUserId())
+        mond = userRepository.findByUserId(MOND.getUserId())
                 .orElseGet(() -> userRepository.save(MOND));
 
         question = new Question("title", "content").writeBy(mond);

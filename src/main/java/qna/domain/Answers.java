@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
@@ -34,10 +35,10 @@ public class Answers {
         return this.answers.contains(answer);
     }
 
-    public void validateRemovable(User loginUser) {
-        for (Answer answer : this.answers) {
-            answer.validateRemovable(loginUser);
-        }
+    public List<DeleteHistory> deleteAnswers(User loginUser) {
+        return this.answers.stream()
+                .map(it -> it.delete(loginUser))
+                .collect(Collectors.toList());
     }
 
     @Override

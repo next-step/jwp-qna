@@ -1,10 +1,7 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -44,26 +41,11 @@ public class DeleteHistory {
         this.deleter = deleter;
     }
 
-    public static List<DeleteHistory> mergeQuestionAndLinkedAnswer(Question question, Answers answers) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(mergeQuestion(question));
-        deleteHistories.addAll(mergeAnswers(answers));
-        return deleteHistories;
-    }
-
-    static DeleteHistory mergeQuestion(Question question) {
-        question.delete();
+    public static DeleteHistory delete(Question question) {
         return new DeleteHistory(DeleteHistoryContent.remove(question), question.getWriter());
     }
 
-    static List<DeleteHistory> mergeAnswers(Answers answers) {
-        return answers.list().stream()
-                .map(DeleteHistory::mergeAnswer)
-                .collect(Collectors.toList());
-    }
-
-    static DeleteHistory mergeAnswer(Answer answer) {
-        answer.delete();
+    public static DeleteHistory delete(Answer answer) {
         return new DeleteHistory(DeleteHistoryContent.remove(answer), answer.getWriter());
     }
 

@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 @DataJpaTest
 class AnswerRepositoryTest {
     private Answer answer;
+    private User mond, srugi;
 
     @Autowired
     TestEntityManager testEntityManager;
@@ -62,7 +63,7 @@ class AnswerRepositoryTest {
     void verifyUpdateEntity() {
         initUserAndQuestionSetting();
         Answer expected = answerRepository.save(answer);
-        expected.delete();
+        expected.delete(srugi);
         entityFlushAndClear();
         Optional<Answer> actual = answerRepository.findById(expected.getId());
 
@@ -90,7 +91,7 @@ class AnswerRepositoryTest {
     void saveAndLogicalDeleteThenFindById() {
         initUserAndQuestionSetting();
         Answer expected = answerRepository.save(answer);
-        expected.delete();
+        expected.delete(srugi);
         entityFlushAndClear();
         Optional<Answer> actualOfFindById = answerRepository.findById(expected.getId());
         Optional<Answer> actualOfFindByIdAndDeletedFalse = answerRepository.findByIdAndDeletedFalse(expected.getId());
@@ -106,7 +107,7 @@ class AnswerRepositoryTest {
     void verifyDeleteAnswerThenNotResult() {
         initUserAndQuestionSetting();
         Answer expected = answerRepository.save(this.answer);
-        expected.delete();
+        expected.delete(srugi);
         entityFlushAndClear();
 
         List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestion().getId());
@@ -114,9 +115,9 @@ class AnswerRepositoryTest {
     }
 
     private void initUserAndQuestionSetting() {
-        User mond = userRepository.findByUserId(MOND.getUserId())
+        mond = userRepository.findByUserId(MOND.getUserId())
                 .orElseGet(() -> userRepository.save(MOND));
-        User srugi = userRepository.findByUserId(SRUGI.getUserId())
+        srugi = userRepository.findByUserId(SRUGI.getUserId())
                 .orElseGet(() -> userRepository.save(SRUGI));
 
         Question question = new Question("question title", "question contents").writeBy(mond);

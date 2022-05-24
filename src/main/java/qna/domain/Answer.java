@@ -51,7 +51,7 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public void validateRemovable(User user) {
+    private void validateRemovable(User user) {
         validateDeleted();
         validateWriter(user);
     }
@@ -84,8 +84,10 @@ public class Answer extends BaseEntity {
         return contents;
     }
 
-    public void delete() {
+    public DeleteHistory delete(User loginUser) {
+        validateRemovable(loginUser);
         this.deleted = true;
+        return DeleteHistory.delete(this);
     }
 
     public boolean isDeleted() {

@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -58,7 +59,7 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public void validateRemovable(User user) {
+    private void validateRemovable(User user) {
         validateDeleted();
         validateWriter(user);
     }
@@ -82,10 +83,17 @@ public class Question extends BaseEntity {
         this.answers.add(answer);
     }
 
-    public List<DeleteHistory> deleteQuestion(User loginUser) {
+    public List<DeleteHistory> delete(User loginUser) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(deleteQuestion(loginUser));
+        deleteHistories.addAll(this.answers.deleteAnswers(loginUser));
+        return deleteHistories;
+    }
+
+    public DeleteHistory deleteQuestion(User loginUser) {
         validateRemovable(loginUser);
-        validateAnswerRemovable(loginUser);
-        return DeleteHistory.mergeQuestionAndLinkedAnswer(this, this.getAnswers());
+        this.deleted = true;
+        return DeleteHistory.delete(this);
     }
 
     public Answers getAnswers() {
@@ -114,14 +122,6 @@ public class Question extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void delete() {
-        this.deleted = true;
-    }
-
-    private void validateAnswerRemovable(User loginUser) {
-        this.answers.validateRemovable(loginUser);
     }
 
     @Override
