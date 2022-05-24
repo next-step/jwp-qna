@@ -99,7 +99,7 @@ public class Question extends BaseEntity {
         return deleteHistories;
     }
 
-    private void validAndThrows(User loginUser) {
+    private void validate(User loginUser) {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
