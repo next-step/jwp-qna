@@ -1,5 +1,6 @@
 package qna.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 @Embeddable
 public class Answers {
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Answer> list;
 
     public Answers() {
