@@ -25,6 +25,9 @@ public class Question extends BaseTimeEntity{
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
+    @Embedded
+    private Answers answers = new Answers();
+
     protected Question() {
     }
 
