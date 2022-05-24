@@ -6,6 +6,7 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.util.Objects;
 
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -13,10 +14,12 @@ public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @Column(name = "writer_id")
-    private Long writerId;
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
     @Lob
     @Column(name = "contents")
     private String contents;
@@ -41,29 +44,25 @@ public class Answer extends BaseEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        toQuestion(question);
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        return this.writer.matchUserId(writer.getUserId());
     }
 
     public Long getId() {
         return id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
@@ -82,12 +81,20 @@ public class Answer extends BaseEntity {
         deleted = true;
     }
 
+    // 연관 관계 편의 메서드
+    private void toQuestion(Question question) {
+        if (this.question != null) {
+            question.remove(this);
+        }
+        this.question = question;
+        question.add(this);
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writer=" + writer.getUserId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

@@ -53,7 +53,7 @@ public class User extends BaseEntity {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    public boolean matchUserId(String userId) {
         return this.userId.equals(userId);
     }
 

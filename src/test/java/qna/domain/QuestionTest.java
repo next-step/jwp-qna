@@ -22,7 +22,7 @@ public class QuestionTest {
         // when
         Question result = question.writeBy(user);
         // then
-        assertThat(result.getWriterId()).isEqualTo(2L);
+        assertThat(result.getWriter()).isEqualTo(user);
     }
 
     @Test
@@ -33,16 +33,5 @@ public class QuestionTest {
         boolean result = question.isOwner(user);
         // then
         assertThat(result).isTrue();
-    }
-
-    @Test
-    void 답변을_추가한다() {
-        // given
-        Question question = new Question(3L, "title", "contents");
-        Answer answer = new Answer();
-        // when
-        question.addAnswer(answer);
-        // then
-        assertThat(answer.getQuestionId()).isEqualTo(3L);
     }
 }

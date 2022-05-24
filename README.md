@@ -44,4 +44,20 @@
 * BaseEntityTest
     * 엔티티가 생성되면 생성일이 저장된다.
     * 엔티티가 수정되면 수정일이 갱신된다. 
+  
+## 엔티티 매핑 기능 정리
+* 연관관계 매핑
+  * question
+    * user(writer)와 ManyToOne 단방향 매핑
+    * answer와 양방향 매핑
+  * deleteHistory
+    * user(deleter)와 ManyToOne 단방향 매핑
+  * answer
+    * user(writer)와 ManyToOne 단방향 매핑
+    * question과 ManyToOne 양방향 매핑
+    * 연관 관계 편의 메서드 정의
+* QuestionRepository test
+  * 질문에 달린 답변들을 조회한다
+  * n + 1 문제 해결
+
     
