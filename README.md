@@ -96,8 +96,8 @@ alter table question
 - 질문자와 답변자가 다른 경우 답변을 삭제할 수 없다.
 - 질문과 답변 삭제 이력에 대한 정보를 DeleteHistory를 활용해 남긴다.
 ## TODO
-- [] `QnaService.deleteQuestion()` 리팩토링
+- [X] `QnaService.deleteQuestion()` 리팩토링
   - [X] Question 삭제 기능 분리
   - [X] Answer 삭제 기능 분리
-  - [] Answers 일급콜렉션 생성
-  - [] DeleteHistories 일급콜렉션 생성
+  - [X] Answers 일급콜렉션 생성
+  - [X] DeleteHistories 일급콜렉션 생성
