@@ -16,4 +16,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Answer a set a.deleted=true where a.id in :ids")
     int updateDeleteOfAnswers(@Param("ids") List<Long> answerIds);
+
+    @Query("select a from Answer a where a.id in :ids")
+    List<Answer> findAllByIds(@Param("ids") List<Long> answerIds);
 }
