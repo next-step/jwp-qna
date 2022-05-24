@@ -93,11 +93,18 @@ public class Answer extends BaseEntity {
     }
 
     public DeleteHistory delete(User writer) {
+        validateAlreadyDeleted();
         if (isOwner(writer)) {
             setDeleted(true);
             return DeleteHistory.ofAnswer(this);
         }
 
         throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
+
+    private void validateAlreadyDeleted() {
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 답변이라 삭제할 수 없습니다.");
+        }
     }
 }

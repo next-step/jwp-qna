@@ -58,4 +58,16 @@ class AnswerTest {
 
         assertTrue(answer.isDeleted());
     }
+
+    @DisplayName("답변이 이미 삭제되었다면 예외가 발생해야 한다")
+    @Test
+    public void delete_test3() {
+        Answer answer = new Answer(writer, question, "contents");
+        answer.setDeleted(true);
+
+        assertThatThrownBy(() -> {
+            answer.delete(writer);
+        }).isInstanceOf(CannotDeleteException.class)
+            .hasMessageContaining("이미 삭제된 답변이라 삭제할 수 없습니다.");
+    }
 }
