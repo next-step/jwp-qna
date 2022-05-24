@@ -122,7 +122,7 @@ public class Question extends BaseTimeEntity {
             '}';
     }
 
-    public HashMap<ContentType, List> delete(User user) throws CannotDeleteException {
+    public HashMap<ContentType, List> getDeleteIds(User user) throws CannotDeleteException {
         if (!this.isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }

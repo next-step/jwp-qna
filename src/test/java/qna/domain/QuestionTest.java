@@ -108,7 +108,7 @@ public class QuestionTest {
         answerRepository.save(answer);
         System.out.println(question);
 
-        assertThatThrownBy(() -> question.delete(UserTest.JAVAJIGI)).isInstanceOf(
+        assertThatThrownBy(() -> question.getDeleteIds(UserTest.JAVAJIGI)).isInstanceOf(
                 CannotDeleteException.class)
             .hasMessage("질문을 삭제할 권한이 없습니다.");
     }
@@ -121,7 +121,7 @@ public class QuestionTest {
 
         answerRepository.save(A2); //산지기 Question
         System.out.println("ee");
-        assertThatThrownBy(() -> Q1.delete(UserTest.JAVAJIGI))
+        assertThatThrownBy(() -> Q1.getDeleteIds(UserTest.JAVAJIGI))
             .isInstanceOf(CannotDeleteException.class)
             .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 
@@ -135,7 +135,7 @@ public class QuestionTest {
         answerRepository.save(A1); //자바지기 Question
         A2.setWriter(UserTest.JAVAJIGI);
         answerRepository.save(A2); //자바지기 Question
-        HashMap<ContentType, List> deleteTargetIds = Q1.delete(UserTest.JAVAJIGI);
+        HashMap<ContentType, List> deleteTargetIds = Q1.getDeleteIds(UserTest.JAVAJIGI);
 
         assertThat(deleteTargetIds.get(ContentType.QUESTION)).contains(Q1.getId());
         assertThat(deleteTargetIds.get(ContentType.ANSWER))
