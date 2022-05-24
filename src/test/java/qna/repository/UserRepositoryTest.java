@@ -7,10 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.User;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static qna.domain.AnswerTest.A1;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
@@ -23,21 +19,19 @@ class UserRepositoryTest {
     @Test
     @DisplayName("유저를 등록 후 정상적으로 등록되었는지 확인 테스트")
     void save() {
-        userRepository.save(JAVAJIGI);
         userRepository.save(SANJIGI);
 
-        Assertions.assertThat(userRepository.findAll()).size().isEqualTo(2);
+        Assertions.assertThat(userRepository.findAll()).size().isEqualTo(1);
     }
 
     @Test
     @DisplayName("유저를 등록 후 정상적으로 조회되었는지 확인 테스트")
     void find() {
-        userRepository.save(JAVAJIGI);
-
-        User user = userRepository.findByUserId(JAVAJIGI.getUserId()).get();
+        User result = userRepository.save(JAVAJIGI);
+        User user = userRepository.findByUserId(result.getUserId()).get();
 
         Assertions.assertThat(user).isNotNull();
-        Assertions.assertThat(user.getId()).isEqualTo(JAVAJIGI.getId());
+        Assertions.assertThat(user.getId()).isEqualTo(result.getId());
     }
 
 }
