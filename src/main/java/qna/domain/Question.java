@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -36,7 +37,7 @@ public class Question extends AuditEntity {
     @JoinColumn(name = "writer_id")
     private User writer;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.MERGE)
     private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
@@ -112,14 +113,21 @@ public class Question extends AuditEntity {
                 '}';
     }
 
-    public boolean isAbleDelete(User actionUser) throws CannotDeleteException {
+    public void deleteQuestion(User actionUser) throws CannotDeleteException {
         if (!this.isOwner(actionUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        return isNoAnswer();
+        if (this.isNotSameAnswer()) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+
+        this.deleted = true;
+        this.answers.forEach(answer -> answer.setDeleted(true));
     }
 
-    private boolean isNoAnswer() {
-        return this.getAnswers().isEmpty();
+    private boolean isNotSameAnswer() {
+        return this.getAnswers()
+                .stream()
+                .anyMatch((answer) -> !answer.isOwner(this.writer));
     }
 }
