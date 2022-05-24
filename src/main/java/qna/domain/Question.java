@@ -3,6 +3,7 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -46,6 +47,18 @@ public class Question extends BaseTimeEntity{
         return this;
     }
 
+    public void delete(User loginUser) throws CannotDeleteException {
+        validateUserToDelete(loginUser);
+        answers.deleteAnswers(loginUser);
+        setDeleted(true);
+    }
+
+    private void validateUserToDelete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
@@ -79,16 +92,8 @@ public class Question extends BaseTimeEntity{
         this.deleted = deleted;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
-        validateUserToDelete(loginUser);
-        answers.deleteAnswers(loginUser);
-        setDeleted(true);
-    }
-
-    private void validateUserToDelete(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+    public List<Answer> getUnmodifiableAnswers() {
+        return answers.getUnmodifiableAnswers();
     }
 
     @Override
