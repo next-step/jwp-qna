@@ -3,9 +3,9 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,48 +21,54 @@ public class DeleteHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private ContentType contentType;
+    @Embedded
+    private DeleteHistoryContent deleteHistoryContent;
 
-    @Column
-    private Long contentId;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id")
-    private User user;
+    private User deleter;
 
     @Column
     @CreatedDate
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
 
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deleter, LocalDateTime createDate) {
-        if (Objects.isNull(deleter)) {
-            throw new UnAuthorizedException();
+    public DeleteHistory(DeleteHistoryContent deleteHistoryContent, User deleter) {
+        nullCheckContentAndUser(deleteHistoryContent, deleter);
+        this.deleteHistoryContent = deleteHistoryContent;
+        this.deleter = deleter;
+    }
+
+    public static DeleteHistory delete(Question question) {
+        return new DeleteHistory(DeleteHistoryContent.remove(question), question.getWriter());
+    }
+
+    public static DeleteHistory delete(Answer answer) {
+        return new DeleteHistory(DeleteHistoryContent.remove(answer), answer.getWriter());
+    }
+
+    private void nullCheckContentAndUser(DeleteHistoryContent deleteHistoryContent, User deleter) {
+        if (Objects.isNull(deleteHistoryContent)) {
+            throw new IllegalArgumentException("삭제 콘텐츠 정보가 존재하지 않습니다.");
         }
-        this.contentType = contentType;
-        this.contentId = contentId;
-        this.user = deleter;
-        this.createDate = createDate;
+
+        if (Objects.isNull(deleter)) {
+            throw new UnAuthorizedException("유저 정보가 존재하지 않습니다.");
+        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public Long getContentId() {
-        return contentId;
+    public DeleteHistoryContent contentInformation() {
+        return this.deleteHistoryContent;
     }
 
     public User getDeleter() {
-        return user;
+        return deleter;
     }
 
     public LocalDateTime getCreateDate() {
@@ -73,9 +79,8 @@ public class DeleteHistory {
     public String toString() {
         return "DeleteHistory{" +
                 "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", user=" + user +
+                ", deleteHistoryContent=" + deleteHistoryContent +
+                ", deleter=" + deleter +
                 ", createDate=" + createDate +
                 '}';
     }
@@ -89,13 +94,12 @@ public class DeleteHistory {
             return false;
         }
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(
-                contentId, that.contentId) && Objects.equals(user, that.user) && Objects.equals(
-                createDate, that.createDate);
+        return Objects.equals(id, that.id) && Objects.equals(deleteHistoryContent, that.deleteHistoryContent)
+                && Objects.equals(deleter.getId(), that.deleter.getId()) && Objects.equals(createDate, that.createDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, user, createDate);
+        return Objects.hash(id, deleteHistoryContent, deleter.getId(), createDate);
     }
 }

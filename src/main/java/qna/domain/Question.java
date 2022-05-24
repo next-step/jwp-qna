@@ -1,18 +1,20 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import org.hibernate.annotations.Where;
 import qna.common.BaseEntity;
+import qna.exception.CannotDeleteException;
+import qna.exception.NotFoundException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -28,12 +30,13 @@ public class Question extends BaseEntity {
     @Column
     private String contents;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
-    private User user;
+    private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    @Where(clause = "deleted = 'false'")
+    private Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -51,37 +54,46 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Question(String title, String contents, User user) {
-        this(null, title, contents);
-        this.user = user;
-    }
-
     public Question writeBy(User writer) {
-        this.user = writer;
+        this.writer = writer;
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.user.equals(writer);
+    private void validateRemovable(User user) {
+        validateDeleted();
+        validateWriter(user);
     }
 
-    public void addAnswer(Answer answer) {
-        this.answers.add(answer);
-        if (answer.getQuestion() != this) {
-            answer.setQuestion(this);
+    private void validateDeleted() {
+        if (this.deleted) {
+            throw new NotFoundException("이미 삭제된 질문입니다.");
         }
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    private void validateWriter(User user) {
+        if (!this.writer.equals(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    public void addAnswer(Answer answer) {
+        if (answer.getQuestion().getId() != this.getId()) {
+            throw new IllegalArgumentException("현재 질문과 등록하려는 답변에 대한 질문이 일치하지 않습니다.");
+        }
+        this.answers.add(answer);
+    }
+
+    public void delete(User loginUser) {
+        validateRemovable(loginUser);
+        this.deleted = true;
+    }
+
+    public Answers getAnswers() {
+        return this.answers;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -96,20 +108,12 @@ public class Question extends BaseEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
-        return user;
+        return writer;
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -118,7 +122,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", user=" + user +
+                ", user=" + writer +
                 ", answers=" + answers +
                 ", deleted=" + deleted +
                 '}';
@@ -133,13 +137,14 @@ public class Question extends BaseEntity {
             return false;
         }
         Question question = (Question) o;
-        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
-                question.title) && Objects.equals(contents, question.contents) && Objects.equals(user,
-                question.user) && Objects.equals(answers, question.answers);
+        return deleted == question.deleted && Objects.equals(id, question.id) &&
+                Objects.equals(title, question.title) && Objects.equals(contents, question.contents) &&
+                Objects.equals(writer.getId(), question.writer.getId()) &&
+                Objects.equals(answers, question.answers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, user, answers, deleted);
+        return Objects.hash(id, title, contents, writer.getId(), answers, deleted);
     }
 }
