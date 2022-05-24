@@ -2,15 +2,18 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class User {
+public class User extends BaseEntity{
 
     public static final GuestUser GUEST_USER = new GuestUser();
 
