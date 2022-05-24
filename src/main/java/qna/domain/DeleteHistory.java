@@ -30,12 +30,12 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    public static DeleteHistory ofQuestion(Long questionId, User deletedBy, LocalDateTime createDate) {
-        return new DeleteHistory(ContentType.QUESTION, questionId, deletedBy, createDate);
+    public static DeleteHistory ofQuestion(Long questionId, User deletedBy) {
+        return new DeleteHistory(ContentType.QUESTION, questionId, deletedBy, LocalDateTime.now());
     }
 
-    public static DeleteHistory ofAnswer(Long answerId, User deletedBy, LocalDateTime createDate) {
-        return new DeleteHistory(ContentType.ANSWER, answerId, deletedBy, createDate);
+    public static DeleteHistory ofAnswer(Long answerId, User deletedBy) {
+        return new DeleteHistory(ContentType.ANSWER, answerId, deletedBy, LocalDateTime.now());
     }
 
     public Long getId() {

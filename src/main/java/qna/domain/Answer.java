@@ -59,8 +59,8 @@ public class Answer extends BaseEntity {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException(NOT_ANSWER_WRITER);
         }
-        this.deleted(Boolean.TRUE);
-        return DeleteHistory.ofAnswer(this.id, loginUser, LocalDateTime.now());
+        this.deleted(true);
+        return DeleteHistory.ofAnswer(this.id, loginUser);
     }
 
     private void deleted(boolean deleted) {

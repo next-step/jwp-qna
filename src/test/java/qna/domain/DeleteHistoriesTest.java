@@ -13,9 +13,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DeleteHistoriesTest {
-    private static DeleteHistory deleteQuestion = DeleteHistory.ofQuestion(1L, UserTest.JAVAJIGI, LocalDateTime.now());
-    private static DeleteHistory deleteAnswer1 = DeleteHistory.ofAnswer(2L, UserTest.JAVAJIGI, LocalDateTime.now());
-    private static DeleteHistory deleteAnswer2 = DeleteHistory.ofAnswer(3L, UserTest.JAVAJIGI, LocalDateTime.now());
+    private static DeleteHistory deleteQuestion = DeleteHistory.ofQuestion(1L, UserTest.JAVAJIGI);
+    private static DeleteHistory deleteAnswer1 = DeleteHistory.ofAnswer(2L, UserTest.JAVAJIGI);
+    private static DeleteHistory deleteAnswer2 = DeleteHistory.ofAnswer(3L, UserTest.JAVAJIGI);
 
 
     @DisplayName("DeleteHistories 일급 컬렉션 생성")

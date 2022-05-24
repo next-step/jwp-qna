@@ -73,8 +73,7 @@ public class Question extends BaseEntity {
 
     private DeleteHistories saveDeleteHistories(User loginUser) throws CannotDeleteException {
         DeleteHistories deleteHistories = DeleteHistories.empty();
-        deleteHistories.addDeleteHistory(
-                DeleteHistory.ofQuestion(this.id, loginUser, LocalDateTime.now()));
+        deleteHistories.addDeleteHistory(DeleteHistory.ofQuestion(this.id, loginUser));
         deleteHistories.addAll(this.answers.deleteAll(loginUser));
         return deleteHistories;
     }
