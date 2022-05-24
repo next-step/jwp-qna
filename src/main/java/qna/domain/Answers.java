@@ -21,18 +21,18 @@ public class Answers {
         this.values = copy(values);
     }
 
+    private static List<Answer> copy(List<Answer> answers) {
+        return answers.stream()
+                .map(Answer::from)
+                .collect(Collectors.toList());
+    }
+
     public static Answers from(Answers answers) {
         return from(answers.values);
     }
 
     public static Answers from(List<Answer> answers) {
         return new Answers(answers);
-    }
-
-    private static List<Answer> copy(List<Answer> answers) {
-        return answers.stream()
-                .map(Answer::from)
-                .collect(Collectors.toList());
     }
 
     public void add(Answer answer) {

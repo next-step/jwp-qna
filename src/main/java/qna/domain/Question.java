@@ -20,18 +20,26 @@ import qna.exception.CannotDeleteException;
 public class Question extends AuditTimeBaseEntity {
     @Embedded
     private Answers answers;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Lob
     private String contents;
+
     @Column(nullable = false)
     private boolean deleted = false;
+
     @Column(length = 100, nullable = false)
     private String title;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -52,9 +60,6 @@ public class Question extends AuditTimeBaseEntity {
         this.writer = User.from(writer);
         this.deleted = deleted;
         this.answers = Answers.from(answers);
-    }
-
-    protected Question() {
     }
 
     public static Question from(Question question) {
@@ -88,6 +93,14 @@ public class Question extends AuditTimeBaseEntity {
         }
     }
 
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    private void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
@@ -116,14 +129,6 @@ public class Question extends AuditTimeBaseEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    private boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
-    private void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

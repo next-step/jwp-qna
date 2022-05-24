@@ -17,14 +17,14 @@ public class DeleteHistories {
         this.values = copy(values);
     }
 
-    public static DeleteHistories from(List<DeleteHistory> deleteHistories) {
-        return new DeleteHistories(deleteHistories);
-    }
-
     private static List<DeleteHistory> copy(List<DeleteHistory> deleteHistories) {
         return deleteHistories.stream()
                 .map(DeleteHistory::from)
                 .collect(Collectors.toList());
+    }
+
+    public static DeleteHistories from(List<DeleteHistory> deleteHistories) {
+        return new DeleteHistories(deleteHistories);
     }
 
     public List<DeleteHistory> get() {

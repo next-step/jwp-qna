@@ -37,6 +37,9 @@ public class Answer extends AuditTimeBaseEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
+    protected Answer() {
+    }
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
@@ -56,7 +59,16 @@ public class Answer extends AuditTimeBaseEntity {
         this.deleted = deleted;
     }
 
-    protected Answer() {
+    private void validateQuestion(Question question) {
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
+    }
+
+    private void validateWriter(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
     }
 
     public static Answer from(Answer answer) {
@@ -74,8 +86,12 @@ public class Answer extends AuditTimeBaseEntity {
         return DeleteHistory.of(ContentType.ANSWER, id, writer);
     }
 
-    public void toQuestion(Question question) {
-        this.question = question;
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    private void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Long getId() {
@@ -90,32 +106,16 @@ public class Answer extends AuditTimeBaseEntity {
         return question.getId();
     }
 
+    public void toQuestion(Question question) {
+        this.question = question;
+    }
+
     public String getContents() {
         return contents;
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    private boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
-    private void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    private void validateQuestion(Question question) {
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
-    }
-
-    private void validateWriter(User writer) {
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
     }
 
     @Override

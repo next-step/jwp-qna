@@ -26,6 +26,9 @@ public class User extends AuditTimeBaseEntity {
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
+    protected User() {
+    }
+
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
     }
@@ -36,9 +39,6 @@ public class User extends AuditTimeBaseEntity {
         this.password = password;
         this.name = name;
         this.email = email;
-    }
-
-    protected User() {
     }
 
     public static User from(User user) {
