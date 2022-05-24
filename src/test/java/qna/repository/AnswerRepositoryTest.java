@@ -107,31 +107,6 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    void findByQuestionIdAndDeletedFalse() {
-        // given
-        final Answer expected = answerRepository.save(answer);
-
-        // when
-        final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestion().getId());
-
-        // then
-        assertThat(actual).hasSize(1);
-    }
-
-    @Test
-    void findByQuestionIdAndDeletedFalseSetDeletedTrue() {
-        // given
-        final Answer expected = answerRepository.save(answer);
-
-        // when
-        expected.setDeleted(true);
-        final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestion().getId());
-
-        // then
-        assertThat(actual).hasSize(0);
-    }
-
-    @Test
     void findByIdAndDeletedFalse() {
         // given
         final Answer expected = answerRepository.save(answer);
