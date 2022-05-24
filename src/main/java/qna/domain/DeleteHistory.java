@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -28,11 +29,11 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User remover, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User remover) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.remover = remover;
-        this.createDate = createDate;
+        this.createDate = LocalDateTime.now();
     }
 
     @Override
@@ -42,21 +43,12 @@ public class DeleteHistory {
 
         DeleteHistory that = (DeleteHistory) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (contentType != that.contentType) return false;
-        if (contentId != null ? !contentId.equals(that.contentId) : that.contentId != null) return false;
-        if (remover != null ? !remover.equals(that.remover) : that.remover != null) return false;
-        return createDate != null ? createDate.equals(that.createDate) : that.createDate == null;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
-        result = 31 * result + (contentId != null ? contentId.hashCode() : 0);
-        result = 31 * result + (remover != null ? remover.hashCode() : 0);
-        result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
-        return result;
+        return Objects.hashCode(id);
     }
 
     @Override

@@ -1,6 +1,9 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -17,6 +20,10 @@ public class Question extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @Embedded
+    private Answers answers = new Answers();
+
     private boolean deleted = false;
 
     protected Question() {
@@ -38,35 +45,16 @@ public class Question extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer == writer;
+        return Objects.equals(this.writer, writer);
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(id, answer);
         answer.toQuestion(this);
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public User getWriter() {
@@ -77,8 +65,28 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistories delete(User loginUser) {
+        validateOwner(loginUser);
+        validateDeleted();
+
+        this.deleted = true;
+
+        DeleteHistories deleteHistories = DeleteHistories.ofQuestion(this);
+        deleteHistories.addAll(answers.delete(loginUser));
+
+        return deleteHistories;
+    }
+
+    private void validateOwner(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private void validateDeleted() {
+        if (deleted) {
+            throw new CannotDeleteException("이미 삭제된 질문입니다.");
+        }
     }
 
     @Override
