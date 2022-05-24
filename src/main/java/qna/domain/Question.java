@@ -3,7 +3,10 @@ package qna.domain;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -119,9 +122,28 @@ public class Question extends BaseTimeEntity {
             '}';
     }
 
-    public void delete(User user) throws CannotDeleteException {
+    public HashMap<ContentType, List> delete(User user) throws CannotDeleteException {
         if (!this.isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
+        checkAnswersIsMine();
+        HashMap<ContentType, List> deleteTarget = new HashMap<>();
+        deleteTarget.put(ContentType.QUESTION, Arrays.asList(this.id));
+        deleteTarget.put(ContentType.ANSWER, getAnswerIdsForDelete());
+        return deleteTarget;
     }
+
+    private void checkAnswersIsMine() throws CannotDeleteException {
+        for (Answer answer : answers) {
+            if (!answer.isOwner(this.writer)) {
+                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            }
+        }
+    }
+
+    private List<Long> getAnswerIdsForDelete(){
+        return answers.stream().map(answer -> answer.getId()).collect(Collectors.toList());
+    }
+
+
 }

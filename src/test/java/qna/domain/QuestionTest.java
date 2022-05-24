@@ -4,9 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -39,6 +42,9 @@ public class QuestionTest {
 
         Q1.setId(null);
         Q2.setId(null);
+
+        AnswerTest.A1.setId(null);
+        AnswerTest.A2.setId(null);
 
     }
 
@@ -102,6 +108,34 @@ public class QuestionTest {
         assertThatThrownBy(() -> question.delete(UserTest.JAVAJIGI)).isInstanceOf(
                 CannotDeleteException.class)
             .hasMessage("질문을 삭제할 권한이 없습니다.");
+    }
 
+    @Test
+    @DisplayName("answer중 자신의 것이 아닌게 있으면 throw")
+    public void deleteQuestionCheckAnswersIsMineTest() {
+        questionRepository.save(Q1); //자바지기 Question
+        answerRepository.save(AnswerTest.A1); //자바지기 Question
+
+        answerRepository.save(AnswerTest.A2); //산지기 Question
+        System.out.println("ee");
+        assertThatThrownBy(() -> Q1.delete(UserTest.JAVAJIGI))
+            .isInstanceOf(CannotDeleteException.class)
+            .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+
+
+    }
+
+    @Test
+    @DisplayName("삭제시 question은 해당 아이디만, answer은 연관된 모든 answer id가 반환된다")
+    public void deleteQuestionGetTargetId() throws CannotDeleteException {
+        questionRepository.save(Q1); //자바지기 Question
+        answerRepository.save(AnswerTest.A1); //자바지기 Question
+        AnswerTest.A2.setWriter(UserTest.JAVAJIGI);
+        answerRepository.save(AnswerTest.A2); //자바지기 Question
+        HashMap<ContentType, List> deleteTargetIds = Q1.delete(UserTest.JAVAJIGI);
+        assertThat(deleteTargetIds.get(ContentType.QUESTION)).contains(1L);
+        assertThat(deleteTargetIds.get(ContentType.ANSWER))
+            .contains(1L)
+            .contains(2L);
     }
 }
