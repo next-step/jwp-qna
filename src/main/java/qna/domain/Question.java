@@ -4,9 +4,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,7 +36,7 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
@@ -122,15 +121,23 @@ public class Question extends BaseTimeEntity {
             '}';
     }
 
-    public HashMap<ContentType, List> delete(User user) throws CannotDeleteException {
+    public ArrayList<DeleteHistory> delete(User user) throws CannotDeleteException {
         if (!this.isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         checkAnswersIsMine();
-        HashMap<ContentType, List> deleteTarget = new HashMap<>();
-        deleteTarget.put(ContentType.QUESTION, Arrays.asList(this.id));
-        deleteTarget.put(ContentType.ANSWER, getAnswerIdsForDelete());
-        return deleteTarget;
+        ArrayList<DeleteHistory> deleteHistories = getDeleteHistories();
+        executeDelete();
+
+        return deleteHistories;
+    }
+
+    private ArrayList<DeleteHistory> getDeleteHistories() {
+        ArrayList<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(this.makeDeleteHistory());
+        deleteHistories.addAll(
+            answers.stream().map(Answer::makeDeleteHistory).collect(Collectors.toList()));
+        return deleteHistories;
     }
 
     private void checkAnswersIsMine() throws CannotDeleteException {
@@ -141,12 +148,13 @@ public class Question extends BaseTimeEntity {
         }
     }
 
-    private void executeDelete(){
+    private void executeDelete() {
         this.deleted = true;
         for (Answer answer : answers) {
             answer.deleteAnswer();
         }
     }
+
     public DeleteHistory makeDeleteHistory() {
         return new DeleteHistory(ContentType.QUESTION, this.getId(), this.writer,
             LocalDateTime.now());

@@ -2,13 +2,12 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
 import static qna.domain.AnswerTest.A1;
 import static qna.domain.AnswerTest.A2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -108,7 +107,7 @@ public class QuestionTest {
         answerRepository.save(answer);
         System.out.println(question);
 
-        assertThatThrownBy(() -> question.getDeleteIds(UserTest.JAVAJIGI)).isInstanceOf(
+        assertThatThrownBy(() -> question.delete(UserTest.JAVAJIGI)).isInstanceOf(
                 CannotDeleteException.class)
             .hasMessage("질문을 삭제할 권한이 없습니다.");
     }
@@ -121,7 +120,7 @@ public class QuestionTest {
 
         answerRepository.save(A2); //산지기 Question
         System.out.println("ee");
-        assertThatThrownBy(() -> Q1.getDeleteIds(UserTest.JAVAJIGI))
+        assertThatThrownBy(() -> Q1.delete(UserTest.JAVAJIGI))
             .isInstanceOf(CannotDeleteException.class)
             .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 
@@ -135,12 +134,14 @@ public class QuestionTest {
         answerRepository.save(A1); //자바지기 Question
         A2.setWriter(UserTest.JAVAJIGI);
         answerRepository.save(A2); //자바지기 Question
-        HashMap<ContentType, List> deleteTargetIds = Q1.delete(UserTest.JAVAJIGI);
+        ArrayList<DeleteHistory> deleteHistories = Q1.delete(UserTest.JAVAJIGI);
 
-        assertThat(deleteTargetIds.get(ContentType.QUESTION)).contains(Q1.getId());
-        assertThat(deleteTargetIds.get(ContentType.ANSWER))
-            .contains(A1.getId())
-            .contains(A2.getId());
+        assertThat(deleteHistories)
+            .extracting("contentType", "contentId")
+            .contains(tuple(ContentType.QUESTION, Q1.getId()))
+            .contains(tuple(ContentType.ANSWER, A1.getId()))
+            .contains(tuple(ContentType.ANSWER, A2.getId()));
+
     }
 
     @Test
