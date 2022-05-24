@@ -10,7 +10,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
-
     private Question yangsQuestion;
     private User yang;
     private User wooobo;
@@ -20,7 +19,6 @@ public class QuestionTest {
         yang = new User("yangsi", "password", "yang", "rhfpdk92@naver.com");
         wooobo = new User("wooobo", "password", "wooobo", "email@naver.com");
         yangsQuestion = new Question("title", "contents", false).writeBy(yang);
-
     }
 
     @Test
