@@ -25,9 +25,9 @@ public class AnswerRepositoryTest {
     @Test
     public void findById() {
         //given
-        Answer expected = answerRepository.save(AnswerTest.A1);
+        Answer expected = answerRepository.save(AnswerTest.A2);
         //when
-        Answer actual = answerRepository.findById(AnswerTest.A1.getId()).get();
+        Answer actual = answerRepository.findById(expected.getId()).get();
         //then
         assertThat(actual).isEqualTo(expected);
     }

@@ -15,11 +15,13 @@ public class UserRepositoryTest {
     @Test
     void save() {
         //given
-        User expected = UserTest.JAVAJIGI;
+        User expected = UserTest.SANJIGI;
         //when
         User actual = userRepository.save(expected);
         //then
-        assertThat(actual).isEqualTo(expected);
+        //assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isNotNull();
+        assertThat(actual.equalsNameAndEmail(expected));
     }
 
     @Test

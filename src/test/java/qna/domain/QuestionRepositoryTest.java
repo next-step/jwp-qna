@@ -25,7 +25,7 @@ public class QuestionRepositoryTest {
     @Test
     public void findById() {
         //given
-        Question expected = questionRepository.save(QuestionTest.Q1);
+        Question expected = questionRepository.save(QuestionTest.Q2);
         //when
         Question actual = questionRepository.findById(expected.getId()).get();
         //then
