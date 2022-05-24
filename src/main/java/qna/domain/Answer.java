@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
@@ -53,11 +54,12 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         this.deleted = true;
+        return DeleteHistory.ofAnswer(this.id, loginUser, LocalDateTime.now());
     }
 
     public void toQuestion(Question question) {

@@ -53,6 +53,7 @@ class QuestionRepositoryTest {
     @Test
     void findByIdAndDeletedFalse() {
         //given
+        QuestionTest.Q1.setDeleted(false);
         final Question expected = questionRepository.save(QuestionTest.Q1);
 
         //when
