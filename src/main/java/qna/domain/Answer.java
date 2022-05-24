@@ -12,13 +12,20 @@ public class Answer extends Time {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "writerId",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_answer_writer"),
+            nullable = false
+    )
+    private User writer;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "questionId",
             referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "fk_answer_to_question")
+            foreignKey = @ForeignKey(name = "fk_answer_to_question"),
+            nullable = false
     )
     private Question question;
     @Lob
@@ -45,13 +52,13 @@ public class Answer extends Time {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
+        this.writer = writer;
         this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -66,12 +73,12 @@ public class Answer extends Time {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public Question getQuestion() {
@@ -100,6 +107,6 @@ public class Answer extends Time {
 
     @Override
     public String toString() {
-        return "Answer{" + "id=" + id + ", writerId=" + writerId + ", question=" + question + ", contents='" + contents + '\'' + ", deleted=" + deleted + '}';
+        return "Answer{" + "id=" + id + ", writer=" + writer + ", question=" + question + ", contents='" + contents + '\'' + ", deleted=" + deleted + '}';
     }
 }
