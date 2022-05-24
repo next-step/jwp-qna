@@ -16,17 +16,16 @@ public class Question extends Time {
     @Column
     private String contents;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "writerId",
+    @JoinColumn(name = "writerId",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_question_writer"),
-            nullable = false
-    )
+            nullable = false)
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "question",
+            fetch = FetchType.LAZY)
     private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
@@ -102,12 +101,7 @@ public class Question extends Time {
 
     @Override
     public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writer=" + writer +
-                ", deleted=" + deleted +
-                '}';
+        return "Question{" + "id=" + id + ", title='" + title + '\'' + ", contents='" + contents + '\'' + ", writer=" +
+                writer + ", deleted=" + deleted + '}';
     }
 }

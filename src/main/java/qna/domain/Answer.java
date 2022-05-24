@@ -13,20 +13,16 @@ public class Answer extends Time {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "writerId",
+    @JoinColumn(name = "writerId",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_answer_writer"),
-            nullable = false
-    )
+            nullable = false)
     private User writer;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "questionId",
+    @JoinColumn(name = "questionId",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_answer_to_question"),
-            nullable = false
-    )
+            nullable = false)
     private Question question;
     @Lob
     @Column
@@ -107,6 +103,7 @@ public class Answer extends Time {
 
     @Override
     public String toString() {
-        return "Answer{" + "id=" + id + ", writer=" + writer + ", question=" + question + ", contents='" + contents + '\'' + ", deleted=" + deleted + '}';
+        return "Answer{" + "id=" + id + ", writer=" + writer + ", question=" + question + ", contents='" + contents +
+                '\'' + ", deleted=" + deleted + '}';
     }
 }

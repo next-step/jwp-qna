@@ -16,12 +16,10 @@ public class DeleteHistory {
     @Column
     private Long contentId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "deletedById",
+    @JoinColumn(name = "deletedById",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_delete_history_to_user"),
-            nullable = false
-    )
+            nullable = false)
     private User deleted;
     @Column
     private LocalDateTime createDate;
@@ -37,29 +35,26 @@ public class DeleteHistory {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deleted, that.deleted);
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hash(id, contentType, contentId, deleted);
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DeleteHistory that = (DeleteHistory) o;
+        return Objects.equals(id, that.id) && contentType == that.contentType &&
+                Objects.equals(contentId, that.contentId) && Objects.equals(deleted, that.deleted);
+    }
+
+    @Override
     public String toString() {
-        return "DeleteHistory{" +
-                "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", deleted=" + deleted +
-                ", createDate=" + createDate +
-                '}';
+        return "DeleteHistory{" + "id=" + id + ", contentType=" + contentType + ", contentId=" + contentId +
+                ", deleted=" + deleted + ", createDate=" + createDate + '}';
     }
 }
