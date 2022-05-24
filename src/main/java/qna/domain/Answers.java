@@ -17,6 +17,10 @@ public class Answers {
         answers = new ArrayList<>();
     }
 
+    public Answers(List<Answer> answers){
+        this.answers = answers;
+    }
+
     public void deleteAnswers(User loginUser) throws CannotDeleteException {
         for (Answer answer : answers) {
             answer.delete(loginUser);

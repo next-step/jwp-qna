@@ -56,7 +56,7 @@ class AnswerRepositoryTest {
         assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId()).isPresent()).isEqualTo(resultPresent);
     }
 
-    private Answer generateAnswer(boolean deleted) {
+    public Answer generateAnswer(boolean deleted) {
         Answer answer = new Answer(user, question, "Answers Contents1");
         if(deleted){
             deleteAnswer(answer, user);

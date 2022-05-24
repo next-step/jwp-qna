@@ -2,6 +2,7 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -35,5 +36,20 @@ public class AnswerTest {
                 () -> assertThat(A1.isOwner(UserTest.JAVAJIGI)).isTrue(),
                 () -> assertThat(A1.isOwner(UserTest.SANJIGI)).isFalse()
         );
+    }
+
+    @Test
+    @DisplayName("Answer 삭제 테스트: 정상")
+    void Answer_삭제() throws CannotDeleteException {
+        A1.delete(UserTest.JAVAJIGI);
+        assertThat(A1.isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Answer 삭제 테스트: 작성자가 맞지 않아 실패")
+    void Answer_삭제_실패() throws CannotDeleteException {
+        assertThatThrownBy(() -> {
+            A1.delete(UserTest.SANJIGI);
+        }).isInstanceOf(CannotDeleteException.class);
     }
 }
