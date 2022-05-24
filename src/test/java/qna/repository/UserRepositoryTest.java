@@ -20,13 +20,13 @@ class UserRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = new User(3L, "mins99", "1234", "ms", "mins99@slipp.net");
+        user = new User("mins99", "1234", "ms", "mins99@slipp.net");
     }
 
     @Test
     void save() {
         // given
-        User expected = new User(4L, "woowahan", "tech", "woowahan", "woowahan@slipp.net");
+        User expected = new User("woowahan", "tech", "woowahan", "woowahan@slipp.net");
 
         // when
         User actual = userRepository.save(expected);

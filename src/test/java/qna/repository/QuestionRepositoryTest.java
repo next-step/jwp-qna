@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Question;
-import qna.domain.UserTest;
+import qna.domain.User;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -18,17 +18,23 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private Question question;
+
+    private User user;
 
     @BeforeEach
     void setUp() {
-        question = new Question(3L, "title3", "contents3").writeBy(UserTest.JAVAJIGI);
+        user = userRepository.save(new User("mins99", "1234", "ms", "mins99@slipp.net"));
+        question = new Question("title3", "contents3").writeBy(user);
     }
 
     @Test
     void save() {
         // given
-        final Question expected = new Question(4L, "title4", "contents4").writeBy(UserTest.JAVAJIGI);
+        final Question expected = new Question("title4", "contents4").writeBy(user);
 
         // when
         final Question actual = questionRepository.save(expected);
@@ -38,7 +44,7 @@ class QuestionRepositoryTest {
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
                 () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
-                () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId())
+                () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter())
         );
     }
 
