@@ -1,9 +1,14 @@
 package qna.domain;
 
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
+@Embeddable
 public class Answers {
+
+    @OneToMany(mappedBy = "question")
     private List<Answer> list;
 
     public Answers() {

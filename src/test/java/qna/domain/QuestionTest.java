@@ -5,7 +5,6 @@ import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -19,13 +18,13 @@ class QuestionTest {
 
     @Test
     void 질문한_유저와_로그인_유저가_같으면_삭제가능() throws CannotDeleteException {
-        aUserQuestion.delete(aUser, new Answers());
+        aUserQuestion.delete(aUser);
     }
 
     @Test
     void 질문한_유저와_로그인_유저가_다르면_삭제불가() {
         assertThatThrownBy(() -> {
-            aUserQuestion.delete(bUser, new Answers());
+            aUserQuestion.delete(bUser);
         }).isInstanceOf(CannotDeleteException.class).hasMessage("질문을 삭제할 권한이 없습니다.");
     }
 
@@ -33,15 +32,16 @@ class QuestionTest {
     void 질문한_유저와_댓글_유저가_다르면_삭제불가() {
         assertThatThrownBy(() -> {
             final Answers answers = new Answers(Arrays.asList(bUserAnswer));
-            aUserQuestion.delete(aUser, answers);
+            aUserQuestion.setAnswers(answers);
+            aUserQuestion.delete(aUser);
         }).isInstanceOf(CannotDeleteException.class).hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 
     @Test
     void 질문_삭제_테스트() throws CannotDeleteException {
         final Answers answers = new Answers(Arrays.asList(aUserAnswer));
-
-        final DeleteHistories history = aUserQuestion.delete(aUser, answers);
+        aUserQuestion.setAnswers(answers);
+        final DeleteHistories history = aUserQuestion.delete(aUser);
 
         assertThat(aUserQuestion.isDeleted()).isTrue();
         history.contains(new DeleteHistory(ContentType.QUESTION, aUserQuestion.getId(), LocalDateTime.now()));
