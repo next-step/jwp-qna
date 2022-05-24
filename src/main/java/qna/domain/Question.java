@@ -3,7 +3,7 @@ package qna.domain;
 import javax.persistence.*;
 
 @Entity
-public class Question {
+public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
