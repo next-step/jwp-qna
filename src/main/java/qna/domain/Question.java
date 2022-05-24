@@ -26,8 +26,8 @@ public class Question extends BaseTimeEntity{
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected  Question() {}
 
@@ -120,10 +120,7 @@ public class Question extends BaseTimeEntity{
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
         deleteHistories.add(delete());
-
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.deleteByLoginUser(loginUser));
-        }
+        deleteHistories.addAll(answers.deleteByLoginUser(loginUser));
 
         return deleteHistories;
     }
