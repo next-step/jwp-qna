@@ -6,16 +6,19 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
-@Table
+@Entity @Table
 public class Answer extends Time {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
     private Long writerId;
-    @Column
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "questionId",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_answer_to_question", value = ConstraintMode.NO_CONSTRAINT))
+    private Question question;
     @Lob
     @Column
     private String contents;
@@ -41,7 +44,7 @@ public class Answer extends Time {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -50,7 +53,7 @@ public class Answer extends Time {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -69,12 +72,12 @@ public class Answer extends Time {
         this.writerId = writerId;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public String getContents() {
@@ -95,12 +98,6 @@ public class Answer extends Time {
 
     @Override
     public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+        return "Answer{" + "id=" + id + ", writerId=" + writerId + ", question=" + question + ", contents='" + contents + '\'' + ", deleted=" + deleted + '}';
     }
 }

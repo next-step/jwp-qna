@@ -1,6 +1,8 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
@@ -17,6 +19,9 @@ public class Question extends Time {
     private Long writerId;
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -42,6 +47,7 @@ public class Question extends Time {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
@@ -82,6 +88,10 @@ public class Question extends Time {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override

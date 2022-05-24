@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,9 +19,10 @@ public class AnswerTest {
     private AnswerRepository answerRepository;
 
     @Test
+    @DisplayName("새로운_객체를_영속화하게_되면_발급된_Id_를_확인할_수_있다")
     void save() {
-        Answer expected = A1;
-        Answer actual = answerRepository.save(expected);
-        assertAll(() -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted()));
+        assertThat(A1.getId()).isNull();
+        answerRepository.save(A1);
+        assertThat(A1.getId()).isNotNull();
     }
 }
