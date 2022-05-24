@@ -1,7 +1,9 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,5 +29,12 @@ public class AnswerTest {
         assertThatThrownBy(
                 () -> answer.validateOwner(UserTest.SANJIGI)
         ).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @DisplayName("delete 메서드는 답변에 대한 삭제 히스토리를 생성한다.")
+    @Test
+    void delete() {
+        final DeleteHistory deleteHistory = answer.delete();
+        assertThat(deleteHistory).isEqualTo(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
     }
 }

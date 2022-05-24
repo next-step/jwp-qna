@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -128,6 +129,16 @@ public class Question extends BaseTimeEntity {
         for (Answer answer : getAnswersDeletedFalse()) {
             answer.validateOwner(loginUser);
         }
+    }
+
+    public List<DeleteHistory> delete() {
+        final List<DeleteHistory> deleteHistories = new ArrayList<>();
+        this.setDeleted(true);
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
+        for (Answer answer : getAnswersDeletedFalse()) {
+            deleteHistories.add(answer.delete());
+        }
+        return deleteHistories;
     }
 
     @Override
