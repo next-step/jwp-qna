@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
@@ -36,10 +37,9 @@ public class QuestionTest {
     void failDeleteQuestionNotSameAnswerWriter() {
         User actionUser = UserTest.SANJIGI;
         Question q1 = new Question("질문", "질문없음").writeBy(actionUser);
-        q1.addAnswer(new Answer(actionUser ,q1, "답변"));
-        q1.addAnswer(new Answer(actionUser ,q1, "답변2"));
-        q1.addAnswer(new Answer(UserTest.JAVAJIGI ,q1, "답변3"));
-
+        q1.addAnswer(new Answer(actionUser, q1, "답변"));
+        q1.addAnswer(new Answer(actionUser, q1, "답변2"));
+        q1.addAnswer(new Answer(UserTest.JAVAJIGI, q1, "답변3"));
 
         assertThatThrownBy(() -> q1.deleteQuestion(UserTest.SANJIGI))
                 .isInstanceOf(CannotDeleteException.class);
@@ -50,9 +50,9 @@ public class QuestionTest {
     void successDeleteQuestionSameAnswerWriter() throws CannotDeleteException {
         User actionUser = UserTest.SANJIGI;
         Question q1 = new Question("질문", "질문없음").writeBy(actionUser);
-        q1.addAnswer(new Answer(actionUser,q1, "답변"));
-        q1.addAnswer(new Answer(actionUser,q1, "답변2"));
-        q1.addAnswer(new Answer(actionUser,q1, "답변3"));
+        q1.addAnswer(new Answer(actionUser, q1, "답변"));
+        q1.addAnswer(new Answer(actionUser, q1, "답변2"));
+        q1.addAnswer(new Answer(actionUser, q1, "답변3"));
 
         q1.deleteQuestion(actionUser);
 
@@ -62,6 +62,25 @@ public class QuestionTest {
         );
     }
 
+    @Test
+    @DisplayName("삭제 이력을 생성한다.")
+    void makeDeleteHistoryes() {
+        User actionUser = UserTest.SANJIGI;
+        Question q1 = new Question("질문", "질문없음").writeBy(actionUser);
+        q1.addAnswer(new Answer(actionUser, q1, "답변"));
+        q1.addAnswer(new Answer(actionUser, q1, "답변2"));
+        q1.addAnswer(new Answer(actionUser, q1, "답변3"));
 
+        final List<DeleteHistory> deleteHistories = q1.makeDeleteHistoryes();
 
+        final Long answerCount = deleteHistories.stream()
+                .filter((deleteHistory -> deleteHistory.getContentType() == ContentType.ANSWER))
+                .count();
+
+        assertAll(
+                () -> assertThat(deleteHistories).hasSize(4),
+                () -> assertThat(answerCount).isEqualTo(3L)
+        );
+
+    }
 }

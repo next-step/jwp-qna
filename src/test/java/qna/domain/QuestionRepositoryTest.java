@@ -118,7 +118,7 @@ class QuestionRepositoryTest {
 
         assertAll(
                 () -> assertThat(findQuestion).isPresent(),
-                () ->  assertThat(findQuestion.get().isOwner(testUser)).isTrue()
+                () -> assertThat(findQuestion.get().isOwner(testUser)).isTrue()
         );
     }
 }
