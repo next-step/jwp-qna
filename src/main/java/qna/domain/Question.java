@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,8 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
@@ -36,8 +37,8 @@ public class Question extends BaseTimeEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private final List<Answer> answerList = new ArrayList<>();
+    @Embedded
+    private final Answers answers = new Answers();
 
     protected Question() {
 
@@ -63,7 +64,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        this.answerList.add(answer);
+        this.answers.addAnswer(answer);
         answer.toQuestion(this);
     }
 
@@ -91,12 +92,27 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public List<DeleteHistory> deleteQuestion(final User loginUser) {
+        invalidQuestionCheck(loginUser);
+        this.deleted = true;
+        return createDeleteHistory();
     }
 
-    public List<Answer> getAnswers() {
-        return answerList;
+    private void invalidQuestionCheck(final User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        if (!answers.isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
+    private List<DeleteHistory> createDeleteHistory() {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer));
+        deleteHistories.addAll(answers.deleteAnswers());
+        return deleteHistories;
     }
 
     @Override
