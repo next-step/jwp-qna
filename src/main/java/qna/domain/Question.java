@@ -12,12 +12,14 @@ public class Question extends BaseTimeEntity {
     @Lob
     @Column(nullable = false)
     private String contents;
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
 
-    protected Question(){}
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -30,12 +32,12 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -67,11 +69,11 @@ public class Question extends BaseTimeEntity {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return writer.getId();
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriterId(User writer) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -88,7 +90,7 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 ", createAt=" + getCreateAt() +
                 ", updateAt=" + getUpdateAt() +

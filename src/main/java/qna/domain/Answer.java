@@ -11,7 +11,7 @@ public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "wirte_id")
+    @Column(name = "write_id")
     private Long writerId;
     @Column(name = "question_id")
     private Long questionId;
