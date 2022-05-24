@@ -106,7 +106,6 @@ public class Question extends CreatedUpdatedDateEntity {
                 ", contents='" + contents + '\'' +
                 ", writer=" + writer +
                 ", deleted=" + deleted +
-                ", answers=" + answers +
                 '}';
     }
 }
