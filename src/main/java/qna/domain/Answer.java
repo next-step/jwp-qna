@@ -73,9 +73,9 @@ public class Answer extends BaseEntity {
         return this;
     }
 
-    public DeleteHistory delete() {
+    public DeleteHistory delete(User deleteUser) {
         setDeleted(true);
-        return new DeleteHistory(ContentType.ANSWER, getId(), LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER, getId(), LocalDateTime.now()).deleteBy(deleteUser);
     }
 
     public void updateContents(String contents) {
