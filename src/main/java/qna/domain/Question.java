@@ -45,6 +45,7 @@ public class Question extends CreatedUpdatedDateEntity {
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
 
