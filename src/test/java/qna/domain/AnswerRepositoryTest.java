@@ -28,7 +28,7 @@ public class AnswerRepositoryTest {
         final User user = createTestUser();
         final Question question = createTestQuestion();
 
-        final Answer saved = answerRepository.save(new Answer("댓글 내용").toQuestion(question).writeBy(user));
+        final Answer saved = answerRepository.save(new Answer(user, question, "댓글 내용"));
 
         assertThat(saved).isNotNull();
     }
@@ -37,7 +37,7 @@ public class AnswerRepositoryTest {
     void 댓글_조회() {
         final User user = createTestUser();
         final Question question = createTestQuestion();
-        final Answer expected = answerRepository.save(new Answer("댓글 내용").toQuestion(question).writeBy(user));
+        final Answer expected = answerRepository.save(new Answer(user, question, "댓글 내용"));
 
         final Answer actual = answerRepository.findById(expected.getId()).get();
 
@@ -48,7 +48,7 @@ public class AnswerRepositoryTest {
     void 질문으로_댓글_조회() {
         final User user = createTestUser();
         final Question question = createTestQuestion();
-        answerRepository.save(new Answer("댓글 내용").toQuestion(question).writeBy(user));
+        answerRepository.save(new Answer(user, question, "댓글 내용"));
 
         List<Answer> answers = answerRepository.findByQuestionId(question.getId());
 
@@ -59,7 +59,7 @@ public class AnswerRepositoryTest {
     void 사용자로_댓글_조회() {
         final User user = createTestUser();
         final Question question = createTestQuestion();
-        answerRepository.save(new Answer("댓글 내용").toQuestion(question).writeBy(user));
+        answerRepository.save(new Answer(user, question, "댓글 내용"));
 
         List<Answer> answers = answerRepository.findByWriterId(user.getId());
 
@@ -70,7 +70,7 @@ public class AnswerRepositoryTest {
     void 댓글_수정() {
         final User user = createTestUser();
         final Question question = createTestQuestion();
-        final Answer answer = answerRepository.save(new Answer("댓글 내용").toQuestion(question).writeBy(user));
+        final Answer answer = answerRepository.save(new Answer(user, question, "댓글 내용"));
 
         answer.updateContents("댓글 수정");
 
@@ -81,7 +81,7 @@ public class AnswerRepositoryTest {
     void 댓글_삭제() {
         final User user = createTestUser();
         final Question question = createTestQuestion();
-        final Answer answer = answerRepository.save(new Answer("댓글 내용").toQuestion(question).writeBy(user));
+        final Answer answer = answerRepository.save(new Answer(user, question, "댓글 내용"));
 
         answerRepository.delete(answer);
 

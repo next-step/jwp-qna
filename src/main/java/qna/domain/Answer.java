@@ -63,11 +63,6 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public Answer toQuestion(Question question) {
-        this.question = question;
-        return this;
-    }
-
     public Answer writeBy(User user) {
         this.writer = user;
         return this;

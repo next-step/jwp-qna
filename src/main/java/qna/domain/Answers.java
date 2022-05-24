@@ -19,13 +19,13 @@ public class Answers {
         this.list = list;
     }
 
+    public void add(Answer answer) {
+        list.add(answer);
+    }
+
     public boolean isQuestionDeletePossible(User user) {
         return list.stream()
                 .allMatch(answer -> answer.isOwner(user));
-    }
-
-    public void updateQuestion(Question update) {
-        list.forEach(answer -> answer.toQuestion(update));
     }
 
     public List<DeleteHistory> delete(User deleteUser) {
@@ -34,9 +34,5 @@ public class Answers {
             history.add(answer.delete(deleteUser));
         }
         return history;
-    }
-
-    public List<Answer> getList() {
-        return list;
     }
 }

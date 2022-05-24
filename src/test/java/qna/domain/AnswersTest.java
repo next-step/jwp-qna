@@ -25,16 +25,6 @@ class AnswersTest {
     }
 
     @Test
-    void 댓글_질문_정보를_업데이트() {
-        final Answers answers = new Answers(Arrays.asList(new Answer(aUser, aUserQuestion, "댓글 내용")));
-        aUserQuestion.setDeleted(true);
-        answers.updateQuestion(aUserQuestion);
-        for (Answer answer : answers.getList()) {
-            assertThat(answer.getQuestion().isDeleted()).isTrue();
-        }
-    }
-
-    @Test
     void 댓글_삭제_테스트() {
         final Answers answers = new Answers(
                 Arrays.asList(
