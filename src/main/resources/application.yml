@@ -1,4 +1,3 @@
-
 spring:
   datasource:
     hikari:
@@ -13,3 +12,6 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL57Dialect
     show-sql: true
+  test:
+    database:
+      replace: NONE
