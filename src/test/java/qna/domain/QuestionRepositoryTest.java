@@ -20,7 +20,7 @@ class QuestionRepositoryTest {
     @Test
     void findById() {
         Optional<Question> optionalQuestion = questionRepository.findById(1L);
-        assertThat(optionalQuestion.isPresent()).isTrue();
+        assertThat(optionalQuestion).isPresent();
 
         Question question = optionalQuestion.get();
         assertAll(
@@ -38,7 +38,10 @@ class QuestionRepositoryTest {
         Question question = questionRepository.save(new Question("세탁", "청소"));
         questionRepository.flush();
 
-        Question savedQuestion = questionRepository.findById(question.getId()).get();
+        Optional<Question> optionalQuestion = questionRepository.findById(question.getId());
+        assertThat(optionalQuestion).isPresent();
+
+        Question savedQuestion = optionalQuestion.get();
         assertAll(
                 () -> assertThat(savedQuestion.getTitle()).isEqualTo("세탁"),
                 () -> assertThat(savedQuestion.getContents()).isEqualTo("청소"),
@@ -51,11 +54,17 @@ class QuestionRepositoryTest {
     @DisplayName("Question 정보 작성자 정보 업데이트 테스트")
     @Test
     void writeBy() {
-        Question question = questionRepository.findById(1L).get();
+        Optional<Question> optionalQuestion = questionRepository.findById(1L);
+        assertThat(optionalQuestion).isPresent();
+
+        Question question = optionalQuestion.get();
         question.writeBy(UserTest.JAVAJIGI);
         questionRepository.flush();
 
-        Question updatedQuestion = questionRepository.findById(1L).get();
+        Optional<Question> optionalUpdatedQuestion = questionRepository.findById(1L);
+        assertThat(optionalUpdatedQuestion).isPresent();
+
+        Question updatedQuestion = optionalUpdatedQuestion.get();
         assertThat(updatedQuestion.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
     }
 
@@ -69,7 +78,10 @@ class QuestionRepositoryTest {
     @DisplayName("삭제되지 않은 Question 정보를 id 및 deleted 로 조회시 테스트")
     @Test
     void findByIdAndDeletedFalse() {
-        Question question = questionRepository.findByIdAndDeletedFalse(3L).get();
+        Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(3L);
+        assertThat(optionalQuestion).isPresent();
+
+        Question question = optionalQuestion.get();
         assertAll(
                 () -> assertThat(question.getId()).isEqualTo(3L),
                 () -> assertThat(question.getTitle()).isEqualTo("차")
@@ -80,6 +92,6 @@ class QuestionRepositoryTest {
     @Test
     void findByIdAndDeletedFalseDeleted() {
         Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(1L);
-        assertThat(optionalQuestion.isPresent()).isFalse();
+        assertThat(optionalQuestion).isNotPresent();
     }
 }

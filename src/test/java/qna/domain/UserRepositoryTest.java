@@ -20,7 +20,7 @@ public class UserRepositoryTest {
     @Test
     void findById() {
         Optional<User> optionalUser = userRepository.findById(1L);
-        assertThat(optionalUser.isPresent()).isTrue();
+        assertThat(optionalUser).isPresent();
 
         User user = optionalUser.get();
         assertAll(
@@ -38,7 +38,7 @@ public class UserRepositoryTest {
     @Test
     void findByUserId() {
         Optional<User> optionalUser = userRepository.findByUserId("user2");
-        assertThat(optionalUser.isPresent()).isTrue();
+        assertThat(optionalUser).isPresent();
 
         User user = optionalUser.get();
         assertAll(
@@ -57,7 +57,7 @@ public class UserRepositoryTest {
         userRepository.save(new User("user3", "aaww", "건담", "ssiaa@naver.com"));
 
         Optional<User> optionalUser = userRepository.findByUserId("user3");
-        assertThat(optionalUser.isPresent()).isTrue();
+        assertThat(optionalUser).isPresent();
 
         User user = optionalUser.get();
         assertAll(
@@ -79,7 +79,7 @@ public class UserRepositoryTest {
         userRepository.flush();
 
         Optional<User> optionalUser = userRepository.findByUserId("user3");
-        assertThat(optionalUser.isPresent()).isTrue();
+        assertThat(optionalUser).isPresent();
 
         User user = optionalUser.get();
         assertAll(

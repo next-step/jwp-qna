@@ -20,7 +20,7 @@ class AnswerRepositoryTest {
     @Test
     void findById() {
         Optional<Answer> optionalAnswer = answerRepository.findById(1L);
-        assertThat(optionalAnswer.isPresent()).isTrue();
+        assertThat(optionalAnswer).isPresent();
 
         Answer answer = optionalAnswer.get();
         assertAll(
@@ -39,7 +39,10 @@ class AnswerRepositoryTest {
         Answer answer = answerRepository.save(new Answer(UserTest.SANJIGI, QuestionTest.Q2, "abc"));
         answerRepository.flush();
 
-        Answer savedAnswer = answerRepository.findById(answer.getId()).get();
+        Optional<Answer> optionalAnswer = answerRepository.findById(answer.getId());
+        assertThat(optionalAnswer).isPresent();
+
+        Answer savedAnswer = optionalAnswer.get();
         assertAll(
                 () -> assertThat(savedAnswer.getWriterId()).isEqualTo(2L),
                 () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(2L),
@@ -54,7 +57,7 @@ class AnswerRepositoryTest {
     @Test
     void findByIdAndDeletedFalse() {
         Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(2L);
-        assertThat(optionalAnswer.isPresent()).isTrue();
+        assertThat(optionalAnswer).isPresent();
 
         Answer answer = optionalAnswer.get();
         assertAll(
@@ -71,7 +74,7 @@ class AnswerRepositoryTest {
     @Test
     void findByIdAndDeletedFalseDeleted() {
         Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(1L);
-        assertThat(optionalAnswer.isPresent()).isFalse();
+        assertThat(optionalAnswer).isNotPresent();
     }
 
     @DisplayName("질문 id와 삭제여부로 정보 조회")
