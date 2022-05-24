@@ -3,6 +3,7 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,16 +74,17 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public DeleteHistory delete() {
         this.deleted = true;
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
-    public void delete(User loginUser) {
+    public DeleteHistory delete(User loginUser) {
         canDelete(loginUser);
         for (Answer answer : answers) {
             answer.delete();
         }
-        delete();
+        return delete();
     }
 
     private void canDelete(User loginUser) {
