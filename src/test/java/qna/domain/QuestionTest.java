@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -55,5 +56,21 @@ public class QuestionTest {
 
         // then
         assertThat(actual).isNotEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("deleteQuestion의 결과 삭제 히스토리가 반환된다")
+    void deleteQuestion() {
+        // given
+        final User user = new User(3L, "mins99", "1234", "ms", "mins99@slipp.net");
+        final Question question = new Question(3L, "title3", "contents3").writeBy(user);
+        final Answer answer = new Answer(user, question, "Answers Contents3");
+
+        // when
+        question.addAnswer(answer);
+        List<DeleteHistory> actual = question.deleteQuestion(user);
+
+        // then
+        assertThat(actual).hasSize(2);
     }
 }

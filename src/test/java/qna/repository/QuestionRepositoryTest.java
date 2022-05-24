@@ -90,19 +90,6 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    void findByDeletedFalseSetDeleted() {
-        // given
-        final Question expected = questionRepository.save(question);
-
-        // when
-        expected.setDeleted(true);
-        final List<Question> actual = questionRepository.findByDeletedFalse();
-
-        // then
-        assertThat(actual).hasSize(0);
-    }
-
-    @Test
     void findByDeletedFalse() {
         // given
         final Question expected = questionRepository.save(question);
@@ -112,19 +99,6 @@ class QuestionRepositoryTest {
 
         // then
         assertThat(actual).hasSize(1);
-    }
-
-    @Test
-    void findByIdAndDeletedFalseSetDeleted() {
-        // given
-        final Question expected = questionRepository.save(question);
-
-        // when
-        expected.setDeleted(true);
-        final Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(expected.getId());
-
-        // then
-        assertThat(actual).isEmpty();
     }
 
     @Test
