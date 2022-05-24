@@ -13,13 +13,13 @@ public class UserRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    void saveTest() {
+    void save() {
         //given
         User expected = UserTest.JAVAJIGI;
         //when
         User actual = userRepository.save(expected);
         //then
-        assertThat(actual).isNotNull();
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
