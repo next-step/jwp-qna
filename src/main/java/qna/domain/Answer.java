@@ -12,11 +12,13 @@ public class Answer extends BaseTimeEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writerId;
 
-    @Column
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question questionId;
 
     @Lob
     @Column
@@ -40,8 +42,8 @@ public class Answer extends BaseTimeEntity{
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writerId = writer;
+        this.questionId = question;
         this.contents = contents;
     }
 
@@ -53,7 +55,7 @@ public class Answer extends BaseTimeEntity{
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.questionId = question;
     }
 
     public Long getId() {
@@ -64,19 +66,19 @@ public class Answer extends BaseTimeEntity{
         this.id = id;
     }
 
-    public Long getWriterId() {
+    public User getWriterId() {
         return writerId;
     }
 
-    public void setWriterId(Long writerId) {
+    public void setWriterId(User writerId) {
         this.writerId = writerId;
     }
 
-    public Long getQuestionId() {
+    public Question getQuestionId() {
         return questionId;
     }
 
-    public void setQuestionId(Long questionId) {
+    public void setQuestionId(Question questionId) {
         this.questionId = questionId;
     }
 
