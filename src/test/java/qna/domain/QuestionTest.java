@@ -2,8 +2,11 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static qna.domain.AnswerTest.A1;
+import static qna.domain.AnswerTest.A2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -43,8 +46,8 @@ public class QuestionTest {
         Q1.setId(null);
         Q2.setId(null);
 
-        AnswerTest.A1.setId(null);
-        AnswerTest.A2.setId(null);
+        A1.setId(null);
+        A2.setId(null);
 
     }
 
@@ -83,16 +86,16 @@ public class QuestionTest {
 
     @Test
     public void oneToManyTest() {
-        AnswerTest.A1.setId(null); //id가없어야 save를 하고 casecade를통한 save도 이뤄짐
-        AnswerTest.A2.setId(null);
-        answerRepository.save(AnswerTest.A1);
-        answerRepository.save(AnswerTest.A2);
+        A1.setId(null); //id가없어야 save를 하고 casecade를통한 save도 이뤄짐
+        A2.setId(null);
+        answerRepository.save(A1);
+        answerRepository.save(A2);
 
         //em.clear(); //현재 Q1은 영속성에 존재하기때문에, answers에 A1과 A2가 없음. 새로가지고와야함
         Optional<Question> q1ById = questionRepository.findByIdAndDeletedIsFalse(Q1.getId());
         assertThat(q1ById.get().getAnswers())
             .extracting("id")
-            .containsExactly(AnswerTest.A1.getId(), AnswerTest.A2.getId());
+            .containsExactly(A1.getId(), A2.getId());
     }
 
     @Test
@@ -114,9 +117,9 @@ public class QuestionTest {
     @DisplayName("answer중 자신의 것이 아닌게 있으면 throw")
     public void deleteQuestionCheckAnswersIsMineTest() {
         questionRepository.save(Q1); //자바지기 Question
-        answerRepository.save(AnswerTest.A1); //자바지기 Question
+        answerRepository.save(A1); //자바지기 Question
 
-        answerRepository.save(AnswerTest.A2); //산지기 Question
+        answerRepository.save(A2); //산지기 Question
         System.out.println("ee");
         assertThatThrownBy(() -> Q1.delete(UserTest.JAVAJIGI))
             .isInstanceOf(CannotDeleteException.class)
@@ -129,13 +132,39 @@ public class QuestionTest {
     @DisplayName("삭제시 question은 해당 아이디만, answer은 연관된 모든 answer id가 반환된다")
     public void deleteQuestionGetTargetId() throws CannotDeleteException {
         questionRepository.save(Q1); //자바지기 Question
-        answerRepository.save(AnswerTest.A1); //자바지기 Question
-        AnswerTest.A2.setWriter(UserTest.JAVAJIGI);
-        answerRepository.save(AnswerTest.A2); //자바지기 Question
+        answerRepository.save(A1); //자바지기 Question
+        A2.setWriter(UserTest.JAVAJIGI);
+        answerRepository.save(A2); //자바지기 Question
         HashMap<ContentType, List> deleteTargetIds = Q1.delete(UserTest.JAVAJIGI);
-        assertThat(deleteTargetIds.get(ContentType.QUESTION)).contains(1L);
+
+        assertThat(deleteTargetIds.get(ContentType.QUESTION)).contains(Q1.getId());
         assertThat(deleteTargetIds.get(ContentType.ANSWER))
-            .contains(1L)
-            .contains(2L);
+            .contains(A1.getId())
+            .contains(A2.getId());
+    }
+
+    @Test
+    @DisplayName("question bulk update 후 false로 전부 적용되어야한다.")
+    public void questionBulkUpdate() {
+        questionRepository.save(Q1);
+        assertThat(Q1.isDeleted()).isFalse();
+        questionRepository.updateDeleteOfQuestions(Arrays.asList(Q1.getId()));
+        Optional<Question> question = questionRepository.findById(Q1.getId());
+        assertThat(question.get().isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("answer bulk update 후 false로 전부 적용되어야한다.")
+    public void answerBulkUpdate() {
+        questionRepository.save(Q1);
+        answerRepository.save(A1);
+        answerRepository.save(A2);
+
+        assertThat(A1.isDeleted()).isFalse();
+        assertThat(A2.isDeleted()).isFalse();
+
+        answerRepository.updateDeleteOfAnswers(Arrays.asList(A1.getId(), A2.getId()));
+        assertThat(answerRepository.findById(A1.getId()).get().isDeleted()).isTrue();
+        assertThat(answerRepository.findById(A2.getId()).get().isDeleted()).isTrue();
     }
 }
