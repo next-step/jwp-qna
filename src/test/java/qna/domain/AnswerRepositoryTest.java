@@ -3,8 +3,11 @@ package qna.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.util.List;
 
@@ -39,28 +42,33 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("Answer 조회: by QuestionId, DeletedFalse")
     void Answer_조회_by_QuestionId_DeletedFalse(){
-        generateAnswerDeletedTrue();
-        Answer answerDeletedFalse = answerRepository.save(new Answer(user, question, "Answers Contents1"));
+        answerRepository.save(generateAnswer(true));
+        Answer answerDeletedFalse = answerRepository.save(generateAnswer(false));
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
         assertThat(answers).containsExactly(answerDeletedFalse);
     }
 
-    @Test
+    @ParameterizedTest(name = "삭제되지 않은 Answer 조회: deleted = {0}, 조회값 존재 = {1}")
     @DisplayName("Answer 조회: by Id, DeletedFalse")
-    void Answer_조회_by_Id_DeletedFalse(){
-        Answer answerDeletedTrue = generateAnswerDeletedTrue();
-        Answer answerDeletedFalse = answerRepository.save(new Answer(user, question, "Answers Contents1"));
-        assertAll(
-                () -> assertThat(answerRepository.findByIdAndDeletedFalse(answerDeletedTrue.getId()))
-                        .isEmpty(),
-                () -> assertThat(answerRepository.findByIdAndDeletedFalse(answerDeletedFalse.getId())).get()
-                        .isEqualTo(answerDeletedFalse)
-        );
+    @CsvSource(value = {"true:false", "false:true"}, delimiter = ':')
+    void Answer_조회_by_Id_DeletedFalse(boolean deleted, boolean resultPresent){
+        Answer answer = answerRepository.save(generateAnswer(deleted));
+        assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId()).isPresent()).isEqualTo(resultPresent);
     }
 
-    private Answer generateAnswerDeletedTrue() {
+    private Answer generateAnswer(boolean deleted) {
         Answer answer = new Answer(user, question, "Answers Contents1");
-        answer.setDeleted(true);
-        return answerRepository.save(answer);
+        if(deleted){
+            deleteAnswer(answer, user);
+        }
+        return answer;
+    }
+
+    private void deleteAnswer(Answer answer, User user) {
+        try {
+            answer.delete(user);
+        } catch (CannotDeleteException e) {
+            e.printStackTrace();
+        }
     }
 }

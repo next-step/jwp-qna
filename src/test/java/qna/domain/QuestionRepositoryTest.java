@@ -3,8 +3,11 @@ package qna.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.util.List;
 
@@ -35,30 +38,33 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("Question 조회: by DeletedFalse")
     void Question_조회_by_DeletedFalse(){
-        generateQuestionDeletedTrue();
-        Question questionDeletedFalse = questionRepository
-                .save(new Question("title1", "contents1").writeBy(user));
+        questionRepository.save(generateQuestion(true));
+        Question questionDeletedFalse = questionRepository.save(generateQuestion(false));
         List<Question> questions = questionRepository.findByDeletedFalse();
         assertThat(questions).containsExactly(questionDeletedFalse);
     }
 
-    @Test
+    @ParameterizedTest(name = "삭제되지 않은 Question 조회: deleted = {0}, 조회값 존재 = {1}")
     @DisplayName("Question 조회: by Id, DeletedFalse")
-    void Question_조회_byId_DeletedFalse(){
-        Question questionDeletedTrue = generateQuestionDeletedTrue();
-        Question questionDeletedFalse = questionRepository
-                .save(new Question("title1", "contents1").writeBy(user));
-        assertAll(
-                () -> assertThat(questionRepository.findByIdAndDeletedFalse(questionDeletedTrue.getId()))
-                        .isEmpty(),
-                () -> assertThat(questionRepository.findByIdAndDeletedFalse(questionDeletedFalse.getId())).get()
-                        .isEqualTo(questionDeletedFalse)
-        );
+    @CsvSource(value = {"true:false", "false:true"}, delimiter = ':')
+    void Question_조회_byId_DeletedFalse(boolean deleted, boolean resultPresent){
+        Question question = questionRepository.save(generateQuestion(deleted));
+        assertThat(questionRepository.findByIdAndDeletedFalse(question.getId()).isPresent()).isEqualTo(resultPresent);
     }
 
-    private Question generateQuestionDeletedTrue() {
+    private Question generateQuestion(boolean deleted) {
         Question question = new Question("title1", "contents1").writeBy(user);
-        question.setDeleted(true);
-        return questionRepository.save(question);
+        if(deleted){
+            deleteQuestion(question, user);
+        }
+        return question;
+    }
+
+    private void deleteQuestion(Question question, User user) {
+        try {
+            question.delete(user);
+        } catch (CannotDeleteException e) {
+            e.printStackTrace();
+        }
     }
 }

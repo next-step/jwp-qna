@@ -51,7 +51,7 @@ public class Question extends BaseTimeEntity{
     public void delete(User loginUser) throws CannotDeleteException {
         validateUserToDelete(loginUser);
         answers.deleteAnswers(loginUser);
-        setDeleted(true);
+        deleted = true;
     }
 
     private void validateUserToDelete(User loginUser) throws CannotDeleteException {
@@ -87,10 +87,6 @@ public class Question extends BaseTimeEntity{
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public List<Answer> getUnmodifiableAnswers() {
