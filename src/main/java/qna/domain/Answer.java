@@ -1,16 +1,14 @@
 package qna.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import javax.persistence.Lob;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-
-import java.util.Objects;
 
 
 @Entity
@@ -23,9 +21,14 @@ public class Answer extends BaseEntity {
     @Column(name = "question_id")
     private Long questionId;
     @Column(name = "contents")
+    @Lob
     private String contents;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    protected Answer() {
+
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
