@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +23,10 @@ public class Answers {
         list.forEach(answer -> answer.toQuestion(update));
     }
 
-    public List<DeleteHistory> delete(User user) {
+    public List<DeleteHistory> delete(User deleteUser) {
         List<DeleteHistory> history = new ArrayList<>();
         for (Answer answer : list) {
-            answer.setDeleted(true);
-            history.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), LocalDateTime.now()).deleteBy(user));
+            history.add(answer.delete(deleteUser));
         }
         return history;
     }
