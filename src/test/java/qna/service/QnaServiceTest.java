@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
     private static final User JAVAJIGI = new User(null, "javajigi", "password", "name", "javajigi@slipp.net");
-    private static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+    private static final User SANJIGI = new User(null, "sanjigi", "password", "name", "sanjigi@slipp.net");
     private static final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
 
     @Mock
