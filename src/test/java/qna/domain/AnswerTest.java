@@ -39,4 +39,19 @@ public class AnswerTest {
         // then
         assertThat(actual).isNotEqualTo(expected);
     }
+
+    @Test
+    @DisplayName("delete의 결과 answer 객체가 삭제 상태로 값이 변경된다.")
+    void delete() {
+        // given
+        User user = new User(3L, "mins99", "1234", "ms", "mins99@slipp.net");
+        Question question = new Question(3L, "title3", "contents3");
+        Answer answer = new Answer(3L, user, question, "Answers Contents3");
+
+        // when
+        answer.delete();
+        boolean actual = answer.isDeleted();
+
+        assertThat(actual).isTrue();
+    }
 }
