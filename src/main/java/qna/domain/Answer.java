@@ -104,7 +104,6 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writer=" + writer +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
