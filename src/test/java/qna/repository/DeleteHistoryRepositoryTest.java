@@ -31,7 +31,7 @@ public class DeleteHistoryRepositoryTest {
     void findDeleteHistoryByDeletedById() {
         save();
         DeleteHistory expected = deleteHistoryRepository.save(DeleteHistoryTest.DH1);
-        List<DeleteHistory> actual = deleteHistoryRepository.findDeleteHistoryByDeletedById(UserTest.JAVAJIGI);
+        List<DeleteHistory> actual = deleteHistoryRepository.findByDeletedById(UserTest.JAVAJIGI);
         assertThat(actual.get(0)).isEqualTo(expected);
     }
 }
