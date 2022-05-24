@@ -79,12 +79,10 @@ public class Question extends BaseEntity {
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
-    public DeleteHistory delete(User loginUser) {
+    public List<DeleteHistory> delete(User loginUser) {
         canDelete(loginUser);
-        for (Answer answer : answers) {
-            answer.delete();
-        }
-        return delete();
+        DeleteHistories deleteHistories = new DeleteHistories();
+        return deleteHistories.addHistory(this);
     }
 
     private void canDelete(User loginUser) {

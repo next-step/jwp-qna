@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -105,5 +107,17 @@ public class QuestionTest {
         DeleteHistory deleteHistory = question.delete();
         // then
         assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.QUESTION);
+    }
+
+    @Test
+    void 질문과_답변을_삭제하면_삭제_기록을_반환한다() {
+        // given
+        User user = new User(1L, "user1", "password", "name", "user1@com");
+        new Answer(user, question, "Answers Contents1");
+        new Answer(user, question, "Answers Contents2");
+        // when
+        List<DeleteHistory> result = question.delete(user);
+        // then
+        assertThat(result).hasSize(3);
     }
 }
