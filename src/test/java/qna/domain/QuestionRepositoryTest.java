@@ -146,7 +146,7 @@ class QuestionRepositoryTest {
         // given
         saveAnswer();
         // when
-        Optional<Question> result = questionRepository.findQuestionById(question1.getId());
+        Optional<Question> result = questionRepository.findByIdAndDeletedFalse(question1.getId());
         // then
         assertThat(result)
                 .map(question -> question.getAnswers().size())
