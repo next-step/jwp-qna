@@ -30,6 +30,7 @@ public class QuestionRepositoryTest {
     private AnswerRepository answerRepository;
     private User writer;
 
+    @DisplayName("테스트 메세드 실행 전 변수 초기화")
     @BeforeEach
     void setup() {
         writer = userRepository.save(new User(3L, "bestsilver", "password", "name", "bestsilver@ggg.net"));
@@ -122,14 +123,13 @@ public class QuestionRepositoryTest {
 
     @Test
     void Question이_삭제될_때_Answer도_함께_삭제_체크() throws CannotDeleteException {
-        Question question = new Question("title1", "contents1").writeBy(writer);
+        Question question = questionRepository.save(new Question("title1", "contents1").writeBy(writer));
         Answer answer = answerRepository.save(new Answer(writer, question, "Answers Contents2"));
         question.addAnswer(answer);
         question.delete(writer);
+        List<Answer> byQuestionIdAndDeletedFalse = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
-        for(Answer deletedAnswer : question.getAnswers()) {
-            assertThat(deletedAnswer.isDeleted()).isTrue();
-        }
+        assertThat(byQuestionIdAndDeletedFalse.size()).isEqualTo(0);
 
     }
 }
