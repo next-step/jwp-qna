@@ -45,8 +45,8 @@ public class Answer extends CreatedUpdatedDateEntity {
         }
 
         this.writer = writer;
-        this.question = question;
         this.contents = contents;
+        toQuestion(question);
     }
 
     public boolean isOwner(User writer) {
