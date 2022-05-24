@@ -97,3 +97,7 @@ alter table question
 - 질문과 답변 삭제 이력에 대한 정보를 DeleteHistory를 활용해 남긴다.
 ## TODO
 - [] `QnaService.deleteQuestion()` 리팩토링
+  - [X] Question 삭제 기능 분리
+  - [X] Answer 삭제 기능 분리
+  - [] Answers 일급콜렉션 생성
+  - [] DeleteHistories 일급콜렉션 생성
