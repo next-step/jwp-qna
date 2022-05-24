@@ -1,34 +1,30 @@
 package qna.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DeleteHistories {
 
-    private final List<DeleteHistory> deleteHistories;
-
-    public DeleteHistories() {
-        this.deleteHistories = new ArrayList<>();
-    }
+    private final List<DeleteHistory> items;
 
     public DeleteHistories(DeleteHistory param) {
-        this.deleteHistories = new ArrayList<>();
-        deleteHistories.add(param);
+        this.items = Collections.singletonList(param);
     }
 
-    public DeleteHistories(List<DeleteHistory> param) {
-        this.deleteHistories = param;
+    public DeleteHistories(List<DeleteHistory> params) {
+        this.items = params;
     }
 
-    public List<DeleteHistory> getDeleteHistories() {
-        return deleteHistories;
+    public static DeleteHistories merge(DeleteHistories histories,
+        DeleteHistories histories2) {
+        List<DeleteHistory> items = new ArrayList<>();
+        items.addAll(histories.getItems());
+        items.addAll(histories2.getItems());
+        return new DeleteHistories(items);
     }
 
-    public void add(DeleteHistory deleteHistory) {
-        this.deleteHistories.add(deleteHistory);
-    }
-
-    public void addAll(List<DeleteHistory> collection) {
-        this.deleteHistories.addAll(collection);
+    public List<DeleteHistory> getItems() {
+        return Collections.unmodifiableList(items);
     }
 }
