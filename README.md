@@ -134,7 +134,7 @@ alter table user
 - [x] 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
   - [x] Answer -> question, user
   - [x] DeleteHistory -> user
-  - [x] Question -> user
+  - [x] Question -> user, answer
 
 ### 힌트
 - 관계형 데이터베이스는 연관된 객체를 찾을 때 외래 키를 사용해서 조인하면 되지만 객체에는 조인이라는 기능이 없다. 객체는 연관된 객체를 찾을 때 참조를 사용해야 한다.
