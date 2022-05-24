@@ -51,4 +51,12 @@ public class AnswerTest {
         // then
         assertThat(result).isTrue();
     }
+
+    @Test
+    void 답변_삭제에_대한_이력을_남긴다() {
+        // when
+        DeleteHistory deleteHistory = answer1.delete();
+        // then
+        assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER);
+    }
 }

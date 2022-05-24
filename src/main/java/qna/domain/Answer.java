@@ -4,6 +4,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
@@ -77,8 +78,9 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public DeleteHistory delete() {
         deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
     // 연관 관계 편의 메서드
