@@ -141,7 +141,12 @@ public class Question extends BaseTimeEntity {
         }
     }
 
-
+    private void executeDelete(){
+        this.deleted = true;
+        for (Answer answer : answers) {
+            answer.deleteAnswer();
+        }
+    }
     public DeleteHistory makeDeleteHistory() {
         return new DeleteHistory(ContentType.QUESTION, this.getId(), this.writer,
             LocalDateTime.now());
