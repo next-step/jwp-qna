@@ -4,6 +4,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -70,6 +71,11 @@ public class Answer extends BaseEntity {
     public Answer writeBy(User user) {
         this.writer = user;
         return this;
+    }
+
+    public DeleteHistory delete() {
+        setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, getId(), LocalDateTime.now());
     }
 
     public void updateContents(String contents) {
