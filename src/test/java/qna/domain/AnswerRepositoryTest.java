@@ -25,7 +25,10 @@ class AnswerRepositoryTest {
     @BeforeEach
     void setUp() {
         user = userRepository.save(new User("vvsungho", "1234", "윤성호", "vvsungho@gmail.com"));
-        question = questionRepository.save(new Question("질문제목", "질문내용"));
+        question = new Question("질문제목", "질문내용");
+        question.writeBy(user);
+
+        question = questionRepository.save(question);
         answer = answerRepository.save(new Answer(user, question, "질문답변"));
     }
 
@@ -36,8 +39,7 @@ class AnswerRepositoryTest {
 
     @Test
     void select() {
-        Answer answer2 = answerRepository.findByIdAndDeletedFalse(1L).get();
+        Answer answer2 = answerRepository.findByIdAndDeletedFalse(answer.getId()).get();
         assertThat(answer.getId()).isEqualTo(answer2.getId());
     }
-
 }
