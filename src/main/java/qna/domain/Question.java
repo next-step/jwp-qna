@@ -1,6 +1,10 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Question extends BaseTimeEntity{
@@ -22,6 +26,9 @@ public class Question extends BaseTimeEntity{
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
+
     protected  Question() {}
 
     public Question(String title, String contents) {
@@ -39,11 +46,15 @@ public class Question extends BaseTimeEntity{
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public boolean isOwner(User writer) throws CannotDeleteException {
+        if (!this.writer.equals(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        return true;
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -96,5 +107,24 @@ public class Question extends BaseTimeEntity{
                 ", deleted=" + deleted +
                 ", writer=" + writer.getId() +
                 '}';
+    }
+
+    private DeleteHistory delete() {
+        this.deleted = true;
+        return new DeleteHistory(ContentType.QUESTION, this.id, writer);
+    }
+
+    public List<DeleteHistory> deleteByLoginUser(User loginUser) throws CannotDeleteException {
+        isOwner(loginUser);
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        deleteHistories.add(delete());
+
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.deleteByLoginUser(loginUser));
+        }
+
+        return deleteHistories;
     }
 }
