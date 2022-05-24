@@ -11,14 +11,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest(includeFilters = { @ComponentScan.Filter(value = { EnableJpaAuditing.class }) })
 public class UserTest {
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-
     @Autowired
     private UserRepository userRepository;
 
     @Test
     void findByUserId() {
+        final User JAVAJIGI = new User(null, "javajigi", "password", "name", "javajigi@slipp.net");
+        final User SANJIGI = new User(null, "sanjigi", "password", "name", "sanjigi@slipp.net");
+
         userRepository.save(JAVAJIGI);
         userRepository.save(SANJIGI);
 

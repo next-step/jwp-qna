@@ -10,42 +10,58 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
 
 @DataJpaTest
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
-    public static final Question Q3 = new Question("title3", "contents3").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q4 = new Question("title4", "contents4").writeBy(UserTest.SANJIGI);
-
     @Autowired
     private QuestionRepository questionRepository;
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     void findByDeletedFalse() {
-        questionRepository.save(Q3);
-        questionRepository.save(Q4);
+        final User JAVAJIGI = new User(null, "javajigi", "password", "name", "javajigi@slipp.net");
+        final User SANJIGI = new User(null, "sanjigi", "password", "name", "sanjigi@slipp.net");
+
+        final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+        final Question Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
+
+        userRepository.save(JAVAJIGI);
+        userRepository.save(SANJIGI);
+        questionRepository.save(Q1);
+        questionRepository.save(Q2);
+
         List<Question> actual = questionRepository.findByDeletedFalse();
 
         assertAll(
                 () -> assertThat(actual.size()).isEqualTo(2),
-                () -> assertThat(actual).contains(Q3, Q4)
+                () -> assertThat(actual).contains(Q1, Q2)
         );
     }
 
     @Test
     @DisplayName("질문을 하나 가져올 때, 이 질문에 대한 답변을 같이 가져올 수 있는지 확인한다")
     void findByIdDeletedFalse() {
+        final User JAVAJIGI = new User(null, "javajigi", "password", "name", "javajigi@slipp.net");
+        final User SANJIGI = new User(null, "sanjigi", "password", "name", "sanjigi@slipp.net");
+
+        final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+        final Question Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
+
+        final Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
+        final Answer A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
+
+        Q1.addAnswer(A1);
+        Q1.addAnswer(A2);
+
+        userRepository.save(JAVAJIGI);
+        userRepository.save(SANJIGI);
         questionRepository.save(Q1);
         questionRepository.save(Q2);
         answerRepository.save(A1);
         answerRepository.save(A2);
-        Q1.addAnswer(A1);
-        Q1.addAnswer(A2);
 
         Question actual = questionRepository.findByIdAndDeletedFalse(Q1.getId()).orElseThrow(NotFoundException::new);
 
