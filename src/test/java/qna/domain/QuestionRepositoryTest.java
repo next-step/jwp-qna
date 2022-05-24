@@ -7,7 +7,6 @@ import static qna.domain.QuestionTest.Q2;
 
 import java.util.List;
 import java.util.Optional;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,9 +24,6 @@ class QuestionRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private EntityManager em;
 
     @BeforeEach
     void userSetUp() {
