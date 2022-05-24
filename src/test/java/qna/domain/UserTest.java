@@ -77,4 +77,15 @@ public class UserTest {
                 )
         );
     }
+
+    @Test
+    void id가_같으면_동일한_유저로_판단한다() {
+        // given
+        User user = new User(1L,"javajigi", "pass1", "mj1", "mj@com");
+        User loginUser = new User(1L, "javajigi", "pass2", "mj2", "mj@com");
+        // when
+        boolean result = user.match(loginUser);
+        // then
+        assertThat(result).isTrue();
+    }
 }

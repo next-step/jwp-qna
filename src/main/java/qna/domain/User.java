@@ -41,7 +41,7 @@ public class User extends BaseEntity {
     }
 
     public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
+        if (!match(loginUser)) {
             throw new UnAuthorizedException();
         }
 
@@ -53,8 +53,8 @@ public class User extends BaseEntity {
         this.email = target.email;
     }
 
-    public boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
+    public boolean match(User user) {
+        return this.equals(user);
     }
 
     public boolean matchPassword(String targetPassword) {
@@ -80,6 +80,19 @@ public class User extends BaseEntity {
 
     public String getUserId() {
         return userId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
