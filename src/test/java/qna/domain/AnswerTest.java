@@ -26,7 +26,7 @@ public class AnswerTest {
     @Test
     void deleteAnswer() {
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "ABC");
-        answer.setDeleted(true);
+        answer.delete();
 
         assertThat(answer.isDeleted()).isTrue();
     }

@@ -23,7 +23,7 @@ public class QuestionTest {
     @Test
     void deleteQuestion() {
         Question question = new Question("title3", "contents3");
-        question.setDeleted(true);
+        question.delete();
 
         assertThat(question.isDeleted()).isTrue();
     }
