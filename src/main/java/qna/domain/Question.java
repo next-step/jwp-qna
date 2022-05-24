@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -123,7 +122,7 @@ public class Question extends BaseTimeEntity {
             '}';
     }
 
-    public HashMap<ContentType, List> getDeleteIds(User user) throws CannotDeleteException {
+    public HashMap<ContentType, List> delete(User user) throws CannotDeleteException {
         if (!this.isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
@@ -142,9 +141,6 @@ public class Question extends BaseTimeEntity {
         }
     }
 
-    private List<Long> getAnswerIdsForDelete() {
-        return answers.stream().map(answer -> answer.getId()).collect(Collectors.toList());
-    }
 
     public DeleteHistory makeDeleteHistory() {
         return new DeleteHistory(ContentType.QUESTION, this.getId(), this.writer,

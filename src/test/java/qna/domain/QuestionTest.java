@@ -135,7 +135,7 @@ public class QuestionTest {
         answerRepository.save(A1); //자바지기 Question
         A2.setWriter(UserTest.JAVAJIGI);
         answerRepository.save(A2); //자바지기 Question
-        HashMap<ContentType, List> deleteTargetIds = Q1.getDeleteIds(UserTest.JAVAJIGI);
+        HashMap<ContentType, List> deleteTargetIds = Q1.delete(UserTest.JAVAJIGI);
 
         assertThat(deleteTargetIds.get(ContentType.QUESTION)).contains(Q1.getId());
         assertThat(deleteTargetIds.get(ContentType.ANSWER))
@@ -163,7 +163,8 @@ public class QuestionTest {
         assertThat(A1.isDeleted()).isFalse();
         assertThat(A2.isDeleted()).isFalse();
 
-        answerRepository.updateDeleteOfAnswers(Arrays.asList(A1.getId(), A2.getId()));
+        assertThat(answerRepository.updateDeleteOfAnswers(
+            Arrays.asList(A1.getId(), A2.getId()))).isEqualTo(2);
         assertThat(answerRepository.findById(A1.getId()).get().isDeleted()).isTrue();
         assertThat(answerRepository.findById(A2.getId()).get().isDeleted()).isTrue();
     }
