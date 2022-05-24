@@ -10,13 +10,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class AnswerRepositoryTest {
 
     @Autowired
-    private AnswerRepository answers;
+    private AnswerRepository answerRepository;
 
     @Test
     void save() {
         final Answer expected = new Answer();
         expected.setContents("hello");
-        final Answer actual = answers.save(expected);
+        final Answer actual = answerRepository.save(expected);
         assertNotNull(actual.getId());
     }
 }
