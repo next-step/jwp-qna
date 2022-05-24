@@ -92,8 +92,13 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
+    }
+
+    public DeleteHistory deleteAnswer() {
+        delete();
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer);
     }
 
     @Override
