@@ -79,6 +79,9 @@ public class Question extends BaseEntity {
 
     public void delete(User loginUser) {
         canDelete(loginUser);
+        for (Answer answer : answers) {
+            answer.delete();
+        }
         delete();
     }
 

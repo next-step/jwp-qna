@@ -6,6 +6,7 @@ import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class QuestionTest {
     private Question question;
@@ -80,5 +81,21 @@ public class QuestionTest {
         assertThatThrownBy(() ->
                 question.delete(loginUser)
         ).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void 질문을_삭제할_때_모든_답변도_삭제된다() {
+        // given
+        User user = new User(1L, "user1", "password", "name", "user1@com");
+        Answer answer = new Answer(user, question, "Answers Contents1");
+        Answer answer2 = new Answer(user, question, "Answers Contents2");
+        // when
+        question.delete(user);
+        // then
+        assertAll(
+                () -> assertThat(question.isDeleted()).isTrue(),
+                () -> assertThat(answer.isDeleted()).isTrue(),
+                () -> assertThat(answer2.isDeleted()).isTrue()
+        );
     }
 }
