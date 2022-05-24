@@ -41,8 +41,11 @@ class UserRepositoryTest {
         assertThat(resultOptional).isNotEmpty();
 
         User result = resultOptional.get();
-        assertThat(result.getId()).isEqualTo(expected.getId());
-        assertThat(result.getUserId()).isEqualTo(expected.getUserId());
-        assertTrue(result.equalsNameAndEmail(expected));
+
+        assertAll(
+                () -> assertThat(result.getId()).isEqualTo(expected.getId()),
+                () -> assertThat(result.getUserId()).isEqualTo(expected.getUserId()),
+                () -> assertTrue(result.equalsNameAndEmail(expected))
+        );
     }
 }

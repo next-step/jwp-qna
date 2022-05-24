@@ -31,10 +31,12 @@ class AnswerRepositoryTest {
         Answer expected = AnswerTest.A1;
         Answer result = answerRepository.save(expected);
 
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getCreatedAt()).isNotNull();
-        assertThat(result.getUpdatedAt()).isNotNull();
-        assertThat(result).isEqualTo(expected);
+        assertAll(
+                () -> assertThat(result.getId()).isNotNull(),
+                () -> assertThat(result.getCreatedAt()).isNotNull(),
+                () -> assertThat(result.getUpdatedAt()).isNotNull(),
+                () -> assertThat(result).isEqualTo(expected)
+        );
     }
 
     @DisplayName("Answer 조회 테스트 / Id로 조회")
