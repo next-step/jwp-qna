@@ -15,8 +15,10 @@ public class AnswerTest {
 
     @Test
     void delete() throws CannotDeleteException {
-        DeleteHistory expect = A1.delete(UserTest.JAVAJIGI);
-        DeleteHistory result = new DeleteHistory(ContentType.ANSWER, A1.getId(), A1.getWriter(), LocalDateTime.now());
+        LocalDateTime deletedAt = LocalDateTime.now();
+
+        DeleteHistory expect = A1.delete(UserTest.JAVAJIGI, deletedAt);
+        DeleteHistory result = new DeleteHistory(ContentType.ANSWER, A1.getId(), A1.getWriter(), deletedAt);
 
         assertAll(
                 () -> assertThat(A1.isDeleted()).isEqualTo(true),
@@ -28,6 +30,6 @@ public class AnswerTest {
 
     @Test
     void delete_예외테스트() {
-        assertThatThrownBy(() -> A1.delete(UserTest.SANJIGI)).isInstanceOf(CannotDeleteException.class);
+        assertThatThrownBy(() -> A1.delete(UserTest.SANJIGI, LocalDateTime.now())).isInstanceOf(CannotDeleteException.class);
     }
 }

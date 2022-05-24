@@ -1,6 +1,5 @@
 package qna.domain;
 
-import net.bytebuddy.build.ToStringPlugin;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -54,14 +53,15 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser, LocalDateTime deletedAt) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("본인이 작성한 답변이 아닌 경우 삭제할 수 없습니다.");
         }
 
         this.deleted = true;
+        this.setUpdatedAt(deletedAt);
 
-        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, this.getUpdatedAt());
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, deletedAt);
     }
 
     private boolean isOwner(User writer) {

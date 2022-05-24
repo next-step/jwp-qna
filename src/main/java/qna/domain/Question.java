@@ -57,10 +57,12 @@ public class Question extends BaseEntity {
     }
 
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        LocalDateTime deletedAt = LocalDateTime.now();
+
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-        deleteHistories.add(deleteQuestion(loginUser));
-        deleteHistories.addAll(deleteAnswers(loginUser));
+        deleteHistories.add(deleteQuestion(loginUser, deletedAt));
+        deleteHistories.addAll(deleteAnswers(loginUser, deletedAt));
 
         return deleteHistories;
     }
@@ -69,18 +71,19 @@ public class Question extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
-        return this.answers.delete(loginUser);
+    private List<DeleteHistory> deleteAnswers(User loginUser, LocalDateTime deletedAt) throws CannotDeleteException {
+        return this.answers.delete(loginUser, deletedAt);
     }
 
-    private DeleteHistory deleteQuestion(User loginUser) throws CannotDeleteException {
+    private DeleteHistory deleteQuestion(User loginUser, LocalDateTime deletedAt) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
         this.deleted = true;
+        this.setUpdatedAt(deletedAt);
 
-        return new DeleteHistory(ContentType.QUESTION, this.id, this.writer, this.getUpdatedAt());
+        return new DeleteHistory(ContentType.QUESTION, this.id, this.writer, deletedAt);
     }
 
     public Long getId() {
