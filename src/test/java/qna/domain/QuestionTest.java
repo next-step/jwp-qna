@@ -18,7 +18,7 @@ public class QuestionTest {
                 () -> assertThat(Q2.isOwner(UserTest.SANJIGI)).isTrue()
         );
     }
-    
+
     @Test
     @DisplayName("답변 추가 후 질문자 id로 변경되었지 확인")
     void addAnswer() {
