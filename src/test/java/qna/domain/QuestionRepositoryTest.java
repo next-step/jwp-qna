@@ -4,12 +4,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,9 +49,16 @@ class QuestionRepositoryTest {
 
     @ParameterizedTest(name = "삭제되지 않은 Question 조회: deleted = {0}, 조회값 존재 = {1}")
     @DisplayName("Question 조회: by Id, DeletedFalse")
-    @CsvSource(value = {"true:false", "false:true"}, delimiter = ':')
+    @MethodSource("provideBooleansForQuestionFind")
     void Question_조회_byId_DeletedFalse(boolean deleted, boolean resultPresent){
         Question question = questionRepository.save(QuestionTest.generateQuestion(user, deleted));
         assertThat(questionRepository.findByIdAndDeletedFalse(question.getId()).isPresent()).isEqualTo(resultPresent);
+    }
+
+    private static Stream<Arguments> provideBooleansForQuestionFind() {
+        return Stream.of(
+                Arguments.of(true, false),
+                Arguments.of(false, true)
+        );
     }
 }
