@@ -67,6 +67,9 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
+        if(this.question == question){ //question매핑 중복시 처리하지않음
+            return;
+        }
         if (this.question != null) {
             removeAnswerFromOriginQuestion();
         }
@@ -85,7 +88,8 @@ public class Answer extends BaseTimeEntity {
     }
 
     private void removeAnswerFromOriginQuestion() {
-        this.question.getAnswers().remove(this);
+        int index = this.question.getAnswers().indexOf(this);
+        this.question.getAnswers().get(index).setDeleted(true);
     }
 
     public void setContents(String contents) {
