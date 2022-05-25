@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -90,18 +92,22 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         validate(loginUser);
         this.deleted = true;
-
-        DeleteHistories deleteHistoriesForQuestion = new DeleteHistories(DeleteHistory.ofQuestion(this));
-        DeleteHistories deleteHistoriesForAnswers = new DeleteHistories(answers.delete(writer));
-        return DeleteHistories.merge(deleteHistoriesForQuestion, deleteHistoriesForAnswers);
+        return createDeleteHistories();
     }
 
     private void validate(User loginUser) {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
+    }
+
+    private List<DeleteHistory> createDeleteHistories() {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.ofQuestion(this));
+        deleteHistories.addAll(answers.delete(writer));
+        return deleteHistories;
     }
 }
