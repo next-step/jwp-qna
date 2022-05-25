@@ -11,10 +11,9 @@ import java.util.List;
 @Embeddable
 public class Answers {
     @OneToMany(mappedBy = "question")
-    List<Answer> answers;
+    List<Answer> answers = new ArrayList<>();
 
     protected Answers() {
-        answers = new ArrayList<>();
     }
 
     public Answers(List<Answer> answers){
@@ -31,7 +30,7 @@ public class Answers {
         answers.add(answer);
     }
 
-    public List<Answer> getUnmodifiableAnswers(){
+    public List<Answer> getAnswers(){
         return Collections.unmodifiableList(answers);
     }
 }

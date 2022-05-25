@@ -10,6 +10,6 @@ public class DeleteHistoriesTest {
     @DisplayName("DeleteHistories 생성")
     void DeleteHistories_생성(){
         DeleteHistories deleteHistories = DeleteHistories.of(QuestionTest.Q1, QuestionTest.Q1.getWriter());
-        assertThat(deleteHistories.getUnmodifiableDeleteHistories().size()).isEqualTo(1);
+        assertThat(deleteHistories.getDeleteHistories().size()).isEqualTo(1);
     }
 }

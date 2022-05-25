@@ -20,7 +20,7 @@ public class DeleteHistories {
         return new DeleteHistories(question, loginUser);
     }
 
-    public List<DeleteHistory> getUnmodifiableDeleteHistories() {
+    public List<DeleteHistory> getDeleteHistories() {
         return Collections.unmodifiableList(deleteHistories);
     }
 }

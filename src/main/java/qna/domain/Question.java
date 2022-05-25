@@ -90,7 +90,7 @@ public class Question extends BaseTimeEntity{
     }
 
     public List<Answer> getUnmodifiableAnswers() {
-        return answers.getUnmodifiableAnswers();
+        return answers.getAnswers();
     }
 
     @Override
