@@ -2,8 +2,10 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,11 +25,12 @@ public class Question extends BaseTimeEntity {
     private String title;
     @Lob
     private String contents;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private List<Answer> answers = new ArrayList<>();
     @Column(nullable = false)
     private boolean deleted = false;
@@ -56,7 +59,6 @@ public class Question extends BaseTimeEntity {
 
     public void addAnswer(Answer answer) {
         this.answers.add(answer);
-        answer.toQuestion(this);
     }
 
     public boolean isAnswersOwner(final User writer) {
@@ -66,7 +68,6 @@ public class Question extends BaseTimeEntity {
 
     public void delete() {
         this.deleted = true;
-        this.answers.forEach(Answer::delete);
     }
 
     public Long getId() {
