@@ -20,12 +20,4 @@ public abstract class BaseEntity {
     @LastModifiedDate
     private LocalDateTime updateAt;
 
-    public LocalDateTime getCreateAt() {
-        return createAt;
-    }
-
-    public LocalDateTime getUpdateAt() {
-        return updateAt;
-    }
-
 }

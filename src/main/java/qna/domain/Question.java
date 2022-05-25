@@ -53,14 +53,6 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
     public Long getWriterId() {
         return writerId;
     }
@@ -69,7 +61,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void changeDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
