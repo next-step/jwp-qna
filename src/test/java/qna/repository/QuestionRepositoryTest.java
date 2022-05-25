@@ -3,8 +3,7 @@ package qna.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.domain.Question;
-import qna.domain.QuestionRepository;
+import qna.domain.*;
 
 import java.util.List;
 
@@ -15,6 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class QuestionRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Test
     void save() {
@@ -42,5 +44,14 @@ public class QuestionRepositoryTest {
         questionRepository.save(expected);
         List<Question> actual = questionRepository.findByDeletedFalse();
         assertThat(actual.get(0).getContents()).isNotNull();
+    }
+
+    @Test
+    void findByWriterId() {
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question expected = new Question("제목", "내용").writeBy(user);
+        questionRepository.save(expected);
+        List<Question> actual = questionRepository.findByWriterId(user);
+        assertThat(actual.get(0)).isEqualTo(expected);
     }
 }
