@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +19,25 @@ public class AnswerTest {
     @Autowired
     private AnswerRepository answerRepository;
 
-    @Test
-    @DisplayName("Answer를_저장하게_되면_발급된_Id_를_확인할_수_있다")
-    void save() {
-        final User JAVAJIGI = new User(null, "javajigi", "password", "name", "javajigi@slipp.net");
-        final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+    private User JAVAJIGI;
+    private Question Q1;
+
+    @BeforeEach
+    void setUp() {
+        JAVAJIGI = new User(null, "javajigi", "password", "name", "javajigi@slipp.net");
+        Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
 
         userRepository.save(JAVAJIGI);
         questionRepository.save(Q1);
-
+    }
+    @Test
+    @DisplayName("Answer를_저장하게_되면_발급된_Id_를_확인할_수_있다")
+    void save() {
         final Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
         assertThat(A1.getId()).isNull();
+
         answerRepository.save(A1);
+
         assertThat(A1.getId()).isNotNull();
     }
 }

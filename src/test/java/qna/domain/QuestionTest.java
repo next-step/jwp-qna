@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +21,27 @@ public class QuestionTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Test
-    void findByDeletedFalse() {
-        final User JAVAJIGI = new User(null, "javajigi", "password", "name", "javajigi@slipp.net");
-        final User SANJIGI = new User(null, "sanjigi", "password", "name", "sanjigi@slipp.net");
+    private User JAVAJIGI;
+    private User SANJIGI;
+    private Question Q1;
+    private Question Q2;
 
-        final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
-        final Question Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
+    @BeforeEach
+    void setUp() {
+        JAVAJIGI = new User(null, "javajigi", "password", "name", "javajigi@slipp.net");
+        SANJIGI = new User(null, "sanjigi", "password", "name", "sanjigi@slipp.net");
+
+        Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+        Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
 
         userRepository.save(JAVAJIGI);
         userRepository.save(SANJIGI);
         questionRepository.save(Q1);
         questionRepository.save(Q2);
+    }
 
+    @Test
+    void findByDeletedFalse() {
         List<Question> actual = questionRepository.findByDeletedFalse();
 
         assertAll(
@@ -44,22 +53,12 @@ public class QuestionTest {
     @Test
     @DisplayName("질문을 하나 가져올 때, 이 질문에 대한 답변을 같이 가져올 수 있는지 확인한다")
     void findByIdDeletedFalse() {
-        final User JAVAJIGI = new User(null, "javajigi", "password", "name", "javajigi@slipp.net");
-        final User SANJIGI = new User(null, "sanjigi", "password", "name", "sanjigi@slipp.net");
-
-        final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
-        final Question Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
-
         final Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
         final Answer A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
 
         Q1.addAnswer(A1);
         Q1.addAnswer(A2);
 
-        userRepository.save(JAVAJIGI);
-        userRepository.save(SANJIGI);
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
         answerRepository.save(A1);
         answerRepository.save(A2);
 
