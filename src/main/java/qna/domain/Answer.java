@@ -65,9 +65,6 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
-        if(this.question == question){ //question매핑 중복시 처리하지않음
-            return;
-        }
         if (this.question != null) {
             removeAnswerFromOriginQuestion();
         }
