@@ -76,7 +76,7 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("삭제이력삭제")
     void delete() {
         DeleteHistory d1History = deleteHistoryRepository.save(d1);
-        DeleteHistory d2History  = deleteHistoryRepository.save(d2);
+        DeleteHistory d2History = deleteHistoryRepository.save(d2);
 
         deleteHistoryRepository.delete(d2);
 

@@ -148,7 +148,6 @@ class AnswerRepositoryTest {
 
         final Optional<Question> findQ1 = questionRepository.findByIdAndDeletedFalse(q1.getId());
 
-
         assertAll(
                 () -> assertThat(findQ1).isPresent(),
                 () -> assertThat(findQ1.get().getAnswers()).hasSize(3)

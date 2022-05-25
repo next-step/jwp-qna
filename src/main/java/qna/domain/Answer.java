@@ -96,6 +96,14 @@ public class Answer extends AuditEntity {
         this.deleted = deleted;
     }
 
+    public Long getQuestionId() {
+        return question.getId();
+    }
+
+    public void delete() {
+        this.deleted = true;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +

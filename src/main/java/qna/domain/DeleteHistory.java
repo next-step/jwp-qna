@@ -47,6 +47,15 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
+    public static DeleteHistory questionDeleteHistory(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(),
+                LocalDateTime.now());
+    }
+
+    public static DeleteHistory answersDeleteHistory(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getQuestionId(), answer.getWriter(),
+                LocalDateTime.now());
+    }
 
     public Long getId() {
         return id;
