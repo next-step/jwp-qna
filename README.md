@@ -58,3 +58,12 @@ create table user
 alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
+### 구현 리스트
+* 답변(`Answer`) 엔티티 클래스
+  * 모델 및 해당 `Repository` 관련 테스트 코드
+* 질문(`Question`) 엔티티 클래스 및 테스트 코드
+  * 모델 및 해당 `Repository` 관련 테스트 코드
+* 유저(`User`) 엔티티 클래스 및 테스트 코드
+  * 모델 및 해당 `Repository` 관련 테스트 코드
+* 삭제이력(`DeleteHistory`) 엔티티 클래스
+* JPA Auditing을 위한 `BaseEntity` 클래스
