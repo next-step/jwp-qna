@@ -1,8 +1,9 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -23,6 +24,9 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id")
     private User writer;
 
+    @Embedded
+    private Answers answers = new Answers();
+
     private boolean deleted = false;
 
     protected Question() {
@@ -38,6 +42,27 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        validateUser(loginUser);
+        setDeleted(true);
+
+        DeleteHistories histories = new DeleteHistories();
+        histories.add(new DeleteHistory(ContentType.QUESTION, getId(), LocalDateTime.now()).deleteBy(loginUser));
+        histories.add(answers.delete(loginUser));
+
+        return histories;
+    }
+
+    private void validateUser(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        if (!answers.isQuestionDeletePossible(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
     public Question writeBy(User user) {
         this.writer = user;
         return this;
@@ -48,7 +73,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public Long getId() {
@@ -73,6 +98,14 @@ public class Question extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Answers getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(Answers answers) {
+        this.answers = answers;
     }
 
     @Override

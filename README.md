@@ -29,3 +29,21 @@
 - [X] Answer(의존 관계 주인) → User 다대일 관계로 참조
 - [X] Answer(의존 관계 주인) → Question 다대일 관계로 참조
 - [X] DeleteHistory(의존 관계 주인) → User 다대일 관계로 참조
+
+## 3단계 - 질문 삭제하기 리팩터링
+
+## 기능 목록
+
+### Entity 클래스
+- [X] 사용자를 표현한 User 엔티티 클래스
+- [X] 질문을 표현한 Question 엔티티 클래스
+- [X] 답변을 표현한 Answer 엔티티 클래스
+- [X] 삭제 이력을 표현한 DeleteHistory 엔티티 클래스
+
+### Repository 클래스
+- [X] User 관련 CRUD 기능을 제공하는 UserRepository 클래스
+- [X] Question 관련 CRUD 기능을 제공하는 QuestionRepository 클래스
+- [X] Answer 관련 CRUD 기능을 제공하는 AnswerRepository 클래스
+- [X] Answer 리스트를 관리하는 Answers 클래스
+- [X] DeleteHistory 관련 CRUD 기능을 제공하는 DeleteHistoryRepository 클래스
+- [X] DeleteHistory 리스트를 관리하는 DeleteHistories 클래스
