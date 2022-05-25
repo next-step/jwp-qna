@@ -153,7 +153,7 @@ public class Question extends BaseTimeEntity {
         this.deleted = true;
         Iterator<Answer> iter = answers.iterator();
         while (iter.hasNext()) {
-            iter.next().deleteAnswer();
+            iter.next().delete();
         }
     }
 
