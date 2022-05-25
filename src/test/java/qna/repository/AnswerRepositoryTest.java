@@ -4,12 +4,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.domain.*;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -54,5 +56,14 @@ public class AnswerRepositoryTest {
 
         assertThat(byIdAndDeletedFalse.isPresent()).isTrue();
         assertThat(byIdAndDeletedFalse.get()).isEqualTo(answer3);
+    }
+
+    @Test
+    void 타인이_작성한_Answer_삭제시_에러_throw() {
+        Answer answer = new Answer(UserTest.JAVAJIGI, question, "Answers Contents3");
+
+        assertThrows(CannotDeleteException.class, () -> {
+            answer.delete(user);
+        });
     }
 }
