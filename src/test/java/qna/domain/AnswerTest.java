@@ -33,8 +33,8 @@ public class AnswerTest {
     @DisplayName("Answer 작성자 테스트")
     void Answer_작성자(){
         assertAll(
-                () -> assertThat(A1.isOwner(UserTest.JAVAJIGI)).isTrue(),
-                () -> assertThat(A1.isOwner(UserTest.SANJIGI)).isFalse()
+                () -> assertThat(A1.mismatchOwner(UserTest.JAVAJIGI)).isTrue(),
+                () -> assertThat(A1.mismatchOwner(UserTest.SANJIGI)).isFalse()
         );
     }
 

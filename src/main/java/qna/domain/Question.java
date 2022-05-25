@@ -55,13 +55,13 @@ public class Question extends BaseTimeEntity{
     }
 
     private void validateUserToDelete(User loginUser){
-        if (!isOwner(loginUser)) {
+        if (mismatchOwner(loginUser)) {
             throw new CannotDeleteException(ErrorMessage.ERROR_INVALID_USER_TO_DELETE_QUESTION);
         }
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public boolean mismatchOwner(User writer) {
+        return !this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
