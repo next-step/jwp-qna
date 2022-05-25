@@ -5,17 +5,18 @@ import org.springframework.lang.Nullable;
 import javax.persistence.*;
 
 @Entity
-public class Question extends BaseEntity{
+public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 100)
-    @Nullable
+    @Column(length = 100, nullable = false)
     private String title;
     @Lob
+    @Column(name = "contents")
     private String contents;
+    @Column(name = "writer_id")
     private Long writerId;
-    @Nullable
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
     public Question(String title, String contents) {
