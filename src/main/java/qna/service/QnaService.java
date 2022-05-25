@@ -1,6 +1,7 @@
 package qna.service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class QnaService {
         Optional<Question> questionOptional = questionRepository.findByIdAndDeletedIsFalse(
             questionId);
         Question question = questionOptional.get();
-        ArrayList<DeleteHistory> deleteHistories = question.delete(loginUser);
+        List<DeleteHistory> deleteHistories = question.delete(loginUser);
         deleteHistoryService.saveAll(deleteHistories);
     }
 }

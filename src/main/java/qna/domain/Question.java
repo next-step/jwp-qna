@@ -99,18 +99,18 @@ public class Question extends BaseTimeEntity {
             '}';
     }
 
-    public ArrayList<DeleteHistory> delete(User user) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
         if (!this.isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         checkAnswersIsMine();
-        ArrayList<DeleteHistory> deleteHistories = getDeleteHistories();
+        List<DeleteHistory> deleteHistories = getDeleteHistories();
         executeDelete();
 
         return deleteHistories;
     }
 
-    private ArrayList<DeleteHistory> getDeleteHistories() {
+    private List<DeleteHistory> getDeleteHistories() {
         ArrayList<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(this.makeDeleteHistory());
         deleteHistories.addAll(

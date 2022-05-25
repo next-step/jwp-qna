@@ -9,6 +9,7 @@ import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -138,7 +139,7 @@ public class QuestionTest {
 
         //when
         questionRepository.save(q1Local); //자바지기 Question
-        ArrayList<DeleteHistory> deleteHistories = q1Local.delete(JAVAJIGI);
+        List<DeleteHistory> deleteHistories = q1Local.delete(JAVAJIGI);
 
         //then
         assertThat(deleteHistories)
