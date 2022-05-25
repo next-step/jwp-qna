@@ -19,4 +19,4 @@
 - [x] UserRepository 테스트 작성
 - [x] QuestionRepository 테스트 작성
 - [x] AnswerRepository 테스트 작성
-- [ ] DeleteHistoryRepository 테스트 작성
+- [x] DeleteHistoryRepository 테스트 작성
