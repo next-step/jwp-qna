@@ -85,11 +85,11 @@ public class Question extends BaseEntity {
 
         this.deleted = true;
 
-        List<DeleteHistory> histories = new ArrayList<>();
-        histories.add(new DeleteHistory(ContentType.QUESTION, id, writer));
-        histories.addAll(answers.delete(loginUser));
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(DeleteHistory.ofQuestion(id, writer));
+        deleteHistories.addAll(answers.delete(loginUser));
 
-        return histories;
+        return deleteHistories.getDeleteHistories();
     }
 
     @Override
