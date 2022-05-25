@@ -15,21 +15,20 @@ public class UserRepositoryTest {
     @Test
     void save() {
         //given
-        User expected = UserTest.SANJIGI;
+        User expected = UserTest.JAVAJIGI;
         //when
         User actual = userRepository.save(expected);
         //then
-        //assertThat(actual).isEqualTo(expected);
-        assertThat(actual).isNotNull();
-        assertThat(actual.equalsNameAndEmail(expected));
+        assertThat(actual).isEqualTo(expected);
+
     }
 
     @Test
     void findByName() {
         //given
-        User expected = userRepository.save(UserTest.JAVAJIGI);
+        User expected = userRepository.save(UserTest.SANJIGI);
         //when
-        User actual = userRepository.findByUserId("javajigi").get();
+        User actual = userRepository.findByUserId("sanjigi").get();
         //then
         assertThat(actual).isEqualTo(expected);
     }
