@@ -28,7 +28,7 @@ public class DeleteHistory{
     private ContentType contentType;
     private Long contentId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DELETE_BY_ID", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedById;
 
