@@ -23,7 +23,7 @@ class DeleteHistoryRepositoryTest {
     void save() {
         //given
         User user = userRepository.save(UserTest.JAVAJIGI);
-        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, user, null);
+        final DeleteHistory deleteHistory = DeleteHistory.ofQuestion(1L, user, null);
         final DeleteHistory expected = deleteHistoryRepository.save(deleteHistory);
 
         //when
