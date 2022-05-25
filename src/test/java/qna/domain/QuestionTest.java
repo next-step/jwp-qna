@@ -92,16 +92,13 @@ public class QuestionTest {
 
     @Test
     public void oneToManyTest() {
-        A1.setId(null); //id가없어야 save를 하고 casecade를통한 save도 이뤄짐
-        A2.setId(null);
-        answerRepository.save(A1);
-        answerRepository.save(A2);
-
+        questionRepository.save(Q1);
         //em.clear(); //현재 Q1은 영속성에 존재하기때문에, answers에 A1과 A2가 없음. 새로가지고와야함
         Optional<Question> q1ById = questionRepository.findByIdAndDeletedIsFalse(Q1.getId());
         assertThat(q1ById.get().getAnswers())
             .extracting("id")
-            .containsExactly(A1.getId(), A2.getId());
+            .contains(A1.getId())
+            .contains(A2.getId());
     }
 
     @Test
