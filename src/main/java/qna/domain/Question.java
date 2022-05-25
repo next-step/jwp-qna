@@ -4,6 +4,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
@@ -36,7 +37,7 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "question", cascade = {CascadeType.PERSIST})
     private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
@@ -150,8 +151,9 @@ public class Question extends BaseTimeEntity {
 
     private void executeDelete() {
         this.deleted = true;
-        for (Answer answer : answers) {
-            answer.deleteAnswer();
+        Iterator<Answer> iter = answers.iterator();
+        while (iter.hasNext()) {
+            iter.next().deleteAnswer();
         }
     }
 
