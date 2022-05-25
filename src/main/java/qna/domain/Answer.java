@@ -54,9 +54,6 @@ public class Answer extends CreatedUpdatedDateEntity {
     }
 
     public void toQuestion(Question question) {
-        if (Objects.nonNull(this.question)) {
-            this.question.getAnswers().remove(this);
-        }
         if (Objects.nonNull(question)) {
             question.getAnswers().add(this);
         }
