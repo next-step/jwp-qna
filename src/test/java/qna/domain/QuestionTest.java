@@ -53,7 +53,7 @@ public class QuestionTest {
         A1.setId(null);
         A2.setId(null);
         A1.toQuestion(Q1);
-        A1.toQuestion(Q1);
+        A2.toQuestion(Q1);
 
         userRepository.save(SANJIGI);
         userRepository.save(JAVAJIGI);
