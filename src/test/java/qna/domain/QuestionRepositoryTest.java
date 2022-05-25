@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    void save() {
+    void save() throws CannotDeleteException {
         final User javajigi = userRepository.save(UserTest.JAVAJIGI);
         final Question question = questionRepository.save(new Question("title123", "contents123").writeBy(javajigi));
         assertThat(question.getId()).isNotNull();
