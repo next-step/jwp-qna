@@ -35,10 +35,18 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User user) {
+    protected DeleteHistory(ContentType contentType, Long contentId, User user) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.user = user;
+    }
+
+    public static DeleteHistory questionDeleteHistory(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWrittenBy());
+    }
+
+    public static DeleteHistory answerDeleteHistory(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWrittenBy());
     }
 
     @Override
@@ -56,12 +64,6 @@ public class DeleteHistory {
 
     @Override
     public String toString() {
-        return "DeleteHistory{" +
-                "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", user=" + user +
-                ", createDate=" + createDate +
-                '}';
+        return "DeleteHistory{" + "id=" + id + ", contentType=" + contentType + ", contentId=" + contentId + ", user=" + user + ", createDate=" + createDate + '}';
     }
 }
