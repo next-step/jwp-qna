@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.AnswerTest.*;
-import static qna.domain.QuestionTest.*;
+import static qna.domain.QuestionTest.Q1;
 
 @DataJpaTest
 class AnswerRepositoryTest {
+
+    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Autowired
     private AnswerRepository answerRepository;

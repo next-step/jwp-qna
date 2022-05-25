@@ -36,14 +36,14 @@ class UserRepositoryTest {
     }
 
 
-    @DisplayName("User 수정 테스트")
+    @DisplayName("User 수정")
     @Test
     void updateUser() {
         final User user = userRepository.save(JAVAJIGI);
         userRepository.flush();
 
         String expected = "자바지기";
-        user.setName(expected);
+        user.changeName(expected);
         Optional<User> actual = userRepository.findByName(expected);
 
         assertThat(actual).isPresent();
