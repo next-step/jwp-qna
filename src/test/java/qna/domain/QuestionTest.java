@@ -16,8 +16,8 @@ public class QuestionTest {
     @DisplayName("Question 작성자 테스트")
     void Question_작성자(){
         assertAll(
-                () -> assertThat(Q1.mismatchOwner(UserTest.JAVAJIGI)).isTrue(),
-                () -> assertThat(Q1.mismatchOwner(UserTest.SANJIGI)).isFalse()
+                () -> assertThat(Q1.mismatchOwner(UserTest.JAVAJIGI)).isFalse(),
+                () -> assertThat(Q1.mismatchOwner(UserTest.SANJIGI)).isTrue()
         );
     }
 
