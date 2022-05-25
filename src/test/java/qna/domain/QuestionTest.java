@@ -46,6 +46,8 @@ public class QuestionTest {
         Q1.setId(null);
         Q2.setId(null);
         Q1.getAnswers().clear();
+        A1.setQuestion(null);
+        A2.setQuestion(null);
         Q2.getAnswers().clear();
 
         A1.setId(null);

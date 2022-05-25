@@ -33,6 +33,8 @@ public class AnswerTest {
         Q1.setId(null);
         Q2.setId(null);
         Q1.getAnswers().clear();
+        A1.setQuestion(null);
+        A2.setQuestion(null);
         Q2.getAnswers().clear();
 
 
@@ -40,8 +42,6 @@ public class AnswerTest {
         A2.setId(null);
         A1.toQuestion(Q1);
         A2.toQuestion(Q1);
-        System.out.println("e"
-            + "");
     }
 
     @Test
