@@ -31,10 +31,10 @@ public class User extends BaseTimeEntity {
     @Column(name = "email")
     private String email;
 
-    public User() {
+    protected User() {
     }
 
-    protected User(String userId, String password, String name, String email) {
+    User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
     }
 
