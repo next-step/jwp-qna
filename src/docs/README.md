@@ -11,7 +11,7 @@
     + spring.jpa.show-sql=true
 
 ## 📈 To-Do
-- [ ] 공통으로 사용할 엔티티 BaseEntity 작성
+- [x] 공통으로 사용할 엔티티 BaseEntity 작성
 - [ ] User 엔티티 jpa 적용
 - [ ] Question 엔티티 jpa 적용
 - [ ] Answer 엔티티 jpa 적용
