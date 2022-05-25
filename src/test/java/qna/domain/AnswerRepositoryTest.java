@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,27 +15,40 @@ class AnswerRepositoryTest {
 
     @Autowired
     AnswerRepository answers;
+    @Autowired
+    UserRepository users;
+    @Autowired
+    QuestionRepository questions;
+    private User user;
+    private Question question;
+    private Answer answer;
+
+    @BeforeEach
+    void setUp() {
+        user = users.save(UserTest.JAVAJIGI);
+        question = questions.save(new Question("title1", "contents1").writeBy(user));
+        answer = new Answer(user, question, "Answers Contents");
+    }
 
     @Test
     void save() {
-        answers.save(AnswerTest.A1);
-        answers.save(AnswerTest.A2);
+        answers.save(answer);
         List<Answer> answersAll = answers.findAll();
-        assertThat(answersAll).hasSize(2);
+        assertThat(answersAll).hasSize(1);
     }
 
     @Test
     void findById() {
-        Answer answer = answers.save(AnswerTest.A1);
-        Answer expected = answers.findById(1L).get();
+        answers.save(answer);
+        Answer expected = answers.findById(answer.getId()).get();
 
         assertThat(expected).isSameAs(answer);
     }
 
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        answers.save(AnswerTest.A1);
-        List<Answer> list = answers.findByQuestionIdAndDeletedFalse(AnswerTest.A1.getQuestionId());
-        assertThat(list).hasSize(1);
+        answers.save(answer);
+        List<Answer> list = answers.findByQuestionIdAndDeletedFalse(answer.getQuestion().getId());
+        assertThat(list.get(0)).isSameAs(answer);
     }
 }
