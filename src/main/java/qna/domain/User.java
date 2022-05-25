@@ -7,9 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -32,15 +29,6 @@ public class User extends BaseEntity {
 
     @Column(length = 50)
     private String email;
-
-    @OneToMany(mappedBy = "writer")
-    private List<Question> questions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "writer")
-    private List<Answer> answers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "deletedByUser")
-    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected User() {
     }
@@ -99,44 +87,26 @@ public class User extends BaseEntity {
         return username;
     }
 
-    public void setUsername(String userId) {
-        this.username = userId;
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", userId='" + username + '\'' +
+                ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", questions=" + questions +
-                ", answers=" + answers +
                 '}';
     }
 
