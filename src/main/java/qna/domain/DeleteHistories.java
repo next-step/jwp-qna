@@ -9,7 +9,7 @@ public class DeleteHistories {
     private final List<DeleteHistory> items;
 
     public DeleteHistories(DeleteHistory param) {
-        this.items = Collections.singletonList(param);
+        this(Collections.singletonList(param));
     }
 
     public DeleteHistories(List<DeleteHistory> params) {
