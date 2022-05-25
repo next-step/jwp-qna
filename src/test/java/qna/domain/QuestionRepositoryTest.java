@@ -1,10 +1,11 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,6 +64,29 @@ public class QuestionRepositoryTest {
 
         final Optional<Question> actual = questionRepository.findById(question.getId());
         assertThat(actual.isPresent()).isFalse();
+    }
+
+    @Test
+    void 질문_삭제_DELETED() throws CannotDeleteException {
+        final User user = userRepository.save(createTestUser());
+        final Question question = questionRepository.save(new Question("제목", "내용").writeBy(user));
+
+        question.delete(user);
+
+        final Question actual = questionRepository.findById(question.getId()).get();
+        assertThat(actual.isDeleted()).isTrue();
+    }
+
+    @Test
+    void 질문_댓글_추가_테스트() {
+        final User user = userRepository.save(createTestUser());
+        final Question question = questionRepository.save(new Question("제목", "내용").writeBy(user));
+        question.addAnswer(new Answer(user, question, "댓글 추가"));
+        question.addAnswer(new Answer(user, question, "댓글 추가"));
+
+        final Question actual = questionRepository.findByIdAndDeletedFalse(question.getId()).get();
+
+        assertThat(actual.getAnswers().getList()).hasSize(2);
     }
 
     private User createTestUser() {

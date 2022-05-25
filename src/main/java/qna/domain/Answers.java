@@ -36,4 +36,8 @@ public class Answers {
         }
         return history;
     }
+
+    public List<Answer> getList() {
+        return list;
+    }
 }
