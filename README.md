@@ -11,7 +11,7 @@
 
 - [x] answer와 question 연관 관계
 - [x] answer와 user 연관 관계
-- [ ] delete_history와 user 연관 관계
+- [x] delete_history와 user 연관 관계
 - [x] question과 user 연관 관계
 
 ### 요구사항
