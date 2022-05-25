@@ -22,10 +22,10 @@ public class Answers {
         this.answers = answers;
     }
 
-    public List<Answer> deleteAnswers(User loginUser){
-        List<Answer> deletedAnswers = new ArrayList<>();
+    public Answers deleteAnswers(User loginUser){
         List<Answer> undeletedAnswers = answers.stream().filter(answer -> !answer.isDeleted())
                 .collect(Collectors.toList());
+        Answers deletedAnswers = new Answers();
         for (Answer answer : undeletedAnswers) {
             deletedAnswers.add(answer.delete(loginUser));
         }

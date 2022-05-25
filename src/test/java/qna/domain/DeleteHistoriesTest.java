@@ -13,7 +13,7 @@ public class DeleteHistoriesTest {
     void DeleteHistories_생성(){
         DeleteHistories deleteHistories = DeleteHistories.of(
                 QuestionTest.Q1,
-                Arrays.asList(AnswerTest.A1, AnswerTest.A2),
+                new Answers(Arrays.asList(AnswerTest.A1, AnswerTest.A2)),
                 UserTest.JAVAJIGI
         );
         assertThat(deleteHistories.getDeleteHistories().size()).isEqualTo(3);

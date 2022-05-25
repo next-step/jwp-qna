@@ -35,7 +35,7 @@ public class AnswersTest {
         Answer answer2 = AnswerTest.generateAnswer(UserTest.JAVAJIGI, QuestionTest.Q1, false);
         Answer answer3 = AnswerTest.generateAnswer(UserTest.JAVAJIGI, QuestionTest.Q1, true);
         Answers answers = new Answers(Arrays.asList(answer1, answer2, answer3));
-        List<Answer> deletedAnswers = answers.deleteAnswers(UserTest.JAVAJIGI);
-        assertThat(deletedAnswers).containsExactly(answer1, answer2);
+        Answers deletedAnswers = answers.deleteAnswers(UserTest.JAVAJIGI);
+        assertThat(deletedAnswers.getAnswers()).containsExactly(answer1, answer2);
     }
 }

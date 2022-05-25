@@ -48,9 +48,9 @@ public class Question extends BaseTimeEntity{
         return this;
     }
 
-    public List<Answer> delete(User loginUser){
+    public Answers delete(User loginUser){
         validateUserToDelete(loginUser);
-        List<Answer> deletedAnswers = answers.deleteAnswers(loginUser);
+        Answers deletedAnswers = answers.deleteAnswers(loginUser);
         deleted = true;
         return deletedAnswers;
     }
