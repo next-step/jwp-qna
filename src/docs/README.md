@@ -15,7 +15,7 @@
 - [x] User 엔티티 jpa 적용
 - [x] Question 엔티티 jpa 적용
 - [x] Answer 엔티티 jpa 적용
-- [ ] DeleteHistory 엔티티 jpa 적용
+- [x] DeleteHistory 엔티티 jpa 적용
 - [ ] UserRepository 테스트 작성
 - [ ] QuestionRepository 테스트 작성
 - [ ] AnswerRepository 테스트 작성
