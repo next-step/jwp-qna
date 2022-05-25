@@ -84,12 +84,10 @@ public class AnswerTest {
 
     @Test
     public void cascadePersist() {
-        assertThat(A1.getWriter().getId()).isNull();
-        assertThat(A1.getQuestion().getId()).isNull();
-
-        answerRepository.save(A1);
-        assertThat(A1.getWriter().getId()).isNotNull();
-        assertThat(A1.getQuestion().getId()).isNotNull();
+        Answer answer = new Answer( UserTest.JAVAJIGI, Q1,
+            "Answers Contents1");
+        questionRepository.save(Q1);
+        assertThat(answer.getQuestion().getId()).isNotNull();
     }
 
     @Test
