@@ -18,4 +18,14 @@ public class QuestionTest {
                 () -> assertThat(Q2.isOwner(UserTest.SANJIGI)).isTrue()
         );
     }
+    
+    @Test
+    @DisplayName("답변 추가 후 질문자 id로 변경되었지 확인")
+    void addAnswer() {
+        Answer answer = AnswerTest.A2;
+        Question question = Q1;
+        question.addAnswer(answer);
+
+        assertThat(answer.getQuestionId()).isEqualTo(question.getId());
+    }
 }
