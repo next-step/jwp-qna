@@ -98,7 +98,7 @@ public class AnswerTest {
             .hasSize(2)
             .contains(A1, A2)
             .as("static 생성자에 의해 Q1에 2개의 Answer가 매핑되어있다");
-        Answer answer1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1,
+        Answer answer1 = new Answer(1L, UserTest.JAVAJIGI, Q1,
             "Answers Contents1");
         assertThat(Q1.getAnswers())
             .hasSize(3)
