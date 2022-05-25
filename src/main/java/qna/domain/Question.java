@@ -3,6 +3,7 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -11,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +30,8 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -73,7 +73,7 @@ public class Question extends BaseTimeEntity {
         return writer;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -87,16 +87,14 @@ public class Question extends BaseTimeEntity {
         }
         this.deleted = true;
 
-        for (Answer answer : answers) {
-            answer.delete(loginUser);
-        }
+        answers.delete(loginUser);
     }
 
     public List<DeleteHistory> createDeleteHistories() {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(DeleteHistory.questionDeleteHistory(this));
-        
-        answers.forEach(answer -> deleteHistories.add(
+
+        answers.getAnswers().forEach(answer -> deleteHistories.add(
                 DeleteHistory.answerDeleteHistory(answer)
         ));
 
