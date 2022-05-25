@@ -70,7 +70,7 @@ public class QuestionTest {
 
     @Test
     public void equalTest() {
-        Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
         Question q1Saved = questionRepository.save(Q1);
         assertThat(q1Saved.hashCode()).isEqualTo(Q1.hashCode());
     }
@@ -104,14 +104,13 @@ public class QuestionTest {
     @Test
     public void deleteQuestionNotMineTest() {
         Question question = new Question("title1", "contents1").writeBy(
-            UserTest.SANJIGI);
-        Answer answer = new Answer(UserTest.JAVAJIGI, question,
+            SANJIGI);
+        Answer answer = new Answer(JAVAJIGI, question,
             "Answers Contents1");
         questionRepository.save(question);
         answerRepository.save(answer);
-        System.out.println(question);
 
-        assertThatThrownBy(() -> question.delete(UserTest.JAVAJIGI)).isInstanceOf(
+        assertThatThrownBy(() -> question.delete(JAVAJIGI)).isInstanceOf(
                 CannotDeleteException.class)
             .hasMessage("질문을 삭제할 권한이 없습니다.");
     }
@@ -124,7 +123,7 @@ public class QuestionTest {
 
         answerRepository.save(A2); //산지기 Question
         System.out.println("ee");
-        assertThatThrownBy(() -> Q1.delete(UserTest.JAVAJIGI))
+        assertThatThrownBy(() -> Q1.delete(JAVAJIGI))
             .isInstanceOf(CannotDeleteException.class)
             .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 
