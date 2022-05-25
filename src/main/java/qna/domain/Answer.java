@@ -5,7 +5,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -58,8 +57,7 @@ public class Answer extends BaseTimeEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
-
-        addAnswerToTargetQuestion();
+        moveAnswer();
     }
 
     public boolean isOwner(User writer) {
@@ -74,23 +72,21 @@ public class Answer extends BaseTimeEntity {
             removeAnswerFromOriginQuestion();
         }
         this.question = question;
-        addAnswerToTargetQuestion();
-
+        moveAnswer();
     }
 
-    private void addAnswerToTargetQuestion() {
+    private void moveAnswer() {
         this.question.getAnswers().add(this);
     }
 
-    public void deleteAnswer() {
-        this.deleted = true;
-        removeAnswerFromOriginQuestion();
+    private void removeAnswerFromOriginQuestion() {
+        this.question.getAnswers().remove(this);
     }
 
-    private void removeAnswerFromOriginQuestion() {
-        int index = this.question.getAnswers().indexOf(this);
-        this.question.getAnswers().get(index).setDeleted(true);
+    public void delete(){
+        this.deleted = true;
     }
+
 
     public void setContents(String contents) {
         this.contents = contents;
