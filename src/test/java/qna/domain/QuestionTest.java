@@ -84,13 +84,6 @@ public class QuestionTest {
     }
 
     @Test
-    public void cascadePersist() {
-        assertThat(Q1.getWriter().getId()).isNull();
-        Question q1Saved = questionRepository.save(Q1);
-        assertThat(q1Saved.getWriter().getId()).isNotNull();
-    }
-
-    @Test
     public void oneToManyTest() {
         questionRepository.save(Q1);
         //em.clear(); //현재 Q1은 영속성에 존재하기때문에, answers에 A1과 A2가 없음. 새로가지고와야함
