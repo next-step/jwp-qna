@@ -1,6 +1,10 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.QuestionTest.Q1;
+import static qna.domain.QuestionTest.Q2;
+import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,21 +20,28 @@ public class AnswerTest {
 
     @Autowired
     QuestionRepository questionRepository;
-    public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1,
+    public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, Q1,
         "Answers Contents1");
-    public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1,
+    public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, Q1,
         "Answers Contents2");
 
     @BeforeEach
     public void init() {
-        UserTest.JAVAJIGI.setId(null);
-        UserTest.SANJIGI.setId(null);
+        JAVAJIGI.setId(null);
+        SANJIGI.setId(null);
 
-        QuestionTest.Q1.setId(null);
-        QuestionTest.Q2.setId(null);
+        Q1.setId(null);
+        Q2.setId(null);
+        Q1.getAnswers().clear();
+        Q2.getAnswers().clear();
+
 
         A1.setId(null);
         A2.setId(null);
+        A1.toQuestion(Q1);
+        A2.toQuestion(Q1);
+        System.out.println("e"
+            + "");
     }
 
     @Test

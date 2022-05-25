@@ -37,18 +37,23 @@ public class QuestionTest {
     public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(
         JAVAJIGI);
     public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(
-        UserTest.SANJIGI);
+        SANJIGI);
 
     @BeforeEach
     public void init() {
-        UserTest.JAVAJIGI.setId(null);
-        UserTest.SANJIGI.setId(null);
+        JAVAJIGI.setId(null);
+        SANJIGI.setId(null);
 
         Q1.setId(null);
         Q2.setId(null);
+        Q1.getAnswers().clear();
+        Q2.getAnswers().clear();
+
 
         A1.setId(null);
         A2.setId(null);
+        A1.toQuestion(Q1);
+        A1.toQuestion(Q1);
 
     }
 
