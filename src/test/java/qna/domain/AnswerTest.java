@@ -19,7 +19,7 @@ public class AnswerTest {
     private AnswerRepository answerRepository;
 
     @Test
-    @DisplayName("새로운_객체를_영속화하게_되면_발급된_Id_를_확인할_수_있다")
+    @DisplayName("Answer를_저장하게_되면_발급된_Id_를_확인할_수_있다")
     void save() {
         final User JAVAJIGI = new User(null, "javajigi", "password", "name", "javajigi@slipp.net");
         final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
