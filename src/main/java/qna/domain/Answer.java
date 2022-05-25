@@ -87,15 +87,6 @@ public class Answer extends BaseTimeEntity {
         this.deleted = true;
     }
 
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -112,20 +103,12 @@ public class Answer extends BaseTimeEntity {
         return question;
     }
 
-    public String getContents() {
-        return contents;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setQuestion(Question question) {
         this.question = question;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
