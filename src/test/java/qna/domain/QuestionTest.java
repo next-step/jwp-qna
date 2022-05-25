@@ -9,7 +9,6 @@ import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +47,6 @@ public class QuestionTest {
         Q2.setId(null);
         Q1.getAnswers().clear();
         Q2.getAnswers().clear();
-
 
         A1.setId(null);
         A2.setId(null);
@@ -136,18 +134,24 @@ public class QuestionTest {
     @Test
     @DisplayName("삭제시 question은 해당 아이디만, answer은 연관된 모든 answer id가 반환된다")
     public void deleteQuestionGetTargetId() throws CannotDeleteException {
-        questionRepository.save(Q1); //자바지기 Question
-        answerRepository.save(A1); //자바지기 Question
-        A2.setWriter(UserTest.JAVAJIGI);
-        answerRepository.save(A2); //자바지기 Question
-        ArrayList<DeleteHistory> deleteHistories = Q1.delete(UserTest.JAVAJIGI);
+        //given
+        Question q1Local = new Question("title1", "contents1").writeBy(
+            JAVAJIGI);
+        Answer answer1Local = new Answer(UserTest.JAVAJIGI, q1Local,
+            "Answers Contents1");
+        Answer answer2Local = new Answer(UserTest.JAVAJIGI, q1Local,
+            "Answers Contents2");
 
+        //when
+        questionRepository.save(q1Local); //자바지기 Question
+        ArrayList<DeleteHistory> deleteHistories = q1Local.delete(JAVAJIGI);
+
+        //then
         assertThat(deleteHistories)
             .extracting("contentType", "contentId")
-            .contains(tuple(ContentType.QUESTION, Q1.getId()))
-            .contains(tuple(ContentType.ANSWER, A1.getId()));
-
-
+            .contains(tuple(ContentType.QUESTION, q1Local.getId()))
+            .contains(tuple(ContentType.ANSWER, answer1Local.getId()))
+            .contains(tuple(ContentType.ANSWER, answer2Local.getId()));
     }
 
 //    @Test
