@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
@@ -26,7 +27,7 @@ public class Answer extends AuditTimeBaseEntity {
     private String contents;
 
     @Column(nullable = false)
-    private boolean deleted = false;
+    private boolean deleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
@@ -36,58 +37,76 @@ public class Answer extends AuditTimeBaseEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
+    protected Answer() {
+    }
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
+        this(id, contents, question, writer, false);
+    }
+
+    private Answer(Long id, String contents, Question question, User writer, boolean deleted) {
+        validateWriter(writer);
+        validateQuestion(question);
+
         this.id = id;
+        this.contents = contents;
+        this.question = Question.from(question);
+        this.writer = User.from(writer);
+        this.deleted = deleted;
+    }
 
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
-
+    private void validateQuestion(Question question) {
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
-
-        this.writer = writer;
-        this.question = question;
-        this.contents = contents;
     }
 
-    public Answer() {
+    private void validateWriter(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
     }
 
-    public boolean isOwner(User writer) {
+    public static Answer from(Answer answer) {
+        if (Objects.isNull(answer)) {
+            return null;
+        }
+        return new Answer(answer.id, answer.contents, answer.question, answer.writer, answer.deleted);
+    }
+
+    public DeleteHistory delete(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        setDeleted(true);
+        return DeleteHistory.of(ContentType.ANSWER, id, writer);
+    }
+
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
-        this.question = question;
+    private void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriterId(User writer) {
-        this.writer = writer;
     }
 
     public Long getQuestionId() {
         return question.getId();
     }
 
-    public void setQuestionId(Question question) {
+    public void toQuestion(Question question) {
         this.question = question;
     }
 
@@ -95,16 +114,8 @@ public class Answer extends AuditTimeBaseEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

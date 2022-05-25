@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.User;
+import qna.exception.CannotDeleteException;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -28,12 +29,14 @@ public class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    private User javajigi;
+
     private Answer answer1;
     private Answer answer2;
 
     @BeforeEach
     void setUp() {
-        User javajigi = userRepository.save(JAVAJIGI);
+        javajigi = userRepository.save(JAVAJIGI);
         User sanjigi = userRepository.save(SANJIGI);
 
         Question question = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi));
@@ -61,8 +64,9 @@ public class AnswerRepositoryTest {
     @DisplayName("조회")
     class Query {
         @BeforeEach
-        void setUp() {
-            answer1.setDeleted(true);
+        void setUp() throws CannotDeleteException {
+            answer1.delete(javajigi);
+
             answerRepository.save(answer1);
             answerRepository.save(answer2);
         }

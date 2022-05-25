@@ -32,14 +32,35 @@ public class DeleteHistory {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
 
+    protected DeleteHistory() {
+    }
+
     public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+        this(null, contentType, contentId, deletedBy, createDate);
+    }
+
+    private DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+        this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedBy = deletedBy;
+        this.deletedBy = User.from(deletedBy);
         this.createDate = createDate;
     }
 
-    public DeleteHistory() {
+    public static DeleteHistory from(DeleteHistory deleteHistory) {
+        if (Objects.isNull(deleteHistory)) {
+            return null;
+        }
+        return new DeleteHistory(
+                deleteHistory.id,
+                deleteHistory.contentType,
+                deleteHistory.contentId,
+                deleteHistory.deletedBy,
+                deleteHistory.createDate);
+    }
+
+    public static DeleteHistory of(ContentType contentType, Long contentId, User writer) {
+        return new DeleteHistory(contentType, contentId, writer, LocalDateTime.now());
     }
 
     public Long getId() {
