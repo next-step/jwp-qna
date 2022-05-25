@@ -12,7 +12,7 @@ public class Question extends BaseTimeEntity {
     @Lob
     @Column(nullable = false)
     private String contents;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
     @Column(nullable = false)
@@ -32,7 +32,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
-        writer = writer;
+        this.writer = writer;
         return this;
     }
 
@@ -68,8 +68,8 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
+    public User getWriter() {
+        return writer;
     }
 
     public void setWriterId(User writer) {
