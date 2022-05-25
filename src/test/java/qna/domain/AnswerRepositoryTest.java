@@ -24,8 +24,8 @@ public class AnswerRepositoryTest {
 		Answer actual = answerRepository.save(expected);
 
 		assertAll(
-			() -> assertThat(actual .getId()).isNotNull(),
-			() -> assertThat(actual .getContents()).isEqualTo(expected.getContents())
+			() -> assertThat(actual.getId()).isNotNull(),
+			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
 		);
 	}
 
