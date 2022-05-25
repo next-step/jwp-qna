@@ -94,10 +94,12 @@ public class AnswerRepositoryTest {
         final User user = userRepository.save(createTestUser());
         final Question question = questionRepository.save(new Question("제목", "내용").writeBy(user));
         final Answer answer = new Answer(user, question, "댓글 추가");
+        answerRepository.save(answer);
 
         answer.delete(user);
 
-        assertThat(answer.isDeleted()).isTrue();
+        final Answer actual = answerRepository.findById(answer.getId()).get();
+        assertThat(actual.isDeleted()).isTrue();
     }
 
     private User createTestUser() {
