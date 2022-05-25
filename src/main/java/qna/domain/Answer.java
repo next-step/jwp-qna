@@ -13,16 +13,10 @@ public class Answer extends Time {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writerId",
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "fk_answer_writer"),
-            nullable = false)
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "questionId",
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "fk_answer_to_question"),
-            nullable = false)
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
     @Lob
     @Column

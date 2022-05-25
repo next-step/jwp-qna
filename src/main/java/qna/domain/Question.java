@@ -16,10 +16,7 @@ public class Question extends Time {
     @Column
     private String contents;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writerId",
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "fk_question_writer"),
-            nullable = false)
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"), nullable = false)
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;

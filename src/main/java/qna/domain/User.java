@@ -6,22 +6,17 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(indexes = {@Index(name = "UK_user_id",
-        columnList = "userId",
-        unique = true)})
+@Table(indexes = {@Index(name = "UK_user_id", columnList = "userId", unique = true)})
 public class User extends Time {
     public static final GuestUser GUEST_USER = new GuestUser();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 20,
-            nullable = false)
+    @Column(length = 20, nullable = false)
     private String userId;
-    @Column(length = 20,
-            nullable = false)
+    @Column(length = 20, nullable = false)
     private String password;
-    @Column(length = 20,
-            nullable = false)
+    @Column(length = 20, nullable = false)
     private String name;
     @Column(length = 50)
     private String email;
