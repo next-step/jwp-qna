@@ -18,5 +18,5 @@
 - [x] DeleteHistory 엔티티 jpa 적용
 - [x] UserRepository 테스트 작성
 - [x] QuestionRepository 테스트 작성
-- [ ] AnswerRepository 테스트 작성
+- [x] AnswerRepository 테스트 작성
 - [ ] DeleteHistoryRepository 테스트 작성
