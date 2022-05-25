@@ -58,8 +58,8 @@ class QnaServiceTest {
     }
 
     @Test
-    @DisplayName("로그인 사용자와 질문한 사람이 같은 경우 삭제 성공")
-    public void delete_1() throws Exception {
+    @DisplayName("로그인한 사용자와 질문 작성자가 같은 경우 삭제 가능")
+    public void delete_question_same_writer() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question1.getId())).thenReturn(Optional.of(question1));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question1.getId())).thenReturn(Arrays.asList(answer));
 
@@ -71,8 +71,8 @@ class QnaServiceTest {
     }
 
     @Test
-    @DisplayName("로그인 사용자와 질문한 사람이 다른 경우 삭제할 수 없음")
-    public void delete_2() throws Exception {
+    @DisplayName("로그인한 사용자가 질문 작성자가 아닌 경우 질문 삭제 불가")
+    public void delete_question_diff_writer() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question1.getId())).thenReturn(Optional.of(question1));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(user2, question1.getId()))
@@ -80,8 +80,8 @@ class QnaServiceTest {
     }
 
     @Test
-    @DisplayName("질문자와 답변 글의 모든 답변자가 같은 경우 삭제 가능")
-    public void delete_3() throws Exception {
+    @DisplayName("질문에 답변이 있을 때, 질문 작성자와 모든 답변 작성자가 같다면 작성자 본인의 질문 삭제 가능")
+    public void delete_question_with_answer_same_writer() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question1.getId())).thenReturn(Optional.of(question1));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question1.getId())).thenReturn(Arrays.asList(answer));
 
@@ -93,8 +93,8 @@ class QnaServiceTest {
     }
 
     @Test
-    @DisplayName("질문자와 답변자가 다른 경우 답변 삭제 불가")
-    public void delete_4() throws Exception {
+    @DisplayName("질문에 답변이 있을 때, 질문 작성자가 아닌 다른 사람의 답변이 있다면 작성자 본인의 질문 삭제 실패")
+    public void delete_question_with_answer_diff_writer() throws Exception {
         Answer answer2 = new Answer(user2, question1, "contents1");
         question1.addAnswer(answer2);
 
