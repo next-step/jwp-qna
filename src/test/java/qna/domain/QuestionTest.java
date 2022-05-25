@@ -32,7 +32,7 @@ public class QuestionTest {
         answers = pushAnswerIn(question);
     }
 
-    @DisplayName("동등성 비교테스트")
+    @DisplayName("동등성 비교 테스트")
     @Test
     void identityTest() {
         Question savedQuestion = questionRepository.save(question);
