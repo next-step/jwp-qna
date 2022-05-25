@@ -27,7 +27,7 @@ class DeleteHistoryRepositoryTest {
         User javajigi = userRepository.save(UserTest.JAVAJIGI);
         Question question = new Question("title", "contents").writeBy(javajigi);
         questionRepository.save(question);
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), javajigi, LocalDateTime.now());
+        DeleteHistory deleteHistory = DeleteHistory.ofQuestion(question.getId(), javajigi);
         //when
         deleteHistoryRepository.save(deleteHistory);
         Optional<DeleteHistory> findDeleteHistory = deleteHistoryRepository.findById(deleteHistory.getId());

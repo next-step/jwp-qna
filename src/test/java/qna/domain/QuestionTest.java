@@ -2,6 +2,7 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,5 +38,38 @@ public class QuestionTest {
                 () -> assertThat(Q1.isOwner(UserTest.JAVAJIGI)).isTrue(),
                 () -> assertThat(Q2.isOwner(UserTest.SANJIGI)).isTrue()
         );
+    }
+
+    @DisplayName("Question 에 답변 추가")
+    @Test
+    void test_add_answer() {
+        //given
+        Question question = new Question("title", "contents").writeBy(UserTest.JAVAJIGI);
+        //when
+        question.addAnswer(AnswerTest.A1);
+        question.addAnswer(AnswerTest.A2);
+        //then
+        assertThat(question.answersSize()).isEqualTo(2);
+    }
+
+    @DisplayName("Question 삭제 시 deleted 상태 업데이트")
+    @Test
+    void test_delete() throws CannotDeleteException {
+        //given
+        Question question = new Question("title", "contents").writeBy(UserTest.JAVAJIGI);
+        //when
+        question.delete(UserTest.JAVAJIGI);
+        //then
+        assertThat(question.isDeleted()).isTrue();
+    }
+
+    @DisplayName("로그인 사용자가 Question 의 작성자(writer)와 동일하지 않으면 오류")
+    @Test
+    void test_writer_not_equals_login_user() {
+        //given
+        Question question = new Question("title", "contents").writeBy(UserTest.JAVAJIGI);
+        //when & then
+        assertThatThrownBy(() -> question.delete(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class);
     }
 }

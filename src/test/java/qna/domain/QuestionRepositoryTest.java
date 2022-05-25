@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,9 +45,9 @@ class QuestionRepositoryTest {
 
     @DisplayName("삭제되지 않은 Question 목록 조회")
     @Test
-    void teat_findByDeletedFalse() {
+    void teat_findByDeletedFalse() throws CannotDeleteException {
         //given
-        this.question1.setDeleted(true);
+        this.question1.delete(UserTest.JAVAJIGI);
         questionRepository.save(this.question1);
         Question savedQuestion = questionRepository.save(this.question2);
         //when
@@ -60,9 +61,9 @@ class QuestionRepositoryTest {
 
     @DisplayName("Id로 삭제되지 않은 Question 목록 조회")
     @Test
-    void teat_findByIdAndDeletedFalse() {
+    void teat_findByIdAndDeletedFalse() throws CannotDeleteException {
         //given
-        this.question1.setDeleted(true);
+        this.question1.delete(UserTest.JAVAJIGI);
         Question deletedQuestion = questionRepository.save(this.question1);
         Question savedQuestion = questionRepository.save(this.question2);
         //when
