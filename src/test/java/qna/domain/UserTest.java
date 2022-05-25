@@ -2,6 +2,7 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.UnAuthorizedException;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +25,7 @@ public class UserTest {
     @Test
     @DisplayName("User Update 실패 테스트: userId 불일치")
     void User_update_fail_userId_불일치(){
-        assertThatThrownBy(() -> {
+        assertThrows(UnAuthorizedException.class, () -> {
             User updatedUser = new User("javajigi", "password", "newname", "newemail@slipp.net");
             SANJIGI.update(JAVAJIGI, updatedUser);
         });
@@ -33,7 +34,7 @@ public class UserTest {
     @Test
     @DisplayName("User Update 실패 테스트: password 불일치")
     void User_update_fail_password_불일치(){
-        assertThatThrownBy(() -> {
+        assertThrows(UnAuthorizedException.class, () -> {
             User updatedUser = new User("javajigi", "wrongpassword", "newname", "newemail@slipp.net");
             JAVAJIGI.update(JAVAJIGI, updatedUser);
         });

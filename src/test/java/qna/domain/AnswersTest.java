@@ -2,11 +2,12 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AnswersTest {
     @Test
@@ -23,9 +24,7 @@ public class AnswersTest {
     void Answers_삭제_실패(){
         Answer answer1 = AnswerTest.generateAnswer(UserTest.JAVAJIGI, QuestionTest.Q1, false);
         Answers answers = new Answers(Arrays.asList(answer1));
-        assertThatThrownBy(() -> {
-            answers.deleteAnswers(UserTest.SANJIGI);
-        });
+        assertThrows(CannotDeleteException.class, () -> answers.deleteAnswers(UserTest.SANJIGI));
     }
 
     @Test

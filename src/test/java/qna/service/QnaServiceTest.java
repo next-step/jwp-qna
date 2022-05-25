@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -54,9 +54,7 @@ class QnaServiceTest {
     @Test
     public void delete_다른_사람이_쓴_글() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-
-        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.SANJIGI, question.getId()))
-                .isInstanceOf(CannotDeleteException.class);
+        assertThrows(CannotDeleteException.class, () -> qnaService.deleteQuestion(UserTest.SANJIGI, question.getId()));
     }
 
     @Test
@@ -77,8 +75,7 @@ class QnaServiceTest {
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId()))
-                .isInstanceOf(CannotDeleteException.class);
+        assertThrows(CannotDeleteException.class, () -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId()));
     }
 
     private void verifyDeleteHistories() {
