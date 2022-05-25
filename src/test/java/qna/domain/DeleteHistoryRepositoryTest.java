@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,30 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
 
-    @Autowired DeleteHistoryRepository deleteHistoryRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    QuestionRepository questionRepository;
+    @Autowired
+    AnswerRepository answerRepository;
+    @Autowired
+    DeleteHistoryRepository deleteHistoryRepository;
+
+    private User user;
+    private Question question;
+    private Answer answer;
+
+    @BeforeEach
+    void init() {
+        user = userRepository.save(new User("yulmucha", "password", "Yul", "yul@google.com"));
+        question = questionRepository.save(new Question(user, "title1", "contents1"));
+        answer = answerRepository.save(new Answer(user, question, "contents"));
+    }
 
     @Test
     @DisplayName("저장이 잘 되는지 테스트")
     void save() {
-        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, 7L, 8L, LocalDateTime.now());
+        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, answer.getId(), user, LocalDateTime.now());
         DeleteHistory actual = deleteHistoryRepository.save(expected);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
@@ -28,11 +47,9 @@ class DeleteHistoryRepositoryTest {
 
     @Test
     @DisplayName("개체를 저장한 후 다시 가져왔을 때 기존의 개체와 동일한지 테스트")
-    void findById() {
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 7L, 8L, LocalDateTime.now());
-        DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
-
-        DeleteHistory foundDeleteHistory = deleteHistoryRepository.findById(savedDeleteHistory.getId()).get();
-        assertThat(foundDeleteHistory).isEqualTo(deleteHistory);
+    void identity() {
+        DeleteHistory d1 = deleteHistoryRepository.save(new DeleteHistory(ContentType.QUESTION, question.getId(), user, LocalDateTime.now()));
+        DeleteHistory d2 = deleteHistoryRepository.findById(d1.getId()).get();
+        assertThat(d1).isSameAs(d2);
     }
 }

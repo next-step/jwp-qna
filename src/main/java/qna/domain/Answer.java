@@ -5,15 +5,31 @@ import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
 public class Answer extends BaseEntity {
 
-    private Long writerId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "answer_id")
+    private Long id;
 
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     @Lob
     private String contents;
@@ -25,6 +41,12 @@ public class Answer extends BaseEntity {
     }
 
     public Answer(User writer, Question question, String contents) {
+        this(null, writer, question, contents);
+    }
+
+    public Answer(Long id, User writer, Question question, String contents) {
+        this.id = id;
+
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -33,25 +55,22 @@ public class Answer extends BaseEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
+        question.addAnswer(this);
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        return this.writer.equals(writer);
     }
 
     public Long getId() {
-        return super.getId();
+        return id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public String getContents() {
@@ -69,9 +88,9 @@ public class Answer extends BaseEntity {
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + super.getId() +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                "id=" + id +
+                ", writer=" + writer +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
