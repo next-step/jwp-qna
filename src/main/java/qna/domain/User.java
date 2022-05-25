@@ -23,10 +23,10 @@ public class User extends BaseEntity {
     @Column(unique = true, nullable = false, length = 20)
     private String userId;
 
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "writer")
     private final List<Answer> answers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "writer")
     private final List<Question> questions = new ArrayList<>();
 
     protected User() {
