@@ -8,9 +8,13 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -25,8 +29,9 @@ public class DeleteHistory {
     private ContentType contentType;
     @Column(name = "content_id")
     private Long contentId;
-    @Column(name = "deleted_by_id")
-    private Long deletedById;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedByUser;
     @CreatedDate
     @Column(name = "create_date", updatable = false)
     private LocalDateTime createDate;
@@ -34,10 +39,10 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedByUser = deletedByUser;
         this.createDate = createDate;
     }
 
@@ -53,8 +58,8 @@ public class DeleteHistory {
         return contentId;
     }
 
-    public Long getDeletedById() {
-        return deletedById;
+    public User getDeletedByUser() {
+        return deletedByUser;
     }
 
     public LocalDateTime getCreateDate() {
@@ -63,18 +68,19 @@ public class DeleteHistory {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-            contentType == that.contentType &&
-            Objects.equals(contentId, that.contentId) &&
-            Objects.equals(deletedById, that.deletedById);
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        DeleteHistory that = (DeleteHistory)o;
+        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(
+            contentId, that.contentId) && Objects.equals(deletedByUser, that.deletedByUser)
+            && Objects.equals(createDate, that.createDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, deletedByUser, createDate);
     }
 
     @Override
@@ -83,7 +89,7 @@ public class DeleteHistory {
             "id=" + id +
             ", contentType=" + contentType +
             ", contentId=" + contentId +
-            ", deletedById=" + deletedById +
+            ", deletedByUser=" + deletedByUser +
             ", createDate=" + createDate +
             '}';
     }
