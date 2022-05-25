@@ -59,7 +59,6 @@ public class QuestionTest {
 
     @Test
     public void equalTest() {
-        Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
         Question q1Saved = questionRepository.save(Q1);
         assertThat(q1Saved.hashCode()).isEqualTo(Q1.hashCode());
     }
@@ -85,14 +84,9 @@ public class QuestionTest {
 
     @Test
     public void deleteQuestionNotMineTest() {
-        Question question = new Question("title1", "contents1").writeBy(
-            SANJIGI);
-        Answer answer = new Answer(JAVAJIGI, question,
-            "Answers Contents1");
-        questionRepository.save(question);
-        answerRepository.save(answer);
+        questionRepository.save(Q1);
 
-        assertThatThrownBy(() -> question.delete(JAVAJIGI)).isInstanceOf(
+        assertThatThrownBy(() -> Q1.delete(SANJIGI)).isInstanceOf(
                 CannotDeleteException.class)
             .hasMessage("질문을 삭제할 권한이 없습니다.");
     }
