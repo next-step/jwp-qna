@@ -48,10 +48,11 @@ public class Question extends BaseTimeEntity{
         return this;
     }
 
-    public void delete(User loginUser){
+    public List<Answer> delete(User loginUser){
         validateUserToDelete(loginUser);
-        answers.deleteAnswers(loginUser);
+        List<Answer> deletedAnswers = answers.deleteAnswers(loginUser);
         deleted = true;
+        return deletedAnswers;
     }
 
     private void validateUserToDelete(User loginUser){
@@ -89,7 +90,7 @@ public class Question extends BaseTimeEntity{
         return deleted;
     }
 
-    public List<Answer> getUnmodifiableAnswers() {
+    public List<Answer> getAnswers() {
         return answers.getAnswers();
     }
 

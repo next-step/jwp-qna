@@ -7,6 +7,8 @@ import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Embeddable
 public class Answers {
@@ -20,10 +22,14 @@ public class Answers {
         this.answers = answers;
     }
 
-    public void deleteAnswers(User loginUser){
-        for (Answer answer : answers) {
-            answer.delete(loginUser);
+    public List<Answer> deleteAnswers(User loginUser){
+        List<Answer> deletedAnswers = new ArrayList<>();
+        List<Answer> undeletedAnswers = answers.stream().filter(answer -> !answer.isDeleted())
+                .collect(Collectors.toList());
+        for (Answer answer : undeletedAnswers) {
+            deletedAnswers.add(answer.delete(loginUser));
         }
+        return deletedAnswers;
     }
 
     public void add(Answer answer) {
@@ -32,5 +38,9 @@ public class Answers {
 
     public List<Answer> getAnswers(){
         return Collections.unmodifiableList(answers);
+    }
+
+    public boolean contains(Answer answer) {
+        return answers.contains(answer);
     }
 }

@@ -7,6 +7,7 @@ import qna.consts.ErrorMessage;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Optional;
 
 @Entity
 @Table(name = "answer")
@@ -53,9 +54,10 @@ public class Answer extends BaseTimeEntity{
         this.contents = contents;
     }
 
-    public void delete(User loginUser){
+    public Answer delete(User loginUser){
         validateUserToDelete(loginUser);
         deleted = true;
+        return this;
     }
 
     private void validateUserToDelete(User loginUser){

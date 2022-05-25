@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import qna.NotFoundException;
 import qna.domain.*;
 
+import java.util.List;
+
 @Service
 public class QnaService {
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
@@ -30,7 +32,8 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId){
         Question question = findQuestionById(questionId);
-        question.delete(loginUser);
-        deleteHistoryService.saveAll(DeleteHistories.of(question, loginUser).getDeleteHistories());
+        List<Answer> deletedAnswers = question.delete(loginUser);
+        DeleteHistories deleteHistories = DeleteHistories.of(question, deletedAnswers, loginUser);
+        deleteHistoryService.saveAll(deleteHistories.getDeleteHistories());
     }
 }

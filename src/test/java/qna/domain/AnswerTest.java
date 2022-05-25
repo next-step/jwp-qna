@@ -52,4 +52,20 @@ public class AnswerTest {
             A1.delete(UserTest.SANJIGI);
         }).isInstanceOf(CannotDeleteException.class);
     }
+
+    public static Answer generateAnswer(User user, Question question, boolean deleted) {
+        Answer answer = new Answer(user, question, "Answers Contents1");
+        if(deleted){
+            deleteAnswer(answer, user);
+        }
+        return answer;
+    }
+
+    private static void deleteAnswer(Answer answer, User user) {
+        try {
+            answer.delete(user);
+        } catch (CannotDeleteException e) {
+            e.printStackTrace();
+        }
+    }
 }

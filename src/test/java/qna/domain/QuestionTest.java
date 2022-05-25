@@ -25,7 +25,7 @@ public class QuestionTest {
     @DisplayName("Question에 Answer 추가 테스트")
     void Question에_Answer추가(){
         Q1.addAnswer(AnswerTest.A1);
-        assertThat(Q1.getUnmodifiableAnswers().contains(AnswerTest.A1));
+        assertThat(Q1.getAnswers().contains(AnswerTest.A1));
     }
 
     @Test
@@ -41,5 +41,21 @@ public class QuestionTest {
         assertThatThrownBy(() -> {
             Q1.delete(UserTest.SANJIGI);
         }).isInstanceOf(CannotDeleteException.class);
+    }
+
+    public static Question generateQuestion(User user, boolean deleted) {
+        Question question = new Question("title1", "contents1").writeBy(user);
+        if(deleted){
+            deleteQuestion(question, user);
+        }
+        return question;
+    }
+
+    private static void deleteQuestion(Question question, User user) {
+        try {
+            question.delete(user);
+        } catch (CannotDeleteException e) {
+            e.printStackTrace();
+        }
     }
 }

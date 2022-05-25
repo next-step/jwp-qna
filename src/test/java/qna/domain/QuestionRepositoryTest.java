@@ -38,8 +38,8 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("Question 조회: by DeletedFalse")
     void Question_조회_by_DeletedFalse(){
-        questionRepository.save(generateQuestion(true));
-        Question questionDeletedFalse = questionRepository.save(generateQuestion(false));
+        questionRepository.save(QuestionTest.generateQuestion(user, true));
+        Question questionDeletedFalse = questionRepository.save(QuestionTest.generateQuestion(user, false));
         List<Question> questions = questionRepository.findByDeletedFalse();
         assertThat(questions).containsExactly(questionDeletedFalse);
     }
@@ -48,23 +48,7 @@ class QuestionRepositoryTest {
     @DisplayName("Question 조회: by Id, DeletedFalse")
     @CsvSource(value = {"true:false", "false:true"}, delimiter = ':')
     void Question_조회_byId_DeletedFalse(boolean deleted, boolean resultPresent){
-        Question question = questionRepository.save(generateQuestion(deleted));
+        Question question = questionRepository.save(QuestionTest.generateQuestion(user, deleted));
         assertThat(questionRepository.findByIdAndDeletedFalse(question.getId()).isPresent()).isEqualTo(resultPresent);
-    }
-
-    private Question generateQuestion(boolean deleted) {
-        Question question = new Question("title1", "contents1").writeBy(user);
-        if(deleted){
-            deleteQuestion(question, user);
-        }
-        return question;
-    }
-
-    private void deleteQuestion(Question question, User user) {
-        try {
-            question.delete(user);
-        } catch (CannotDeleteException e) {
-            e.printStackTrace();
-        }
     }
 }

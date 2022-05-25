@@ -42,8 +42,8 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("Answer 조회: by QuestionId, DeletedFalse")
     void Answer_조회_by_QuestionId_DeletedFalse(){
-        answerRepository.save(generateAnswer(true));
-        Answer answerDeletedFalse = answerRepository.save(generateAnswer(false));
+        answerRepository.save(AnswerTest.generateAnswer(user, question, true));
+        Answer answerDeletedFalse = answerRepository.save(AnswerTest.generateAnswer(user, question, false));
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
         assertThat(answers).containsExactly(answerDeletedFalse);
     }
@@ -52,23 +52,7 @@ class AnswerRepositoryTest {
     @DisplayName("Answer 조회: by Id, DeletedFalse")
     @CsvSource(value = {"true:false", "false:true"}, delimiter = ':')
     void Answer_조회_by_Id_DeletedFalse(boolean deleted, boolean resultPresent){
-        Answer answer = answerRepository.save(generateAnswer(deleted));
+        Answer answer = answerRepository.save(AnswerTest.generateAnswer(user, question, deleted));
         assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId()).isPresent()).isEqualTo(resultPresent);
-    }
-
-    public Answer generateAnswer(boolean deleted) {
-        Answer answer = new Answer(user, question, "Answers Contents1");
-        if(deleted){
-            deleteAnswer(answer, user);
-        }
-        return answer;
-    }
-
-    private void deleteAnswer(Answer answer, User user) {
-        try {
-            answer.delete(user);
-        } catch (CannotDeleteException e) {
-            e.printStackTrace();
-        }
     }
 }
