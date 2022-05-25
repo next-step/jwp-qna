@@ -89,6 +89,17 @@ public class AnswerRepositoryTest {
         assertThat(actual.isPresent()).isFalse();
     }
 
+    @Test
+    void 댓글_삭제_DELETED() {
+        final User user = userRepository.save(createTestUser());
+        final Question question = questionRepository.save(new Question("제목", "내용").writeBy(user));
+        final Answer answer = new Answer(user, question, "댓글 추가");
+
+        answer.delete(user);
+
+        assertThat(answer.isDeleted()).isTrue();
+    }
+
     private User createTestUser() {
         return userRepository.save(new User(1L, "donghee.han", "password", "donghee", "donghee.han@slipp.net"));
     }
