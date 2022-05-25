@@ -14,27 +14,32 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Test
     void 질문_생성() {
-        Question expected = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        User user = userRepository.save(UserTest.SANJIGI);
+        Question expected = new Question("title10", "contents10").writeBy(user);
         Question actual = questionRepository.save(expected);
+
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
                 () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
                 () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
-                () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
+                () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted())
         );
     }
 
     @Test
     void 삭제_되지_않은_질문목록_조회() {
-
+        User user = userRepository.save(UserTest.SANJIGI);
         Question deletedQuestion = questionRepository.save(
-                new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI));
+                new Question("title1", "contents1").writeBy(user));
         Question notDeletedQuestion = questionRepository.save(
-                new Question("title2", "contents2").writeBy(UserTest.SANJIGI));
+                new Question("title2", "contents2").writeBy(user));
 
         deletedQuestion.setDeleted(true);
 
@@ -44,10 +49,11 @@ class QuestionRepositoryTest {
 
     @Test
     void 아이디로_삭제_되지_않은_질문_조회() {
+        User user = userRepository.save(UserTest.SANJIGI);
         Question deletedQuestion = questionRepository.save(
-                new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI));
+                new Question("title1", "contents1").writeBy(user));
         Question notDeletedQuestion = questionRepository.save(
-                new Question("title2", "contents2").writeBy(UserTest.SANJIGI));
+                new Question("title2", "contents2").writeBy(user));
 
         deletedQuestion.setDeleted(true);
 
