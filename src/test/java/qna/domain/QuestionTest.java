@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,15 +23,13 @@ public class QuestionTest {
     @Autowired
     private AnswerRepository answerRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-
     private Question question;
+    private List<Answer> answers;
 
     @BeforeEach
     void setUp() {
-        question = questionRepository.save(QuestionTest.Q1.writeBy(userRepository.save(UserTest.JAVAJIGI)));
+        question = new Question(QuestionTest.Q1.getTitle(), QuestionTest.Q1.getContents());
+        answers = pushAnswerIn(question);
     }
 
     @DisplayName("동등성 비교테스트")
@@ -45,37 +42,35 @@ public class QuestionTest {
     @DisplayName("변경 테스트")
     @Test
     void changeTest() {
-        question.setContents("testContents");
-        Question changedQuestion = questionRepository.findById(question.getId()).get();
-        assertThat(changedQuestion).isSameAs(question);
+        Question savedQuestion = questionRepository.save(question);
+        savedQuestion.setContents("testContents");
+        assertThat(questionRepository.findById(savedQuestion.getId()).get()).isSameAs(savedQuestion);
     }
 
     @DisplayName("Question 에 따른 Answers 를 가져 온다.")
     @Test
     void answersTest() {
         Question savedQuestion = questionRepository.save(question);
-        Answer[] answers = saveAnswerIn(savedQuestion).toArray(new Answer[0]);
-        Question question = questionRepository.findById(savedQuestion.getId()).get();
-        assertThat(question.getAnswers()).containsExactly( answers);
+        assertThat(questionRepository.findById(savedQuestion.getId()).get().getAnswers()).contains(answers.toArray(new Answer[0]));
     }
 
-    @DisplayName("Qustion 에서 질문을 지우면 연결관계가 끊어진다.")
+    @DisplayName("Question 에서 질문을 지우면 연결 관계가 끊어 진다.")
     @Test
     void removeAnswerTest() {
         Question savedQuestion = questionRepository.save(question);
-        List<Answer> answers1 = saveAnswerIn(savedQuestion);
-        savedQuestion.removeAnswer(answers1.get(0));
-        assertThat(savedQuestion.getAnswers().contains(answers1.get(0))).isFalse();
-        assertThat(answerRepository.findById(answers1.get(0).getId()).get().getQuestion()).isNull();
+        savedQuestion.removeAnswer(answers.get(0));
+        assertThat(questionRepository.findById(savedQuestion.getId()).get().getAnswers().contains(answers.get(0))).isFalse();
+        assertThat(answerRepository.findById(answers.get(0).getId()).get().getQuestion()).isNotEqualTo(savedQuestion);
     }
 
-    private List<Answer> saveAnswerIn(final Question question) {
+    private List<Answer> pushAnswerIn(Question question) {
         List<Answer> answers = new ArrayList<>();
-        for (int i =0; i < 2; i++) {
-            Answer answer = new Answer();
-            answer.toQuestion(question);
-            answers.add(answerRepository.save(answer));
-        }
+        Answer answer = new Answer();
+        answers.add(answer);
+        Answer answer1 = new Answer();
+        answers.add(answer1);
+        answer.toQuestion(question);
+        answer1.toQuestion(question);
         return answers;
     }
 }

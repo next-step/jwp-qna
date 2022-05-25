@@ -7,7 +7,8 @@ import java.util.Objects;
 
 @Entity
 public class Question extends CreatedUpdatedDateEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(length = 100, nullable = false)
     private String title;
@@ -19,8 +20,8 @@ public class Question extends CreatedUpdatedDateEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    List<Answer> answers = new ArrayList<>();
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -45,8 +46,10 @@ public class Question extends CreatedUpdatedDateEntity {
     }
 
     public void addAnswer(Answer answer) {
-        this.answers.add(answer);
-        answer.toQuestion(this);
+        if (!this.answers.contains(answer)) {
+            this.answers.add(answer);
+            answer.toQuestion(this);
+        }
     }
 
     public Long getId() {
@@ -91,10 +94,12 @@ public class Question extends CreatedUpdatedDateEntity {
     }
 
     public void removeAnswer(final Answer removeAnswer) {
-        if (Objects.equals(this,removeAnswer.getQuestion())) {
+        if (Objects.equals(this, removeAnswer.getQuestion())) {
             removeAnswer.toQuestion(null);
         }
+        this.getAnswers().remove(removeAnswer);
     }
+
     public List<Answer> getAnswers() {
         return answers;
     }
