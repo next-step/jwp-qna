@@ -126,6 +126,24 @@ public class QuestionTest {
             .contains(tuple(ContentType.ANSWER, answer2Local.getId()));
     }
 
+    @Test
+    public void getAnswersAfterDelete () throws CannotDeleteException {
+        //given
+        Question q1Local = new Question("title1", "contents1").writeBy(
+            JAVAJIGI);
+        Answer answer1Local = new Answer(UserTest.JAVAJIGI, q1Local,
+            "Answers Contents1");
+        Answer answer2Local = new Answer(UserTest.JAVAJIGI, q1Local,
+            "Answers Contents2");
+
+        //when
+        questionRepository.save(q1Local);
+        q1Local.delete(UserTest.JAVAJIGI);
+        //then
+
+        assertThat(q1Local.getAnswersIsNotDelete()).hasSize(0);
+        assertThat(q1Local.getAnswers()).hasSize(2);
+    }
 //    @Test
 //    @DisplayName("question bulk update 후 false로 전부 적용되어야한다.")
 //    public void questionBulkUpdate() {

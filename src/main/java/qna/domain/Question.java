@@ -139,4 +139,9 @@ public class Question extends BaseTimeEntity {
             LocalDateTime.now());
     }
 
+    public List<Answer> getAnswersIsNotDelete() {
+        return this.answers.stream()
+            .filter(answer -> answer.isDeleted() != true)
+            .collect(Collectors.toList());
+    }
 }
