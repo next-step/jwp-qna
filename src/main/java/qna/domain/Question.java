@@ -105,7 +105,7 @@ public class Question extends BaseTimeEntity {
         }
         checkAnswersIsMine();
         List<DeleteHistory> deleteHistories = getDeleteHistories();
-        executeDelete();
+        executeDeleteAnswers();
 
         return deleteHistories;
     }
@@ -126,7 +126,7 @@ public class Question extends BaseTimeEntity {
         }
     }
 
-    private void executeDelete() {
+    private void executeDeleteAnswers() {
         this.deleted = true;
         Iterator<Answer> iter = answers.iterator();
         while (iter.hasNext()) {
