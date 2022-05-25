@@ -65,7 +65,6 @@ class QnaServiceTest {
     @Test
     public void delete_성공_질문자_답변자_같음() throws Exception {
         when(questionRepository.findByIdAndDeletedIsFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
         qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
 
@@ -80,7 +79,6 @@ class QnaServiceTest {
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedIsFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer, answer2));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
