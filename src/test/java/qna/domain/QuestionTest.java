@@ -41,23 +41,9 @@ public class QuestionTest {
 
     @BeforeEach
     public void init() {
-        JAVAJIGI.setId(null);
-        SANJIGI.setId(null);
-
-        Q1.setId(null);
-        Q2.setId(null);
-        Q1.getAnswers().clear();
-        A1.setQuestion(null);
-        A2.setQuestion(null);
-        Q2.getAnswers().clear();
-
-        A1.setId(null);
-        A2.setId(null);
-        A1.toQuestion(Q1);
-        A2.toQuestion(Q1);
-
-        userRepository.save(SANJIGI);
+        InitUtils.init();
         userRepository.save(JAVAJIGI);
+        userRepository.save(SANJIGI);
     }
 
 
@@ -89,7 +75,7 @@ public class QuestionTest {
     @Test
     public void oneToManyTest() {
         questionRepository.save(Q1);
-        //em.clear(); //현재 Q1은 영속성에 존재하기때문에, answers에 A1과 A2가 없음. 새로가지고와야함
+
         Optional<Question> q1ById = questionRepository.findByIdAndDeletedIsFalse(Q1.getId());
         assertThat(q1ById.get().getAnswers())
             .extracting("id")
@@ -115,10 +101,7 @@ public class QuestionTest {
     @DisplayName("answer중 자신의 것이 아닌게 있으면 throw")
     public void deleteQuestionCheckAnswersIsMineTest() {
         questionRepository.save(Q1); //자바지기 Question
-        answerRepository.save(A1); //자바지기 Question
 
-        answerRepository.save(A2); //산지기 Question
-        System.out.println("ee");
         assertThatThrownBy(() -> Q1.delete(JAVAJIGI))
             .isInstanceOf(CannotDeleteException.class)
             .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");

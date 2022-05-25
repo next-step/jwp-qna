@@ -1,10 +1,6 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
 
 import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +13,7 @@ public class UserTest {
 
     @Autowired
     UserRepository userRepository;
+
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name",
         "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name",
@@ -24,20 +21,9 @@ public class UserTest {
 
     @BeforeEach
     public void init() {
-        JAVAJIGI.setId(null);
-        SANJIGI.setId(null);
-
-        Q1.setId(null);
-        Q2.setId(null);
-        Q1.getAnswers().clear();
-        A1.setQuestion(null);
-        A2.setQuestion(null);
-        Q2.getAnswers().clear();
-
-        A1.setId(null);
-        A2.setId(null);
-        A1.toQuestion(Q1);
-        A1.toQuestion(Q1);
+        InitUtils.init();
+        userRepository.save(JAVAJIGI);
+        userRepository.save(SANJIGI);
     }
 
     @Test
@@ -52,7 +38,7 @@ public class UserTest {
 
     @Test
     public void equalTest() {
-        User javajigi = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        User javajigi = new User("testUser1", "password", "name", "javajigi@slipp.net");
         User u1Saved = userRepository.save(javajigi);
         assertThat(u1Saved.hashCode()).isEqualTo(javajigi.hashCode());
     }

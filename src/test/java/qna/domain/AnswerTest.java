@@ -20,6 +20,9 @@ public class AnswerTest {
 
     @Autowired
     QuestionRepository questionRepository;
+
+    @Autowired
+    UserRepository userRepository;
     public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, Q1,
         "Answers Contents1");
     public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, Q1,
@@ -27,21 +30,9 @@ public class AnswerTest {
 
     @BeforeEach
     public void init() {
-        JAVAJIGI.setId(null);
-        SANJIGI.setId(null);
-
-        Q1.setId(null);
-        Q2.setId(null);
-        Q1.getAnswers().clear();
-        A1.setQuestion(null);
-        A2.setQuestion(null);
-        Q2.getAnswers().clear();
-
-
-        A1.setId(null);
-        A2.setId(null);
-        A1.toQuestion(Q1);
-        A2.toQuestion(Q1);
+        InitUtils.init();
+        userRepository.save(JAVAJIGI);
+        userRepository.save(SANJIGI);
     }
 
     @Test
@@ -84,7 +75,7 @@ public class AnswerTest {
 
     @Test
     public void cascadePersist() {
-        Answer answer = new Answer( UserTest.JAVAJIGI, Q1,
+        Answer answer = new Answer(UserTest.JAVAJIGI, Q1,
             "Answers Contents1");
         questionRepository.save(Q1);
         assertThat(answer.getQuestion().getId()).isNotNull();
