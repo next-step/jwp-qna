@@ -14,11 +14,11 @@ public class QnaService {
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
     private QuestionRepository questionRepository;
-    private DeleteHistoryService deleteHistoryService;
+    private DeleteHistoryRepository deleteHistoryRepository;
 
-    public QnaService(QuestionRepository questionRepository, DeleteHistoryService deleteHistoryService) {
+    public QnaService(QuestionRepository questionRepository, DeleteHistoryRepository deleteHistoryRepository) {
         this.questionRepository = questionRepository;
-        this.deleteHistoryService = deleteHistoryService;
+        this.deleteHistoryRepository = deleteHistoryRepository;
     }
 
     @Transactional(readOnly = true)
@@ -31,6 +31,6 @@ public class QnaService {
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
         List<DeleteHistory> deleteHistories = question.delete(loginUser);
-        deleteHistoryService.saveAll(deleteHistories);
+        deleteHistoryRepository.saveAll(deleteHistories);
     }
 }

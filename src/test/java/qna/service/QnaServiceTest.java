@@ -30,7 +30,7 @@ class QnaServiceTest {
     private QuestionRepository questionRepository;
 
     @Mock
-    private DeleteHistoryService deleteHistoryService;
+    private DeleteHistoryRepository deleteHistoryRepository;
 
     @InjectMocks
     private QnaService qnaService;
@@ -91,6 +91,6 @@ class QnaServiceTest {
                 new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
                 new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
         );
-        verify(deleteHistoryService).saveAll(deleteHistories);
+        verify(deleteHistoryRepository).saveAll(deleteHistories);
     }
 }
