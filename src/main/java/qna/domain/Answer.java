@@ -53,12 +53,12 @@ public class Answer extends BaseTimeEntity{
         this.contents = contents;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public void delete(User loginUser){
         validateUserToDelete(loginUser);
         deleted = true;
     }
 
-    private void validateUserToDelete(User loginUser) throws CannotDeleteException {
+    private void validateUserToDelete(User loginUser){
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(ErrorMessage.ERROR_INVALID_USER_TO_DELETE_ANSWER);
         }

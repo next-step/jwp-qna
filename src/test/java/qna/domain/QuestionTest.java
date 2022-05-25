@@ -30,14 +30,14 @@ public class QuestionTest {
 
     @Test
     @DisplayName("Question 삭제 테스트: 정상")
-    void Question_삭제() throws CannotDeleteException {
+    void Question_삭제(){
         Q1.delete(Q1.getWriter());
         assertThat(Q1.isDeleted()).isTrue();
     }
 
     @Test
     @DisplayName("Question 삭제 테스트: 작성자가 맞지 않아 실패")
-    void Question() throws CannotDeleteException {
+    void Question(){
         assertThatThrownBy(() -> {
             Q1.delete(UserTest.SANJIGI);
         }).isInstanceOf(CannotDeleteException.class);

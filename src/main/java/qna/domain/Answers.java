@@ -21,7 +21,7 @@ public class Answers {
         this.answers = answers;
     }
 
-    public void deleteAnswers(User loginUser) throws CannotDeleteException {
+    public void deleteAnswers(User loginUser){
         for (Answer answer : answers) {
             answer.delete(loginUser);
         }
