@@ -46,6 +46,7 @@ public class Answer extends BaseEntity {
 
     public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
+
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -56,15 +57,12 @@ public class Answer extends BaseEntity {
 
         this.writer = writer;
         this.question = question;
+        question.addAnswer(this);
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
     }
 
     public Long getId() {
@@ -92,7 +90,7 @@ public class Answer extends BaseEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writer=" + writer +
-                ", question=" + question +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
