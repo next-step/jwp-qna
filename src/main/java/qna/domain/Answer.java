@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -49,6 +51,11 @@ public class Answer extends BaseAuditingEntity {
         this.contents = contents;
     }
 
+    public DeleteHistory delete() {
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER,this.id,this.writer, LocalDateTime.now());
+    }
+
     public Long getId() {
         return id;
     }
@@ -63,7 +70,10 @@ public class Answer extends BaseAuditingEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
-        question.getAnswers().add(this);
+        List<Answer> answers = question.getAnswers();
+        if(!answers.contains(this)){
+            answers.add(this);
+        }
     }
 
     public String getContents() {
@@ -92,4 +102,6 @@ public class Answer extends BaseAuditingEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
+
 }
