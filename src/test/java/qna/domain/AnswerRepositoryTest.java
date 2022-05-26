@@ -28,8 +28,8 @@ class AnswerRepositoryTest extends BaseRepositoryTest {
         saveUsers();
         savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
         savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
-        savedQ1.addAnswer(new Answer(savedJavajigi, "Answers Contents1").writeBy(savedJavajigi));
-        savedQ2.addAnswer(new Answer(savedSanjigi, "Answers Contents2").writeBy(savedSanjigi));
+        savedQ1.addAnswer(new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi));
+        savedQ2.addAnswer(new Answer(savedSanjigi, savedQ2, "Answers Contents2").writeBy(savedSanjigi));
         answerRepository.flush();
     }
 
@@ -37,7 +37,7 @@ class AnswerRepositoryTest extends BaseRepositoryTest {
     @DisplayName("Answer 저장")
     void save() {
         // when
-        final Answer answer = answerRepository.save(new Answer(savedSanjigi, "Answers Contents1"));
+        final Answer answer = answerRepository.save(new Answer(savedSanjigi, savedQ1, "Answers Contents1"));
 
         // then
         assertThat(answer).isNotNull();
@@ -57,7 +57,7 @@ class AnswerRepositoryTest extends BaseRepositoryTest {
     @DisplayName("Question 에서 answer 정보 조회")
     void getAnswer() {
         // given
-        final Answer answer = new Answer(savedJavajigi, "Answers Contents1").writeBy(savedJavajigi);
+        final Answer answer = new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi);
         savedQ1.addAnswer(answer);
         answerRepository.flush();
 

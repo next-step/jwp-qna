@@ -22,6 +22,9 @@ public class Answer extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
+
+    @Column(name = "question_id")
+    private Long questionId;
     @Lob
     private String contents;
     @Column(nullable = false)
@@ -30,11 +33,11 @@ public class Answer extends BaseTimeEntity {
     protected Answer() {
     }
 
-    public Answer(User writer, String contents) {
-        this(null, writer, contents);
+    public Answer(User writer, Question question, String contents) {
+        this(null, writer ,question, contents);
     }
 
-    public Answer(Long id, User writer, String contents) {
+    public Answer(Long id, User writer ,Question question, String contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -42,6 +45,7 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.writer = writer;
+        this.questionId = question.getId();
         this.contents = contents;
     }
 
