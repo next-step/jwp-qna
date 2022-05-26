@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
@@ -23,15 +24,18 @@ public class Answers {
         this.answerList.add(answer);
     }
 
-    public boolean isOwner(User writer) {
+    public List<Answer> nonDeletedAnswers() {
         return answerList.stream()
-                .allMatch(answer -> answer.isOwner(writer));
+                .filter(answer -> !answer.isDeleted())
+                .collect(Collectors.toList());
     }
 
-    public List<DeleteHistory> deleteAnswers() {
+    public List<DeleteHistory> deleteAnswers(final User loginUser) {
+        List<Answer> nonDeletedAnswers = nonDeletedAnswers();
+
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : answerList) {
-            deleteHistories.add(answer.deleteAnswer());
+        for (Answer answer : nonDeletedAnswers) {
+            deleteHistories.add(answer.deleteAnswer(loginUser));
         }
         return deleteHistories;
     }
