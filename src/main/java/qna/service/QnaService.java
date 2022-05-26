@@ -1,15 +1,15 @@
 package qna.service;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import qna.CannotDeleteException;
 import qna.NotFoundException;
+import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
@@ -18,6 +18,7 @@ import qna.domain.User;
 
 @Service
 public class QnaService {
+
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
     private QuestionRepository questionRepository;
@@ -39,10 +40,29 @@ public class QnaService {
 
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) {
-        Optional<Question> questionOptional = questionRepository.findByIdAndDeletedIsFalse(
-            questionId);
-        Question question = questionOptional.get();
-        List<DeleteHistory> deleteHistories = question.delete(loginUser);
+        Question question = questionRepository.findByIdAndDeletedIsFalse(
+            questionId).orElseThrow(NotFoundException::new);
+
+        question.delete(loginUser);
+        List<DeleteHistory> deleteHistories = getDeleteHistories(question);
         deleteHistoryService.saveAll(deleteHistories);
+
+        answerRepository.updateDeleteOfAnswers(
+            question.getAnswers().stream()
+                .map(Answer::getId)
+                .collect(Collectors.toList())
+        );
+
+    }
+
+    private List<DeleteHistory> getDeleteHistories(Question question) {
+        List<DeleteHistory> deleteHistories = new LinkedList<>();
+        deleteHistories.add(question.makeDeleteHistory());
+        deleteHistories.addAll(
+            question.getAnswers().stream()
+                .map(Answer::makeDeleteHistory)
+                .collect(Collectors.toList())
+        );
+        return deleteHistories;
     }
 }
