@@ -25,7 +25,11 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
+        this(contentType, contentId, deletedByUser, LocalDateTime.now());
+    }
+
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
@@ -46,5 +50,13 @@ public class DeleteHistory {
     @Override
     public int hashCode() {
         return Objects.hash(id, contentId, contentType, deletedByUser);
+    }
+
+    public static DeleteHistory ofAnswer(Long contentId, User deletedByUser) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deletedByUser);
+    }
+
+    public static DeleteHistory ofQuestion(Long contentId, User deletedByUser) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deletedByUser);
     }
 }
