@@ -25,7 +25,7 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("다른 유저가 삭제를 시도한 경우")
+    @DisplayName("다른 유저가 삭제를 시도한 경우 실패 테스트")
     void deleteFalse() {
         assertThatExceptionOfType(CannotDeleteException.class)
                 .isThrownBy(() -> A1.delete(UserTest.SANJIGI))
