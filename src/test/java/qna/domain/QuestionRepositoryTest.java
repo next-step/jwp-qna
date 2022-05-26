@@ -15,6 +15,8 @@ class QuestionRepositoryTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @DisplayName("Question 정보 id로 조회 테스트")
     @Test
@@ -54,18 +56,15 @@ class QuestionRepositoryTest {
     @DisplayName("Question 정보 작성자 정보 업데이트 테스트")
     @Test
     void writeBy() {
-        Optional<Question> optionalQuestion = questionRepository.findById(2001L);
-        assertThat(optionalQuestion).isPresent();
+        Question question = questionRepository.findById(2001L).get();
+        assertThat(question.getWriter()).isNull();
 
-        Question question = optionalQuestion.get();
-        question.writeBy(UserTest.JAVAJIGI);
+        User writer = userRepository.findById(1001L).get();
+        question.writeBy(writer);
         questionRepository.flush();
 
-        Optional<Question> optionalUpdatedQuestion = questionRepository.findById(2001L);
-        assertThat(optionalUpdatedQuestion).isPresent();
-
-        Question updatedQuestion = optionalUpdatedQuestion.get();
-        assertThat(updatedQuestion.getWriter()).isEqualTo(UserTest.JAVAJIGI);
+        Question updatedQuestion = questionRepository.findById(2001L).get();
+        assertThat(updatedQuestion.getWriter()).isEqualTo(writer);
     }
 
     @DisplayName("삭제되지 않은 Question 정보 목록 조회 테스트")
