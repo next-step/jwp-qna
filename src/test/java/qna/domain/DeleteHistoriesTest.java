@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class DeleteHistoriesTest {
     @Test
-    void question_으로_DeleteHistories_를_생성할_수_있다() {
+    void Question_으로_DeleteHistories_를_생성할_수_있다() {
         assertDoesNotThrow(() -> new DeleteHistories(new Question()));
     }
 

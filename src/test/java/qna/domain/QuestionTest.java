@@ -55,7 +55,7 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("질문을 하나 가져올 때, 이 질문에 대한 답변을 같이 가져올 수 있는지 확인한다")
+    @DisplayName("질문을 하나 가져올 때, 이 질문에 대한 답변을 같이 가져올 수 있다")
     void findByIdDeletedFalse() {
         //given
         final Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
