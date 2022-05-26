@@ -17,6 +17,8 @@ import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static qna.domain.ExceptionMessage.CANNOT_DELETE_NOT_OWNER;
+
 @Entity
 public class Answer extends BaseEntity {
 
@@ -86,13 +88,9 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public DeleteHistory deletedBy(User writer) throws CannotDeleteException {
         if (!this.isOwner(writer)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(CANNOT_DELETE_NOT_OWNER.getMessage());
         }
 
         this.deleted = true;

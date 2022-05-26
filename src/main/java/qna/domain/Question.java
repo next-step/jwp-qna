@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static qna.domain.ExceptionMessage.CANNOT_DELETE_NOT_OWNER;
+import static qna.domain.ExceptionMessage.CANNOT_DELETE_OTHERS_ANSWER;
+
 @Entity
 public class Question extends BaseEntity {
 
@@ -91,18 +94,14 @@ public class Question extends BaseEntity {
         return this.deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public List<DeleteHistory> deletedBy(User writer) throws CannotDeleteException {
         if (!this.isOwner(writer)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(CANNOT_DELETE_NOT_OWNER.getMessage());
         }
 
         if (answers.stream()
                 .anyMatch(a -> !a.isOwner(writer))) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(CANNOT_DELETE_OTHERS_ANSWER.getMessage());
         }
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
