@@ -3,6 +3,7 @@ package qna.domain;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -38,6 +39,8 @@ public class Question {
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -61,10 +64,6 @@ public class Question {
         return this.writer.equals(writer);
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
-
     public Long getId() {
         return id;
     }
@@ -83,6 +82,15 @@ public class Question {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public void addAnswer(Answer answer) {
+        answer.toQuestion(this);
+        answers.add(answer);
+    }
+
+    public Answers getAnswers() {
+        return answers;
     }
 
     public void setDeleted(boolean deleted) {
