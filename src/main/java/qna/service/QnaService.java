@@ -26,7 +26,8 @@ public class QnaService {
     private DeleteHistoryService deleteHistoryService;
 
     @Autowired
-    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
+    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository,
+        DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.deleteHistoryService = deleteHistoryService;
@@ -35,7 +36,7 @@ public class QnaService {
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {
         return questionRepository.findByIdAndDeletedIsFalse(id)
-                .orElseThrow(NotFoundException::new);
+            .orElseThrow(NotFoundException::new);
     }
 
     @Transactional
