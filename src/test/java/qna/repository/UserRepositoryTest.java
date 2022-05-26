@@ -3,8 +3,6 @@ package qna.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +24,8 @@ class UserRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = JAVAJIGI;
-        user2 = SANJIGI;
+        user = new User(1L, "woobeen", "password", "name", "drogba02@naver.com");
+        user2 = new User(2L, "woobeen2", "password", "name", "drogba03@naver.com");
 
         user = userRepository.save(user);
         user2 = userRepository.save(user2);
@@ -64,7 +62,7 @@ class UserRepositoryTest {
     @DisplayName("entity 를 수정하면 변경된 값으로 조회되어야 한다")
     @Test
     void update_test() {
-        user.update(JAVAJIGI, SANJIGI);
+        user.update(user, user2);
         userRepository.save(user);
 
         Optional<User> result = userRepository.findByUserId(user.getUserId());
@@ -72,8 +70,8 @@ class UserRepositoryTest {
         assertTrue(result.isPresent());
 
         assertAll(
-            () -> assertThat(result.get().getName()).isEqualTo(SANJIGI.getName()),
-            () -> assertThat(result.get().getEmail()).isEqualTo(SANJIGI.getEmail())
+            () -> assertThat(result.get().getName()).isEqualTo(user.getName()),
+            () -> assertThat(result.get().getEmail()).isEqualTo(user2.getEmail())
         );
     }
 

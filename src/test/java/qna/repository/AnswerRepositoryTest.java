@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.UserTest.JAVAJIGI;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,8 +37,8 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        writer = userRepository.save(JAVAJIGI);
-        question = Q1;
+        writer = userRepository.save(new User(1L, "woobeen", "password", "name", "drogba02@naver.com"));
+        question = new Question("test-title", "test-contents");
         question.writeBy(writer);
         question = questionRepository.save(question);
     }

@@ -1,6 +1,9 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -29,6 +33,9 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id")
     private User writer;
 
+    @Embedded
+    private Answers answers = new Answers();
+
     protected Question() {
 
     }
@@ -48,11 +55,12 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -72,11 +80,34 @@ public class Question extends BaseEntity {
         return writer;
     }
 
+    public Answers getAnswers() {
+        return answers;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        validate(loginUser);
+        this.deleted = true;
+        return createDeleteHistories();
+    }
+
+    private void validate(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private List<DeleteHistory> createDeleteHistories() {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.ofQuestion(this));
+        deleteHistories.addAll(answers.delete(writer));
+        return deleteHistories;
     }
 }
