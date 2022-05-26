@@ -5,11 +5,11 @@ import qna.CannotDeleteException;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 @Embeddable
-public class Answers {
+public class Answers implements Iterable<Answer> {
     @OneToMany(mappedBy = "question")
     private final List<Answer> answers = new ArrayList<>();
 
@@ -23,7 +23,8 @@ public class Answers {
         }
     }
 
-    public List<Answer> getAnswers() {
-        return Collections.unmodifiableList(new ArrayList<>(answers));
+    @Override
+    public Iterator<Answer> iterator() {
+        return answers.iterator();
     }
 }

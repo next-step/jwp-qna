@@ -95,7 +95,7 @@ public class Question extends BaseTimeEntity {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(DeleteHistory.ofQuestion(this));
 
-        answers.getAnswers().forEach(answer -> deleteHistories.add(
+        answers.forEach(answer -> deleteHistories.add(
                 DeleteHistory.ofAnswer(answer)
         ));
 
