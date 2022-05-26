@@ -71,6 +71,14 @@ public class DeleteHistory {
         return deletedUser.getId();
     }
 
+    public static DeleteHistory newQuestionDeleteHistory(Long contentId, User deletedUser, LocalDateTime createDate) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deletedUser, createDate);
+    }
+
+    public static DeleteHistory newAnswerDeleteHistory(Long contentId, User deletedUser, LocalDateTime createDate) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deletedUser, createDate);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -81,8 +89,7 @@ public class DeleteHistory {
         }
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) && contentType == that.contentType && Objects
-                .equals(contentId, that.contentId) && Objects.equals(deletedUser, that.deletedUser)
-                && Objects.equals(createDate, that.createDate);
+                .equals(contentId, that.contentId) && Objects.equals(deletedUser, that.deletedUser);
     }
 
     @Override
