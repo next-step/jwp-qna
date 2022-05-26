@@ -110,7 +110,7 @@ public class Question extends BaseTimeEntity {
                 '}';
     }
 
-    public List<DeleteHistory> deleteQuestionAndAnswer(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleteQuestionAndAnswer(User loginUser) {
         LocalDateTime deletedAt = LocalDateTime.now();
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
@@ -121,7 +121,7 @@ public class Question extends BaseTimeEntity {
         return deleteHistories;
     }
 
-    private DeleteHistory delete(User loginUser, LocalDateTime deletedAt) throws CannotDeleteException {
+    private DeleteHistory delete(User loginUser, LocalDateTime deletedAt) {
         if (!isOwner(loginUser))
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 
