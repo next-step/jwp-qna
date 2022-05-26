@@ -97,11 +97,17 @@ public class Answer extends BaseTimeEntity{
         return deleted;
     }
 
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public DeleteHistory delete(User loginUser, LocalDateTime deletedAt) {
         if (!isOwner(loginUser))
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 
-        if (!isDeleted())
+        System.out.println("id() : " + id);
+        System.out.println("isDeleted() : " + isDeleted());
+        if (isDeleted())
             throw new CannotDeleteException("이미 삭제된 답변입니다.");
 
         deleted = true;
