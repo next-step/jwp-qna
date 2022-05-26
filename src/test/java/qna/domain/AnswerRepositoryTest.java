@@ -15,6 +15,10 @@ class AnswerRepositoryTest {
 
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @DisplayName("Answer 정보 id로 조회 테스트")
     @Test
@@ -36,7 +40,9 @@ class AnswerRepositoryTest {
     @DisplayName("Answer 정보 저장 테스트")
     @Test
     void save() {
-        Answer answer = answerRepository.save(new Answer(UserTest.SANJIGI, QuestionTest.Q2, "abc"));
+        User writer = userRepository.findById(1001L).get();
+        Question question = questionRepository.findById(2001L).get();
+        Answer answer = answerRepository.save(new Answer(writer, question, "abc"));
         answerRepository.flush();
 
         Optional<Answer> optionalAnswer = answerRepository.findById(answer.getId());
@@ -44,8 +50,8 @@ class AnswerRepositoryTest {
 
         Answer savedAnswer = optionalAnswer.get();
         assertAll(
-                () -> assertThat(savedAnswer.getWriter().getId()).isEqualTo(1002L),
-                () -> assertThat(savedAnswer.getQuestion().getId()).isEqualTo(2002L),
+                () -> assertThat(savedAnswer.getWriter()).isEqualTo(writer),
+                () -> assertThat(savedAnswer.getQuestion().getId()).isEqualTo(question.getId()),
                 () -> assertThat(savedAnswer.getContents()).isEqualTo("abc"),
                 () -> assertThat(savedAnswer.isDeleted()).isFalse(),
                 () -> assertThat(savedAnswer.getCreatedAt()).isNotNull(),
