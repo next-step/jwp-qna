@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.domain.Answer;
-import qna.domain.AnswerRepository;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
@@ -32,82 +31,72 @@ class QnaServiceTest {
     private QuestionRepository questionRepository;
 
     @Mock
-    private AnswerRepository answerRepository;
-
-    @Mock
     private DeleteHistoryService deleteHistoryService;
 
     @InjectMocks
     private QnaService qnaService;
 
-    private User user1;
-    private User user2;
-    private Question question1;
-    private Question question2;
+    private User JAVAJIGI;
+    private User SANJIGI;
+    private Question question;
     private Answer answer;
 
     @BeforeEach
     public void setUp() throws Exception {
-        user1 = new User(10L, "javajigi", "password", "name", "javajigi@slipp.net");
-        user2 = new User(11L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-
-        question1 = new Question(10L, user1, "title1", "contents1");
-        question2 = new Question(11L, user2, "title2", "contents2");
-
-        answer = new Answer(10L, user1, question1, "contents1");
+        JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+        SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+        question = new Question(1L, JAVAJIGI, "title1", "contents1");
+        answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
     }
 
     @Test
-    @DisplayName("로그인한 사용자와 질문 작성자가 같은 경우 삭제 가능")
+    @DisplayName("로그인한 사용자가 질문 작성자 본인이면 질문 삭제 성공")
     public void delete_question_same_writer() throws Exception {
-        when(questionRepository.findByIdAndDeletedFalse(question1.getId())).thenReturn(Optional.of(question1));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question1.getId())).thenReturn(Arrays.asList(answer));
+        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+        assertThat(question.isDeleted()).isFalse();
 
-        assertThat(question1.isDeleted()).isFalse();
-        qnaService.deleteQuestion(user1, question1.getId());
+        qnaService.deleteQuestion(JAVAJIGI, question.getId());
 
-        assertThat(question1.isDeleted()).isTrue();
+        assertThat(question.isDeleted()).isTrue();
         verifyDeleteHistories();
     }
 
     @Test
-    @DisplayName("로그인한 사용자가 질문 작성자가 아닌 경우 질문 삭제 불가")
-    public void delete_question_diff_writer() throws Exception {
-        when(questionRepository.findByIdAndDeletedFalse(question1.getId())).thenReturn(Optional.of(question1));
+    @DisplayName("로그인한 사용자가 질문 작성자 본인이 아니면 질문 삭제 실패")
+    public void delete_question_diff_writer() {
+        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(user2, question1.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(SANJIGI, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
-    @DisplayName("질문에 답변이 있을 때, 질문 작성자와 모든 답변 작성자가 같다면 작성자 본인의 질문 삭제 가능")
+    @DisplayName("질문에 답변이 있을 때, 로그인한 사용자 본인이 작성한 질문에 본인이 작성한 답변만 있다면 질문 삭제 성공")
     public void delete_question_with_answer_same_writer() throws Exception {
-        when(questionRepository.findByIdAndDeletedFalse(question1.getId())).thenReturn(Optional.of(question1));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question1.getId())).thenReturn(Arrays.asList(answer));
+        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+        assertThat(question.isDeleted()).isFalse();
+        assertThat(answer.isDeleted()).isFalse();
 
-        qnaService.deleteQuestion(user1, question1.getId());
+        qnaService.deleteQuestion(JAVAJIGI, question.getId());
 
-        assertThat(question1.isDeleted()).isTrue();
+        assertThat(question.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
         verifyDeleteHistories();
     }
 
     @Test
-    @DisplayName("질문에 답변이 있을 때, 질문 작성자가 아닌 다른 사람의 답변이 있다면 작성자 본인의 질문 삭제 실패")
-    public void delete_question_with_answer_diff_writer() throws Exception {
-        Answer answer2 = new Answer(user2, question1, "contents1");
-        question1.addAnswer(answer2);
+    @DisplayName("질문에 답변이 있을 때, 로그인한 사용자 본인이 작성한 질문이더라도 다른 사람의 답변이 있다면 질문 삭제 실패")
+    public void delete_question_with_answer_diff_writer() {
+        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+        new Answer(2L, SANJIGI, question, "Answers Contents1");
 
-        when(questionRepository.findByIdAndDeletedFalse(question1.getId())).thenReturn(Optional.of(question1));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question1.getId())).thenReturn(Arrays.asList(answer, answer2));
-
-        assertThatThrownBy(() -> qnaService.deleteQuestion(user1, question1.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(JAVAJIGI, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question1.getId(), question1.getWriter(), LocalDateTime.now()),
+                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
                 new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
