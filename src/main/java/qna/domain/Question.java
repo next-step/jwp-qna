@@ -3,11 +3,8 @@ package qna.domain;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -100,22 +97,19 @@ public class Question extends BaseTimeEntity {
             '}';
     }
 
-    public Map<ContentType, List<Long>> delete(User user) {
+    public void delete(User user) {
         if (!this.isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         checkAnswersIsMine();
+        this.deleted = true;
+        setAnswersDelete();
+    }
 
-        HashMap<ContentType, List<Long>> deleteTargets = new HashMap<>();
-
-        deleteTargets.put(ContentType.QUESTION, Arrays.asList(this.id));
-
-        List<Long> answerIds = answers.stream()
-            .map(Answer::getId)
-            .collect(Collectors.toList());
-        deleteTargets.put(ContentType.ANSWER, answerIds);
-
-        return deleteTargets;
+    private void setAnswersDelete() {
+        for (Answer answer : answers) {
+            answer.delete();
+        }
     }
 
 
