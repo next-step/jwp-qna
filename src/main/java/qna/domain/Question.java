@@ -1,6 +1,10 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+import qna.consts.ErrorMessage;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -23,6 +27,9 @@ public class Question extends BaseTimeEntity{
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
+    @Embedded
+    private Answers answers = new Answers();
+
     protected Question() {
     }
 
@@ -41,11 +48,25 @@ public class Question extends BaseTimeEntity{
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public Answers delete(User loginUser){
+        validateUserToDelete(loginUser);
+        Answers deletedAnswers = answers.deleteAnswers(loginUser);
+        deleted = true;
+        return deletedAnswers;
+    }
+
+    private void validateUserToDelete(User loginUser){
+        if (mismatchOwner(loginUser)) {
+            throw new CannotDeleteException(ErrorMessage.ERROR_INVALID_USER_TO_DELETE_QUESTION);
+        }
+    }
+
+    public boolean mismatchOwner(User writer) {
+        return !this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -69,8 +90,8 @@ public class Question extends BaseTimeEntity{
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public List<Answer> getAnswers() {
+        return answers.getAnswers();
     }
 
     @Override

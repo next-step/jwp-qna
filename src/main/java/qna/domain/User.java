@@ -112,4 +112,20 @@ public class User extends BaseTimeEntity{
             return true;
         }
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof  User)) {
+            return false;
+        }
+        return ((User)o).getId() == id;
+    }
 }

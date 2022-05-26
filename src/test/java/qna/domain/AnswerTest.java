@@ -2,6 +2,7 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -15,25 +16,52 @@ public class AnswerTest {
     @Test
     @DisplayName("Answer writer NotNull 테스트")
     void Answer_writer_notnull(){
-        assertThatThrownBy(() -> {
-            Answer answer = new Answer(null, QuestionTest.Q1, "Answers Contents1");
-        }).isInstanceOf(UnAuthorizedException.class);
+        assertThrows(UnAuthorizedException.class,
+                () -> new Answer(null, QuestionTest.Q1, "Answers Contents1"));
     }
 
     @Test
     @DisplayName("Answer question NotNull 테스트")
     void Answer_question_notnull(){
-        assertThatThrownBy(() -> {
-            Answer A1 = new Answer(UserTest.JAVAJIGI, null, "Answers Contents1");
-        }).isInstanceOf(NotFoundException.class);
+        assertThrows(NotFoundException.class,
+                () -> new Answer(UserTest.JAVAJIGI, null, "Answers Contents1"));
     }
 
     @Test
     @DisplayName("Answer 작성자 테스트")
     void Answer_작성자(){
         assertAll(
-                () -> assertThat(A1.isOwner(UserTest.JAVAJIGI)).isTrue(),
-                () -> assertThat(A1.isOwner(UserTest.SANJIGI)).isFalse()
+                () -> assertThat(A1.mismatchOwner(UserTest.JAVAJIGI)).isFalse(),
+                () -> assertThat(A1.mismatchOwner(UserTest.SANJIGI)).isTrue()
         );
+    }
+
+    @Test
+    @DisplayName("Answer 삭제 테스트: 정상")
+    void Answer_삭제(){
+        A1.delete(UserTest.JAVAJIGI);
+        assertThat(A1.isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Answer 삭제 테스트: 작성자가 맞지 않아 실패")
+    void Answer_삭제_실패(){
+        assertThrows(CannotDeleteException.class, () -> A1.delete(UserTest.SANJIGI));
+    }
+
+    public static Answer generateAnswer(User user, Question question, boolean deleted) {
+        Answer answer = new Answer(user, question, "Answers Contents1");
+        if(deleted){
+            deleteAnswer(answer, user);
+        }
+        return answer;
+    }
+
+    private static void deleteAnswer(Answer answer, User user) {
+        try {
+            answer.delete(user);
+        } catch (CannotDeleteException e) {
+            e.printStackTrace();
+        }
     }
 }
