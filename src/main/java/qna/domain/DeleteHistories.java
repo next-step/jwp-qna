@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,11 +10,9 @@ public class DeleteHistories implements Iterable<DeleteHistory> {
 
     public DeleteHistories(Question question) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
+        deleteHistories.add(DeleteHistory.question(question));
         for (Answer answer : question.getAnswers()) {
-            deleteHistories.add(
-                    new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+            deleteHistories.add(DeleteHistory.answer(answer));
         }
         this.deleteHistories = deleteHistories;
     }
