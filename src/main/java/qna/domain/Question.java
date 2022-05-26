@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +92,18 @@ public class Question extends Time {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        for (Answer answer : getAnswers()) {
+            answer.delete(loginUser);
+        }
+
+        this.deleted = true;
     }
 
     public List<Answer> getAnswers() {
