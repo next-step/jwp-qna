@@ -65,7 +65,7 @@ class QuestionRepositoryTest {
         assertThat(optionalUpdatedQuestion).isPresent();
 
         Question updatedQuestion = optionalUpdatedQuestion.get();
-        assertThat(updatedQuestion.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+        assertThat(updatedQuestion.getWriter()).isEqualTo(UserTest.JAVAJIGI);
     }
 
     @DisplayName("삭제되지 않은 Question 정보 목록 조회 테스트")

@@ -25,8 +25,8 @@ class AnswerRepositoryTest {
         Answer answer = optionalAnswer.get();
         assertAll(
                 () -> assertThat(answer.getId()).isEqualTo(1L),
-                () -> assertThat(answer.getWriterId()).isEqualTo(1L),
-                () -> assertThat(answer.getQuestionId()).isEqualTo(1L),
+                () -> assertThat(answer.getWriter().getId()).isEqualTo(1L),
+                () -> assertThat(answer.getQuestion().getId()).isEqualTo(1L),
                 () -> assertThat(answer.getContents()).isEqualTo("수원"),
                 () -> assertThat(answer.isDeleted()).isTrue(),
                 () -> assertThat(answer.getCreatedAt()).isNotNull()
@@ -44,8 +44,8 @@ class AnswerRepositoryTest {
 
         Answer savedAnswer = optionalAnswer.get();
         assertAll(
-                () -> assertThat(savedAnswer.getWriterId()).isEqualTo(2L),
-                () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(2L),
+                () -> assertThat(savedAnswer.getWriter().getId()).isEqualTo(2L),
+                () -> assertThat(savedAnswer.getQuestion().getId()).isEqualTo(2L),
                 () -> assertThat(savedAnswer.getContents()).isEqualTo("abc"),
                 () -> assertThat(savedAnswer.isDeleted()).isFalse(),
                 () -> assertThat(savedAnswer.getCreatedAt()).isNotNull(),
@@ -62,8 +62,8 @@ class AnswerRepositoryTest {
         Answer answer = optionalAnswer.get();
         assertAll(
                 () -> assertThat(answer.getId()).isEqualTo(2L),
-                () -> assertThat(answer.getWriterId()).isEqualTo(2L),
-                () -> assertThat(answer.getQuestionId()).isEqualTo(2L),
+                () -> assertThat(answer.getWriter().getId()).isEqualTo(2L),
+                () -> assertThat(answer.getQuestion().getId()).isEqualTo(2L),
                 () -> assertThat(answer.getContents()).isEqualTo("한국대"),
                 () -> assertThat(answer.isDeleted()).isFalse(),
                 () -> assertThat(answer.getCreatedAt()).isNotNull()

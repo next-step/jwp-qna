@@ -17,7 +17,7 @@ public class AnswerTest {
         assertAll(
                 () -> assertThat(A1.isOwner(UserTest.JAVAJIGI)).isTrue(),
                 () -> assertThat(A2.isOwner(UserTest.JAVAJIGI)).isFalse(),
-                () -> assertThat(A1.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
+                () -> assertThat(A1.getWriter()).isEqualTo(UserTest.JAVAJIGI),
                 () -> assertThat(A2.isDeleted()).isFalse()
         );
     }
