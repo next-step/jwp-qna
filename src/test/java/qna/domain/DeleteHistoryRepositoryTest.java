@@ -16,7 +16,7 @@ public class DeleteHistoryRepositoryTest {
     @Test
     public void save() {
         //given
-        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
         //when
         DeleteHistory actual = deleteHistoryRepository.save(expected);
         //then
@@ -26,7 +26,7 @@ public class DeleteHistoryRepositoryTest {
     @Test
     public void findById() {
         //given
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
         DeleteHistory expected = deleteHistoryRepository.save(deleteHistory);
         //when
         DeleteHistory actual = deleteHistoryRepository.findById(1L).get();
