@@ -1,11 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
-import static qna.domain.QuestionTest.Q1;
 
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,68 +12,82 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class AnswerRepositoryTest {
+class AnswerRepositoryTest extends BaseRepositoryTest {
     @Autowired
     AnswerRepository answerRepository;
 
+    @Autowired
+    QuestionRepository questionRepository;
+
+    Question savedQ1;
+
+    Question savedQ2;
+
     @BeforeEach
     void setUp() {
-        // given
-        answerRepository.save(A1);
-        answerRepository.save(A2);
+        saveUsers();
+        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
+        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
+        savedQ1.addAnswer(new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi));
+        savedQ2.addAnswer(new Answer(savedSanjigi, savedQ2, "Answers Contents2").writeBy(savedSanjigi));
+        answerRepository.flush();
     }
 
     @Test
     @DisplayName("Answer 저장")
     void save() {
         // when
-        final Answer answer = answerRepository.save(new Answer(UserTest.JAVAJIGI, Q1, "Answers Contents1"));
+        final Answer answer = answerRepository.save(new Answer(savedSanjigi, savedQ1, "Answers Contents1"));
 
         // then
         assertThat(answer).isNotNull();
     }
 
     @Test
-    @DisplayName("QuestionId 와 delete = false 인 Answer 들 조회")
-    void findByQuestionIdAndDeletedFalse() {
-        // when
-        final List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(Q1.getId());
-        answerRepository.flush();
-
-        // then
-        assertThat(actual).hasSize(2);
-    }
-
-    @Test
     @DisplayName("id 와 delete = false 인 Answer 들 조회")
     void findByIdAndDeletedFalse() {
         // when
-        final Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(A1.getId());
+        final Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(savedQ1.getAnswers().get(0).getId());
 
         // then
         assertThat(actual).isNotEmpty();
-        assertThat(actual.get()).isEqualTo(A1);
+    }
+
+    @Test
+    @DisplayName("Question 에서 answer 정보 조회")
+    void getAnswer() {
+        // given
+        final Answer answer = new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi);
+        savedQ1.addAnswer(answer);
+        answerRepository.flush();
+
+        // when & then
+        assertThat(savedQ1.getAnswers()).contains(answerRepository.findById(answer.getId()).get());
     }
 
     @Test
     @DisplayName("Answer contents 내용 변경")
     void update() {
+        // given
+        final Answer answer = savedQ1.getAnswers().get(0);
+
         // when
-        A1.setContents("contents 변경");
-        answerRepository.flush();
+        answer.setContents("contents 변경");
 
         // then
-        assertThat(A1.getContents()).isEqualTo("contents 변경");
+        assertThat(answer.getContents()).isEqualTo("contents 변경");
     }
 
     @Test
     @DisplayName("Answer 삭제")
     void delete() {
+        // bdd
+        final Answer answer = savedQ1.getAnswers().get(0);
+
         // when
-        answerRepository.delete(A1);
-        answerRepository.flush();
+        answerRepository.delete(answer);
 
         // then
-        assertThat(answerRepository.findById(A1.getId())).isEmpty();
+        assertThat(answerRepository.findById(answer.getId())).isEmpty();
     }
 }

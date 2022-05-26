@@ -2,9 +2,6 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
-import static qna.domain.UserTest.JAVAJIGI;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -21,15 +18,19 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class QuestionRepositoryTest {
+class QuestionRepositoryTest extends BaseRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
+
+    Question savedQ1;
+    Question savedQ2;
 
     @BeforeEach
     void setUp() {
         // given
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
+        saveUsers();
+        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
+        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
     }
 
     @Test
@@ -64,7 +65,6 @@ class QuestionRepositoryTest {
     void findByDeletedFalse() {
         // when
         final List<Question> questionList = questionRepository.findByDeletedFalse();
-        questionRepository.flush();
 
         // then
         assertThat(questionList).hasSize(2);
@@ -74,28 +74,26 @@ class QuestionRepositoryTest {
     @DisplayName("id 와 deleted = false 인 question 조회")
     void findByIdAndDeletedFalse() {
         // when & then
-        assertThat(questionRepository.findByIdAndDeletedFalse(Q1.getId())).isNotEmpty();
+        assertThat(questionRepository.findByIdAndDeletedFalse(savedQ1.getId())).isNotEmpty();
     }
 
     @Test
     @DisplayName("writer_id 변경")
     void update() {
         // when
-        Q1.writeBy(JAVAJIGI);
-        questionRepository.flush();
+        savedQ1.writeBy(savedJavajigi);
 
         // then
-        assertThat(Q1.getWriterId()).isEqualTo(1L);
+        assertThat(savedQ1.getWriter()).isEqualTo(savedJavajigi);
     }
 
     @Test
     @DisplayName("Question 삭제")
     void delete() {
         // when
-        questionRepository.delete(Q1);
-        questionRepository.flush();
+        questionRepository.delete(savedQ1);
 
         // then
-        assertThat(questionRepository.findById(Q1.getId())).isEmpty();
+        assertThat(questionRepository.findById(savedQ1.getId())).isEmpty();
     }
 }
