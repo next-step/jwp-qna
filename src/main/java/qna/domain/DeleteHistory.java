@@ -38,13 +38,12 @@ public class DeleteHistory {
     }
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
-        this.contentType = contentType;
-        this.contentId = contentId;
-
         if (Objects.isNull(deletedByUser)) {
             throw new UnAuthorizedException();
         }
 
+        this.contentType = contentType;
+        this.contentId = contentId;
         this.deletedByUser = deletedByUser;
         this.createDate = createDate;
     }
@@ -70,7 +69,7 @@ public class DeleteHistory {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedByUser, createDate);
+        return Objects.hash(id, contentType, contentId, deletedByUser);
     }
 
     @Override
