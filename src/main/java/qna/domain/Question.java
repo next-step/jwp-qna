@@ -1,19 +1,27 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Question extends CreatedUpdatedDateEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(length = 100, nullable = false)
     private String title;
     @Lob
     private String contents;
-    @Column(name = "WRITER_ID")
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -29,16 +37,19 @@ public class Question extends CreatedUpdatedDateEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        if (!this.answers.contains(answer)) {
+            this.answers.add(answer);
+            answer.toQuestion(this);
+        }
     }
 
     public Long getId() {
@@ -65,12 +76,13 @@ public class Question extends CreatedUpdatedDateEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -81,13 +93,24 @@ public class Question extends CreatedUpdatedDateEntity {
         this.deleted = deleted;
     }
 
+    public void removeAnswer(final Answer removeAnswer) {
+        if (Objects.equals(this, removeAnswer.getQuestion())) {
+            removeAnswer.toQuestion(null);
+        }
+        this.getAnswers().remove(removeAnswer);
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }

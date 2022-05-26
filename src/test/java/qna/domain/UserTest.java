@@ -19,7 +19,7 @@ public class UserTest {
     @Autowired
     private UserRepository userRepository;
 
-    @DisplayName("동등성 비교테스트")
+    @DisplayName("동등성 비교 테스트")
     @Test
     void identityTest() {
         final User savedUser = userRepository.save(UserTest.JAVAJIGI);
