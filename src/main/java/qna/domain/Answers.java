@@ -5,12 +5,13 @@ import qna.CannotDeleteException;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Embeddable
 public class Answers {
     @OneToMany(mappedBy = "question")
-    List<Answer> answers = new ArrayList<>();
+    private final List<Answer> answers = new ArrayList<>();
 
     public void add(Answer answer) {
         answers.add(answer);
@@ -23,6 +24,6 @@ public class Answers {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return Collections.unmodifiableList(new ArrayList<>(answers));
     }
 }
