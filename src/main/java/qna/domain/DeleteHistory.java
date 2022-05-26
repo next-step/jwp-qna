@@ -40,7 +40,10 @@ public class DeleteHistory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(contentId, that.contentId) && Objects.equals(user, that.user) && Objects.equals(createDate.getSecond(), that.createDate.getSecond());
+        return Objects.equals(id, that.id)
+                && contentType == that.contentType
+                && Objects.equals(contentId, that.contentId)
+                && Objects.equals(user, that.user);
     }
 
     @Override
