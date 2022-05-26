@@ -104,13 +104,13 @@ public class Question extends BaseTimeEntity {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         checkAnswersIsMine();
-        List<DeleteHistory> deleteHistories = getDeleteHistories();
+        List<DeleteHistory> deleteHistories = makeDeleteHistories();
         executeDeleteAnswers();
 
         return deleteHistories;
     }
 
-    private List<DeleteHistory> getDeleteHistories() {
+    private List<DeleteHistory> makeDeleteHistories() {
         ArrayList<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(this.makeDeleteHistory());
         deleteHistories.addAll(
