@@ -73,6 +73,7 @@ public class Answer {
 
     public void toQuestion(Question question) {
         this.question = question;
+        question.getAnswers().add(this);
     }
 
     public Long getId() {
