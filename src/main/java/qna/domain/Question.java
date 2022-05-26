@@ -1,7 +1,11 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -10,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends Common {
@@ -30,6 +35,9 @@ public class Question extends Common {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
+
+    @Embedded
+    private final Answers answers = new Answers();
 
     protected Question() {
     }
@@ -54,7 +62,28 @@ public class Question extends Common {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        this.answers.add(answer);
+    }
+
+    public List<DeleteHistory> delete(User loginUser) {
+        validateDeletePermission(loginUser);
+
+        List<DeleteHistory> deleteHistoryList = new ArrayList<>();
+        deleteHistoryList.add(this.deleteQuestion());
+        deleteHistoryList.addAll(answers.delete(loginUser));
+
+        return deleteHistoryList;
+    }
+
+    private DeleteHistory deleteQuestion() {
+        this.deleted = true;
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+    }
+
+    private void validateDeletePermission(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -97,15 +126,8 @@ public class Question extends Common {
         this.writer = writer;
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", contents='" + contents + '\'' +
-            ", deleted=" + deleted +
-            ", writer=" + writer +
-            '}';
+    public Answers getAnswers() {
+        return answers;
     }
 
     @Override
@@ -117,14 +139,12 @@ public class Question extends Common {
             return false;
         }
         Question question = (Question) o;
-        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
-            question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer,
-            question.writer);
+        return Objects.equals(id, question.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, deleted, writer);
+        return Objects.hash(id);
     }
 
 }

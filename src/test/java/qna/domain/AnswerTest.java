@@ -3,8 +3,10 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -40,6 +42,21 @@ public class AnswerTest {
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
         answer.toQuestion(QuestionTest.Q2);
         assertThat(answer.getQuestion()).isEqualTo(QuestionTest.Q2);
+    }
+
+    @Test
+    @DisplayName("Answer 삭제시 권한 체크")
+    void Answer_delete_fail() {
+        assertThatExceptionOfType(CannotDeleteException.class)
+            .isThrownBy(() -> A1.delete(UserTest.SANJIGI));
+    }
+
+    @Test
+    @DisplayName("Answer 삭제시 성공")
+    void Answer_delete_success() {
+        DeleteHistory deleteHistory = A1.delete(UserTest.JAVAJIGI);
+        assertThat(deleteHistory)
+            .isEqualTo(new DeleteHistory(ContentType.ANSWER, A1.getId(), UserTest.JAVAJIGI, LocalDateTime.now()));
     }
 
 }
