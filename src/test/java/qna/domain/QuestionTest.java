@@ -147,30 +147,4 @@ public class QuestionTest {
         assertThat(q1Local.getAnswersIsNotDelete()).hasSize(0);
         assertThat(q1Local.getAnswers()).hasSize(2);
     }
-//    @Test
-//    @DisplayName("question bulk update 후 false로 전부 적용되어야한다.")
-//    public void questionBulkUpdate() {
-//        questionRepository.save(Q1);
-//        assertThat(Q1.isDeleted()).isFalse();
-//        questionRepository.updateDeleteOfQuestions(Arrays.asList(Q1.getId()));
-//        Optional<Question> question = questionRepository.findById(Q1.getId());
-//        assertThat(question.get().isDeleted()).isTrue();
-//    }
-
-//    @Test
-//    @DisplayName("answer bulk update 후 false로 전부 적용되어야한다.")
-//    public void answerBulkUpdate() {
-//        Question question = new Question("title1", "contents1").writeBy(JAVAJIGI);
-//        Answer answer1 = new Answer( JAVAJIGI, QuestionTest.Q1,"Answers Contents1");
-//        Answer answer2 = new Answer( JAVAJIGI, QuestionTest.Q1,"Answers Contents2");
-//        questionRepository.save(question);
-//        answerRepository.save(answer1);
-//        answerRepository.save(answer2);
-//
-//        assertThat(answer1.isDeleted()).isFalse();
-//        assertThat(answer2.isDeleted()).isFalse();
-//
-//        assertThat(answerRepository.updateDeleteOfAnswers(Arrays.asList(answer1.getId(),answer2.getId()))).isEqualTo(2);
-//        assertThat(answerRepository.findById(answer1.getId()).get().isDeleted()).isTrue();
-//    }
 }
