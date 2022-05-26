@@ -125,7 +125,7 @@ class AnswerRepositoryTest {
         final Answer expected = answerRepository.save(answer);
 
         // when
-        expected.deleteAnswer();
+        expected.deleteAnswer(expected.getWriter());
         final Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(expected.getId());
 
         // then
