@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +22,7 @@ public class DeleteHistory {
     @Column(name = "content_id")
     private Long contentId;
     @ManyToOne
-    @JoinColumn(name = "deleted_by_id")
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedByUser;
     @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
