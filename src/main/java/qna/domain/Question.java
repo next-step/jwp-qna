@@ -93,10 +93,10 @@ public class Question extends BaseTimeEntity {
 
     public List<DeleteHistory> createDeleteHistories() {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(DeleteHistory.questionDeleteHistory(this));
+        deleteHistories.add(DeleteHistory.ofQuestion(this));
 
         answers.getAnswers().forEach(answer -> deleteHistories.add(
-                DeleteHistory.answerDeleteHistory(answer)
+                DeleteHistory.ofAnswer(answer)
         ));
 
         return deleteHistories;

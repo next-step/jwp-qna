@@ -41,11 +41,11 @@ public class DeleteHistory {
         this.deleteUser = deleteUser;
     }
 
-    public static DeleteHistory questionDeleteHistory(Question question) {
+    public static DeleteHistory ofQuestion(Question question) {
         return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWrittenBy());
     }
 
-    public static DeleteHistory answerDeleteHistory(Answer answer) {
+    public static DeleteHistory ofAnswer(Answer answer) {
         return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWrittenBy());
     }
 
