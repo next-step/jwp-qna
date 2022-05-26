@@ -132,13 +132,11 @@ public class Question extends BaseTimeEntity {
     }
 
     public List<DeleteHistory> delete() {
-        final List<DeleteHistory> deleteHistories = new ArrayList<>();
         this.setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
-        for (Answer answer : getAnswersDeletedFalse()) {
-            deleteHistories.add(answer.delete());
-        }
-        return deleteHistories;
+        final DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.addQuestion(this);
+        deleteHistories.addAnswers(getAnswersDeletedFalse());
+        return deleteHistories.getDeleteHistories();
     }
 
     @Override

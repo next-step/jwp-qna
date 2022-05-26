@@ -120,7 +120,7 @@ public class Answer extends BaseTimeEntity {
 
     public DeleteHistory delete() {
         this.setDeleted(true);
-        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+        return DeleteHistory.newAnswerDeleteHistory(this.id, this.writer, LocalDateTime.now());
     }
 
     @Override
