@@ -7,13 +7,19 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Answer extends BaseWriterEntity {
+public class Answer extends BaseEntity {
     @Lob
     private String contents;
 
     private boolean deleted = false;
 
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name="fk_answer_to_question"))
+    private Question question;
 
     public Answer() {
     }
@@ -33,17 +39,21 @@ public class Answer extends BaseWriterEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
+    }
+
+    public Long getWriterId() {
+        return writer.getId();
     }
 
     public Long getId() {
@@ -51,7 +61,7 @@ public class Answer extends BaseWriterEntity {
     }
 
     public Long getQuestionId() {
-        return questionId;
+        return question.getId();
     }
 
     public String getContents() {
@@ -66,14 +76,18 @@ public class Answer extends BaseWriterEntity {
         this.deleted = deleted;
     }
 
+    public User getWriter() {
+        return writer;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "contents='" + contents + '\'' +
                 ", deleted=" + deleted +
-                ", questionId=" + questionId +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", id=" + id +
-                ", writerId=" + writerId +
                 '}';
     }
 }
