@@ -11,7 +11,7 @@ import qna.NotFoundException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@DataJpaTest(includeFilters = { @ComponentScan.Filter(value = { EnableJpaAuditing.class }) })
+@DataJpaTest(includeFilters = {@ComponentScan.Filter(value = {EnableJpaAuditing.class})})
 public class UserTest {
     @Autowired
     private UserRepository userRepository;
@@ -30,11 +30,12 @@ public class UserTest {
 
     @Test
     void findByUserId() {
-        String userId = JAVAJIGI.getUserId();
-        User actual = userRepository.findByUserId(userId).orElseThrow(NotFoundException::new);
+        //when
+        User actual = userRepository.findByUserId(JAVAJIGI.getUserId()).orElseThrow(NotFoundException::new);
 
+        //then
         assertAll(
-                () -> assertThat(actual.getUserId()).isEqualTo(userId)
+                () -> assertThat(actual.getUserId()).isEqualTo(JAVAJIGI.getUserId())
         );
     }
 }

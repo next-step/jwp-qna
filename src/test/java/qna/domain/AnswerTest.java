@@ -12,7 +12,7 @@ import qna.CannotDeleteException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DataJpaTest(includeFilters = { @ComponentScan.Filter(value = { EnableJpaAuditing.class }) })
+@DataJpaTest(includeFilters = {@ComponentScan.Filter(value = {EnableJpaAuditing.class})})
 public class AnswerTest {
     @Autowired
     private UserRepository userRepository;

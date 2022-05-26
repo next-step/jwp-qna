@@ -4,10 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class DeleteHistoriesTest {
     @Test
@@ -20,10 +19,12 @@ class DeleteHistoriesTest {
         //given
         DeleteHistory d1 = new DeleteHistory(ContentType.QUESTION, 0L, User.GUEST_USER, LocalDateTime.now());
         DeleteHistory d2 = new DeleteHistory(ContentType.ANSWER, 0L, User.GUEST_USER, LocalDateTime.now());
-        List<DeleteHistory> deleteHistories = Arrays.asList(d1, d2);
+
+        //when
+        DeleteHistories deleteHistories = new DeleteHistories(Arrays.asList(d2, d1));
 
         //then
-        assertThat(new DeleteHistories(deleteHistories)).isEqualTo(new DeleteHistories(deleteHistories));
+        assertThat(deleteHistories).isEqualTo(new DeleteHistories(Arrays.asList(d1, d2)));
     }
 
     @Test
@@ -31,10 +32,12 @@ class DeleteHistoriesTest {
         //given
         DeleteHistory d1 = new DeleteHistory(ContentType.QUESTION, 0L, User.GUEST_USER, LocalDateTime.now());
         DeleteHistory d2 = new DeleteHistory(ContentType.ANSWER, 0L, User.GUEST_USER, LocalDateTime.now());
-        List<DeleteHistory> deleteHistories = Arrays.asList(d1, d2);
+
+        //when
+        DeleteHistories deleteHistories = new DeleteHistories(Arrays.asList(d1, d2));
 
         //then
-        assertThat(new DeleteHistories(deleteHistories)).containsExactlyInAnyOrder(d2, d1);
+        assertThat(deleteHistories).containsExactlyInAnyOrder(d2, d1);
     }
 
 }
