@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(indexes = { @Index(name = "UK_user_id", columnList = "userId", unique = true) })
+@Table(indexes = {@Index(name = "UK_user_id", columnList = "userId", unique = true)})
 public class User extends Time {
     public static final GuestUser GUEST_USER = new GuestUser();
     @Id
@@ -62,8 +62,7 @@ public class User extends Time {
             return false;
         }
 
-        return name.equals(target.name) &&
-                email.equals(target.email);
+        return name.equals(target.name) && email.equals(target.email);
     }
 
     public boolean isGuestUser() {
@@ -112,13 +111,8 @@ public class User extends Time {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+        return "User{" + "id=" + id + ", userId='" + userId + '\'' + ", password='" + password + '\'' + ", name='" +
+                name + '\'' + ", email='" + email + '\'' + '}';
     }
 
     private static class GuestUser extends User {

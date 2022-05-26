@@ -7,8 +7,7 @@ public class UnAuthenticationException extends Exception {
         super();
     }
 
-    public UnAuthenticationException(String message, Throwable cause, boolean enableSuppression,
-                                     boolean writableStackTrace) {
+    public UnAuthenticationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 

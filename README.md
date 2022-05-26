@@ -2,6 +2,8 @@
 
 ## 기능 요구사항
 
+- 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+
 - QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
 
 - 아래의 DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
@@ -57,6 +59,31 @@ add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
 
 ### 힌트
+- 연관관계 설정 시 아래 DDL 을 보고 유추한다.
+
+```
+H2
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
+```
+
 - Spring Data JPA 사용 시 아래 옵션은 동작 쿼리를 로그로 확인할 수 있게 해준다.
 
 ```
