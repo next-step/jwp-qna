@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Assertions.tuple;
 import static qna.domain.AnswerTest.A1;
 import static qna.domain.AnswerTest.A2;
@@ -9,7 +10,10 @@ import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,7 +90,7 @@ public class QuestionTest {
     public void deleteQuestionNotMineTest() {
         questionRepository.save(Q1);
 
-        assertThatThrownBy(() -> Q1.delete(SANJIGI)).isInstanceOf(
+        assertThatThrownBy(() -> Q1.getDeleteTargetIds(SANJIGI)).isInstanceOf(
                 CannotDeleteException.class)
             .hasMessage("질문을 삭제할 권한이 없습니다.");
     }
@@ -96,7 +100,7 @@ public class QuestionTest {
     public void deleteQuestionCheckAnswersIsMineTest() {
         questionRepository.save(Q1); //자바지기 Question
 
-        assertThatThrownBy(() -> Q1.delete(JAVAJIGI))
+        assertThatThrownBy(() -> Q1.getDeleteTargetIds(JAVAJIGI))
             .isInstanceOf(CannotDeleteException.class)
             .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 
@@ -116,14 +120,13 @@ public class QuestionTest {
 
         //when
         questionRepository.save(q1Local); //자바지기 Question
-        List<DeleteHistory> deleteHistories = q1Local.delete(JAVAJIGI);
+        Map<ContentType, List<Long>> deleteTargetIds = q1Local.getDeleteTargetIds(JAVAJIGI);
 
         //then
-        assertThat(deleteHistories)
-            .extracting("contentType", "contentId")
-            .contains(tuple(ContentType.QUESTION, q1Local.getId()))
-            .contains(tuple(ContentType.ANSWER, answer1Local.getId()))
-            .contains(tuple(ContentType.ANSWER, answer2Local.getId()));
+        assertThat(deleteTargetIds)
+            .contains(entry(ContentType.QUESTION, Arrays.asList(q1Local.getId())))
+            .contains(entry(ContentType.ANSWER,
+                Arrays.asList(answer1Local.getId(), answer2Local.getId())));
     }
 
     @Test
@@ -138,7 +141,7 @@ public class QuestionTest {
 
         //when
         questionRepository.save(q1Local);
-        q1Local.delete(UserTest.JAVAJIGI);
+        q1Local.getDeleteTargetIds(UserTest.JAVAJIGI);
         //then
 
         assertThat(q1Local.getAnswersIsNotDelete()).hasSize(0);

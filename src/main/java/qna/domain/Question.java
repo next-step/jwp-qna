@@ -4,11 +4,13 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -100,15 +102,22 @@ public class Question extends BaseTimeEntity {
             '}';
     }
 
-    public List<DeleteHistory> delete(User user) {
+    public Map<ContentType, List<Long>> getDeleteTargetIds(User user) {
         if (!this.isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         checkAnswersIsMine();
-        List<DeleteHistory> deleteHistories = makeDeleteHistories();
-        executeDeleteAnswers();
 
-        return deleteHistories;
+        HashMap<ContentType, List<Long>> deleteTargets = new HashMap<>();
+
+        deleteTargets.put(ContentType.QUESTION, Arrays.asList(this.id));
+
+        List<Long> answerIds = answers.stream()
+            .map(Answer::getId)
+            .collect(Collectors.toList());
+        deleteTargets.put(ContentType.ANSWER, answerIds);
+
+        return deleteTargets;
     }
 
     private List<DeleteHistory> makeDeleteHistories() {
@@ -124,14 +133,6 @@ public class Question extends BaseTimeEntity {
     private void checkAnswersIsMine() {
         for (Answer answer : answers) {
             answer.isOwner(this.writer);
-        }
-    }
-
-    private void executeDeleteAnswers() {
-        this.deleted = true;
-        Iterator<Answer> iter = answers.iterator();
-        while (iter.hasNext()) {
-            iter.next().delete();
         }
     }
 
