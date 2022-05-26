@@ -127,9 +127,9 @@ public class User extends BaseEntity {
         }
         User that = (User) o;
         return Objects.equals(id, that.id) &&
-                userId.equals(that.userId) &&
-                password.equals(that.password) &&
-                name.equals(that.name) &&
-                email.equals(that.email);
+                Objects.equals(userId, that.userId) &&
+                Objects.equals(password, that.password) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(email, that.email);
     }
 }
