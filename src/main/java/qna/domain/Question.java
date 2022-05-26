@@ -38,7 +38,7 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", cascade = {CascadeType.PERSIST})
+    @OneToMany(mappedBy = "question")
     private List<Answer> answers = new LinkedList<>();
 
     protected Question() {
