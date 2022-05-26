@@ -3,6 +3,7 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -12,10 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 public class Question extends BaseEntity {
@@ -35,8 +33,8 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
 
@@ -79,8 +77,8 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public Answers getAnswers() {
+        return this.answers;
     }
 
     public boolean isDeleted() {
@@ -97,16 +95,10 @@ public class Question extends BaseEntity {
 
     private List<DeleteHistory> createDeleteHistories(User loginUser) {
         DeleteHistories deleteQuestionHistories = new DeleteHistories(ContentType.QUESTION, this.id, this.getWriter());
-        List<DeleteHistory> deleteAnswerHistories = makeAnswerDeleted(loginUser);
+        List<DeleteHistory> deleteAnswerHistories = this.answers.makeAnswerDeleted(loginUser);
         deleteQuestionHistories.add(deleteAnswerHistories);
 
         return deleteQuestionHistories.getDeleteHistories();
-    }
-
-    private List<DeleteHistory> makeAnswerDeleted(User loginUser) {
-        return this.answers.stream()
-                .map(answer -> answer.delete(loginUser))
-                .collect(Collectors.toList());
     }
 
     @Override
