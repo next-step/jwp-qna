@@ -1,16 +1,34 @@
 package qna.domain;
 
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
 
-public class Answer {
+@Entity
+public class Answer extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "writer_id")
     private Long writerId;
+    @Column(name = "question_id")
     private Long questionId;
+    @Column(name = "contents")
+    @Lob
     private String contents;
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    protected Answer() {
+
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
