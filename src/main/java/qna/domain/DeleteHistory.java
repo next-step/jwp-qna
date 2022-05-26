@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class DeleteHistory extends BaseTimeEntity {
+public class DeleteHistory{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
