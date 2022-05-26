@@ -20,6 +20,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("update Question q set q.deleted=true where q.id in :ids")
     int updateDeleteOfQuestions(@Param("ids") List<Long> questionIds);
 
-    @Query("select q from Question q where q.id in :ids")
-    List<Question> findAllByIds(@Param("ids") List<Long> questionIds);
+
 }

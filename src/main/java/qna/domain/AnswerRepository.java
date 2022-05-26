@@ -17,6 +17,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
     @Query("update Answer a set a.deleted=true where a.id in :ids")
     int updateDeleteOfAnswers(@Param("ids") List<Long> answerIds);
 
-    @Query("select a from Answer a where a.id in :ids")
-    List<Answer> findAllByIds(@Param("ids") List<Long> answerIds);
+    @Override
+    List<Answer> findAllById(Iterable<Long> longs);
 }
