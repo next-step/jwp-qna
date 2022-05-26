@@ -110,7 +110,7 @@ public class Question extends BaseTimeEntity {
                 '}';
     }
 
-    public List<DeleteHistory> deleteQuestion(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleteQuestionAndAnswer(User loginUser) throws CannotDeleteException {
         LocalDateTime deletedAt = LocalDateTime.now();
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
