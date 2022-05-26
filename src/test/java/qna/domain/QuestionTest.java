@@ -2,16 +2,12 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.entry;
 import static qna.domain.AnswerTest.A1;
 import static qna.domain.AnswerTest.A2;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -106,8 +102,8 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("삭제시 question은 해당 아이디만, answer은 연관된 모든 answer id가 반환된다")
-    public void deleteQuestionGetTargetId() throws CannotDeleteException {
+    @DisplayName("삭제시 question과 answer들의 delete는 true여야합니다")
+    public void deleteQuestTest() throws CannotDeleteException {
         //given
         Question q1Local = new Question("title1", "contents1").writeBy(
             JAVAJIGI);
@@ -117,32 +113,15 @@ public class QuestionTest {
             "Answers Contents2");
 
         //when
-        questionRepository.save(q1Local); //자바지기 Question
-        Map<ContentType, List<Long>> deleteTargetIds = q1Local.delete(JAVAJIGI);
-
-        //then
-        assertThat(deleteTargetIds)
-            .contains(entry(ContentType.QUESTION, Arrays.asList(q1Local.getId())))
-            .contains(entry(ContentType.ANSWER,
-                Arrays.asList(answer1Local.getId(), answer2Local.getId())));
-    }
-
-    @Test
-    public void getAnswersAfterDelete () throws CannotDeleteException {
-        //given
-        Question q1Local = new Question("title1", "contents1").writeBy(
-            JAVAJIGI);
-        Answer answer1Local = new Answer(UserTest.JAVAJIGI, q1Local,
-            "Answers Contents1");
-        Answer answer2Local = new Answer(UserTest.JAVAJIGI, q1Local,
-            "Answers Contents2");
-
-        //when
+        answerRepository.save(answer1Local);
+        answerRepository.save(answer2Local);
         questionRepository.save(q1Local);
         q1Local.delete(UserTest.JAVAJIGI);
         //then
 
-        assertThat(q1Local.getAnswersIsNotDelete()).hasSize(0);
-        assertThat(q1Local.getAnswers()).hasSize(2);
+        assertThat(q1Local.getAnswers())
+            .extracting("deleted")
+            .doesNotContain("false");
+        assertThat(q1Local.isDeleted()).isTrue();
     }
 }
