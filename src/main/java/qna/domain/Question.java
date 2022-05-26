@@ -2,9 +2,10 @@ package qna.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
-import javax.persistence.CascadeType;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -27,14 +29,14 @@ public class Question extends BaseTimeEntity {
     @Lob
     private String contents;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    private List<Answer> answers = new LinkedList<>();
 
     protected Question() {
 
@@ -55,8 +57,8 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.getWriter().getId().equals(writer.getId());
+    private boolean isOwner(User writer) {
+        return this.writer == writer;
     }
 
     public void addAnswer(Answer answer) {
@@ -67,44 +69,21 @@ public class Question extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
 
     public List<Answer> getAnswers() {
         return answers;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
@@ -117,4 +96,32 @@ public class Question extends BaseTimeEntity {
             ", deleted=" + deleted +
             '}';
     }
+
+    public void delete(User user) {
+        if (!this.isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        checkAnswersIsMine();
+        this.deleted = true;
+        setAnswersDelete();
+    }
+
+    private void setAnswersDelete() {
+        for (Answer answer : answers) {
+            answer.delete();
+        }
+    }
+
+
+    private void checkAnswersIsMine() {
+        for (Answer answer : answers) {
+            answer.isOwner(this.writer);
+        }
+    }
+
+    public DeleteHistory makeDeleteHistory() {
+        return new DeleteHistory(ContentType.QUESTION, this.getId(), this.writer,
+            LocalDateTime.now());
+    }
+
 }

@@ -42,12 +42,4 @@ public class DeleteHistoryTest {
         assertThat(answerSaved.hashCode()).isEqualTo(answer.hashCode());
     }
 
-
-
-    @Test
-    public void cascadePersist(){
-        assertThat(answer.getDeletedById().getId()).isNull();
-        DeleteHistory answerSaved = deleteHistoryRepository.save(answer);
-        assertThat(answerSaved.getDeletedById().getId()).isNotNull();
-    }
 }

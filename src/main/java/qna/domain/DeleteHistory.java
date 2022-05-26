@@ -5,9 +5,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -15,11 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-public class DeleteHistory{
+public class DeleteHistory {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -28,7 +24,7 @@ public class DeleteHistory{
     private ContentType contentType;
     private Long contentId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DELETE_BY_ID", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedById;
 
@@ -87,19 +83,4 @@ public class DeleteHistory{
         return id;
     }
 
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public Long getContentId() {
-        return contentId;
-    }
-
-    public User getDeletedById() {
-        return deletedById;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
 }
