@@ -24,6 +24,6 @@ public class QuestionTest {
     void cannotDeleteException() {
         assertThatExceptionOfType(CannotDeleteException.class)
                 .isThrownBy(() -> Q1.delete(UserTest.SANJIGI))
-                .withMessageContaining("답변을 삭제할 수 없습니다.");
+                .withMessageContaining("질문을 삭제할 권한이 없습니다.");
     }
 }
