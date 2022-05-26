@@ -1,0 +1,40 @@
+package qna.domain;
+
+import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+
+class DeleteHistoriesTest {
+    @Test
+    void question_으로_DeleteHistories_를_생성할_수_있다() {
+        assertDoesNotThrow(() -> new DeleteHistories(new Question()));
+    }
+
+    @Test
+    void DeleteHistories_는_사이즈가_같고_구성요소를_모두_포함하고_있으면_같은_객체로_본다() {
+        //given
+        DeleteHistory d1 = new DeleteHistory(ContentType.QUESTION, 0L, User.GUEST_USER, LocalDateTime.now());
+        DeleteHistory d2 = new DeleteHistory(ContentType.ANSWER, 0L, User.GUEST_USER, LocalDateTime.now());
+        List<DeleteHistory> deleteHistories = Arrays.asList(d1, d2);
+
+        //then
+        assertThat(new DeleteHistories(deleteHistories)).isEqualTo(new DeleteHistories(deleteHistories));
+    }
+
+    @Test
+    void DeleteHistories_는_Iterable_객체이다() {
+        //given
+        DeleteHistory d1 = new DeleteHistory(ContentType.QUESTION, 0L, User.GUEST_USER, LocalDateTime.now());
+        DeleteHistory d2 = new DeleteHistory(ContentType.ANSWER, 0L, User.GUEST_USER, LocalDateTime.now());
+        List<DeleteHistory> deleteHistories = Arrays.asList(d1, d2);
+
+        //then
+        assertThat(new DeleteHistories(deleteHistories)).containsExactlyInAnyOrder(d2, d1);
+    }
+
+}
