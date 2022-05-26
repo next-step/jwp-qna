@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -68,6 +69,10 @@ public class Question extends BaseTimeEntity {
         answer.toQuestion(this);
     }
 
+    public List<Answer> getAnswers() {
+        return this.answers.nonDeletedAnswers();
+    }
+
     public Long getId() {
         return id;
     }
@@ -95,24 +100,21 @@ public class Question extends BaseTimeEntity {
     public List<DeleteHistory> deleteQuestion(final User loginUser) {
         invalidQuestionCheck(loginUser);
         this.deleted = true;
-        return createDeleteHistory();
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer));
+        deleteHistories.addAll(answers.deleteAnswers(loginUser));
+        return Collections.unmodifiableList(deleteHistories);
     }
 
     private void invalidQuestionCheck(final User loginUser) {
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 질문입니다.");
+        }
+
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-
-        if (!answers.isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
-    }
-
-    private List<DeleteHistory> createDeleteHistory() {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer));
-        deleteHistories.addAll(answers.deleteAnswers());
-        return deleteHistories;
     }
 
     @Override
