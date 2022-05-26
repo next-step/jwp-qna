@@ -59,8 +59,8 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.getWriter().getId().equals(writer.getId());
+    private boolean isOwner(User writer) {
+        return this.writer == writer;
     }
 
     public void addAnswer(Answer answer) {
@@ -118,7 +118,7 @@ public class Question extends BaseTimeEntity {
         return deleteHistories;
     }
 
-    private void checkAnswersIsMine()  {
+    private void checkAnswersIsMine() {
         for (Answer answer : answers) {
             if (!answer.isOwner(this.writer)) {
                 throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
