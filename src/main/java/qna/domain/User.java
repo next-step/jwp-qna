@@ -1,13 +1,12 @@
 package qna.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import qna.UnAuthorizedException;
-
-import java.util.Objects;
 import qna.entity.BaseEntity;
 
 @Entity
@@ -111,5 +110,26 @@ public class User extends BaseEntity {
         public boolean isGuestUser() {
             return true;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User that = (User) o;
+        return Objects.equals(id, that.id) &&
+                userId.equals(that.userId) &&
+                password.equals(that.password) &&
+                name.equals(that.name) &&
+                email.equals(that.email);
     }
 }
