@@ -56,9 +56,8 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
-        this.question = question;
-        question.addAnswer(this);
         this.contents = contents;
+        question.addAnswer(this);
     }
 
     public boolean isOwner(User writer) {
@@ -79,6 +78,10 @@ public class Answer extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public void setDeleted(boolean deleted) {
