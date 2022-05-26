@@ -98,12 +98,13 @@ public class Answer extends BaseTimeEntity{
     }
 
     public DeleteHistory delete(User loginUser, LocalDateTime deletedAt) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
+        if (!isOwner(loginUser))
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
+
+        if (!isDeleted())
+            throw new CannotDeleteException("이미 삭제된 답변입니다.");
 
         deleted = true;
-
         return new DeleteHistory(ContentType.ANSWER, id, user, deletedAt);
     }
 

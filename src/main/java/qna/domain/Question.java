@@ -115,17 +115,18 @@ public class Question extends BaseTimeEntity {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
         deleteHistories.add(delete(loginUser, deletedAt));
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.deleteAnswer(loginUser, deletedAt));
-        }
+        for (Answer answer : answers)
+            deleteHistories.add(answer.delete(loginUser, deletedAt));
 
         return deleteHistories;
     }
 
     private DeleteHistory delete(User loginUser, LocalDateTime deletedAt) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
+        if (!isOwner(loginUser))
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+
+        if (isDeleted())
+            throw new CannotDeleteException("이미 삭제된 질문입니다.");
 
         this.deleted = true;
 
