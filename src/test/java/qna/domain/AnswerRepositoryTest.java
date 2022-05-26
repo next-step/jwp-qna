@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,16 +12,22 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Test
     void 답변_생성() {
 
-        Answer expected = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
+        Answer expected = new Answer(user, question, "Answers Contents1");
         Answer actual = answerRepository.save(expected);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
-                () -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId()),
+                () -> assertThat(actual.getWriter().getId()).isEqualTo(expected.getWriter().getId()),
+                () -> assertThat(actual.getQuestion().getId()).isEqualTo(expected.getQuestion().getId()),
                 () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
                 () -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted())
         );
@@ -30,32 +35,21 @@ public class AnswerRepositoryTest {
 
     @Test
     void 질문_아이디로_삭제_되지_않은_답변_조회() {
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
+
         Answer deletedAnswer = answerRepository.save(
-                new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1"));
+                new Answer(user, question, "Answers Contents1"));
         Answer notDeletedAnswer = answerRepository.save(
-                new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2"));
+                new Answer(user, question, "Answers Contents2"));
 
         deletedAnswer.setDeleted(true);
 
-        List<Answer> foundAnswers = answerRepository.findByQuestionIdAndDeletedFalse(deletedAnswer.getQuestionId());
+        List<Answer> foundAnswers = answerRepository.findByQuestionIdAndDeletedFalse(
+                deletedAnswer.getQuestion().getId());
 
         assertThat(foundAnswers).containsExactly(notDeletedAnswer);
     }
 
-    @Test
-    void 아이디로_삭제_되지_않은_답변_조회() {
-        Answer deletedAnswer = answerRepository.save(
-                new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1"));
-        Answer notDeletedAnswer = answerRepository.save(
-                new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2"));
 
-        deletedAnswer.setDeleted(true);
-        
-        Optional<Answer> foundDeletedAnswer = answerRepository.findByIdAndDeletedFalse(deletedAnswer.getId());
-        Optional<Answer> foundNotDeletedAnswer = answerRepository.findByIdAndDeletedFalse(notDeletedAnswer.getId());
-        assertAll(
-                () -> assertThat(foundDeletedAnswer.isPresent()).isFalse(),
-                () -> assertThat(foundNotDeletedAnswer.isPresent()).isTrue()
-        );
-    }
 }

@@ -22,6 +22,6 @@ public class AnswerTest {
         Answer answer = new Answer(UserTest.JAVAJIGI, new Question("question", "content"), "content");
         Question input = new Question("question", "content");
         answer.toQuestion(input);
-        assertThat(answer.getQuestionId()).isEqualTo(input.getId());
+        assertThat(answer.getQuestion().getId()).isEqualTo(input.getId());
     }
 }
