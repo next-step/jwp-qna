@@ -1,12 +1,12 @@
-package qnamission.domain;
+package qna.domain;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@DataJpaTest
+@SpringBootTest
 class DeleteHistoryRepositoryTest {
 
     @Autowired
@@ -18,4 +18,5 @@ class DeleteHistoryRepositoryTest {
         final DeleteHistory actual = deleteHistoryRepository.save(expected);
         assertNotNull(actual.getId());
     }
+
 }
