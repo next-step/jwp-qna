@@ -94,7 +94,7 @@ public class Question extends BaseEntity {
     }
 
     private List<DeleteHistory> createDeleteHistories(User loginUser) {
-        DeleteHistories deleteQuestionHistories = new DeleteHistories(ContentType.QUESTION, this.id, this.getWriter());
+        DeleteHistories deleteQuestionHistories = new DeleteHistories(DeleteHistory.of(this));
         List<DeleteHistory> deleteAnswerHistories = this.answers.makeAnswerDeleted(loginUser);
         deleteQuestionHistories.add(deleteAnswerHistories);
 
