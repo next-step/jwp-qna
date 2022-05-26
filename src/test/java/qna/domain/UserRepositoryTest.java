@@ -19,7 +19,7 @@ class UserRepositoryTest {
     @DisplayName("User 저장")
     @Test
     void save() {
-        final User actual = userRepository.save(JAVAJIGI);
+        final User actual = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
 
         assertThat(actual.getId()).isNotNull();
     }
@@ -27,7 +27,7 @@ class UserRepositoryTest {
     @DisplayName("User id로 User 조회")
     @Test
     void findByUserId() {
-        final User expected = userRepository.save(JAVAJIGI);
+        final User expected = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
 
         Optional<User> actual = userRepository.findByUserId(expected.getUserId());
 
@@ -39,7 +39,7 @@ class UserRepositoryTest {
     @DisplayName("User 수정")
     @Test
     void updateUser() {
-        final User user = userRepository.save(JAVAJIGI);
+        final User user = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
         userRepository.flush();
 
         String expected = "자바지기";
