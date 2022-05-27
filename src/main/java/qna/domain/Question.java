@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,6 +32,9 @@ public class Question extends BaseTimeEntity {
     @Column(name = "deleted")
     private boolean deleted = false;
 
+    @Embedded
+    private Answers answers = new Answers();
+
     protected Question() {
     }
 
@@ -54,7 +58,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.add(answer, this);
     }
 
     public boolean canBeDeletedBy(final User loginUser) throws CannotDeleteException {
@@ -86,6 +90,10 @@ public class Question extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Answers getAnswers() {
+        return answers;
     }
 
     @Override

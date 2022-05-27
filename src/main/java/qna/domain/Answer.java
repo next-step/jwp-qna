@@ -53,7 +53,7 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.writer = writer;
-        this.question = question;
+        toQuestion(question);
         this.contents = contents;
     }
 
@@ -61,8 +61,12 @@ public class Answer extends BaseTimeEntity {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
-        this.question = question;
+    public void toQuestion(final Question question) {
+        if (this.question != question) {
+            this.question.getAnswers().remove(this);
+            this.question = question;
+            question.getAnswers().add(this, question);
+        }
     }
 
     public Long getId() {
