@@ -11,7 +11,6 @@ import qna.domain.Question;
 import qna.domain.User;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.QuestionTest.Q1;
 import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
@@ -33,7 +32,7 @@ class AnswerRepositoryTest {
     @BeforeEach
     void setUp() {
         user = userRepository.save(JAVAJIGI);
-        question = questionRepository.save(Q1.writeBy(user));
+        question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
     }
 
     @Test
