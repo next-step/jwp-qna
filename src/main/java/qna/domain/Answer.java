@@ -37,6 +37,16 @@ public class Answer extends BaseAuditingEntity {
 
     }
 
+    Answer(User writer, Question question, String contents, boolean deleted) {
+        this(writer,question,contents);
+        this.deleted = deleted;
+    }
+
+    Answer(Long id, User writer, Question question, String contents) {
+        this(writer,question,contents);
+        this.id = id;
+    }
+    
     public Answer(User writer, Question question, String contents) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -51,7 +61,7 @@ public class Answer extends BaseAuditingEntity {
         this.contents = contents;
     }
 
-    public DeleteHistory delete(User loginUser) {
+    DeleteHistory delete(User loginUser) {
         verifyWriter(loginUser);
         this.deleted = true;
         return new DeleteHistory(ContentType.ANSWER,this.id, loginUser, LocalDateTime.now());

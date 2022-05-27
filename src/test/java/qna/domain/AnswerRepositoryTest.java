@@ -1,4 +1,4 @@
-package qna.repository;
+package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,12 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import qna.annotation.DataJpaTestIncludeAuditing;
-import qna.domain.Answer;
-import qna.domain.AnswerRepository;
-import qna.domain.Question;
-import qna.domain.QuestionRepository;
-import qna.domain.User;
-import qna.domain.UserRepository;
 
 @DataJpaTestIncludeAuditing
 public class AnswerRepositoryTest {
@@ -66,9 +60,8 @@ public class AnswerRepositoryTest {
 
     @Test
     void findByIdAndDeletedFalse_테스트() {
-        Answer managedAnswer1 = answerRepository.save(new Answer(javajigi, question, "Answers Contents1"));
+        Answer managedAnswer1 = answerRepository.save(new Answer(javajigi, question, "Answers Contents1",true));
         Answer managedAnswer2 = answerRepository.save(new Answer(sanjigi, question, "Answers Contents2"));
-        managedAnswer1.delete(javajigi);
         Optional<Answer> a1 = answerRepository.findByIdAndDeletedFalse(managedAnswer1.getId());
         Optional<Answer> a2 = answerRepository.findByIdAndDeletedFalse(managedAnswer2.getId());
         assertThat(a1.isPresent()).isFalse();
