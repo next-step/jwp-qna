@@ -2,8 +2,11 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class AnswerTest {
@@ -31,5 +34,23 @@ public class AnswerTest {
 
         //then
         assertThat(answer.getQuestion()).isEqualTo(QuestionTest.Q2);
+    }
+
+    @Test
+    @DisplayName("답변 생성시 사용자 null일 경우 Exception 발생 확인")
+    void validate_user_null() {
+        //then
+        assertThatThrownBy(() -> {
+            new Answer(null, QuestionTest.Q1, "answer contents");
+        }).isInstanceOf(UnAuthorizedException.class);
+    }
+
+    @Test
+    @DisplayName("답변 생성시 질문 null일 경우 Exception 발생 확인")
+    void validate_question_null() {
+        //then
+        assertThatThrownBy(() -> {
+            new Answer(UserTest.JAVAJIGI, null, "answer contents");
+        }).isInstanceOf(NotFoundException.class);
     }
 }
