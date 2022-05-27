@@ -17,14 +17,17 @@ public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
     @Autowired
+    private AnswerRepository answerRepository;
+    @Autowired
     private UserRepository userRepository;
 
     private Question question1, question2;
+    private User writer;
 
     @BeforeEach
     void init() {
         //given
-        final User writer = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        writer = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
         question1 = questionRepository.save(new Question("title1", "contents1").writeBy(writer));
         question2 = questionRepository.save(new Question("title2", "contents2").writeBy(writer));
     }
@@ -71,6 +74,20 @@ public class QuestionRepositoryTest {
         assertAll(
                 () -> assertThat(foundsQuestion1.isPresent()).isFalse(),
                 () -> assertThat(foundsQuestion2.isPresent()).isTrue()
+        );
+    }
+
+    @Test
+    @DisplayName("질문에 답변 등록 후 답변 정보 확인")
+    void addAnswer() {
+        //when
+        final Answer answer = answerRepository.save(new Answer(writer, question1, "Answers Contents"));
+        question1.addAnswer(answer);
+
+        //then
+        assertAll(
+                () -> assertThat(question1.getAnswers()).hasSize(1),
+                () -> assertThat(question1.getAnswers()).containsExactly(answer)
         );
     }
 }
