@@ -61,8 +61,23 @@ public class QuestionTest {
     }
 
     @Test
-    void 질문글에_답변이_없을_때_삭제_가능_여부_확인_시_작성자이면_true가_반환되어야_한다() throws Exception {
+    void 답변이_추가되면_Question과_Answer의_연관관계가_올바르게_설정되어야_한다() {
         // given
+        final Question originQuestion = new Question(1L, "origin title", "origin contents");
+        final Answer answer = new Answer(writer, originQuestion, "answer");
+
+        final Question newQuestion = new Question(2L, "new title", "new contents");
+
+        // when
+        newQuestion.addAnswer(answer);
+
+        // then
+        assertThat(answer.getQuestion()).isEqualTo(newQuestion);
+    }
+
+    @Test
+    void 질문글에_답변이_없을_때_삭제_가능_여부_확인_시_작성자이면_true가_반환되어야_한다() throws Exception {
+        // when and then
         assertThat(question.canBeDeletedBy(writer)).isTrue();
     }
 
@@ -75,5 +90,27 @@ public class QuestionTest {
         assertThatThrownBy(() -> question.canBeDeletedBy(loginUser))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("질문을 삭제할 권한이 없습니다.");
+    }
+
+    @Test
+    void 질문글에_답변이_있을_때_삭제_가능_여부_확인_시_모든_답변이_질문글_작성자가_작성한_것이면_true가_반환되어야_한다() throws Exception {
+        // given
+        new Answer(1L, writer, question, "answer1");
+        new Answer(2L, writer, question, "answer2");
+
+        // when and then
+        assertThat(question.canBeDeletedBy(writer)).isTrue();
+    }
+
+    @Test
+    void 질문글에_답변이_있을_때_삭제_가능_여부_확인_시_답변이_하나라도_질문글_작성자가_작성한_게_아니면_CannotDeleteException이_발생해야_한다() {
+        // given
+        final User differentWriter = new User(2L, "different", "password", "name", "email");
+        new Answer(1L, differentWriter, question, "answer");
+
+        // when and then
+        assertThatThrownBy(() -> question.canBeDeletedBy(writer))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }

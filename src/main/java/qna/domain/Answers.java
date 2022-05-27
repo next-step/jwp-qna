@@ -20,4 +20,9 @@ public class Answers {
     public void remove(final Answer answer) {
         answers.remove(answer);
     }
+
+    public boolean allWrittenBy(final User writer) {
+        return answers.stream()
+                .allMatch(answer -> answer.isOwner(writer));
+    }
 }
