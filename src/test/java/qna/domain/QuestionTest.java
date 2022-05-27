@@ -74,4 +74,14 @@ public class QuestionTest {
         assertThatThrownBy(() -> question.deletedBy(writer1))
                 .isInstanceOf(CannotDeleteException.class);
     }
+
+    @Test
+    @DisplayName("질문에 답변을 중복으로 추가할 때 실패")
+    void add_duplicate_answer() {
+        Question question = new Question(writer1, "Question A", "Contents A");
+        Answer answer = new Answer(writer2, question, "Answer Contents");
+
+        assertThatThrownBy(() -> question.addAnswer(answer))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }

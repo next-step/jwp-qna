@@ -1,6 +1,7 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
+import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
@@ -16,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,12 +56,11 @@ public class Question extends BaseEntity {
     }
 
     public Question(Long id, User writer, String title, String contents) {
-        this.id = id;
-
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
 
+        this.id = id;
         this.writer = writer;
         this.title = title;
         this.contents = contents;
@@ -70,6 +71,12 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        if (Objects.isNull(answer)) {
+            throw new NotFoundException();
+        }
+
+        validateDuplicate(answer);
+
         answers.add(answer);
         answer.setQuestion(this);
     }
@@ -106,6 +113,14 @@ public class Question extends BaseEntity {
         this.deleted = true;
 
         return getDeleteHistories(writer);
+    }
+
+    private void validateDuplicate(Answer answer) {
+        HashSet<Answer> set = new HashSet<>(answers);
+        set.add(answer);
+        if (set.size() == answers.size()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private boolean isAllAnswersOwnedBy(User writer) {
