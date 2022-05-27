@@ -57,8 +57,15 @@ public class Question extends BaseTimeEntity {
         return this.writer.equals(writer);
     }
 
-    public void addAnswer(Answer answer) {
-        answers.add(answer, this);
+    public void addAnswer(final Answer answer) {
+        answers.add(answer);
+        if (answer.getQuestion() != this) {
+            answer.toQuestion(this);
+        }
+    }
+
+    public void removeAnswer(final Answer answer) {
+        answers.remove(answer);
     }
 
     public boolean canBeDeletedBy(final User loginUser) throws CannotDeleteException {
@@ -90,10 +97,6 @@ public class Question extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public Answers getAnswers() {
-        return answers;
     }
 
     @Override

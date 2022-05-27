@@ -62,11 +62,11 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(final Question question) {
-        if (this.question != question) {
-            this.question.getAnswers().remove(this);
-            this.question = question;
-            question.getAnswers().add(this, question);
+        if (this.question != null && this.question != question) {
+            this.question.removeAnswer(this);
         }
+        this.question = question;
+        question.addAnswer(this);
     }
 
     public Long getId() {

@@ -13,11 +13,8 @@ public class Answers {
     protected Answers() {
     }
 
-    public void add(final Answer answer, final Question question) {
+    public void add(final Answer answer) {
         answers.add(answer);
-        if (answer.getQuestion() != question) {
-            answer.toQuestion(question);
-        }
     }
 
     public void remove(final Answer answer) {
