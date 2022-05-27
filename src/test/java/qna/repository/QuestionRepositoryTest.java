@@ -57,10 +57,10 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    void findByIdAndDeletedFalse_테스트() {
+    void findByIdAndDeletedFalse_테스트() throws Exception{
         Question managedQuestion1 = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi));
         Question managedQuestion2 = questionRepository.save(new Question("title2", "contents2").writeBy(sanjigi));
-        managedQuestion1.setDeleted(true);
+        managedQuestion1.deleteByUser(javajigi);
         Optional<Question> q1 = questionRepository.findByIdAndDeletedFalse(managedQuestion1.getId());
         Optional<Question> q2 = questionRepository.findByIdAndDeletedFalse(managedQuestion2.getId());
         assertThat(q1.isPresent()).isFalse();

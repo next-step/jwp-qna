@@ -51,9 +51,16 @@ public class Answer extends BaseAuditingEntity {
         this.contents = contents;
     }
 
-    public DeleteHistory delete() {
+    public DeleteHistory delete(User loginUser) {
+        verifyWriter(loginUser);
         this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER,this.id,this.writer, LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER,this.id, loginUser, LocalDateTime.now());
+    }
+
+    private void verifyWriter(User loginUser){
+        if (!this.isOwner(loginUser)) {
+            throw new UnAuthorizedException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -80,16 +87,8 @@ public class Answer extends BaseAuditingEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

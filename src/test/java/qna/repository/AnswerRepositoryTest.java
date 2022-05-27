@@ -68,7 +68,7 @@ public class AnswerRepositoryTest {
     void findByIdAndDeletedFalse_테스트() {
         Answer managedAnswer1 = answerRepository.save(new Answer(javajigi, question, "Answers Contents1"));
         Answer managedAnswer2 = answerRepository.save(new Answer(sanjigi, question, "Answers Contents2"));
-        managedAnswer1.setDeleted(true);
+        managedAnswer1.delete(javajigi);
         Optional<Answer> a1 = answerRepository.findByIdAndDeletedFalse(managedAnswer1.getId());
         Optional<Answer> a2 = answerRepository.findByIdAndDeletedFalse(managedAnswer2.getId());
         assertThat(a1.isPresent()).isFalse();

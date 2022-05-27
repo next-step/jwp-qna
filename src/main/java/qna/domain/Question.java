@@ -49,32 +49,33 @@ public class Question extends BaseAuditingEntity {
     }
 
     public List<DeleteHistory> deleteByUser(User loginUser) throws CannotDeleteException {
-        try{
-            verifyWriter(loginUser);
-        }catch(UnAuthorizedException e){
-            throw new CannotDeleteException(e.getMessage(),e);
-        }
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(this.delete());
-        deleteHistories.addAll(this.deleteAnswers());
+        try{
+            deleteHistories.add(this.delete(loginUser));
+            deleteHistories.addAll(this.deleteAnswers(loginUser));
+        } catch (UnAuthorizedException e) {
+            throw new CannotDeleteException(e.getMessage(), e);
+        }
         return deleteHistories;
     }
 
-    private void verifyWriter(User loginUser){
+
+    private DeleteHistory delete(User loginUser)  {
+        verifyWriter(loginUser);
+        this.deleted = true;
+        return new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
+    }
+
+    private void verifyWriter(User loginUser) {
         if (!this.isOwner(loginUser)) {
             throw new UnAuthorizedException("질문을 삭제할 권한이 없습니다.");
         }
     }
 
-    private DeleteHistory delete(){
-        this.deleted = true;
-        return new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
-    }
-
-    private List<DeleteHistory> deleteAnswers(){
+    private List<DeleteHistory> deleteAnswers(User loginUser) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for(Answer answer : answers){
-            deleteHistories.add(answer.delete());
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(loginUser));
         }
         return deleteHistories;
     }
@@ -87,16 +88,8 @@ public class Question extends BaseAuditingEntity {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public List<Answer> getAnswers() {
@@ -104,7 +97,7 @@ public class Question extends BaseAuditingEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if(!answers.contains(answer)){
+        if (!answers.contains(answer)) {
             answers.add(answer);
         }
         answer.toQuestion(this);
@@ -125,10 +118,6 @@ public class Question extends BaseAuditingEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
