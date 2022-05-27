@@ -41,6 +41,4 @@ class StationRepositoryTest {
         Station station2 = stations.findByName("몽촌토성역");
         assertThat(station2).isNotNull();
     }
-
-
 }
