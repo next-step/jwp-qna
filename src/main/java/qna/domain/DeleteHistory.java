@@ -30,15 +30,35 @@ public class DeleteHistory {
 
     @ManyToOne
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
-    private User user;
+    private User deleteUser;
 
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User user) {
+    protected DeleteHistory(ContentType contentType, Long contentId, User deleteUser) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.user = user;
+        this.deleteUser = deleteUser;
+    }
+
+    public static DeleteHistory ofQuestion(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWrittenBy());
+    }
+
+    public static DeleteHistory ofAnswer(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWrittenBy());
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public User getDeleteUser() {
+        return deleteUser;
     }
 
     @Override
@@ -46,22 +66,16 @@ public class DeleteHistory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) && Objects.equals(contentId, that.contentId) && contentType == that.contentType && Objects.equals(createDate, that.createDate) && Objects.equals(user, that.user);
+        return Objects.equals(id, that.id) && Objects.equals(contentId, that.contentId) && contentType == that.contentType && Objects.equals(createDate, that.createDate) && Objects.equals(deleteUser, that.deleteUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentId, contentType, createDate, user);
+        return Objects.hash(id, contentId, contentType, createDate, deleteUser);
     }
 
     @Override
     public String toString() {
-        return "DeleteHistory{" +
-                "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", user=" + user +
-                ", createDate=" + createDate +
-                '}';
+        return "DeleteHistory{" + "id=" + id + ", contentType=" + contentType + ", contentId=" + contentId + ", user=" + deleteUser + ", createDate=" + createDate + '}';
     }
 }
