@@ -23,7 +23,6 @@ public class DeleteHistoryRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
-    private User writer;
     private Question question;
     private Answer answer;
     private DeleteHistory answerHistory, questionHistory;
@@ -31,7 +30,7 @@ public class DeleteHistoryRepositoryTest {
     @BeforeEach
     void init() {
         //given
-        writer = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        User writer = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
         question = questionRepository.save(new Question("title1", "contents1").writeBy(writer));
         answer = answerRepository.save(new Answer(writer, question, "Answers Contents1"));
 
