@@ -31,6 +31,6 @@ public class QuestionTest {
         question.addAnswer(answer);
 
         //then
-        assertThat(answer.getQuestionId()).isEqualTo(question.getId());
+        assertThat(answer.getQuestion().getId()).isEqualTo(question.getId());
     }
 }

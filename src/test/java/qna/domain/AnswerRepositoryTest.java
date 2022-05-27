@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,35 +16,46 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    private User writer;
+    private Question question;
+    private Answer answer1, answer2;
+
+    @BeforeEach
+    void init() {
+        //given
+        writer = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        question = questionRepository.save(new Question("title1", "contents1").writeBy(writer));
+        answer1 = answerRepository.save(new Answer(writer, question, "Answers Contents1"));
+        answer2 = answerRepository.save(new Answer(writer, question, "Answers Contents2"));
+    }
 
     @Test
     @DisplayName("답변 저장 및 값 비교 테스트")
     void save() {
-        //given
-        final Answer expected = AnswerTest.A1;
-
         //when
-        final Answer actual = answerRepository.save(expected);
+        final Answer actual = answerRepository.save(answer1);
+        question.addAnswer(actual);
 
         //then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriterId()).isEqualTo(expected.getWriterId()),
-                () -> assertThat(actual.getQuestionId()).isEqualTo(expected.getQuestionId()),
-                () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
+                () -> assertThat(actual.getWriter()).isEqualTo(answer1.getWriter()),
+                () -> assertThat(actual.getQuestion()).isEqualTo(answer1.getQuestion()),
+                () -> assertThat(actual.getContents()).isEqualTo(answer1.getContents())
         );
     }
 
     @Test
     @DisplayName("질문 작성자 id로 삭제되지 않은 답변 목록 조회")
     void findByQuestionIdAndDeletedFalse() {
-        //given
-        final Answer answer1 = answerRepository.save(AnswerTest.A1);
-        final Answer answer2 = answerRepository.save(AnswerTest.A2);
-        answer1.setDeleted(true);
-
         //when
-        List<Answer> founds = answerRepository.findByQuestionIdAndDeletedFalse(answer1.getQuestionId());
+        answer1.setDeleted(true);
+        List<Answer> founds = answerRepository.findByQuestionIdAndDeletedFalse(answer1.getQuestion().getId());
 
         //then
         assertAll(
@@ -56,12 +68,8 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("id로 삭제되지 않은 질문 목록 조회")
     void findByIdAndDeletedFalse() {
-        //given
-        final Answer answer1 = answerRepository.save(AnswerTest.A1);
-        final Answer answer2 = answerRepository.save(AnswerTest.A2);
-        answer1.setDeleted(true);
-
         //when
+        answer1.setDeleted(true);
         Optional<Answer> foundsAnswer1 = answerRepository.findByIdAndDeletedFalse(answer1.getId());
         Optional<Answer> foundsAnswer2 = answerRepository.findByIdAndDeletedFalse(answer2.getId());
 
@@ -69,6 +77,29 @@ public class AnswerRepositoryTest {
         assertAll(
                 () -> assertThat(foundsAnswer1.isPresent()).isFalse(),
                 () -> assertThat(foundsAnswer2.isPresent()).isTrue()
+        );
+    }
+
+    @Test
+    @DisplayName("질문 작성자 일치하는지 확인")
+    void isOwner() {
+        //then
+        assertAll(
+                () -> assertThat(answer1.isOwner(writer)).isTrue(),
+                () -> assertThat(answer2.isOwner(writer)).isTrue()
+        );
+    }
+
+    @Test
+    @DisplayName("질문 작성자 불일치하는지 확인")
+    void isNotOwner() {
+        //when
+        User anotherWriter = userRepository.save(new User("las139", "password", "name", "javajigi@slipp.net"));
+
+        //then
+        assertAll(
+                () -> assertThat(answer1.isOwner(anotherWriter)).isFalse(),
+                () -> assertThat(answer2.isOwner(anotherWriter)).isFalse()
         );
     }
 }

@@ -30,6 +30,6 @@ public class AnswerTest {
         answer.toQuestion(QuestionTest.Q2);
 
         //then
-        assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q2.getId());
+        assertThat(answer.getQuestion()).isEqualTo(QuestionTest.Q2);
     }
 }
