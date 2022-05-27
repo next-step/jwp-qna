@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -11,6 +12,7 @@ public class Answer extends BaseEntity {
     @Lob
     private String contents;
 
+    @Column(nullable = false)
     private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -18,7 +20,7 @@ public class Answer extends BaseEntity {
     private User writer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name="fk_answer_to_question"))
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
     public Answer() {
@@ -29,7 +31,7 @@ public class Answer extends BaseEntity {
     }
 
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+        super(id);
 
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -52,18 +54,6 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getQuestionId() {
-        return question.getId();
-    }
-
     public String getContents() {
         return contents;
     }
@@ -72,22 +62,18 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public User getWriter() {
         return writer;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                ", writer=" + writer +
-                ", question=" + question +
-                ", id=" + id +
-                '}';
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 답변입니다.");
+        }
+        deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, super.getId(), writer);
     }
 }
