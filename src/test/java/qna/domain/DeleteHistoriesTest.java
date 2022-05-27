@@ -40,12 +40,12 @@ class DeleteHistoriesTest {
 
     @Test
     @DisplayName("삭제 기록을 합치는 테스트")
-    void merge() {
+    void addAll() {
         DeleteHistories deleteHistories1 = new DeleteHistories();
         deleteHistories1.add(DeleteHistory.ofQuestion(question.getId(), UserTest.JAVAJIGI));
 
         DeleteHistories deleteHistories2 = new DeleteHistories();
-        deleteHistories2.add(DeleteHistory.ofQuestion(question.getId(), UserTest.JAVAJIGI));
+        deleteHistories2.add(DeleteHistory.ofQuestion(question.getId(), UserTest.SANJIGI));
 
         deleteHistories1.add(deleteHistories2);
         Assertions.assertThat(deleteHistories1.getDeleteHistories()).size().isEqualTo(2);
