@@ -122,11 +122,13 @@ public class Question extends BaseTimeEntity {
     }
 
     public DeleteHistory delete(User loginUser, LocalDateTime deletedAt) {
-        if (!isOwner(loginUser))
+        if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
 
-        if (isDeleted())
+        if (isDeleted()) {
             throw new CannotDeleteException("이미 삭제된 질문입니다.");
+        }
 
         this.deleted = true;
 
