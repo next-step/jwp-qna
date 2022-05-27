@@ -99,22 +99,30 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException(CANNOT_DELETE_NOT_OWNER.getMessage());
         }
 
-        if (answers.stream()
-                .anyMatch(a -> !a.isOwner(writer))) {
+        if (!isAllAnswersOwnedBy(writer)) {
             throw new CannotDeleteException(CANNOT_DELETE_OTHERS_ANSWER.getMessage());
         }
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
         this.deleted = true;
+
+        return getDeleteHistories(writer);
+    }
+
+    private boolean isAllAnswersOwnedBy(User writer) {
+        return answers.stream()
+                .allMatch(answer -> answer.isOwner(writer));
+    }
+
+    private List<DeleteHistory> getDeleteHistories(User writer) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
-        answers.forEach(a -> {
+        answers.forEach(answer -> {
             try {
-                deleteHistories.add(a.deletedBy(writer));
+                deleteHistories.add(answer.deletedBy(writer));
             } catch (CannotDeleteException e) {
                 e.printStackTrace();
             }
         });
-
         return deleteHistories;
     }
 
