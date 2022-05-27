@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    private Long id;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -21,8 +21,14 @@ public abstract class BaseEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    public BaseEntity(){
+    }
+
+    public BaseEntity(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
-
 }
