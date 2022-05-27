@@ -37,9 +37,13 @@ public class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("질문 삭제 히스토리 저장 및 값 비교 테스트")
     void save_by_question() {
+        //given
         DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, question.getId(), user.getId(), LocalDateTime.now());
+
+        //when
         DeleteHistory actual = deleteHistoryRepository.save(expected);
 
+        //then
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual).isEqualTo(expected)
@@ -49,9 +53,13 @@ public class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("답변 삭제 히스토리 저장 및 값 비교 테스트")
     void save_by_answer() {
+        //given
         DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, answer.getId(), user.getId(), LocalDateTime.now());
+
+        //when
         DeleteHistory actual = deleteHistoryRepository.save(expected);
 
+        //then
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual).isEqualTo(expected)
@@ -61,9 +69,13 @@ public class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("id로 삭제기록 목록 조회")
     void findById() {
+        //given
         DeleteHistory expected = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, answer.getId(), user.getId(), LocalDateTime.now()));
+
+        //when
         Optional<DeleteHistory> actual = deleteHistoryRepository.findById(user.getId());
 
+        //then
         assertAll(
                 () -> assertThat(actual).isPresent(),
                 () -> assertThat(actual.get()).isSameAs(expected)

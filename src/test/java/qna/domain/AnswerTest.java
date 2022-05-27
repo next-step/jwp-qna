@@ -13,6 +13,7 @@ public class AnswerTest {
     @Test
     @DisplayName("답변 작성자 동일한지 확인")
     void isOwner() {
+        //then
         assertAll(
                 () -> assertThat(A1.isOwner(UserTest.JAVAJIGI)).isTrue(),
                 () -> assertThat(A2.isOwner(UserTest.SANJIGI)).isTrue()
@@ -22,8 +23,13 @@ public class AnswerTest {
     @Test
     @DisplayName("질문 변경 후 질문 작성자 id 동일한지 확인")
     void toQuestion() {
+        //given
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "answer contents");
+
+        //when
         answer.toQuestion(QuestionTest.Q2);
+
+        //then
         assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q2.getId());
     }
 }
