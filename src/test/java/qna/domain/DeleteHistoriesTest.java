@@ -47,7 +47,7 @@ class DeleteHistoriesTest {
         DeleteHistories deleteHistories2 = new DeleteHistories();
         deleteHistories2.add(DeleteHistory.ofQuestion(question.getId(), UserTest.JAVAJIGI));
 
-        deleteHistories1.merge(deleteHistories2);
+        deleteHistories1.add(deleteHistories2);
         Assertions.assertThat(deleteHistories1.getDeleteHistories()).size().isEqualTo(2);
     }
 

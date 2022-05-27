@@ -18,7 +18,7 @@ public class DeleteHistories {
         this.deleteHistories.add(deleteHistory);
     }
 
-    public void merge(DeleteHistories deleteHistories) {
+    public void add(DeleteHistories deleteHistories) {
         this.deleteHistories.addAll(deleteHistories.getDeleteHistories());
     }
 
