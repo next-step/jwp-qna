@@ -60,4 +60,3 @@
 - [x] Answer 연관 매핑 적용
 - [x] Question 연관 매핑 적용
 - [x] DeleteHistory 연관 매핑 적용
-- [ ] User 연관 매핑 적용
