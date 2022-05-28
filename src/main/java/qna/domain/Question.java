@@ -59,11 +59,10 @@ public class Question extends BaseAuditingEntity {
         return deleteHistories;
     }
 
-
     private DeleteHistory delete(User loginUser)  {
         verifyWriter(loginUser);
         this.deleted = true;
-        return new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
+        return DeleteHistoryFactory.createQuestionDeleteHistory(this);
     }
 
     private void verifyWriter(User loginUser) {

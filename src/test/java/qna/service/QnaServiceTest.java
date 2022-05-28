@@ -15,10 +15,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import qna.domain.DeleteHistoryFactory;
 import qna.util.annotation.DataJpaTestIncludeAuditing;
 import qna.domain.Answer;
 import qna.domain.AnswerRepository;
-import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
@@ -74,7 +74,7 @@ class QnaServiceTest {
         Question afterDeleted = questionRepository.findById(question.getId()).get();
         질문삭제여부_검증(afterDeleted);
         삭제히스토리_검증(Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now())
+                DeleteHistoryFactory.createQuestionDeleteHistory(question)
        ));
     }
 

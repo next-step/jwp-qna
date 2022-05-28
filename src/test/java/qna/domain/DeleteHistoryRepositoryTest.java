@@ -2,7 +2,6 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +42,7 @@ public class DeleteHistoryRepositoryTest {
 
     @Test
     void save_테스트(){
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
+        DeleteHistory deleteHistory = DeleteHistoryFactory.createAnswerDeleteHistory(answer);
         DeleteHistory managedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
         assertThat(managedDeleteHistory.getId()).isNotNull();
     }
@@ -51,8 +50,8 @@ public class DeleteHistoryRepositoryTest {
     @Test
     void saveAll_테스트(){
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
+                DeleteHistoryFactory.createQuestionDeleteHistory(question),
+                DeleteHistoryFactory.createAnswerDeleteHistory(answer)
         );
         List<DeleteHistory> managedDeleteHistories = deleteHistoryRepository.saveAll(deleteHistories);
         assertThat( managedDeleteHistories.equals(deleteHistories)).isTrue();

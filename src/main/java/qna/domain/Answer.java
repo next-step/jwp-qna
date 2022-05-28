@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -59,7 +58,7 @@ public class Answer extends BaseAuditingEntity {
     DeleteHistory delete(User loginUser) {
         verifyWriter(loginUser);
         this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER,this.id, loginUser, LocalDateTime.now());
+        return DeleteHistoryFactory.createAnswerDeleteHistory(this);
     }
 
     private void verifyWriter(User loginUser){

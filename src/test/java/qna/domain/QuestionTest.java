@@ -41,7 +41,8 @@ public class QuestionTest {
         List<DeleteHistory> deleteHistories = question.deleteByUser(javajigi);
 
         질문삭제여부_검증(question);
-        List<DeleteHistory> expected = Arrays.asList(new DeleteHistory(ContentType.QUESTION,question.getId(),javajigi,LocalDateTime.now()));
+        List<DeleteHistory> expected = Arrays.asList(
+                DeleteHistoryFactory.createQuestionDeleteHistory(question));
         삭제히스토리_검증(expected,deleteHistories);
     }
 
@@ -59,7 +60,9 @@ public class QuestionTest {
 
         질문에_답변이없는지_확인();
         질문삭제여부_검증(question);
-        List<DeleteHistory> expected = Arrays.asList(new DeleteHistory(ContentType.QUESTION,question.getId(),javajigi,LocalDateTime.now()));
+        List<DeleteHistory> expected = Arrays.asList(
+                DeleteHistoryFactory.createQuestionDeleteHistory(question)
+        );
         삭제히스토리_검증(expected,deleteHistories);
     }
 
@@ -76,9 +79,9 @@ public class QuestionTest {
         답변삭제여부_검증(a1);
         답변삭제여부_검증(a2);
         List<DeleteHistory> expected = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION,question.getId(),javajigi,LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER,a1.getId(),javajigi,LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER,a2.getId(),javajigi,LocalDateTime.now())
+                DeleteHistoryFactory.createQuestionDeleteHistory(question),
+                DeleteHistoryFactory.createAnswerDeleteHistory(a1),
+                DeleteHistoryFactory.createAnswerDeleteHistory(a2)
         );
         삭제히스토리_검증(expected,deleteHistories);
     }
