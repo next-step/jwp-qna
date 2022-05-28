@@ -5,7 +5,7 @@ import java.util.List;
 
 public class DeleteHistories {
 
-    private List<DeleteHistory> elements = new ArrayList<>();
+    private final List<DeleteHistory> elements = new ArrayList<>();
 
     public List<DeleteHistory> addHistory(Question question) {
         elements.add(question.delete());
