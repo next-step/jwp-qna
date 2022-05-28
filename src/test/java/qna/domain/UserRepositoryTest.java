@@ -1,8 +1,8 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.UserTest.JAVAJIGI;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,24 +11,31 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class UserRepositoryTest {
 
+    User javaJigi;
+
     @Autowired
     UserRepository userRepository;
+
+    @BeforeEach
+    void setUp() {
+        javaJigi = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+    }
 
     @Test
     @DisplayName("이름, 이메일 수정")
     void updateNameAndEmail() {
         User changeUser = new User(1L, "javajigi", "password", "name2", "javajigi2@slipp.net");
-        changeUser.update(JAVAJIGI, JAVAJIGI);
-        assertThat(changeUser.getName()).isEqualTo(JAVAJIGI.getName());
-        assertThat(changeUser.getEmail()).isEqualTo(JAVAJIGI.getEmail());
+        changeUser.update(javaJigi, javaJigi);
+        assertThat(changeUser.getName()).isEqualTo(javaJigi.getName());
+        assertThat(changeUser.getEmail()).isEqualTo(javaJigi.getEmail());
     }
 
     @Test
     @DisplayName("저장 후 이름, 이메일,비밀번호 동일 저장 확인")
     void saveMatch() {
-        User user = userRepository.save(JAVAJIGI);
-        assertThat(user.matchPassword(JAVAJIGI.getPassword())).isTrue();
-        assertThat(user.equalsNameAndEmail(JAVAJIGI)).isTrue();
+        User user = userRepository.save(javaJigi);
+        assertThat(user.matchPassword(javaJigi.getPassword())).isTrue();
+        assertThat(user.equalsNameAndEmail(javaJigi)).isTrue();
     }
 
     @Test

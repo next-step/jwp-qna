@@ -3,6 +3,7 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
@@ -11,7 +12,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class DeleteHistory {
     @Id
@@ -25,13 +29,14 @@ public class DeleteHistory {
     @ManyToOne
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedUser;
-    private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedUser, LocalDateTime createDate) {
+    @CreatedDate
+    private LocalDateTime createDate;
+
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedUser) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedUser = deletedUser;
-        this.createDate = createDate;
     }
 
     @Override
@@ -52,9 +57,4 @@ public class DeleteHistory {
         return Objects.hash(id, contentType, contentId, deletedUser);
     }
 
-    @Override
-    public String toString() {
-        return "DeleteHistory{" + "id=" + id + ", contentType=" + contentType + ", contentId=" + contentId
-                + ", deletedUser=" + deletedUser + ", createDate=" + createDate + '}';
-    }
 }

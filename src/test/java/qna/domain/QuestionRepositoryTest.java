@@ -13,9 +13,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
-
-    User javaJigi = UserTest.getJavajigi();
-    User sanJigi = UserTest.getSanjigi();
+    User user1;
+    User user2;
+    Question question1;
+    Question question2;
 
     @Autowired
     AnswerRepository answerRepository;
@@ -26,6 +27,15 @@ public class QuestionRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
+    @BeforeEach
+    void setUp() {
+        user1 = userRepository.save(UserTest.getJavajigi());
+        user2 = userRepository.save(UserTest.getSanjigi());
+
+        question1 = questionRepository.save(new Question("title1", "contents1", user1));
+        question2 = questionRepository.save(new Question("title2", "contents2", user2));
+    }
+
     @AfterEach
     void afterEach() {
         answerRepository.deleteAllInBatch();
@@ -34,60 +44,43 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("질문에 답변 달기")
+    @DisplayName("질문에 답변 달기, 질문 변경")
     void addAnswer() {
-        User user1 = userRepository.save(javaJigi);
-        User user2 = userRepository.save(sanJigi);
-
-        Question question1 = questionRepository.save(QuestionTest.getQuestion1(user1));
-        Answer answer1 = AnswerTest.getAnswer1(user1, question1);
-
+        Answer answer1 = new Answer(user1, question1, "Answers Contents1");
         Answer answer = answerRepository.save(answer1);
 
-        Question question2 = QuestionTest.getQuestion2(user2);
-        Question question = questionRepository.save(question2);
-
-        question.addAnswer(answer);
+        question2.addAnswer(answer);
         Answer answerFind = answerRepository.findById(answer.getId()).get();
-        assertThat(answerFind.getQuestion().getId()).isEqualTo(question.getId());
+        assertThat(answerFind.getQuestion().getId()).isEqualTo(question2.getId());
     }
 
     @Test
     @DisplayName("저장하기")
     void save() {
-        User user = userRepository.save(javaJigi);
-        Question q1 = QuestionTest.getQuestion1(user);
+        Optional<Question> questionOptional = questionRepository.findById(question1.getId());
 
-        Question question = questionRepository.save(q1);
-        Optional<Question> questionOptional = questionRepository.findById(question.getId());
-
-        assertThat(questionOptional.get().getId()).isEqualTo(question.getId());
+        assertThat(questionOptional.get().getId()).isEqualTo(question1.getId());
     }
 
     @Test
     @DisplayName("미삭제 건 전체 조회")
     void notDeleted() {
-        User user1 = userRepository.save(javaJigi);
-        User user2 = userRepository.save(sanJigi);
-
-        Question question1 = QuestionTest.getQuestion1(user1);
-        Question question2 = QuestionTest.getQuestion2(user2);
-
-        Question saveQuestion1 = questionRepository.save(question1);
-        Question saveQuestion2 = questionRepository.save(question2);
         List<Question> deletedFalse = questionRepository.findByDeletedFalse();
-        assertThat(deletedFalse).contains(saveQuestion1, saveQuestion2);
+        assertThat(deletedFalse).contains(question1, question2);
     }
 
     @Test
     @DisplayName("미삭제 질문 id로 조회")
     void findByIdAndNotDeleted() {
-        User user = userRepository.save(javaJigi);
-        Question question1 = QuestionTest.getQuestion1(user);
+        Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(question1.getId());
+        assertThat(optionalQuestion.get().getId()).isEqualTo(question1.getId());
+    }
 
-        Question saveQuestion1 = questionRepository.save(question1);
-
-        Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestion1.getId());
-        assertThat(optionalQuestion.get().getId()).isEqualTo(saveQuestion1.getId());
+    @Test
+    @DisplayName("질문 삭제 처리 확인")
+    void delete() {
+        questionRepository.deleteById(question1.getId());
+        assertThat(questionRepository.findById(question1.getId())).isEmpty();
+        questionRepository.flush();
     }
 }

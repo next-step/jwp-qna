@@ -15,9 +15,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class AnswerRepositoryTest {
 
     User javaJigi;
-    User sanJigi = UserTest.getSanjigi();
+    User sanJigi;
     Question question1;
-    Answer answer1;
+    Answer answer;
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -29,10 +29,12 @@ public class AnswerRepositoryTest {
     private UserRepository userRepository;
 
     @BeforeEach
-    void init() {
+    void setUp() {
         javaJigi = userRepository.save(UserTest.getJavajigi());
-        question1 = questionRepository.save(QuestionTest.getQuestion1(javaJigi));
-        answer1 = AnswerTest.getAnswer1(javaJigi, question1);
+        question1 = questionRepository.save(new Question("title1", "contents1", javaJigi));
+        answer = new Answer(javaJigi, question1, "Answers Contents1");
+
+        sanJigi = userRepository.save(UserTest.getSanjigi());
     }
 
     @AfterEach
@@ -45,14 +47,14 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("저장하기")
     void save() {
-        Answer save = answerRepository.save(answer1);
+        Answer save = answerRepository.save(answer);
         assertThat(save).isNotNull();
     }
 
     @Test
     @DisplayName("삭제되지 않은 답변 id로 조회")
     void findByIdAndDeletedFalse() {
-        Answer save = answerRepository.save(answer1);
+        Answer save = answerRepository.save(answer);
         Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(save.getId());
         assertThat(optionalAnswer.get().getId()).isEqualTo(save.getId());
     }
@@ -60,11 +62,10 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("질문 id로 답변들 찾기")
     void findByQuestionIdAndDeletedFalse() {
-        Answer save1 = answerRepository.save(answer1);
+        Answer save1 = answerRepository.save(answer);
         save1.setQuestion(question1);
 
-        User user2 = userRepository.save(sanJigi);
-        Answer answer2 = AnswerTest.getAnswer2(user2, question1);
+        Answer answer2 = new Answer(sanJigi, question1, "Answers Contents2");
 
         Answer save2 = answerRepository.save(answer2);
         save2.setQuestion(question1);
@@ -76,14 +77,14 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 주인 찾기")
     void isOwner() {
-        Answer saveAnswer1 = answerRepository.save(answer1);
+        Answer saveAnswer1 = answerRepository.save(answer);
         assertThat(saveAnswer1.isOwner(javaJigi)).isTrue();
     }
 
     @Test
     @DisplayName("내용 수정")
     void updateContent() {
-        Answer saveAnswer1 = answerRepository.save(answer1);
+        Answer saveAnswer1 = answerRepository.save(answer);
         saveAnswer1.setContents("Changed Contents1");
         Optional<Answer> optionalAnswer = answerRepository.findById(saveAnswer1.getId());
         assertThat(optionalAnswer.get().getContents()).isEqualTo("Changed Contents1");
@@ -92,13 +93,20 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("어떤 질문에 대한 답변인지 변경하기")
     void toQuestion() {
-        Answer answer = answerRepository.save(answer1);
-
-        Question question2 = questionRepository.save(QuestionTest.getQuestion2(sanJigi));
+        Answer answer = answerRepository.save(this.answer);
+        Question question2 = questionRepository.save(new Question("title2", "contents2", sanJigi));
 
         questionRepository.save(question2);
         answer.toQuestion(question2);
         Optional<Answer> optionalAnswer = answerRepository.findById(answer.getId());
         assertThat(optionalAnswer.get().getQuestion().getId()).isEqualTo(question2.getId());
+    }
+
+    @Test
+    @DisplayName("답변 삭제 처리 확인")
+    void delete() {
+        Answer savedAnswer = answerRepository.save(answer);
+        answerRepository.delete(answer);
+        assertThat(answerRepository.findByIdAndDeletedFalse(savedAnswer.getId())).isEmpty();
     }
 }
