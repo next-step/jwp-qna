@@ -18,8 +18,13 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("유저 저장 및 값 비교 테스트")
     void save() {
+        //given
         final User expected = UserTest.JAVAJIGI;
+
+        //when
         final User actual = userRepository.save(expected);
+
+        //then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getUserId()).isEqualTo(expected.getUserId()),
@@ -32,8 +37,13 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("userId 조회 테스트")
     void findByUserId() {
+        //given
         final User expected = userRepository.save(UserTest.JAVAJIGI);
+
+        //when
         final Optional<User> actual = userRepository.findByUserId(expected.getUserId());
+
+        //then
         assertAll(
                 () -> assertThat(actual).isPresent(),
                 () -> assertThat(actual.get().getId()).isNotNull(),

@@ -18,52 +18,66 @@ public class DeleteHistoryRepositoryTest {
     private DeleteHistoryRepository deleteHistoryRepository;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private QuestionRepository questionRepository;
-    @Autowired
-    private AnswerRepository answerRepository;
-
-    private User user;
-    private Question question;
-    private Answer answer;
+    private DeleteHistory answerHistory, questionHistory;
 
     @BeforeEach
     void init() {
-        user = userRepository.save(UserTest.JAVAJIGI);
-        question = questionRepository.save(QuestionTest.Q1);
-        answer = answerRepository.save(AnswerTest.A1);
+        //given
+        User writer = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        questionHistory = new DeleteHistory(ContentType.QUESTION, 1L, writer, LocalDateTime.now());
+        answerHistory = new DeleteHistory(ContentType.ANSWER, 1L, writer, LocalDateTime.now());
     }
 
     @Test
     @DisplayName("질문 삭제 히스토리 저장 및 값 비교 테스트")
     void save_by_question() {
-        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, question.getId(), user.getId(), LocalDateTime.now());
-        DeleteHistory actual = deleteHistoryRepository.save(expected);
+        //when
+        DeleteHistory actual = deleteHistoryRepository.save(questionHistory);
 
+        //then
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual).isEqualTo(expected)
+                () -> assertThat(actual).isEqualTo(questionHistory)
         );
     }
 
     @Test
     @DisplayName("답변 삭제 히스토리 저장 및 값 비교 테스트")
     void save_by_answer() {
-        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, answer.getId(), user.getId(), LocalDateTime.now());
-        DeleteHistory actual = deleteHistoryRepository.save(expected);
+        //when
+        DeleteHistory actual = deleteHistoryRepository.save(answerHistory);
 
+        //then
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual).isEqualTo(expected)
+                () -> assertThat(actual).isEqualTo(answerHistory)
         );
     }
 
     @Test
-    @DisplayName("id로 삭제기록 목록 조회")
-    void findById() {
-        DeleteHistory expected = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, answer.getId(), user.getId(), LocalDateTime.now()));
-        Optional<DeleteHistory> actual = deleteHistoryRepository.findById(user.getId());
+    @DisplayName("질문 타입 저장 후 id로 삭제기록 목록 조회")
+    void findById_question_type() {
+        //when
+        DeleteHistory expected = deleteHistoryRepository.save(questionHistory);
+        Optional<DeleteHistory> actual = deleteHistoryRepository.findById(expected.getId());
 
+        //then
+        assertAll(
+                () -> assertThat(actual).isPresent(),
+                () -> assertThat(actual.get()).isSameAs(expected)
+        );
+    }
+
+    @Test
+    @DisplayName("답변 타입 저장 후 id로 삭제기록 목록 조회")
+    void findById_answer_type() {
+        //when
+        DeleteHistory expected = deleteHistoryRepository.save(answerHistory);
+
+        //when
+        Optional<DeleteHistory> actual = deleteHistoryRepository.findById(expected.getId());
+
+        //then
         assertAll(
                 () -> assertThat(actual).isPresent(),
                 () -> assertThat(actual.get()).isSameAs(expected)
