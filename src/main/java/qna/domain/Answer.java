@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
 import qna.base.BaseTimeEntity;
 
@@ -34,10 +36,10 @@ public class Answer extends BaseTimeEntity {
     }
 
     public Answer(User writer, Question question, String contents) {
-        this(null, writer ,question, contents);
+        this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer ,Question question, String contents) {
+    public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -82,11 +84,21 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void delete() {
+    public DeleteHistory delete(final User loginUser) throws CannotDeleteException {
+        validateWriter(loginUser);
         this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
+    private void validateWriter(final User loginUser) throws CannotDeleteException {
+        if (!isWriter(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
 
+    private boolean isWriter(final User loginUser) {
+        return writer.equals(loginUser);
+    }
 
     @Override
     public String toString() {
