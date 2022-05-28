@@ -20,7 +20,7 @@ public class DeleteHistory {
 
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory() {
+    protected DeleteHistory() {
 
     }
 
