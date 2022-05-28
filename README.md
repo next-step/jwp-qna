@@ -17,16 +17,16 @@
 
 #### step3
 
-- [ ] 질문 삭제 권한 검증 로직 Question 도메인으로 이동
+- [x] 질문 삭제 권한 검증 로직 Question 도메인으로 이동
 - [x] 답변 삭제 권한 검증 로직 Answer 도메인으로 이동
-- [ ] Question 도메인에 삭제 메서드 생성
-- [ ] 질문 삭제 시, 해당 질문에 달려있는 Answers 도 삭제
+- [x] Question 도메인에 삭제 메서드 생성
+- [x] 질문 삭제 시, 해당 질문에 달려있는 Answers 도 삭제
 - [x] Answer 도메인에 삭제 메서드 생성
-- [ ] 기존 set함수로 상태를 변경하던 것을 도메인 메서드로 변경
-- [ ] 기존 get함수로 데이터를 가져오던 것 삭제
-- [ ] Question 삭제 시, DeleteHistory 목록 반환
+- [x] 기존 set함수로 상태를 변경하던 것을 도메인 메서드로 변경
+- [x] 기존 get함수로 데이터를 가져오던 것 삭제
+- [x] Question 삭제 시, DeleteHistory 목록 반환
 - [x] Answer 삭제 시, DeleteHistory 목록 반환
-- [ ] 반환 받은 DeleteHistory목록을 이용해 deleteHistoryService.saveAll 호출
+- [x] 반환 받은 DeleteHistory목록을 이용해 deleteHistoryService.saveAll 호출
 
 ### 요구사항
 
