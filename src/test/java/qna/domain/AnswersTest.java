@@ -7,7 +7,6 @@ import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -48,7 +47,7 @@ public class AnswersTest {
     @Test
     void findAnswerByDeleteType() {
         Answer deleteAnswer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "test content");
-        deleteAnswer.setDeleted(true);
+        deleteAnswer.setDeleted(DeletedType.YES);
         defaultAnswers.addAnswer(deleteAnswer);
 
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q2, "test1 content");

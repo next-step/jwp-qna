@@ -72,7 +72,7 @@ public class QuestionTest {
     void invalidRemove() {
         assertThatThrownBy(() -> {
             Question savedQuestion = questionRepository.save(question);
-            savedQuestion.setDeleted(true);
+            savedQuestion.setDeleted(DeletedType.YES);
             savedQuestion.remove(savedQuestion.getWriter());
         }).isExactlyInstanceOf(CannotDeleteException.class);
     }

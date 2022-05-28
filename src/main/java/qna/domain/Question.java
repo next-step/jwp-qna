@@ -4,7 +4,6 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -19,8 +18,9 @@ public class Question extends CreatedUpdatedDateEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WRITER_ID", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean deleted = false;
+    private DeletedType deleted = DeletedType.NO;
 
     @Embedded Answers answers = new Answers();
 
@@ -86,10 +86,10 @@ public class Question extends CreatedUpdatedDateEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(DeletedType deleted) {
         this.deleted = deleted;
     }
 
@@ -110,7 +110,7 @@ public class Question extends CreatedUpdatedDateEntity {
     }
 
     private DeleteHistory removeQuestion(final User loginUser) {
-        this.setDeleted(true);
+        this.setDeleted(DeletedType.YES);
         return new DeleteHistory(ContentType.QUESTION,getId(), loginUser, LocalDateTime.now());
     }
 

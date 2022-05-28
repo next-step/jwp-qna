@@ -39,7 +39,7 @@ public class Answers {
 
     public Answers findAnswerBy(final DeletedType state) {
         return new Answers(answers.stream()
-                .filter(answer -> Objects.equals(DeletedType.valueOf(answer.isDeleted()), state))
+                .filter(answer -> !answer.isDeleted())
                 .collect(Collectors.toList()));
     }
 

@@ -24,8 +24,9 @@ public class Answer extends CreatedUpdatedDateEntity {
     @Lob
     private String contents;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean deleted = false;
+    private DeletedType deleted = DeletedType.NO;
 
     protected Answer() {
     }
@@ -86,16 +87,16 @@ public class Answer extends CreatedUpdatedDateEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setDeleted(final DeletedType state) {
+        this.deleted = state;
     }
 
     public DeleteHistory remove() {
         this.toQuestion(null);
-        this.setDeleted(true);
+        this.setDeleted(DeletedType.YES);
         return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter(), LocalDateTime.now());
     }
 
