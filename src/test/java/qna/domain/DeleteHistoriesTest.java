@@ -46,7 +46,7 @@ public class DeleteHistoriesTest {
         assertThat(deleteHistories.size()).isEqualTo(1);
     }
 
-    @DisplayName("삭제 History 정보를 추가할수 있다.")
+    @DisplayName("삭제 History 정보를 추가시 중복은 제외 된다.")
     @Test
     void add() {
         DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 2L, UserTest.SANJIGI, LocalDateTime.now());
@@ -56,12 +56,12 @@ public class DeleteHistoriesTest {
         assertThat(deleteHistories.size()).isEqualTo(2);
     }
 
-    @DisplayName("삭제된 정보들에서 답변 정보가 남아 있는지 확인한다.")
+    @DisplayName("삭제된 정보들에서 삭제 정보가 있는지 여부 확인")
     @Test
     void isDeletedAnswer() {
         deleteHistoryList.add(new DeleteHistory(ContentType.ANSWER, 2L, UserTest.SANJIGI, LocalDateTime.now()));
         DeleteHistories deleteHistories = new DeleteHistories(deleteHistoryList);
-        Answer answer = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "test content");
-        assertThat(deleteHistories.findBy(answer).get()).isEqualTo(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
+        assertThat(deleteHistories.isContains(deleteHistory)).isTrue();
     }
 }
