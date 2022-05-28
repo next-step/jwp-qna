@@ -22,9 +22,19 @@ public class Answers {
         return answers.size();
     }
 
-    public void deleteAll(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleteAll(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
         for(Answer answer : answers) {
-            answer.delete(loginUser);
+            addNotNullHistory(deleteHistories, answer.delete(loginUser));
+        }
+
+        return deleteHistories;
+    }
+
+    private void addNotNullHistory(List<DeleteHistory> deleteHistories, DeleteHistory deleteHistory) {
+        if(deleteHistory != null) {
+            deleteHistories.add(deleteHistory);
         }
     }
 }

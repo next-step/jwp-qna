@@ -1,5 +1,8 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -80,12 +83,18 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        if(isDeleted()) {
+            return new ArrayList<>();
+        }
+
         validateForDelete(loginUser);
 
-        answers.deleteAll(loginUser);
-
+        List<DeleteHistory> deleteHistories = answers.deleteAll(loginUser);
         this.deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
+
+        return deleteHistories;
     }
 
     private void validateForDelete(User loginUser) throws CannotDeleteException {

@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -80,10 +81,15 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if(isDeleted()) {
+            return null;
+        }
+
         validateForDelete(loginUser);
 
         this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, loginUser, LocalDateTime.now());
     }
 
     private void validateForDelete(User loginUser) throws CannotDeleteException {
