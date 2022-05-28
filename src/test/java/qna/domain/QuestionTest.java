@@ -77,30 +77,14 @@ public class QuestionTest {
     }
 
     @Test
-    void 질문글에_답변이_없을_때_삭제_가능_여부_확인_시_작성자이면_true가_반환되어야_한다() throws Exception {
-        // when and then
-        assertThat(question.canBeDeletedBy(writer)).isTrue();
-    }
-
-    @Test
     void 질문글에_답변이_없을_때_삭제_가능_여부_확인_시_작성자가_아니면_CannotDeleteException이_발생해야_한다() {
         // given
         final User loginUser = new User(2L, "ttungga", "password", "name", "email");
 
         // when and then
-        assertThatThrownBy(() -> question.canBeDeletedBy(loginUser))
+        assertThatThrownBy(() -> question.delete(loginUser))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("질문을 삭제할 권한이 없습니다.");
-    }
-
-    @Test
-    void 질문글에_답변이_있을_때_삭제_가능_여부_확인_시_모든_답변이_질문글_작성자가_작성한_것이면_true가_반환되어야_한다() throws Exception {
-        // given
-        new Answer(1L, writer, question, "answer1");
-        new Answer(2L, writer, question, "answer2");
-
-        // when and then
-        assertThat(question.canBeDeletedBy(writer)).isTrue();
     }
 
     @Test
@@ -110,15 +94,15 @@ public class QuestionTest {
         new Answer(1L, differentWriter, question, "answer");
 
         // when and then
-        assertThatThrownBy(() -> question.canBeDeletedBy(writer))
+        assertThatThrownBy(() -> question.delete(writer))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 
     @Test
-    void 질문글에_답변이_없을_때_질문글을_삭제하면_삭제된_상태로_변경되고_삭제이력_목록이_반환되어야_한다() {
+    void 질문글에_답변이_없을_때_작성자가_질문글을_삭제하면_삭제된_상태가_되고_삭제이력_목록이_반환되어야_한다() throws Exception {
         // when
-        List<DeleteHistory> deleteHistories = question.delete(writer);
+        final List<DeleteHistory> deleteHistories = question.delete(writer);
 
         // then
         assertThat(question.isDeleted()).isTrue();
@@ -126,13 +110,13 @@ public class QuestionTest {
     }
 
     @Test
-    void 질문글에_답변이_있을_때_질문글을_삭제하면_질문글과_답변들이_삭제된_상태로_변경되고_삭제이력_목록이_반환되어야_한다() {
+    void 질문글과_모든_답변의_작성자가_같을_때_질문글을_삭제하면_질문글과_답변들이_삭제된_상태가_되고_삭제이력_목록이_반환되어야_한다() throws Exception {
         // given
         final Answer answer1 = new Answer(1L, writer, question, "answer1");
         final Answer answer2 = new Answer(2L, writer, question, "answer2");
 
         // when
-        List<DeleteHistory> deleteHistories = question.delete(writer);
+        final List<DeleteHistory> deleteHistories = question.delete(writer);
 
         // then
         assertThat(question.isDeleted() && answer1.isDeleted() && answer2.isDeleted()).isTrue();

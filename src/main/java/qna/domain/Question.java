@@ -71,17 +71,8 @@ public class Question extends BaseTimeEntity {
         answers.remove(answer);
     }
 
-    public boolean canBeDeletedBy(final User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-        if (!answers.allWrittenBy(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
-        return true;
-    }
-
-    public List<DeleteHistory> delete(final User writer) {
+    public List<DeleteHistory> delete(final User writer) throws CannotDeleteException {
+        canBeDeletedBy(writer);
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         this.setDeleted(true);
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION,
@@ -114,6 +105,15 @@ public class Question extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    private void canBeDeletedBy(final User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        if (!answers.allWrittenBy(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     @Override
