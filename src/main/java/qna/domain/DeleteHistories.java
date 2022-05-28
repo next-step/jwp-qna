@@ -23,6 +23,10 @@ public class DeleteHistories {
         return deleteHistories.size();
     }
 
+    public Set<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
