@@ -1,7 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,16 +15,20 @@ class QuestionRepositoryTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private AnswerRepository answerRepository;
 
     @DisplayName("Question 정보 id로 조회 테스트")
     @Test
     void findById() {
-        Optional<Question> optionalQuestion = questionRepository.findById(1L);
+        Optional<Question> optionalQuestion = questionRepository.findById(2001L);
         assertThat(optionalQuestion).isPresent();
 
         Question question = optionalQuestion.get();
         assertAll(
-                () -> assertThat(question.getId()).isEqualTo(1L),
+                () -> assertThat(question.getId()).isEqualTo(2001L),
                 () -> assertThat(question.getTitle()).isEqualTo("집"),
                 () -> assertThat(question.getContents()).isEqualTo("너의 집은 어디인가"),
                 () -> assertThat(question.isDeleted()).isTrue(),
@@ -54,18 +58,15 @@ class QuestionRepositoryTest {
     @DisplayName("Question 정보 작성자 정보 업데이트 테스트")
     @Test
     void writeBy() {
-        Optional<Question> optionalQuestion = questionRepository.findById(1L);
-        assertThat(optionalQuestion).isPresent();
+        Question question = questionRepository.findById(2001L).get();
+        assertThat(question.getWriter()).isNull();
 
-        Question question = optionalQuestion.get();
-        question.writeBy(UserTest.JAVAJIGI);
+        User writer = userRepository.findById(1001L).get();
+        question.writeBy(writer);
         questionRepository.flush();
 
-        Optional<Question> optionalUpdatedQuestion = questionRepository.findById(1L);
-        assertThat(optionalUpdatedQuestion).isPresent();
-
-        Question updatedQuestion = optionalUpdatedQuestion.get();
-        assertThat(updatedQuestion.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+        Question updatedQuestion = questionRepository.findById(2001L).get();
+        assertThat(updatedQuestion.getWriter()).isEqualTo(writer);
     }
 
     @DisplayName("삭제되지 않은 Question 정보 목록 조회 테스트")
@@ -78,12 +79,12 @@ class QuestionRepositoryTest {
     @DisplayName("삭제되지 않은 Question 정보를 id 및 deleted 로 조회시 테스트")
     @Test
     void findByIdAndDeletedFalse() {
-        Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(3L);
+        Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(2003L);
         assertThat(optionalQuestion).isPresent();
 
         Question question = optionalQuestion.get();
         assertAll(
-                () -> assertThat(question.getId()).isEqualTo(3L),
+                () -> assertThat(question.getId()).isEqualTo(2003L),
                 () -> assertThat(question.getTitle()).isEqualTo("차")
         );
     }
@@ -91,7 +92,7 @@ class QuestionRepositoryTest {
     @DisplayName("삭제된 Question 정보를 id 및 deleted 로 조회시 테스트")
     @Test
     void findByIdAndDeletedFalseDeleted() {
-        Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(1L);
+        Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(2001L);
         assertThat(optionalQuestion).isNotPresent();
     }
 }

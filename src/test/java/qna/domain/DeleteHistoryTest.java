@@ -9,20 +9,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class DeleteHistoryTest {
-    public static final DeleteHistory DH1 = new DeleteHistory(ContentType.QUESTION, 1L, 2L, LocalDateTime.now());
-    public static final DeleteHistory DH2 = new DeleteHistory(ContentType.QUESTION, 1L, 2L, LocalDateTime.now());
-    public static final DeleteHistory DH3 = new DeleteHistory(ContentType.ANSWER, 2L, 3L, LocalDateTime.now());
+    public static final DeleteHistory DH1 = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
+    public static final DeleteHistory DH2 = new DeleteHistory(ContentType.ANSWER, 2L, UserTest.SANJIGI, LocalDateTime.now());
 
     @DisplayName("DeleteHistory 객체 동일객체 비교 테스트")
     @Test
     void equalDeleteHistory() {
-        assertThat(DH1).isEqualTo(DH2);
+        assertThat(DH1).isEqualTo(new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now()));
     }
 
     @DisplayName("DeleteHistory 객체 비동일객체 비교 테스트")
     @Test
     void notEqualDeleteHistory() {
-        assertThat(DH2).isNotEqualTo(DH3);
+        assertThat(DH1).isNotEqualTo(DH2);
     }
 
 }

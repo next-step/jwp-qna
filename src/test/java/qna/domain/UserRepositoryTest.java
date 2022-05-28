@@ -19,12 +19,12 @@ public class UserRepositoryTest {
     @DisplayName("id를 통한 검색 테스트")
     @Test
     void findById() {
-        Optional<User> optionalUser = userRepository.findById(1L);
+        Optional<User> optionalUser = userRepository.findById(1001L);
         assertThat(optionalUser).isPresent();
 
         User user = optionalUser.get();
         assertAll(
-                () -> assertThat(user.getId()).isEqualTo(1L),
+                () -> assertThat(user.getId()).isEqualTo(1001L),
                 () -> assertThat(user.getPassword()).isEqualTo("abcd"),
                 () -> assertThat(user.getName()).isEqualTo("안드로이드"),
                 () -> assertThat(user.getUserId()).isEqualTo("user1"),
@@ -42,7 +42,7 @@ public class UserRepositoryTest {
 
         User user = optionalUser.get();
         assertAll(
-                () -> assertThat(user.getId()).isEqualTo(2L),
+                () -> assertThat(user.getId()).isEqualTo(1002L),
                 () -> assertThat(user.getPassword()).isEqualTo("efgh"),
                 () -> assertThat(user.getName()).isEqualTo("터미네이터"),
                 () -> assertThat(user.getUserId()).isEqualTo("user2"),
