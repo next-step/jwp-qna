@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 
 public class QuestionTest {
     public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
@@ -21,9 +22,11 @@ public class QuestionTest {
 
     @DisplayName("Question 객체 deleted 변경 테스트")
     @Test
-    void deleteQuestion() {
+    void deleteQuestion() throws CannotDeleteException {
         Question question = new Question("title3", "contents3");
-        question.delete();
+        User writer = new User("onepunch", "abc", "name", "abc@gmail.com");
+        question.writeBy(writer);
+        question.delete(writer);
 
         assertThat(question.isDeleted()).isTrue();
     }
