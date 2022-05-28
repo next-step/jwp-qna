@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
@@ -112,5 +113,29 @@ public class QuestionTest {
         assertThatThrownBy(() -> question.canBeDeletedBy(writer))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
+
+    @Test
+    void 질문글에_답변이_없을_때_질문글을_삭제하면_삭제된_상태로_변경되고_삭제이력_목록이_반환되어야_한다() {
+        // when
+        List<DeleteHistory> deleteHistories = question.delete(writer);
+
+        // then
+        assertThat(question.isDeleted()).isTrue();
+        assertThat(deleteHistories.size()).isEqualTo(1);
+    }
+
+    @Test
+    void 질문글에_답변이_있을_때_질문글을_삭제하면_질문글과_답변들이_삭제된_상태로_변경되고_삭제이력_목록이_반환되어야_한다() {
+        // given
+        final Answer answer1 = new Answer(1L, writer, question, "answer1");
+        final Answer answer2 = new Answer(2L, writer, question, "answer2");
+
+        // when
+        List<DeleteHistory> deleteHistories = question.delete(writer);
+
+        // then
+        assertThat(question.isDeleted() && answer1.isDeleted() && answer2.isDeleted()).isTrue();
+        assertThat(deleteHistories.size()).isEqualTo(3);
     }
 }

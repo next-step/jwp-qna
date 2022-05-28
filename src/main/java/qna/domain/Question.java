@@ -1,5 +1,8 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -76,6 +79,17 @@ public class Question extends BaseTimeEntity {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         return true;
+    }
+
+    public List<DeleteHistory> delete(final User writer) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        this.setDeleted(true);
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION,
+                id,
+                writer,
+                LocalDateTime.now()));
+        deleteHistories.addAll(answers.delete(writer));
+        return deleteHistories;
     }
 
     public Long getId() {
