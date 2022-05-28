@@ -54,4 +54,10 @@ public class DeleteHistoriesTest {
         deleteHistories.add(deleteHistory);
         assertThat(deleteHistories.size()).isEqualTo(2);
     }
+
+    @DisplayName("기본 생성자를 가진다.")
+    @Test
+    void create() {
+        assertThat(new DeleteHistories()).isEqualTo(new DeleteHistories());
+    }
 }

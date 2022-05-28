@@ -3,13 +3,16 @@ package qna.domain;
 import java.util.*;
 
 public class DeleteHistories {
-    private final Set<DeleteHistory> deleteHistories;
+    private final Set<DeleteHistory> deleteHistories = new HashSet<>();
+
+    public DeleteHistories() {
+    }
 
     public DeleteHistories(final List<DeleteHistory> deleteHistories) {
         if (Objects.isNull(deleteHistories)) {
             throw new IllegalArgumentException("invalid parameter");
         }
-        this.deleteHistories= new HashSet<>(deleteHistories);
+        this.deleteHistories.addAll(deleteHistories);
     }
 
     public void add(final DeleteHistory deleteHistory) {
