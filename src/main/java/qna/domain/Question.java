@@ -1,7 +1,9 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,8 +22,7 @@ public class Question extends CreatedUpdatedDateEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded Answers answers = new Answers();
 
     protected Question() {
     }
@@ -46,8 +47,7 @@ public class Question extends CreatedUpdatedDateEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if (!this.answers.contains(answer)) {
-            this.answers.add(answer);
+        if (Objects.nonNull(answer)) {
             answer.toQuestion(this);
         }
     }
@@ -93,15 +93,33 @@ public class Question extends CreatedUpdatedDateEntity {
         this.deleted = deleted;
     }
 
-    public void removeAnswer(final Answer removeAnswer) {
-        if (Objects.equals(this, removeAnswer.getQuestion())) {
-            removeAnswer.toQuestion(null);
+    public DeleteHistories remove(final User loginUser) throws CannotDeleteException {
+        if (this.isDeleted()) {
+            throw new CannotDeleteException("질문을 삭제 되어 있는 상태입니다.");
         }
-        this.getAnswers().remove(removeAnswer);
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        DeleteHistories deleteHistories = removeNoDeletedAnswer(loginUser);
+        deleteHistories.add(removeQuestion(loginUser));
+        return deleteHistories;
     }
 
     public List<Answer> getAnswers() {
+        return answers.getAnswers();
+    }
+
+    public Answers getAnswers1() {
         return answers;
+    }
+
+    private DeleteHistory removeQuestion(final User loginUser) {
+        this.setDeleted(true);
+        return new DeleteHistory(ContentType.QUESTION,getId(), loginUser, LocalDateTime.now());
+    }
+
+    private DeleteHistories removeNoDeletedAnswer(final User loginUser) throws CannotDeleteException {
+        return answers.findAnswerBy(DeletedType.NO).remove(loginUser);
     }
 
     @Override

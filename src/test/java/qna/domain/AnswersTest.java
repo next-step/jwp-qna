@@ -60,9 +60,12 @@ public class AnswersTest {
     @DisplayName("사용자 정보를 입력하면 해당 사용자의 답변을 찾을수 있다.")
     @Test
     void findAnswerByWriter() {
+        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q2, "test");
+        defaultAnswers.addAnswer(answer);
         defaultAnswers.addAnswer(AnswerTest.A1);
         defaultAnswers.addAnswer(AnswerTest.A2);
-        assertThat(defaultAnswers.findAnswerBy(UserTest.JAVAJIGI)).isEqualTo(new Answers(AnswerTest.A1));
+        assertThat(defaultAnswers.findAnswerBy(UserTest.JAVAJIGI)).isEqualTo(new Answers(Arrays.asList(AnswerTest.A1,answer)));
+        assertThat(defaultAnswers.findAnswerBy(UserTest.JAVAJIGI)).isEqualTo(new Answers(Arrays.asList(answer,AnswerTest.A1)));
     }
 
     @DisplayName("삭제 시 질문자와 답변자가 다르면 에러를 발생한다.")
