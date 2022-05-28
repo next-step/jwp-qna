@@ -71,7 +71,7 @@ public class Answer extends BaseTimeEntity {
     public Long getId() {
         return id;
     }
-    
+
     public Question getQuestion() {
         return question;
     }
@@ -96,7 +96,7 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writer.getId() +
+                ", writer=" + writer +
                 ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
