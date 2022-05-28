@@ -13,18 +13,20 @@
 - [x] answer와 user 연관 관계
 - [x] delete_history와 user 연관 관계
 - [x] question과 user 연관 관계
-- 
+-
+
 #### step3
+
 - [ ] 질문 삭제 권한 검증 로직 Question 도메인으로 이동
-- [ ] 답변 삭제 권한 검증 로직 Answer 도메인으로 이동
+- [x] 답변 삭제 권한 검증 로직 Answer 도메인으로 이동
 - [ ] Question 도메인에 삭제 메서드 생성
 - [ ] 질문 삭제 시, 해당 질문에 달려있는 Answers 도 삭제
-- [ ] Answer 도메인에 삭제 메서드 생성
+- [x] Answer 도메인에 삭제 메서드 생성
 - [ ] 기존 set함수로 상태를 변경하던 것을 도메인 메서드로 변경
 - [ ] 기존 get함수로 데이터를 가져오던 것 삭제
 - [ ] Question 삭제 시, DeleteHistory 목록 반환
-- [ ] Answer 삭제 시, DeleteHistory 목록 반환
-- [ ] 반환 받은 DeleteHistory목록을 이용해  deleteHistoryService.saveAll 호출
+- [x] Answer 삭제 시, DeleteHistory 목록 반환
+- [ ] 반환 받은 DeleteHistory목록을 이용해 deleteHistoryService.saveAll 호출
 
 ### 요구사항
 
@@ -38,8 +40,8 @@
 - 질문자와 답변자가 다른 경우 답변을 삭제할 수 없다.
 - 질문과 답변 삭제 이력에 대한 정보를 DeleteHistory를 활용해 남긴다.
 
-
 #### step2
+
 - QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
 
 ```

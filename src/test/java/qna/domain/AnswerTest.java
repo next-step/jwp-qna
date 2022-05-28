@@ -1,9 +1,11 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 
 public class AnswerTest {
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
@@ -23,5 +25,13 @@ public class AnswerTest {
         Question input = new Question("question", "content");
         answer.toQuestion(input);
         assertThat(answer.getQuestion().getId()).isEqualTo(input.getId());
+    }
+
+    @Test
+    void 답변_삭제_예외() {
+
+        Answer answer = new Answer(UserTest.JAVAJIGI, new Question("question", "content"), "content");
+
+        assertThatThrownBy(() -> answer.delete(UserTest.SANJIGI)).isInstanceOf(CannotDeleteException.class);
     }
 }
