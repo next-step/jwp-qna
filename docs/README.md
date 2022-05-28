@@ -2,11 +2,11 @@
 
 ## STEP-1
 
-- [ ] DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성
-    - [ ] User
-    - [ ] Question
-    - [ ] DeleteHistory
-    - [ ] Answer
+- [x] DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성
+    - [x] User
+    - [x] Question
+    - [x] DeleteHistory
+    - [x] Answer
 - [ ] @DataJpaTest를 사용하여 학습 테스트작성
     - [ ] User
     - [ ] Question
