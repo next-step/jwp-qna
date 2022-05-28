@@ -12,6 +12,9 @@ public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private AnswerRepository answerRepository;
+
     @Test
     public void save() {
         //given
@@ -30,5 +33,17 @@ public class QuestionRepositoryTest {
         Question actual = questionRepository.findById(expected.getId()).get();
         //then
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void findQuestionAnswer() {
+        //given
+        Question question = questionRepository.save(new Question("title3", "contents3"));
+        Answer expectedAnswer = answerRepository.save(AnswerTest.A1);
+        expectedAnswer.toQuestion(question);
+        //when
+        Question actual = questionRepository.findById(question.getId()).get();
+        //then
+        assertThat(actual.getAnswers()).contains(expectedAnswer);
     }
 }
