@@ -50,6 +50,7 @@ public class Answer extends BaseEntity {
 
         this.writer = writer;
         this.question = question;
+        question.addAnswer(this);
         this.contents = contents;
     }
 
@@ -77,8 +78,8 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void changeDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
     }
 
     @Override

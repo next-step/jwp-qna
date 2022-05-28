@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.springframework.dao.DuplicateKeyException;
+
 import javax.persistence.*;
 
 import java.util.ArrayList;
@@ -25,7 +27,9 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "question",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     List<Answer> answers = new ArrayList<>();
 
     @Column(nullable = false)
@@ -54,6 +58,9 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        if (answers.contains(answer)) {
+            throw new DuplicateKeyException("중복되는 답변을 추가할 수 없습니다.");
+        }
         answer.toQuestion(this);
         answers.add(answer);
     }
@@ -70,8 +77,8 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void changeDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
     }
 
     @Override

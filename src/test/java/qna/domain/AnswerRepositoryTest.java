@@ -18,19 +18,23 @@ class AnswerRepositoryTest {
     private AnswerRepository answerRepository;
 
     private Question question;
+
     private User writer;
+
+    private Answer answer;
 
     @BeforeEach
     void setUp(@Autowired QuestionRepository questionRepository,
                @Autowired UserRepository userRepository) {
         writer = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
         question = questionRepository.save(new Question("title1", "contents1").writeBy(writer));
+        answer = new Answer(writer, question, "Answers Contents1");
     }
 
     @DisplayName("Answer 저장")
     @Test
     void save() {
-        final Answer actual = answerRepository.save(new Answer(writer, question, "Answers Contents1"));
+        final Answer actual = answerRepository.save(answer);
         question.addAnswer(actual);
 
         assertThat(actual.getId()).isNotNull();
@@ -39,13 +43,12 @@ class AnswerRepositoryTest {
     @DisplayName("Answer 전체 조회")
     @Test
     void findAll() {
-        final Answer answer1 = answerRepository.save(new Answer(writer, question, "Answers Contents1"));
-        final Answer answer2 = answerRepository.save(new Answer(writer, question, "Answers Contents2"));
+        final Answer answer = answerRepository.save(this.answer);
 
         List<Answer> answers = answerRepository.findAll();
 
-        assertThat(answers).hasSize(2);
-        assertThat(answers).contains(answer1, answer2);
+        assertThat(answers).hasSize(1);
+        assertThat(answers).contains(answer);
     }
 
     @DisplayName("삭제되지 않은 Answer id로 조회")
@@ -63,13 +66,12 @@ class AnswerRepositoryTest {
     @DisplayName("Question id로 삭제되지않은 Answer 리스트 조회")
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        final Answer answer1 = answerRepository.save(new Answer(writer, question, "Answers Contents1"));
-        final Answer answer2 = answerRepository.save(new Answer(writer, question, "Answers Contents2"));
+        final Answer answer = answerRepository.save(this.answer);
 
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(answer1.getQuestion().getId());
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestion().getId());
 
-        assertThat(answers).hasSize(2);
-        assertThat(answers).contains(answer1, answer2);
+        assertThat(answers).hasSize(1);
+        assertThat(answers).contains(answer);
     }
 
 }
