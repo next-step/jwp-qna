@@ -150,7 +150,7 @@ alter table user
 - 삭제후 DeleteHistory 객체를 넘겨준다.
 
 #### Answers
-- 삭제 객체를 관리를 한다.
+- 답장 객체를 관리를 한다.
 - remove 메소드에 user 정보를 입력받는다.
 - 질문들을 삭제한 후에는 DeleteHistories 객체를 넘겨준다.
 
