@@ -20,8 +20,7 @@ public class DeleteHistoryRepositoryTest {
     void DeleteHistory_생성() {
         User user = userRepository.save(UserTest.JAVAJIGI);
         Question question = questionRepository.save(new Question("title10", "contents10").writeBy(user));
-        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, question.getId(), user,
-                LocalDateTime.now());
+        DeleteHistory expected = DeleteHistory.ofQuestion(question.getId(), user);
 
         DeleteHistory actual = deleteHistoryRepository.save(expected);
 
