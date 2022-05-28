@@ -27,9 +27,6 @@ class QuestionRepositoryTest {
 
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
-                () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
-                () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
-                () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted())
         );
     }
