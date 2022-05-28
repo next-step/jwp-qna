@@ -47,13 +47,14 @@ public class AnswersTest {
     @DisplayName("DeletedType 에 따른 Answer 를 찾을수 있다.")
     @Test
     void findAnswerByDeleteType() {
-        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "test content");
-        answer.setDeleted(true);
+        Answer deleteAnswer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "test content");
+        deleteAnswer.setDeleted(true);
+        defaultAnswers.addAnswer(deleteAnswer);
 
+        Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q2, "test1 content");
         defaultAnswers.addAnswer(answer);
-        defaultAnswers.addAnswer(AnswerTest.A1);
         Answers noDeletedAnswers = defaultAnswers.findAnswerBy(DeletedType.NO);
-        assertThat(noDeletedAnswers).isEqualTo(new Answers(Collections.singletonList(AnswerTest.A1)));
+        assertThat(noDeletedAnswers.isContains(answer)).isTrue();
     }
 
     @DisplayName("사용자 정보를 입력하면 해당 사용자의 답변을 찾을수 있다.")
@@ -81,5 +82,12 @@ public class AnswersTest {
         DeleteHistories deleteHistories = answers.remove(UserTest.JAVAJIGI);
         DeleteHistory expectedDeleteHistory = new DeleteHistory(ContentType.ANSWER, 2L, UserTest.JAVAJIGI, LocalDateTime.now());
         assertThat(deleteHistories.isContains(expectedDeleteHistory)).isTrue();
+    }
+
+    @DisplayName("답장 포함 확인 ")
+    @Test
+    void isContains() {
+        Answers answers = new Answers(Arrays.asList(AnswerTest.A1, AnswerTest.A2));
+        assertThat(answers.isContains(AnswerTest.A1)).isTrue();
     }
 }

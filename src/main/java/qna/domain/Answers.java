@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.springframework.data.annotation.AccessType;
 import qna.CannotDeleteException;
 
 import javax.persistence.CascadeType;
@@ -41,15 +40,15 @@ public class Answers {
 
     public Answers findAnswerBy(final DeletedType state) {
         return new Answers(answers.stream()
-                .filter(answer -> Objects.equals(DeletedType.valueOf(answer.isDeleted()),state))
+                .filter(answer -> Objects.equals(DeletedType.valueOf(answer.isDeleted()), state))
                 .collect(Collectors.toList()));
     }
 
     public Answers findAnswerBy(final User writer) {
         return new Answers(
                 answers.stream()
-                  .filter(answer -> answer.isOwner(writer))
-                  .collect(Collectors.toList())
+                        .filter(answer -> answer.isOwner(writer))
+                        .collect(Collectors.toList())
         );
     }
 
@@ -59,8 +58,13 @@ public class Answers {
         }
         return new DeleteHistories(this.answers.stream().map(answer -> {
             answer.toQuestion(null);
-           return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
+            answer.setDeleted(true);
+            return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
         }).collect(Collectors.toList()));
+    }
+
+    public boolean isContains(final Answer answer) {
+        return this.answers.contains(answer);
     }
 
     public List<Answer> getAnswers() {
