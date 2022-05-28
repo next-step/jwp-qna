@@ -2,6 +2,7 @@ package qna.domain;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +24,7 @@ public class AnswerTest {
         );
     }
 
-    @DisplayName("Answer 객체 deleted 변경 테스트")
+    @DisplayName("Answer 객체 delete 테스트")
     @Test
     void deleteAnswer() throws CannotDeleteException {
         User writer = new User(30L, "onepunch","abcd", "ho9", "abc@gmail.com");
@@ -31,6 +32,16 @@ public class AnswerTest {
         answer.delete(writer);
 
         assertThat(answer.isDeleted()).isTrue();
+    }
+
+    @DisplayName("Answer 객체 delete 를 writer 와 다른 유저가 동작시 Exception 발생 확인")
+    @Test
+    void deleteAnswerByOtherUser() {
+        User writer = new User(30L, "onepunch","abcd", "ho9", "abc@gmail.com");
+        Answer answer = new Answer(writer, QuestionTest.Q1, "ABC");
+        User other = new User(31L, "Jonson","vill", "ho8", "abbb@gmail.com");
+
+        assertThatThrownBy(() -> answer.delete(other)).isInstanceOf(CannotDeleteException.class);
     }
 
 }
