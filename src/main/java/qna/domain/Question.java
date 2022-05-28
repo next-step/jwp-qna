@@ -80,12 +80,12 @@ public class Question extends BaseEntity {
     }
 
     public List<DeleteHistory> delete(User loginUser) {
-        canDelete(loginUser);
+        validateDeletion(loginUser);
         DeleteHistories deleteHistories = new DeleteHistories();
         return deleteHistories.addHistory(this);
     }
 
-    private void canDelete(User loginUser) {
+    private void validateDeletion(User loginUser) {
         validateDeletionPermission(loginUser);
         validateMyAnswers(loginUser);
     }
