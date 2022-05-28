@@ -88,8 +88,21 @@ class QuestionRepositoryTest extends BaseRepositoryTest {
     }
 
     @Test
-    @DisplayName("Question 삭제")
-    void delete() {
+    @DisplayName("Question 삭제 - 답변이 없는 경우")
+    void delete_no_answer() {
+        // when
+        questionRepository.delete(savedQ1);
+
+        // then
+        assertThat(questionRepository.findById(savedQ1.getId())).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Question 삭제 - 답변이 있는 경우")
+    void delete_exist_answer() {
+        // given
+        savedQ1.addAnswer(new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi));
+
         // when
         questionRepository.delete(savedQ1);
 
