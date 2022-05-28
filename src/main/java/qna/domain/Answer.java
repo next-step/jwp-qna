@@ -23,7 +23,7 @@ public class Answer extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
