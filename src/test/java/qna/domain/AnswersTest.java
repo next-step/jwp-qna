@@ -3,9 +3,6 @@ package qna.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
@@ -35,15 +32,15 @@ public class AnswersTest {
     @Test
     void add() {
         Answers answers = new Answers();
-        answers.add(AnswerTest.A1);
+        answers.addAnswer(AnswerTest.A1);
         assertThat(answers.size()).isEqualTo(1);
     }
 
     @DisplayName("중복 Answer 시 하나만 저장한다.")
     @Test
     void noDuplicateAnswer() {
-        defaultAnswers.add(AnswerTest.A1);
-        defaultAnswers.add(AnswerTest.A1);
+        defaultAnswers.addAnswer(AnswerTest.A1);
+        defaultAnswers.addAnswer(AnswerTest.A1);
         assertThat(defaultAnswers.size()).isEqualTo(1);
     }
 
@@ -53,8 +50,8 @@ public class AnswersTest {
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "test content");
         answer.setDeleted(true);
 
-        defaultAnswers.add(answer);
-        defaultAnswers.add(AnswerTest.A1);
+        defaultAnswers.addAnswer(answer);
+        defaultAnswers.addAnswer(AnswerTest.A1);
         Answers noDeletedAnswers = defaultAnswers.findAnswerBy(DeletedType.NO);
         assertThat(noDeletedAnswers).isEqualTo(new Answers(Collections.singletonList(AnswerTest.A1)));
     }
@@ -62,8 +59,8 @@ public class AnswersTest {
     @DisplayName("사용자 정보를 입력하면 해당 사용자의 답변을 찾을수 있다.")
     @Test
     void findAnswerByWriter() {
-        defaultAnswers.add(AnswerTest.A1);
-        defaultAnswers.add(AnswerTest.A2);
+        defaultAnswers.addAnswer(AnswerTest.A1);
+        defaultAnswers.addAnswer(AnswerTest.A2);
         assertThat(defaultAnswers.findAnswerBy(UserTest.JAVAJIGI)).isEqualTo(new Answers(AnswerTest.A1));
     }
 

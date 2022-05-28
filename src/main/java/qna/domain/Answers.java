@@ -1,15 +1,24 @@
 package qna.domain;
 
+import org.springframework.data.annotation.AccessType;
 import qna.CannotDeleteException;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Embeddable
 public class Answers {
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private final Set<Answer> answers = new HashSet<>();
 
-    public Answers() {}
+    public Answers() {
+
+    }
 
     public Answers(final Answer answer) {
         answers.add(answer);
@@ -26,21 +35,8 @@ public class Answers {
         return answers.size();
     }
 
-    public void add(final Answer answer) {
+    public void addAnswer(final Answer answer) {
         answers.add(answer);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Answers answers1 = (Answers) o;
-        return Objects.equals(answers, answers1.answers);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(answers);
     }
 
     public Answers findAnswerBy(final DeletedType state) {
@@ -65,5 +61,22 @@ public class Answers {
             answer.toQuestion(null);
            return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
         }).collect(Collectors.toList()));
+    }
+
+    public List<Answer> getAnswers() {
+        return new ArrayList<>(answers);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answers answers1 = (Answers) o;
+        return Objects.equals(answers, answers1.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(answers);
     }
 }
