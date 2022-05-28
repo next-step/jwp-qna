@@ -1,10 +1,13 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
@@ -24,6 +27,9 @@ public class User extends BaseEntity {
     private String name;
     @Column(length = 50)
     private String email;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
 
     private User() {
     }
@@ -70,6 +76,10 @@ public class User extends BaseEntity {
                 email.equals(target.email);
     }
 
+    public boolean isSameUser(User targetUser) {
+        return this.getId().equals(targetUser.getId());
+    }
+
     public boolean isGuestUser() {
         return false;
     }
@@ -112,6 +122,14 @@ public class User extends BaseEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
     }
 
     @Override
