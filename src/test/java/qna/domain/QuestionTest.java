@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -55,7 +54,7 @@ public class QuestionTest {
     @Test
     void answersTest() {
         Question savedQuestion = questionRepository.save(question);
-        assertThat(questionRepository.findById(savedQuestion.getId()).get().getAnswers1()).isEqualTo(savedQuestion.getAnswers1());
+        assertThat(questionRepository.findById(savedQuestion.getId()).get().getAnswers()).isEqualTo(savedQuestion.getAnswers());
     }
 
     @DisplayName("로그인 사용자와 같은 경우 일때 삭제 하기")
@@ -64,9 +63,7 @@ public class QuestionTest {
         Question savedQuestion = questionRepository.save(question);
         DeleteHistories deleteHistories = savedQuestion.remove(savedQuestion.getWriter());
         assertThat(savedQuestion.isDeleted()).isTrue();
-        answers.forEach(answer ->  {
-            assertThat(answerRepository.findById(answer.getId()).get().isDeleted()).isTrue();
-        });
+        answers.forEach(answer ->  assertThat(answerRepository.findById(answer.getId()).get().isDeleted()).isTrue());
         assertThat(deleteHistories.size()).isEqualTo(1 + answers.size());
     }
 

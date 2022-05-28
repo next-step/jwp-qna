@@ -4,6 +4,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -55,7 +56,7 @@ public class Answer extends CreatedUpdatedDateEntity {
 
     public void toQuestion(Question question) {
         if (Objects.nonNull(question)) {
-            question.getAnswers1().addAnswer(this);
+            question.getAnswers().addAnswer(this);
         }
         this.question = question;
     }
@@ -90,6 +91,12 @@ public class Answer extends CreatedUpdatedDateEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public DeleteHistory remove() {
+        this.toQuestion(null);
+        this.setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter(), LocalDateTime.now());
     }
 
     @Override

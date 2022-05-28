@@ -6,7 +6,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,22 +44,16 @@ public class Answers {
     }
 
     public Answers findAnswerBy(final User writer) {
-        return new Answers(
-                answers.stream()
-                        .filter(answer -> answer.isOwner(writer))
-                        .collect(Collectors.toList())
-        );
+        return new Answers(answers.stream()
+                .filter(answer -> answer.isOwner(writer))
+                .collect(Collectors.toList()));
     }
 
     public DeleteHistories remove(final User writer) throws CannotDeleteException {
         if (!Objects.equals(this, findAnswerBy(writer))) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
-        return new DeleteHistories(this.answers.stream().map(answer -> {
-            answer.toQuestion(null);
-            answer.setDeleted(true);
-            return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
-        }).collect(Collectors.toList()));
+        return new DeleteHistories(this.answers.stream().map(Answer::remove).collect(Collectors.toList()));
     }
 
     public boolean isContains(final Answer answer) {

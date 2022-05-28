@@ -1,13 +1,12 @@
 package qna.domain;
 
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.event.annotation.BeforeTestMethod;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -25,8 +24,6 @@ public class AnswerTest {
 
     @Autowired
     private QuestionRepository questionRepository;
-
-    private Long id = 0L;
 
     private Question question;
     private Answer answer;
@@ -77,5 +74,13 @@ public class AnswerTest {
     @Test
     void manyToOneAnswerAndQuestionTest() {
         assertThat(answerRepository.findById(answer.getId()).get().getQuestion()).isEqualTo(question);
+    }
+
+    @DisplayName("삭제시 DeleteHistory 객체를 반환한다.")
+    @Test
+    void remove() {
+        User savedUser = userRepository.save(UserTest.JAVAJIGI);
+        Answer savedAnswer = answerRepository.save(new Answer(savedUser, QuestionTest.Q1, "test content"));
+        assertThat(savedAnswer.remove()).isEqualTo(new DeleteHistory(ContentType.ANSWER,savedAnswer.getId(),savedUser, LocalDateTime.now()));
     }
 }

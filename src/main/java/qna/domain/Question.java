@@ -105,11 +105,7 @@ public class Question extends CreatedUpdatedDateEntity {
         return deleteHistories;
     }
 
-    public List<Answer> getAnswers() {
-        return answers.getAnswers();
-    }
-
-    public Answers getAnswers1() {
+    public Answers getAnswers() {
         return answers;
     }
 
