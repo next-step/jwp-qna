@@ -22,9 +22,8 @@ public class Answer extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-    private Question question;
+    @Column(name = "question_id")
+    private Long questionId;
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
@@ -48,7 +47,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
-        this.question = question;
+        this.questionId = question.getId();
         this.contents = contents;
     }
 
@@ -57,7 +56,7 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.question = question;
+        this.questionId = question.getId();
     }
 
     public Long getId() {
@@ -68,8 +67,8 @@ public class Answer extends BaseEntity {
         return writer;
     }
 
-    public Question getQuestion() {
-        return question;
+    public Long getQuestionId() {
+        return questionId;
     }
 
     public String getContents() {
@@ -89,7 +88,7 @@ public class Answer extends BaseEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writer=" + writer +
-                ", question=" + question +
+                ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

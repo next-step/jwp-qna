@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import qna.entity.BaseEntity;
 
 @Entity
@@ -24,6 +27,9 @@ public class Question extends BaseEntity {
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
+    @OneToMany
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -49,6 +55,7 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public Long getId() {
@@ -65,6 +72,10 @@ public class Question extends BaseEntity {
 
     public User getWriter() {
         return writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public boolean isDeleted() {

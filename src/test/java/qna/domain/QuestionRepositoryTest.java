@@ -95,4 +95,19 @@ class QuestionRepositoryTest {
         Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(2001L);
         assertThat(optionalQuestion).isNotPresent();
     }
+
+    @DisplayName("Question 에 Answer 를 추가한 후 추가 여부 확인")
+    @Test
+    void addAnswer() {
+        Question question = questionRepository.findById(2002L).get();
+        assertThat(question.getAnswers()).hasSize(1);
+
+        User user = userRepository.findById(1002L).get();
+        Answer answer = answerRepository.findById(3001L).get();
+        question.addAnswer(answer);
+
+        Question updatedQuestion = questionRepository.findById(2002L).get();
+        assertThat(updatedQuestion.getAnswers()).hasSize(2);
+        assertThat(updatedQuestion.getAnswers()).contains(answer);
+    }
 }
