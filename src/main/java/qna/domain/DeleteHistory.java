@@ -3,6 +3,7 @@ package qna.domain;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 @Entity
 @Table(name = "DELETE_HISTORY")
@@ -32,6 +33,26 @@ public class DeleteHistory {
 
     public Long getId() {
         return id;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public User getDeletedByUser() {
+        return deletedByUser;
+    }
+
+
+    public boolean isDeletedBy(Predicate<DeleteHistory> predicate) {
+        if (Objects.isNull(predicate)) {
+            throw new IllegalArgumentException("invalid parameter");
+        }
+        return predicate.test(this);
     }
 
     @Override

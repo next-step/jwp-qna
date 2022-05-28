@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @DataJpaTest
@@ -41,5 +44,24 @@ public class DeleteHistoryTest {
         Optional<DeleteHistory> isDeleteHistory = deleteHistoryRepository.findById(deletedHistory.getId());
         assertThat(isDeleteHistory.isPresent()).isTrue();
         assertThat(isDeleteHistory.get()).isSameAs(deleteHistory);
+    }
+
+    @DisplayName("인자 값에 의해 삭제되었는지 확인")
+    @Test
+    void isDeletedByTest() {
+        Predicate<DeleteHistory> predicate = deleteHistory -> {
+            return Objects.equals(deleteHistory.getDeletedByUser(), UserTest.JAVAJIGI) &&
+                    Objects.equals(deleteHistory.getContentId(), 1L) &&
+                    Objects.equals(deleteHistory.getContentType(), ContentType.ANSWER);
+        };
+
+        assertThat(deletedHistory.isDeletedBy(predicate)).isTrue();
+    }
+
+    @DisplayName("isDeltedBy 메소드의 인자값은 null 이 될수 없다.")
+    @Test
+    void invalidIsDeletedByTest() {
+        assertThatThrownBy(() -> deletedHistory.isDeletedBy(null))
+                .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }
