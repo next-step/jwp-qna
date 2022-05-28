@@ -101,7 +101,7 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writer=" + writer.toString() +
+                ", writer=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }

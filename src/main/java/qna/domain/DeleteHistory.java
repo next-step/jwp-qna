@@ -56,7 +56,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedBy=" + deletedBy.toString() +
+                ", deletedBy=" + deletedBy.getId() +
                 ", createDate=" + createDate +
                 '}';
     }
