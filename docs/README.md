@@ -7,12 +7,11 @@
     - [x] Question
     - [x] DeleteHistory
     - [x] Answer
-- [ ] @DataJpaTest를 사용하여 학습 테스트작성
-    - [ ] User
-    - [ ] Question
-    - [ ] DeleteHistory
-    - [ ] Answer
-    -
+- [x] @DataJpaTest를 사용하여 학습 테스트작성
+    - [x] User
+    - [x] Question
+    - [x] DeleteHistory
+    - [x] Answer
 
 ### DDL
 
