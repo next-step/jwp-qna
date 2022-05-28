@@ -5,8 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -18,7 +18,8 @@ public class DeleteHistoriesTest {
 
     @BeforeEach
     void setUp() {
-        deleteHistoryList = Collections.singletonList(new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now()));
+        deleteHistoryList = new ArrayList<>();
+        deleteHistoryList.add(new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now()));
     }
 
     @DisplayName("삭제된 History 정보들를 입력 받는다.")
@@ -55,9 +56,12 @@ public class DeleteHistoriesTest {
         assertThat(deleteHistories.size()).isEqualTo(2);
     }
 
-    @DisplayName("기본 생성자를 가진다.")
+    @DisplayName("삭제된 정보들에서 답변 정보가 남아 있는지 확인한다.")
     @Test
-    void create() {
-        assertThat(new DeleteHistories()).isEqualTo(new DeleteHistories());
+    void isDeletedAnswer() {
+        deleteHistoryList.add(new DeleteHistory(ContentType.ANSWER, 2L, UserTest.SANJIGI, LocalDateTime.now()));
+        DeleteHistories deleteHistories = new DeleteHistories(deleteHistoryList);
+        Answer answer = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "test content");
+        assertThat(deleteHistories.findBy(answer).get()).isEqualTo(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
     }
 }

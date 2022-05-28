@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class DeleteHistories {
     private final Set<DeleteHistory> deleteHistories = new HashSet<>();
@@ -15,6 +16,12 @@ public class DeleteHistories {
         this.deleteHistories.addAll(deleteHistories);
     }
 
+    private static Predicate<DeleteHistory> getAnswerPredicate(final Answer answer) {
+        return deleteHistory -> Objects.equals(answer.getId(), deleteHistory.getContentId()) &&
+                Objects.equals(answer.getWriter(), deleteHistory.getDeletedByUser()) &&
+                Objects.equals(deleteHistory.getContentType(), ContentType.ANSWER);
+    }
+
     public void add(final DeleteHistory deleteHistory) {
         this.deleteHistories.add(deleteHistory);
     }
@@ -25,6 +32,12 @@ public class DeleteHistories {
 
     public Set<DeleteHistory> getDeleteHistories() {
         return deleteHistories;
+    }
+
+    public Optional<DeleteHistory> findBy(final Answer answer) {
+        return this.deleteHistories.stream()
+                .filter(deleteHistory -> deleteHistory.isDeletedBy(getAnswerPredicate(answer)))
+                .findAny();
     }
 
     @Override
