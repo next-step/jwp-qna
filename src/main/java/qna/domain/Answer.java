@@ -43,6 +43,14 @@ public class Answer extends BaseTimeEntity {
     public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
+        validate(writer, question);
+
+        this.writer = writer;
+        this.question = question;
+        this.contents = contents;
+    }
+
+    private void validate(User writer, Question question) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -50,10 +58,6 @@ public class Answer extends BaseTimeEntity {
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
-
-        this.writer = writer;
-        this.question = question;
-        this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
