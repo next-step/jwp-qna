@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +13,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
-    private static User javaJigi = new User("javajigi", "password", "name", "javajigi@slipp.net");
-    private static User sanJigi = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
-    private static Question question1 = new Question("title1", "contents1").writeBy(javaJigi);
-    private static Question question2 = new Question("title2", "contents2").writeBy(sanJigi);
-    private static Answer answer1 = new Answer(javaJigi, question1, "Answers Contents1");
 
-//    User javaJigi = new User("javajigi", "password", "name", "javajigi@slipp.net");
-//    User sanJigi = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
-//    Question question1 = new Question("title1", "contents1").writeBy(javaJigi);
-//    Question question2 = new Question("title2", "contents2").writeBy(sanJigi);
-//    Answer answer1 = new Answer(javaJigi, question1, "Answers Contents1");
+    User javaJigi = UserTest.getJavajigi();
+    User sanJigi = UserTest.getSanjigi();
 
     @Autowired
     AnswerRepository answerRepository;
@@ -33,34 +26,25 @@ public class QuestionRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
-
-//    @BeforeEach
-//    void init() {
-//        userRepository.save(javaJigi);
-//        userRepository.save(sanJigi);
-//
-//        questionRepository.save(question1);
-//        questionRepository.save(question2);
-//
-//        answerRepository.save(answer1);
-//    }
-
     @AfterEach
     void afterEach() {
-        userRepository.flush();
-        questionRepository.flush();
-        answerRepository.flush();
-
         answerRepository.deleteAllInBatch();
         questionRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
     }
 
-
     @Test
     @DisplayName("질문에 답변 달기")
     void addAnswer() {
+        User user1 = userRepository.save(javaJigi);
+        User user2 = userRepository.save(sanJigi);
+
+        Question question1 = questionRepository.save(QuestionTest.getQuestion1(user1));
+        Answer answer1 = AnswerTest.getAnswer1(user1, question1);
+
         Answer answer = answerRepository.save(answer1);
+
+        Question question2 = QuestionTest.getQuestion2(user2);
         Question question = questionRepository.save(question2);
 
         question.addAnswer(answer);
@@ -71,10 +55,10 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("저장하기")
     void save() {
-        userRepository.save(javaJigi);
+        User user = userRepository.save(javaJigi);
+        Question q1 = QuestionTest.getQuestion1(user);
 
-
-        Question question = questionRepository.save(question1);
+        Question question = questionRepository.save(q1);
         Optional<Question> questionOptional = questionRepository.findById(question.getId());
 
         assertThat(questionOptional.get().getId()).isEqualTo(question.getId());
@@ -83,9 +67,11 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("미삭제 건 전체 조회")
     void notDeleted() {
-        userRepository.save(javaJigi);
-        userRepository.save(sanJigi);
+        User user1 = userRepository.save(javaJigi);
+        User user2 = userRepository.save(sanJigi);
 
+        Question question1 = QuestionTest.getQuestion1(user1);
+        Question question2 = QuestionTest.getQuestion2(user2);
 
         Question saveQuestion1 = questionRepository.save(question1);
         Question saveQuestion2 = questionRepository.save(question2);
@@ -96,7 +82,8 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("미삭제 질문 id로 조회")
     void findByIdAndNotDeleted() {
-        userRepository.save(javaJigi);
+        User user = userRepository.save(javaJigi);
+        Question question1 = QuestionTest.getQuestion1(user);
 
         Question saveQuestion1 = questionRepository.save(question1);
 

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,12 +13,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
-    User javaJigi = new User("javajigi", "password", "name", "javajigi@slipp.net");
-    User sanJigi = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
-    Question question1 = new Question("title1", "contents1").writeBy(javaJigi);
-    Question question2 = new Question("title2", "contents2").writeBy(sanJigi);
-    Answer answer1 = new Answer(javaJigi, question1, "Answers Contents1");
-    Answer answer2 = new Answer(sanJigi, question1, "Answers Contents2");
+
+    User javaJigi;
+    User sanJigi = UserTest.getSanjigi();
+    Question question1;
+    Answer answer1;
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -30,10 +30,16 @@ public class AnswerRepositoryTest {
 
     @BeforeEach
     void init() {
-        userRepository.save(javaJigi);
-        userRepository.save(sanJigi);
-        questionRepository.save(question1);
-        questionRepository.save(question2);
+        javaJigi = userRepository.save(UserTest.getJavajigi());
+        question1 = questionRepository.save(QuestionTest.getQuestion1(javaJigi));
+        answer1 = AnswerTest.getAnswer1(javaJigi, question1);
+    }
+
+    @AfterEach
+    void afterEach() {
+        answerRepository.deleteAllInBatch();
+        questionRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
     }
 
     @Test
@@ -56,6 +62,10 @@ public class AnswerRepositoryTest {
     void findByQuestionIdAndDeletedFalse() {
         Answer save1 = answerRepository.save(answer1);
         save1.setQuestion(question1);
+
+        User user2 = userRepository.save(sanJigi);
+        Answer answer2 = AnswerTest.getAnswer2(user2, question1);
+
         Answer save2 = answerRepository.save(answer2);
         save2.setQuestion(question1);
 
@@ -83,6 +93,9 @@ public class AnswerRepositoryTest {
     @DisplayName("어떤 질문에 대한 답변인지 변경하기")
     void toQuestion() {
         Answer answer = answerRepository.save(answer1);
+
+        Question question2 = questionRepository.save(QuestionTest.getQuestion2(sanJigi));
+
         questionRepository.save(question2);
         answer.toQuestion(question2);
         Optional<Answer> optionalAnswer = answerRepository.findById(answer.getId());
