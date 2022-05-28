@@ -74,15 +74,23 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public DeleteHistory delete() {
-        this.deleted = true;
-        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
-    }
-
     public List<DeleteHistory> delete(User loginUser) {
         validateDeletion(loginUser);
+        this.deleted = true;
+
         DeleteHistories deleteHistories = new DeleteHistories();
-        return deleteHistories.addHistory(this);
+        deleteAfter(deleteHistories, loginUser);
+
+        return deleteHistories.elements();
+    }
+
+    private void deleteAfter(DeleteHistories deleteHistories, User loginUser) {
+        DeleteHistory questionDeleteHistory = new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+        deleteHistories.addHistory(questionDeleteHistory);
+
+        for (Answer answer : getAnswers()) {
+            deleteHistories.addHistory(answer.delete(loginUser));
+        }
     }
 
     private void validateDeletion(User loginUser) {
@@ -97,10 +105,11 @@ public class Question extends BaseEntity {
     }
 
     private void validateMyAnswers(User loginUser) {
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
+        boolean owner  = answers.stream()
+                .allMatch(answer -> answer.isOwner(loginUser));
+
+        if (!owner) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
     }
 

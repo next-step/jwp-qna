@@ -36,7 +36,7 @@ class AnswerRepositoryTest {
     @MethodSource("answer와_기댓값을_리턴한다")
     void id를_넘겨주어_deleted가_false인_answer를_찾는다(Answer answer, boolean expected) {
         // given
-        answer.delete();
+        answer.delete(answer.getWriter());
         userRepository.save(answer.getWriter());
         questionRepository.save(answer.getQuestion());
         Answer saved = answerRepository.save(answer);

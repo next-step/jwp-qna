@@ -10,18 +10,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AnswerTest {
     private Answer answer1;
-    private Answer answer2;
 
     @BeforeEach
     void before() {
-        User user1 = new User(1L, "user1", "password", "name", "user1@com");
-        User user2 = new User(2L, "user2", "password", "name", "user2@com");
+        User user = new User(1L, "user1", "password", "name", "user1@com");
 
-        Question question1 = new Question("title1", "contents1").writeBy(user1);
-        Question question2 = new Question("title2", "contents2").writeBy(user2);
+        Question question = new Question("title1", "contents1").writeBy(user);
 
-        answer1 = new Answer(user1, question1, "Answers Contents1");
-        answer2 = new Answer(user2, question2, "Answers Contents1");
+        answer1 = new Answer(user, question, "Answers Contents1");
     }
 
     @Test
@@ -54,8 +50,10 @@ public class AnswerTest {
 
     @Test
     void 답변_삭제에_대한_이력을_남긴다() {
+        // given
+        User writer = new User(1L, "user1", "password", "name", "user1@com");
         // when
-        DeleteHistory deleteHistory = answer1.delete();
+        DeleteHistory deleteHistory = answer1.delete(writer);
         // then
         assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER);
     }

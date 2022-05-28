@@ -109,7 +109,11 @@ class QuestionRepositoryTest {
     @MethodSource(value = "question을_리턴한다")
     void id로_삭제되지_않은_질문_찾기(Question question) {
         // given
-        question.delete();
+        User writer = new User("user1", "password", "name", "user1@com");
+        userRepository.save(writer);
+
+        question.writeBy(writer);
+        question.delete(writer);
         Question saved = questionRepository.save(question);
         // when
         Optional<Question> result = questionRepository.findByIdAndDeletedFalse(saved.getId());

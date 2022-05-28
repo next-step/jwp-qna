@@ -102,14 +102,6 @@ public class QuestionTest {
     }
 
     @Test
-    void 질문_삭제에_대한_이력을_남긴다() {
-        // when
-        DeleteHistory deleteHistory = question.delete();
-        // then
-        assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.QUESTION);
-    }
-
-    @Test
     void 질문과_답변을_삭제하면_삭제_기록을_반환한다() {
         // given
         User user = new User(1L, "user1", "password", "name", "user1@com");
