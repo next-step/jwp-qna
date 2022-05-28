@@ -2,8 +2,8 @@ package qna.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static qna.assertions.QnaAssertions.삭제불가_예외발생;
-import static qna.assertions.QnaAssertions.질문삭제여부_검증;
+import static qna.util.assertions.QnaAssertions.삭제불가_예외발생;
+import static qna.util.assertions.QnaAssertions.질문삭제여부_검증;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import qna.annotation.DataJpaTestIncludeAuditing;
+import qna.util.annotation.DataJpaTestIncludeAuditing;
 import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.ContentType;

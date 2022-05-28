@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import qna.annotation.DataJpaTestIncludeAuditing;
+import qna.util.annotation.DataJpaTestIncludeAuditing;
 
 @DataJpaTestIncludeAuditing
 public class AnswerRepositoryTest {

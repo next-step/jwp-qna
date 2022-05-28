@@ -48,11 +48,6 @@ public class Question extends BaseAuditingEntity {
         this.contents = contents;
     }
 
-    Question(Long id, String title, String contents) {
-        this(title,contents);
-        this.id = id;
-    }
-
     public List<DeleteHistory> deleteByUser(User loginUser) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         try{

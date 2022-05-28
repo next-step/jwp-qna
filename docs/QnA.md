@@ -68,3 +68,7 @@
   - [X] Test 클래스에 @DirtiesContext 제거
   - [X] 테스트 실행시 @EnableJpaAuditing 적용되도록 변경
 
+## 3단계 
+  - [X] id를 받는 기본 생성자 삭제(Question, Answer)
+    - 테스트 코드에서만 Reflection API로 id부여 
+  - [ ] DeleteHistory를 생성하는 팩토리 메서드 생성

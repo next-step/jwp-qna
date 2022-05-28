@@ -42,11 +42,6 @@ public class Answer extends BaseAuditingEntity {
         this.deleted = deleted;
     }
 
-    Answer(Long id, User writer, Question question, String contents) {
-        this(writer,question,contents);
-        this.id = id;
-    }
-    
     public Answer(User writer, Question question, String contents) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();

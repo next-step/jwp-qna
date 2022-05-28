@@ -1,4 +1,4 @@
-package qna.assertions;
+package qna.util.assertions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

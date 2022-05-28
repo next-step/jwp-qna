@@ -1,10 +1,11 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.assertions.QnaAssertions.답변삭제여부_검증;
-import static qna.assertions.QnaAssertions.삭제불가_예외발생;
-import static qna.assertions.QnaAssertions.질문삭제여부_검증;
+import static qna.util.assertions.QnaAssertions.답변삭제여부_검증;
+import static qna.util.assertions.QnaAssertions.삭제불가_예외발생;
+import static qna.util.assertions.QnaAssertions.질문삭제여부_검증;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -20,10 +21,19 @@ public class QuestionTest {
     private Question question;
 
     @BeforeEach
-    void setUp(){
+    void setUp() throws Exception{
         javajigi = new User("javajigi", "password", "name", "javajigi@slipp.net");
         sanjigi = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
-        question = new Question(1L,"title1", "contents1").writeBy(javajigi);
+        question = createQuestionWithId(new Question("title1", "contents1").writeBy(javajigi),1L);
+    }
+
+    private Question createQuestionWithId(Question question,Long id) throws Exception{
+        Question newQuestion = new Question(question.getTitle(),question.getContents()).writeBy(question.getWriter());
+        Class<Question> questionClass = Question.class;
+        Field field = questionClass.getDeclaredField("id");
+        field.setAccessible(true);
+        field.set(newQuestion, id);
+        return newQuestion;
     }
 
     @Test
@@ -55,8 +65,8 @@ public class QuestionTest {
 
     @Test
     public void 질문자와_모든_답변자가_동일한경우_삭제가능() throws Exception {
-        Answer a1 = new Answer(1L,javajigi, question, "Answers Contents1");
-        Answer a2 = new Answer(2L, javajigi, question, "Answers Contents2");
+        Answer a1 = 질문_생성(1L,javajigi, question, "Answers Contents1");
+        Answer a2 = 질문_생성(2L, javajigi, question, "Answers Contents2");
         질문에_답변추가(a1);
         질문에_답변추가(a2);
 
@@ -71,6 +81,15 @@ public class QuestionTest {
                 new DeleteHistory(ContentType.ANSWER,a2.getId(),javajigi,LocalDateTime.now())
         );
         삭제히스토리_검증(expected,deleteHistories);
+    }
+
+    private Answer 질문_생성(Long id, User user, Question question, String contents) throws Exception{
+        Answer answer = new Answer(user, question, contents);
+        Class<Answer> answerClass = Answer.class;
+        Field field = answerClass.getDeclaredField("id");
+        field.setAccessible(true);
+        field.set(answer, id);
+        return answer;
     }
 
     @Test
