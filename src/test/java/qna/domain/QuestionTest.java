@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.useRepresentation;
 
 @DataJpaTest
 public class QuestionTest {
@@ -22,6 +23,9 @@ public class QuestionTest {
 
     @Autowired
     private AnswerRepository answerRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private Question question;
     private List<Answer> answers;
@@ -64,10 +68,14 @@ public class QuestionTest {
     }
 
     private List<Answer> pushAnswerIn(Question question) {
+        User savedUser = userRepository.save(UserTest.JAVAJIGI);
+        question.setWriter(savedUser);
         List<Answer> answers = new ArrayList<>();
         Answer answer = new Answer();
+        answer.setWriter(savedUser);
         answers.add(answer);
         Answer answer1 = new Answer();
+        answer1.setWriter(savedUser);
         answers.add(answer1);
         answer.toQuestion(question);
         answer1.toQuestion(question);
