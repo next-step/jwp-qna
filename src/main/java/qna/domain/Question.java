@@ -87,7 +87,7 @@ public class Question extends BaseEntity {
         validateForDelete(loginUser);
 
         for(Answer answer : answers) {
-            answer.delete();
+            answer.delete(loginUser);
         }
 
         this.deleted = true;
