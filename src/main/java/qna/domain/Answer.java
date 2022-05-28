@@ -104,7 +104,7 @@ public class Answer extends BaseTimeEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writer=" + writer.getId() +
-                ", question=" + question.toString() +
+                ", question=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
