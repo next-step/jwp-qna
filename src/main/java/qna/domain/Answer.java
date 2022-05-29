@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -94,10 +95,13 @@ public class Answer extends CreatedUpdatedDateEntity {
         this.deleted = state;
     }
 
-    public DeleteHistory remove() {
-        this.toQuestion(null);
-        this.setDeleted(DeletedType.YES);
-        return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter(), LocalDateTime.now());
+    public DeleteHistory remove(final User writer) throws CannotDeleteException {
+        if (Objects.equals(this.getWriter(), writer)) {
+            this.toQuestion(null);
+            this.setDeleted(DeletedType.YES);
+            return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter(), LocalDateTime.now());
+        }
+        throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 
     @Override

@@ -98,7 +98,7 @@ public class AnswersTest {
     @Test
     void compareUser() {
         Answers answers = new Answers(Collections.singletonList(AnswerTest.A1));
-        assertThat(answers.isDifferenceAnswerBy(AnswerTest.A1.getWriter())).isFalse();
-        assertThat(answers.isDifferenceAnswerBy(UserTest.SANJIGI)).isTrue();
+        assertThat(answers.isCompareAnswerUserBy(AnswerTest.A1.getWriter())).isFalse();
+        assertThat(answers.isCompareAnswerUserBy(UserTest.SANJIGI)).isTrue();
     }
 }

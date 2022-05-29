@@ -5,9 +5,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -78,9 +80,18 @@ public class AnswerTest {
 
     @DisplayName("삭제시 DeleteHistory 객체를 반환한다.")
     @Test
-    void remove() {
+    void remove() throws CannotDeleteException {
         User savedUser = userRepository.save(UserTest.JAVAJIGI);
         Answer savedAnswer = answerRepository.save(new Answer(savedUser, QuestionTest.Q1, "test content"));
-        assertThat(savedAnswer.remove()).isEqualTo(new DeleteHistory(ContentType.ANSWER,savedAnswer.getId(),savedUser, LocalDateTime.now()));
+        assertThat(savedAnswer.remove(savedUser)).isEqualTo(new DeleteHistory(ContentType.ANSWER,savedAnswer.getId(),savedUser, LocalDateTime.now()));
+    }
+
+    @DisplayName("삭제시 사용자가 다르면 에러를 발생한다.")
+    @Test
+    void removeDifferenceUser() {
+        User savedUser = userRepository.save(UserTest.JAVAJIGI);
+        Answer savedAnswer = answerRepository.save(new Answer(savedUser, QuestionTest.Q1, "test content"));
+        assertThatThrownBy(() -> savedAnswer.remove(UserTest.SANJIGI))
+                .isExactlyInstanceOf(CannotDeleteException.class);
     }
 }
