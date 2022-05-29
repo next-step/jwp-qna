@@ -95,7 +95,7 @@ public class Question extends Time {
         this.deleted = deleted;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
@@ -105,6 +105,8 @@ public class Question extends Time {
         }
 
         this.deleted = true;
+
+        return new DeleteHistories(this);
     }
 
     public List<Answer> getAnswers() {
