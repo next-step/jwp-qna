@@ -37,7 +37,7 @@ public class Answer extends BaseAuditingEntity {
     }
 
     Answer(User writer, Question question, String contents, boolean deleted) {
-        this(writer,question,contents);
+        this(writer, question, contents);
         this.deleted = deleted;
     }
 
@@ -60,7 +60,7 @@ public class Answer extends BaseAuditingEntity {
         this.deleted = true;
     }
 
-    private void verifyWriter(User loginUser){
+    private void verifyWriter(User loginUser) {
         if (!this.isOwner(loginUser)) {
             throw new UnAuthorizedException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
@@ -81,7 +81,7 @@ public class Answer extends BaseAuditingEntity {
     public void toQuestion(Question question) {
         this.question = question;
         List<Answer> answers = question.getAnswers();
-        if(!answers.contains(this)){
+        if (!answers.contains(this)) {
             answers.add(this);
         }
     }

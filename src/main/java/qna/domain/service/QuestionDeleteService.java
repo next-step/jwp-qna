@@ -13,7 +13,7 @@ import qna.exception.UnAuthorizedException;
 public class QuestionDeleteService {
     public List<DeleteHistory> deleteQuestionByLoginUser(Question question, User user) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        try{
+        try {
             question.delete(user);
             deleteHistories.add(DeleteHistoryFactory.createQuestionDeleteHistory(question));
             deleteHistories.addAll(deleteAnswers(question.getAnswers(), user));
