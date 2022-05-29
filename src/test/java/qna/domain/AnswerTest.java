@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import qna.CannotDeleteException;
@@ -15,11 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DataJpaTest(includeFilters = {@ComponentScan.Filter(value = {EnableJpaAuditing.class})})
 public class AnswerTest {
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private QuestionRepository questionRepository;
-    @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private TestEntityManager testEntityManager;
 
     private User JAVAJIGI;
     private Question Q1;
@@ -31,11 +30,10 @@ public class AnswerTest {
         Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
         A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
 
-        userRepository.save(JAVAJIGI);
-        questionRepository.save(Q1);
-        answerRepository.save(A1);
-
-        Q1.addAnswer(A1);
+        testEntityManager.persistAndFlush(JAVAJIGI);
+        testEntityManager.persistAndFlush(Q1);
+        testEntityManager.persistAndFlush(A1);
+        testEntityManager.clear();
     }
 
     @Test

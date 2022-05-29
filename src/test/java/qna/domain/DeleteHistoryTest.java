@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,13 +14,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 public class DeleteHistoryTest {
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private QuestionRepository questionRepository;
-    @Autowired
-    private AnswerRepository answerRepository;
-    @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
+
+    @Autowired
+    private TestEntityManager testEntityManager;
 
     private User JAVAJIGI;
     private Question Q1;
@@ -31,11 +29,10 @@ public class DeleteHistoryTest {
         Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
         A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
 
-        userRepository.save(JAVAJIGI);
-        questionRepository.save(Q1);
-        answerRepository.save(A1);
-
-        Q1.addAnswer(A1);
+        testEntityManager.persistAndFlush(JAVAJIGI);
+        testEntityManager.persistAndFlush(Q1);
+        testEntityManager.persistAndFlush(A1);
+        testEntityManager.clear();
     }
 
     @Test

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import qna.NotFoundException;
@@ -15,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class UserTest {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private TestEntityManager testEntityManager;
 
     private User JAVAJIGI;
     private User SANJIGI;
@@ -24,8 +27,9 @@ public class UserTest {
         JAVAJIGI = new User(null, "javajigi", "password", "name", "javajigi@slipp.net");
         SANJIGI = new User(null, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
-        userRepository.save(JAVAJIGI);
-        userRepository.save(SANJIGI);
+        testEntityManager.persistAndFlush(JAVAJIGI);
+        testEntityManager.persistAndFlush(SANJIGI);
+        testEntityManager.clear();
     }
 
     @Test
