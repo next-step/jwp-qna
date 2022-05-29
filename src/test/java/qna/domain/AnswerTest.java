@@ -42,21 +42,6 @@ public class AnswerTest {
     }
 
     @Test
-    void 답변의_삭제_여부를_설정할_수_있어야_한다() {
-        // given
-        final boolean original = A1.isDeleted();
-
-        // when
-        A1.setDeleted(!A1.isDeleted());
-
-        // then
-        assertThat(A1.isDeleted()).isNotEqualTo(original);
-
-        // finally
-        A1.setDeleted(original);
-    }
-
-    @Test
     void 작성자가_답변을_삭제하면_답변이_삭제된_상태가_되어야_하고_삭제이력이_반환되어야_한다() throws Exception {
         // given
         final Answer answer = new Answer(1L, writer, question, "contents");
