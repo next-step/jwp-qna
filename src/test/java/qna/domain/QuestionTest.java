@@ -37,7 +37,7 @@ public class QuestionTest {
 
     @Test
     void 로그인유저와_질문자가_동일한경우_삭제가능() throws CannotDeleteException{
-        List<DeleteHistory> deleteHistories = question.deleteByUser(javajigi);
+        List<DeleteHistory> deleteHistories = 로그인유저와_질문자가_동일한경우_삭제시도();
 
         질문삭제여부_검증(question);
         List<DeleteHistory> expected = Arrays.asList(
@@ -48,14 +48,14 @@ public class QuestionTest {
     @Test
     void 로그인유저와_질문자가_다른경우_삭제불가(){
         ThrowingCallable tryDelete = () -> {
-            question.deleteByUser(sanjigi);
+            로그인유저와_질문자가_다른경우_삭제시도();
         };
         삭제불가_예외발생(tryDelete);
     }
 
     @Test
     public void 질문에_달린_답변이_없는경우_삭제가능() throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = question.deleteByUser(javajigi);
+        List<DeleteHistory> deleteHistories = 로그인유저와_질문자가_동일한경우_삭제시도();
 
         질문에_답변이없는지_확인();
         질문삭제여부_검증(question);
@@ -72,7 +72,7 @@ public class QuestionTest {
         질문에_답변추가(a1);
         질문에_답변추가(a2);
 
-        List<DeleteHistory> deleteHistories = question.deleteByUser(javajigi);
+        List<DeleteHistory> deleteHistories = 로그인유저와_질문자가_동일한경우_삭제시도();
 
         질문삭제여부_검증(question);
         답변삭제여부_검증(a1);
@@ -93,9 +93,23 @@ public class QuestionTest {
         질문에_답변추가(a2);
 
         ThrowingCallable tryDelete = () -> {
-            question.deleteByUser(javajigi);
+            로그인유저와_질문자가_동일한경우_삭제시도();
         };
         삭제불가_예외발생(tryDelete);
+    }
+
+
+
+    private List<DeleteHistory> 로그인유저와_질문자가_동일한경우_삭제시도() throws CannotDeleteException{
+        return question.deleteByUser(javajigi);
+    }
+
+    private List<DeleteHistory> 로그인유저와_질문자가_다른경우_삭제시도() throws CannotDeleteException{
+        return question.deleteByUser(sanjigi);
+    }
+
+    private void 질문에_답변이없는지_확인() {
+        assertThat(question.getAnswers().size()).isEqualTo(0);
     }
 
     private Answer 답변_생성(Long id, User user, Question question, String contents) throws Exception{
@@ -105,10 +119,6 @@ public class QuestionTest {
         field.setAccessible(true);
         field.set(answer, id);
         return answer;
-    }
-
-    private void 질문에_답변이없는지_확인() {
-        assertThat(question.getAnswers().size()).isEqualTo(0);
     }
 
     private void 질문에_답변추가(Answer answer){
