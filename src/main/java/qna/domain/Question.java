@@ -79,7 +79,7 @@ public class Question extends BaseTimeEntity {
                 id,
                 writer,
                 LocalDateTime.now()));
-        deleteHistories.addAll(answers.delete());
+        deleteHistories.addAll(answers.delete(writer));
         return deleteHistories;
     }
 

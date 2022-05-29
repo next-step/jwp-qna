@@ -1,12 +1,12 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
@@ -29,14 +29,10 @@ public class Answers {
                 .allMatch(answer -> answer.isOwner(writer));
     }
 
-    public List<DeleteHistory> delete() {
+    public List<DeleteHistory> delete(final User writer) throws CannotDeleteException {
         final List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (final Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER,
-                    answer.getId(),
-                    answer.getWriter(),
-                    LocalDateTime.now()));
+            deleteHistories.add(answer.delete(writer));
         }
         return deleteHistories;
     }

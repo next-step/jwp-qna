@@ -44,7 +44,7 @@ class AnswersTest {
     }
 
     @Test
-    void delete_호출_시_모든_답변들이_삭제되어야_한다() {
+    void delete_호출_시_모든_답변들이_삭제되어야_한다() throws Exception {
         // given
         final Answer answer1 = new Answer(1L, writer, question, "contents");
         final Answer answer2 = new Answer(2L, writer, question, "contents");
@@ -56,7 +56,7 @@ class AnswersTest {
         answers.add(answer3);
 
         // when
-        final List<DeleteHistory> deleteHistories = answers.delete();
+        final List<DeleteHistory> deleteHistories = answers.delete(writer);
 
         // then
         assertThat(answer1.isDeleted() && answer2.isDeleted() && answer3.isDeleted()).isTrue();
