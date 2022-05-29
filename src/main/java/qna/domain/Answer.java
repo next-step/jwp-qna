@@ -87,23 +87,23 @@ public class Answer extends BaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         Answer answer = (Answer) o;
         return deleted == answer.deleted
-                && id.equals(answer.id)
-                && writerId.equals(answer.writerId)
-                && questionId.equals(answer.questionId)
-                && contents.equals(answer.contents);
+                && Objects.equals(id, answer.id)
+                && Objects.equals(writer, answer.writer)
+                && Objects.equals(question, answer.question)
+                && Objects.equals(contents, answer.contents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, writerId, questionId, contents, deleted);
+        return Objects.hash(id, writer, question, contents, deleted);
     }
 
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
