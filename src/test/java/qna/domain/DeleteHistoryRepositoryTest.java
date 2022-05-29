@@ -26,7 +26,7 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("DeleteHistory 저장")
     @Test
     void save() {
-        final DeleteHistory expected = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, 1L, deleteBy, null));
+        final DeleteHistory expected = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, 1L, deleteBy));
 
         final Optional<DeleteHistory> actual = deleteHistoryRepository.findById(expected.getId());
 

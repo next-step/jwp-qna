@@ -3,8 +3,6 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -26,10 +24,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(fetch = FetchType.LAZY,
-            mappedBy = "question",
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    List<Answer> answers = new ArrayList<>();
+    @Embedded
+    Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -57,9 +53,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if (!answers.contains(answer)) {
-            answers.add(answer);
-        }
+        answers.addAnswer(answer);
         answer.toQuestion(this);
     }
 
@@ -76,10 +70,16 @@ public class Question extends BaseEntity {
     }
 
     public void delete(User loginUser) {
-        if(!writer.equals(loginUser)) {
+        validateOwner(loginUser);
+        answers.deleteAll(loginUser);
+
+        this.deleted = true;
+    }
+
+    private void validateOwner(User loginUser) {
+        if(!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        this.deleted = true;
     }
 
     @Override
