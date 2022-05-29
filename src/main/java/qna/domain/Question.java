@@ -84,15 +84,16 @@ public class Question extends BaseEntity {
     }
 
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         if(isDeleted()) {
-            return new ArrayList<>();
+            return deleteHistories;
         }
 
         validateForDelete(loginUser);
-
-        List<DeleteHistory> deleteHistories = answers.deleteAll(loginUser);
         this.deleted = true;
+
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
+        deleteHistories.addAll(answers.deleteAll(loginUser));
 
         return deleteHistories;
     }
