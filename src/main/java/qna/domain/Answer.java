@@ -2,7 +2,7 @@ package qna.domain;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-
+import org.hibernate.Hibernate;
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -89,5 +89,18 @@ public class Answer extends BaseEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Answer answer = (Answer) o;
+        return id != null && Objects.equals(id, answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

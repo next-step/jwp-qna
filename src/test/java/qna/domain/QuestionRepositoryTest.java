@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
-public class QuestionRepositoryTest {
+class QuestionRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 
