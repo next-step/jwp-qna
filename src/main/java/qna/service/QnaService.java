@@ -9,6 +9,7 @@ import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.User;
+import qna.domain.service.QuestionDeleteService;
 import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
 
@@ -18,6 +19,7 @@ public class QnaService {
 
     private QuestionRepository questionRepository;
     private DeleteHistoryService deleteHistoryService;
+    private QuestionDeleteService questionDeleteService = new QuestionDeleteService();
 
     public QnaService(QuestionRepository questionRepository,
                       DeleteHistoryService deleteHistoryService) {
@@ -34,7 +36,7 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-        List<DeleteHistory> deleteHistories = question.deleteByUser(loginUser);
+        List<DeleteHistory> deleteHistories = questionDeleteService.deleteQuestionByLoginUser(question,loginUser);
         deleteHistoryService.saveAll(deleteHistories);
     }
 }

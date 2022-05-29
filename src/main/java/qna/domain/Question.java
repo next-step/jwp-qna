@@ -48,35 +48,15 @@ public class Question extends BaseAuditingEntity {
         this.contents = contents;
     }
 
-    public List<DeleteHistory> deleteByUser(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        try{
-            deleteHistories.add(this.delete(loginUser));
-            deleteHistories.addAll(this.deleteAnswers(loginUser));
-        } catch (UnAuthorizedException e) {
-            throw new CannotDeleteException(e.getMessage(), e);
-        }
-        return deleteHistories;
-    }
-
-    private DeleteHistory delete(User loginUser)  {
+    public void delete(User loginUser)  {
         verifyWriter(loginUser);
         this.deleted = true;
-        return DeleteHistoryFactory.createQuestionDeleteHistory(this);
     }
 
     private void verifyWriter(User loginUser) {
         if (!this.isOwner(loginUser)) {
             throw new UnAuthorizedException("질문을 삭제할 권한이 없습니다.");
         }
-    }
-
-    private List<DeleteHistory> deleteAnswers(User loginUser) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.delete(loginUser));
-        }
-        return deleteHistories;
     }
 
     public Long getId() {

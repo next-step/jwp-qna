@@ -55,10 +55,9 @@ public class Answer extends BaseAuditingEntity {
         this.contents = contents;
     }
 
-    DeleteHistory delete(User loginUser) {
+    public void delete(User loginUser) {
         verifyWriter(loginUser);
         this.deleted = true;
-        return DeleteHistoryFactory.createAnswerDeleteHistory(this);
     }
 
     private void verifyWriter(User loginUser){

@@ -72,4 +72,4 @@
   - [X] id를 받는 기본 생성자 삭제(Question, Answer)
     - 테스트 코드에서만 Reflection API로 id부여 
   - [X] DeleteHistoryFactory 작성
-  - 
+  - [X] QuestionDeleteService 작성 및 테스트 리팩토링

@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import qna.domain.service.QuestionDeleteService;
 import qna.util.annotation.DataJpaTestIncludeAuditing;
 
 @DataJpaTestIncludeAuditing
@@ -56,7 +57,8 @@ public class QuestionRepositoryTest {
     void findByIdAndDeletedFalse_테스트() throws Exception{
         Question managedQuestion1 = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi));
         Question managedQuestion2 = questionRepository.save(new Question("title2", "contents2").writeBy(sanjigi));
-        managedQuestion1.deleteByUser(javajigi);
+        QuestionDeleteService questionDeleteService = new QuestionDeleteService();
+        questionDeleteService.deleteQuestionByLoginUser(managedQuestion1,javajigi);
         Optional<Question> q1 = questionRepository.findByIdAndDeletedFalse(managedQuestion1.getId());
         Optional<Question> q2 = questionRepository.findByIdAndDeletedFalse(managedQuestion2.getId());
         assertThat(q1.isPresent()).isFalse();
