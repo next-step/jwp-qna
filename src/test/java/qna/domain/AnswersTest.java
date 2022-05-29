@@ -74,7 +74,7 @@ public class AnswersTest {
         Answers answers = new Answers(Arrays.asList(AnswerTest.A1, AnswerTest.A2));
         assertThatExceptionOfType(CannotDeleteException.class)
                 .isThrownBy(() -> answers.remove(UserTest.JAVAJIGI))
-                .withMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+                .withMessage("답변 사용자와 달라서 삭제할 수 없습니다.");
     }
 
     @DisplayName("삭제시 질문자와 답변자가 같으면 DeleteHistories 객체를 반환한다.")

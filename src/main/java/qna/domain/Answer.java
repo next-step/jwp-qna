@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Where(clause = "deleted='NO'")
 public class Answer extends CreatedUpdatedDateEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -97,11 +99,10 @@ public class Answer extends CreatedUpdatedDateEntity {
 
     public DeleteHistory delete(final User writer) throws CannotDeleteException {
         if (Objects.equals(this.getWriter(), writer)) {
-            this.toQuestion(null);
             this.setDeleted(DeletedType.YES);
             return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter(), LocalDateTime.now());
         }
-        throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        throw new CannotDeleteException("답변 사용자와 달라서 삭제할 수 없습니다.");
     }
 
     @Override
