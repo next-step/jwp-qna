@@ -6,7 +6,6 @@ import static qna.util.assertions.QnaAssertions.삭제불가_예외발생;
 import static qna.util.assertions.QnaAssertions.질문삭제여부_검증;
 
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -68,8 +67,8 @@ public class QuestionTest {
 
     @Test
     public void 질문자와_모든_답변자가_동일한경우_삭제가능() throws Exception {
-        Answer a1 = 질문_생성(1L,javajigi, question, "Answers Contents1");
-        Answer a2 = 질문_생성(2L, javajigi, question, "Answers Contents2");
+        Answer a1 = 답변_생성(1L,javajigi, question, "Answers Contents1");
+        Answer a2 = 답변_생성(2L, javajigi, question, "Answers Contents2");
         질문에_답변추가(a1);
         질문에_답변추가(a2);
 
@@ -86,26 +85,26 @@ public class QuestionTest {
         삭제히스토리_검증(expected,deleteHistories);
     }
 
-    private Answer 질문_생성(Long id, User user, Question question, String contents) throws Exception{
+    @Test
+    public void 다른_사람이_쓴_답변이_있는경우_삭제불가() throws Exception {
+        Answer a1 = 답변_생성(1L,javajigi, question, "Answers Contents1");
+        Answer a2 = 답변_생성(2L, sanjigi, question, "Answers Contents2");
+        질문에_답변추가(a1);
+        질문에_답변추가(a2);
+
+        ThrowingCallable tryDelete = () -> {
+            question.deleteByUser(javajigi);
+        };
+        삭제불가_예외발생(tryDelete);
+    }
+
+    private Answer 답변_생성(Long id, User user, Question question, String contents) throws Exception{
         Answer answer = new Answer(user, question, contents);
         Class<Answer> answerClass = Answer.class;
         Field field = answerClass.getDeclaredField("id");
         field.setAccessible(true);
         field.set(answer, id);
         return answer;
-    }
-
-    @Test
-    public void 다른_사람이_쓴_답변이_있는경우_삭제불가() throws Exception {
-        Answer a1 = new Answer(javajigi, question, "Answers Contents1");
-        Answer a2 = new Answer(sanjigi, question, "Answers Contents2");
-        질문에_답변추가(a1);
-        질문에_답변추가(a2);
-
-        ThrowingCallable tryDelete = () -> {
-            question.deleteByUser(sanjigi);
-        };
-        삭제불가_예외발생(tryDelete);
     }
 
     private void 질문에_답변이없는지_확인() {
