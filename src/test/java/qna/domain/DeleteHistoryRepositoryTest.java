@@ -20,14 +20,11 @@ class DeleteHistoryRepositoryTest {
 	@Autowired
 	DeleteHistoryRepository deleteHistoryRepository;
 
-	@Autowired
-	QuestionRepository questionRepository;
-
-	@Autowired
-	UserRepository userRepository;
-
 	@BeforeEach
-	void init() {
+	void init(
+		@Autowired final UserRepository userRepository,
+		@Autowired final QuestionRepository questionRepository
+	) {
 		javajigi = userRepository.save(UserTest.JAVAJIGI);
 		sanjigi = userRepository.save(UserTest.SANJIGI);
 		question = questionRepository.save(QuestionTest.Q1);

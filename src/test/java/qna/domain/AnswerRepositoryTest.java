@@ -22,14 +22,11 @@ public class AnswerRepositoryTest {
 	@Autowired
 	private AnswerRepository answerRepository;
 
-	@Autowired
-	private QuestionRepository questionRepository;
-
-	@Autowired
-	private UserRepository userRepository;
-
 	@BeforeEach
-	void init() {
+	void init(
+		@Autowired final UserRepository userRepository,
+		@Autowired final QuestionRepository questionRepository
+	) {
 		javajigi = userRepository.save(UserTest.JAVAJIGI);
 		sanjigi = userRepository.save(UserTest.SANJIGI);
 		question = questionRepository.save(QuestionTest.Q1);
@@ -89,8 +86,12 @@ public class AnswerRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("Question 저장")
-	void saveWidthQuestion() {
+	@DisplayName("Answer 수정")
+	void updateAnswer() {
+		Answer expected = answerRepository.save(expected1);
+		expected.setContents("Answer Updated");
+		Answer actual = answerRepository.findById(expected.getId()).get();
 
+		assertThat(actual.getContents()).isEqualTo("Answer Updated");
 	}
 }
