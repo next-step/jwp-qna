@@ -19,7 +19,6 @@
   - [ ] User : Question = 1:N 단방향 관계로 변경
   - [ ] User : DeleteHistory = 1:N 단방향 관계로 변경
 - Question
-  - [ ] Question : User = N:1 단방향 관계로 변경
-  - [ ] Question : Answer = N:1 단방향 관계로 변경
+  - [x] Question : User = N:1 단방향 관계로 변경
 - DeleteHistory
   - DeleteHistory : User = N:1 단방향 관계로 변경
