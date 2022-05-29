@@ -24,8 +24,10 @@ public class QuestionTest {
         Answer answer = new Answer(UserTest.JAVAJIGI, Q2, "new answer");
         Q2.addAnswer(answer);
 
-        assertThat(answer.getQuestionId())
-                .isEqualTo(Q2.getId());
+        assertThat(answer.getQuestion())
+                .isEqualTo(Q2);
+        assertThat(Q2.getAnswers())
+                .containsExactly(answer);
     }
 
 }

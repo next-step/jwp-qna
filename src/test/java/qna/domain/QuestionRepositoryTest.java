@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -19,26 +18,42 @@ class QuestionRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
+    private User savedWriter;
+    private Question savedQuestion;
+
+    @BeforeEach
+    void setUp() {
+        savedWriter = userRepository.save(new User("user", "1234", "username", "test@gmail.com"));
+        savedQuestion = questionRepository.save(new Question("question title", "question content").writeBy(savedWriter));
+    }
+
     @AfterEach
     void clear() {
         questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
     @DisplayName("질문을 저장한다.")
     void save() {
-        Question savedQuestion = questionRepository.save(Q1);
-        Question foundQuestion = questionRepository.getOne(savedQuestion.getId());
-
         assertThat(savedQuestion)
                 .isNotNull()
-                .isEqualTo(foundQuestion);
+                .satisfies(question -> {
+                    assertThat(question.getTitle())
+                            .isEqualTo("question title");
+                    assertThat(question.getContents())
+                            .isEqualTo("question content");
+                    assertThat(question.getWriter())
+                            .isEqualTo(savedWriter);
+                });
     }
 
     @Test
     @DisplayName("질문 Id로 조회한다.")
     void findByIdAndDeletedFalse() {
-        Question savedQuestion = questionRepository.save(Q1);
         Optional<Question> foundQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
 
         assertThat(foundQuestion)
@@ -49,11 +64,11 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("저장된 전체 질문들을 조회한다.")
     void findByDeletedFalse() {
-        Question question1 = questionRepository.save(Q1);
-        Question question2 = questionRepository.save(Q2);
-        List<Question> questions = questionRepository.findByDeletedFalse();
+        Question savedQuestion2 = questionRepository.save(new Question("question2 title", "question2 content").writeBy(savedWriter));
+        Question savedQuestion3 = questionRepository.save(new Question("question3 title", "question3 content").writeBy(savedWriter));
 
+        List<Question> questions = questionRepository.findByDeletedFalse();
         assertThat(questions)
-                .containsExactly(question1, question2);
+                .containsExactly(savedQuestion, savedQuestion2, savedQuestion3);
     }
 }
