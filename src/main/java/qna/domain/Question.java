@@ -113,18 +113,4 @@ public class Question {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", contents='" + contents + '\'' +
-            ", writer=" + writer +
-            ", deleted=" + deleted +
-            ", createdAt=" + createdAt +
-            ", updatedAt=" + updatedAt +
-            ", answers=" + answers +
-            '}';
-    }
 }

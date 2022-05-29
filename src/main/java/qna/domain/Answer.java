@@ -16,6 +16,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import qna.NotFoundException;
@@ -27,20 +28,27 @@ public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
+
     @Lob
     @Column(name = "contents")
     private String contents;
+
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createAt;
+
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -88,6 +96,10 @@ public class Answer {
         return question;
     }
 
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
     public String getContents() {
         return contents;
     }
@@ -106,18 +118,5 @@ public class Answer {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
-    }
-
-    @Override
-    public String toString() {
-        return "Answer{" +
-            "id=" + id +
-            ", writer=" + writer +
-            ", question=" + question +
-            ", contents='" + contents + '\'' +
-            ", deleted=" + deleted +
-            ", createAt=" + createAt +
-            ", updatedAt=" + updatedAt +
-            '}';
     }
 }
