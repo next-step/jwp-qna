@@ -90,9 +90,6 @@ public class Answer extends BaseEntity {
 
     // 연관 관계 편의 메서드
     private void toQuestion(Question question) {
-        if (this.question != null) {
-            question.remove(this);
-        }
         this.question = question;
         question.add(this);
     }

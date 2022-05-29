@@ -4,7 +4,6 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
@@ -23,8 +22,8 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-    @OneToMany(fetch = LAZY, mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
@@ -75,27 +74,14 @@ public class Question extends BaseEntity {
     }
 
     public List<DeleteHistory> delete(User loginUser) {
-        validateDeletion(loginUser);
+        validateDeletionPermission(loginUser);
         this.deleted = true;
 
         DeleteHistories deleteHistories = new DeleteHistories();
-        deleteAfter(deleteHistories, loginUser);
+        deleteHistories.addHistory(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
 
+        answers.deleteAll(deleteHistories, loginUser);
         return deleteHistories.elements();
-    }
-
-    private void deleteAfter(DeleteHistories deleteHistories, User loginUser) {
-        DeleteHistory questionDeleteHistory = new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
-        deleteHistories.addHistory(questionDeleteHistory);
-
-        for (Answer answer : getAnswers()) {
-            deleteHistories.addHistory(answer.delete(loginUser));
-        }
-    }
-
-    private void validateDeletion(User loginUser) {
-        validateDeletionPermission(loginUser);
-        validateMyAnswers(loginUser);
     }
 
     private void validateDeletionPermission(User loginUser) {
@@ -104,25 +90,12 @@ public class Question extends BaseEntity {
         }
     }
 
-    private void validateMyAnswers(User loginUser) {
-        boolean owner  = answers.stream()
-                .allMatch(answer -> answer.isOwner(loginUser));
-
-        if (!owner) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
-    }
-
-    public void remove(Answer answer) {
-        answers.remove(answer);
-    }
-
     public void add(Answer answer) {
         answers.add(answer);
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.elements();
     }
 
     @Override

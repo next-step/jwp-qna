@@ -73,19 +73,6 @@ public class QuestionTest {
     }
 
     @Test
-    void 다른사람이_작성한_답변을_삭제할_경우_예외가_발생한다() {
-        // given
-        User writer = new User(2L, "user1", "password", "name", "user1@com");
-        new Answer(writer, question, "Answers Contents1");
-
-        User loginUser = new User(1L, "user1", "password", "name", "user1@com");
-        // when & then
-        assertThatThrownBy(() ->
-                question.delete(loginUser)
-        ).isInstanceOf(CannotDeleteException.class);
-    }
-
-    @Test
     void 질문을_삭제할_때_모든_답변도_삭제된다() {
         // given
         User user = new User(1L, "user1", "password", "name", "user1@com");
