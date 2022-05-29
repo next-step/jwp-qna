@@ -69,14 +69,14 @@ class AnswerRepositoryTest {
     void findTest02() {
         Answer answer1 = new Answer(testUser, testQuestion, "컴퓨터 언어 입니다.");
         Answer expected = answerRepository.save(answer1);
-        List<Answer> results = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestionId());
+        List<Answer> results = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestion().getId());
         assertThat(results)
                 .hasSize(1)
                 .contains(expected);
 
         Answer answer2 = new Answer(testUser, testQuestion, "객체지향 언어 입니다.");
         Answer expected2 = answerRepository.save(answer2);
-        results = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestionId());
+        results = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestion().getId());
         assertThat(results)
                 .hasSize(2)
                 .contains(expected, expected2);
