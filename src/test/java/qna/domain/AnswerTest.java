@@ -37,13 +37,13 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("입력받은 질문 Id로 변경한다.")
+    @DisplayName("입력받은 질문에 답변을 추가한다.")
     void toQuestion() {
         Question question = new Question(10L, "Test Question", "Test Question Contents");
         A1.toQuestion(question);
 
-        assertThat(A1.getQuestionId())
-                .isEqualTo(question.getId())
-                .isEqualTo(10L);
+        assertThat(A1.getQuestion())
+                .isEqualTo(question)
+                .hasFieldOrPropertyWithValue("id", 10L);
     }
 }
