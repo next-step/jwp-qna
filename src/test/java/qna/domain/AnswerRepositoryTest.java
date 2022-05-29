@@ -18,17 +18,30 @@ import static org.junit.jupiter.api.Assertions.*;
 class AnswerRepositoryTest {
 
     @Autowired
+    UserRepository userRepository;
+
+    @Autowired
     AnswerRepository answerRepository;
+
+    @Autowired
+    QuestionRepository questionRepository;
+
+    User testUser;
+
+    Question testQuestion;
 
     @BeforeEach
     void before() {
-        answerRepository.deleteAll();
+        testUser = new User("test", "pw", "테스트유저", "a@naver.com");
+        userRepository.save(testUser);
+        testQuestion = new Question("테스트질문", "java가 뭐에요?");
+        questionRepository.save(testQuestion);
     }
 
     @DisplayName("Answer 저장 테스트")
     @Test
     void saveWithBaseTimeEntityTest() {
-        Answer expected = AnswerTest.A1;
+        Answer expected = new Answer(testUser, testQuestion, "컴퓨터 언어 입니다.");
         Answer result = answerRepository.save(expected);
 
         assertAll(
@@ -42,7 +55,7 @@ class AnswerRepositoryTest {
     @DisplayName("Answer 조회 테스트 / Id로 조회")
     @Test
     void findTest01() {
-        Answer expected = answerRepository.save(AnswerTest.A1);
+        Answer expected = answerRepository.save(new Answer(testUser, testQuestion, "컴퓨터 언어 입니다."));
         Optional<Answer> resultOptional = answerRepository.findByIdAndDeletedFalse(expected.getId());
         assertThat(resultOptional).isNotEmpty();
 
@@ -54,13 +67,15 @@ class AnswerRepositoryTest {
     @DisplayName("Answer 조회 테스트 / QuestionId로 조회")
     @Test
     void findTest02() {
-        Answer expected = answerRepository.save(AnswerTest.A1);
+        Answer answer1 = new Answer(testUser, testQuestion, "컴퓨터 언어 입니다.");
+        Answer expected = answerRepository.save(answer1);
         List<Answer> results = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestionId());
         assertThat(results)
                 .hasSize(1)
                 .contains(expected);
 
-        Answer expected2 = answerRepository.save(AnswerTest.A2);
+        Answer answer2 = new Answer(testUser, testQuestion, "객체지향 언어 입니다.");
+        Answer expected2 = answerRepository.save(answer2);
         results = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestionId());
         assertThat(results)
                 .hasSize(2)
