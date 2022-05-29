@@ -34,11 +34,19 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User remover, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User remover, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.remover = remover;
         this.createDate = createDate;
+    }
+
+    public static DeleteHistory ofAnswer(Long answerId, User remover) {
+        return new DeleteHistory(ContentType.ANSWER, answerId, remover, LocalDateTime.now());
+    }
+
+    public static DeleteHistory ofQuestion(Long questionId, User remover) {
+        return new DeleteHistory(ContentType.QUESTION, questionId, remover, LocalDateTime.now());
     }
 
     @Override
@@ -50,15 +58,12 @@ public class DeleteHistory {
             return false;
         }
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(remover, that.remover);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, remover.getId());
+        return Objects.hash(id);
     }
 
     @Override
@@ -67,7 +72,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + remover.getId() +
+                ", remover=" + remover +
                 ", createDate=" + createDate +
                 '}';
     }

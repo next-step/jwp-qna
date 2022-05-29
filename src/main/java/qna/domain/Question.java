@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -10,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
@@ -26,6 +28,7 @@ public class Question extends BaseTimeEntity {
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -50,6 +53,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -57,40 +61,22 @@ public class Question extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public User getWriter() {
-        return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        validateOwner(loginUser);
+        List<DeleteHistory> deleteHistories = answers.deleteAll(loginUser);
+        deleteHistories.add(DeleteHistory.ofQuestion(id, loginUser));
+        this.deleted = true;
+        return deleteHistories;
+    }
+
+    private void validateOwner(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     @Override
@@ -99,7 +85,7 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writer.getId() +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }

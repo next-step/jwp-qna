@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -42,6 +43,14 @@ public class Answer extends BaseTimeEntity {
     public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
+        validate(writer, question);
+
+        this.writer = writer;
+        this.question = question;
+        this.contents = contents;
+    }
+
+    private void validate(User writer, Question question) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -49,10 +58,6 @@ public class Answer extends BaseTimeEntity {
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
-
-        this.writer = writer;
-        this.question = question;
-        this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
@@ -67,47 +72,31 @@ public class Answer extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getWriter() {
-        return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     public Question getQuestion() {
         return question;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        validateOwner(loginUser);
+        this.deleted = true;
+        return DeleteHistory.ofAnswer(id, loginUser);
+    }
+
+    private void validateOwner(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writer.getId() +
+                ", writer=" + writer +
                 ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +

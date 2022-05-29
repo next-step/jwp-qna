@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -26,15 +27,13 @@ public class AnswerRepositoryTest {
         Answer actual = answerRepository.save(expected);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriter().getId()).isEqualTo(expected.getWriter().getId()),
                 () -> assertThat(actual.getQuestion().getId()).isEqualTo(expected.getQuestion().getId()),
-                () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
                 () -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted())
         );
     }
 
     @Test
-    void 질문_아이디로_삭제_되지_않은_답변_조회() {
+    void 질문_아이디로_삭제_되지_않은_답변_조회() throws CannotDeleteException {
         User user = userRepository.save(UserTest.JAVAJIGI);
         Question question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
 
@@ -43,7 +42,7 @@ public class AnswerRepositoryTest {
         Answer notDeletedAnswer = answerRepository.save(
                 new Answer(user, question, "Answers Contents2"));
 
-        deletedAnswer.setDeleted(true);
+        deletedAnswer.delete(user);
 
         List<Answer> foundAnswers = answerRepository.findByQuestionIdAndDeletedFalse(
                 deletedAnswer.getQuestion().getId());

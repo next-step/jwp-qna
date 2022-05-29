@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -26,36 +27,33 @@ class QuestionRepositoryTest {
 
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
-                () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
-                () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
-                () -> assertThat(actual.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted())
         );
     }
 
     @Test
-    void 삭제_되지_않은_질문목록_조회() {
+    void 삭제_되지_않은_질문목록_조회() throws CannotDeleteException {
         User user = userRepository.save(UserTest.SANJIGI);
         Question deletedQuestion = questionRepository.save(
                 new Question("title1", "contents1").writeBy(user));
         Question notDeletedQuestion = questionRepository.save(
                 new Question("title2", "contents2").writeBy(user));
 
-        deletedQuestion.setDeleted(true);
+        deletedQuestion.delete(user);
 
         List<Question> foundQuestions = questionRepository.findByDeletedFalse();
         assertThat(foundQuestions).containsExactly(notDeletedQuestion);
     }
 
     @Test
-    void 아이디로_삭제_되지_않은_질문_조회() {
+    void 아이디로_삭제_되지_않은_질문_조회() throws CannotDeleteException {
         User user = userRepository.save(UserTest.SANJIGI);
         Question deletedQuestion = questionRepository.save(
                 new Question("title1", "contents1").writeBy(user));
         Question notDeletedQuestion = questionRepository.save(
                 new Question("title2", "contents2").writeBy(user));
 
-        deletedQuestion.setDeleted(true);
+        deletedQuestion.delete(user);
 
         Optional<Question> foundDeletedQuestion = questionRepository.findByIdAndDeletedFalse(deletedQuestion.getId());
         Optional<Question> foundNotDeletedQuestion = questionRepository.findByIdAndDeletedFalse(
