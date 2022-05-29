@@ -83,7 +83,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) {
         validateForDelete(loginUser);
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
@@ -96,7 +96,7 @@ public class Question extends BaseEntity {
         return deleteHistories;
     }
 
-    private void validateForDelete(User loginUser) throws CannotDeleteException {
+    private void validateForDelete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }

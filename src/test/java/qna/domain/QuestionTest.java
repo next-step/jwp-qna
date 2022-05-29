@@ -23,7 +23,7 @@ public class QuestionTest {
 
     @DisplayName("Question 객체 delete 테스트")
     @Test
-    void deleteQuestion() throws CannotDeleteException {
+    void deleteQuestion() {
         Question question = new Question("title3", "contents3");
         User writer = new User("onepunch", "abc", "name", "abc@gmail.com");
         question.writeBy(writer);

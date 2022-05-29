@@ -27,8 +27,8 @@ public class AnswerTest {
 
     @DisplayName("Answer 객체 delete 테스트")
     @Test
-    void deleteAnswer() throws CannotDeleteException {
-        User writer = new User(30L, "onepunch","abcd", "ho9", "abc@gmail.com");
+    void deleteAnswer() {
+        User writer = new User(30L, "onepunch", "abcd", "ho9", "abc@gmail.com");
         Answer answer = new Answer(writer, QuestionTest.Q1, "ABC");
         answer.delete(writer, LocalDateTime.now());
 
@@ -38,9 +38,9 @@ public class AnswerTest {
     @DisplayName("Answer 객체 delete 를 writer 와 다른 유저가 동작시 Exception 발생 확인")
     @Test
     void deleteAnswerByOtherUser() {
-        User writer = new User(30L, "onepunch","abcd", "ho9", "abc@gmail.com");
+        User writer = new User(30L, "onepunch", "abcd", "ho9", "abc@gmail.com");
         Answer answer = new Answer(writer, QuestionTest.Q1, "ABC");
-        User other = new User(31L, "Jonson","vill", "ho8", "abbb@gmail.com");
+        User other = new User(31L, "Jonson", "vill", "ho8", "abbb@gmail.com");
 
         assertThatThrownBy(() -> answer.delete(other, LocalDateTime.now())).isInstanceOf(CannotDeleteException.class);
     }

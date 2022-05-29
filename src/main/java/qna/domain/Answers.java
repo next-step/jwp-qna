@@ -23,7 +23,7 @@ public class Answers {
         return answers.size();
     }
 
-    public List<DeleteHistory> deleteAll(User loginUser, LocalDateTime deletedDate) throws CannotDeleteException {
+    public List<DeleteHistory> deleteAll(User loginUser, LocalDateTime deletedDate) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
         for(Answer answer : answers) {
