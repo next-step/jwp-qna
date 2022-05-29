@@ -13,6 +13,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 @Table(name = "question")
@@ -45,6 +46,16 @@ public class Question extends BaseAuditingEntity {
         this.contents = contents;
     }
 
+    public void delete(User loginUser) {
+        verifyWriter(loginUser);
+        this.deleted = true;
+    }
+
+    private void verifyWriter(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new UnAuthorizedException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
 
     public Long getId() {
         return id;
@@ -54,16 +65,8 @@ public class Question extends BaseAuditingEntity {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public List<Answer> getAnswers() {
@@ -71,7 +74,9 @@ public class Question extends BaseAuditingEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
+        if (!answers.contains(answer)) {
+            answers.add(answer);
+        }
         answer.toQuestion(this);
     }
 
@@ -92,10 +97,6 @@ public class Question extends BaseAuditingEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     @Override
     public String toString() {
         return "Question{" +
@@ -106,4 +107,6 @@ public class Question extends BaseAuditingEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
+
 }

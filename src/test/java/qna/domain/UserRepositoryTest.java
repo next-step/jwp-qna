@@ -1,14 +1,14 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import qna.annotation.DataJpaTestIncludeAuditing;
+import qna.util.annotation.DataJpaTestIncludeAuditing;
 
 @DataJpaTestIncludeAuditing
-public class UserTest {
+public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;

@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,6 +36,11 @@ public class Answer extends BaseAuditingEntity {
 
     }
 
+    Answer(User writer, Question question, String contents, boolean deleted) {
+        this(writer, question, contents);
+        this.deleted = deleted;
+    }
+
     public Answer(User writer, Question question, String contents) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
@@ -47,6 +53,17 @@ public class Answer extends BaseAuditingEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+    }
+
+    public void delete(User loginUser) {
+        verifyWriter(loginUser);
+        this.deleted = true;
+    }
+
+    private void verifyWriter(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new UnAuthorizedException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -63,23 +80,18 @@ public class Answer extends BaseAuditingEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
-        question.getAnswers().add(this);
+        List<Answer> answers = question.getAnswers();
+        if (!answers.contains(this)) {
+            answers.add(this);
+        }
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -92,4 +104,6 @@ public class Answer extends BaseAuditingEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
+
 }
