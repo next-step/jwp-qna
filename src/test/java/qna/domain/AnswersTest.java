@@ -7,6 +7,7 @@ import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -91,5 +92,13 @@ public class AnswersTest {
     void isContains() {
         Answers answers = new Answers(Arrays.asList(AnswerTest.A1, AnswerTest.A2));
         assertThat(answers.isContains(AnswerTest.A1)).isTrue();
+    }
+
+    @DisplayName("입력한 사용자와 Answers 사용자 간의 비교한다.")
+    @Test
+    void compareUser() {
+        Answers answers = new Answers(Collections.singletonList(AnswerTest.A1));
+        assertThat(answers.isDifferenceAnswerBy(AnswerTest.A1.getWriter())).isFalse();
+        assertThat(answers.isDifferenceAnswerBy(UserTest.SANJIGI)).isTrue();
     }
 }

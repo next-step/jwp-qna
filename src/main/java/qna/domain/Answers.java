@@ -49,8 +49,12 @@ public class Answers {
                 .collect(Collectors.toList()));
     }
 
+    public boolean isDifferenceAnswerBy(final User writer) {
+        return answers.stream().anyMatch(answer -> !answer.isOwner(writer));
+    }
+
     public DeleteHistories remove(final User writer) throws CannotDeleteException {
-        if (!Objects.equals(this, findAnswerBy(writer))) {
+        if (isDifferenceAnswerBy(writer)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         return new DeleteHistories(this.answers.stream().map(Answer::remove).collect(Collectors.toList()));
