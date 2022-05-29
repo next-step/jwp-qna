@@ -1,13 +1,10 @@
 package qna.domain;
 
-import org.springframework.dao.DuplicateKeyException;
-
 import javax.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.GenerationType.*;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Table(name = "question")
 @Entity
@@ -58,11 +55,10 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if (answers.contains(answer)) {
-            throw new DuplicateKeyException("중복되는 답변을 추가할 수 없습니다.");
+        if (!answers.contains(answer)) {
+            answers.add(answer);
         }
         answer.toQuestion(this);
-        answers.add(answer);
     }
 
     public Long getId() {
