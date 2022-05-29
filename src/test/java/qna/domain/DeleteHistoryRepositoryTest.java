@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,15 +17,21 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
+    User testUser;
+
     @BeforeEach
     void before() {
-        deleteHistoryRepository.deleteAll();
+        testUser = new User("test", "pw", "테스트유저", "a@naver.com");
+        userRepository.save(testUser);
     }
 
     @DisplayName("DeleteHistory 저장 테스트")
     @Test
     void saveTest() {
-        DeleteHistory expected = DeleteHistoryTest.DH1;
+        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, 1L, testUser, LocalDateTime.now());
         DeleteHistory result = deleteHistoryRepository.save(expected);
 
         assertThat(result).isNotNull();
@@ -34,7 +41,8 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("DeleteHistory 조회 테스트")
     @Test
     void findTest() {
-        DeleteHistory expected = deleteHistoryRepository.save(DeleteHistoryTest.DH1);
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, testUser, LocalDateTime.now());
+        DeleteHistory expected = deleteHistoryRepository.save(deleteHistory);
         Optional<DeleteHistory> resultOptional = deleteHistoryRepository.findById(expected.getId());
         assertThat(resultOptional).isNotEmpty();
 
