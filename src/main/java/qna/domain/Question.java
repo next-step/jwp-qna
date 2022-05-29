@@ -16,6 +16,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -24,21 +25,29 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "title", nullable = false, length = 100)
     private String title;
+
     @Lob
     @Column(name = "contents")
     private String contents;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
     @Embedded
     private Answers answers = new Answers();
 
@@ -115,6 +124,7 @@ public class Question {
             ", deleted=" + deleted +
             ", createdAt=" + createdAt +
             ", updatedAt=" + updatedAt +
+            ", answers=" + answers +
             '}';
     }
 }

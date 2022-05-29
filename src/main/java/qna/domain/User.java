@@ -23,14 +23,19 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "user_id", nullable = false, length = 20)
     private String userId;
+
     @Column(name = "password", nullable = false, length = 20)
     private String password;
+
     @Column(name = "name", nullable = false, length = 20)
     private String name;
+
     @Column(name = "email", nullable = false, length = 50)
     private String email;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

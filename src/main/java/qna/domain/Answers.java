@@ -9,9 +9,17 @@ import javax.persistence.OneToMany;
 @Embeddable
 public class Answers {
 	@OneToMany(mappedBy = "question")
-	private List<Answer> answerList = new ArrayList<>();
+	private List<Answer> answers = new ArrayList<>();
+
+	protected Answers() {
+		answers = new ArrayList<>();
+	}
+
+	public Answers(List<Answer> answers) {
+		this.answers = answers;
+	}
 
 	public void add(Answer answer) {
-		answerList.add(answer);
+		answers.add(answer);
 	}
 }
