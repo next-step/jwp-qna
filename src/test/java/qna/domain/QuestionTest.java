@@ -12,7 +12,7 @@ public class QuestionTest {
     public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
 
-    @DisplayName("Question 객체 기본 API 테스트")
+    @DisplayName("isOwner 메서드 실행시 작성자와 동일 유저일 경우 true, 다른 유저일 경우 false 리턴 확인")
     @Test
     void questionNormal() {
         assertAll(
@@ -21,7 +21,7 @@ public class QuestionTest {
         );
     }
 
-    @DisplayName("Question 객체 delete 테스트")
+    @DisplayName("Question 객체 삭제시 deleted 가 true 가 되는것을 확인")
     @Test
     void deleteQuestion() {
         Question question = new Question("title3", "contents3");
