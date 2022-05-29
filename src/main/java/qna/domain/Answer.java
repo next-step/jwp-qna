@@ -82,10 +82,6 @@ public class Answer extends BaseEntity {
     }
 
     public DeleteHistory delete(User loginUser, LocalDateTime deletedDate) throws CannotDeleteException {
-        if(isDeleted()) {
-            return null;
-        }
-
         validateForDelete(loginUser);
 
         this.deleted = true;
