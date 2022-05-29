@@ -2,8 +2,13 @@ package qna.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class QuestionTest {
     private Question question;
@@ -33,5 +38,65 @@ public class QuestionTest {
         boolean result = question.isOwner(user);
         // then
         assertThat(result).isTrue();
+    }
+    
+    @Test
+    void 내가_작성한_질문만_삭제할_수_있다() {
+        // given
+        User loginUser = new User(1L, "user1", "password", "name", "user1@com");
+        // when
+        question.delete(loginUser);
+        // then
+        assertThat(question.isDeleted()).isTrue();
+    }
+
+    @Test
+    void 다른_사람의_질문을_삭제할_경우_예외가_발생한다() {
+        // given
+        User loginUser = new User(2L, "user1", "password", "name", "user1@com");
+        // when & then
+        assertThatThrownBy(() ->
+                question.delete(loginUser)
+        ).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void 질문에_내가_쓴_답변만_있을경우_삭제할_수_있다() {
+        // given
+        User user = new User(1L, "user1", "password", "name", "user1@com");
+        new Answer(user, question, "Answers Contents1");
+        new Answer(user, question, "Answers Contents2");
+        // when
+        question.delete(user);
+        // then
+        assertThat(question.isDeleted()).isTrue();
+    }
+
+    @Test
+    void 질문을_삭제할_때_모든_답변도_삭제된다() {
+        // given
+        User user = new User(1L, "user1", "password", "name", "user1@com");
+        Answer answer = new Answer(user, question, "Answers Contents1");
+        Answer answer2 = new Answer(user, question, "Answers Contents2");
+        // when
+        question.delete(user);
+        // then
+        assertAll(
+                () -> assertThat(question.isDeleted()).isTrue(),
+                () -> assertThat(answer.isDeleted()).isTrue(),
+                () -> assertThat(answer2.isDeleted()).isTrue()
+        );
+    }
+
+    @Test
+    void 질문과_답변을_삭제하면_삭제_기록을_반환한다() {
+        // given
+        User user = new User(1L, "user1", "password", "name", "user1@com");
+        new Answer(user, question, "Answers Contents1");
+        new Answer(user, question, "Answers Contents2");
+        // when
+        List<DeleteHistory> result = question.delete(user);
+        // then
+        assertThat(result).hasSize(3);
     }
 }

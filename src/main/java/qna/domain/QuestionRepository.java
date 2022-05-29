@@ -10,8 +10,6 @@ import java.util.Optional;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByDeletedFalse();
 
-    Optional<Question> findByIdAndDeletedFalse(Long id);
-
-    @Query("select q from Question q join fetch q.answers where q.id = :id")
-    Optional<Question> findQuestionById(@Param(value = "id") Long id);
+    @Query("select q from Question q join fetch q.answers where q.id = :id and q.deleted = false")
+    Optional<Question> findByIdAndDeletedFalse(@Param(value = "id") Long id);
 }

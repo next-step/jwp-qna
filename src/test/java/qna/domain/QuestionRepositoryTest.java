@@ -109,7 +109,11 @@ class QuestionRepositoryTest {
     @MethodSource(value = "question을_리턴한다")
     void id로_삭제되지_않은_질문_찾기(Question question) {
         // given
-        question.delete();
+        User writer = new User("user1", "password", "name", "user1@com");
+        userRepository.save(writer);
+
+        question.writeBy(writer);
+        question.delete(writer);
         Question saved = questionRepository.save(question);
         // when
         Optional<Question> result = questionRepository.findByIdAndDeletedFalse(saved.getId());
@@ -146,7 +150,7 @@ class QuestionRepositoryTest {
         // given
         saveAnswer();
         // when
-        Optional<Question> result = questionRepository.findQuestionById(question1.getId());
+        Optional<Question> result = questionRepository.findByIdAndDeletedFalse(question1.getId());
         // then
         assertThat(result)
                 .map(question -> question.getAnswers().size())
@@ -161,8 +165,7 @@ class QuestionRepositoryTest {
         User suzy = new User("suzy", "password", "suzy", "suzy@com");
         userRepository.saveAll(Arrays.asList(minje, suzy));
 
-        Answer answerOfMinje = new Answer(minje, saved, "good!");
-        Answer answerOfSuzy = new Answer(suzy, saved, "bad!");
-        answerRepository.saveAll(Arrays.asList(answerOfMinje, answerOfSuzy));
+        new Answer(minje, saved, "good!");
+        new Answer(suzy, saved, "bad!");
     }
 }

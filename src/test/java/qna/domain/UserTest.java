@@ -23,13 +23,11 @@ public class UserTest {
     @Test
     void 이름과_이메일을_변경한다() {
         // given
-        User loginUser = new User("user1", "password", "name", "user1@com");
-
-        User target = new User("user1", "password", "mj", "mj@com");
+        User loginUser = new User(1L, "user1", "password", "name", "user1@com");
         // when
-        user.update(loginUser, target);
+        user.update(loginUser, user);
         // then
-        assertThat(user.equalsNameAndEmail(target)).isTrue();
+        assertThat(user.equalsNameAndEmail(loginUser)).isTrue();
     }
 
     @Test
@@ -76,5 +74,16 @@ public class UserTest {
                         true
                 )
         );
+    }
+
+    @Test
+    void id가_같으면_동일한_유저로_판단한다() {
+        // given
+        User user = new User(1L,"javajigi", "pass1", "mj1", "mj@com");
+        User loginUser = new User(1L, "javajigi", "pass2", "mj2", "mj@com");
+        // when
+        boolean result = user.match(loginUser);
+        // then
+        assertThat(result).isTrue();
     }
 }

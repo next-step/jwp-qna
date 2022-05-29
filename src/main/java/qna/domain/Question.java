@@ -1,8 +1,9 @@
 package qna.domain;
 
-import javax.persistence.*;
+import qna.CannotDeleteException;
 
-import java.util.ArrayList;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
@@ -21,8 +22,8 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-    @OneToMany(fetch = LAZY, mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
@@ -72,12 +73,21 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public List<DeleteHistory> delete(User loginUser) {
+        validateDeletionPermission(loginUser);
         this.deleted = true;
+
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.addHistory(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+
+        answers.deleteAll(deleteHistories, loginUser);
+        return deleteHistories.elements();
     }
 
-    public void remove(Answer answer) {
-        answers.remove(answer);
+    private void validateDeletionPermission(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public void add(Answer answer) {
@@ -85,7 +95,7 @@ public class Question extends BaseEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.elements();
     }
 
     @Override

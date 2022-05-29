@@ -1,9 +1,11 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
@@ -50,7 +52,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.matchUserId(writer.getUserId());
+        return this.writer.match(writer);
     }
 
     public Long getId() {
@@ -77,15 +79,17 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public DeleteHistory delete(User writer) {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
+        }
+
         deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
     // 연관 관계 편의 메서드
     private void toQuestion(Question question) {
-        if (this.question != null) {
-            question.remove(this);
-        }
         this.question = question;
         question.add(this);
     }
@@ -94,7 +98,8 @@ public class Answer extends BaseEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writer=" + writer.getUserId() +
+                ", writerId=" + writer.getUserId() +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
