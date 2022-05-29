@@ -1,6 +1,9 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +27,8 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question() {
 
@@ -51,8 +54,17 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
-        answer.setQuestion(null);
+        List<Answer> answerList = new ArrayList<>();
+        answerList.add(answer);
+        setAnswers(answerList);
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers.setAnswerList(answers);
+    }
+
+    public Answers getAnswers() {
+        return answers;
     }
 
     public Long getId() {
@@ -94,6 +106,39 @@ public class Question extends BaseTimeEntity {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 질문입니다.");
+        }
+
+        setDeleted(true);
+        List<Answer> answerList = this.answers.getAnswerList();
+        for (Answer answer : answerList) {
+            answer.delete(loginUser);
+        }
+    }
+
+    public List<DeleteHistory> createDeleteHistories() {
+        if (!isDeleted()) {
+            return new ArrayList<>();
+        }
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(), getWriter(), LocalDateTime.now()));
+
+        List<Answer> answerList = this.answers.getAnswerList();
+        for (Answer answer : answerList) {
+            deleteHistories.add(answer.createDeleteHistories());
+        }
+
+        return deleteHistories;
+    }
+
 
     @Override
     public String toString() {
