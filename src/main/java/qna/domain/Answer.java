@@ -81,7 +81,7 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser, LocalDateTime deletedDate) throws CannotDeleteException {
         if(isDeleted()) {
             return null;
         }
@@ -89,7 +89,7 @@ public class Answer extends BaseEntity {
         validateForDelete(loginUser);
 
         this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, loginUser, LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER, id, loginUser, deletedDate);
     }
 
     private void validateForDelete(User loginUser) throws CannotDeleteException {

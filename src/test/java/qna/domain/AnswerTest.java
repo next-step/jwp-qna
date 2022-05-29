@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
@@ -29,7 +30,7 @@ public class AnswerTest {
     void deleteAnswer() throws CannotDeleteException {
         User writer = new User(30L, "onepunch","abcd", "ho9", "abc@gmail.com");
         Answer answer = new Answer(writer, QuestionTest.Q1, "ABC");
-        answer.delete(writer);
+        answer.delete(writer, LocalDateTime.now());
 
         assertThat(answer.isDeleted()).isTrue();
     }
@@ -41,7 +42,7 @@ public class AnswerTest {
         Answer answer = new Answer(writer, QuestionTest.Q1, "ABC");
         User other = new User(31L, "Jonson","vill", "ho8", "abbb@gmail.com");
 
-        assertThatThrownBy(() -> answer.delete(other)).isInstanceOf(CannotDeleteException.class);
+        assertThatThrownBy(() -> answer.delete(other, LocalDateTime.now())).isInstanceOf(CannotDeleteException.class);
     }
 
 }

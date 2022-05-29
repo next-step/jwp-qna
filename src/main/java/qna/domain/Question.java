@@ -87,8 +87,9 @@ public class Question extends BaseEntity {
         validateForDelete(loginUser);
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
-        deleteHistories.addAll(answers.deleteAll(loginUser));
+        LocalDateTime deletedDate = LocalDateTime.now();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, deletedDate));
+        deleteHistories.addAll(answers.deleteAll(loginUser, deletedDate));
 
         this.deleted = true;
 

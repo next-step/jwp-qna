@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Embeddable;
@@ -22,11 +23,11 @@ public class Answers {
         return answers.size();
     }
 
-    public List<DeleteHistory> deleteAll(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleteAll(User loginUser, LocalDateTime deletedDate) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
 
         for(Answer answer : answers) {
-            addNotNullHistory(deleteHistories, answer.delete(loginUser));
+            addNotNullHistory(deleteHistories, answer.delete(loginUser, deletedDate));
         }
 
         return deleteHistories;
