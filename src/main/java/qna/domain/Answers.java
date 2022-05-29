@@ -56,7 +56,7 @@ public class Answers {
     public DeleteHistories remove(final User writer) throws CannotDeleteException {
           DeleteHistories deleteHistories = new DeleteHistories();
           for (Answer answer: answers) {
-              deleteHistories.add(answer.remove(writer));
+              deleteHistories.add(answer.delete(writer));
           }
           return deleteHistories;
     }

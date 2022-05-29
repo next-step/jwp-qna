@@ -83,7 +83,7 @@ public class AnswerTest {
     void remove() throws CannotDeleteException {
         User savedUser = userRepository.save(UserTest.JAVAJIGI);
         Answer savedAnswer = answerRepository.save(new Answer(savedUser, QuestionTest.Q1, "test content"));
-        assertThat(savedAnswer.remove(savedUser)).isEqualTo(new DeleteHistory(ContentType.ANSWER,savedAnswer.getId(),savedUser, LocalDateTime.now()));
+        assertThat(savedAnswer.delete(savedUser)).isEqualTo(new DeleteHistory(ContentType.ANSWER,savedAnswer.getId(),savedUser, LocalDateTime.now()));
     }
 
     @DisplayName("삭제시 사용자가 다르면 에러를 발생한다.")
@@ -91,7 +91,7 @@ public class AnswerTest {
     void removeDifferenceUser() {
         User savedUser = userRepository.save(UserTest.JAVAJIGI);
         Answer savedAnswer = answerRepository.save(new Answer(savedUser, QuestionTest.Q1, "test content"));
-        assertThatThrownBy(() -> savedAnswer.remove(UserTest.SANJIGI))
+        assertThatThrownBy(() -> savedAnswer.delete(UserTest.SANJIGI))
                 .isExactlyInstanceOf(CannotDeleteException.class);
     }
 }

@@ -95,7 +95,7 @@ public class Answer extends CreatedUpdatedDateEntity {
         this.deleted = state;
     }
 
-    public DeleteHistory remove(final User writer) throws CannotDeleteException {
+    public DeleteHistory delete(final User writer) throws CannotDeleteException {
         if (Objects.equals(this.getWriter(), writer)) {
             this.toQuestion(null);
             this.setDeleted(DeletedType.YES);
