@@ -132,8 +132,8 @@ public class AnswerRepositoryTest {
         answerRepository.flush();
 
         // when
-        Optional<Answer> foundAnswer1 = answerRepository.findById(savedAnswer1.getId());
-        Optional<Answer> foundAnswer2 = answerRepository.findById(savedAnswer2.getId());
+        Optional<Answer> foundAnswer1 = answerRepository.findByIdAndDeletedFalse(savedAnswer1.getId());
+        Optional<Answer> foundAnswer2 = answerRepository.findByIdAndDeletedFalse(savedAnswer2.getId());
 
         // then
         Assertions.assertAll(
