@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -34,7 +36,7 @@ public class Answer extends BaseTimeEntity {
     @Column(name = "deleted")
     private boolean deleted = false;
 
-    public Answer() {
+    protected Answer() {
     }
 
     Answer(User writer, Question question, String contents) {
@@ -53,7 +55,7 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.writer = writer;
-        this.question = question;
+        toQuestion(question);
         this.contents = contents;
     }
 
@@ -61,8 +63,20 @@ public class Answer extends BaseTimeEntity {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
+    public void toQuestion(final Question question) {
+        if (this.question != null && this.question != question) {
+            this.question.removeAnswer(this);
+        }
         this.question = question;
+        question.addAnswer(this);
+    }
+
+    public DeleteHistory delete(final User writer) throws CannotDeleteException {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
+        }
+        deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
     public Long getId() {
@@ -83,10 +97,6 @@ public class Answer extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
