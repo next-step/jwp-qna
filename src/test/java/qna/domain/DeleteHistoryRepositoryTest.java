@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,19 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    private User deleteBy;
+
+    @BeforeEach
+    void setUp(@Autowired UserRepository userRepository) {
+        deleteBy = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+    }
+
     @DisplayName("DeleteHistory 저장")
     @Test
     void save() {
-        final DeleteHistory expected = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, 1L, 1L, null));
+        final DeleteHistory expected = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, 1L, deleteBy, null));
 
-        final Optional<DeleteHistory> actual = deleteHistoryRepository.findById(1L);
+        final Optional<DeleteHistory> actual = deleteHistoryRepository.findById(expected.getId());
 
         assertThat(actual).isPresent();
         assertThat(actual.get()).isSameAs(expected);
