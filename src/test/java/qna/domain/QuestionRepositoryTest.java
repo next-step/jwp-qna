@@ -1,12 +1,11 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,19 +13,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 class QuestionRepositoryTest {
-	private Question expected1;
-	private Question expected2;
-	private Question expected3;
+	private final Question expected1 = new Question("title1", "contents1");
+	private final Question expected2 = new Question("title2", "contents2");
+	private final Question expected3 = new Question("title3", "contents3");
 
 	@Autowired
 	QuestionRepository questionRepository;
-
-	@BeforeEach
-	void init() {
-		expected1 = new Question("title1", "contents1");
-		expected2 = new Question("title2", "contents2");
-		expected3 = new Question("title3", "contents3");
-	}
 
 	@Test
 	@DisplayName("Question 생성")
