@@ -2,6 +2,7 @@ package qna.domain;
 
 import qna.CannotDeleteException;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import static javax.persistence.FetchType.LAZY;
 
 @Embeddable
 public class Answers {
-    @OneToMany(mappedBy = "question", fetch = LAZY)
+    @OneToMany(mappedBy = "question", fetch = LAZY, cascade = CascadeType.PERSIST)
     private final List<Answer> elements = new ArrayList<>();
 
     public List<Answer> elements() {

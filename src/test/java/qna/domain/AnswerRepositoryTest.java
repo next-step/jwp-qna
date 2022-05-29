@@ -39,9 +39,8 @@ class AnswerRepositoryTest {
         answer.delete(answer.getWriter());
         userRepository.save(answer.getWriter());
         questionRepository.save(answer.getQuestion());
-        Answer saved = answerRepository.save(answer);
         // when
-        Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(saved.getId());
+        Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(answer.getId());
         // then
         assertThat(result.isPresent()).isEqualTo(expected);
     }
@@ -70,11 +69,10 @@ class AnswerRepositoryTest {
         // given
         userRepository.save(answer.getWriter());
         questionRepository.save(answer.getQuestion());
-        Answer saved = answerRepository.save(answer);
 
-        saved.writeContents("update");
+        answer.writeContents("update");
         // when
-        Optional<Answer> result = answerRepository.findById(saved.getId());
+        Optional<Answer> result = answerRepository.findById(answer.getId());
         // then
         assertThat(result)
                 .map(Answer::getContents)

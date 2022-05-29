@@ -165,8 +165,7 @@ class QuestionRepositoryTest {
         User suzy = new User("suzy", "password", "suzy", "suzy@com");
         userRepository.saveAll(Arrays.asList(minje, suzy));
 
-        Answer answerOfMinje = new Answer(minje, saved, "good!");
-        Answer answerOfSuzy = new Answer(suzy, saved, "bad!");
-        answerRepository.saveAll(Arrays.asList(answerOfMinje, answerOfSuzy));
+        new Answer(minje, saved, "good!");
+        new Answer(suzy, saved, "bad!");
     }
 }
