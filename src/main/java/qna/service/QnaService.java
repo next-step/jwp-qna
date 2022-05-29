@@ -32,6 +32,6 @@ public class QnaService {
 
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {
-        return questionRepository.findByIdAndDeletedFalse(id).orElseThrow(NotFoundException::new);
+        return questionRepository.findWithAnswersByIdAndDeletedFalse(id).orElseThrow(NotFoundException::new);
     }
 }
