@@ -3,11 +3,11 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
@@ -24,18 +24,6 @@ public class Answers {
     }
 
     public List<DeleteHistory> deleteAll(User loginUser, LocalDateTime deletedDate) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-
-        for(Answer answer : answers) {
-            addNotNullHistory(deleteHistories, answer.delete(loginUser, deletedDate));
-        }
-
-        return deleteHistories;
-    }
-
-    private void addNotNullHistory(List<DeleteHistory> deleteHistories, DeleteHistory deleteHistory) {
-        if(deleteHistory != null) {
-            deleteHistories.add(deleteHistory);
-        }
+        return answers.stream().map(x -> x.delete(loginUser, deletedDate)).collect(Collectors.toList());
     }
 }
