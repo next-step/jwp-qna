@@ -54,6 +54,9 @@ public class Answers {
     }
 
     public DeleteHistories remove(final User writer) throws CannotDeleteException {
+          if (isCompareAnswerUserBy(writer)) {
+              throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+          }
           DeleteHistories deleteHistories = new DeleteHistories();
           for (Answer answer: answers) {
               deleteHistories.add(answer.delete(writer));
