@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.hibernate.Hibernate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -19,18 +18,20 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
-    @Column
-    private Long deletedById;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedBy;
 
     @Column
     private LocalDateTime createDate = LocalDateTime.now();
 
     protected DeleteHistory() {}
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedBy = deletedBy;
         this.createDate = createDate;
     }
 
@@ -43,26 +44,29 @@ public class DeleteHistory {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DeleteHistory that = (DeleteHistory) o;
+        return Objects.equals(id, that.id) &&
+                contentType == that.contentType &&
+                Objects.equals(contentId, that.contentId) &&
+                Objects.equals(deletedBy, that.deletedBy);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contentType, contentId, deletedBy);
+    }
+
+    @Override
     public String toString() {
         return "DeleteHistory{" +
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedBy=" + deletedBy.toString() +
                 ", createDate=" + createDate +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        DeleteHistory that = (DeleteHistory) o;
-        return id != null && Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
     }
 }

@@ -14,38 +14,43 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DataJpaTest
 class QuestionRepositoryTest {
     @Autowired
+    UserRepository userRepository;
+    @Autowired
     QuestionRepository questionRepository;
 
-    Question q1, q2;
+    User testWriter;
+    Question question1, question2;
 
     @BeforeEach
     void setup(){
-        q1 = questionRepository.save(QuestionTest.Q1);
-        q2 = questionRepository.save(QuestionTest.Q2);
+        testWriter = userRepository.save(UserTest.ROCKPRO87);
+        question1 = questionRepository.save(new Question("질문 제목1", "질문 내용1").writeBy(testWriter));
+        question2 = questionRepository.save(new Question("질문 제목2", "질문 내용2").writeBy(testWriter));
     }
 
     @Test
     void save() {
         Question expected = new Question(
-                null,
                 "질문 제목이에요",
-                "질문 내용이에요.");
+                "질문 내용이에요.")
+                .writeBy(testWriter);
         Question actual = questionRepository.save(expected);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle())
+                () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
+                () -> assertThat(actual.getWriter()).isEqualTo(testWriter)
         );
     }
 
     @Test
     void findByDeletedFalse() {
         List<Question> actual = questionRepository.findByDeletedFalse();
-        assertThat(actual).contains(q1, q2);
+        assertThat(actual).contains(question1, question2);
     }
 
     @Test
     void findByIdAndDeletedFalse() {
-        Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(q1.getId());
-        assertThat(actual).contains(q1);
+        Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(question1.getId());
+        assertThat(actual).contains(question1);
     }
 }
