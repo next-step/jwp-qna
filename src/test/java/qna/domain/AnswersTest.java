@@ -56,7 +56,7 @@ class AnswersTest {
         answers.add(answer3);
 
         // when
-        final List<DeleteHistory> deleteHistories = answers.delete(writer);
+        final List<DeleteHistory> deleteHistories = answers.delete();
 
         // then
         assertThat(answer1.isDeleted() && answer2.isDeleted() && answer3.isDeleted()).isTrue();

@@ -29,7 +29,7 @@ public class Answers {
                 .allMatch(answer -> answer.isOwner(writer));
     }
 
-    public List<DeleteHistory> delete(final User writer) {
+    public List<DeleteHistory> delete() {
         final List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (final Answer answer : answers) {
             answer.setDeleted(true);
