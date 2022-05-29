@@ -108,4 +108,21 @@ public class Answer extends Time {
         return "Answer{" + "id=" + id + ", writer=" + writer + ", question=" + question + ", contents='" + contents +
                 '\'' + ", deleted=" + deleted + '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Answer)) {
+            return false;
+        }
+        Answer answer = (Answer) o;
+        return getId().equals(answer.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }
