@@ -4,6 +4,9 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Table(name = "question")
@@ -69,11 +72,14 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void delete(User loginUser) {
+    public List<DeleteHistory> delete(User loginUser) {
         validateOwner(loginUser);
-        answers.deleteAll(loginUser);
-
         this.deleted = true;
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer));
+        deleteHistories.addAll(answers.deleteAll(loginUser));
+        return deleteHistories;
     }
 
     private void validateOwner(User loginUser) {

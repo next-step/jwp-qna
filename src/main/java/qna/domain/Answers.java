@@ -28,8 +28,10 @@ public class Answers {
         }
     }
 
-    public void deleteAll(User loginUser) {
-        answers.forEach(answer -> answer.delete(loginUser));
+    public List<DeleteHistory> deleteAll(User loginUser) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        answers.forEach(answer -> deleteHistories.add(answer.delete(loginUser)));
+        return deleteHistories;
     }
 
 }
