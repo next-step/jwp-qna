@@ -1,7 +1,7 @@
 package qna.domain;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.Embeddable;
@@ -30,7 +30,7 @@ public class Answers {
     }
 
     public List<DeleteHistory> delete(final User writer) throws CannotDeleteException {
-        final List<DeleteHistory> deleteHistories = new ArrayList<>();
+        final List<DeleteHistory> deleteHistories = new LinkedList<>();
         for (final Answer answer : answers) {
             deleteHistories.add(answer.delete(writer));
         }

@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.LinkedList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -61,5 +62,6 @@ class AnswersTest {
         // then
         assertThat(answer1.isDeleted() && answer2.isDeleted() && answer3.isDeleted()).isTrue();
         assertThat(deleteHistories.size()).isEqualTo(3);
+        assertThat(deleteHistories).isInstanceOf(LinkedList.class);
     }
 }

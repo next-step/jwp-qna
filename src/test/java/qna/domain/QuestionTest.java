@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.LinkedList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -107,6 +108,7 @@ public class QuestionTest {
         // then
         assertThat(question.isDeleted()).isTrue();
         assertThat(deleteHistories.size()).isEqualTo(1);
+        assertThat(deleteHistories).isInstanceOf(LinkedList.class);
     }
 
     @Test
@@ -121,5 +123,6 @@ public class QuestionTest {
         // then
         assertThat(question.isDeleted() && answer1.isDeleted() && answer2.isDeleted()).isTrue();
         assertThat(deleteHistories.size()).isEqualTo(3);
+        assertThat(deleteHistories).isInstanceOf(LinkedList.class);
     }
 }

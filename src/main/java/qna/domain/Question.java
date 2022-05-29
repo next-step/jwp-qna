@@ -1,7 +1,7 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -73,8 +73,8 @@ public class Question extends BaseTimeEntity {
 
     public List<DeleteHistory> delete(final User writer) throws CannotDeleteException {
         canBeDeletedBy(writer);
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        this.setDeleted(true);
+        List<DeleteHistory> deleteHistories = new LinkedList<>();
+        deleted = true;
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION,
                 id,
                 writer,
@@ -101,10 +101,6 @@ public class Question extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     private void canBeDeletedBy(final User loginUser) throws CannotDeleteException {
