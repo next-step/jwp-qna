@@ -65,8 +65,8 @@ public class Answer extends BaseTimeEntity {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
+    public User getWriter() {
+        return writer;
     }
 
     public void setWriter(User writer) {

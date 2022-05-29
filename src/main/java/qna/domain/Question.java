@@ -47,6 +47,10 @@ public class Question extends BaseTimeEntity {
         answer.toQuestion(this);
     }
 
+    public User getWriter() {
+        return writer;
+    }
+
     public Long getId() {
         return id;
     }
