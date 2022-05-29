@@ -107,6 +107,6 @@ class QuestionRepositoryTest {
         question.addAnswer(answer);
 
         Question updatedQuestion = questionRepository.findById(2002L).get();
-        assertThat(question.getAnswers().size()).isEqualTo(2);
+        assertThat(updatedQuestion.getAnswers().size()).isEqualTo(2);
     }
 }
