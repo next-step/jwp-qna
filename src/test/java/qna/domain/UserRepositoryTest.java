@@ -18,19 +18,18 @@ class UserRepositoryTest {
 	@Test
 	@DisplayName("User 생성")
 	void save() {
-		User expected = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-		User actual = userRepository.save(expected);
+		User actual = userRepository.save(UserTest.JAVAJIGI);
 
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.getUserId()).isEqualTo(expected.getUserId())
+			() -> assertThat(actual.getUserId()).isEqualTo(UserTest.JAVAJIGI.getUserId())
 		);
 	}
 
 	@Test
 	@DisplayName("User Id로 조회")
 	void findByUserId() {
-		User expected = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
+		User expected = userRepository.save(UserTest.JAVAJIGI);
 		Optional<User> actual = userRepository.findByUserId(expected.getUserId());
 		
 		assertThat(actual.isPresent()).isTrue();

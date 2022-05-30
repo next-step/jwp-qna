@@ -13,8 +13,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 class QuestionRepositoryTest {
-	private final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-	private final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+	private final Question expected1 = new Question("title1", "contents1");
+	private final Question expected2 = new Question("title2", "contents2");
+	private final Question expected3 = new Question("title3", "contents3");
 
 	@Autowired
 	QuestionRepository questionRepository;
@@ -22,20 +23,19 @@ class QuestionRepositoryTest {
 	@Test
 	@DisplayName("Question 생성")
 	void save() {
-		Question expected = new Question("title1", "contents1").writeBy(JAVAJIGI);
-		Question actual = questionRepository.save(expected);
+		Question actual = questionRepository.save(expected1);
 
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
-			() -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
+			() -> assertThat(actual.getTitle()).isEqualTo(expected1.getTitle()),
+			() -> assertThat(actual.getContents()).isEqualTo(expected1.getContents())
 		);
 	}
 
 	@Test
 	@DisplayName("Question 삭제")
 	void delete() {
-		Question expected = questionRepository.save(new Question("title1", "contents1").writeBy(JAVAJIGI));
+		Question expected = questionRepository.save(expected1);
 		questionRepository.delete(expected);
 
 		Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(expected.getId());
@@ -46,16 +46,16 @@ class QuestionRepositoryTest {
 	@Test
 	@DisplayName("삭제되지 않은 Question 조회")
 	void findByDeletedFalse() {
-		Question expected1 = questionRepository.save(new Question("title1", "contents1").writeBy(JAVAJIGI));
-		Question expected2 = questionRepository.save(new Question("title2", "contents2").writeBy(JAVAJIGI));
-		Question expected3 = questionRepository.save(new Question("title3", "contents3").writeBy(JAVAJIGI));
+		Question actual1 = questionRepository.save(expected1);
+		Question actual2 = questionRepository.save(expected2);
+		Question actual3 = questionRepository.save(expected3);
 
-		questionRepository.delete(expected3);
+		questionRepository.delete(actual3);
 
 		List<Question> actual = questionRepository.findByDeletedFalse();
 
 		assertThat(actual)
-			.contains(expected1, expected2)
-			.doesNotContain();
+			.contains(actual1, actual2)
+			.doesNotContain(actual3);
 	}
 }

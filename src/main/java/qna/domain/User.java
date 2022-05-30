@@ -5,31 +5,40 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import qna.UnAuthorizedException;
 
 @Entity
-@Table(name = "user")
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "user_id", nullable = false, length = 20)
     private String userId;
+
     @Column(name = "password", nullable = false, length = 20)
     private String password;
+
     @Column(name = "name", nullable = false, length = 20)
     private String name;
+
     @Column(name = "email", nullable = false, length = 50)
     private String email;
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     protected User() {
     }
@@ -98,17 +107,6 @@ public class User {
 
     public String getEmail() {
         return email;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-            "id=" + id +
-            ", userId='" + userId + '\'' +
-            ", password='" + password + '\'' +
-            ", name='" + name + '\'' +
-            ", email='" + email + '\'' +
-            '}';
     }
 
     private static class GuestUser extends User {

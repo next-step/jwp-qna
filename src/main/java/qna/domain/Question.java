@@ -3,32 +3,53 @@ package qna.domain;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.ManyToOne;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "question")
+@EntityListeners(AuditingEntityListener.class)
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "title", nullable = false, length = 100)
     private String title;
+
     @Lob
     @Column(name = "contents")
     private String contents;
-    @Column(name = "writer_id")
-    private Long writerId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -44,16 +65,12 @@ public class Question {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        return this.writer.equals(writer);
     }
 
     public Long getId() {
@@ -68,12 +85,21 @@ public class Question {
         return contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public void addAnswer(Answer answer) {
+        answer.toQuestion(this);
+        answers.add(answer);
+    }
+
+    public Answers getAnswers() {
+        return answers;
     }
 
     public void setDeleted(boolean deleted) {
@@ -86,16 +112,5 @@ public class Question {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", contents='" + contents + '\'' +
-            ", writerId=" + writerId +
-            ", deleted=" + deleted +
-            '}';
     }
 }
