@@ -10,8 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class DeleteHistoriesTest {
     @Test
-    void Question_으로_DeleteHistories_를_생성할_수_있다() {
-        assertDoesNotThrow(() -> new DeleteHistories(new Question()));
+    void DeleteHistories_를_생성할_수_있다() {
+        assertDoesNotThrow(() -> new DeleteHistories());
     }
 
     @Test
@@ -21,10 +21,15 @@ class DeleteHistoriesTest {
         DeleteHistory d2 = new DeleteHistory(ContentType.ANSWER, 0L, User.GUEST_USER, LocalDateTime.now());
 
         //when
-        DeleteHistories deleteHistories = new DeleteHistories(Arrays.asList(d2, d1));
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(d1);
+        deleteHistories.add(d2);
 
         //then
-        assertThat(deleteHistories).isEqualTo(new DeleteHistories(Arrays.asList(d1, d2)));
+        DeleteHistories sameDeleteHistories = new DeleteHistories();
+        deleteHistories.add(d2);
+        deleteHistories.add(d1);
+        assertThat(deleteHistories).isEqualTo(sameDeleteHistories);
     }
 
     @Test
@@ -34,7 +39,9 @@ class DeleteHistoriesTest {
         DeleteHistory d2 = new DeleteHistory(ContentType.ANSWER, 0L, User.GUEST_USER, LocalDateTime.now());
 
         //when
-        DeleteHistories deleteHistories = new DeleteHistories(Arrays.asList(d1, d2));
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(d1);
+        deleteHistories.add(d2);
 
         //then
         assertThat(deleteHistories).containsExactlyInAnyOrder(d2, d1);

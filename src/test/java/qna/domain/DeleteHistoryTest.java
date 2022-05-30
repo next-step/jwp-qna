@@ -40,7 +40,9 @@ public class DeleteHistoryTest {
         //given
         DeleteHistory D1 = DeleteHistory.question(Q1);
         DeleteHistory D2 = DeleteHistory.answer(A1);
-        DeleteHistories deleteHistories = new DeleteHistories(Arrays.asList(D1, D2));
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(D1);
+        deleteHistories.add(D2);
 
         //when
         List<DeleteHistory> savedDeleteHistories = deleteHistoryRepository.saveAll(deleteHistories);

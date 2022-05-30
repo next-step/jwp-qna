@@ -8,17 +8,12 @@ import java.util.Objects;
 public class DeleteHistories implements Iterable<DeleteHistory> {
     private final List<DeleteHistory> deleteHistories;
 
-    public DeleteHistories(Question question) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(DeleteHistory.question(question));
-        for (Answer answer : question.getAnswers()) {
-            deleteHistories.add(DeleteHistory.answer(answer));
-        }
-        this.deleteHistories = deleteHistories;
+    public DeleteHistories() {
+        this.deleteHistories = new ArrayList<>();
     }
 
-    public DeleteHistories(List<DeleteHistory> deleteHistories) {
-        this.deleteHistories = deleteHistories;
+    public void add(DeleteHistory deleteHistory) {
+        this.deleteHistories.add(deleteHistory);
     }
 
     @Override
