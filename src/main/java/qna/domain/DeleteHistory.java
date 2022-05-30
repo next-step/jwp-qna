@@ -38,13 +38,12 @@ public class DeleteHistory {
     }
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
-        this.contentType = contentType;
-        this.contentId = contentId;
-
         if (Objects.isNull(deletedByUser)) {
             throw new UnAuthorizedException();
         }
 
+        this.contentType = contentType;
+        this.contentId = contentId;
         this.deletedByUser = deletedByUser;
         this.createDate = createDate;
     }
@@ -61,16 +60,15 @@ public class DeleteHistory {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedByUser, that.deletedByUser);
+        DeleteHistory history = (DeleteHistory) o;
+        return Objects.equals(id, history.id) &&
+                contentType == history.contentType &&
+                Objects.equals(contentId, history.contentId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedByUser, createDate);
+        return Objects.hash(id, contentType, contentId);
     }
 
     @Override

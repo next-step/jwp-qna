@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -13,7 +14,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import java.util.Objects;
+
+import static qna.domain.ExceptionMessage.CANNOT_DELETE_NOT_OWNER;
 
 @Entity
 public class Answer extends BaseEntity {
@@ -56,9 +60,8 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
-        this.question = question;
-        question.addAnswer(this);
         this.contents = contents;
+        question.addAnswer(this);
     }
 
     public boolean isOwner(User writer) {
@@ -81,8 +84,17 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
+    public DeleteHistory deletedBy(User writer) throws CannotDeleteException {
+        if (!this.isOwner(writer)) {
+            throw new CannotDeleteException(CANNOT_DELETE_NOT_OWNER.getMessage());
+        }
+
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
     @Override
@@ -94,5 +106,20 @@ public class Answer extends BaseEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answer answer = (Answer) o;
+        return deleted == answer.deleted &&
+                Objects.equals(id, answer.id) &&
+                Objects.equals(contents, answer.contents);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contents, deleted);
     }
 }

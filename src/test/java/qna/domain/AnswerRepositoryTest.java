@@ -6,12 +6,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.persistence.EntityManager;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
 
+    @Autowired
+    EntityManager entityManager;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -45,5 +49,14 @@ public class AnswerRepositoryTest {
         Answer a1 = answerRepository.save(new Answer(user, question, "contents"));
         Answer a2 = answerRepository.findById(a1.getId()).get();
         assertThat(a1).isSameAs(a2);
+    }
+
+    @Test
+    @DisplayName("개체를 저장하고 영속성 컨텍스트를 초기화한 후 개체를 다시 가져왔을 때, 저장했을 당시의 개체와 동등한지 테스트")
+    void equality() {
+        Answer a1 = answerRepository.save(new Answer(user, question, "contents"));
+        entityManager.clear();
+        Answer a2 = answerRepository.findById(a1.getId()).get();
+        assertThat(a1).isEqualTo(a2);
     }
 }
