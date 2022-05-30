@@ -1,12 +1,16 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Where(clause = "deleted='NO'")
 public class Answer extends CreatedUpdatedDateEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +27,9 @@ public class Answer extends CreatedUpdatedDateEntity {
     @Lob
     private String contents;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean deleted = false;
+    private DeletedType deleted = DeletedType.NO;
 
     protected Answer() {
     }
@@ -54,8 +59,8 @@ public class Answer extends CreatedUpdatedDateEntity {
     }
 
     public void toQuestion(Question question) {
-        if (Objects.nonNull(question) && !question.getAnswers().contains(this)) {
-            question.getAnswers().add(this);
+        if (Objects.nonNull(question)) {
+            question.getAnswers().addAnswer(this);
         }
         this.question = question;
     }
@@ -85,11 +90,19 @@ public class Answer extends CreatedUpdatedDateEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.isDeleted();
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setDeleted(final DeletedType state) {
+        this.deleted = state;
+    }
+
+    public DeleteHistory delete(final User writer) throws CannotDeleteException {
+        if (Objects.equals(this.getWriter(), writer)) {
+            this.setDeleted(DeletedType.YES);
+            return new DeleteHistory(ContentType.ANSWER, this.getId(), this.getWriter(), LocalDateTime.now());
+        }
+        throw new CannotDeleteException("답변 사용자와 달라서 삭제할 수 없습니다.");
     }
 
     @Override
