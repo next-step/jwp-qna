@@ -51,16 +51,8 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public User getWriter() {
@@ -76,10 +68,6 @@ public class Answer extends BaseTimeEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -88,6 +76,10 @@ public class Answer extends BaseTimeEntity {
         validateWriter(loginUser);
         this.deleted = true;
         return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    }
+
+    public void changeContents(final String contents) {
+        this.contents = contents;
     }
 
     private void validateWriter(final User loginUser) throws CannotDeleteException {
