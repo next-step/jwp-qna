@@ -16,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -65,17 +64,6 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
-    public void addAnswer(Answer answer) {
-        validate(answer);
-
-        answers.add(answer);
-        answer.setQuestion(this);
-    }
-
     public Long getId() {
         return id;
     }
@@ -92,16 +80,27 @@ public class Question extends BaseEntity {
         return writer;
     }
 
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
     public boolean isDeleted() {
         return this.deleted;
     }
 
-    public List<DeleteHistory> deletedBy(User writer) throws CannotDeleteException {
+    public void addAnswer(Answer answer) {
+        validate(answer);
+
+        answers.add(answer);
+        answer.setQuestion(this);
+    }
+
+    public DeleteHistories deletedBy(User writer) throws CannotDeleteException {
         validateOwner(writer);
 
         this.deleted = true;
 
-        return getDeleteHistories(writer);
+        return new DeleteHistories(id, writer, answers);
     }
 
     private void validateOwner(User writer) throws CannotDeleteException {
@@ -145,31 +144,6 @@ public class Question extends BaseEntity {
         }
     }
 
-    private List<DeleteHistory> getDeleteHistories(User writer) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
-        answers.forEach(answer -> {
-            try {
-                deleteHistories.add(answer.deletedBy(writer));
-            } catch (CannotDeleteException e) {
-                e.printStackTrace();
-            }
-        });
-        return deleteHistories;
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writer=" + writer +
-                ", answers=" + answers +
-                ", deleted=" + deleted +
-                '}';
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -184,5 +158,17 @@ public class Question extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, title, contents, deleted);
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", contents='" + contents + '\'' +
+                ", writer=" + writer +
+                ", answers=" + answers +
+                ", deleted=" + deleted +
+                '}';
     }
 }

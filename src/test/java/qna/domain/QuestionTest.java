@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -29,10 +28,10 @@ public class QuestionTest {
         Question question = new Question(writer1, "Question A", "Contents A");
         assertThat(question.isDeleted()).isFalse();
 
-        List<DeleteHistory> histories = question.deletedBy(question.getWriter());
+        DeleteHistories deleteHistories = question.deletedBy(question.getWriter());
 
         assertThat(question.isDeleted()).isTrue();
-        assertThat(histories).containsExactly(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
+        assertThat(deleteHistories.toList()).containsExactly(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
     }
 
     @Test
@@ -52,11 +51,11 @@ public class QuestionTest {
         Answer answer = new Answer(writer1, question, "Answer Contents");
         assertThat(question.isDeleted()).isFalse();
 
-        List<DeleteHistory> histories = question.deletedBy(writer1);
+        DeleteHistories deleteHistories = question.deletedBy(writer1);
 
         assertThat(question.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
-        assertThat(histories).contains(
+        assertThat(deleteHistories.toList()).contains(
                 new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()),
                 new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
     }
