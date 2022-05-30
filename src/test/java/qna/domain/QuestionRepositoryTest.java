@@ -59,12 +59,4 @@ class QuestionRepositoryTest {
         assertThatThrownBy(() -> questionRepository.findByIdAndDeletedFalse(QUESTION_TRUE.getId())
                 .orElseThrow(NotFoundException::new)).isInstanceOf(NotFoundException.class);
     }
-
-    @Test
-    void findByIdAndDeletedFalseWithValidIdWithAnswer() {
-        Question question = questionRepository.findByIdAndDeletedFalse(QUESTION_FALSE.getId())
-                .orElseThrow(NotFoundException::new);
-
-        assertThat(question).isEqualTo(QUESTION_FALSE);
-    }
 }
