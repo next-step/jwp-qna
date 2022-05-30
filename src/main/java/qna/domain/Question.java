@@ -72,8 +72,14 @@ public class Question extends BaseTimeEntity {
         return writer;
     }
 
-    public void setWriterId(User writer) {
-        this.writer = writer;
+    public void setWriter(User writer) {
+        if (writer != null) {
+            this.writer.addQuestion(this);
+        }
+
+        if (!writer.getQuestion().contains(this)) {
+            writer.getQuestion().add(this);
+        }
     }
 
     public boolean isDeleted() {
