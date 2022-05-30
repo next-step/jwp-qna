@@ -80,7 +80,7 @@ public class QuestionRepositoryTest {
     @DisplayName("질문 삭제 처리 확인")
     void delete() {
         questionRepository.deleteById(question1.getId());
-        assertThat(questionRepository.findById(question1.getId())).isEmpty();
+        assertThat(questionRepository.findByIdAndDeletedFalse(question1.getId())).isEmpty();
         questionRepository.flush();
     }
 }

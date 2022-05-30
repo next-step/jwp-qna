@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -103,10 +105,38 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("답변 삭제 처리 확인")
-    void delete() {
+    @DisplayName("작성자가 답변 삭제 처리하기")
+    void deleteByOwner() throws CannotDeleteException {
         Answer savedAnswer = answerRepository.save(answer);
-        answerRepository.delete(answer);
+        savedAnswer.deleteByOwner(javaJigi);
+
+        answerRepository.flush();
+        assertThat(answerRepository.findByIdAndDeletedFalse(savedAnswer.getId())).isEmpty();
+    }
+
+    @Test
+    @DisplayName("작성자가 아닌 사람 답변 삭제 요청하기")
+    void deleteByNotOwner() {
+        Answer savedAnswer = answerRepository.save(answer);
+        assertThatThrownBy(() -> savedAnswer.deleteByOwner(sanJigi)).isInstanceOf(CannotDeleteException.class);
+        assertThat(answerRepository.findByIdAndDeletedFalse(savedAnswer.getId())).isPresent();
+    }
+
+    @Test
+    @DisplayName("답변 삭제 처리 확인")
+    void deleteBySetter() {
+        Answer savedAnswer = answerRepository.save(answer);
+        savedAnswer.setDeleted(true);
+        answerRepository.flush();
+        assertThat(answerRepository.findByIdAndDeletedFalse(savedAnswer.getId())).isEmpty();
+    }
+
+    @Test
+    @DisplayName("답변 삭제 처리 확인 repository로 호출")
+    void deleteByRepository() {
+        Answer savedAnswer = answerRepository.save(answer);
+        answerRepository.delete(savedAnswer);
+        answerRepository.flush();
         assertThat(answerRepository.findByIdAndDeletedFalse(savedAnswer.getId())).isEmpty();
     }
 }
