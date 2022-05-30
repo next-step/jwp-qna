@@ -18,10 +18,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import static qna.domain.ExceptionMessage.ANSWER_DUPLICATED;
 import static qna.domain.ExceptionMessage.CANNOT_DELETE_NOT_OWNER;
 import static qna.domain.ExceptionMessage.CANNOT_DELETE_OTHERS_ANSWER;
 
@@ -140,10 +140,8 @@ public class Question extends BaseEntity {
     }
 
     private void checkDuplicated(Answer answer) {
-        HashSet<Answer> set = new HashSet<>(answers);
-        set.add(answer);
-        if (set.size() == answers.size()) {
-            throw new IllegalArgumentException();
+        if (answers.contains(answer)) {
+            throw new IllegalArgumentException(ANSWER_DUPLICATED.getMessage());
         }
     }
 
