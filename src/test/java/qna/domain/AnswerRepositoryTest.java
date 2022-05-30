@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,27 +43,37 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("답변 저장")
-    void save() {
+    @DisplayName("답변이 생성되고 연관관계가 맺어졌는지 검증")
+    void saveWithRelation() {
         Answer expected = new Answer(testWriter, testQuestion, "답변 내용이에요.");
         Answer actual = answerRepository.save(expected);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
+                () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
+                () -> assertThat(actual.getWriter()).isEqualTo(testWriter),
+                () -> assertThat(actual.getQuestion()).isEqualTo(testQuestion)
+        );
+    }
+
+    @Test
+    @DisplayName("답변 조회시 연관관계 데이터가 정상적으로 조회되는지 검증")
+    void findValidRelation() {
+        Answer actual = answerRepository.findByIdAndDeletedFalse(answer1.getId()).orElseThrow(NotFoundException::new);
+        assertAll(
+                () -> assertThat(actual.getWriter()).isEqualTo(testWriter),
+                () -> assertThat(actual.getQuestion()).isEqualTo(testQuestion)
         );
     }
 
     @Test
     void findByDeletedFalse() {
         List<Answer> actual = answerRepository.findByQuestionAndDeletedFalse(testQuestion);
-        answerRepository.flush();
         assertThat(actual).contains(answer1, answer2);
     }
 
     @Test
     void findByIdAndDeletedFalse() {
         Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(answer1.getId());
-        answerRepository.flush();
-        assertThat(actual.get()).isEqualTo(answer1);
+        assertThat(actual.orElseThrow(NotFoundException::new)).isEqualTo(answer1);
     }
 }
