@@ -11,12 +11,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.entity.BaseEntity;
 
 @Entity
+@SQLDelete(sql = "UPDATE answer SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
