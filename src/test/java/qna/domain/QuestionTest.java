@@ -71,7 +71,7 @@ public class QuestionTest {
         //then
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getAnswers()).containsExactly(A2),
+                () -> assertThat(actual.getUnDeletedAnswers()).containsExactly(A2),
                 () -> assertThat(A2.isDeleted()).isFalse()
         );
     }

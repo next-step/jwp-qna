@@ -27,8 +27,8 @@ class DeleteHistoriesTest {
 
         //then
         DeleteHistories sameDeleteHistories = new DeleteHistories();
-        deleteHistories.add(d2);
-        deleteHistories.add(d1);
+        sameDeleteHistories.add(d2);
+        sameDeleteHistories.add(d1);
         assertThat(deleteHistories).isEqualTo(sameDeleteHistories);
     }
 
