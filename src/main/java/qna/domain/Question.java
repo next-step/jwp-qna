@@ -57,9 +57,7 @@ public class Question extends BaseEntity {
     }
 
     public Question(Long id, User writer, String title, String contents) {
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
+        validateAuthorization(writer);
 
         this.id = id;
         this.writer = writer;
@@ -72,11 +70,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if (Objects.isNull(answer)) {
-            throw new NotFoundException();
-        }
-
-        validateDuplicate(answer);
+        validate(answer);
 
         answers.add(answer);
         answer.setQuestion(this);
@@ -103,30 +97,54 @@ public class Question extends BaseEntity {
     }
 
     public List<DeleteHistory> deletedBy(User writer) throws CannotDeleteException {
-        if (!this.isOwner(writer)) {
-            throw new CannotDeleteException(CANNOT_DELETE_NOT_OWNER.getMessage());
-        }
-
-        if (!isAllAnswersOwnedBy(writer)) {
-            throw new CannotDeleteException(CANNOT_DELETE_OTHERS_ANSWER.getMessage());
-        }
+        validateOwner(writer);
 
         this.deleted = true;
 
         return getDeleteHistories(writer);
     }
 
-    private void validateDuplicate(Answer answer) {
+    private void validateOwner(User writer) throws CannotDeleteException {
+        validateQuestionOwner(writer);
+        validateAnswersOwner(writer);
+    }
+
+    private void validateQuestionOwner(User writer) throws CannotDeleteException {
+        if (!this.isOwner(writer)) {
+            throw new CannotDeleteException(CANNOT_DELETE_NOT_OWNER.getMessage());
+        }
+    }
+
+    private void validateAnswersOwner(User writer) throws CannotDeleteException {
+        if (!answers.stream()
+                .allMatch(answer -> answer.isOwner(writer))) {
+            throw new CannotDeleteException(CANNOT_DELETE_OTHERS_ANSWER.getMessage());
+        }
+    }
+
+    private void validateAuthorization(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
+    }
+
+    private void validate(Answer answer) {
+        checkNull(answer);
+        checkDuplicated(answer);
+    }
+
+    private void checkNull(Answer answer) {
+        if (Objects.isNull(answer)) {
+            throw new NotFoundException();
+        }
+    }
+
+    private void checkDuplicated(Answer answer) {
         HashSet<Answer> set = new HashSet<>(answers);
         set.add(answer);
         if (set.size() == answers.size()) {
             throw new IllegalArgumentException();
         }
-    }
-
-    private boolean isAllAnswersOwnedBy(User writer) {
-        return answers.stream()
-                .allMatch(answer -> answer.isOwner(writer));
     }
 
     private List<DeleteHistory> getDeleteHistories(User writer) {
