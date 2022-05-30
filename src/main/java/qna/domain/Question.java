@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -12,12 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import org.hibernate.annotations.SQLDelete;
 import qna.CannotDeleteException;
 
 @Entity
-@SQLDelete(sql = "update question set deleted = true where id = ? ")
 public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +31,8 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question() {
     }
@@ -66,7 +64,7 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-        answers.add(answer);
+        answers.addAnswer(answer);
     }
 
     public Long getId() {
@@ -85,7 +83,7 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -96,10 +94,8 @@ public class Question extends BaseEntity {
 
         setDeleted(true);
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer));
+        deleteHistories.addAll(answers.delete(loginUser));
 
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.deleteByOwner(loginUser));
-        }
         return deleteHistories;
     }
 
@@ -108,5 +104,4 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
     }
-
 }

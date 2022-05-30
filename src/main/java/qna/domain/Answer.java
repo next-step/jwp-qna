@@ -17,7 +17,6 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
-@SQLDelete(sql = "update answer set deleted = true where id = ? ")
 public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
