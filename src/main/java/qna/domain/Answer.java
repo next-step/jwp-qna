@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import org.hibernate.annotations.SQLDelete;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -70,14 +72,9 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return writer;
     }
-
 
     public Question getQuestion() {
         return question;
@@ -103,14 +100,16 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writer=" + writer +
-                ", question=" + question +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+    public DeleteHistory deleteByOwner(User loginUser) throws CannotDeleteException {
+        checkDeleteAuthority(loginUser);
+        setDeleted(true);
+
+        return new DeleteHistory(ContentType.ANSWER, id, writer);
+    }
+
+    private void checkDeleteAuthority(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 }
