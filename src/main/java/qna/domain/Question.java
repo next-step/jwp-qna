@@ -81,20 +81,8 @@ public class Question extends BaseTimeEntity {
         return this.writer.equals(loginUser);
     }
 
-    public DeleteHistories deleteAnswers(final User loginUser) throws CannotDeleteException {
-        return this.answers.deleteAll(loginUser);
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
     }
 
     public User getWriter() {

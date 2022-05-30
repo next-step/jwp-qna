@@ -70,7 +70,7 @@ class AnswerRepositoryTest extends BaseRepositoryTest {
     @DisplayName("Answer contents 내용 변경")
     void update() {
         // when
-        savedA1.setContents("contents 변경");
+        savedA1.changeContents("contents 변경");
 
         // then
         assertThat(savedA1.getContents()).isEqualTo("contents 변경");
