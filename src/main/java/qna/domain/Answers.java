@@ -6,6 +6,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Embeddable
 public class Answers {
@@ -25,9 +26,15 @@ public class Answers {
         return answers;
     }
 
+    public List<Answer> undeletedAnswers() {
+        return answers.stream()
+                .filter(answer -> !answer.isDeleted())
+                .collect(Collectors.toList());
+    }
+
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         DeleteHistories deleteHistories = new DeleteHistories();
-        for (Answer answer : answers) {
+        for (Answer answer : undeletedAnswers()) {
             deleteHistories.add(answer.delete(loginUser));
         }
         return deleteHistories;

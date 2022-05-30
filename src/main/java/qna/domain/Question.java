@@ -53,6 +53,10 @@ public class Question extends BaseEntity {
         this.answers.add(answer);
     }
 
+    public Answers getAnswers() {
+        return answers;
+    }
+
     public Long getId() {
         return id;
     }
