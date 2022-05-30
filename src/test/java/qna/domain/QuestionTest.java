@@ -63,10 +63,10 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("삭제되지 않은 질문을 하나 가져올 때, 이 질문에 대한 삭제되지 않은 답변을 같이 가져올 수 있다")
-    void findWithAnswersByIdAndDeletedFalse() {
+    @DisplayName("삭제되지 않은 질문을 하나 가져올 때, 이 질문에 대한 답변을 같이 가져올 수 있다")
+    void findByIdAndDeletedFalse() {
         //when
-        Question actual = questionRepository.findWithAnswersByIdAndDeletedFalse(Q1.getId()).orElseThrow(NotFoundException::new);
+        Question actual = questionRepository.findByIdAndDeletedFalse(Q1.getId()).orElseThrow(NotFoundException::new);
 
         //then
         assertAll(
