@@ -35,11 +35,18 @@ public class DeleteHistory {
 
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long questionId, User writer) {
         this.contentType = contentType;
-        this.contentId = contentId;
-        this.user = user;
-        this.createDate = createDate;
+        this.contentId = questionId;
+        this.user = writer;
+    }
+
+    public static DeleteHistory of(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter());
+    }
+
+    public static DeleteHistory of(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter());
     }
 
     @Override

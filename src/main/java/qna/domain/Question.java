@@ -1,6 +1,9 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -10,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -28,6 +32,9 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
+
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
 
@@ -70,12 +77,28 @@ public class Question extends BaseEntity {
         return writer;
     }
 
+    public Answers getAnswers() {
+        return this.answers;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.deleted = true;
+        return createDeleteHistories(loginUser);
+    }
+
+    private List<DeleteHistory> createDeleteHistories(User loginUser) {
+        DeleteHistories deleteQuestionHistories = new DeleteHistories(DeleteHistory.of(this));
+        List<DeleteHistory> deleteAnswerHistories = this.answers.makeAnswerDeleted(loginUser);
+        deleteQuestionHistories.add(deleteAnswerHistories);
+
+        return deleteQuestionHistories.getDeleteHistories();
     }
 
     @Override
@@ -86,6 +109,7 @@ public class Question extends BaseEntity {
                 ", deleted=" + deleted +
                 ", title='" + title + '\'' +
                 ", writer=" + writer +
+                ", answers=" + answers +
                 '}';
     }
 }

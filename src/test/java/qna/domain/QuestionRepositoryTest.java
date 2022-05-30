@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.NotFoundException;
 
@@ -15,19 +14,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("QuestionRepository는 ")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    private Answer answer;
     private Question QUESTION_FALSE;
     private Question QUESTION_TRUE;
 
     @BeforeEach
     void setUp() {
+        answer = new Answer();
+
         QUESTION_FALSE = new Question("title", "contents", false);
         QUESTION_TRUE = new Question("title", "contents", true);
+
+        QUESTION_FALSE.addAnswer(answer);
+        QUESTION_TRUE.addAnswer(answer);
+
         questionRepository.saveAll(Arrays.asList(QUESTION_FALSE, QUESTION_TRUE));
     }
 
