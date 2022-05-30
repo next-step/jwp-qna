@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -25,6 +26,7 @@ class UserRepositoryTest {
         userRepository.save(EXISTED_USER);
     }
 
+    @DisplayName("유효한 id면 user를 리턴한다")
     @Test
     void findByValidUserId() {
         User user = userRepository.findByUserId(EXISTED_USER_ID)
@@ -33,6 +35,7 @@ class UserRepositoryTest {
         assertThat(user).isEqualTo(EXISTED_USER);
     }
 
+    @DisplayName("유효한 id가 아니라면 NotFoundException를 던진다")
     @Test
     void findByInvalidUserId() {
         assertThatThrownBy(() -> userRepository.findByUserId(NOT_EXISTED_USER_ID)
