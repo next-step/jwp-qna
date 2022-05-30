@@ -10,6 +10,7 @@ public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Enumerated(EnumType.STRING)
     private ContentType contentType;
     private Long contentId;
 
@@ -19,7 +20,7 @@ public class DeleteHistory {
 
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory() {
+    protected DeleteHistory() {
 
     }
 
@@ -42,7 +43,7 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedBy, that.deletedBy);
+                Objects.equals(deletedBy.getId(), that.deletedBy.getId());
     }
 
     @Override
@@ -56,7 +57,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedBy=" + deletedBy.toString() +
+                ", deletedBy=" + deletedBy.getId() +
                 ", createDate=" + createDate +
                 '}';
     }
