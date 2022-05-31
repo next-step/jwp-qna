@@ -27,7 +27,7 @@ class AnswersTest {
     @DisplayName("정상적인 답변 삭제 테스트")
     void deleteAnswers() throws CannotDeleteException {
         Answers answers = new Answers();
-        answers.add(A1);
+        answers.add(new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1"));
 
         DeleteHistories delete = answers.delete(JAVAJIGI);
         Assertions.assertThat(delete.getDeleteHistories()).size().isEqualTo(1);
@@ -37,7 +37,7 @@ class AnswersTest {
     @DisplayName("답변 삭제시 권한 오류")
     void cannotDeleteException() {
         Answers answers = new Answers();
-        answers.add(A1);
+        answers.add(new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1"));
 
         assertThatExceptionOfType(CannotDeleteException.class)
                 .isThrownBy(() -> answers.delete(SANJIGI))
