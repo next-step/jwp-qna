@@ -1,8 +1,12 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Table
@@ -92,13 +96,50 @@ public class Question extends Time {
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        this.deleted = true;
+
+        DeleteHistories deleteHistories = deleteAnswers(loginUser);
+        deleteHistories.add(DeleteHistory.question(this));
+        return deleteHistories;
+    }
+
+    private DeleteHistories deleteAnswers(User loginUser) throws CannotDeleteException {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        for (Answer undeletedAnswer: getUnDeletedAnswers()) {
+            deleteHistories.add(undeletedAnswer.delete(loginUser));
+        }
+        return deleteHistories;
+    }
+
+    public List<Answer> getUnDeletedAnswers() {
+        return answers.stream().filter(it -> !it.isDeleted()).collect(Collectors.toList());
     }
 
     @Override
     public String toString() {
         return "Question{" + "id=" + id + ", title='" + title + '\'' + ", contents='" + contents + '\'' + ", writer=" +
                 writer + ", deleted=" + deleted + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Question)) {
+            return false;
+        }
+        Question question = (Question) o;
+        return getId().equals(question.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

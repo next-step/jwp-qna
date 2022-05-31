@@ -9,9 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.domain.*;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,9 +26,6 @@ class QnaServiceTest {
     private QuestionRepository questionRepository;
 
     @Mock
-    private AnswerRepository answerRepository;
-
-    @Mock
     private DeleteHistoryService deleteHistoryService;
 
     @InjectMocks
@@ -41,7 +35,7 @@ class QnaServiceTest {
     private Answer answer;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         question = new Question(1L, "title1", "contents1").writeBy(JAVAJIGI);
         answer = new Answer(1L, JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
@@ -50,7 +44,6 @@ class QnaServiceTest {
     @Test
     public void delete_성공() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
         assertThat(question.isDeleted()).isFalse();
         qnaService.deleteQuestion(JAVAJIGI, question.getId());
@@ -60,10 +53,9 @@ class QnaServiceTest {
     }
 
     private void verifyDeleteHistories() {
-        List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
-        );
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(DeleteHistory.question(question));
+        deleteHistories.add(DeleteHistory.answer(answer));
         verify(deleteHistoryService).saveAll(deleteHistories);
     }
 
@@ -79,7 +71,6 @@ class QnaServiceTest {
     @Test
     public void delete_성공_질문자_답변자_같음() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
         qnaService.deleteQuestion(JAVAJIGI, question.getId());
 
@@ -95,8 +86,6 @@ class QnaServiceTest {
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId()))
                 .thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId()))
-                .thenReturn(Arrays.asList(answer, answer2));
 
         assertThatThrownBy(
                 () -> qnaService.deleteQuestion(JAVAJIGI, question.getId())
