@@ -67,3 +67,48 @@ alter table user
   * 모델 및 해당 `Repository` 관련 테스트 코드
 * 삭제이력(`DeleteHistory`) 엔티티 클래스
 * JPA Auditing을 위한 `BaseEntity` 클래스
+
+* * *
+
+## 🚀 2단계 - 연관 관계 매핑
+
+### 기능 요구사항
+* 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+
+### DDL
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
+```
+
+### 구현 리스트
+* 답변(`Answer`) 엔티티 클래스에 연관관계 추가
+  * 유저(`User`)를 참조하는 외래키 설정 추가
+    * N:1 관계에 따라 `@ManyToOne` 설정
+  * 질문(`Question`)을 참조하는 외래키 설정 추가
+    * N:1 관계에 따라 `@ManyToOne` 설정
+* 삭제이력(`DeleteHistory`) 엔티티 클래스에 연관관계 추가
+  * 유저(`User`)를 참조하는 외래키 설정 추가
+    * N:1 관계에 따라 `@ManyToOne` 설정
+* 질문(`Question`) 엔티티 클래스에 연관관계 추가
+  * 유저(`User`)를 참조하는 외래키 설정 추가
+    * N:1 관계에 따라 `@ManyToOne` 설정
+  * 답변(`Answer`)에 대한 양방향 설정 추가
+    * 1:N 관계에 따라 `@OneToMany` 설정

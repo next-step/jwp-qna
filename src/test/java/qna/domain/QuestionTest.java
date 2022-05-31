@@ -2,11 +2,9 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
@@ -26,8 +24,10 @@ public class QuestionTest {
         Answer answer = new Answer(UserTest.JAVAJIGI, Q2, "new answer");
         Q2.addAnswer(answer);
 
-        assertThat(answer.getQuestionId())
-                .isEqualTo(Q2.getId());
+        assertThat(answer.getQuestion())
+                .isEqualTo(Q2);
+        assertThat(Q2.getAnswers())
+                .containsExactly(answer);
     }
 
 }
