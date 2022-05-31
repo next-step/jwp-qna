@@ -2,7 +2,7 @@ package qna.domain;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-
+import org.hibernate.Hibernate;
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -20,11 +20,13 @@ public class Answer extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
-    @Column
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
     protected Answer() {}
 
@@ -43,33 +45,33 @@ public class Answer extends BaseEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
     public String getContents() {
         return contents;
+    }
+
+    public User getWriter() {
+        return writer;
+    }
+
+    public Question getQuestion() {
+        return question;
     }
 
     public boolean isDeleted() {
@@ -84,10 +86,23 @@ public class Answer extends BaseEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writer=" + writer.toString() + '\'' +
+                ", question=" + question.toString() + '\'' +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Answer answer = (Answer) o;
+        return id != null && Objects.equals(id, answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

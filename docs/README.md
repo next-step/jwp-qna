@@ -13,6 +13,11 @@
     - [x] DeleteHistory
     - [x] Answer
 
+## STEP-2
+
+- [x] 연관관계 매핑
+- [x] 연관관계 매핑 테스트 작성
+
 ### DDL
 
 ```SQL
@@ -71,3 +76,10 @@ create table user
 alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
+
+
+# 피드백
+- 공개되지 않아도 되는 클래스나 메서드에는 접근제어자 제거 ex) test클래스
+- Equals, HashCode 식별자로 재정의
+  - [참고자료](https://jwkim96.tistory.com/256)
+  - Entity는 ID만 같아도 동일하다고 볼 수 있다.
