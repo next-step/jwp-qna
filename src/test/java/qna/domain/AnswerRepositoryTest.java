@@ -30,9 +30,9 @@ class AnswerRepositoryTest {
         assertAll(
                 () -> assertThat(answer.getId()).isEqualTo(3001L),
                 () -> assertThat(answer.getWriter().getId()).isEqualTo(1001L),
-                () -> assertThat(answer.getQuestion().getId()).isEqualTo(2001L),
+                () -> assertThat(answer.getQuestionId()).isEqualTo(2002L),
                 () -> assertThat(answer.getContents()).isEqualTo("수원"),
-                () -> assertThat(answer.isDeleted()).isTrue(),
+                () -> assertThat(answer.isDeleted()).isFalse(),
                 () -> assertThat(answer.getCreatedAt()).isNotNull()
         );
     }
@@ -51,7 +51,7 @@ class AnswerRepositoryTest {
         Answer savedAnswer = optionalAnswer.get();
         assertAll(
                 () -> assertThat(savedAnswer.getWriter()).isEqualTo(writer),
-                () -> assertThat(savedAnswer.getQuestion().getId()).isEqualTo(question.getId()),
+                () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(question.getId()),
                 () -> assertThat(savedAnswer.getContents()).isEqualTo("abc"),
                 () -> assertThat(savedAnswer.isDeleted()).isFalse(),
                 () -> assertThat(savedAnswer.getCreatedAt()).isNotNull(),
@@ -62,15 +62,15 @@ class AnswerRepositoryTest {
     @DisplayName("id와 삭제여부로 정보 조회")
     @Test
     void findByIdAndDeletedFalse() {
-        Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(3002L);
+        Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(3001L);
         assertThat(optionalAnswer).isPresent();
 
         Answer answer = optionalAnswer.get();
         assertAll(
-                () -> assertThat(answer.getId()).isEqualTo(3002L),
-                () -> assertThat(answer.getWriter().getId()).isEqualTo(1002L),
-                () -> assertThat(answer.getQuestion().getId()).isEqualTo(2002L),
-                () -> assertThat(answer.getContents()).isEqualTo("한국대"),
+                () -> assertThat(answer.getId()).isEqualTo(3001L),
+                () -> assertThat(answer.getWriter().getId()).isEqualTo(1001L),
+                () -> assertThat(answer.getQuestionId()).isEqualTo(2002L),
+                () -> assertThat(answer.getContents()).isEqualTo("수원"),
                 () -> assertThat(answer.isDeleted()).isFalse(),
                 () -> assertThat(answer.getCreatedAt()).isNotNull()
         );
@@ -79,7 +79,7 @@ class AnswerRepositoryTest {
     @DisplayName("id와 삭제여부로 삭제된 id 조회")
     @Test
     void findByIdAndDeletedFalseDeleted() {
-        Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(3001L);
+        Optional<Answer> optionalAnswer = answerRepository.findByIdAndDeletedFalse(3002L);
         assertThat(optionalAnswer).isNotPresent();
     }
 

@@ -31,7 +31,7 @@ class QuestionRepositoryTest {
                 () -> assertThat(question.getId()).isEqualTo(2001L),
                 () -> assertThat(question.getTitle()).isEqualTo("집"),
                 () -> assertThat(question.getContents()).isEqualTo("너의 집은 어디인가"),
-                () -> assertThat(question.isDeleted()).isTrue(),
+                () -> assertThat(question.isDeleted()).isFalse(),
                 () -> assertThat(question.getCreatedAt()).isNotNull()
         );
     }
@@ -73,7 +73,7 @@ class QuestionRepositoryTest {
     @Test
     void findByDeletedFalse() {
         List<Question> list = questionRepository.findByDeletedFalse();
-        assertThat(list).hasSize(2);
+        assertThat(list).hasSize(3);
     }
 
     @DisplayName("삭제되지 않은 Question 정보를 id 및 deleted 로 조회시 테스트")
@@ -92,7 +92,21 @@ class QuestionRepositoryTest {
     @DisplayName("삭제된 Question 정보를 id 및 deleted 로 조회시 테스트")
     @Test
     void findByIdAndDeletedFalseDeleted() {
-        Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(2001L);
+        Optional<Question> optionalQuestion = questionRepository.findByIdAndDeletedFalse(2004L);
         assertThat(optionalQuestion).isNotPresent();
+    }
+
+    @DisplayName("Question 에 Answer 를 추가한 후 추가 여부 확인")
+    @Test
+    void addAnswer() {
+        Question question = questionRepository.findById(2002L).get();
+        assertThat(question.getAnswers().size()).isEqualTo(1);
+
+        User user = userRepository.findById(1002L).get();
+        Answer answer = answerRepository.findById(3001L).get();
+        question.addAnswer(answer);
+
+        Question updatedQuestion = questionRepository.findById(2002L).get();
+        assertThat(updatedQuestion.getAnswers().size()).isEqualTo(2);
     }
 }
