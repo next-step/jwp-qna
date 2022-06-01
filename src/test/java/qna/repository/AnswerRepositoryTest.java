@@ -6,12 +6,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.User;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.QuestionTest.Q1;
 import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
@@ -33,7 +35,7 @@ class AnswerRepositoryTest {
     @BeforeEach
     void setUp() {
         user = userRepository.save(JAVAJIGI);
-        question = questionRepository.save(Q1.writeBy(user));
+        question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
     }
 
     @Test
@@ -66,4 +68,13 @@ class AnswerRepositoryTest {
         );
     }
 
+    @Test
+    @DisplayName("질문 조회시 삭제가 된 질문을 미노출 여부 테스트")
+    void deletedFalse() throws CannotDeleteException {
+        Answer answer = answerRepository.save(new Answer(user, question, "답변입니다."));
+        answer.delete(user);
+
+        List<Answer> result = answerRepository.findAll();
+        Assertions.assertThat(result).size().isEqualTo(0);
+    }
 }
