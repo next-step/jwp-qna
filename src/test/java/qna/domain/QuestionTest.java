@@ -4,6 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -56,5 +58,53 @@ public class QuestionTest {
 
         //then
         assertThat(question.isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("답변 없는 질문 삭제시 삭제기록 확인")
+    void delete_no_answer() throws CannotDeleteException {
+        //given
+        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+
+        //when
+        List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
+
+        //then
+        assertThat(deleteHistories).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("질문 삭제시 답변도 같이 삭제되는지 확인")
+    void delete_with_answer() throws CannotDeleteException {
+        //given
+        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Answer answer = new Answer(UserTest.JAVAJIGI, question, "Answers Contents1");
+        question.addAnswer(answer);
+
+        //when
+        List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
+
+        //then
+        for (Answer a : question.getAnswers()) {
+            assertThat(a.isDeleted()).isTrue();
+        }
+        assertThat(deleteHistories).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("다른 사용자 답변이 삭제된 경우 질문 삭제 가능한지 확인")
+    void delete_with_other_answer() throws CannotDeleteException {
+        //given
+        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Answer answer = new Answer(UserTest.SANJIGI, question, "Answers Contents1");
+        answer.delete(answer.getWriter());
+        question.addAnswer(answer);
+
+        //when
+        List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
+
+        //then
+        assertThat(question.isDeleted()).isTrue();
+        assertThat(deleteHistories).hasSize(1);
     }
 }
