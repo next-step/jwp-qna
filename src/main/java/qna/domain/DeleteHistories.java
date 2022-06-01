@@ -21,10 +21,6 @@ public class DeleteHistories {
         return new DeleteHistories(asList(histories));
     }
 
-    public static DeleteHistories valueOf(final List<DeleteHistory> histories) {
-        return new DeleteHistories(histories);
-    }
-
     public DeleteHistories add(final DeleteHistory deleteHistory) {
         return new DeleteHistories(concat(items.stream(), Stream.of(deleteHistory)).collect(Collectors.toList()));
     }
