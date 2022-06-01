@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.hibernate.Hibernate;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -20,6 +21,9 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @Embedded
+    private Answers answers;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -65,6 +69,10 @@ public class Question extends BaseEntity {
         return writer;
     }
 
+    public Answers getAnswers() {
+        return answers;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
@@ -79,7 +87,6 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }

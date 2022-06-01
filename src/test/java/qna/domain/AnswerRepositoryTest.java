@@ -37,9 +37,9 @@ class AnswerRepositoryTest {
 
     @AfterEach
     void clean(){
-        userRepository.deleteAll();
-        questionRepository.deleteAll();
         answerRepository.deleteAll();
+        questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
