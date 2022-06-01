@@ -3,7 +3,6 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,8 +21,8 @@ public class User extends BaseTimeEntity {
     private String name;
     @Column(length = 50)
     private String email;
-    @OneToMany(mappedBy = "writer")
-    private final List<Question> question = new ArrayList<>();
+    @Embedded
+    private final Questions question = new Questions();
 
     protected User() {
     }
@@ -88,7 +87,7 @@ public class User extends BaseTimeEntity {
     }
 
     public List<Question> getQuestion() {
-        return question;
+        return question.getQuestion();
     }
 
     public Long getId() {

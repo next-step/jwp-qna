@@ -46,32 +46,8 @@ class UserRepositoryTest {
         saveUser.addQuestion(saveQuestion2);
         // when
         final Optional<User> expected = users.findById(saveUser.getId());
-        final Optional<Question> expectedQuestion = questions.findById(saveQuestion.getId());
         // then
         assertThat(expected.get().getQuestion()).hasSize(2);
         assertThat(expected.get().getQuestion().get(0)).isEqualTo(saveQuestion);
-        assertThat(expectedQuestion.get().getWriter()).isEqualTo(saveUser);
-    }
-
-    @Test
-    void 유저_질문_포함_여부_확인() {
-        // given
-        final Question saveQuestion = questions.save(question);
-        saveUser.addQuestion(saveQuestion);
-        // when
-        final Optional<User> expected = users.findById(saveUser.getId());
-        // then
-        assertThat(expected.get().containQuestion(saveQuestion)).isTrue();
-    }
-
-    @Test
-    void 유저_이름_이메일_변경_테스트() {
-        // given
-        final User loginUser = users.findById(saveUser.getId()).get();
-        final User target = new ChangeNameAndEmailDto("password", "이찬준", "lcjltj@gmail.com").toEntity();
-        // when
-        loginUser.updateNameAndEmail(loginUser, target);
-        // then
-        assertThat(loginUser.equalsNameAndEmail(target)).isTrue();
     }
 }
