@@ -44,6 +44,6 @@ public class QuestionRepositoryTest {
         //when
         Question actual = questionRepository.findById(question.getId()).get();
         //then
-        assertThat(actual.getAnswers()).contains(expectedAnswer);
+        assertThat(actual.containAnswer(expectedAnswer)).isTrue();
     }
 }

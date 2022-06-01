@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
-import qna.domain.Answer;
 import qna.domain.AnswerRepository;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
@@ -38,25 +37,11 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-        question.deleteQuestion();
-        if (!question.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
-        }
+        question.delete(loginUser);
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.deleteQuestion();
         deleteHistories.add(DeleteHistory.createQuestionDeleteHistory(questionId, question.getWriter()));
-        for (Answer answer : answers) {
-            answer.deleteAnswer();
-            deleteHistories.add(DeleteHistory.createAnswerDeleteHistory(answer.getId(), answer.getWriter()));
-        }
+
         deleteHistoryService.saveAll(deleteHistories);
     }
 }

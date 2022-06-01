@@ -67,10 +67,10 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         if (this.question != null) {
-            question.getAnswers().remove(this);
+            question.removeAnswer(this);
         }
         this.question = question;
-        question.getAnswers().add(this);
+        question.addAnswer(this);
     }
 
     public void deleteAnswer() {
