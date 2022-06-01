@@ -14,11 +14,11 @@ public class AnswersTest {
     @Test
     @DisplayName("다른 사람의 답변이 있으면 삭제시 CannotDeleteException 예외가 발생해야 한다.")
     void cannotDeleteTest() {
-        //given
+        // given
         List<Answer> answerList = Arrays.asList(AnswerTest.A1, AnswerTest.A2);
         Answers answers = new Answers(answerList);
 
-        //then
+        // then
         assertThatThrownBy(() -> answers.delete(UserTest.JAVAJIGI))
             .isExactlyInstanceOf(CannotDeleteException.class);
     }
@@ -26,17 +26,17 @@ public class AnswersTest {
     @Test
     @DisplayName("답변이 삭제되면 DeleteHistories가 반환되어야 한다.")
     void deleteAnswersTest() throws CannotDeleteException {
-        //given
+        // given
         Answer answer1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "contents1 - answer");
         Answer answer2 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "contents2 - answer");
         Answers savedAnswers = new Answers();
         savedAnswers.add(answer1);
         savedAnswers.add(answer2);
 
-        //when
+        // when
         DeleteHistories deleteHistories = savedAnswers.delete(UserTest.JAVAJIGI);
 
-        //then
+        // then
         assertThat(deleteHistories).isNotNull();
     }
 
