@@ -69,7 +69,7 @@ class AnswerRepositoryTest extends BaseRepositoryTest {
         savedA1.changeContents("contents 변경");
 
         // then
-        assertThat(savedA1.getContents()).isEqualTo("contents 변경");
+        assertThat(savedA1.getContents()).isEqualTo(answerRepository.findById(savedA1.getId()).get().getContents());
     }
 
     @Test

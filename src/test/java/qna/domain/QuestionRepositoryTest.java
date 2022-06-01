@@ -80,7 +80,7 @@ class QuestionRepositoryTest extends BaseRepositoryTest {
         savedQ1.writeBy(savedJavajigi);
 
         // then
-        assertThat(savedQ1.getWriter()).isEqualTo(savedJavajigi);
+        assertThat(savedQ1.getWriter()).isEqualTo(questionRepository.findById(savedQ1.getId()).get().getWriter());
     }
 
     @Test
