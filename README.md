@@ -28,5 +28,5 @@
 
 - [ ] user 테이블
     - [x] Entity 클래스 작성
-    - [ ] Repository 클래스 작성
+    - [x] Repository 클래스 작성
     - [x] Entity 테스트코드 작성
