@@ -12,7 +12,7 @@ public class Answers {
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "question",
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+            cascade = CascadeType.PERSIST)
     List<Answer> answers = new ArrayList<>();
 
     protected Answers() {
@@ -28,10 +28,10 @@ public class Answers {
         }
     }
 
-    public List<DeleteHistory> deleteAll(User loginUser) {
+    public DeleteHistories deleteAll(User loginUser) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         answers.forEach(answer -> deleteHistories.add(answer.delete(loginUser)));
-        return deleteHistories;
+        return new DeleteHistories(deleteHistories);
     }
 
 }

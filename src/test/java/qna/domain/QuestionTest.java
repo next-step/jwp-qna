@@ -3,10 +3,7 @@ package qna.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.AnswerTest.A1;
 import static qna.domain.UserTest.JAVAJIGI;
 
 public class QuestionTest {
@@ -28,8 +25,8 @@ public class QuestionTest {
         final Answer answer = new Answer(JAVAJIGI, question, "Answers Contents3");
 
         question.addAnswer(answer);
-        List<DeleteHistory> actual = question.delete(JAVAJIGI);
+        DeleteHistories actual = question.delete(JAVAJIGI);
 
-        assertThat(actual).hasSize(2);
+        assertThat(actual.get()).hasSize(2);
     }
 }
