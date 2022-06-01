@@ -1,6 +1,9 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +24,8 @@ public class Question extends BaseEntity {
     private List<Answer> answers = new ArrayList<>();
     @Column(nullable = false)
     private boolean deleted = false;
+
+    private static final String CANNOT_DELETE_NO_AUTHORITY = "질문을 삭제할 권한이 없습니다.";
 
     protected Question() {
     }
@@ -49,6 +54,22 @@ public class Question extends BaseEntity {
         answer.toQuestion(this);
     }
 
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        validateDelete(loginUser);
+        this.deleted = true;
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
+
+        return deleteHistories;
+    }
+
+    private void validateDelete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(CANNOT_DELETE_NO_AUTHORITY);
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -71,10 +92,6 @@ public class Question extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
