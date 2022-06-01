@@ -8,7 +8,6 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,13 +45,25 @@ public class QnaService {
             }
         }
 
-        DeleteHistories deleteHistories = new DeleteHistories();
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(deleteQuestion(loginUser, question));
+        deleteHistories.addAll(deleteAnswer(loginUser, answers));
+
+        deleteHistoryService.saveAll(new DeleteHistories(deleteHistories));
+    }
+
+    private DeleteHistory deleteQuestion(final User loginUser, final Question question) {
         question.setDeleted(true);
-        deleteHistories.add(DeleteHistory.ofQuestion(questionId, loginUser));
+        return DeleteHistory.ofQuestion(question.getId(), loginUser);
+    }
+
+    private List<DeleteHistory> deleteAnswer(final User loginUser, final List<Answer> answers) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : answers) {
             answer.setDeleted(true);
             deleteHistories.add(DeleteHistory.ofAnswer(answer.getId(), loginUser));
         }
-        deleteHistoryService.saveAll(deleteHistories);
+
+        return deleteHistories;
     }
 }
