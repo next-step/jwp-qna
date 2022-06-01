@@ -12,12 +12,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class QuestionRepositoryTest extends BaseRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
@@ -29,8 +25,6 @@ class QuestionRepositoryTest extends BaseRepositoryTest {
     void setUp() {
         // given
         saveUsers();
-        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
-        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
     }
 
     @Test
@@ -63,6 +57,10 @@ class QuestionRepositoryTest extends BaseRepositoryTest {
     @Test
     @DisplayName("deleted = false 인 question 리스트 조회")
     void findByDeletedFalse() {
+        // given
+        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
+        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
+
         // when
         final List<Question> questionList = questionRepository.findByDeletedFalse();
 
@@ -73,6 +71,10 @@ class QuestionRepositoryTest extends BaseRepositoryTest {
     @Test
     @DisplayName("id 와 deleted = false 인 question 조회")
     void findByIdAndDeletedFalse() {
+        // given
+        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
+        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
+
         // when & then
         assertThat(questionRepository.findByIdAndDeletedFalse(savedQ1.getId())).isNotEmpty();
     }
@@ -80,16 +82,39 @@ class QuestionRepositoryTest extends BaseRepositoryTest {
     @Test
     @DisplayName("writer_id 변경")
     void update() {
+        // given
+        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
+        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
+
         // when
         savedQ1.writeBy(savedJavajigi);
 
         // then
-        assertThat(savedQ1.getWriter()).isEqualTo(savedJavajigi);
+        assertThat(savedQ1.getWriter()).isEqualTo(questionRepository.findById(savedQ1.getId()).get().getWriter());
     }
 
     @Test
-    @DisplayName("Question 삭제")
-    void delete() {
+    @DisplayName("Question 삭제 - 답변이 없는 경우")
+    void delete_no_answer() {
+        // given
+        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
+        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
+
+        // when
+        questionRepository.delete(savedQ1);
+
+        // then
+        assertThat(questionRepository.findById(savedQ1.getId())).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Question 삭제 - 답변이 있는 경우")
+    void delete_exist_answer() {
+        // given
+        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
+        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
+        savedQ1.addAnswer(new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi));
+
         // when
         questionRepository.delete(savedQ1);
 

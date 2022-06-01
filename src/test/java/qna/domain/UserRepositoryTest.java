@@ -7,7 +7,6 @@ import static qna.domain.UserTest.SANJIGI;
 
 import java.util.Optional;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,13 +25,6 @@ class UserRepositoryTest {
 
     @Autowired
     UserRepository userRepository;
-
-    @BeforeEach
-    void setUp() {
-        // given
-        userRepository.save(JAVAJIGI);
-        userRepository.save(SANJIGI);
-    }
 
     @Test
     @DisplayName("사용자 저장 성공 케이스")
@@ -65,6 +57,9 @@ class UserRepositoryTest {
     @Test
     @DisplayName("useer_id 가 중복되어 데이터 저장 불가")
     void save_duplicate_user_id() {
+        // given
+        userRepository.save(JAVAJIGI);
+
         // when & then
         assertThatThrownBy(() -> userRepository.save(new User(JAVAJIGI.getUserId(), "1234", "이름", "test@email.com")))
                 .isInstanceOf(DataIntegrityViolationException.class);
@@ -73,6 +68,10 @@ class UserRepositoryTest {
     @Test
     @DisplayName("useerId로 찾기")
     void findByUserId() {
+        // given
+        userRepository.save(JAVAJIGI);
+        userRepository.save(SANJIGI);
+
         // when
         final Optional<User> actual = userRepository.findByUserId(JAVAJIGI.getUserId());
 
@@ -83,14 +82,19 @@ class UserRepositoryTest {
     @Test
     @DisplayName("이름과 이메일 변경")
     void update() {
+        // given
+        final User user = userRepository.save(JAVAJIGI);
+        userRepository.save(SANJIGI);
+
         // when
-        JAVAJIGI.update(JAVAJIGI,
+        user.update(JAVAJIGI,
                 new User(JAVAJIGI.getUserId(), JAVAJIGI.getPassword(), "변경하는 이름", "change@email.com"));
         userRepository.flush();
 
         // then
-        assertThat(JAVAJIGI.getName()).isEqualTo("변경하는 이름");
-        assertThat(JAVAJIGI.getEmail()).isEqualTo("change@email.com");
+        final User expected = userRepository.findByUserId(user.getUserId()).get();
+        assertThat(user.getName()).isEqualTo(expected.getName());
+        assertThat(user.getEmail()).isEqualTo(expected.getEmail());
     }
 
     @ParameterizedTest
@@ -98,15 +102,23 @@ class UserRepositoryTest {
     @DisplayName("아이디 혹은 패스워드가 다른경우 변경 불가")
     void update_exception(String userId, String password) {
         // given
+        final User user = userRepository.save(JAVAJIGI);
+        userRepository.save(SANJIGI);
+
+        // given
         final User actual = new User(userId, password, "변경하는 이름", "change@email.com");
 
         // when & then
-        assertThatThrownBy(() -> JAVAJIGI.update(actual, actual))
+        assertThatThrownBy(() -> user.update(actual, actual))
                 .isInstanceOf(UnAuthorizedException.class);
     }
 
     @Test
     void delete() {
+        // given
+        userRepository.save(JAVAJIGI);
+        userRepository.save(SANJIGI);
+
         // when
         userRepository.delete(JAVAJIGI);
         userRepository.flush();

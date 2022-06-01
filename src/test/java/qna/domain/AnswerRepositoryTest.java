@@ -7,11 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class AnswerRepositoryTest extends BaseRepositoryTest {
     @Autowired
     AnswerRepository answerRepository;
@@ -20,16 +16,17 @@ class AnswerRepositoryTest extends BaseRepositoryTest {
     QuestionRepository questionRepository;
 
     Question savedQ1;
-
     Question savedQ2;
+
+    Answer savedA1;
+    Answer savedA2;
+
 
     @BeforeEach
     void setUp() {
         saveUsers();
         savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
         savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
-        savedQ1.addAnswer(new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi));
-        savedQ2.addAnswer(new Answer(savedSanjigi, savedQ2, "Answers Contents2").writeBy(savedSanjigi));
         answerRepository.flush();
     }
 
@@ -46,48 +43,64 @@ class AnswerRepositoryTest extends BaseRepositoryTest {
     @Test
     @DisplayName("id 와 delete = false 인 Answer 들 조회")
     void findByIdAndDeletedFalse() {
+        // given
+        savedA1 = new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi);
+        savedQ1.addAnswer(savedA1);
+        savedA2 = new Answer(savedSanjigi, savedQ2, "Answers Contents2").writeBy(savedSanjigi);
+        savedQ2.addAnswer(savedA2);
+        answerRepository.flush();
+
         // when
-        final Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(savedQ1.getAnswers().get(0).getId());
+        final Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(savedA1.getId());
 
         // then
         assertThat(actual).isNotEmpty();
     }
 
     @Test
-    @DisplayName("Question 에서 answer 정보 조회")
-    void getAnswer() {
+    @DisplayName("answers 정보 조회")
+    void getAnswers() {
         // given
-        final Answer answer = new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi);
-        savedQ1.addAnswer(answer);
+        savedA1 = new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi);
+        savedQ1.addAnswer(savedA1);
+        savedA2 = new Answer(savedSanjigi, savedQ2, "Answers Contents2").writeBy(savedSanjigi);
+        savedQ2.addAnswer(savedA2);
         answerRepository.flush();
 
         // when & then
-        assertThat(savedQ1.getAnswers()).contains(answerRepository.findById(answer.getId()).get());
+        assertThat(savedQ1.getAnswers().contains(answerRepository.findByIdAndDeletedFalse(savedA1.getId()).get())).isTrue();
     }
 
     @Test
     @DisplayName("Answer contents 내용 변경")
     void update() {
         // given
-        final Answer answer = savedQ1.getAnswers().get(0);
+        savedA1 = new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi);
+        savedQ1.addAnswer(savedA1);
+        savedA2 = new Answer(savedSanjigi, savedQ2, "Answers Contents2").writeBy(savedSanjigi);
+        savedQ2.addAnswer(savedA2);
+        answerRepository.flush();
 
         // when
-        answer.setContents("contents 변경");
+        savedA1.changeContents("contents 변경");
 
         // then
-        assertThat(answer.getContents()).isEqualTo("contents 변경");
+        assertThat(savedA1.getContents()).isEqualTo(answerRepository.findById(savedA1.getId()).get().getContents());
     }
 
     @Test
     @DisplayName("Answer 삭제")
     void delete() {
-        // bdd
-        final Answer answer = savedQ1.getAnswers().get(0);
+        // given
+        savedA1 = new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi);
+        savedQ1.addAnswer(savedA1);
+        savedA2 = new Answer(savedSanjigi, savedQ2, "Answers Contents2").writeBy(savedSanjigi);
+        savedQ2.addAnswer(savedA2);
 
         // when
-        answerRepository.delete(answer);
+        savedA1.delete(savedJavajigi);
 
         // then
-        assertThat(answerRepository.findById(answer.getId())).isEmpty();
+        assertThat(savedA1.isDeleted()).isTrue();
     }
 }
