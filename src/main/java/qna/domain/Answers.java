@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -27,10 +28,14 @@ public class Answers {
 		answers.add(answer);
 	}
 
-	public void delete(User loginUser) throws CannotDeleteException {
-		for (Answer answer : answers) {
+	public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+		for(Answer answer: answers) {
 			validateAuth(answer, loginUser);
 		}
+
+		return answers.stream()
+			.map(Answer::delete)
+			.collect(Collectors.toList());
 	}
 
 	private void validateAuth(Answer answer, User loginUser) throws CannotDeleteException {

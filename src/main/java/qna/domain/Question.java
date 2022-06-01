@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -118,11 +119,20 @@ public class Question {
         return updatedAt;
     }
 
-    public void delete(User user) throws CannotDeleteException {
-        if(!isOwner(user)) {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        if(!isOwner(loginUser)) {
             throw new CannotDeleteException(CAN_NOT_DELETE_MESSAGE);
         }
 
+        List<DeleteHistory> deleteHistories = deleteAnswer(loginUser);
+
         deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+
+        return deleteHistories;
+    }
+
+    private List<DeleteHistory> deleteAnswer(User loginUser) throws CannotDeleteException {
+        return answers.delete(loginUser);
     }
 }

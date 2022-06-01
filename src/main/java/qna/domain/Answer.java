@@ -119,4 +119,9 @@ public class Answer {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
+
+    public DeleteHistory delete() {
+        deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    }
 }
