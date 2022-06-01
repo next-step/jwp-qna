@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DeleteHistories {
-    public static final DeleteHistories EMPTY = new DeleteHistories(new ArrayList<>());
     private final List<DeleteHistory> items;
 
     private DeleteHistories(final List<DeleteHistory> items) {

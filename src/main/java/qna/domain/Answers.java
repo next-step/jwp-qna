@@ -7,7 +7,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
@@ -27,11 +26,10 @@ public class Answers {
         this.answers.add(answer);
     }
 
-    public DeleteHistories deleteAll(final User loginUser) throws CannotDeleteException {
-        DeleteHistories deleteHistories = DeleteHistories.EMPTY;
-        for (Answer answer : answers) {
-            deleteHistories = deleteHistories.add(answer.delete(loginUser));
-        }
+    public DeleteHistories deleteAll(final User loginUser) {
+        final DeleteHistories deleteHistories = DeleteHistories.valueOf(answers.stream()
+                .map(answer -> answer.delete(loginUser))
+                .toArray(DeleteHistory[]::new));
         answers.clear();
 
         return deleteHistories;

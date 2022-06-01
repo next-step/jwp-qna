@@ -62,7 +62,7 @@ public class Question extends BaseTimeEntity {
         this.answers.add(answer);
     }
 
-    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) {
         validateLoginUser(loginUser);
         final DeleteHistories deleteHistories = DeleteHistories.valueOf(
                         new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()))
@@ -71,7 +71,7 @@ public class Question extends BaseTimeEntity {
         return deleteHistories;
     }
 
-    private void validateLoginUser(final User loginUser) throws CannotDeleteException {
+    private void validateLoginUser(final User loginUser) {
         if (!isWriter(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }

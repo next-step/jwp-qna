@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import qna.CannotDeleteException;
 
 class AnswerRepositoryTest extends BaseRepositoryTest {
     @Autowired
@@ -74,7 +73,7 @@ class AnswerRepositoryTest extends BaseRepositoryTest {
 
     @Test
     @DisplayName("Answer 삭제")
-    void delete() throws CannotDeleteException {
+    void delete() {
         // when
         savedA1.delete(savedJavajigi);
 
