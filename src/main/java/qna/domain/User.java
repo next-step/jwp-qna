@@ -16,25 +16,26 @@ public class User extends BaseTimeEntity {
     private Long id;
     @Column(length = 20, nullable = false)
     private String userId;
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, unique = true)
     private String password;
     @Column(length = 20, nullable = false)
     private String name;
     @Column(length = 50)
     private String email;
     @OneToMany(mappedBy = "writer")
-    private List<Question> question = new ArrayList<>();
+    private final List<Question> question = new ArrayList<>();
 
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
+    public User(final String userId, final String password, final String name, final String email) {
+        this.userId = userId;
+        this.password = password;
+        this.name = name;
+        this.email = email;
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
-        this.userId = userId;
+    public User(final String password, final String name, final String email) {
         this.password = password;
         this.name = name;
         this.email = email;
@@ -44,11 +45,15 @@ public class User extends BaseTimeEntity {
         this.question.add(question);
 
         if (question.getWriter() != this) {
-            question.setWriter(this);
+            question.updateWriter(this);
         }
     }
 
-    public void update(User loginUser, User target) {
+    public boolean containQuestion(final Question question) {
+        return this.question.contains(question);
+    }
+
+    public void updateNameAndEmail(final User loginUser, final User target) {
         if (!matchUserId(loginUser.userId)) {
             throw new UnAuthorizedException();
         }
@@ -90,40 +95,8 @@ public class User extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @Override
