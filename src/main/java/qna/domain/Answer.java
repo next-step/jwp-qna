@@ -24,7 +24,7 @@ public class Answer extends BaseTimeEntity {
 
     protected Answer() {}
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, String contents) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -33,9 +33,14 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
+        this.id = id;
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+    }
+
+    public Answer(User writer, Question question, String contents) {
+        this(null, writer, question, contents);
     }
 
     public boolean isOwner(User writer) {
@@ -77,5 +82,18 @@ public class Answer extends BaseTimeEntity {
                 ", createAt=" + getCreateAt() +
                 ", updateAt=" + getUpdateAt() +
                 '}';
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Answer answer = (Answer) o;
+        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writer, answer.writer) && Objects.equals(question, answer.question) && Objects.equals(contents, answer.contents);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, writer, question, contents, deleted);
     }
 }

@@ -26,18 +26,20 @@ public class User extends BaseTimeEntity {
 
     protected User() {
     }
-
-    public User(final String userId, final String password, final String name, final String email) {
+    public User(final Long id, final String userId, final String password, final String name, final String email) {
+        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
     }
 
+    public User(final String userId, final String password, final String name, final String email) {
+        this(null, userId, password, name, email);
+    }
+
     public User(final String password, final String name, final String email) {
-        this.password = password;
-        this.name = name;
-        this.email = email;
+        this(null, null, password, name, email);
     }
 
     public void addQuestion(final Question question) {

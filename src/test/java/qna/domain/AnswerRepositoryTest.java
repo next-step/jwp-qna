@@ -1,7 +1,6 @@
 package qna.domain;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -19,13 +18,14 @@ class AnswerRepositoryTest {
     UserRepository users;
     @Autowired
     QuestionRepository questions;
+
     private User user;
     private Question question;
     private Answer answer;
 
     @BeforeEach
     void setUp() {
-        user = users.save(UserTest.JAVAJIGI);
+        user = users.save(new User("lcjltj","password", "chanjun", "lcjltj@gmail.com"));
         question = questions.save(new Question("title1", "contents1").writeBy(user));
         answer = new Answer(user, question, "Answers Contents");
     }
