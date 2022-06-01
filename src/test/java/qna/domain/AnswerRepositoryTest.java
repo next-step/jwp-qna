@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.util.List;
 import java.util.Optional;
@@ -52,9 +53,9 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("질문 작성자 id로 삭제되지 않은 답변 목록 조회")
-    void findByQuestionIdAndDeletedFalse() {
+    void findByQuestionIdAndDeletedFalse() throws CannotDeleteException {
         //when
-        answer1.setDeleted(true);
+        answer1.delete(writer);
         List<Answer> founds = answerRepository.findByQuestionIdAndDeletedFalse(answer1.getQuestion().getId());
 
         //then
@@ -67,9 +68,9 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("id로 삭제되지 않은 질문 목록 조회")
-    void findByIdAndDeletedFalse() {
+    void findByIdAndDeletedFalse() throws CannotDeleteException {
         //when
-        answer1.setDeleted(true);
+        answer1.delete(writer);
         Optional<Answer> foundsAnswer1 = answerRepository.findByIdAndDeletedFalse(answer1.getId());
         Optional<Answer> foundsAnswer2 = answerRepository.findByIdAndDeletedFalse(answer2.getId());
 
