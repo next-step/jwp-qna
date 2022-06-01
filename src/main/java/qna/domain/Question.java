@@ -19,6 +19,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import qna.CannotDeleteException;
+
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Question {
@@ -112,5 +114,13 @@ public class Question {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void delete(User user) throws CannotDeleteException {
+        if(!isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        deleted = true;
     }
 }
