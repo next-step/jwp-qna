@@ -17,7 +17,7 @@
     - [ ] 테스트코드 작성
 
 - [ ] delete_history 테이블
-    - [ ] Entity 클래스 작성
+    - [x] Entity 클래스 작성
     - [ ] Repository 클래스 작성
     - [ ] 테스트코드 작성
 
