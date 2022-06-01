@@ -25,8 +25,6 @@ class QuestionRepositoryTest extends BaseRepositoryTest {
     void setUp() {
         // given
         saveUsers();
-        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
-        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
     }
 
     @Test
@@ -59,6 +57,10 @@ class QuestionRepositoryTest extends BaseRepositoryTest {
     @Test
     @DisplayName("deleted = false 인 question 리스트 조회")
     void findByDeletedFalse() {
+        // given
+        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
+        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
+
         // when
         final List<Question> questionList = questionRepository.findByDeletedFalse();
 
@@ -69,6 +71,10 @@ class QuestionRepositoryTest extends BaseRepositoryTest {
     @Test
     @DisplayName("id 와 deleted = false 인 question 조회")
     void findByIdAndDeletedFalse() {
+        // given
+        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
+        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
+
         // when & then
         assertThat(questionRepository.findByIdAndDeletedFalse(savedQ1.getId())).isNotEmpty();
     }
@@ -76,6 +82,10 @@ class QuestionRepositoryTest extends BaseRepositoryTest {
     @Test
     @DisplayName("writer_id 변경")
     void update() {
+        // given
+        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
+        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
+
         // when
         savedQ1.writeBy(savedJavajigi);
 
@@ -86,6 +96,10 @@ class QuestionRepositoryTest extends BaseRepositoryTest {
     @Test
     @DisplayName("Question 삭제 - 답변이 없는 경우")
     void delete_no_answer() {
+        // given
+        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
+        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
+
         // when
         questionRepository.delete(savedQ1);
 
@@ -97,6 +111,8 @@ class QuestionRepositoryTest extends BaseRepositoryTest {
     @DisplayName("Question 삭제 - 답변이 있는 경우")
     void delete_exist_answer() {
         // given
+        savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
+        savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
         savedQ1.addAnswer(new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi));
 
         // when

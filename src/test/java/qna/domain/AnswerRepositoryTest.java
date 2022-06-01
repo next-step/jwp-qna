@@ -27,10 +27,6 @@ class AnswerRepositoryTest extends BaseRepositoryTest {
         saveUsers();
         savedQ1 = questionRepository.save(new Question("title1", "contents1").writeBy(savedJavajigi));
         savedQ2 = questionRepository.save(new Question("title2", "contents2").writeBy(savedSanjigi));
-        savedA1 = new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi);
-        savedQ1.addAnswer(savedA1);
-        savedA2 = new Answer(savedSanjigi, savedQ2, "Answers Contents2").writeBy(savedSanjigi);
-        savedQ2.addAnswer(savedA2);
         answerRepository.flush();
     }
 
@@ -47,6 +43,13 @@ class AnswerRepositoryTest extends BaseRepositoryTest {
     @Test
     @DisplayName("id 와 delete = false 인 Answer 들 조회")
     void findByIdAndDeletedFalse() {
+        // given
+        savedA1 = new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi);
+        savedQ1.addAnswer(savedA1);
+        savedA2 = new Answer(savedSanjigi, savedQ2, "Answers Contents2").writeBy(savedSanjigi);
+        savedQ2.addAnswer(savedA2);
+        answerRepository.flush();
+
         // when
         final Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(savedA1.getId());
 
@@ -57,13 +60,27 @@ class AnswerRepositoryTest extends BaseRepositoryTest {
     @Test
     @DisplayName("answers 정보 조회")
     void getAnswers() {
+        // given
+        savedA1 = new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi);
+        savedQ1.addAnswer(savedA1);
+        savedA2 = new Answer(savedSanjigi, savedQ2, "Answers Contents2").writeBy(savedSanjigi);
+        savedQ2.addAnswer(savedA2);
+        answerRepository.flush();
+
         // when & then
-        assertThat(savedQ1.getAnswers().contains(savedA1)).isTrue();
+        assertThat(savedQ1.getAnswers().contains(answerRepository.findByIdAndDeletedFalse(savedA1.getId()).get())).isTrue();
     }
 
     @Test
     @DisplayName("Answer contents 내용 변경")
     void update() {
+        // given
+        savedA1 = new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi);
+        savedQ1.addAnswer(savedA1);
+        savedA2 = new Answer(savedSanjigi, savedQ2, "Answers Contents2").writeBy(savedSanjigi);
+        savedQ2.addAnswer(savedA2);
+        answerRepository.flush();
+
         // when
         savedA1.changeContents("contents 변경");
 
@@ -74,6 +91,12 @@ class AnswerRepositoryTest extends BaseRepositoryTest {
     @Test
     @DisplayName("Answer 삭제")
     void delete() {
+        // given
+        savedA1 = new Answer(savedJavajigi, savedQ1, "Answers Contents1").writeBy(savedJavajigi);
+        savedQ1.addAnswer(savedA1);
+        savedA2 = new Answer(savedSanjigi, savedQ2, "Answers Contents2").writeBy(savedSanjigi);
+        savedQ2.addAnswer(savedA2);
+
         // when
         savedA1.delete(savedJavajigi);
 
