@@ -4,8 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -67,10 +65,10 @@ public class QuestionTest {
         Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
 
         //when
-        List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
+        DeleteHistories deleteHistories = question.delete(UserTest.JAVAJIGI);
 
         //then
-        assertThat(deleteHistories).hasSize(1);
+        assertThat(deleteHistories.getDeleteHistories()).hasSize(1);
     }
 
     @Test
@@ -82,13 +80,13 @@ public class QuestionTest {
         question.addAnswer(answer);
 
         //when
-        List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
+        DeleteHistories deleteHistories = question.delete(UserTest.JAVAJIGI);
 
         //then
         for (Answer a : question.getAnswers()) {
             assertThat(a.isDeleted()).isTrue();
         }
-        assertThat(deleteHistories).hasSize(2);
+        assertThat(deleteHistories.getDeleteHistories()).hasSize(2);
     }
 
     @Test
@@ -101,10 +99,10 @@ public class QuestionTest {
         question.addAnswer(answer);
 
         //when
-        List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
+        DeleteHistories deleteHistories = question.delete(UserTest.JAVAJIGI);
 
         //then
         assertThat(question.isDeleted()).isTrue();
-        assertThat(deleteHistories).hasSize(1);
+        assertThat(deleteHistories.getDeleteHistories()).hasSize(1);
     }
 }

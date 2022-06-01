@@ -5,8 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AnswersTest {
@@ -31,10 +29,10 @@ public class AnswersTest {
     @DisplayName("모든 답변 삭제 후 삭제기록 확인")
     void delete() throws CannotDeleteException {
         //when
-        List<DeleteHistory> deleteHistories = answers.delete(UserTest.JAVAJIGI);
+        DeleteHistories deleteHistories = answers.delete(UserTest.JAVAJIGI);
 
         //then
-        assertThat(deleteHistories).hasSize(1);
+        assertThat(deleteHistories.getDeleteHistories()).hasSize(1);
     }
 
     @Test
@@ -46,10 +44,10 @@ public class AnswersTest {
         answers.add(deletedAnswer);
 
         //when
-        List<DeleteHistory> deleteHistories = answers.delete(UserTest.JAVAJIGI);
+        DeleteHistories deleteHistories = answers.delete(UserTest.JAVAJIGI);
 
         //then
-        assertThat(deleteHistories).hasSize(1);
+        assertThat(deleteHistories.getDeleteHistories()).hasSize(1);
     }
 
     @Test
