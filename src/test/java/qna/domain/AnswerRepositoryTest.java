@@ -54,7 +54,7 @@ class AnswerRepositoryTest {
     @DisplayName("삭제되지 않은 Answer id로 조회")
     @Test
     void findByIdAndDeletedFalse() {
-        final Answer expected = answerRepository.save(new Answer(writer, question, "Answers Contents1"));
+        final Answer expected = answerRepository.save(answer);
 
         Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(expected.getId());
 

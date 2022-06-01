@@ -1,13 +1,13 @@
 package qna.domain;
 
-import org.springframework.dao.DuplicateKeyException;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.GenerationType.*;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Table(name = "question")
 @Entity
@@ -27,10 +27,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(fetch = FetchType.LAZY,
-            mappedBy = "question",
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    List<Answer> answers = new ArrayList<>();
+    @Embedded
+    Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -58,11 +56,8 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if (answers.contains(answer)) {
-            throw new DuplicateKeyException("중복되는 답변을 추가할 수 없습니다.");
-        }
+        answers.addAnswer(answer);
         answer.toQuestion(this);
-        answers.add(answer);
     }
 
     public Long getId() {
@@ -77,8 +72,19 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public DeleteHistories delete(User loginUser) {
+        validateOwner(loginUser);
         this.deleted = true;
+
+        DeleteHistories deleteHistories = DeleteHistories.fromQuestion(this);
+        deleteHistories.addAll(answers.deleteAll(loginUser));
+        return deleteHistories;
+    }
+
+    private void validateOwner(User loginUser) {
+        if(!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     @Override
