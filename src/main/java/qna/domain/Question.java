@@ -3,6 +3,8 @@ package qna.domain;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -14,10 +16,15 @@ public class Question extends BaseTimeEntity {
     @Lob
     @Column(name = "contents")
     private String contents;
-    @Column(name = "writer_id")
-    private Long writerId;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answerList = new ArrayList<>();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -34,15 +41,19 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
+
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
+        if (!this.answerList.contains(answer)) {
+            this.answerList.add(answer);
+        }
         answer.toQuestion(this);
     }
 
@@ -50,32 +61,16 @@ public class Question extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -92,8 +87,12 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public List<Answer> getAnswers() {
+        return answerList;
     }
 }
