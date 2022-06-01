@@ -11,10 +11,10 @@ import java.util.stream.Stream;
 
 public class DeleteHistories {
     public static final DeleteHistories EMPTY = new DeleteHistories(new ArrayList<>());
-    private final List<DeleteHistory> list;
+    private final List<DeleteHistory> items;
 
-    private DeleteHistories(final List<DeleteHistory> list) {
-        this.list = list;
+    private DeleteHistories(final List<DeleteHistory> items) {
+        this.items = items;
     }
 
     public static DeleteHistories valueOf(final DeleteHistory... histories) {
@@ -26,7 +26,7 @@ public class DeleteHistories {
     }
 
     public DeleteHistories add(final DeleteHistory deleteHistory) {
-        return new DeleteHistories(concat(list.stream(), Stream.of(deleteHistory)).collect(Collectors.toList()));
+        return new DeleteHistories(concat(items.stream(), Stream.of(deleteHistory)).collect(Collectors.toList()));
     }
 
     public DeleteHistories addAll(final DeleteHistories deleteHistories) {
@@ -34,11 +34,11 @@ public class DeleteHistories {
     }
 
     private List<DeleteHistory> concatList(final DeleteHistories deleteHistories) {
-        return concat(list.stream(), deleteHistories.list.stream()).collect(Collectors.toList());
+        return concat(items.stream(), deleteHistories.items.stream()).collect(Collectors.toList());
     }
 
-    public List<DeleteHistory> getList() {
-        return list;
+    public List<DeleteHistory> getItems() {
+        return items;
     }
 
     @Override
@@ -50,18 +50,18 @@ public class DeleteHistories {
             return false;
         }
         final DeleteHistories that = (DeleteHistories) o;
-        return Objects.equals(list, that.list);
+        return Objects.equals(items, that.items);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(list);
+        return Objects.hash(items);
     }
 
     @Override
     public String toString() {
         return "DeleteHistories{" +
-                "list=" + list +
+                "list=" + items +
                 '}';
     }
 }
