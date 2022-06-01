@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Stream.concat;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class DeleteHistories {
     private final List<DeleteHistory> items;
 
     private DeleteHistories(final List<DeleteHistory> items) {
-        this.items = items;
+        this.items = new ArrayList<>(items);
     }
 
     public static DeleteHistories valueOf(final DeleteHistory... histories) {
@@ -33,7 +34,7 @@ public class DeleteHistories {
     }
 
     public List<DeleteHistory> getItems() {
-        return items;
+        return unmodifiableList(items);
     }
 
     @Override
