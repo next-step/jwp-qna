@@ -1,8 +1,10 @@
 package qna.domain;
 
 import org.hibernate.Hibernate;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -23,7 +25,7 @@ public class Question extends BaseEntity {
     private User writer;
 
     @Embedded
-    private Answers answers;
+    private Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -50,15 +52,12 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.addAnswer(answer);
         answer.toQuestion(this);
     }
 
     public Long getId() {
         return id;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public String getContents() {
@@ -81,12 +80,21 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        setDeleted(true);
+        return new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
+    }
+
     @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
+                ", writerId=" + writer.getId() + '\'' +
                 ", deleted=" + deleted +
                 '}';
     }

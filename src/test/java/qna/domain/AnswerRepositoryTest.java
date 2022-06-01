@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.NotFoundException;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,15 +27,17 @@ class AnswerRepositoryTest {
     Answer answer1, answer2;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         testWriter = userRepository.save(UserTest.ROCKPRO87);
         testQuestion = questionRepository.save(new Question("질문 제목", "질문 내용").writeBy(testWriter));
         answer1 = answerRepository.save(new Answer(testWriter, testQuestion, "답변 내용 1번"));
         answer2 = answerRepository.save(new Answer(testWriter, testQuestion, "답변 내용 2번"));
+        testQuestion.addAnswer(answer1);
+        testQuestion.addAnswer(answer2);
     }
 
     @AfterEach
-    void clean(){
+    void clean() {
         answerRepository.deleteAll();
         questionRepository.deleteAll();
         userRepository.deleteAll();
@@ -63,12 +64,6 @@ class AnswerRepositoryTest {
                 () -> assertThat(actual.getWriter()).isEqualTo(testWriter),
                 () -> assertThat(actual.getQuestion()).isEqualTo(testQuestion)
         );
-    }
-
-    @Test
-    void findByDeletedFalse() {
-        List<Answer> actual = answerRepository.findByQuestionAndDeletedFalse(testQuestion);
-        assertThat(actual).contains(answer1, answer2);
     }
 
     @Test
