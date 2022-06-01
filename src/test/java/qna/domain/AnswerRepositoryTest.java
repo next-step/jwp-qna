@@ -39,7 +39,6 @@ public class AnswerRepositoryTest {
         savedAnswer2 = answerRepository.save(
             new Answer(savedWriter, savedQuestion, "answer contents4"));
 
-        System.out.println(savedQuestion.getAnswers().size());
     }
 
     @AfterEach

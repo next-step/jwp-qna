@@ -31,5 +31,4 @@ public class QuestionTest {
         assertThat(savedAnswer.getQuestion()).isEqualTo(Q2);
     }
 
-
 }
