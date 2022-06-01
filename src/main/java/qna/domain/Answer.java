@@ -11,10 +11,12 @@ public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "wirte_id")
-    private Long writerId;
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
     @Lob
     private String contents;
     @Column(nullable = false)
@@ -22,13 +24,7 @@ public class Answer extends BaseTimeEntity {
 
     protected Answer() {}
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
-
     public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
-
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -37,49 +33,34 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.id = id;
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
+    public Answer(User writer, Question question, String contents) {
+        this(null, writer, question, contents);
+    }
+
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public User getWriter() {
+        return writer;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
+    public Question getQuestion() {
+        return question;
     }
 
     public boolean isDeleted() {
@@ -94,12 +75,25 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writerId=" + writer.getId() +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 ", createAt=" + getCreateAt() +
                 ", updateAt=" + getUpdateAt() +
                 '}';
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Answer answer = (Answer) o;
+        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writer, answer.writer) && Objects.equals(question, answer.question) && Objects.equals(contents, answer.contents);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, writer, question, contents, deleted);
     }
 }

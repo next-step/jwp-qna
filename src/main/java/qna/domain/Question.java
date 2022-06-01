@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -12,30 +13,32 @@ public class Question extends BaseTimeEntity {
     @Lob
     @Column(nullable = false)
     private String contents;
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
 
-    protected Question(){}
-
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    protected Question() {
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(final Long id, final String title, final String contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
     }
 
+    public Question(String title, String contents) {
+        this(null, title, contents);
+    }
+
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -46,32 +49,18 @@ public class Question extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public User getWriter() {
+        return writer;
     }
 
-    public String getTitle() {
-        return title;
-    }
+    public void updateWriter(User writer) {
+        if (writer != null) {
+            this.writer.addQuestion(this);
+        }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+        if (!writer.containQuestion(this)) {
+            writer.addQuestion(this);
+        }
     }
 
     public boolean isDeleted() {
@@ -88,10 +77,23 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 ", createAt=" + getCreateAt() +
                 ", updateAt=" + getUpdateAt() +
                 '}';
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Question question = (Question) o;
+        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer, question.writer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writer, deleted);
     }
 }
