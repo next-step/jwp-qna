@@ -24,6 +24,8 @@ import qna.CannotDeleteException;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Question {
+    private final String CAN_NOT_DELETE_MESSAGE = "질문을 삭제할 권한이 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -118,7 +120,7 @@ public class Question {
 
     public void delete(User user) throws CannotDeleteException {
         if(!isOwner(user)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(CAN_NOT_DELETE_MESSAGE);
         }
 
         deleted = true;

@@ -10,8 +10,10 @@ import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
+	private final String CAN_NOT_DELETE_MESSAGE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+
 	@OneToMany(mappedBy = "question")
-	private List<Answer> answers = new ArrayList<>();
+	private List<Answer> answers;
 
 	protected Answers() {
 		answers = new ArrayList<>();
@@ -27,9 +29,13 @@ public class Answers {
 
 	public void delete(User loginUser) throws CannotDeleteException {
 		for (Answer answer : answers) {
-			if (!answer.isOwner(loginUser)) {
-				throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-			}
+			validateAuth(answer, loginUser);
+		}
+	}
+
+	private void validateAuth(Answer answer, User loginUser) throws CannotDeleteException {
+		if (!answer.isOwner(loginUser)) {
+			throw new CannotDeleteException(CAN_NOT_DELETE_MESSAGE);
 		}
 	}
 }
