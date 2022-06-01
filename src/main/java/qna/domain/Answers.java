@@ -40,7 +40,6 @@ public class Answers {
         }
 
         answers.forEach(answer -> answer.deleteAnswer());
-
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         answers.forEach(answer -> deleteHistories.add(DeleteHistory.createAnswerDeleteHistory(answer)));
         return deleteHistories;

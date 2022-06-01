@@ -44,8 +44,8 @@ public class DeleteHistory {
     }
 
 
-    public static DeleteHistory createQuestionDeleteHistory(Long contentId, User deletedByUser) {
-        return new DeleteHistory(ContentType.QUESTION, contentId, deletedByUser, LocalDateTime.now());
+    public static DeleteHistory createQuestionDeleteHistory(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
     }
 
     @Override
