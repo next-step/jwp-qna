@@ -67,6 +67,16 @@ public class UserTest {
     }
 
     @Test
+    void 작성자_동일_유무_테스트() {
+        // given
+        final User loginUser = JAVAJIGI;
+        final Question question = QuestionTest.Q1;
+        // when
+        // then
+        assertThat(loginUser.isOwner(question.getWriter())).isTrue();
+    }
+
+    @Test
     void 게스트_유저_확인() {
         // given
         User user = JAVAJIGI;
