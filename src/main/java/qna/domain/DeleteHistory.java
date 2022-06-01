@@ -25,9 +25,10 @@ public class DeleteHistory {
     @Column(name = "create_date")
     private LocalDateTime createDate;
 
-    protected DeleteHistory() {}
+    protected DeleteHistory() {
+    }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deleteBy) {
+    private DeleteHistory(final ContentType contentType, final Long contentId, final User deleteBy) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deleteBy = deleteBy;
