@@ -37,7 +37,7 @@ class UserRepositoryTest {
         List<User> list = users.findAll();
         final Optional<User> expected = users.findById(question.getWriter().getId());
         // then
-        assertThat(expected.get().getQuestion()).hasSize(1);
-        assertThat(expected.get().getQuestion().get(0)).isEqualTo(saveQuestion);
+        assertThat(expected.get().getQuestions()).hasSize(1);
+        assertThat(expected.get().getQuestions().get(0)).isEqualTo(saveQuestion);
     }
 }

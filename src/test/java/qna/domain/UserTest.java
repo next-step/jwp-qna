@@ -21,7 +21,7 @@ public class UserTest {
         // when
         User user = 질문_추가_유저_생성();
         // then
-        assertThat(user.getQuestion()).contains(QuestionTest.Q1);
+        assertThat(user.getQuestions()).contains(QuestionTest.Q1);
     }
 
     @Test

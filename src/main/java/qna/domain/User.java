@@ -13,19 +13,20 @@ public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 20, nullable = false)
-    private String userId;
     @Column(length = 20, nullable = false, unique = true)
+    private String userId;
+    @Column(length = 20, nullable = false)
     private String password;
     @Column(length = 20, nullable = false)
     private String name;
     @Column(length = 50)
     private String email;
     @Embedded
-    private final Questions question = new Questions();
+    private final Questions questions = new Questions();
 
     protected User() {
     }
+
     public User(final Long id, final String userId, final String password, final String name, final String email) {
         this.id = id;
         this.userId = userId;
@@ -43,7 +44,7 @@ public class User extends BaseTimeEntity {
     }
 
     public void addQuestion(final Question question) {
-        this.question.add(question);
+        this.questions.add(question);
 
         if (question.getWriter() != this) {
             question.updateWriter(this);
@@ -51,7 +52,7 @@ public class User extends BaseTimeEntity {
     }
 
     public boolean containQuestion(final Question question) {
-        return this.question.contains(question);
+        return this.questions.contains(question);
     }
 
     public void updateNameAndEmail(final User loginUser, final User target) {
@@ -88,8 +89,8 @@ public class User extends BaseTimeEntity {
         return false;
     }
 
-    public List<Question> getQuestion() {
-        return question.getQuestion();
+    public List<Question> getQuestions() {
+        return questions.getQuestion();
     }
 
     public Long getId() {
@@ -108,7 +109,7 @@ public class User extends BaseTimeEntity {
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", question=" + question +
+                ", question=" + questions +
                 '}';
     }
 
@@ -117,12 +118,12 @@ public class User extends BaseTimeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(userId, user.userId) && Objects.equals(password, user.password) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(question, user.question);
+        return Objects.equals(id, user.id) && Objects.equals(userId, user.userId) && Objects.equals(password, user.password) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(questions, user.questions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email, question);
+        return Objects.hash(id, userId, password, name, email, questions);
     }
 
     private static class GuestUser extends User {
