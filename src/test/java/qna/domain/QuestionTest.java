@@ -9,16 +9,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
-
     @Test
     @DisplayName("질문 작성자 동일한지 확인")
     void isOwner() {
         //then
         assertAll(
-                () -> assertThat(Q1.isOwner(UserTest.JAVAJIGI)).isTrue(),
-                () -> assertThat(Q2.isOwner(UserTest.SANJIGI)).isTrue()
+                () -> assertThat(QuestionFixtures.Q1.isOwner(UserFixtures.JAVAJIGI)).isTrue(),
+                () -> assertThat(QuestionFixtures.Q2.isOwner(UserFixtures.SANJIGI)).isTrue()
         );
     }
 
@@ -26,8 +23,8 @@ public class QuestionTest {
     @DisplayName("답변 추가 후 질문자 id로 변경되었지 확인")
     void addAnswer() {
         //given
-        Answer answer = AnswerTest.A2;
-        Question question = Q1;
+        Answer answer = AnswerFixtures.A2;
+        Question question = QuestionFixtures.Q1;
 
         //when
         question.addAnswer(answer);
@@ -41,7 +38,7 @@ public class QuestionTest {
     void validateDelete() {
         //then
         assertThatThrownBy(() -> {
-            Q1.delete(UserTest.SANJIGI);
+            QuestionFixtures.Q1.delete(UserFixtures.SANJIGI);
         }).isInstanceOf(CannotDeleteException.class);
     }
 
@@ -49,10 +46,10 @@ public class QuestionTest {
     @DisplayName("질문 삭제시 삭제여부 true 로 변경되는지 확인")
     void delete() throws CannotDeleteException {
         //given
-        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Question question = QuestionFixtures.createByUser("title", "content", UserFixtures.JAVAJIGI);
 
         //when
-        question.delete(UserTest.JAVAJIGI);
+        question.delete(UserFixtures.JAVAJIGI);
 
         //then
         assertThat(question.isDeleted()).isTrue();
@@ -62,10 +59,10 @@ public class QuestionTest {
     @DisplayName("답변 없는 질문 삭제시 삭제기록 확인")
     void delete_no_answer() throws CannotDeleteException {
         //given
-        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Question question = QuestionFixtures.createByUser("title", "content", UserFixtures.JAVAJIGI);
 
         //when
-        DeleteHistories deleteHistories = question.delete(UserTest.JAVAJIGI);
+        DeleteHistories deleteHistories = question.delete(UserFixtures.JAVAJIGI);
 
         //then
         assertThat(deleteHistories.getDeleteHistories()).hasSize(1);
@@ -75,12 +72,12 @@ public class QuestionTest {
     @DisplayName("질문 삭제시 답변도 같이 삭제되는지 확인")
     void delete_with_answer() throws CannotDeleteException {
         //given
-        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-        Answer answer = new Answer(UserTest.JAVAJIGI, question, "Answers Contents1");
+        Question question = QuestionFixtures.createByUser("title", "content", UserFixtures.JAVAJIGI);
+        Answer answer = AnswerFixtures.createDefault(UserFixtures.JAVAJIGI, question);
         question.addAnswer(answer);
 
         //when
-        DeleteHistories deleteHistories = question.delete(UserTest.JAVAJIGI);
+        DeleteHistories deleteHistories = question.delete(UserFixtures.JAVAJIGI);
 
         //then
         for (Answer a : question.getAnswers()) {
@@ -93,13 +90,13 @@ public class QuestionTest {
     @DisplayName("다른 사용자 답변이 삭제된 경우 질문 삭제 가능한지 확인")
     void delete_with_other_answer() throws CannotDeleteException {
         //given
-        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-        Answer answer = new Answer(UserTest.SANJIGI, question, "Answers Contents1");
+        Question question = QuestionFixtures.createByUser("title", "content", UserFixtures.JAVAJIGI);
+        Answer answer = AnswerFixtures.createDefault(UserFixtures.SANJIGI, question);
         answer.delete(answer.getWriter());
         question.addAnswer(answer);
 
         //when
-        DeleteHistories deleteHistories = question.delete(UserTest.JAVAJIGI);
+        DeleteHistories deleteHistories = question.delete(UserFixtures.JAVAJIGI);
 
         //then
         assertThat(question.isDeleted()).isTrue();

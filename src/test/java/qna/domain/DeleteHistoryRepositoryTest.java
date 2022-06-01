@@ -23,7 +23,7 @@ public class DeleteHistoryRepositoryTest {
     @BeforeEach
     void init() {
         //given
-        User writer = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        User writer = userRepository.save(UserFixtures.JAVAJIGI);
         questionHistory = new DeleteHistory(ContentType.QUESTION, 1L, writer, LocalDateTime.now());
         answerHistory = new DeleteHistory(ContentType.ANSWER, 1L, writer, LocalDateTime.now());
     }

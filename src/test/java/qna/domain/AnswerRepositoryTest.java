@@ -29,10 +29,10 @@ public class AnswerRepositoryTest {
     @BeforeEach
     void init() {
         //given
-        writer = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
-        question = questionRepository.save(new Question("title1", "contents1").writeBy(writer));
-        answer1 = answerRepository.save(new Answer(writer, question, "Answers Contents1"));
-        answer2 = answerRepository.save(new Answer(writer, question, "Answers Contents2"));
+        writer = userRepository.save(UserFixtures.JAVAJIGI);
+        question = questionRepository.save(QuestionFixtures.createDefaultByUser(writer));
+        answer1 = answerRepository.save(AnswerFixtures.create(writer, question, "Answer Contents1"));
+        answer2 = answerRepository.save(AnswerFixtures.create(writer, question, "Answer Contents2"));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class AnswerRepositoryTest {
     @DisplayName("질문 작성자 불일치하는지 확인")
     void isNotOwner() {
         //when
-        User anotherWriter = userRepository.save(new User("las139", "password", "name", "javajigi@slipp.net"));
+        User anotherWriter = userRepository.save(UserFixtures.SANJIGI);
 
         //then
         assertAll(

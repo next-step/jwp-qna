@@ -15,8 +15,8 @@ public class DeleteHistoriesTest {
     void setUp() {
         //given
         deleteHistories = new DeleteHistories();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now()));
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, 2L, UserTest.SANJIGI, LocalDateTime.now()));
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, 1L, UserFixtures.JAVAJIGI, LocalDateTime.now()));
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, 2L, UserFixtures.SANJIGI, LocalDateTime.now()));
     }
 
     @Test
@@ -31,8 +31,8 @@ public class DeleteHistoriesTest {
     void addAll() {
         //given
         DeleteHistories addDeleteHistories = new DeleteHistories();
-        addDeleteHistories.add(new DeleteHistory(ContentType.QUESTION, 1L, UserTest.JAVAJIGI, LocalDateTime.now()));
-        addDeleteHistories.add(new DeleteHistory(ContentType.QUESTION, 2L, UserTest.SANJIGI, LocalDateTime.now()));
+        addDeleteHistories.add(new DeleteHistory(ContentType.QUESTION, 1L, UserFixtures.JAVAJIGI, LocalDateTime.now()));
+        addDeleteHistories.add(new DeleteHistory(ContentType.QUESTION, 2L, UserFixtures.SANJIGI, LocalDateTime.now()));
 
         //when
         deleteHistories.addAll(addDeleteHistories);

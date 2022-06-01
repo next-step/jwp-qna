@@ -14,7 +14,7 @@ public class AnswersTest {
     void setUp() {
         //given
         answers = new Answers();
-        Answer undeletedAnswer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q2, "answer contents");
+        Answer undeletedAnswer = AnswerFixtures.createDefault(UserFixtures.JAVAJIGI, QuestionFixtures.Q1);
         answers.add(undeletedAnswer);
     }
 
@@ -29,7 +29,7 @@ public class AnswersTest {
     @DisplayName("모든 답변 삭제 후 삭제기록 확인")
     void delete() throws CannotDeleteException {
         //when
-        DeleteHistories deleteHistories = answers.delete(UserTest.JAVAJIGI);
+        DeleteHistories deleteHistories = answers.delete(UserFixtures.JAVAJIGI);
 
         //then
         assertThat(deleteHistories.getDeleteHistories()).hasSize(1);
@@ -39,12 +39,12 @@ public class AnswersTest {
     @DisplayName("삭제된 답변 존재할 경우 답변들 삭제 후 삭제기록 확인")
     void delete_with_deleted_answer() throws CannotDeleteException {
         //given
-        Answer deletedAnswer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q2, "answer contents");
-        deletedAnswer.delete(UserTest.JAVAJIGI);
+        Answer deletedAnswer = AnswerFixtures.createDefault(UserFixtures.JAVAJIGI, QuestionFixtures.Q2);
+        deletedAnswer.delete(UserFixtures.JAVAJIGI);
         answers.add(deletedAnswer);
 
         //when
-        DeleteHistories deleteHistories = answers.delete(UserTest.JAVAJIGI);
+        DeleteHistories deleteHistories = answers.delete(UserFixtures.JAVAJIGI);
 
         //then
         assertThat(deleteHistories.getDeleteHistories()).hasSize(1);
@@ -54,10 +54,10 @@ public class AnswersTest {
     @DisplayName("삭제되지 않은 답변 사이즈 확인")
     void undeletedAnswers() throws CannotDeleteException {
         //given
-        Answer deletedAnswer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q2, "answer contents");
+        Answer deletedAnswer = AnswerFixtures.createDefault(UserFixtures.JAVAJIGI, QuestionFixtures.Q2);
 
         //when
-        deletedAnswer.delete(UserTest.JAVAJIGI);
+        deletedAnswer.delete(UserFixtures.JAVAJIGI);
         answers.add(deletedAnswer);
 
         //then
