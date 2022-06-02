@@ -5,7 +5,6 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -65,7 +64,7 @@ public class Answer extends BaseEntity {
         validateDelete(loginUser);
         this.deleted = true;
 
-        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+        return DeleteHistory.of(this);
     }
 
     private void validateDelete(User loginUser) throws CannotDeleteException {
