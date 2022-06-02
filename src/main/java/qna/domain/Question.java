@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -127,12 +128,29 @@ public class Question {
         List<DeleteHistory> deleteHistories = deleteAnswer(loginUser);
 
         deleted = true;
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.add(0, new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
 
         return deleteHistories;
     }
 
     private List<DeleteHistory> deleteAnswer(User loginUser) throws CannotDeleteException {
         return answers.delete(loginUser);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Question question = (Question)o;
+        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
+            question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer,
+            question.writer) && Objects.equals(answers, question.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writer, deleted, answers);
     }
 }

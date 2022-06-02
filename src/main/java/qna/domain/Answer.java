@@ -81,7 +81,6 @@ public class Answer {
 
     public void toQuestion(Question question) {
         this.question = question;
-        question.getAnswers().add(this);
     }
 
     public Long getId() {
@@ -123,5 +122,22 @@ public class Answer {
     public DeleteHistory delete() {
         deleted = true;
         return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Answer answer = (Answer)o;
+        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writer,
+            answer.writer) && Objects.equals(question, answer.question) && Objects.equals(contents,
+            answer.contents);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, writer, question, contents, deleted);
     }
 }

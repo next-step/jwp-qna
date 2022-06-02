@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.persistence.Embeddable;
@@ -42,5 +43,20 @@ public class Answers {
 		if (!answer.isOwner(loginUser)) {
 			throw new CannotDeleteException(CAN_NOT_DELETE_MESSAGE);
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Answers answers1 = (Answers)o;
+		return Objects.equals(answers, answers1.answers);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(answers);
 	}
 }
