@@ -14,15 +14,21 @@ public class DeleteHistories {
     }
 
     public DeleteHistories(List<DeleteHistory> deleteHistories) {
-        this.deleteHistories = deleteHistories;
+        this.deleteHistories = Collections.unmodifiableList(deleteHistories);
+    }
+
+    public DeleteHistories(DeleteHistory deleteHistory) {
+        this.deleteHistories = Collections.singletonList(deleteHistory);
     }
 
     public void add(DeleteHistory deleteHistory) {
         deleteHistories.add(deleteHistory);
     }
 
-    public void addAll(DeleteHistories deleteHistories) {
-        this.deleteHistories.addAll(deleteHistories.getList());
+    public DeleteHistories merge(DeleteHistories target) {
+        List<DeleteHistory> source = new LinkedList<>(deleteHistories);
+        source.addAll(target.deleteHistories);
+        return new DeleteHistories(source);
     }
 
     public List<DeleteHistory> getList() {
