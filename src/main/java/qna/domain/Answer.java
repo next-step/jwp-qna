@@ -140,4 +140,15 @@ public class Answer {
     public int hashCode() {
         return Objects.hash(id, writer, question, contents, deleted);
     }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+            "id=" + id +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            ", createAt=" + createAt +
+            ", updatedAt=" + updatedAt +
+            '}';
+    }
 }

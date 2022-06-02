@@ -90,4 +90,14 @@ public class DeleteHistory {
     public int hashCode() {
         return Objects.hash(contentType);
     }
+
+    @Override
+    public String toString() {
+        return "DeleteHistory{" +
+            "id=" + id +
+            ", contentType=" + contentType +
+            ", contentId=" + contentId +
+            ", createDate=" + createDate +
+            '}';
+    }
 }
