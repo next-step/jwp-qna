@@ -1,9 +1,8 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -13,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -35,8 +34,8 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -61,11 +60,8 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if (this.answers.contains(answer)) {
-            return;
-        }
-        this.answers.add(answer);
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
@@ -88,34 +84,19 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        validateDeletePermission(loginUser);
+        this.deleted = true;
+        DeleteHistories deleteHistories = new DeleteHistories(
+            new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now())
+        );
+        return deleteHistories.merge(answers.delete(loginUser));
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+    private void validateDeletePermission(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Question question = (Question) o;
-        return deleted == question.deleted
-            && Objects.equals(id, question.id)
-            && Objects.equals(title, question.title)
-            && Objects.equals(contents, question.contents)
-            && Objects.equals(writer, question.writer)
-            && Objects.equals(answers, question.answers);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, contents, writer, deleted);
     }
 
     @Override
