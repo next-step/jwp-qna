@@ -56,9 +56,8 @@ public class Question extends BaseEntity {
         validateDelete(loginUser);
         this.deleted = true;
 
-        DeleteHistories deleteHistories = new DeleteHistories();
+        DeleteHistories deleteHistories = answers.delete(loginUser);
         deleteHistories.add(DeleteHistory.of(this));
-        deleteHistories.addAll(answers.delete(loginUser));
 
         return deleteHistories;
     }
