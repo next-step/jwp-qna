@@ -27,7 +27,7 @@ class DeleteHistoryRepositoryTest {
 	) {
 		javajigi = userRepository.save(UserTest.JAVAJIGI);
 		sanjigi = userRepository.save(UserTest.SANJIGI);
-		question = questionRepository.save(QuestionTest.Q1);
+		question = questionRepository.save(QuestionTest.TitleAQuestion);
 	}
 
 	@Test
@@ -45,9 +45,9 @@ class DeleteHistoryRepositoryTest {
 	@Test
 	@DisplayName("삭제 History 조회")
 	void findAll() {
-		DeleteHistory actual1 = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, question.getId(), javajigi, LocalDateTime.now()));
-		DeleteHistory actual2 = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, question.getId(), sanjigi, LocalDateTime.now()));
+		DeleteHistory javajigiDeleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, question.getId(), javajigi, LocalDateTime.now()));
+		DeleteHistory sanjigiDeleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, question.getId(), sanjigi, LocalDateTime.now()));
 
-		assertThat(deleteHistoryRepository.findAll()).contains(actual1, actual2);
+		assertThat(deleteHistoryRepository.findAll()).contains(javajigiDeleteHistory, sanjigiDeleteHistory);
 	}
 }

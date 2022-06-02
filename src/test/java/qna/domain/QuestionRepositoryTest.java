@@ -13,9 +13,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 class QuestionRepositoryTest {
-	private final Question expected1 = new Question("title1", "contents1");
-	private final Question expected2 = new Question("title2", "contents2");
-	private final Question expected3 = new Question("title3", "contents3");
+	private final Question titleAQuestion = new Question("titleA", "contents1");
+	private final Question titleBQuestion = new Question("titleB", "contents2");
+	private final Question titleCQuestion = new Question("titleC", "contents3");
 
 	@Autowired
 	QuestionRepository questionRepository;
@@ -23,19 +23,19 @@ class QuestionRepositoryTest {
 	@Test
 	@DisplayName("Question 생성")
 	void save() {
-		Question actual = questionRepository.save(expected1);
+		Question actual = questionRepository.save(titleAQuestion);
 
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.getTitle()).isEqualTo(expected1.getTitle()),
-			() -> assertThat(actual.getContents()).isEqualTo(expected1.getContents())
+			() -> assertThat(actual.getTitle()).isEqualTo(titleAQuestion.getTitle()),
+			() -> assertThat(actual.getContents()).isEqualTo(titleAQuestion.getContents())
 		);
 	}
 
 	@Test
 	@DisplayName("Question 삭제")
 	void delete() {
-		Question expected = questionRepository.save(expected1);
+		Question expected = questionRepository.save(titleAQuestion);
 		questionRepository.delete(expected);
 
 		Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(expected.getId());
@@ -46,9 +46,9 @@ class QuestionRepositoryTest {
 	@Test
 	@DisplayName("삭제되지 않은 Question 조회")
 	void findByDeletedFalse() {
-		Question actual1 = questionRepository.save(expected1);
-		Question actual2 = questionRepository.save(expected2);
-		Question actual3 = questionRepository.save(expected3);
+		Question actual1 = questionRepository.save(titleAQuestion);
+		Question actual2 = questionRepository.save(titleBQuestion);
+		Question actual3 = questionRepository.save(titleCQuestion);
 
 		questionRepository.delete(actual3);
 
