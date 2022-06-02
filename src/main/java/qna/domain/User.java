@@ -1,6 +1,7 @@
 package qna.domain;
 
 import com.sun.istack.NotNull;
+import org.hibernate.annotations.Cascade;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false)
+    @Column(unique = true, length = 20, nullable = false)
     private String userId;
 
     @Column(length = 20 ,nullable = false)
@@ -84,7 +85,6 @@ public class User extends BaseTimeEntity {
     public String getUserId() {
         return userId;
     }
-
 
     public String getPassword() {
         return password;

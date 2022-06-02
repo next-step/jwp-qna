@@ -55,4 +55,11 @@ alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ````
 
+# 2단계 - 연관 관계 매핑
+- [x] answer, question_id
+- [x] answer, writer_id
+- [x] delete_history, delete_by_id
+- [x] question, writer_id
+
+
 

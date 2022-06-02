@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class DeleteHistory extends BaseTimeEntity {
+public class DeleteHistory{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,15 +14,18 @@ public class DeleteHistory extends BaseTimeEntity {
     private ContentType contentType;
     @Column(name = "content_id")
     private Long contentId;
-    @Column(name = "deleted_by_id")
-    private Long deletedById;
+
     @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedUser;
+
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedUser = deletedUser;
         this.createDate = createDate;
     }
 
@@ -49,7 +52,7 @@ public class DeleteHistory extends BaseTimeEntity {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedUser=" + deletedUser +
                 ", createDate=" + createDate +
                 '}';
     }

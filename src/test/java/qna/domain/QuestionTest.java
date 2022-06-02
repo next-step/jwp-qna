@@ -30,7 +30,7 @@ public class QuestionTest {
 
         question.addAnswer(answer);
         Answer findAnswer = answerRepository.findById(answer.getId()).get();
-        assertThat(findAnswer.getQuestionId()).isEqualTo(question.getId());
+        assertThat(findAnswer.getQuestion()).isEqualTo(question.getId());
     }
 
 }
