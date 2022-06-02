@@ -85,8 +85,8 @@ public class Question extends BaseTimeEntity {
     }
 
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
-        this.deleted = true;
         validateDeletePermission(loginUser);
+        this.deleted = true;
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(
             new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
