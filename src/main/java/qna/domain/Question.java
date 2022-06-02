@@ -17,6 +17,9 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    private Question() {
+    }
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }
