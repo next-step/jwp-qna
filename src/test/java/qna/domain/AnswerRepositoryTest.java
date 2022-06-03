@@ -55,9 +55,12 @@ class AnswerRepositoryTest {
 
         // When
         Answer actual = answerRepository.save(given);
+        entityManager.clear();
 
         // Then
         assertAll(
+            () -> assertThat(actual).isEqualTo(given),
+            () -> assertThat(actual).as("동일 트랜잭션 내 객체 동일성 보장").isSameAs(given),
             () -> assertThat(actual.isOwner(answerWriter)).isTrue(),
             () -> assertThat(actual.getQuestionId()).isEqualTo(question.getId())
         );

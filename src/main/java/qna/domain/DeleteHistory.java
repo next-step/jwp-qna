@@ -41,6 +41,14 @@ public class DeleteHistory {
         return id;
     }
 
+    public boolean isQuestion() {
+        return contentType.isQuestion();
+    }
+
+    public boolean isAnswer() {
+        return contentType.isAnswer();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

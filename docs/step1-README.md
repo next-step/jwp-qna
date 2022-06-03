@@ -178,6 +178,15 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL57Dialect
   - 수정일시(updated_at) : timestamp
 - [x] git을 통해 이미 관리 되고 있는 이력용 javadoc 주석 제거
   - IntelliJ의 Class 생성 시, 설정된 주석 템플릿을 주입하는 File and Code Template 설정 제거
-- Entity Class의 equals and hashcode 적용
-- 명확하지 않은 객체 생성 TC 수정
-- 연관관계를 가지는 객체가 영속상태가 아닌 경우 검증 부 수정
+- [x] Entity 객체에 equals and hashcode 적용
+  - 테이블의 각 row를 표현하는 Entity의 경우, DB에 의해 유일성이 보장되므로 비지니스 키(userId)와 기본 키를 이용한 equals and hashcode 재 정의 
+- [x] Entity 객체에 프록시 사용을 고려한 최소 접근 제한지인 Protected 기본 생성자 추가
+- [x] 검증 항목이 명확하지 않은 객체 생성 TC의 검증 부 수정
+
+### 고민사항
+영속상태가 아닌 순수 Entity 객체의 TC 작성에 대한 고민
+```
+Entity내 구현된 비지니스 로직 외에 영속상태에 대한 검증이 필요한지,
+필요하다면 PK로 매핑된 id 필드가 Null인 경우 영속상태 여부에 대한 검증이 의미 있는지,
+```
+---

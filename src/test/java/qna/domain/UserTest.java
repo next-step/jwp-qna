@@ -33,13 +33,11 @@ public class UserTest {
 
         // Then
         assertAll(
-            () -> assertThat(given.getId()).as("IDENTITY 전략에 의해 DB에서 생성되는 PK값의 Null 여부").isNull(),
+            () -> assertThat(given).isEqualTo(new User(userId, password, name, email)),
             () -> assertThat(given.getUserId()).isEqualTo(userId),
             () -> assertThat(given.getPassword()).isEqualTo(password),
             () -> assertThat(given.getName()).isEqualTo(name),
-            () -> assertThat(given.getEmail()).isEqualTo(email),
-            () -> assertThat(given.getCreatedAt()).as("JPA Audit에 의해 할당되는 생성일시 정보의 Null 여부").isNull(),
-            () -> assertThat(given.getUpdatedAt()).as("JPA Audit에 의해 할당되는 수정일시 정보의 Null 여부").isNull()
+            () -> assertThat(given.getEmail()).isEqualTo(email)
         );
     }
 
