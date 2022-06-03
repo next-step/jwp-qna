@@ -17,17 +17,10 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
 
-    User testDeletedBy;
-    Question testQuestion;
-
-    @BeforeEach
-    void setup(){
-        testDeletedBy = userRepository.save(UserTest.ROCKPRO87);
-        testQuestion = questionRepository.save(QuestionTest.Q1.writeBy(testDeletedBy));
-    }
-
     @Test
     void save() {
+        User testDeletedBy = userRepository.save(UserTest.ROCKPRO87);
+        Question testQuestion = questionRepository.save(QuestionTest.Q1.writeBy(testDeletedBy));
         DeleteHistory expected = new DeleteHistory(
                 ContentType.QUESTION,
                 testQuestion.getId(),
