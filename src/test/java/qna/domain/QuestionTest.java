@@ -26,8 +26,8 @@ public class QuestionTest {
 
         assertThat(answer.getQuestion())
                 .isEqualTo(Q2);
-        assertThat(Q2.getAnswers())
-                .containsExactly(answer);
+        assertThat(Q2.getAnswers().size())
+                .isEqualTo(1);
     }
 
 }
