@@ -23,11 +23,15 @@ public class DeleteHistory {
 
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
         this.createDate = createDate;
+    }
+
+    public static DeleteHistory of(ContentType contentType, Long contentId, User deletedByUser) {
+        return new DeleteHistory(contentType, contentId, deletedByUser, LocalDateTime.now());
     }
 
     @Override
