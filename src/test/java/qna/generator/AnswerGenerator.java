@@ -7,10 +7,6 @@ import qna.domain.AnswerRepository;
 import qna.domain.Question;
 import qna.domain.User;
 
-/**
- * @author : choi-ys
- * @date : 2022/05/27 9:17 오후
- */
 @TestConstructor(autowireMode = AutowireMode.ALL)
 public class AnswerGenerator {
 

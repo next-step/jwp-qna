@@ -5,10 +5,6 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 import qna.domain.User;
 import qna.domain.UserRepository;
 
-/**
- * @author : choi-ys
- * @date : 2022/05/26 12:55 오후
- */
 @TestConstructor(autowireMode = AutowireMode.ALL)
 public class UserGenerator {
 

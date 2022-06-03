@@ -20,10 +20,6 @@ import qna.NotFoundException;
 import qna.generator.QuestionGenerator;
 import qna.generator.UserGenerator;
 
-/**
- * @author : choi-ys
- * @date : 2022/05/26 3:22 오후
- */
 @DataJpaTest
 @Import({UserGenerator.class, QuestionGenerator.class})
 @TestConstructor(autowireMode = AutowireMode.ALL)

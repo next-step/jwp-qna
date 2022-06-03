@@ -176,7 +176,8 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL57Dialect
 - [x] JPA Auditing을 이용한 Entity의 공통 속성 추출 및 매핑 정보 상속
   - 생성일시(created_at) : timestamp not null
   - 수정일시(updated_at) : timestamp
+- [x] git을 통해 이미 관리 되고 있는 이력용 javadoc 주석 제거
+  - IntelliJ의 Class 생성 시, 설정된 주석 템플릿을 주입하는 File and Code Template 설정 제거
 - Entity Class의 equals and hashcode 적용
-- git에 이미 관리되고 있는 이력용 javadoc 주석 제거
 - 명확하지 않은 객체 생성 TC 수정
 - 연관관계를 가지는 객체가 영속상태가 아닌 경우 검증 부 수정

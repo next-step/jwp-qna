@@ -13,10 +13,6 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 import qna.NotFoundException;
 import qna.generator.UserGenerator;
 
-/**
- * @author : choi-ys
- * @date : 2022/05/26 3:00 오후
- */
 @DataJpaTest
 @TestConstructor(autowireMode = AutowireMode.ALL)
 @Import(UserGenerator.class)

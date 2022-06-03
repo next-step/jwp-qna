@@ -6,10 +6,6 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/**
- * @author : choi-ys
- * @date : 2022/05/26 2:33 오후
- */
 @DisplayName("Domain:DeleteHistory")
 class DeleteHistoryTest {
 

@@ -17,10 +17,6 @@ import qna.generator.AnswerGenerator;
 import qna.generator.QuestionGenerator;
 import qna.generator.UserGenerator;
 
-/**
- * @author : choi-ys
- * @date : 2022/05/26 4:45 오후
- */
 @DataJpaTest
 @Import({UserGenerator.class, QuestionGenerator.class, AnswerGenerator.class})
 @TestConstructor(autowireMode = AutowireMode.ALL)
