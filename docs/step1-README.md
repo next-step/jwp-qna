@@ -155,7 +155,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL57Dialect
 3. 설계한 Entity의 객체 생성 TC 작성
    - auto increment 속성에 의해 DB에서 할당되는 id 항목의 Null 여부 확인
    - boolean 타입 항목의 기본값 적용 여부 확인
-   - Enum Type의 저장 방식이 순서 저장 방식인 Orginal 설정이 아닌 값 저장 방식인 String 적용 여부 확인
+   - Enum Type의 저장 방식이 순서 저장 방식인 `ORDINAL` 설정이 아닌 값 저장 방식인 `STRING` 적용 여부 확인
 
 ---
 ### 학습 키워드
@@ -171,3 +171,12 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL57Dialect
   - 쓰기 지연 저장소
 
 ---
+### 코드리뷰 피드백 적용
+- [x] Docs 내 잘못 표현된 오타 수정
+- [x] JPA Auditing을 이용한 Entity의 공통 속성 추출 및 매핑 정보 상속
+  - 생성일시(created_at) : timestamp not null
+  - 수정일시(updated_at) : timestamp
+- Entity Class의 equals and hashcode 적용
+- git에 이미 관리되고 있는 이력용 javadoc 주석 제거
+- 명확하지 않은 객체 생성 TC 수정
+- 연관관계를 가지는 객체가 영속상태가 아닌 경우 검증 부 수정

@@ -46,8 +46,8 @@ class UserRepositoryTest {
         // Then
         assertAll(
             () -> assertThat(given.getUserId()).as("IDENTITY 전략에 따라 DB에서 부여된 PK값 생성 여부").isNotNull(),
-            () -> assertThat(given.getCreatedAt()).isNotNull(),
-            () -> assertThat(given.getUpdatedAt()).isNull()
+            () -> assertThat(given.getCreatedAt()).as("JPA Audit에 의해 할당되는 생성일시 정보의 할당 여부").isNotNull(),
+            () -> assertThat(given.getUpdatedAt()).as("JPA Audit에 의해 할당되는 수정일시 정보의 할당 여부").isNotNull()
         );
     }
 

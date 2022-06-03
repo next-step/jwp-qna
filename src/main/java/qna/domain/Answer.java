@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +13,7 @@ import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "answer")
-public class Answer {
+public class Answer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,11 +28,6 @@ public class Answer {
 
     @Column(nullable = false)
     private boolean deleted = false;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private LocalDateTime updatedAt;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -101,14 +95,6 @@ public class Answer {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 
     @Override

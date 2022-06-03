@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +10,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "question")
-public class Question {
+public class Question extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,11 +26,6 @@ public class Question {
 
     @Column(nullable = false)
     private boolean deleted = false;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private LocalDateTime updatedAt;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -94,14 +88,6 @@ public class Question {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 
     @Override

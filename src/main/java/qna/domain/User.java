@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +16,7 @@ import qna.UnAuthorizedException;
         name = "USER_ID_UNIQUE",
         columnNames = "userId"
     ))
-public class User {
+public class User extends BaseEntity {
 
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -36,11 +35,6 @@ public class User {
 
     @Column(length = 50)
     private String email;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private LocalDateTime updatedAt;
 
     private User() {
     }
@@ -130,14 +124,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 
     @Override

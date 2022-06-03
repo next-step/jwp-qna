@@ -31,8 +31,8 @@ public class AnswerTest {
         assertAll(
             () -> assertThat(given.getId()).as("IDENTITY 전략에 의해 DB에서 생성되는 PK값의 Null 여부").isNull(),
             () -> assertThat(given.getContents()).isEqualTo(contents),
-            () -> assertThat(given.getCreatedAt()).as("객체 생성일시 정보의 할당 여부").isNotNull(),
-            () -> assertThat(given.getUpdatedAt()).as("객체 수정 시 할당되는 수정일시 정보의 Null 여부").isNull()
+            () -> assertThat(given.getCreatedAt()).as("JPA Audit에 의해 할당되는 생성일시 정보의 Null 여부").isNull(),
+            () -> assertThat(given.getUpdatedAt()).as("JPA Audit에 의해 할당되는 수정일시 정보의 Null 여부").isNull()
         );
     }
 
