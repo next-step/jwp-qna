@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -67,14 +69,18 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         if (this.question != null) {
-            question.getAnswers().remove(this);
+            question.removeAnswer(this);
         }
         this.question = question;
-        question.getAnswers().add(this);
+        question.addAnswer(this);
     }
 
-    public void deleteAnswer() {
+    public DeleteHistory deleteAnswer(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
         this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
     public Long getId() {
