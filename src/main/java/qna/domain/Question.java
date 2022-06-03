@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -93,7 +94,7 @@ public class Question extends BaseEntity {
 
         List<DeleteHistory> deleteHistories = answers.delete(loginUser);
         deleteQuestion();
-        deleteHistories.add(DeleteHistory.createQuestionDeleteHistory(this));
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
 
         return deleteHistories;
     }

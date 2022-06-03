@@ -29,4 +29,28 @@ public class AnswersTest {
         assertThat(actualHistory).isNotNull();
     }
 
+    @Test
+    public void add_answer() {
+        //given
+        Answers answers = new Answers();
+        Answer expected = AnswerTest.A1;
+        //when
+        answers.add(expected);
+        //when
+        assertThat(answers.contains(expected)).isTrue();
+    }
+
+    @Test
+    public void remove_answer() {
+        //given
+        Answers answers = new Answers();
+        answers.add(AnswerTest.A1);
+        answers.add(AnswerTest.A2);
+        //when
+        answers.remove(AnswerTest.A1);
+        //then
+        assertThat(answers.contains(AnswerTest.A1)).isFalse();
+        assertThat(answers.contains(AnswerTest.A2)).isTrue();
+    }
+
 }
