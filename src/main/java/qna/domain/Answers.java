@@ -9,7 +9,7 @@ import java.util.*;
 @Embeddable
 public class Answers {
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     private Set<Answer> answers = new LinkedHashSet<>();
 
     protected Answers() {
