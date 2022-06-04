@@ -41,9 +41,10 @@ class AnswerRepositoryTest {
     @Test
     void findById() {
         answers.save(answer);
-        Answer expected = answers.findById(answer.getId()).get();
+        Optional<Answer> expected = answers.findById(answer.getId());
 
-        assertThat(expected).isSameAs(answer);
+        assertThat(expected).isPresent().get()
+                .isEqualTo(answer);
     }
 
     @Test
@@ -57,6 +58,7 @@ class AnswerRepositoryTest {
     void findByIdAndDeletedFalse() {
         Answer answer = answers.save(this.answer);
         Optional<Answer> expected = answers.findByIdAndDeletedFalse(answer.getId());
-        assertThat(expected.get()).isSameAs(answer);
+        assertThat(expected).isPresent().get()
+                .isEqualTo(answer);
     }
 }

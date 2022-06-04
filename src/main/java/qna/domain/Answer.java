@@ -2,6 +2,7 @@ package qna.domain;
 
 import qna.CannotDeleteException;
 import qna.NotFoundException;
+import qna.QnaExceptionType;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
@@ -52,7 +53,7 @@ public class Answer extends BaseTimeEntity {
 
     private void validateOwner(final User writer) throws CannotDeleteException {
         if (!writer.isOwner(this.writer)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(QnaExceptionType.EXIST_OTHER_ANSWER_ERROR);
         }
     }
 

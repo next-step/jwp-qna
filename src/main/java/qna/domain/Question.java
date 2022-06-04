@@ -1,6 +1,7 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
+import qna.QnaExceptionType;
 
 import javax.persistence.*;
 import java.util.List;
@@ -61,7 +62,7 @@ public class Question extends BaseTimeEntity {
 
     private void validateOwner(User writer) throws CannotDeleteException {
         if (!writer.isOwner(this.writer)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(QnaExceptionType.NOT_AUTHOR_QUESTION);
         }
     }
 
