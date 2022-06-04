@@ -3,10 +3,13 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.generator.QuestionGenerator.CONTENTS;
+import static qna.generator.QuestionGenerator.TITLE;
 
 import java.util.List;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
+import org.hibernate.proxy.HibernateProxy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -48,7 +51,7 @@ class QuestionRepositoryTest {
     public void saveQuestionTest() {
         // Given
         final User questionWriter = userGenerator.savedUser();
-        final Question given = new Question("title", "contents").writeBy(questionWriter);
+        final Question given = new Question(TITLE, CONTENTS).writeBy(questionWriter);
 
         // When
         Question actual = questionRepository.save(given);
@@ -66,26 +69,28 @@ class QuestionRepositoryTest {
     @ParameterizedTest
     @MethodSource
     @DisplayName("유효하지 못한 질문자 정보를 가지는 질문 저장 시 예외")
-    public void saveQuestion_WhenInvalidWriter(final Question given, final User questionWriter, final String throwDescription) {
+    public void saveQuestion_WhenInvalidWriter(
+        final Question given,
+        final User questionWriter,
+        final String throwDescription
+    ) {
         // When
         Question actual = questionRepository.save(given);
 
         // Then
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getCreatedAt()).isNotNull(),
-            () -> assertThat(actual.isDeleted()).isFalse(),
-            () -> assertThat(actual.getUpdatedAt()).isNotNull()
+            () -> assertThatExceptionOfType(NullPointerException.class)
+                .isThrownBy(() -> assertThat(actual.isOwner(questionWriter)).isNull())
+                .as(throwDescription)
         );
-        assertThatExceptionOfType(NullPointerException.class)
-            .isThrownBy(() -> assertThat(actual.isOwner(questionWriter)).isNull())
-            .as(throwDescription);
     }
 
     private static Stream saveQuestion_WhenInvalidWriter() {
+        final Question given = new Question(TITLE, CONTENTS);
         return Stream.of(
-            Arguments.of(new Question("TITLE", "CONTENTS"), null, "질문 작성자 정보가 없는 질문"),
-            Arguments.of(new Question("TITLE", "CONTENTS"), UserGenerator.generateQuestionWriter(), "영속 상태가 아닌 질문 작성자 정보를 가진 질문")
+            Arguments.of(given, null, "질문 작성자 정보가 없는 질문"),
+            Arguments.of(given, UserGenerator.generateQuestionWriter(), "영속 상태가 아닌 질문 작성자 정보를 가진 질문")
         );
     }
 
@@ -95,12 +100,15 @@ class QuestionRepositoryTest {
         // Given
         final User questionWriter = userGenerator.savedUser();
         final Question given = questionGenerator.savedQuestion(questionWriter);
+        entityManager.clear();
 
         // When
         Question actual = questionRepository.findById(given.getId()).orElseThrow(NotFoundException::new);
 
         // Then
-        assertThat(actual).as("동일 트랜잭션 내 객체 동일성 보장 여부").isSameAs(given);
+        assertThat(actual.getWriter())
+            .as("LazyLoading 옵션 적용으로 인한 *ToOne 연관관계인 질문 작성자 엔티티의 프록시 객체 여부")
+            .isInstanceOf(HibernateProxy.class);
     }
 
     @Test
@@ -109,12 +117,13 @@ class QuestionRepositoryTest {
         // Given
         final User questionWriter = userGenerator.savedUser();
         final Question given = questionGenerator.savedQuestion(questionWriter);
+        entityManager.clear();
 
         // When
         Question actual = questionRepository.findByIdAndDeletedFalse(given.getId()).orElseThrow(NotFoundException::new);
 
         // Then
-        assertThat(actual).isSameAs(given);
+        assertThat(actual.isDeleted()).as("삭제 상태 False 여부").isFalse();
     }
 
     @Test
@@ -123,6 +132,7 @@ class QuestionRepositoryTest {
         final User questionWriter = userGenerator.savedUser();
         questionGenerator.savedQuestion(questionWriter);
         questionGenerator.savedQuestion(questionWriter);
+        entityManager.clear();
 
         // When
         List<Question> actual = questionRepository.findByDeletedFalse();
@@ -130,7 +140,16 @@ class QuestionRepositoryTest {
         // Then
         assertThat(actual)
             .hasSize(2)
-            .allSatisfy(question -> assertThat(question.isDeleted()).isFalse());
+            .allSatisfy(question ->
+                assertAll(
+                    () -> assertThat(question.isDeleted())
+                        .as("조회된 질문 목록의 상제 상태 False 여부")
+                        .isFalse(),
+                    () -> assertThat(question.getWriter())
+                        .as("LazyLoading 옵션 적용으로 인한 *ToOne 연관관계인 질문 작성자 엔티티의 프록시 객체 여부")
+                        .isInstanceOf(HibernateProxy.class)
+                )
+            );
     }
 
     @Test
