@@ -19,12 +19,16 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Answer {
+    private final String CAN_NOT_DELETE_MESSAGE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+    private final String ALREADY_DELETE_MESSAGE = "이미 삭제된 답변입니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -119,7 +123,15 @@ public class Answer {
         return updatedAt;
     }
 
-    public DeleteHistory delete() {
+    public DeleteHistory delete(User user) throws CannotDeleteException {
+        if(!isOwner(user)) {
+            throw new CannotDeleteException(CAN_NOT_DELETE_MESSAGE);
+        }
+
+        if(isDeleted()) {
+            throw new CannotDeleteException(ALREADY_DELETE_MESSAGE);
+        }
+
         deleted = true;
         return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }

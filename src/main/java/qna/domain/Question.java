@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -121,14 +122,11 @@ public class Question {
     }
 
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
-        if(!isOwner(loginUser)) {
-            throw new CannotDeleteException(CAN_NOT_DELETE_MESSAGE);
-        }
-
-        List<DeleteHistory> deleteHistories = deleteAnswer(loginUser);
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
 
         deleted = true;
-        deleteHistories.add(0, new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(deleteAnswer(loginUser));
 
         return deleteHistories;
     }
