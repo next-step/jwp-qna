@@ -22,7 +22,7 @@ public class User extends BaseTimeEntity {
     @Column(length = 50)
     private String email;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
