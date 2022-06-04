@@ -17,6 +17,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 import qna.NotFoundException;
@@ -71,26 +72,20 @@ class QuestionRepositoryTest {
     @DisplayName("유효하지 못한 질문자 정보를 가지는 질문 저장 시 예외")
     public void saveQuestion_WhenInvalidWriter(
         final Question given,
-        final User questionWriter,
         final String throwDescription
     ) {
-        // When
-        Question actual = questionRepository.save(given);
-
-        // Then
-        assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThatExceptionOfType(NullPointerException.class)
-                .isThrownBy(() -> assertThat(actual.isOwner(questionWriter)).isNull())
-                .as(throwDescription)
-        );
+        // When & Then
+        assertThatExceptionOfType(InvalidDataAccessApiUsageException.class)
+            .isThrownBy(() -> questionRepository.save(given))
+            .as(throwDescription)
+            .isInstanceOf(RuntimeException.class);
     }
 
     private static Stream saveQuestion_WhenInvalidWriter() {
         final Question given = new Question(TITLE, CONTENTS);
         return Stream.of(
-            Arguments.of(given, null, "질문 작성자 정보가 없는 질문"),
-            Arguments.of(given, UserGenerator.generateQuestionWriter(), "영속 상태가 아닌 질문 작성자 정보를 가진 질문")
+            Arguments.of(given, "질문 작성자 정보가 없는 질문"),
+            Arguments.of(given.writeBy(UserGenerator.generateQuestionWriter()), "영속 상태가 아닌 질문 작성자 정보를 가진 질문")
         );
     }
 

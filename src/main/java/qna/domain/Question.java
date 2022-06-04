@@ -28,7 +28,11 @@ public class Question extends BaseEntity {
     private String contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "FK_QUESTION_WRITER"))
+    @JoinColumn(
+        name = "writer_id",
+        foreignKey = @ForeignKey(name = "FK_QUESTION_WRITER"),
+        nullable = false
+    )
     private User writer;
 
     @Column(nullable = false)
