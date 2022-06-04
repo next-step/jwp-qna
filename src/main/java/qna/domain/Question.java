@@ -1,7 +1,8 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,10 +18,12 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
     @Column(nullable = false)
     private boolean deleted = false;
+
+    private static final String CANNOT_DELETE_NO_AUTHORITY = "질문을 삭제할 권한이 없습니다.";
 
     protected Question() {
     }
@@ -49,6 +52,22 @@ public class Question extends BaseEntity {
         answer.toQuestion(this);
     }
 
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        validateDelete(loginUser);
+        this.deleted = true;
+
+        DeleteHistories deleteHistories = answers.delete(loginUser);
+        deleteHistories.add(DeleteHistory.of(this));
+
+        return deleteHistories;
+    }
+
+    private void validateDelete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(CANNOT_DELETE_NO_AUTHORITY);
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -66,15 +85,11 @@ public class Question extends BaseEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.getAnswers();
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

@@ -19,7 +19,7 @@ public class UserRepositoryTest {
     @DisplayName("유저 저장 및 값 비교 테스트")
     void save() {
         //given
-        final User expected = UserTest.JAVAJIGI;
+        final User expected = UserFixtures.JAVAJIGI;
 
         //when
         final User actual = userRepository.save(expected);
@@ -38,7 +38,7 @@ public class UserRepositoryTest {
     @DisplayName("userId 조회 테스트")
     void findByUserId() {
         //given
-        final User expected = userRepository.save(UserTest.JAVAJIGI);
+        final User expected = userRepository.save(UserFixtures.JAVAJIGI);
 
         //when
         final Optional<User> actual = userRepository.findByUserId(expected.getUserId());

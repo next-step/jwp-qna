@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -23,6 +24,8 @@ public class Answer extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    private static final String CANNOT_DELETE_EXISTS_OTHER_ANSWER = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+
     protected Answer() {
     }
 
@@ -39,7 +42,7 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    private void validate(User writer, Question question){
+    private void validate(User writer, Question question) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -55,6 +58,19 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        validateDelete(loginUser);
+        this.deleted = true;
+
+        return DeleteHistory.of(this);
+    }
+
+    private void validateDelete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(CANNOT_DELETE_EXISTS_OTHER_ANSWER);
+        }
     }
 
     public Long getId() {
@@ -75,10 +91,6 @@ public class Answer extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

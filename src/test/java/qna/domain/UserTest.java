@@ -9,22 +9,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class UserTest {
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-
     @Test
     @DisplayName("name, email 업데이트 테스트")
     void update() {
         //given
-        User oldJavajigi = new User(1L, "javagiji", "password", "name2", "javajigi@slipp.net");
+        User oldJavajigi = UserFixtures.create("javagiji", "password", "name2", "javajigi@slipp.net");
 
         //when
-        oldJavajigi.update(oldJavajigi, JAVAJIGI);
+        oldJavajigi.update(oldJavajigi, UserFixtures.JAVAJIGI);
 
         //then
         assertAll(
-                () -> assertThat(oldJavajigi.getName()).isEqualTo(JAVAJIGI.getName()),
-                () -> assertThat(oldJavajigi.getEmail()).isEqualTo(JAVAJIGI.getEmail())
+                () -> assertThat(oldJavajigi.getName()).isEqualTo(UserFixtures.JAVAJIGI.getName()),
+                () -> assertThat(oldJavajigi.getEmail()).isEqualTo(UserFixtures.JAVAJIGI.getEmail())
         );
     }
 
@@ -37,7 +34,7 @@ public class UserTest {
 
         //then
         assertThatThrownBy(() -> {
-            oldJavajigi.update(oldSanjigi, JAVAJIGI);
+            oldJavajigi.update(oldSanjigi, UserFixtures.JAVAJIGI);
         }).isInstanceOf(UnAuthorizedException.class);
     }
 
@@ -49,7 +46,7 @@ public class UserTest {
 
         //then
         assertThatThrownBy(() -> {
-            oldJavajigi.update(oldJavajigi, JAVAJIGI);
+            oldJavajigi.update(oldJavajigi, UserFixtures.JAVAJIGI);
         }).isInstanceOf(UnAuthorizedException.class);
     }
 
@@ -61,7 +58,7 @@ public class UserTest {
 
         //then
         assertAll(
-                () -> assertThat(JAVAJIGI.isGuestUser()).isFalse(),
+                () -> assertThat(UserFixtures.JAVAJIGI.isGuestUser()).isFalse(),
                 () -> assertThat(guestUser.isGuestUser()).isTrue()
         );
     }
