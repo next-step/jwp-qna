@@ -34,11 +34,8 @@ class QuestionRepositoryTest {
         // given
         question.delete(user);
         // when
-        Optional<Question> expected = questions.findByIdAndDeletedFalse(question.getId());
         // then
-        assertThatThrownBy(() -> expected.get())
-                .isInstanceOf(NoSuchElementException.class);
-
+        assertThat(questions.findByIdAndDeletedFalse(question.getId())).isNotPresent();
     }
 
     @Test

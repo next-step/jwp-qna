@@ -23,7 +23,8 @@ class UserRepositoryTest {
         // when
         Optional<User> expected = users.findByUserId(saveUser.getUserId());
         // then
-        assertThat(expected.get()).isSameAs(saveUser);
+        assertThat(expected).isPresent().get()
+                .isEqualTo(saveUser);
     }
 
     @Test
@@ -37,7 +38,13 @@ class UserRepositoryTest {
         List<User> list = users.findAll();
         final Optional<User> expected = users.findById(question.getWriter().getId());
         // then
-        assertThat(expected.get().getQuestions()).hasSize(1);
-        assertThat(expected.get().getQuestions().get(0)).isEqualTo(saveQuestion);
+        assertThat(expected).isPresent().get()
+                .extracting(User::getQuestions)
+                .extracting(List::size).isEqualTo(1);
+
+        assertThat(expected).isPresent().get()
+                .extracting(User::getQuestions)
+                .extracting(v -> v.get(0))
+                .isEqualTo(saveQuestion);
     }
 }
