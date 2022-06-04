@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.generator.AnswerGenerator.CONTENTS;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 import qna.NotFoundException;
@@ -55,46 +57,46 @@ class AnswerRepositoryTest {
 
         // When
         Answer actual = answerRepository.save(given);
-        entityManager.clear();
 
         // Then
         assertAll(
-            () -> assertThat(actual).isEqualTo(given),
-            () -> assertThat(actual).as("동일 트랜잭션 내 객체 동일성 보장").isSameAs(given),
+            () -> assertThat(actual.getId()).as("IDENTITY 전략에 따라 DB에서 부여된 PK값 생성 여부").isNotNull(),
+            () -> assertThat(actual.isDeleted()).isFalse(),
             () -> assertThat(actual.isOwner(answerWriter)).isTrue(),
-            () -> assertThat(actual.getQuestionId()).isEqualTo(question.getId())
+            () -> assertThat(actual.getQuestion()).isEqualTo(question),
+            () -> assertThat(given.getCreatedAt()).as("JPA Audit에 의해 할당되는 생성일시 정보의 할당 여부").isNotNull(),
+            () -> assertThat(given.getUpdatedAt()).as("JPA Audit에 의해 할당되는 수정일시 정보의 할당 여부").isNotNull(),
+            () -> assertThat(actual).as("동일 트랜잭션 내 객체 동일성 보장").isSameAs(given)
         );
     }
 
     @Test
-    @DisplayName("답변 저장 시, 작성자 정보가 영속상태가 아닌 경우")
+    @DisplayName("답변 저장 시, 작성자 정보가 영속상태가 아닌 경우 예외")
     public void saveAnswer_WhenInvalidWriter() {
         // Given
         final Question question = QuestionGenerator.generateQuestion(UserGenerator.generateQuestionWriter());
         final User answerWriter = UserGenerator.generateAnswerWriter();
-        final Answer given = answerGenerator.savedAnswer(answerWriter, question, "답변 내용");
+        final Answer given = AnswerGenerator.generateAnswer(answerWriter, question, CONTENTS);
+        given.toQuestion(question);
 
         // When
-        Answer actual = answerRepository.save(given);
-
-        // Then
-        assertThatExceptionOfType(NullPointerException.class)
-            .isThrownBy(() -> actual.isOwner(answerWriter));
+        assertThatExceptionOfType(InvalidDataAccessApiUsageException.class)
+            .isThrownBy(() -> answerRepository.save(given))
+            .as("작성자 정보가 영속상태가 아닌 답변");
     }
 
     @Test
-    @DisplayName("답변 저장 시, 질문 정보가 영속상태가 아닌 경우")
+    @DisplayName("답변 저장 시, 질문 정보가 영속상태가 아닌 경우 예외")
     public void saveAnswer_WhenInvalidQuestion() {
         // Given
         final Question question = QuestionGenerator.generateQuestion(UserGenerator.generateQuestionWriter());
         final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
-        final Answer given = answerGenerator.savedAnswer(answerWriter, question, "답변 내용");
+        final Answer given = AnswerGenerator.generateAnswer(answerWriter, question, CONTENTS);
 
-        // When
-        Answer actual = answerRepository.save(given);
-
-        // Then
-        assertThat(actual.getQuestionId()).as("질문 정보가 영속상태가 아닌 경우").isNull();
+        // When & Then
+        assertThatExceptionOfType(InvalidDataAccessApiUsageException.class)
+            .isThrownBy(() -> answerRepository.save(given))
+            .as("질문 정보가 영속상태가 아닌 답변");
     }
 
     @Test
@@ -110,12 +112,15 @@ class AnswerRepositoryTest {
         answerGenerator.savedAnswer(answerWriter, question, "답변 내용3");
 
         // When
-        List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
+        List<Answer> actual = answerRepository.findByQuestionAndDeletedFalse(question);
 
         // Then
         assertThat(actual)
             .hasSize(3)
-            .allSatisfy(answer -> assertThat(answer.getQuestionId()).isEqualTo(question.getId()));
+            .allSatisfy(answer -> assertAll(
+                () -> assertThat(answer.getQuestion()).isEqualTo(question),
+                () -> assertThat(answer.isDeleted()).as("삭제 상태 False 여부").isFalse()
+            ));
     }
 
     @Test
@@ -128,10 +133,14 @@ class AnswerRepositoryTest {
         final Answer given = answerGenerator.savedAnswer(answerWriter, question, "답변 내용");
 
         // When
-        Answer actual = answerRepository.findByIdAndDeletedFalse(given.getId()).orElseThrow(NotFoundException::new);
+        Answer actual = answerRepository.findByIdAndDeletedFalse(given.getId())
+            .orElseThrow(NotFoundException::new);
 
         // Then
-        assertThat(actual).isSameAs(given);
+        assertAll(
+            () -> assertThat(actual.equals(given)),
+            () -> assertThat(actual.isDeleted()).isFalse()
+        );
     }
 
     @Test
@@ -148,10 +157,7 @@ class AnswerRepositoryTest {
         entityManager.flush();
 
         // Then
-        assertAll(
-            () -> assertThat(given.isDeleted()).isTrue(),
-            () -> assertThat(given.getQuestionId()).isEqualTo(question.getId())
-        );
+        assertThat(given.isDeleted()).isTrue();
     }
 
     @Test
