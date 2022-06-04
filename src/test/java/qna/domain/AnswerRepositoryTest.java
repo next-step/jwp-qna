@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,9 +41,9 @@ class AnswerRepositoryTest {
     @Test
     void findById() {
         answers.save(answer);
-        Answer expected = answers.findById(answer.getId()).get();
-
-        assertThat(expected).isSameAs(answer);
+        Optional<Answer> expected = answers.findById(answer.getId());
+        assertThat(expected).isPresent().get()
+                .isEqualTo(answer);
     }
 
     @Test

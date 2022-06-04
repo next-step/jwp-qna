@@ -7,8 +7,12 @@ import java.util.Objects;
 public class DeleteHistories {
     private final List<DeleteHistory> histories;
 
-    public DeleteHistories(final List<DeleteHistory> histories) {
-        this.histories = Collections.unmodifiableList(histories);
+    public static DeleteHistories toHistories(final List<DeleteHistory> histories) {
+        return new DeleteHistories(Collections.unmodifiableList(histories));
+    }
+
+    private DeleteHistories(final List<DeleteHistory> histories) {
+        this.histories = histories;
     }
 
     public List<DeleteHistory> getDeleteHistories() {

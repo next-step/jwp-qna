@@ -21,7 +21,7 @@ public class UserTest {
         // when
         User user = 질문_추가_유저_생성();
         // then
-        assertThat(user.getQuestion()).contains(QuestionTest.Q1);
+        assertThat(user.getQuestions()).contains(QuestionTest.Q1);
     }
 
     @Test
@@ -64,6 +64,16 @@ public class UserTest {
         // then
         assertThatThrownBy(() -> JAVAJIGI.updateNameAndEmail(loginUser, target))
                 .isInstanceOf(UnAuthorizedException.class);
+    }
+
+    @Test
+    void 작성자_동일_유무_테스트() {
+        // given
+        final User loginUser = JAVAJIGI;
+        final Question question = QuestionTest.Q1;
+        // when
+        // then
+        assertThat(loginUser.isOwner(question.getWriter())).isTrue();
     }
 
     @Test

@@ -20,14 +20,17 @@ public class Questions {
         return Collections.unmodifiableList(questions);
     }
 
-    public void add(Question question) {
+    public void add(final Question question) {
         questions.add(question);
     }
 
-    public boolean contains(Question question) {
+    public boolean contains(final Question question) {
         return questions.contains(question);
     }
 
+    public int size() {
+        return questions.size();
+    }
     @Override
     public String toString() {
         return "Questions{" +
