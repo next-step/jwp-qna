@@ -5,6 +5,7 @@ import qna.QnaExceptionType;
 
 import javax.persistence.*;
 import java.util.List;
+
 import java.util.Objects;
 
 @Entity
@@ -86,7 +87,6 @@ public class Question extends BaseTimeEntity {
         if (writer != null) {
             this.writer.addQuestion(this);
         }
-
         if (!writer.containQuestion(this)) {
             writer.addQuestion(this);
         }

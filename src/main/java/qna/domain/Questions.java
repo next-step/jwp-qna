@@ -31,7 +31,6 @@ public class Questions {
     public int size() {
         return questions.size();
     }
-
     @Override
     public String toString() {
         return "Questions{" +

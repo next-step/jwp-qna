@@ -12,6 +12,7 @@ public class AnswerTest {
     public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
+
     @Test
     void 작성자_미입력_오류_테스트() {
         assertThatThrownBy(() -> new Answer(null, QuestionTest.Q1, "content"))

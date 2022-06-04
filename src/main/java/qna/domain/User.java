@@ -15,18 +15,19 @@ public class User extends BaseTimeEntity {
     private Long id;
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, unique = true)
     private String password;
     @Column(length = 20, nullable = false)
     private String name;
     @Column(length = 50)
     private String email;
     @Embedded
+  
     private final Questions questions = new Questions();
 
     protected User() {
     }
-
+  
     public User(final Long id, final String userId, final String password, final String name, final String email) {
         this.id = id;
         this.userId = userId;
@@ -95,6 +96,7 @@ public class User extends BaseTimeEntity {
 
     public List<Question> getQuestions() {
         return questions.getQuestion();
+
     }
 
     public Long getId() {
@@ -128,6 +130,7 @@ public class User extends BaseTimeEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, userId, password, name, email, questions);
+
     }
 
     private static class GuestUser extends User {
