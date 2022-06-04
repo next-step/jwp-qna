@@ -18,6 +18,12 @@
 - [x] 연관관계 매핑
 - [x] 연관관계 매핑 테스트 작성
 
+## STEP-3
+
+- [x] 단위테스트 가능하도록 코드 리팩터링
+- [x] 단위테스트 추가하기
+- [x] 질문 삭제하기 리팩터링
+
 ### DDL
 
 ```SQL
@@ -83,3 +89,10 @@ alter table user
 - Equals, HashCode 식별자로 재정의
   - [참고자료](https://jwkim96.tistory.com/256)
   - Entity는 ID만 같아도 동일하다고 볼 수 있다.
+- 디미터의 법칙(객체에게 자료를 숨기는 대신 함수를 공개) 위반
+  - [참고자료](https://mangkyu.tistory.com/147)
+- orphanRemoval = true 옵션도 같이 공부
+  - 고아 삭제
+  - [참고자료](https://developer-hm.tistory.com/47)
+- beforeEach는 중복코드가 줄어들지만 가독성 측면에서는 안좋을 수 있음
+- 요구사항을 세부적으로 나누기...ㅠㅠ 왜 안될까.

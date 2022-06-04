@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.NotFoundException;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,21 +24,21 @@ class AnswerRepositoryTest {
 
     User testWriter;
     Question testQuestion;
-    Answer answer1, answer2;
+    Answer answer;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         testWriter = userRepository.save(UserTest.ROCKPRO87);
         testQuestion = questionRepository.save(new Question("질문 제목", "질문 내용").writeBy(testWriter));
-        answer1 = answerRepository.save(new Answer(testWriter, testQuestion, "답변 내용 1번"));
-        answer2 = answerRepository.save(new Answer(testWriter, testQuestion, "답변 내용 2번"));
+        answer = answerRepository.save(new Answer(testWriter, testQuestion, "답변 내용 1번"));
+        testQuestion.addAnswer(answer);
     }
 
     @AfterEach
-    void clean(){
-        userRepository.deleteAll();
-        questionRepository.deleteAll();
+    void clean() {
         answerRepository.deleteAll();
+        questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -58,7 +57,7 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 조회시 연관관계 데이터가 정상적으로 조회되는지 검증")
     void findValidRelation() {
-        Answer actual = answerRepository.findByIdAndDeletedFalse(answer1.getId()).orElseThrow(NotFoundException::new);
+        Answer actual = answerRepository.findByIdAndDeletedFalse(answer.getId()).orElseThrow(NotFoundException::new);
         assertAll(
                 () -> assertThat(actual.getWriter()).isEqualTo(testWriter),
                 () -> assertThat(actual.getQuestion()).isEqualTo(testQuestion)
@@ -66,14 +65,8 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    void findByDeletedFalse() {
-        List<Answer> actual = answerRepository.findByQuestionAndDeletedFalse(testQuestion);
-        assertThat(actual).contains(answer1, answer2);
-    }
-
-    @Test
     void findByIdAndDeletedFalse() {
-        Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(answer1.getId());
-        assertThat(actual.orElseThrow(NotFoundException::new)).isEqualTo(answer1);
+        Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(answer.getId());
+        assertThat(actual.orElseThrow(NotFoundException::new)).isEqualTo(answer);
     }
 }

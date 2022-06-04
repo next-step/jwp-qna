@@ -1,8 +1,10 @@
 package qna.domain;
 
+import org.hibernate.Hibernate;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-import org.hibernate.Hibernate;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -20,15 +22,16 @@ public class Answer extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    protected Answer() {}
+    protected Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -82,12 +85,19 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        setDeleted(true);
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writer=" + writer.toString() + '\'' +
-                ", question=" + question.toString() + '\'' +
+                ", writerId=" + writer.getId() + '\'' +
+                ", questionId=" + question.getId() + '\'' +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

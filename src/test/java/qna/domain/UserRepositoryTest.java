@@ -15,12 +15,6 @@ class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
-    @BeforeEach
-    void setup(){
-        userRepository.save(UserTest.JAVAJIGI);
-        userRepository.save(UserTest.SANJIGI);
-    }
-
     @AfterEach
     void clean(){
         userRepository.deleteAll();
@@ -38,6 +32,7 @@ class UserRepositoryTest {
 
     @Test
     void findByUserId() {
+        userRepository.save(UserTest.JAVAJIGI);
         String expected = UserTest.JAVAJIGI.getUserId();
         User actual = userRepository.findByUserId(expected).orElseThrow(NotFoundException::new);
         assertThat(actual.getUserId()).isEqualTo(expected);

@@ -1,7 +1,12 @@
 package qna.domain;
 
 import org.hibernate.Hibernate;
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -20,6 +25,9 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @Embedded
+    private Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -46,15 +54,12 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.addAnswer(answer);
         answer.toQuestion(this);
     }
 
     public Long getId() {
         return id;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public String getContents() {
@@ -73,13 +78,24 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        setDeleted(true);
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
+        deleteHistories.addAll(this.answers.deleteAll(loginUser));
+        return deleteHistories;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writer=" + writer +
+                ", writerId=" + writer.getId() + '\'' +
                 ", deleted=" + deleted +
                 '}';
     }
