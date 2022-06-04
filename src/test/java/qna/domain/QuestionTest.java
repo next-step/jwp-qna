@@ -15,11 +15,11 @@ public class QuestionTest {
     void checkValidWriter() {
         assertAll(
             () -> {
-                assertThat(Q1.getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId());
+                assertThat(Q1.getUser().getId()).isEqualTo(UserTest.JAVAJIGI.getId());
                 assertThat(Q1.isOwner(UserTest.JAVAJIGI)).isTrue();
             },
             () -> {
-                assertThat(Q2.getWriterId()).isEqualTo(UserTest.SANJIGI.getId());
+                assertThat(Q2.getUser().getId()).isEqualTo(UserTest.SANJIGI.getId());
                 assertThat(Q2.isOwner(UserTest.SANJIGI)).isTrue();
             }
         );

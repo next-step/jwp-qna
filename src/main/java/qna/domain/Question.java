@@ -12,8 +12,9 @@ public class Question extends BaseTimeEntity {
     private String title;
     @Lob
     private String contents;
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User user;
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -31,12 +32,12 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.user = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.user.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -55,8 +56,17 @@ public class Question extends BaseTimeEntity {
         return contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        if (this.user != null) {
+            this.user.getQuestions().remove(this);
+        }
+        
+        this.user = user;
+        user.addQuestion(this);
     }
 
     public boolean isDeleted() {
@@ -73,7 +83,7 @@ public class Question extends BaseTimeEntity {
             "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", writerId=" + writerId +
+            ", user=" + user +
             ", deleted=" + deleted +
             '}';
     }
