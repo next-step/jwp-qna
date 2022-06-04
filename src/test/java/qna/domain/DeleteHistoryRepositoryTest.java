@@ -27,7 +27,7 @@ class DeleteHistoryRepositoryTest {
 	) {
 		javajigi = userRepository.save(UserTest.JAVAJIGI);
 		sanjigi = userRepository.save(UserTest.SANJIGI);
-		question = questionRepository.save(QuestionTest.TitleAQuestion);
+		question = questionRepository.save(QuestionTest.TITLEA_QUESTION);
 	}
 
 	@Test

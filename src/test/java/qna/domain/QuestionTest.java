@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
 public class QuestionTest {
-    public static final Question TitleAQuestion = new Question("titleA", "contents1");
-    public static final Question TitleBQuestion = new Question("titleB", "contents2");
+    public static final Question TITLEA_QUESTION = new Question("titleA", "contents1");
+    public static final Question TITLEB_QUESTION = new Question("titleB", "contents2");
 
     @Test
     @DisplayName("로그인 사용자와 질문자가 같은 경우 삭제")

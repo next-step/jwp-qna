@@ -29,7 +29,7 @@ public class AnswerRepositoryTest {
 	) {
 		javajigi = userRepository.save(UserTest.JAVAJIGI);
 		sanjigi = userRepository.save(UserTest.SANJIGI);
-		question = questionRepository.save(QuestionTest.TitleAQuestion);
+		question = questionRepository.save(QuestionTest.TITLEA_QUESTION);
 
 		javajigiAnswerExpected = new Answer(javajigi, question, "Answers Contents1");
 		sanjigiAnswerExpected = new Answer(sanjigi, question, "Answers Contents2");
