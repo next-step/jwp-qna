@@ -31,11 +31,11 @@ public class QuestionTest {
         assertAll(
             () -> {
                 Q1.addAnswer(AnswerTest.A1);
-                assertThat(AnswerTest.A1.getQuestionId()).isEqualTo(Q1.getId());
+                assertThat(AnswerTest.A1.getQuestion().getId()).isEqualTo(Q1.getId());
             },
             () -> {
                 Q2.addAnswer(AnswerTest.A2);
-                assertThat(AnswerTest.A2.getQuestionId()).isEqualTo(Q2.getId());
+                assertThat(AnswerTest.A2.getQuestion().getId()).isEqualTo(Q2.getId());
             }
         );
     }

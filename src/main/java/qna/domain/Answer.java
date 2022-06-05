@@ -12,10 +12,12 @@ public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "writer_id")
-    private Long writerId;
-    @Column(name = "question_id")
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User user;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
     @Lob
     private String contents;
     @Column(nullable = false)
@@ -36,29 +38,43 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.user = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        return this.user.getId().equals(writer.getId());
     }
 
     public Long getId() {
         return id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public void setQuestion(Question question) {
+        if (this.question != null) {
+            this.question.getAnswers().remove(this);
+        }
+
+        this.question = question;
+        question.addAnswer(this);
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        if (this.user != null) {
+            this.user.getAnswers().remove(this);
+        }
+
+        this.user = user;
+        user.addAnswer(this);
     }
 
     public String getContents() {
@@ -77,8 +93,8 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
             "id=" + id +
-            ", writerId=" + writerId +
-            ", questionId=" + questionId +
+            ", user=" + user +
+            ", question=" + question +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';

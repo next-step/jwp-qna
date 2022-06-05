@@ -24,8 +24,11 @@ public class User extends BaseTimeEntity {
     @Column(length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Answer> answers = new ArrayList<>();
 
     protected User() {
     }
@@ -100,11 +103,23 @@ public class User extends BaseTimeEntity {
         return questions;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
     public void addQuestion(Question question) {
         this.questions.add(question);
 
         if (question.getUser() != this) {
             question.setUser(this);
+        }
+    }
+
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
+
+        if (answer.getUser() != this) {
+            answer.setUser(this);
         }
     }
 
@@ -116,6 +131,8 @@ public class User extends BaseTimeEntity {
             ", password='" + password + '\'' +
             ", name='" + name + '\'' +
             ", email='" + email + '\'' +
+            ", questions=" + questions +
+            ", answers=" + answers +
             '}';
     }
 

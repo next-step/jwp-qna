@@ -36,12 +36,12 @@ public class AnswerTest {
     @DisplayName("질문 등록할 수 있다.")
     void checkToQuestion() {
         assertAll(() -> {
-            A1.toQuestion(QuestionTest.Q2);
-            assertThat(A1.getQuestionId()).isEqualTo(QuestionTest.Q2.getId());
+            A1.setQuestion(QuestionTest.Q2);
+            assertThat(A1.getQuestion().getId()).isEqualTo(QuestionTest.Q2.getId());
         });
         assertAll(() -> {
-            A2.toQuestion(QuestionTest.Q2);
-            assertThat(A2.getQuestionId()).isEqualTo(QuestionTest.Q2.getId());
+            A2.setQuestion(QuestionTest.Q2);
+            assertThat(A2.getQuestion().getId()).isEqualTo(QuestionTest.Q2.getId());
         });
     }
 }
