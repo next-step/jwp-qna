@@ -43,6 +43,12 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+        this.deletedByUser = deletedByUser;
+    }
+
     public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
@@ -77,13 +83,21 @@ public class DeleteHistory {
         if (o == null || getClass() != o.getClass())
             return false;
         DeleteHistory that = (DeleteHistory)o;
-        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(
-            contentId, that.contentId) && Objects.equals(deletedByUser, that.deletedByUser)
-            && Objects.equals(createDate, that.createDate);
+        return contentType == that.contentType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedByUser, createDate);
+        return Objects.hash(contentType);
+    }
+
+    @Override
+    public String toString() {
+        return "DeleteHistory{" +
+            "id=" + id +
+            ", contentType=" + contentType +
+            ", contentId=" + contentId +
+            ", createDate=" + createDate +
+            '}';
     }
 }

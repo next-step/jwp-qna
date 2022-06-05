@@ -19,12 +19,16 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Answer {
+    private final String CAN_NOT_DELETE_MESSAGE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+    private final String ALREADY_DELETE_MESSAGE = "이미 삭제된 답변입니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -81,7 +85,6 @@ public class Answer {
 
     public void toQuestion(Question question) {
         this.question = question;
-        question.getAnswers().add(this);
     }
 
     public Long getId() {
@@ -118,5 +121,46 @@ public class Answer {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public DeleteHistory delete(User user) throws CannotDeleteException {
+        if(!isOwner(user)) {
+            throw new CannotDeleteException(CAN_NOT_DELETE_MESSAGE);
+        }
+
+        if(isDeleted()) {
+            throw new CannotDeleteException(ALREADY_DELETE_MESSAGE);
+        }
+
+        deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Answer answer = (Answer)o;
+        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writer,
+            answer.writer) && Objects.equals(question, answer.question) && Objects.equals(contents,
+            answer.contents);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, writer, question, contents, deleted);
+    }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+            "id=" + id +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            ", createAt=" + createAt +
+            ", updatedAt=" + updatedAt +
+            '}';
     }
 }

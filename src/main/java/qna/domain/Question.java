@@ -1,6 +1,9 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -19,9 +22,13 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import qna.CannotDeleteException;
+
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Question {
+    private final String CAN_NOT_DELETE_MESSAGE = "질문을 삭제할 권한이 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -112,5 +119,48 @@ public class Question {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(deleteAnswer(loginUser));
+
+        return deleteHistories;
+    }
+
+    private List<DeleteHistory> deleteAnswer(User loginUser) throws CannotDeleteException {
+        return answers.delete(loginUser);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Question question = (Question)o;
+        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title,
+            question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer,
+            question.writer) && Objects.equals(answers, question.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writer, deleted, answers);
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            ", createdAt=" + createdAt +
+            ", updatedAt=" + updatedAt +
+            '}';
     }
 }

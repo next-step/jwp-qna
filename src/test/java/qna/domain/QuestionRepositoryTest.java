@@ -13,9 +13,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 class QuestionRepositoryTest {
-	private final Question expected1 = new Question("title1", "contents1");
-	private final Question expected2 = new Question("title2", "contents2");
-	private final Question expected3 = new Question("title3", "contents3");
+	private final Question TITLEA_QUESTION = new Question("titleA", "contents1");
+	private final Question TITLEB_QUESTION = new Question("titleB", "contents2");
+	private final Question TITLEC_QUESTION = new Question("titleC", "contents3");
 
 	@Autowired
 	QuestionRepository questionRepository;
@@ -23,19 +23,19 @@ class QuestionRepositoryTest {
 	@Test
 	@DisplayName("Question 생성")
 	void save() {
-		Question actual = questionRepository.save(expected1);
+		Question actual = questionRepository.save(TITLEA_QUESTION);
 
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.getTitle()).isEqualTo(expected1.getTitle()),
-			() -> assertThat(actual.getContents()).isEqualTo(expected1.getContents())
+			() -> assertThat(actual.getTitle()).isEqualTo(TITLEA_QUESTION.getTitle()),
+			() -> assertThat(actual.getContents()).isEqualTo(TITLEA_QUESTION.getContents())
 		);
 	}
 
 	@Test
 	@DisplayName("Question 삭제")
 	void delete() {
-		Question expected = questionRepository.save(expected1);
+		Question expected = questionRepository.save(TITLEA_QUESTION);
 		questionRepository.delete(expected);
 
 		Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(expected.getId());
@@ -46,9 +46,9 @@ class QuestionRepositoryTest {
 	@Test
 	@DisplayName("삭제되지 않은 Question 조회")
 	void findByDeletedFalse() {
-		Question actual1 = questionRepository.save(expected1);
-		Question actual2 = questionRepository.save(expected2);
-		Question actual3 = questionRepository.save(expected3);
+		Question actual1 = questionRepository.save(TITLEA_QUESTION);
+		Question actual2 = questionRepository.save(TITLEB_QUESTION);
+		Question actual3 = questionRepository.save(TITLEC_QUESTION);
 
 		questionRepository.delete(actual3);
 
