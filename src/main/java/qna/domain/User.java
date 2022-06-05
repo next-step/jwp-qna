@@ -30,6 +30,9 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
+
     protected User() {
     }
 
@@ -121,6 +124,18 @@ public class User extends BaseTimeEntity {
         if (answer.getUser() != this) {
             answer.setUser(this);
         }
+    }
+
+    public void addDeleteHistories(DeleteHistory deleteHistory) {
+        this.deleteHistories.add(deleteHistory);
+
+        if (deleteHistory.getUser() != this) {
+            deleteHistory.setUser(this);
+        }
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
     }
 
     @Override
