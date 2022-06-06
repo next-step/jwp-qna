@@ -89,6 +89,19 @@ DB 컬럼 중심적인 매핑에서 객체 간 연관관계 매핑으로 변경
   - 연관관계 설정에 따른 TC 및 검증 항목 수정
 
 ### 피드백 내용 정리
-- 엔티티의 equals와 hashCode 구현 시 필드 구성에 따른 차이점
-- Audit 기능 동작 원리에 따른 Audit 기능 사용 여부 판단
-- 명확하지 않은 TC 검증 항목 수정
+- JPA Audit
+  - JPA Entity에 이벤트가 발생할 때 데이터 변경 추적을 위해 콜백을 실행하여 메타성 데이터를 관리하는 기능
+  - Pre*, Post* 시점에 persist, remove, update 등의 Event 처리를 위한 EventListener 제공
+
+- Spring Data JPA Audit
+  - Spring Data JPA는 AuditingEntityListener라는 EventListener 구현체를 제공
+  - @PrePersist와 @PreUpdate 콜백 메서드를 통해 flush가 발생하는 시점에 AuditingHandler에 의해 @CreatedBy, @CreatedDate, @LastModifiedBy, @LastModifiedDate 값 설정
+  - Entity의 isNew 상태에 따라 생성 일시와 수정 일시에 해당하는 값을 판별하며, 값 설정 시 CurrentDateTimeProvider의 기본 구현체를 제공
+    - CurrentDateTimeProvider은 LocaDateTime 타입을 다루므로 글로벌 서비스 등을 위해 UTC(ZonedDateTime)를 다뤄야 하는 경우 Listener를 직접 구현하는 경우를 고려
+  - EnableJpaAuditing의 modifyOnCreate 설정을 통해 엔티티가 영속 처리되는 시점에 Modified 관련 이벤트를 처리하지 않도록 설정 가능
+
+- JPA Entity의 isNew 판별
+   - isNew 판별 기준 : PK에 해당하는 식별자 필드의 값이 null 또는 0일 경우
+   - PK에 해당하는 식별자를 DB채번 전략이 아닌 String 등의 값을 할당하는 경우 Entity에 Persistable 인터페이스의 isNew 직접 구현을 통해 판별 기준을 정의
+
+---
