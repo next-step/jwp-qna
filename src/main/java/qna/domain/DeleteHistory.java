@@ -63,7 +63,6 @@ public class DeleteHistory {
             "id=" + id +
             ", contentType=" + contentType +
             ", contentId=" + contentId +
-            ", user=" + user +
             ", createDate=" + createDate +
             '}';
     }

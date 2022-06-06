@@ -93,8 +93,6 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
             "id=" + id +
-            ", user=" + user +
-            ", question=" + question +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';

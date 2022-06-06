@@ -95,9 +95,7 @@ public class Question extends BaseTimeEntity {
             "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", user=" + user +
             ", deleted=" + deleted +
-            ", answers=" + answers +
             '}';
     }
 }

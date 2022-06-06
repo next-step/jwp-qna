@@ -146,8 +146,6 @@ public class User extends BaseTimeEntity {
             ", password='" + password + '\'' +
             ", name='" + name + '\'' +
             ", email='" + email + '\'' +
-            ", questions=" + questions +
-            ", answers=" + answers +
             '}';
     }
 
