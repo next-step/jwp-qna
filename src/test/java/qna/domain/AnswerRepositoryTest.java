@@ -65,7 +65,7 @@ class AnswerRepositoryTest {
             () -> assertThat(actual.isOwner(answerWriter)).isTrue(),
             () -> assertThat(actual.getQuestion()).isEqualTo(question),
             () -> assertThat(given.getCreatedAt()).as("JPA Audit에 의해 할당되는 생성일시 정보의 할당 여부").isNotNull(),
-            () -> assertThat(given.getUpdatedAt()).as("JPA Audit에 의해 할당되는 수정일시 정보의 할당 여부").isNotNull(),
+            () -> assertThat(given.getUpdatedAt()).as("JPA Audit의 modifyOnCreate 설정에 의한 수정일시 정보 Null 여부").isNull(),
             () -> assertThat(actual).as("동일 트랜잭션 내 객체 동일성 보장").isSameAs(given)
         );
     }
@@ -157,7 +157,11 @@ class AnswerRepositoryTest {
         entityManager.flush();
 
         // Then
-        assertThat(given.isDeleted()).isTrue();
+        assertAll(
+            () -> assertThat(given.isDeleted()).isTrue(),
+            () -> assertThat(given.getUpdatedAt()).as("flush 시점에 @PreUpdate 콜백 메서드에 의한 생성일시 값 할당 여부")
+                .isNotNull()
+        );
     }
 
     @Test
