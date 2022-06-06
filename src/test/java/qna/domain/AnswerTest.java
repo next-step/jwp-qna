@@ -3,8 +3,10 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 public class AnswerTest {
@@ -31,4 +33,22 @@ public class AnswerTest {
 
     }
 
+    @Test
+    void 답변_삭제() throws CannotDeleteException {
+        DeleteHistory deleteHistory = A1.delete(UserTest.JAVAJIGI);
+        assertThat(deleteHistory).isNotNull();
+
+    }
+
+    @Test
+    void 답변_삭제_실패() {
+        assertThatThrownBy(() -> A1.delete(UserTest.SANJIGI)).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void 답변_삭제_실패2(){
+        A1.setDeleted(true);
+        assertThatThrownBy(() -> A1.delete(UserTest.JAVAJIGI)).isInstanceOf(CannotDeleteException.class);
+    }
 }
+
