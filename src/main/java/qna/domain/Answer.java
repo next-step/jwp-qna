@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -18,11 +19,11 @@ public class Answer extends BaseTimeEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name= "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
@@ -105,4 +106,14 @@ public class Answer extends BaseTimeEntity {
                 '}';
     }
 
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 삭제 된 답변입니다.");
+        }
+        this.deleted = true;
+        return DeleteHistory.of(ContentType.ANSWER, id, writer);
+    }
 }
