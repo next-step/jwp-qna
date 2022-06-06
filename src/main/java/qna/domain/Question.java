@@ -14,7 +14,7 @@ public class Question extends BaseTimeEntity {
     private String title;
     @Lob
     private String contents;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User user;
     @Column(nullable = false)

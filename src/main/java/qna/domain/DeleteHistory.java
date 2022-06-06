@@ -15,7 +15,7 @@ public class DeleteHistory {
     private ContentType contentType;
     @Column(name = "content_id")
     private Long contentId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delete_by_id")
     private User user;
     @Column(name = "create_date")
