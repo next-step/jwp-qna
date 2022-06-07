@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.springframework.beans.factory.support.ScopeNotActiveException;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -31,6 +33,10 @@ public class DeleteHistory{
 
     protected DeleteHistory() {
 
+    }
+
+    public static DeleteHistory of(ContentType contentType, Long contentId, User deletedUser) {
+        return new DeleteHistory(contentType, contentId, deletedUser, LocalDateTime.now());
     }
 
     @Override

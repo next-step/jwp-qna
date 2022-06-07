@@ -34,4 +34,6 @@ class QuestionRepositoryTest {
 
         assertThat(getQuestion.getWriter()).isEqualTo(user);
     }
+
+
 }
