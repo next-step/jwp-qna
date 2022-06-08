@@ -1,10 +1,13 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.generator.QuestionGenerator;
+import qna.generator.UserGenerator;
 
 @DisplayName("Domain:DeleteHistory")
 class DeleteHistoryTest {
@@ -13,15 +16,18 @@ class DeleteHistoryTest {
     @DisplayName("삭제 이력 생성")
     public void createDeleteHistoryTest() {
         // Given
-        final ContentType contentType = ContentType.ANSWER;
-        final Long contentId = 1L;
-        final Long deletedById = 1L;
+        final ContentType contentType = ContentType.QUESTION;
+        final User questionWriter = UserGenerator.generateQuestionWriter();
+        final Question question = QuestionGenerator.generateQuestion(questionWriter);
         final LocalDateTime createDate = LocalDateTime.now();
 
         // When
-        DeleteHistory given = new DeleteHistory(contentType, contentId, deletedById, createDate);
+        DeleteHistory actual = new DeleteHistory(contentType, question.getId(), questionWriter, createDate);
 
         // Then
-        assertThat(given).isEqualTo(new DeleteHistory(contentType, contentId, deletedById, createDate));
+        assertAll(
+            () -> assertThat(actual.isQuestion()).isTrue(),
+            () -> assertThat(actual).isEqualTo(new DeleteHistory(contentType, question.getId(), questionWriter, createDate))
+        );
     }
 }

@@ -46,7 +46,7 @@ class DeleteHistoryRepositoryTest {
         final DeleteHistory deleteHistory = new DeleteHistory(
             ContentType.QUESTION,
             question.getId(),
-            questionWriter.getId(),
+            questionWriter,
             LocalDateTime.now()
         );
 
@@ -71,7 +71,7 @@ class DeleteHistoryRepositoryTest {
         final DeleteHistory deleteHistory = new DeleteHistory(
             ContentType.ANSWER,
             answer.getId(),
-            answerWriter.getId(),
+            answerWriter,
             LocalDateTime.now()
         );
 

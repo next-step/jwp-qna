@@ -10,6 +10,8 @@ import qna.domain.User;
 @TestConstructor(autowireMode = AutowireMode.ALL)
 public class AnswerGenerator {
 
+    public static final String CONTENTS = "답변 내용";
+
     private final AnswerRepository answerRepository;
 
     public AnswerGenerator(AnswerRepository answerRepository) {
