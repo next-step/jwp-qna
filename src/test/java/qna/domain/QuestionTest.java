@@ -11,7 +11,7 @@ public class QuestionTest {
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Test
-    @DisplayName("질문의 작성자를 확인한다.")
+    @DisplayName("질문 작성자와 로그인 유저가 동일하다.")
     void checkValidWriter() {
         assertAll(
             () -> {
