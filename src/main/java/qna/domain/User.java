@@ -3,6 +3,8 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,7 +24,16 @@ public class User extends BaseTimeEntity {
     @Column(length = 50)
     private String email;
 
-    private User() {
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Answer> answers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -89,6 +100,42 @@ public class User extends BaseTimeEntity {
 
     public String getEmail() {
         return email;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void addQuestion(Question question) {
+        this.questions.add(question);
+
+        if (question.getUser() != this) {
+            question.setUser(this);
+        }
+    }
+
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
+
+        if (answer.getUser() != this) {
+            answer.setUser(this);
+        }
+    }
+
+    public void addDeleteHistories(DeleteHistory deleteHistory) {
+        this.deleteHistories.add(deleteHistory);
+
+        if (deleteHistory.getUser() != this) {
+            deleteHistory.setUser(this);
+        }
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
     }
 
     @Override

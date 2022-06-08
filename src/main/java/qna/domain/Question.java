@@ -1,6 +1,8 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -12,12 +14,15 @@ public class Question extends BaseTimeEntity {
     private String title;
     @Lob
     private String contents;
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id")
+    private User user;
     @Column(nullable = false)
     private boolean deleted = false;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    private List<Answer> answers = new ArrayList<>();
 
-    private Question() {
+    protected Question() {
     }
 
     public Question(String title, String contents) {
@@ -31,16 +36,20 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.user = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.user.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        this.answers.add(answer);
+
+        if (answer.getQuestion() != this) {
+            answer.setQuestion(this);
+        }
     }
 
     public Long getId() {
@@ -55,8 +64,17 @@ public class Question extends BaseTimeEntity {
         return contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        if (this.user != null) {
+            this.user.getQuestions().remove(this);
+        }
+
+        this.user = user;
+        user.addQuestion(this);
     }
 
     public boolean isDeleted() {
@@ -67,13 +85,16 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
             "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", writerId=" + writerId +
             ", deleted=" + deleted +
             '}';
     }
