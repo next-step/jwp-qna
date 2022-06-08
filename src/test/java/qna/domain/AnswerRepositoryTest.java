@@ -1,11 +1,13 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,12 +21,24 @@ class AnswerRepositoryTest {
     QuestionRepository questionRepository;
     @Autowired
     UserRepository userRepository;
+    @PersistenceContext
+    EntityManager entityManager;
 
-    @BeforeEach
-    void deleteAll() {
-        userRepository.deleteAll();
-        questionRepository.deleteAll();
+    @AfterEach
+    void tearDown() {
         answerRepository.deleteAll();
+        questionRepository.deleteAll();
+        userRepository.deleteAll();
+
+        entityManager
+            .createNativeQuery("ALTER TABLE user ALTER COLUMN `id` RESTART WITH 1")
+            .executeUpdate();
+        entityManager
+            .createNativeQuery("ALTER TABLE question ALTER COLUMN `id` RESTART WITH 1")
+            .executeUpdate();
+        entityManager
+            .createNativeQuery("ALTER TABLE answer ALTER COLUMN `id` RESTART WITH 1")
+            .executeUpdate();
     }
 
     @Test
