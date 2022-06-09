@@ -35,4 +35,26 @@ class AnswersTest {
             answers.delete(UserTest.JAVAJIGI);
         }).isInstanceOf(CannotDeleteException.class);
     }
+
+    @DisplayName("여러개의 답변이 삭제가 되면 삭제된 history가 list 형태로 리턴이 된다. (그런데 이미 삭제된 답변과 다른 제거가 된 상태)")
+    @Test
+    public void deleteTest03() throws CannotDeleteException {
+        Answer answer1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "test answer1");
+        Answer answer2 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "test answer2");
+        answer2.delete(UserTest.JAVAJIGI);
+        Answer answer3 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "test answer3");
+
+        Answers answers = new Answers();
+        answers.add(answer1);
+        answers.add(answer2);
+        answers.add(answer3);
+
+        DeleteHistories delete = answers.delete(UserTest.JAVAJIGI);
+
+        assertThat(delete).isNotNull();
+        assertThat(delete.getList())
+                .hasSize(2)
+                .contains(DeleteHistory.byAnswer(answer1.getId(), answer1.getWriter()),
+                        DeleteHistory.byAnswer(answer3.getId(), answer3.getWriter()));
+    }
 }

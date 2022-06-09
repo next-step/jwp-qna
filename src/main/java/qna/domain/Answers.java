@@ -23,8 +23,12 @@ public class Answers {
 
     private List<Answer> undeletedAnswers() {
         return answers.stream()
-                .filter(answer -> !answer.isDeleted())
+                .filter(this::isNotDeleted)
                 .collect(Collectors.toList());
+    }
+
+    private boolean isNotDeleted(Answer answer) {
+        return !answer.isDeleted();
     }
 
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
