@@ -6,6 +6,7 @@ import java.util.List;
 
 @Entity
 public class Member {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,4 +28,3 @@ public class Member {
         this.favorites.add(favorite);
     }
 }
-

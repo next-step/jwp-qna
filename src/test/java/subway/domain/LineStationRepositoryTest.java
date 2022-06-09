@@ -1,6 +1,5 @@
 package subway.domain;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -17,7 +16,6 @@ class LineStationRepositoryTest {
     @Autowired
     StationRepository stations;
 
-    @DisplayName("INSERT 이외에 불필요한 SQL이 발생하지 않는다")
     @Test
     void saveWithLineStation() {
         LineStation lineStation = lineStations.save(new LineStation());
