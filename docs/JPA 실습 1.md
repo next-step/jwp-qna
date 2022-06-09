@@ -277,10 +277,12 @@ public class JpaPersistableEntityInformation<T extends Persistable<ID>, ID>
 - 영속(managed): 영속성 컨텍스트에 저장된 상태
 - 준영속(detached): 영속성 컨텍스트에 저장되었다가 분리된 상태
 - 삭제(removed): 삭제된 상태
+
 ![image](./image/image04.png)
 
 @Transactional
 - 트랜잭션을 커밋하는 순간 영속성 컨텍스트를 데이터베이스에 반영
+
 ![image](./image/image05.png)
 ![image](./image/image06.png)
 ![image](./image/image07.png)
@@ -296,4 +298,5 @@ void update() {
     assertThat(station2).isNotNull();
 }
 ```
+
 ![image](./image/image08.png)
