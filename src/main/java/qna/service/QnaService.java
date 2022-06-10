@@ -35,14 +35,7 @@ public class QnaService {
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
         question.delete(loginUser);
-
-//        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
-//        for (Answer answer : answers) {
-//            if (!answer.isOwner(loginUser)) {
-//                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-//            }
-//        }
-//
+        
 //        question.setDeleted(true);
 //        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getUser(), LocalDateTime.now()));
 //        for (Answer answer : answers) {

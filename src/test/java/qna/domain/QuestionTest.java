@@ -25,18 +25,18 @@ public class QuestionTest {
         );
     }
 
-    @Test
-    @DisplayName("질문에 답변을 작성할 수 있다.")
-    void checkAddAnswer() {
-        assertAll(
-            () -> {
-                Q1.addAnswer(AnswerTest.A1);
-                assertThat(AnswerTest.A1.getQuestion().getId()).isEqualTo(Q1.getId());
-            },
-            () -> {
-                Q2.addAnswer(AnswerTest.A2);
-                assertThat(AnswerTest.A2.getQuestion().getId()).isEqualTo(Q2.getId());
-            }
-        );
-    }
+//    @Test
+//    @DisplayName("질문에 답변을 작성할 수 있다.")
+//    void checkAddAnswer() {
+//        assertAll(
+//            () -> {
+//                Q1.addAnswer(AnswerTest.A1);
+//                assertThat(AnswerTest.A1.getQuestion().getId()).isEqualTo(Q1.getId());
+//            },
+//            () -> {
+//                Q2.addAnswer(AnswerTest.A2);
+//                assertThat(AnswerTest.A2.getQuestion().getId()).isEqualTo(Q2.getId());
+//            }
+//        );
+//    }
 }

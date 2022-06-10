@@ -3,8 +3,6 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -21,8 +19,8 @@ public class Question extends BaseTimeEntity {
     private User user;
     @Column(nullable = false)
     private boolean deleted = false;
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
 
     protected Question() {
     }
@@ -46,13 +44,13 @@ public class Question extends BaseTimeEntity {
         return this.user.equals(writer);
     }
 
-    public void addAnswer(Answer answer) {
-        this.answers.add(answer);
-
-        if (answer.getQuestion() != this) {
-            answer.setQuestion(this);
-        }
-    }
+//    public void addAnswer(Answer answer) {
+//        this.answers.add(answer);
+//
+//        if (answer.getQuestion() != this) {
+//            answer.setQuestion(this);
+//        }
+//    }
 
     public Long getId() {
         return id;
@@ -87,12 +85,13 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
     public void delete(User loginUser) throws CannotDeleteException {
         validateUser(loginUser);
+        answers.delete(loginUser);
     }
 
     private void validateUser(User loginUser) throws CannotDeleteException {

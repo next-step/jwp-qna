@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -59,12 +60,12 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void setQuestion(Question question) {
-        if (this.question != null) {
-            this.question.getAnswers().remove(this);
-        }
-
-        this.question = question;
-        question.addAnswer(this);
+//        if (this.question != null) {
+//            this.question.getAnswers().remove(this);
+//        }
+//
+//        this.question = question;
+//        question.addAnswer(this);
     }
 
     public User getUser() {
@@ -88,8 +89,8 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setDeleted() {
+        this.deleted = true;
     }
 
     @Override
@@ -99,5 +100,16 @@ public class Answer extends BaseTimeEntity {
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        validateUser(loginUser);
+        setDeleted();
+    }
+
+    private void validateUser(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 }
