@@ -4,6 +4,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -50,11 +51,18 @@ public class Answer extends BaseTime {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.getId()
+                          .equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().remove(this);
+        }
         this.question = question;
+        if (question != null && !question.getAnswers().contains(this)) {
+            question.getAnswers().add(this);
+        }
     }
 
     public Long getId() {
@@ -93,8 +101,9 @@ public class Answer extends BaseTime {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public DeleteHistory setDeleted(boolean deleted) {
         this.deleted = deleted;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
     @Override
