@@ -1,6 +1,12 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -21,6 +27,9 @@ public class Question extends BaseTime {
     private String contents;
 
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question")
+    private final List<Answer> answers = new LinkedList<>();
 
     protected Question() {
     }
@@ -45,8 +54,15 @@ public class Question extends BaseTime {
                           .equals(writer.getId());
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.add(answer);
+        if (answer.getQuestion() != this) {
+            answer.toQuestion(this);
+        }
     }
 
     public Long getId() {
@@ -81,12 +97,45 @@ public class Question extends BaseTime {
         this.writer = writer;
     }
 
+    public List<DeleteHistory> deleteBy(User request) {
+        confirmAuthority(request);
+        confirmAnswer();
+
+        return createDeletionHistory();
+    }
+
+    public void confirmAuthority(User request) {
+        if (!isOwner(request)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    public void confirmAnswer() {
+        for (Answer answer : getAnswers()) {
+            if (!answer.isOwner(writer)) {
+                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            }
+        }
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public DeleteHistory setDeleted(boolean deleted) {
         this.deleted = deleted;
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+    }
+
+    public List<DeleteHistory> createDeletionHistory() {
+        List<DeleteHistory> histories = new ArrayList<>();
+        histories.add(setDeleted(true));
+
+        for (Answer answer : getAnswers()) {
+            histories.add(answer.setDeleted(true));
+        }
+
+        return histories;
     }
 
     @Override
