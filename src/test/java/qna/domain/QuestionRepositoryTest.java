@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,16 +24,18 @@ class QuestionRepositoryTest {
     EntityManager entityManager;
 
     @BeforeEach
-    void deleteAll() {
+    void setUp() {
+        question1 = new Question(1L, "hi", "hello~", new Answers());
+        question2 = new Question(2L, "wow", "yeah~", new Answers());
+    }
+
+    @AfterEach
+    void tearDown() {
         questionRepository.deleteAll();
 
         entityManager
             .createNativeQuery("ALTER TABLE question ALTER COLUMN `id` RESTART WITH 1")
             .executeUpdate();
-
-        // TODO: 테스트 한번에 실행해도 성공하도록 수정 필요
-        question1 = new Question(1L, "hi", "hello~", new Answers());
-        question2 = new Question(2L, "wow", "yeah~", new Answers());
     }
 
     @Test
