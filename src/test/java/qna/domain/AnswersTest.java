@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
@@ -17,10 +18,12 @@ class AnswersTest {
         answers.add(AnswerTest.A1);
         DeleteHistories delete = answers.delete(UserTest.JAVAJIGI);
 
-        assertThat(delete).isNotNull();
-        assertThat(delete.getList())
-                .hasSize(1)
-                .contains(DeleteHistory.byAnswer(AnswerTest.A1.getId(), UserTest.JAVAJIGI));
+        Assertions.assertAll(
+                () -> assertThat(delete).isNotNull(),
+                () -> assertThat(delete.getList())
+                        .hasSize(1)
+                        .contains(DeleteHistory.byAnswer(AnswerTest.A1.getId(), UserTest.JAVAJIGI))
+        );
     }
 
     @DisplayName("답변이 중 작성자가 다르면 삭제시 에러가 발생한다.")
@@ -51,10 +54,12 @@ class AnswersTest {
 
         DeleteHistories delete = answers.delete(UserTest.JAVAJIGI);
 
-        assertThat(delete).isNotNull();
-        assertThat(delete.getList())
-                .hasSize(2)
-                .contains(DeleteHistory.byAnswer(answer1.getId(), answer1.getWriter()),
-                        DeleteHistory.byAnswer(answer3.getId(), answer3.getWriter()));
+        Assertions.assertAll(
+                () -> assertThat(delete).isNotNull(),
+                () -> assertThat(delete.getList())
+                        .hasSize(2)
+                        .contains(DeleteHistory.byAnswer(answer1.getId(), answer1.getWriter()),
+                                DeleteHistory.byAnswer(answer3.getId(), answer3.getWriter()))
+        );
     }
 }
