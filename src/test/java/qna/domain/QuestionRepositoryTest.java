@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,16 +19,20 @@ class QuestionRepositoryTest {
     QuestionRepository questionRepository;
     Question question1;
     Question question2;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @BeforeEach
     void deleteAll() {
         questionRepository.deleteAll();
 
+        entityManager
+            .createNativeQuery("ALTER TABLE question ALTER COLUMN `id` RESTART WITH 1")
+            .executeUpdate();
+
         // TODO: 테스트 한번에 실행해도 성공하도록 수정 필요
         question1 = new Question(1L, "hi", "hello~", new Answers());
-        question1.setDeleted();
         question2 = new Question(2L, "wow", "yeah~", new Answers());
-        question2.setDeleted();
     }
 
     @Test
@@ -44,7 +50,6 @@ class QuestionRepositoryTest {
     @DisplayName("deleted 가 false 인 질문을 찾는다.")
     void findByDeletedFalse() {
         questionRepository.save(question1);
-        questionRepository.save(question2);
 
         List<Question> findQuestions = questionRepository.findByDeletedFalse();
 
