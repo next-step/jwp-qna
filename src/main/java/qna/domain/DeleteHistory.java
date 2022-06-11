@@ -28,17 +28,16 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    public User getUser() {
-        return user;
+    public ContentType getContentType() {
+        return contentType;
     }
 
-    public void setUser(User user) {
-        if (this.user != null) {
-            this.user.getDeleteHistories().remove(this);
-        }
+    public Long getContentId() {
+        return contentId;
+    }
 
-        this.user = user;
-        user.addDeleteHistories(this);
+    public User getUser() {
+        return user;
     }
 
     @Override
@@ -51,7 +50,7 @@ public class DeleteHistory {
             Objects.equals(contentId, that.contentId) &&
             Objects.equals(user.getId(), that.user.getId());
     }
-
+    
     @Override
     public int hashCode() {
         return Objects.hash(id, contentType, contentId, user.getId());

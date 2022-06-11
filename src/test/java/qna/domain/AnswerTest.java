@@ -2,6 +2,7 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -42,6 +43,41 @@ public class AnswerTest {
         assertAll(() -> {
             A2.setQuestion(QuestionTest.Q2);
             assertThat(A2.getQuestion().getId()).isEqualTo(QuestionTest.Q2.getId());
+        });
+    }
+
+    @Test
+    @DisplayName("답변삭제 시 작성자가 아닐 경우 오류가 발생한다.")
+    void checkExceptionUserId() {
+        assertThatThrownBy(() -> A1.delete(UserTest.SANJIGI)).isExactlyInstanceOf(CannotDeleteException.class);
+        assertThatThrownBy(() -> A2.delete(UserTest.JAVAJIGI)).isExactlyInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    @DisplayName("답변 작성자와 로그인 유저가 일치할 경우 답변이 삭제된다.")
+    void checkDeleteAnswer() {
+        assertAll(() -> {
+            A1.delete(A1.getUser());
+            assertThat(A1.isDeleted()).isTrue();
+        });
+        assertAll(() -> {
+            A2.delete(A2.getUser());
+            assertThat(A2.isDeleted()).isTrue();
+        });
+    }
+
+    @Test
+    @DisplayName("답변 삭제 히스토리를 생성할 수 있다.")
+    void checkCreateDeleteHistory() {
+        assertAll(() -> {
+            DeleteHistory deleteHistory = A1.createDeleteHistory();
+            assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER);
+            assertThat(deleteHistory.getContentId()).isEqualTo(A1.getId());
+        });
+        assertAll(() -> {
+            DeleteHistory deleteHistory = A2.createDeleteHistory();
+            assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER);
+            assertThat(deleteHistory.getContentId()).isEqualTo(A2.getId());
         });
     }
 }

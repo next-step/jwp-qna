@@ -1,9 +1,11 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -59,25 +61,12 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void setQuestion(Question question) {
-        if (this.question != null) {
-            this.question.getAnswers().remove(this);
-        }
-
         this.question = question;
         question.addAnswer(this);
     }
 
     public User getUser() {
         return user;
-    }
-
-    public void setUser(User user) {
-        if (this.user != null) {
-            this.user.getAnswers().remove(this);
-        }
-
-        this.user = user;
-        user.addAnswer(this);
     }
 
     public String getContents() {
@@ -88,8 +77,8 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setDeleted() {
+        this.deleted = true;
     }
 
     @Override
@@ -99,5 +88,20 @@ public class Answer extends BaseTimeEntity {
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        validateUser(loginUser);
+        setDeleted();
+    }
+
+    private void validateUser(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
+    public DeleteHistory createDeleteHistory() {
+        return new DeleteHistory(ContentType.ANSWER, getId(), getUser(), LocalDateTime.now());
     }
 }

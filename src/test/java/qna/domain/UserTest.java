@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class UserTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+    public static final User EUNJI = new User(3L, "eunji", "password", "name", "eunji@next.step");
 
     @Test
     @DisplayName("name, email변경 시 로그인 정보와 userId가 일치하지 않으면 오류를 발생시킨다.")
