@@ -107,12 +107,23 @@ public class Question extends BaseTimeEntity {
         canDelete(loginUser);
 
         DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.add(answers.delete(loginUser));
-        deleteHistories.add(DeleteHistory.byQuestion(id, loginUser));
+        deleteAnswers(loginUser, deleteHistories);
+        deleteQuestion(loginUser, deleteHistories);
 
         this.deleted = true;
         return deleteHistories;
     }
+
+    private void deleteAnswers(User loginUser, DeleteHistories deleteHistories) throws CannotDeleteException {
+        DeleteHistories deleteHistoriesByAnswers = answers.delete(loginUser);
+        deleteHistories.add(deleteHistoriesByAnswers);
+    }
+
+    private void deleteQuestion(User loginUser, DeleteHistories deleteHistories) {
+        DeleteHistory deleteHistoryByQuestion = DeleteHistory.byQuestion(id, loginUser);
+        deleteHistories.add(deleteHistoryByQuestion);
+    }
+
 
     @Override
     public String toString() {
