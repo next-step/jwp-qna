@@ -61,12 +61,8 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void setQuestion(Question question) {
-//        if (this.question != null) {
-//            this.question.getAnswers().remove(this);
-//        }
-//
-//        this.question = question;
-//        question.addAnswer(this);
+        this.question = question;
+        question.addAnswer(this);
     }
 
     public User getUser() {
