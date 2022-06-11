@@ -21,19 +21,20 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
     @Embedded
-    private Answers answers = new Answers();
+    private Answers answers;
 
     protected Question() {
     }
 
     public Question(String title, String contents) {
-        this(null, title, contents);
+        this(null, title, contents, new Answers());
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, String title, String contents, Answers answers) {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = answers;
     }
 
     public Question writeBy(User writer) {

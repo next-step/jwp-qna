@@ -23,9 +23,9 @@ class QuestionRepositoryTest {
         questionRepository.deleteAll();
 
         // TODO: 테스트 한번에 실행해도 성공하도록 수정 필요
-        question1 = new Question(1L, "hi", "hello~");
+        question1 = new Question(1L, "hi", "hello~", new Answers());
         question1.setDeleted();
-        question2 = new Question(2L, "wow", "yeah~");
+        question2 = new Question(2L, "wow", "yeah~", new Answers());
         question2.setDeleted();
     }
 
@@ -58,7 +58,7 @@ class QuestionRepositoryTest {
         questionRepository.save(question1);
 
         Optional<Question> question = questionRepository.findByIdAndDeletedFalse(question1.getId());
-        
+
         assertThat(question.isPresent()).isTrue();
         assertThat(question.get().getId()).isEqualTo(question1.getId());
     }
