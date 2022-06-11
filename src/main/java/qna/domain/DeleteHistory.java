@@ -28,10 +28,18 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
     public User getUser() {
         return user;
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,7 +50,7 @@ public class DeleteHistory {
             Objects.equals(contentId, that.contentId) &&
             Objects.equals(user.getId(), that.user.getId());
     }
-
+    
     @Override
     public int hashCode() {
         return Objects.hash(id, contentType, contentId, user.getId());

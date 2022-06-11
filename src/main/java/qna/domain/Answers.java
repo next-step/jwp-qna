@@ -17,12 +17,28 @@ public class Answers {
         answers = new ArrayList<>();
     }
 
+    public Answers(List<Answer> answers) {
+        this.answers = answers;
+    }
+
     public void delete(User loginUser) throws CannotDeleteException {
         for (Answer answer : answers) {
             answer.delete(loginUser);
         }
     }
 
+    public List<Answer> getAnswers() {
+        return new ArrayList<>(answers);
+    }
+
+    public DeleteHistories createHistories() {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.createDeleteHistory());
+        }
+        return new DeleteHistories(deleteHistories);
+    }
+    
     public void add(Answer answer) {
         answers.add(answer);
     }

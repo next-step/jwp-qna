@@ -65,4 +65,19 @@ public class AnswerTest {
             assertThat(A2.isDeleted()).isTrue();
         });
     }
+
+    @Test
+    @DisplayName("답변 삭제 히스토리를 생성할 수 있다.")
+    void checkCreateDeleteHistory() {
+        assertAll(() -> {
+            DeleteHistory deleteHistory = A1.createDeleteHistory();
+            assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER);
+            assertThat(deleteHistory.getContentId()).isEqualTo(A1.getId());
+        });
+        assertAll(() -> {
+            DeleteHistory deleteHistory = A2.createDeleteHistory();
+            assertThat(deleteHistory.getContentType()).isEqualTo(ContentType.ANSWER);
+            assertThat(deleteHistory.getContentId()).isEqualTo(A2.getId());
+        });
+    }
 }
