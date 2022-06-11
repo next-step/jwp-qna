@@ -68,15 +68,6 @@ public class Question extends BaseTimeEntity {
         return user;
     }
 
-    public void setUser(User user) {
-        if (this.user != null) {
-            this.user.getQuestions().remove(this);
-        }
-
-        this.user = user;
-        user.addQuestion(this);
-    }
-
     public boolean isDeleted() {
         return deleted;
     }

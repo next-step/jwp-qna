@@ -31,16 +31,7 @@ public class DeleteHistory {
     public User getUser() {
         return user;
     }
-
-    public void setUser(User user) {
-        if (this.user != null) {
-            this.user.getDeleteHistories().remove(this);
-        }
-
-        this.user = user;
-        user.addDeleteHistories(this);
-    }
-
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
