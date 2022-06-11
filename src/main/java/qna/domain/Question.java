@@ -20,7 +20,7 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
     @Embedded
-    private Answers answers;
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -44,13 +44,13 @@ public class Question extends BaseTimeEntity {
         return this.user.equals(writer);
     }
 
-//    public void addAnswer(Answer answer) {
-//        this.answers.add(answer);
-//
-//        if (answer.getQuestion() != this) {
-//            answer.setQuestion(this);
-//        }
-//    }
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+
+        if (answer.getQuestion() != this) {
+            answer.setQuestion(this);
+        }
+    }
 
     public Long getId() {
         return id;
@@ -81,8 +81,8 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setDeleted() {
+        this.deleted = true;
     }
 
     public Answers getAnswers() {
@@ -92,6 +92,7 @@ public class Question extends BaseTimeEntity {
     public void delete(User loginUser) throws CannotDeleteException {
         validateUser(loginUser);
         answers.delete(loginUser);
+        setDeleted();
     }
 
     private void validateUser(User loginUser) throws CannotDeleteException {

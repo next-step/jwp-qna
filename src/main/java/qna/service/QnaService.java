@@ -36,7 +36,6 @@ public class QnaService {
         Question question = findQuestionById(questionId);
         question.delete(loginUser);
         
-//        question.setDeleted(true);
 //        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getUser(), LocalDateTime.now()));
 //        for (Answer answer : answers) {
 //            answer.setDeleted(true);

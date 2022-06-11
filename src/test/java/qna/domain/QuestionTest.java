@@ -2,8 +2,10 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class QuestionTest {
@@ -25,18 +27,41 @@ public class QuestionTest {
         );
     }
 
-//    @Test
-//    @DisplayName("질문에 답변을 작성할 수 있다.")
-//    void checkAddAnswer() {
-//        assertAll(
-//            () -> {
-//                Q1.addAnswer(AnswerTest.A1);
-//                assertThat(AnswerTest.A1.getQuestion().getId()).isEqualTo(Q1.getId());
-//            },
-//            () -> {
-//                Q2.addAnswer(AnswerTest.A2);
-//                assertThat(AnswerTest.A2.getQuestion().getId()).isEqualTo(Q2.getId());
-//            }
-//        );
-//    }
+    @Test
+    @DisplayName("질문에 답변을 작성할 수 있다.")
+    void checkAddAnswer() {
+        assertAll(
+            () -> {
+                Q1.addAnswer(AnswerTest.A1);
+                assertThat(AnswerTest.A1.getQuestion().getId()).isEqualTo(Q1.getId());
+            },
+            () -> {
+                Q2.addAnswer(AnswerTest.A2);
+                assertThat(AnswerTest.A2.getQuestion().getId()).isEqualTo(Q2.getId());
+            }
+        );
+    }
+
+    @Test
+    @DisplayName("질문 작성자와 로그인 사용자가 다르면 삭제할 수 없다.")
+    void checkExceptionByInvalidUserId() {
+        assertThatThrownBy(() -> Q1.delete(UserTest.SANJIGI)).isExactlyInstanceOf(CannotDeleteException.class);
+        assertThatThrownBy(() -> Q2.delete(UserTest.JAVAJIGI)).isExactlyInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    @DisplayName("질문 작성자와 로그인 사용자가 같으면 삭제할 수 있다.")
+    void checkDeleteQuestion() {
+        assertAll(
+            () -> {
+                Q1.addAnswer(AnswerTest.A1);
+                Q1.delete(UserTest.JAVAJIGI);
+                assertThat(Q1.isDeleted()).isTrue();
+            },
+            () -> {
+                Q2.addAnswer(AnswerTest.A2);
+                Q2.delete(Q2.getUser());
+                assertThat(Q2.isDeleted()).isTrue();
+            });
+    }
 }

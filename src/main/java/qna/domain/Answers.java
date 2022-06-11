@@ -13,7 +13,7 @@ public class Answers {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private final List<Answer> answers;
 
-    private Answers() {
+    public Answers() {
         answers = new ArrayList<>();
     }
 
@@ -21,5 +21,9 @@ public class Answers {
         for (Answer answer : answers) {
             answer.delete(loginUser);
         }
+    }
+
+    public void add(Answer answer) {
+        answers.add(answer);
     }
 }
