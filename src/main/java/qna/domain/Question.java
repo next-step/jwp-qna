@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 
 @Entity
@@ -20,6 +22,9 @@ public class Question extends BaseTimeEntity {
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -44,6 +49,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -86,6 +92,38 @@ public class Question extends BaseTimeEntity {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+
+    private void canDelete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 질문입니다.");
+        }
+    }
+
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        canDelete(loginUser);
+
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteAnswers(loginUser, deleteHistories);
+        deleteQuestion(loginUser, deleteHistories);
+
+        this.deleted = true;
+        return deleteHistories;
+    }
+
+    private void deleteAnswers(User loginUser, DeleteHistories deleteHistories) throws CannotDeleteException {
+        DeleteHistories deleteHistoriesByAnswers = answers.delete(loginUser);
+        deleteHistories.add(deleteHistoriesByAnswers);
+    }
+
+    private void deleteQuestion(User loginUser, DeleteHistories deleteHistories) {
+        DeleteHistory deleteHistoryByQuestion = DeleteHistory.byQuestion(id, loginUser);
+        deleteHistories.add(deleteHistoryByQuestion);
+    }
+
 
     @Override
     public String toString() {

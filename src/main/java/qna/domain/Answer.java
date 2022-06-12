@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -91,6 +92,22 @@ public class Answer extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    private void canDelete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
+        }
+
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 답변입니다.");
+        }
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        canDelete(loginUser);
+        this.deleted = true;
+        return DeleteHistory.byAnswer(id, loginUser);
     }
 
     @Override
