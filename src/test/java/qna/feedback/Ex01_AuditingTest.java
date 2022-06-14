@@ -1,4 +1,4 @@
-package qna.audit;
+package qna.feedback;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -18,16 +18,18 @@ import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 import qna.domain.BaseEntity;
+import qna.feedback.entity.lazy.Member;
+import qna.feedback.repository.MemberRepository;
 
 @DataJpaTest
 @TestConstructor(autowireMode = AutowireMode.ALL)
 @DisplayName("Test:JPA Auditing")
-class AuditingTest {
+class Ex01_AuditingTest {
 
     private final MemberRepository memberRepository;
     private final EntityManager entityManager;
 
-    public AuditingTest(
+    public Ex01_AuditingTest(
         MemberRepository memberRepository,
         EntityManager entityManager
     ) {
