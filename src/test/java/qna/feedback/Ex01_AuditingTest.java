@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,7 +24,7 @@ import qna.feedback.repository.MemberRepository;
 
 @DataJpaTest
 @TestConstructor(autowireMode = AutowireMode.ALL)
-@DisplayName("Test:JPA Auditing")
+@DisplayName("코드 리뷰 피드백 : JPA Auditing 동작 알아보기")
 class Ex01_AuditingTest {
 
     private final MemberRepository memberRepository;
@@ -65,6 +66,7 @@ class Ex01_AuditingTest {
     }
 
     @Test
+    @Disabled
     @DisplayName("하나의 트랜잭션 내에서 여러개의 엔티티 수정 시 수정일시 값 할당에 대한 학습 테스트")
     public void lastModifiedDateTest() {
         // When
