@@ -17,6 +17,7 @@ import qna.NotFoundException;
 import qna.generator.AnswerGenerator;
 import qna.generator.QuestionGenerator;
 import qna.generator.UserGenerator;
+import qna.repository.AnswerRepository;
 
 @DataJpaTest
 @Import({UserGenerator.class, QuestionGenerator.class, AnswerGenerator.class})

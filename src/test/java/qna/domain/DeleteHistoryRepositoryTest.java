@@ -13,6 +13,7 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 import qna.generator.AnswerGenerator;
 import qna.generator.QuestionGenerator;
 import qna.generator.UserGenerator;
+import qna.repository.DeleteHistoryRepository;
 
 @DataJpaTest
 @TestConstructor(autowireMode = AutowireMode.ALL)

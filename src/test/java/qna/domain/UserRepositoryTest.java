@@ -12,6 +12,7 @@ import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 import qna.NotFoundException;
 import qna.generator.UserGenerator;
+import qna.repository.UserRepository;
 
 @DataJpaTest
 @TestConstructor(autowireMode = AutowireMode.ALL)

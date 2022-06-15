@@ -3,7 +3,7 @@ package qna.generator;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 import qna.domain.Answer;
-import qna.domain.AnswerRepository;
+import qna.repository.AnswerRepository;
 import qna.domain.Question;
 import qna.domain.User;
 

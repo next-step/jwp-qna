@@ -23,6 +23,7 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 import qna.NotFoundException;
 import qna.generator.QuestionGenerator;
 import qna.generator.UserGenerator;
+import qna.repository.QuestionRepository;
 
 @DataJpaTest
 @Import({UserGenerator.class, QuestionGenerator.class})
