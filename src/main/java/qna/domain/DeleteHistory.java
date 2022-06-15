@@ -49,6 +49,18 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
+    public static DeleteHistory createQuestionDeleteHistory(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+    }
+
+    public static List<DeleteHistory> createAnswerDeleteHistory(List<Answer> answers) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : answers) {
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+        }
+        return deleteHistories;
+    }
+
     public Long getId() {
         return id;
     }
@@ -59,25 +71,6 @@ public class DeleteHistory {
 
     public boolean isAnswer() {
         return contentType.isAnswer();
-    }
-
-    public static List<DeleteHistory> createQuestionDeleteHistory(Question question) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        if (question.getAnswers().size() > 0) {
-            deleteHistories.addAll(createAnswerDeleteHistory(question.getAnswers()));
-        }
-        DeleteHistory questionDeleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(),
-            LocalDateTime.now());
-        deleteHistories.add(questionDeleteHistory);
-        return deleteHistories;
-    }
-
-    private static List<DeleteHistory> createAnswerDeleteHistory(List<Answer> answers) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : answers) {
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
-        return deleteHistories;
     }
 
     @Override

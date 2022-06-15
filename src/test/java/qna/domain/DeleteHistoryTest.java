@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.generator.AnswerGenerator;
@@ -41,12 +40,10 @@ class DeleteHistoryTest {
         final Question question = QuestionGenerator.generateQuestion(questionWriter);
 
         // When
-        List<DeleteHistory> actual = DeleteHistory.createQuestionDeleteHistory(question);
+        DeleteHistories actual = DeleteHistories.of(question);
 
         // Then
-        assertThat(actual)
-            .hasSize(1)
-            .allSatisfy(it -> assertThat(it.isQuestion()).isTrue());
+        assertThat(actual.getSize()).isEqualTo(1);
     }
 
     @Test
@@ -60,9 +57,9 @@ class DeleteHistoryTest {
         AnswerGenerator.generateAnswer(questionWriter, question);
 
         // When
-        List<DeleteHistory> actual = DeleteHistory.createQuestionDeleteHistory(question);
+        DeleteHistories actual = DeleteHistories.of(question);
 
         // Then
-        assertThat(actual).hasSize(4);
+        assertThat(actual.getSize()).isEqualTo(4);
     }
 }
