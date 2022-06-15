@@ -72,6 +72,18 @@ public class Question extends BaseEntity {
         this.answers.add(answer);
     }
 
+    public void delete(User loginUser) {
+        if (!writer.equals(loginUser)) {
+            throw new UnAuthorizedException();
+        }
+
+        if (!answers.isEmpty()) {
+            Answers answers = new Answers(this.answers);
+            answers.deleteAll(writer);
+        }
+        this.deleted = true;
+    }
+
     public Long getId() {
         return id;
     }
@@ -104,21 +116,6 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public void delete(User loginUser) {
-        if(!writer.equals(loginUser)){
-            throw new UnAuthorizedException();
-        }
-
-        long notEqualsWriterCount = answers.stream()
-            .filter(it -> !writer.equals(it.getWriter()))
-            .count();
-
-        if(notEqualsWriterCount > 0){
-            throw new UnAuthorizedException();
-        }
-        this.deleted = true;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -146,6 +143,4 @@ public class Question extends BaseEntity {
             ", deleted=" + deleted +
             '}';
     }
-
-
 }
