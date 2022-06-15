@@ -9,7 +9,7 @@ import static qna.generator.UserGenerator.generateQuestionWriter;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import qna.UnAuthorizedException;
+import qna.CannotDeleteException;
 import qna.generator.AnswerGenerator;
 import qna.generator.QuestionGenerator;
 
@@ -39,7 +39,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("질문 삭제")
-    public void delete() {
+    public void delete() throws CannotDeleteException {
         // Given
         final User loginUser = generateLoginUser();
         final Question question = QuestionGenerator.generateQuestion(loginUser);
@@ -65,7 +65,7 @@ public class QuestionTest {
         AnswerGenerator.generateAnswer(answerWriter, question);
 
         // When & Then
-        assertThatExceptionOfType(UnAuthorizedException.class)
+        assertThatExceptionOfType(CannotDeleteException.class)
             .isThrownBy(() -> question.delete(loginUser));
     }
 
@@ -82,7 +82,7 @@ public class QuestionTest {
         AnswerGenerator.generateAnswer(answerWriter, question);
 
         // When & Then
-        assertThatExceptionOfType(UnAuthorizedException.class)
+        assertThatExceptionOfType(CannotDeleteException.class)
             .isThrownBy(() -> question.delete(loginUser));
     }
 }

@@ -33,4 +33,8 @@ public class DeleteHistories {
     public int getSize() {
         return deleteHistories.size();
     }
+
+    public List<DeleteHistory> getList() {
+        return deleteHistories;
+    }
 }

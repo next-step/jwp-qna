@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 import qna.generator.AnswerGenerator;
 import qna.generator.QuestionGenerator;
 import qna.generator.UserGenerator;
@@ -13,7 +14,7 @@ class AnswersTest {
 
     @Test
     @DisplayName("일괄 삭제 처리")
-    public void deleteAll() {
+    public void deleteAll() throws CannotDeleteException {
         // Given
         final User questionWriter = UserGenerator.generateQuestionWriter();
         final Question question = QuestionGenerator.generateQuestion(questionWriter);

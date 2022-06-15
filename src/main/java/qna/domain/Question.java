@@ -15,7 +15,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import qna.UnAuthorizedException;
+import qna.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
@@ -72,9 +72,9 @@ public class Question extends BaseEntity {
         this.answers.add(answer);
     }
 
-    public void delete(User loginUser) {
+    public void delete(User loginUser) throws CannotDeleteException {
         if (!writer.equals(loginUser)) {
-            throw new UnAuthorizedException();
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
         if (!answers.isEmpty()) {
