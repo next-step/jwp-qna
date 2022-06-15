@@ -88,10 +88,6 @@ public class Answer extends BaseEntity {
         return writer;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
-    }
-
     public Question getQuestion() {
         return question;
     }
@@ -100,16 +96,8 @@ public class Answer extends BaseEntity {
         return question.getId();
     }
 
-    public String getContents() {
-        return contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

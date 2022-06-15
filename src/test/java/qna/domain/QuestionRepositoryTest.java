@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.generator.AnswerGenerator;
 import qna.generator.QuestionGenerator;
@@ -154,13 +155,13 @@ class QuestionRepositoryTest {
 
     @Test
     @DisplayName("변경 감지에 의한 삭제 여부 수정")
-    public void setDeleteTest() {
+    public void setDeleteTest() throws CannotDeleteException {
         // Given
         final User questionWriter = userGenerator.savedUser();
         final Question given = questionGenerator.savedQuestion(questionWriter);
 
         // When
-        given.setDeleted(true);
+        given.delete(questionWriter);
         entityManager.flush();
 
         // Then

@@ -102,20 +102,12 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
-    }
-
     public List<Answer> getAnswers() {
         return answers;
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
