@@ -15,6 +15,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import qna.UnAuthorizedException;
 
 @Entity
 @Table(name = "question")
@@ -103,6 +104,21 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public void delete(User loginUser) {
+        if(!writer.equals(loginUser)){
+            throw new UnAuthorizedException();
+        }
+
+        long notEqualsWriterCount = answers.stream()
+            .filter(it -> !writer.equals(it.getWriter()))
+            .count();
+
+        if(notEqualsWriterCount > 0){
+            throw new UnAuthorizedException();
+        }
+        this.deleted = true;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -130,4 +146,6 @@ public class Question extends BaseEntity {
             ", deleted=" + deleted +
             '}';
     }
+
+
 }
