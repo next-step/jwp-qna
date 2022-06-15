@@ -30,4 +30,11 @@ public class AnswerGenerator {
         answer.toQuestion(question);
         return answerRepository.saveAndFlush(answer);
     }
+
+    public Answer savedDeleteAnswer(User writer, Question question) {
+        Answer answer = generateAnswer(writer, question);
+        answer.toQuestion(question);
+        answer.delete();
+        return answerRepository.saveAndFlush(answer);
+    }
 }

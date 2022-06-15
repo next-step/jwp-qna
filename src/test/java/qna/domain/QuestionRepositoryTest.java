@@ -21,12 +21,13 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 import qna.NotFoundException;
+import qna.generator.AnswerGenerator;
 import qna.generator.QuestionGenerator;
 import qna.generator.UserGenerator;
 import qna.repository.QuestionRepository;
 
 @DataJpaTest
-@Import({UserGenerator.class, QuestionGenerator.class})
+@Import({UserGenerator.class, QuestionGenerator.class, AnswerGenerator.class})
 @TestConstructor(autowireMode = AutowireMode.ALL)
 @DisplayName("Repository:Question")
 class QuestionRepositoryTest {
@@ -34,17 +35,20 @@ class QuestionRepositoryTest {
     private final QuestionRepository questionRepository;
     private final UserGenerator userGenerator;
     private final QuestionGenerator questionGenerator;
+    private final AnswerGenerator answerGenerator;
     private final EntityManager entityManager;
 
     public QuestionRepositoryTest(
         QuestionRepository questionRepository,
         UserGenerator userGenerator,
         QuestionGenerator questionGenerator,
+        AnswerGenerator answerGenerator,
         EntityManager entityManager
     ) {
         this.questionRepository = questionRepository;
         this.userGenerator = userGenerator;
         this.questionGenerator = questionGenerator;
+        this.answerGenerator = answerGenerator;
         this.entityManager = entityManager;
     }
 
@@ -165,5 +169,27 @@ class QuestionRepositoryTest {
             () -> assertThat(given.getUpdatedAt()).as("flush 시점에 @PreUpdate 콜백 메서드에 의한 생성일시 값 할당 여부")
                 .isNotNull()
         );
+    }
+    
+    @Test
+    @DisplayName("질문의 답변 목록 조회 시, 미 삭제 상태 여부 검증")
+    public void deletedFalseAnswersToQuestion(){
+        // Given
+        final User questionWriter = userGenerator.savedUser();
+        final Question given = questionGenerator.savedQuestion(questionWriter);
+        answerGenerator.savedAnswer(questionWriter, given);
+        answerGenerator.savedAnswer(questionWriter, given);
+        answerGenerator.savedDeleteAnswer(questionWriter, given);
+        entityManager.clear();
+
+        // When
+        Question question = questionRepository.findById(given.getId())
+            .orElseThrow(NotFoundException::new);
+        List<Answer> actual = question.getAnswers();
+
+        // Then
+        assertThat(actual)
+            .hasSize(2)
+            .allSatisfy(answer -> assertThat(answer.isDeleted()).isFalse());
     }
 }

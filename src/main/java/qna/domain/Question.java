@@ -15,6 +15,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 
 @Entity
@@ -39,6 +40,7 @@ public class Question extends BaseEntity {
     )
     private User writer;
 
+    @Where(clause = "deleted = false")
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
