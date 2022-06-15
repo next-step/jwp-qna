@@ -10,6 +10,7 @@ import qna.domain.User;
 @TestConstructor(autowireMode = AutowireMode.ALL)
 public class AnswerGenerator {
 
+    public static int COUNTER = 0;
     public static final String CONTENTS = "답변 내용";
 
     private final AnswerRepository answerRepository;
@@ -18,12 +19,14 @@ public class AnswerGenerator {
         this.answerRepository = answerRepository;
     }
 
-    public static Answer generateAnswer(User writer, Question question, String contents) {
-        return new Answer(writer, question, contents);
+    public static Answer generateAnswer(User writer, Question question) {
+        Answer answer = new Answer(writer, question, CONTENTS + COUNTER);
+        question.addAnswer(answer);
+        return answer;
     }
 
-    public Answer savedAnswer(User writer, Question question, String contents) {
-        Answer answer = generateAnswer(writer, question, contents);
+    public Answer savedAnswer(User writer, Question question) {
+        Answer answer = generateAnswer(writer, question);
         answer.toQuestion(question);
         return answerRepository.saveAndFlush(answer);
     }

@@ -9,6 +9,7 @@ import qna.domain.User;
 @TestConstructor(autowireMode = AutowireMode.ALL)
 public class QuestionGenerator {
 
+    public static int COUNTER = 0;
     public static final String TITLE = "질문 제목";
     public static final String CONTENTS = "질문 내용";
 
@@ -19,7 +20,7 @@ public class QuestionGenerator {
     }
 
     public static Question generateQuestion(User writer) {
-        return new Question(TITLE, CONTENTS).writeBy(writer);
+        return new Question(TITLE + COUNTER, CONTENTS + COUNTER).writeBy(writer);
     }
 
     public Question savedQuestion(User savedUser) {

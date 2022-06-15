@@ -3,7 +3,6 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.generator.AnswerGenerator.CONTENTS;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -76,7 +75,7 @@ class AnswerRepositoryTest {
         // Given
         final Question question = QuestionGenerator.generateQuestion(UserGenerator.generateQuestionWriter());
         final User answerWriter = UserGenerator.generateAnswerWriter();
-        final Answer given = AnswerGenerator.generateAnswer(answerWriter, question, CONTENTS);
+        final Answer given = AnswerGenerator.generateAnswer(answerWriter, question);
         given.toQuestion(question);
 
         // When
@@ -91,7 +90,7 @@ class AnswerRepositoryTest {
         // Given
         final Question question = QuestionGenerator.generateQuestion(UserGenerator.generateQuestionWriter());
         final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
-        final Answer given = AnswerGenerator.generateAnswer(answerWriter, question, CONTENTS);
+        final Answer given = AnswerGenerator.generateAnswer(answerWriter, question);
 
         // When & Then
         assertThatExceptionOfType(InvalidDataAccessApiUsageException.class)
@@ -107,9 +106,9 @@ class AnswerRepositoryTest {
         final Question question = questionGenerator.savedQuestion(questionWriter);
         final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
 
-        answerGenerator.savedAnswer(answerWriter, question, "답변 내용1");
-        answerGenerator.savedAnswer(answerWriter, question, "답변 내용2");
-        answerGenerator.savedAnswer(answerWriter, question, "답변 내용3");
+        answerGenerator.savedAnswer(answerWriter, question);
+        answerGenerator.savedAnswer(answerWriter, question);
+        answerGenerator.savedAnswer(answerWriter, question);
 
         // When
         List<Answer> actual = answerRepository.findByQuestionAndDeletedFalse(question);
@@ -130,7 +129,7 @@ class AnswerRepositoryTest {
         final User questionWriter = userGenerator.savedUser();
         final Question question = questionGenerator.savedQuestion(questionWriter);
         final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
-        final Answer given = answerGenerator.savedAnswer(answerWriter, question, "답변 내용");
+        final Answer given = answerGenerator.savedAnswer(answerWriter, question);
 
         // When
         Answer actual = answerRepository.findByIdAndDeletedFalse(given.getId())
@@ -150,7 +149,7 @@ class AnswerRepositoryTest {
         final User questionWriter = userGenerator.savedUser();
         final Question question = questionGenerator.savedQuestion(questionWriter);
         final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
-        final Answer given = answerGenerator.savedAnswer(answerWriter, question, "답변 내용");
+        final Answer given = answerGenerator.savedAnswer(answerWriter, question);
 
         // When
         given.setDeleted(true);
@@ -194,7 +193,7 @@ class AnswerRepositoryTest {
         final User questionWriter = userGenerator.savedUser(UserGenerator.generateQuestionWriter());
         final Question question = questionGenerator.savedQuestion(questionWriter);
         final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
-        final Answer given = answerGenerator.savedAnswer(answerWriter, question, "답변 내용");
+        final Answer given = answerGenerator.savedAnswer(answerWriter, question);
 
         // When
         question.setDeleted(true);
