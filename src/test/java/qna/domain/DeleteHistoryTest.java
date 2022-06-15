@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.generator.AnswerGenerator;
 import qna.generator.QuestionGenerator;
 import qna.generator.UserGenerator;
 
@@ -29,5 +31,38 @@ class DeleteHistoryTest {
             () -> assertThat(actual.isQuestion()).isTrue(),
             () -> assertThat(actual).isEqualTo(new DeleteHistory(contentType, question.getId(), questionWriter, createDate))
         );
+    }
+
+    @Test
+    @DisplayName("답변이 없는 질문 삭제 시, 삭제 이력 생성")
+    public void createDeleteHistory() {
+        // Given
+        final User questionWriter = UserGenerator.generateQuestionWriter();
+        final Question question = QuestionGenerator.generateQuestion(questionWriter);
+
+        // When
+        List<DeleteHistory> actual = DeleteHistory.createQuestionDeleteHistory(question);
+
+        // Then
+        assertThat(actual)
+            .hasSize(1)
+            .allSatisfy(it -> assertThat(it.isQuestion()).isTrue());
+    }
+
+    @Test
+    @DisplayName("답변이 포함된 질문 삭제 시, 삭제 이력 생성")
+    public void createDeleteHistories() {
+        // Given
+        final User questionWriter = UserGenerator.generateQuestionWriter();
+        final Question question = QuestionGenerator.generateQuestion(questionWriter);
+        AnswerGenerator.generateAnswer(questionWriter, question);
+        AnswerGenerator.generateAnswer(questionWriter, question);
+        AnswerGenerator.generateAnswer(questionWriter, question);
+
+        // When
+        List<DeleteHistory> actual = DeleteHistory.createQuestionDeleteHistory(question);
+
+        // Then
+        assertThat(actual).hasSize(4);
     }
 }

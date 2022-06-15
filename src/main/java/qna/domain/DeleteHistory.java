@@ -1,6 +1,8 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -57,6 +59,25 @@ public class DeleteHistory {
 
     public boolean isAnswer() {
         return contentType.isAnswer();
+    }
+
+    public static List<DeleteHistory> createQuestionDeleteHistory(Question question) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        if (question.getAnswers().size() > 0) {
+            deleteHistories.addAll(createAnswerDeleteHistory(question.getAnswers()));
+        }
+        DeleteHistory questionDeleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(),
+            LocalDateTime.now());
+        deleteHistories.add(questionDeleteHistory);
+        return deleteHistories;
+    }
+
+    private static List<DeleteHistory> createAnswerDeleteHistory(List<Answer> answers) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : answers) {
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+        }
+        return deleteHistories;
     }
 
     @Override
