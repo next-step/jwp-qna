@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -76,7 +77,10 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
-    public void delete() {
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (!writer.equals(loginUser)) {
+            throw new CannotDeleteException("답변 작성자만 삭제 할 수 있습니다.");
+        }
         this.deleted = true;
     }
 

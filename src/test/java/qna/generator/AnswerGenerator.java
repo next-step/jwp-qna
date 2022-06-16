@@ -2,6 +2,7 @@ package qna.generator;
 
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
+import qna.CannotDeleteException;
 import qna.domain.Answer;
 import qna.repository.AnswerRepository;
 import qna.domain.Question;
@@ -20,6 +21,7 @@ public class AnswerGenerator {
     }
 
     public static Answer generateAnswer(User writer, Question question) {
+        COUNTER++;
         Answer answer = new Answer(writer, question, CONTENTS + COUNTER);
         question.addAnswer(answer);
         return answer;
@@ -31,10 +33,10 @@ public class AnswerGenerator {
         return answerRepository.saveAndFlush(answer);
     }
 
-    public Answer savedDeleteAnswer(User writer, Question question) {
+    public Answer savedDeleteAnswer(User writer, Question question) throws CannotDeleteException {
         Answer answer = generateAnswer(writer, question);
         answer.toQuestion(question);
-        answer.delete();
+        answer.delete(writer);
         return answerRepository.saveAndFlush(answer);
     }
 }

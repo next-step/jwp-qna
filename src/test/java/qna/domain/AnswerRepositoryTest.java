@@ -13,7 +13,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 import qna.CannotDeleteException;
-import qna.NotFoundException;
 import qna.generator.AnswerGenerator;
 import qna.generator.QuestionGenerator;
 import qna.generator.UserGenerator;
@@ -101,15 +100,14 @@ class AnswerRepositoryTest {
 
     @Test
     @DisplayName("변경 감지에 의한 답변 삭제 상태 변경")
-    public void setDeleteTest() {
+    public void setDeleteTest() throws CannotDeleteException {
         // Given
         final User questionWriter = userGenerator.savedUser();
         final Question question = questionGenerator.savedQuestion(questionWriter);
-        final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
-        final Answer given = answerGenerator.savedAnswer(answerWriter, question);
+        final Answer given = answerGenerator.savedAnswer(questionWriter, question);
 
         // When
-        given.delete();
+        given.delete(questionWriter);
         entityManager.flush();
 
         // Then
@@ -118,6 +116,20 @@ class AnswerRepositoryTest {
             () -> assertThat(given.getUpdatedAt()).as("flush 시점에 @PreUpdate 콜백 메서드에 의한 생성일시 값 할당 여부")
                 .isNotNull()
         );
+    }
+
+    @Test
+    @DisplayName("본인이 작성하지 않은 답변 삭제 시 예외 발생 검증")
+    public void setDeleteTestException() {
+        // Given
+        final User questionWriter = userGenerator.savedUser();
+        final Question question = questionGenerator.savedQuestion(questionWriter);
+        final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
+        final Answer given = answerGenerator.savedAnswer(answerWriter, question);
+
+        // When & Then
+        assertThatExceptionOfType(CannotDeleteException.class)
+            .isThrownBy(() -> given.delete(questionWriter));
     }
 
     @Test

@@ -171,10 +171,10 @@ class QuestionRepositoryTest {
                 .isNotNull()
         );
     }
-    
+
     @Test
     @DisplayName("질문의 답변 목록 조회 시, 미 삭제 상태 여부 검증")
-    public void deletedFalseAnswersToQuestion(){
+    public void deletedFalseAnswersToQuestion() throws CannotDeleteException {
         // Given
         final User questionWriter = userGenerator.savedUser();
         final Question given = questionGenerator.savedQuestion(questionWriter);
@@ -192,5 +192,43 @@ class QuestionRepositoryTest {
         assertThat(actual)
             .hasSize(2)
             .allSatisfy(answer -> assertThat(answer.isDeleted()).isFalse());
+    }
+
+    @Test
+    @DisplayName("질문과 답변 목록 삭제")
+    public void deleteQuestionAndAllAnswers() throws CannotDeleteException {
+        // Given
+        final User questionWriter = userGenerator.savedUser();
+        final Question given = questionGenerator.savedQuestion(questionWriter);
+        answerGenerator.savedAnswer(questionWriter, given);
+        answerGenerator.savedAnswer(questionWriter, given);
+        answerGenerator.savedAnswer(questionWriter, given);
+
+        // When
+        given.delete(questionWriter);
+        entityManager.flush();
+
+        // Then
+        assertAll(
+            () -> assertThat(given.isDeleted()).isTrue(),
+            () -> assertThat(given.getAnswers())
+                .allSatisfy(answer -> assertThat(answer.isDeleted()).isTrue())
+        );
+    }
+
+    @Test
+    @DisplayName("작성자 정보가 다른 답변이 포함된 질문 삭제 시 예외")
+    public void throwException_deleteQuestionAndAllAnswers() {
+        // Given
+        final User questionWriter = userGenerator.savedUser();
+        final Question given = questionGenerator.savedQuestion(questionWriter);
+        final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
+        answerGenerator.savedAnswer(questionWriter, given);
+        answerGenerator.savedAnswer(questionWriter, given);
+        answerGenerator.savedAnswer(answerWriter, given);
+
+        // When & Then
+        assertThatExceptionOfType(CannotDeleteException.class)
+            .isThrownBy(() -> given.delete(questionWriter));
     }
 }
