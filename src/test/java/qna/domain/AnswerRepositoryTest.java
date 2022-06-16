@@ -100,26 +100,6 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제 상태가 아닌 특정 답변 조회")
-    public void findByIdAndDeletedFalseTest() {
-        // Given
-        final User questionWriter = userGenerator.savedUser();
-        final Question question = questionGenerator.savedQuestion(questionWriter);
-        final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
-        final Answer given = answerGenerator.savedAnswer(answerWriter, question);
-
-        // When
-        Answer actual = answerRepository.findByIdAndDeletedFalse(given.getId())
-            .orElseThrow(NotFoundException::new);
-
-        // Then
-        assertAll(
-            () -> assertThat(actual.equals(given)),
-            () -> assertThat(actual.isDeleted()).isFalse()
-        );
-    }
-
-    @Test
     @DisplayName("변경 감지에 의한 답변 삭제 상태 변경")
     public void setDeleteTest() {
         // Given
