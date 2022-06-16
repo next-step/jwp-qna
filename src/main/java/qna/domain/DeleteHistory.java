@@ -53,12 +53,8 @@ public class DeleteHistory {
         return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
     }
 
-    public static List<DeleteHistory> createAnswerDeleteHistory(List<Answer> answers) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : answers) {
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
-        return deleteHistories;
+    public static DeleteHistory createAnswerDeleteHistory(Answer answer){
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
     }
 
     public Long getId() {

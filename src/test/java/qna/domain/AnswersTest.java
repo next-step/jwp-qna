@@ -1,7 +1,9 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
@@ -13,7 +15,7 @@ import qna.generator.UserGenerator;
 class AnswersTest {
 
     @Test
-    @DisplayName("일괄 삭제 처리")
+    @DisplayName("답변 일급 컬렉션의 일괄 삭제 처리")
     public void deleteAll() throws CannotDeleteException {
         // Given
         final User questionWriter = UserGenerator.generateQuestionWriter();
@@ -24,10 +26,15 @@ class AnswersTest {
 
         // When
         Answers answers = new Answers(question.getAnswers());
-        answers.deleteAll(questionWriter);
+        List<DeleteHistory> deleteHistories = answers.deleteAll(questionWriter);
 
         // Then
-        assertThat(question.getAnswers())
-            .allSatisfy(it -> assertThat(it.isDeleted()).isTrue());
+        assertAll(
+            () -> assertThat(question.getAnswers())
+                .allSatisfy(answer -> assertThat(answer.isDeleted()).isTrue()),
+            () -> assertThat(deleteHistories).extracting("contentType")
+                .hasSize(3)
+                .containsOnly(ContentType.ANSWER)
+        );
     }
 }

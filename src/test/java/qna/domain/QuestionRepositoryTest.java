@@ -205,14 +205,17 @@ class QuestionRepositoryTest {
         answerGenerator.savedAnswer(questionWriter, given);
 
         // When
-        given.delete(questionWriter);
+        List<DeleteHistory> deleteHistories = given.delete(questionWriter);
         entityManager.flush();
 
         // Then
         assertAll(
             () -> assertThat(given.isDeleted()).isTrue(),
             () -> assertThat(given.getAnswers())
-                .allSatisfy(answer -> assertThat(answer.isDeleted()).isTrue())
+                .allSatisfy(answer -> assertThat(answer.isDeleted()).isTrue()),
+            () -> assertThat(deleteHistories).extracting("contentType")
+                .hasSize(4)
+                .containsOnly(ContentType.ANSWER, ContentType.QUESTION)
         );
     }
 

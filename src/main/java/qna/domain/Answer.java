@@ -77,11 +77,12 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         if (!writer.equals(loginUser)) {
             throw new CannotDeleteException("답변 작성자만 삭제 할 수 있습니다.");
         }
         this.deleted = true;
+        return DeleteHistory.createAnswerDeleteHistory(this);
     }
 
     public Long getId() {

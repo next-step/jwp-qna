@@ -112,10 +112,13 @@ public class AnswerTest {
         final Answer given = AnswerGenerator.generateAnswer(questionWriter, question);
 
         // When
-        given.delete(questionWriter);
+        DeleteHistory deleteHistory = given.delete(questionWriter);
 
         // Then
-        assertThat(given.isDeleted()).isTrue();
+        assertAll(
+            () -> assertThat(given.isDeleted()).isTrue(),
+            () -> assertThat(deleteHistory.isAnswer()).isTrue()
+        );
     }
 
     @Test

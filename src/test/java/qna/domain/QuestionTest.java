@@ -7,6 +7,7 @@ import static qna.generator.UserGenerator.generateAnswerWriter;
 import static qna.generator.UserGenerator.generateLoginUser;
 import static qna.generator.UserGenerator.generateQuestionWriter;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
@@ -46,10 +47,15 @@ public class QuestionTest {
         AnswerGenerator.generateAnswer(loginUser, question);
 
         // When
-        question.delete(loginUser);
+        List<DeleteHistory> deleteHistories = question.delete(loginUser);
 
         // Then
-        assertThat(question.isDeleted()).isTrue();
+        assertAll(
+            () -> assertThat(question.isDeleted()).isTrue(),
+            () -> assertThat(deleteHistories).extracting("contentType")
+                .hasSize(2)
+                .containsExactly(ContentType.ANSWER, ContentType.QUESTION)
+        );
     }
 
     @Test
