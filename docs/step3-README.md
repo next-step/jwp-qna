@@ -173,9 +173,18 @@ Step2 피드백 TODO List
   - 답변 삭제 시, 질문 작성자에 대한 유효성 검사 부 수정
 - [x] 답변만 삭제 하는 경우, 작성자에 대한 누락된 유효성 검사 추가 및 TC 작성
 - [x] `Quesion`, `Answer` 삭제 시, 삭제 이력을 반환하도록 서비스 계층의 비지니스 로직을 도메인 계층으로 분산
-- [ ] JPQL fetch join에 대한 추가 학습테스트
+- [x] JPQL fetch join에 대한 추가 학습테스트
   - e.g. 질문 5개와 각 질문의 답변을 모두 조회하는 경우, 
-    - [ ] `fetch join + limit 5 + distinct`를 이용한 조회 쿼리의 동작 살펴 보기
-    - [ ] `fetch join + limit 5`를 이용한 조회 쿼리의 동작 살펴 보기
-    - [ ] limit 유무에 따른 동작 방식 살펴보기
-    - [ ] distinct 유무에 따른 동작 방식 살펴보기
+    - [x] `fetch join + limit 5 + distinct`를 이용한 조회 쿼리의 동작 살펴 보기
+    - [x] `fetch join + limit 5`를 이용한 조회 쿼리의 동작 살펴 보기
+ 
+### 1:N 연관관계의 fetch join을 이용한 pagination 시 주의 사항
+현상 : `firstResult/maxResults specified with collection fetch; applying in memory!` 경고 발생
+원인 : 
+  - 1:N 연관관계의 경우 카테이션 곱 연산으로 인해 연관 객체가 조회된 수 만큼 중복이 발생
+  - 따라서 JPA는 DB에 페이징 쿼리를 실행하지 않고 풀스캔 쿼리 실행  
+  - 쿼리 실행 결과를 메모리에 적재하여 중복 제거 후 Application 레벨에서 페이징 처리
+주의 사항 : 조회 데이터가 많은 경우 OOME 발생에 주의
+해결 : 
+  - *One으로 매핑된 연관관계를 fetch join으로 조회하여 불필요한 쿼리 발생을 줄이고, *Many로 매핑된 연관관계는 LazyLoading과 batch size 옵션을 이용해여 In절을 이용하여 프록시 객체를 초기화
+

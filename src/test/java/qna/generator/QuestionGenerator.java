@@ -20,6 +20,7 @@ public class QuestionGenerator {
     }
 
     public static Question generateQuestion(User writer) {
+        COUNTER++;
         return new Question(TITLE + COUNTER, CONTENTS + COUNTER).writeBy(writer);
     }
 

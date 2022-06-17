@@ -17,7 +17,6 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 import qna.feedback.entity.lazy.Team;
 import qna.feedback.generator.MemberGenerator;
 import qna.feedback.generator.TeamGenerator;
-import qna.feedback.repository.TeamRepository;
 import qna.feedback.service.TeamService;
 
 @SpringBootTest
