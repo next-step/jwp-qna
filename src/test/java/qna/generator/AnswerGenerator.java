@@ -2,14 +2,16 @@ package qna.generator;
 
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
+import qna.CannotDeleteException;
 import qna.domain.Answer;
-import qna.domain.AnswerRepository;
+import qna.repository.AnswerRepository;
 import qna.domain.Question;
 import qna.domain.User;
 
 @TestConstructor(autowireMode = AutowireMode.ALL)
 public class AnswerGenerator {
 
+    public static int COUNTER = 0;
     public static final String CONTENTS = "답변 내용";
 
     private final AnswerRepository answerRepository;
@@ -18,13 +20,23 @@ public class AnswerGenerator {
         this.answerRepository = answerRepository;
     }
 
-    public static Answer generateAnswer(User writer, Question question, String contents) {
-        return new Answer(writer, question, contents);
+    public static Answer generateAnswer(User writer, Question question) {
+        COUNTER++;
+        Answer answer = new Answer(writer, question, CONTENTS + COUNTER);
+        question.addAnswer(answer);
+        return answer;
     }
 
-    public Answer savedAnswer(User writer, Question question, String contents) {
-        Answer answer = generateAnswer(writer, question, contents);
+    public Answer savedAnswer(User writer, Question question) {
+        Answer answer = generateAnswer(writer, question);
         answer.toQuestion(question);
+        return answerRepository.saveAndFlush(answer);
+    }
+
+    public Answer savedDeleteAnswer(User writer, Question question) throws CannotDeleteException {
+        Answer answer = generateAnswer(writer, question);
+        answer.toQuestion(question);
+        answer.delete(writer);
         return answerRepository.saveAndFlush(answer);
     }
 }

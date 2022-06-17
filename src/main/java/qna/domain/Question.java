@@ -15,6 +15,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
@@ -38,6 +40,7 @@ public class Question extends BaseEntity {
     )
     private User writer;
 
+    @Where(clause = "deleted = false")
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
@@ -71,6 +74,29 @@ public class Question extends BaseEntity {
         this.answers.add(answer);
     }
 
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        if (!writer.equals(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.deleted = true;
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.createQuestionDeleteHistory(this));
+
+        if (!answers.isEmpty()) {
+            deleteHistories.addAll(deleteAllAnswers());
+        }
+        return deleteHistories;
+    }
+
+    private List<DeleteHistory> deleteAllAnswers() throws CannotDeleteException {
+        Answers answers = new Answers(this.answers);
+        if (answers.isContainsAnotherAnswerWriter(writer)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        return answers.deleteAll(writer);
+    }
+
     public Long getId() {
         return id;
     }
@@ -87,20 +113,12 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
-    }
-
     public List<Answer> getAnswers() {
         return answers;
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

@@ -1,11 +1,18 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.generator.UserGenerator.generateAnswerWriter;
+import static qna.generator.UserGenerator.generateLoginUser;
 import static qna.generator.UserGenerator.generateQuestionWriter;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
+import qna.generator.AnswerGenerator;
+import qna.generator.QuestionGenerator;
 
 @DisplayName("Domain:Question")
 public class QuestionTest {
@@ -29,5 +36,59 @@ public class QuestionTest {
             () -> assertThat(given.getTitle()).isEqualTo(title),
             () -> assertThat(given.getContents()).isEqualTo(contents)
         );
+    }
+
+    @Test
+    @DisplayName("질문 삭제")
+    public void delete() throws CannotDeleteException {
+        // Given
+        final User loginUser = generateLoginUser();
+        final Question question = QuestionGenerator.generateQuestion(loginUser);
+        AnswerGenerator.generateAnswer(loginUser, question);
+
+        // When
+        List<DeleteHistory> deleteHistories = question.delete(loginUser);
+
+        // Then
+        assertAll(
+            () -> assertThat(question.isDeleted()).isTrue(),
+            () -> assertThat(deleteHistories).extracting("contentType")
+                .hasSize(2)
+                .containsExactly(ContentType.QUESTION, ContentType.ANSWER)
+        );
+    }
+
+    @Test
+    @DisplayName("질문 삭제 시 예외 : 질문 삭제 요청자와 질문 작성자가 다른 경우")
+    public void throwException_LoginUserIsNotQuestionWriter() {
+        // Given
+        final User loginUser = generateLoginUser();
+        final User questionWriter = generateQuestionWriter();
+        final Question question = QuestionGenerator.generateQuestion(questionWriter);
+        final User answerWriter = generateAnswerWriter();
+        AnswerGenerator.generateAnswer(questionWriter, question);
+        AnswerGenerator.generateAnswer(questionWriter, question);
+        AnswerGenerator.generateAnswer(answerWriter, question);
+
+        // When & Then
+        assertThatExceptionOfType(CannotDeleteException.class)
+            .isThrownBy(() -> question.delete(loginUser));
+    }
+
+    @Test
+    @DisplayName("질문 삭제 시 예외 : 질문 작성자와 답변 작성자가 다른 경우")
+    public void throwException_QuestionWriterIsNotAnswerWriter() {
+        // Given
+        final User loginUser = generateLoginUser();
+        final User questionWriter = generateQuestionWriter();
+        final Question question = QuestionGenerator.generateQuestion(questionWriter);
+        final User answerWriter = generateAnswerWriter();
+        AnswerGenerator.generateAnswer(questionWriter, question);
+        AnswerGenerator.generateAnswer(questionWriter, question);
+        AnswerGenerator.generateAnswer(answerWriter, question);
+
+        // When & Then
+        assertThatExceptionOfType(CannotDeleteException.class)
+            .isThrownBy(() -> question.delete(loginUser));
     }
 }

@@ -3,9 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.generator.AnswerGenerator.CONTENTS;
 
-import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,10 +12,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
-import qna.NotFoundException;
+import qna.CannotDeleteException;
 import qna.generator.AnswerGenerator;
 import qna.generator.QuestionGenerator;
 import qna.generator.UserGenerator;
+import qna.repository.AnswerRepository;
 
 @DataJpaTest
 @Import({UserGenerator.class, QuestionGenerator.class, AnswerGenerator.class})
@@ -76,7 +75,7 @@ class AnswerRepositoryTest {
         // Given
         final Question question = QuestionGenerator.generateQuestion(UserGenerator.generateQuestionWriter());
         final User answerWriter = UserGenerator.generateAnswerWriter();
-        final Answer given = AnswerGenerator.generateAnswer(answerWriter, question, CONTENTS);
+        final Answer given = AnswerGenerator.generateAnswer(answerWriter, question);
         given.toQuestion(question);
 
         // When
@@ -91,7 +90,7 @@ class AnswerRepositoryTest {
         // Given
         final Question question = QuestionGenerator.generateQuestion(UserGenerator.generateQuestionWriter());
         final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
-        final Answer given = AnswerGenerator.generateAnswer(answerWriter, question, CONTENTS);
+        final Answer given = AnswerGenerator.generateAnswer(answerWriter, question);
 
         // When & Then
         assertThatExceptionOfType(InvalidDataAccessApiUsageException.class)
@@ -100,60 +99,15 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제되지 않은 특정 질문의 답변 목록 조회")
-    public void findByQuestionIdAndDeletedFalseTest() {
-        // Given
-        final User questionWriter = userGenerator.savedUser();
-        final Question question = questionGenerator.savedQuestion(questionWriter);
-        final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
-
-        answerGenerator.savedAnswer(answerWriter, question, "답변 내용1");
-        answerGenerator.savedAnswer(answerWriter, question, "답변 내용2");
-        answerGenerator.savedAnswer(answerWriter, question, "답변 내용3");
-
-        // When
-        List<Answer> actual = answerRepository.findByQuestionAndDeletedFalse(question);
-
-        // Then
-        assertThat(actual)
-            .hasSize(3)
-            .allSatisfy(answer -> assertAll(
-                () -> assertThat(answer.getQuestion()).isEqualTo(question),
-                () -> assertThat(answer.isDeleted()).as("삭제 상태 False 여부").isFalse()
-            ));
-    }
-
-    @Test
-    @DisplayName("삭제 상태가 아닌 특정 답변 조회")
-    public void findByIdAndDeletedFalseTest() {
-        // Given
-        final User questionWriter = userGenerator.savedUser();
-        final Question question = questionGenerator.savedQuestion(questionWriter);
-        final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
-        final Answer given = answerGenerator.savedAnswer(answerWriter, question, "답변 내용");
-
-        // When
-        Answer actual = answerRepository.findByIdAndDeletedFalse(given.getId())
-            .orElseThrow(NotFoundException::new);
-
-        // Then
-        assertAll(
-            () -> assertThat(actual.equals(given)),
-            () -> assertThat(actual.isDeleted()).isFalse()
-        );
-    }
-
-    @Test
     @DisplayName("변경 감지에 의한 답변 삭제 상태 변경")
-    public void setDeleteTest() {
+    public void setDeleteTest() throws CannotDeleteException {
         // Given
         final User questionWriter = userGenerator.savedUser();
         final Question question = questionGenerator.savedQuestion(questionWriter);
-        final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
-        final Answer given = answerGenerator.savedAnswer(answerWriter, question, "답변 내용");
+        final Answer given = answerGenerator.savedAnswer(questionWriter, question);
 
         // When
-        given.setDeleted(true);
+        given.delete(questionWriter);
         entityManager.flush();
 
         // Then
@@ -165,12 +119,26 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제된 질문에 답변 하는 경우, 고아 객체 발생")
-    public void toDeletedQuestionTest() {
+    @DisplayName("본인이 작성하지 않은 답변 삭제 시 예외 발생 검증")
+    public void setDeleteTestException() {
         // Given
         final User questionWriter = userGenerator.savedUser();
         final Question question = questionGenerator.savedQuestion(questionWriter);
-        question.setDeleted(true);
+        final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
+        final Answer given = answerGenerator.savedAnswer(answerWriter, question);
+
+        // When & Then
+        assertThatExceptionOfType(CannotDeleteException.class)
+            .isThrownBy(() -> given.delete(questionWriter));
+    }
+
+    @Test
+    @DisplayName("삭제된 질문에 답변 하는 경우, 고아 객체 발생")
+    public void toDeletedQuestionTest() throws CannotDeleteException {
+        // Given
+        final User questionWriter = userGenerator.savedUser();
+        final Question question = questionGenerator.savedQuestion(questionWriter);
+        question.delete(questionWriter);
         entityManager.flush();
 
         final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
@@ -184,26 +152,6 @@ class AnswerRepositoryTest {
         assertAll(
             () -> assertThat(question.isDeleted()).isTrue(),
             () -> assertThat(actual.isDeleted()).isFalse()
-        );
-    }
-
-    @Test
-    @DisplayName("답변이 있는 질문 삭제 상태 변경 시, 고아 객체 발생")
-    public void changeDeleted_WhenHasAnswer() {
-        // Given
-        final User questionWriter = userGenerator.savedUser(UserGenerator.generateQuestionWriter());
-        final Question question = questionGenerator.savedQuestion(questionWriter);
-        final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
-        final Answer given = answerGenerator.savedAnswer(answerWriter, question, "답변 내용");
-
-        // When
-        question.setDeleted(true);
-        entityManager.flush();
-
-        // Then
-        assertAll(
-            () -> assertThat(question.isDeleted()).isTrue(),
-            () -> assertThat(given.isDeleted()).isFalse()
         );
     }
 }

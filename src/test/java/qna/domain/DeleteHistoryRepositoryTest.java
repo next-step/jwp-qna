@@ -13,6 +13,7 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 import qna.generator.AnswerGenerator;
 import qna.generator.QuestionGenerator;
 import qna.generator.UserGenerator;
+import qna.repository.DeleteHistoryRepository;
 
 @DataJpaTest
 @TestConstructor(autowireMode = AutowireMode.ALL)
@@ -67,7 +68,7 @@ class DeleteHistoryRepositoryTest {
         final User questionWriter = userGenerator.savedUser();
         final Question question = questionGenerator.savedQuestion(questionWriter);
         final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
-        final Answer answer = answerGenerator.savedAnswer(answerWriter, question, "답변 추가");
+        final Answer answer = answerGenerator.savedAnswer(answerWriter, question);
         final DeleteHistory deleteHistory = new DeleteHistory(
             ContentType.ANSWER,
             answer.getId(),

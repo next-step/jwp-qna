@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -76,16 +77,20 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!writer.equals(loginUser)) {
+            throw new CannotDeleteException("답변 작성자만 삭제 할 수 있습니다.");
+        }
+        this.deleted = true;
+        return DeleteHistory.createAnswerDeleteHistory(this);
+    }
+
     public Long getId() {
         return id;
     }
 
     public User getWriter() {
         return writer;
-    }
-
-    public Long getWriterId() {
-        return writer.getId();
     }
 
     public Question getQuestion() {
@@ -96,16 +101,8 @@ public class Answer extends BaseEntity {
         return question.getId();
     }
 
-    public String getContents() {
-        return contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

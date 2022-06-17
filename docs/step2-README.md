@@ -105,3 +105,42 @@ DB 컬럼 중심적인 매핑에서 객체 간 연관관계 매핑으로 변경
    - PK에 해당하는 식별자를 DB채번 전략이 아닌 String 등의 값을 할당하는 경우 Entity에 Persistable 인터페이스의 isNew 직접 구현을 통해 판별 기준을 정의
 
 ---
+### step2 코드 리뷰 피드백 내용 정리
+> 양방향 연관관계의 toString 구현 시 주의사항
+- 순환 참조로 인해 `StackOverFlow`가 발생할 수 있음에 주의
+- 트랜잭션 범위 밖에서 프록시 객체 접근 시 `LazyInitializationException` 발생에 주의
+- 해결
+  - Entity를 별도의 DTO 객체로 변환하여 순환참조를 방지
+  - 다른쪽의 toString에서 참조를 끊어냄으로써 순환참조를 방지
+
+> N+1 문제와 이를 해결하기 위한 방법
+- Fetch Join을 이용하여 연관관계를 가지는 Entity를 함께 조회
+  - 주의사항 : 카테시안 곱 연산으로 인해 연관관계를 가지는 Entity의 수 만큼 중복이 발생함에 주의
+  - 해결방법 : 
+    - `distinct`를 이용한 중복 해결
+    - Many에 해당하는 연관관계 객체 필드의 속성을 Set으로 선언하여 중복 해결 (순서를 다뤄야 하는 경우 LinkedHashSet)
+  - 한계 : 페이징 처리 불가
+- @EntityGraph를 이용하여 연관관계를 가지는 Entity를 함께 조회
+  - 주의사항 : Fetch Join과 다르게 Left join이 발생할 수 있음에 주의
+- JPA BatchSize 옵션을 이용하여 연관 Entity 조회 시, In절을 이용한 1+1 쿼리로 해결
+
+> 유사 개념 비교를 통한 내용 정리 : test/java/qna/feedback 경로에 해당 개념에 대한 TC 작성
+- `FetchType.EAGER vs FetchType.LAZY`
+  - EAGER : 연관 Entity를 함께 조회
+  - LAZY : 연관 Entity를 프록시 객체로 할당
+- `join vs join fetch`
+  - join : 연관 Entity를 프록시 객체로 조회, 실제 질의하는 대상 Entity에 대한 컬럼만 SELECT
+    - 연관관계가 있는 Entity를 쿼리 검색 조건에는 필요하지만 실제 데이터는 필요하지 않는 경우 사용을 고려
+  - fetch join : 연관 Entity를 함께 조회
+- `join fetch vs @EntityGraph`
+  - join fetch : inner join
+  - @EntityGraph : left join
+
+### 참조 URL
+[JPA 엔티티 그래프](https://data-make.tistory.com/628)
+[자바 ORM 표준 JPA 프로그래밍 - 14.4 엔티티 그래프](https://milenote.tistory.com/151)
+[JPA 일반 Join과 Fetch Join의 차이](https://cobbybb.tistory.com/18)
+[JPA N+1 발생원인과 해결 방법](https://www.popit.kr/jpa-n1-%EB%B0%9C%EC%83%9D%EC%9B%90%EC%9D%B8%EA%B3%BC-%ED%95%B4%EA%B2%B0-%EB%B0%A9%EB%B2%95/)
+[JPA API 성능 끌어올리기 - N+1 문제 등](https://bepoz-study-diary.tistory.com/226)
+[JPA N+1 문제 및 해결방안](https://jojoldu.tistory.com/165)
+[MultipleBagFetchException 발생시 해결 방법](https://jojoldu.tistory.com/457)

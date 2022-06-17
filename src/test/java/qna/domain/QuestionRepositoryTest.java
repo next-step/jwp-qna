@@ -20,12 +20,15 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
+import qna.generator.AnswerGenerator;
 import qna.generator.QuestionGenerator;
 import qna.generator.UserGenerator;
+import qna.repository.QuestionRepository;
 
 @DataJpaTest
-@Import({UserGenerator.class, QuestionGenerator.class})
+@Import({UserGenerator.class, QuestionGenerator.class, AnswerGenerator.class})
 @TestConstructor(autowireMode = AutowireMode.ALL)
 @DisplayName("Repository:Question")
 class QuestionRepositoryTest {
@@ -33,17 +36,20 @@ class QuestionRepositoryTest {
     private final QuestionRepository questionRepository;
     private final UserGenerator userGenerator;
     private final QuestionGenerator questionGenerator;
+    private final AnswerGenerator answerGenerator;
     private final EntityManager entityManager;
 
     public QuestionRepositoryTest(
         QuestionRepository questionRepository,
         UserGenerator userGenerator,
         QuestionGenerator questionGenerator,
+        AnswerGenerator answerGenerator,
         EntityManager entityManager
     ) {
         this.questionRepository = questionRepository;
         this.userGenerator = userGenerator;
         this.questionGenerator = questionGenerator;
+        this.answerGenerator = answerGenerator;
         this.entityManager = entityManager;
     }
 
@@ -149,13 +155,13 @@ class QuestionRepositoryTest {
 
     @Test
     @DisplayName("변경 감지에 의한 삭제 여부 수정")
-    public void setDeleteTest() {
+    public void setDeleteTest() throws CannotDeleteException {
         // Given
         final User questionWriter = userGenerator.savedUser();
         final Question given = questionGenerator.savedQuestion(questionWriter);
 
         // When
-        given.setDeleted(true);
+        given.delete(questionWriter);
         entityManager.flush();
 
         // Then
@@ -164,5 +170,68 @@ class QuestionRepositoryTest {
             () -> assertThat(given.getUpdatedAt()).as("flush 시점에 @PreUpdate 콜백 메서드에 의한 생성일시 값 할당 여부")
                 .isNotNull()
         );
+    }
+
+    @Test
+    @DisplayName("질문의 답변 목록 조회 시, 미 삭제 상태 여부 검증")
+    public void deletedFalseAnswersToQuestion() throws CannotDeleteException {
+        // Given
+        final User questionWriter = userGenerator.savedUser();
+        final Question given = questionGenerator.savedQuestion(questionWriter);
+        answerGenerator.savedAnswer(questionWriter, given);
+        answerGenerator.savedAnswer(questionWriter, given);
+        answerGenerator.savedDeleteAnswer(questionWriter, given);
+        entityManager.clear();
+
+        // When
+        Question question = questionRepository.findById(given.getId())
+            .orElseThrow(NotFoundException::new);
+        List<Answer> actual = question.getAnswers();
+
+        // Then
+        assertThat(actual)
+            .hasSize(2)
+            .allSatisfy(answer -> assertThat(answer.isDeleted()).isFalse());
+    }
+
+    @Test
+    @DisplayName("질문과 답변 목록 삭제")
+    public void deleteQuestionAndAllAnswers() throws CannotDeleteException {
+        // Given
+        final User questionWriter = userGenerator.savedUser();
+        final Question given = questionGenerator.savedQuestion(questionWriter);
+        answerGenerator.savedAnswer(questionWriter, given);
+        answerGenerator.savedAnswer(questionWriter, given);
+        answerGenerator.savedAnswer(questionWriter, given);
+
+        // When
+        List<DeleteHistory> deleteHistories = given.delete(questionWriter);
+        entityManager.flush();
+
+        // Then
+        assertAll(
+            () -> assertThat(given.isDeleted()).isTrue(),
+            () -> assertThat(given.getAnswers())
+                .allSatisfy(answer -> assertThat(answer.isDeleted()).isTrue()),
+            () -> assertThat(deleteHistories).extracting("contentType")
+                .hasSize(4)
+                .containsOnly(ContentType.ANSWER, ContentType.QUESTION)
+        );
+    }
+
+    @Test
+    @DisplayName("작성자 정보가 다른 답변이 포함된 질문 삭제 시 예외")
+    public void throwException_deleteQuestionAndAllAnswers() {
+        // Given
+        final User questionWriter = userGenerator.savedUser();
+        final Question given = questionGenerator.savedQuestion(questionWriter);
+        final User answerWriter = userGenerator.savedUser(UserGenerator.generateAnswerWriter());
+        answerGenerator.savedAnswer(questionWriter, given);
+        answerGenerator.savedAnswer(questionWriter, given);
+        answerGenerator.savedAnswer(answerWriter, given);
+
+        // When & Then
+        assertThatExceptionOfType(CannotDeleteException.class)
+            .isThrownBy(() -> given.delete(questionWriter));
     }
 }

@@ -13,7 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
+import qna.generator.AnswerGenerator;
 
 @DisplayName("Domain:Answer")
 public class AnswerTest {
@@ -100,5 +102,36 @@ public class AnswerTest {
         // When & Then
         assertThatExceptionOfType(UnAuthorizedException.class)
             .isThrownBy(() -> new Answer(null, question, "답변내용"));
+    }
+
+    @Test
+    @DisplayName("답변 삭제")
+    public void delete() throws CannotDeleteException {
+        final User questionWriter = generateQuestionWriter();
+        final Question question = generateQuestion(questionWriter);
+        final Answer given = AnswerGenerator.generateAnswer(questionWriter, question);
+
+        // When
+        DeleteHistory deleteHistory = given.delete(questionWriter);
+
+        // Then
+        assertAll(
+            () -> assertThat(given.isDeleted()).isTrue(),
+            () -> assertThat(deleteHistory.isAnswer()).isTrue()
+        );
+    }
+
+    @Test
+    @DisplayName("본인이 작성하지 않은 답변 삭제 시 예외")
+    public void throwException_WhenInvalidWriter() {
+        // Given
+        final User questionWriter = generateQuestionWriter();
+        final Question question = generateQuestion(questionWriter);
+        final User answerWriter = generateAnswerWriter();
+        final Answer given = AnswerGenerator.generateAnswer(answerWriter, question);
+
+        // When & Then
+        assertThatExceptionOfType(CannotDeleteException.class)
+            .isThrownBy(() -> given.delete(questionWriter));
     }
 }
