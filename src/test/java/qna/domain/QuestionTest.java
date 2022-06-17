@@ -54,7 +54,7 @@ public class QuestionTest {
             () -> assertThat(question.isDeleted()).isTrue(),
             () -> assertThat(deleteHistories).extracting("contentType")
                 .hasSize(2)
-                .containsExactly(ContentType.ANSWER, ContentType.QUESTION)
+                .containsExactly(ContentType.QUESTION, ContentType.ANSWER)
         );
     }
 

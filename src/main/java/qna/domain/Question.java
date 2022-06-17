@@ -78,16 +78,23 @@ public class Question extends BaseEntity {
         if (!writer.equals(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
+        this.deleted = true;
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        if (!answers.isEmpty()) {
-            Answers answers = new Answers(this.answers);
-            deleteHistories = answers.deleteAll(writer);
-        }
-
-        this.deleted = true;
         deleteHistories.add(DeleteHistory.createQuestionDeleteHistory(this));
+
+        if (!answers.isEmpty()) {
+            deleteHistories.addAll(deleteAllAnswers());
+        }
         return deleteHistories;
+    }
+
+    private List<DeleteHistory> deleteAllAnswers() throws CannotDeleteException {
+        Answers answers = new Answers(this.answers);
+        if (answers.isContainsAnotherAnswerWriter(writer)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        return answers.deleteAll(writer);
     }
 
     public Long getId() {
