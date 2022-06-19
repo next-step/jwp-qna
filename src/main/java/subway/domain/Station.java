@@ -60,7 +60,7 @@ public class Station {
             this.line.getStations().remove(this);
         }
         this.line = line;
-        if (line != null && !line.getStations().contains(this)) {
+        if (line != null && !line.contains(this)) {
             line.getStations().add(this);
         }
     }

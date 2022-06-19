@@ -50,8 +50,7 @@ public class Question extends BaseTime {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId()
-                          .equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public List<Answer> getAnswers() {
@@ -63,6 +62,14 @@ public class Question extends BaseTime {
         if (answer.getQuestion() != this) {
             answer.toQuestion(this);
         }
+    }
+
+    public boolean contains(Answer answer) {
+        return answers.contains(answer);
+    }
+
+    public void removeAnswer(Answer answer) {
+        answers.remove(answer);
     }
 
     public Long getId() {

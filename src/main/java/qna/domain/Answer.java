@@ -51,16 +51,15 @@ public class Answer extends BaseTime {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId()
-                          .equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
         if (Objects.nonNull(this.question)) {
-            this.question.getAnswers().remove(this);
+            this.question.removeAnswer(this);
         }
         this.question = question;
-        if (question != null && !question.getAnswers().contains(this)) {
+        if (question != null && !question.contains(this)) {
             question.getAnswers().add(this);
         }
     }
