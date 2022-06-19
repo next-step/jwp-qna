@@ -52,7 +52,7 @@ public class UserTest {
     @DisplayName("패스워드가 일치하지 않는 경우 이름과 이메일을 변경할 수 없다.")
     @Test
     void password() {
-        user.setPassword("guest");
+        user.changePassword("guest");
         assertThatThrownBy(() -> user.update(user, target)).isInstanceOf(UnAuthorizedException.class);
     }
 }
