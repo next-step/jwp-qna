@@ -23,7 +23,7 @@ class LineRepositoryTest {
     @Test
     void saveWithLine() {
         Station station = new Station("잠실역");
-        station.setLine(lines.save(new Line("2호선")));
+        station.changeLine(lines.save(new Line("2호선")));
         stations.save(station);
         stations.flush();
     }
@@ -40,7 +40,7 @@ class LineRepositoryTest {
     @Test
     void updateWithLine() {
         Station station = stations.findByName("교대역");
-        station.setLine(lines.save(new Line("2호선")));
+        station.changeLine(lines.save(new Line("2호선")));
         stations.flush();
     }
 
@@ -48,7 +48,7 @@ class LineRepositoryTest {
     @Test
     void removeLine() {
         Station station = stations.findByName("교대역");
-        station.setLine(null);
+        station.changeLine(null);
         stations.flush();
     }
 

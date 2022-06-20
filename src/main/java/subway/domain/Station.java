@@ -47,7 +47,7 @@ public class Station {
         return name;
     }
 
-    public void setName(String name) {
+    public void changeName(String name) {
         this.name = name;
     }
 
@@ -55,7 +55,7 @@ public class Station {
         return line;
     }
 
-    public void setLine(Line line) {
+    public void changeLine(Line line) {
         if (Objects.nonNull(this.line)) {
             this.line.getStations().remove(this);
         }

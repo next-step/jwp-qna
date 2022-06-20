@@ -60,7 +60,7 @@ class StationRepositoryTest {
     @Test
     void update() {
         Station station1 = stations.save(new Station("잠실역"));
-        station1.setName("몽촌토성역");
+        station1.changeName("몽촌토성역");
         Station station2 = stations.findByName("몽촌토성역"); // update sql이 실행되는 이유는?
         assertThat(station2).isNotNull();
     }

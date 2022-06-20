@@ -41,7 +41,7 @@ public class Line {
     public void addStation(Station station) {
         stations.add(station);
         if (station.getLine() != this) {
-            station.setLine(this);
+            station.changeLine(this);
         }
     }
 
