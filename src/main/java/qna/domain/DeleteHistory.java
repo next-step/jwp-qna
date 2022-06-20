@@ -40,13 +40,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id)
                 && contentType == that.contentType
                 && Objects.equals(contentId, that.contentId)
-                && Objects.equals(deleter, that.deleter)
-                && Objects.equals(createDate, that.createDate);
+                && Objects.equals(deleter, that.deleter);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deleter, createDate);
+        return Objects.hash(id, contentType, contentId, deleter);
     }
 
     @Override

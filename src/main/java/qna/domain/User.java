@@ -1,15 +1,15 @@
 package qna.domain;
 
+import qna.UnAuthenticationException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "user")
 public class User extends BaseTime {
-    public static final GuestUser GUEST_USER = new GuestUser();
+    public static final GuestUser GUEST_USER = new GuestUser("guest", "guest1", "게스트");
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +30,10 @@ public class User extends BaseTime {
     protected User() {
     }
 
+    public User(String userId, String password, String name) {
+        this(userId, password, name, null);
+    }
+
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
     }
@@ -43,6 +47,10 @@ public class User extends BaseTime {
     }
 
     public void update(User loginUser, User target) {
+        if (isGuestUser()) {
+            throw new UnAuthenticationException();
+        }
+
         if (!matchUserId(loginUser.userId)) {
             throw new UnAuthorizedException();
         }
@@ -88,15 +96,11 @@ public class User extends BaseTime {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void changePassword(String password) {
         this.password = password;
     }
 
@@ -104,16 +108,25 @@ public class User extends BaseTime {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id)
+                && Objects.equals(userId, user.userId)
+                && Objects.equals(password, user.password)
+                && Objects.equals(name, user.name)
+                && Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email);
     }
 
     @Override
@@ -128,6 +141,13 @@ public class User extends BaseTime {
     }
 
     private static class GuestUser extends User {
+        public GuestUser() {
+        }
+
+        public GuestUser(String userId, String password, String name) {
+            super(userId, password, name);
+        }
+
         @Override
         public boolean isGuestUser() {
             return true;

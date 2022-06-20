@@ -25,6 +25,11 @@ public class Station {
     protected Station() {
     }
 
+    public Station(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Station(String name) {
         this.name = name;
     }
@@ -36,10 +41,6 @@ public class Station {
 
     public Long getId() {
         return id;
-    }
-
-    public void changeId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -59,18 +60,34 @@ public class Station {
             this.line.getStations().remove(this);
         }
         this.line = line;
-        line.getStations().add(this);
+        if (line != null && !line.contains(this)) {
+            line.getStations().add(this);
+        }
     }
 
-    public void removeLine() {
-        this.line = null;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Station station = (Station) o;
+        return Objects.equals(id, station.id)
+                && Objects.equals(name, station.name)
+                && Objects.equals(line, station.line)
+                && Objects.equals(lineStation, station.lineStation);
     }
 
-    public LineStation getLineStation() {
-        return lineStation;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, line, lineStation);
     }
 
-    public void changeLineStation(LineStation lineStation) {
-        this.lineStation = lineStation;
+    @Override
+    public String toString() {
+        return "Station{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", line=" + line +
+                ", lineStation=" + lineStation +
+                '}';
     }
 }
