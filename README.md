@@ -121,7 +121,8 @@ spring:
       hiberate:
         dialect: org.hibernate.dialect.MySQL57Dialect
         format_sql: true
-        ddl-auto: create
+    hibernate:
+      ddl-auto: create
     show-sql: true
 
   logging:
