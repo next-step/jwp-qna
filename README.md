@@ -132,5 +132,4 @@ spring:
 3. [x] Question 등록/조회/삭제 테스트
 4. [x] Question 객체 생성 시 예외처리 테스트
 5. [x] User 등록/조회/삭제 테스트
-7. DeleteHistory 등록/조회/삭제 테스트
-8. DeleteHistory 객체 생성 테스트
+7. [x] DeleteHistory 등록/조회/삭제 테스트
