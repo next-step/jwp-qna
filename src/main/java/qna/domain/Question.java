@@ -1,11 +1,28 @@
 package qna.domain;
 
-public class Question {
+import java.util.Objects;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import qna.NotFoundException;
+
+@Table(name = "question")
+@Entity
+public class Question extends BaseTime {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String contents;
     private Long writerId;
     private boolean deleted = false;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -13,6 +30,9 @@ public class Question {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
+        if (Objects.isNull(title)) {
+            throw new NotFoundException();
+        }
         this.title = title;
         this.contents = contents;
     }
@@ -73,11 +93,11 @@ public class Question {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", contents='" + contents + '\'' +
+            ", writerId=" + writerId +
+            ", deleted=" + deleted +
+            '}';
     }
 }
