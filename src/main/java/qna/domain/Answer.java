@@ -33,6 +33,7 @@ public class Answer extends BaseEntity{
             throw new NotFoundException();
         }
 
+
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
