@@ -67,5 +67,5 @@ create table user
 alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
-- [ ] user 테이블의 DDL을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
+- [X] user 테이블의 DDL을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
 - [ ] @DataJpaTest를 사용하여 학습 테스트를 해 본다.
