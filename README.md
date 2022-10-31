@@ -127,8 +127,8 @@ spring:
 * application 실행 시마다 기존 테이블 삭제되고 생성되도록 ddl-auto를 create-drop으로 설정
 
 ### 테스트 목록
-1. Answer 등록/조회/삭제 테스트
-2. Answer 객체 생성 시 예외처리 테스트
+1. [x] Answer 등록/조회/삭제 테스트
+2. [x] Answer 객체 생성 시 예외처리 테스트
 3. Question 등록/조회/삭제 테스트
 4. Question 객체 생성 시 예외처리 테스트
 5. User 등록/조회/삭제 테스트
