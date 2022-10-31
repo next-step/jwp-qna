@@ -5,7 +5,7 @@ import javax.persistence.*;
 @Entity
 public class Question extends BaseEntity {
     private Long id;
-    @Column(nullable = false)
+    @Column(length = 100, nullable = false)
     private String title;
     @Lob
     private String contents;
