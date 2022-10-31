@@ -1,5 +1,8 @@
 package qna.domain;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +13,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "question")
+@Where(clause = "deleted = false")
+@SQLDelete(sql = "UPDATE question SET deleted = true WHERE id = ?")
 public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

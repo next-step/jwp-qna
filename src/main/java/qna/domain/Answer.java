@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -14,6 +16,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
+@Where(clause = "deleted = false")
+@SQLDelete(sql = "UPDATE answer SET deleted = true WHERE id = ?")
 public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
