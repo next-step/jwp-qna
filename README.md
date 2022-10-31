@@ -23,8 +23,8 @@
   - CRUD 및 Exception 테스트
   - [x] AnswerRepositoryTest
   - [x] QuestionRepositoryTest
-  - [ ] UserRepositoryTest
-  - [ ] DeleteHistoryRepositoryTest
+  - [x] UserRepositoryTest
+  - [x] DeleteHistoryRepositoryTest
 
 ### DDL
 ```SQL
