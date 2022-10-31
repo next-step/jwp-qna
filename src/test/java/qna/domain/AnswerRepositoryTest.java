@@ -41,10 +41,10 @@ class AnswerRepositoryTest {
 
     @Test
     void 질문찾기() {
-        answerRepository.save(A1);
-        answerRepository.save(A2);
+        Answer savedA1 = answerRepository.save(A1);
+        Answer savedA2 = answerRepository.save(A2);
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
         assertThat(answers).hasSize(2);
-        assertThat(answers).containsExactly(A1, A2);
+        assertThat(answers).containsExactly(savedA1, savedA2);
     }
 }

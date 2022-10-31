@@ -6,8 +6,6 @@ import static qna.domain.UserTest.*;
 
 import java.util.UUID;
 
-import javax.persistence.EntityManager;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -19,8 +17,6 @@ import qna.NotFoundException;
 class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    EntityManager em;
 
     @Test
     void user_save_and_find() {
@@ -33,7 +29,7 @@ class UserRepositoryTest {
             () -> assertThat(actual.getEmail()).isEqualTo(JAVAJIGI.getEmail()),
             () -> assertThat(actual.getCreatedAt()).isNotNull(),
             () -> assertThat(actual.getUpdatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isEqualTo(JAVAJIGI.getCreatedAt())
+            () -> assertThat(actual.getUpdatedAt()).isEqualTo(actual.getCreatedAt())
         );
         assertThat(userRepository.findByUserId(JAVAJIGI.getUserId()).orElseThrow(RuntimeException::new))
             .isEqualTo(actual);
@@ -44,7 +40,6 @@ class UserRepositoryTest {
         User user = userRepository.save(JAVAJIGI);
         String newPassword = UUID.randomUUID().toString();
         user.setPassword(newPassword);
-        em.flush(); // for update by dirty checking
         User actual = userRepository.findByUserId(user.getUserId())
             .orElseThrow(RuntimeException::new);
         assertThat(actual.getPassword()).isEqualTo(newPassword);
