@@ -15,14 +15,14 @@
 ### 요구사항
 
 - Entity 클래스와 Repository 클래스 작성
-  - [ ] Answer
-  - [ ] Question
-  - [ ] User
-  - [ ] DeleteHistory
+  - [x] Answer
+  - [x] Question
+  - [x] User
+  - [x] DeleteHistory
 - `@DataJpaTest` 를 활용한 Repository 테스트 코드 작성
   - CRUD 및 Exception 테스트
-  - [ ] AnswerRepositoryTest
-  - [ ] QuestionRepositoryTest
+  - [x] AnswerRepositoryTest
+  - [x] QuestionRepositoryTest
   - [ ] UserRepositoryTest
   - [ ] DeleteHistoryRepositoryTest
 
