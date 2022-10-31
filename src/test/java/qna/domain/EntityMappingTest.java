@@ -26,26 +26,6 @@ class EntityMappingTest {
     EntityManager em;
 
     @Test
-    void questionSaveAndFindTest() {
-        Question expected = newQuestion();
-        User writer = userRepository.save(newUser());
-        expected.writeBy(writer);
-        Question actual = questionRepository.save(expected);
-        assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
-            () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle()),
-            () -> assertThat(actual.isDeleted()).isFalse(),
-            () -> assertThat(actual.getWriterId()).isEqualTo(writer.getId()),
-            () -> assertThat(actual.getCreatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isEqualTo(expected.getCreatedAt())
-        );
-        assertThat(questionRepository.findByIdAndDeletedFalse(actual.getId()).orElseThrow(RuntimeException::new))
-            .isEqualTo(actual);
-    }
-
-    @Test
     void answerSaveAndFindTest() {
         User user = newUser();
         User savedUser = userRepository.save(user);
