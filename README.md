@@ -114,21 +114,24 @@ spring:
   h2:
     console:
       enabled: true
-      path: /h2
 
   jpa:
     properties:
-      hiberate:
-        dialect: org.hibernate.dialect.MySQL57Dialect
+      hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     show-sql: true
-
-  logging:
-    level:
-      org.hibernate.SQL: debug
 ```
-* Mysql 형식으로 쿼리를 보여주도록 설정
 * H2 콘솔에 접근할 수도 있다고 생각해 콘솔 설정 진행
-* application 실행 시마다 기존 테이블 삭제되고 생성되도록 ddl-auto를 create으로 설정
+* application 실행 시마다 기존 테이블 삭제되고 생성되도록 ddl-auto를 create-drop으로 설정
+
+### 테스트 목록
+1. Answer 등록/조회/삭제 테스트
+2. Answer 객체 생성 시 예외처리 테스트
+3. Question 등록/조회/삭제 테스트
+4. Question 객체 생성 시 예외처리 테스트
+5. User 등록/조회/삭제 테스트
+6. User 객체 수정 시 예외처리 테스트
+7. DeleteHistory 등록/조회/삭제 테스트
+8. DeleteHistory 객체 생성 테스트
