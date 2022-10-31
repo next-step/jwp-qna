@@ -11,9 +11,6 @@ import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.DataIntegrityViolationException;
-
-import qna.NotFoundException;
 
 @DataJpaTest
 class EntityMappingTest {
@@ -27,50 +24,6 @@ class EntityMappingTest {
     DeleteHistoryRepository deleteHistoryRepository;
     @Autowired
     EntityManager em;
-
-    @Test
-    void userSaveAndFindTest() {
-        User expected = newUser();
-        User actual = userRepository.save(expected);
-        assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getUserId()).isEqualTo(expected.getUserId()),
-            () -> assertThat(actual.getPassword()).isEqualTo(expected.getPassword()),
-            () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
-            () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail()),
-            () -> assertThat(actual.getCreatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isEqualTo(expected.getCreatedAt())
-        );
-        assertThat(userRepository.findByUserId(expected.getUserId()).orElseThrow(RuntimeException::new))
-            .isEqualTo(actual);
-    }
-
-    @Test
-    void userUpdateTest() {
-        User user = userRepository.save(newUser());
-        String newPassword = UUID.randomUUID().toString();
-        user.setPassword(newPassword);
-        em.flush(); // for update by dirty checking
-        User actual = userRepository.findByUserId(user.getUserId())
-            .orElseThrow(RuntimeException::new);
-        assertThat(actual.getPassword()).isEqualTo(newPassword);
-    }
-
-    @Test
-    void user_에서_userId_는_유니크하다() {
-        User user = newUser();
-        userRepository.save(user);
-        User sameUserIdUser = newUser();
-        assertThatThrownBy(() -> userRepository.save(sameUserIdUser))
-            .isInstanceOf(DataIntegrityViolationException.class);
-    }
-
-    @Test
-    void user의_not_null_컬럼값이_null을_저장하려고할때_예외처리한다() {
-        assertThatThrownBy(() -> new User(null, UUID.randomUUID().toString(), "name", "email@test.com"))
-            .isInstanceOf(NotFoundException.class);
-    }
 
     @Test
     void questionSaveAndFindTest() {
