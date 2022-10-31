@@ -26,27 +26,6 @@ class EntityMappingTest {
     EntityManager em;
 
     @Test
-    void answerSaveAndFindTest() {
-        User user = newUser();
-        User savedUser = userRepository.save(user);
-        Question question = newQuestion();
-        Question savedQuestion = questionRepository.save(question);
-        Answer expected = new Answer(savedUser, savedQuestion, "contents");
-        Answer actual = answerRepository.save(expected);
-        assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getCreatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isEqualTo(actual.getCreatedAt()),
-            () -> assertThat(actual.isDeleted()).isFalse(),
-            () -> assertThat(actual.getQuestionId()).isEqualTo(savedQuestion.getId()),
-            () -> assertThat(actual.getWriterId()).isEqualTo(savedUser.getId())
-        );
-        assertThat(answerRepository.findByIdAndDeletedFalse(actual.getId()).orElseThrow(RuntimeException::new))
-            .isEqualTo(actual);
-    }
-
-    @Test
     void deleteHistorySaveAndFindTest() {
         User user = userRepository.save(newUser());
         Question question = questionRepository.save(newQuestion());
