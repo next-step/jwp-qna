@@ -3,11 +3,14 @@ package qna.domain;
 import javax.persistence.*;
 
 @Entity
-public class Question {
+public class Question extends BaseEntity {
     private Long id;
+    @Column(nullable = false)
     private String title;
+    @Lob
     private String contents;
     private Long writerId;
+    @Column(nullable = false)
     private boolean deleted = false;
 
     public Question(String title, String contents) {
