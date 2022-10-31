@@ -3,9 +3,11 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+public class Answer extends BaseEntity {
     private Long id;
     private Long writerId;
     private Long questionId;

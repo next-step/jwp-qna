@@ -2,8 +2,9 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
-
+@Entity
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 

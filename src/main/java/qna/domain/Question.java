@@ -1,5 +1,8 @@
 package qna.domain;
 
+import javax.persistence.*;
+
+@Entity
 public class Question {
     private Long id;
     private String title;
