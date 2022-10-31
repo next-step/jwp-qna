@@ -4,7 +4,7 @@
 - [x] Answer 도메인 객체에 JPA 엔티티 매핑
 - [x] DeleteHistory 도메인 객체에 JPA 엔티티 매핑
 - [x] Question 도메인 객체에 JPA 엔티티 매핑
-- [ ] User 도메인 객체에 JPA 엔티티 매핑
+- [x] User 도메인 객체에 JPA 엔티티 매핑
 - [ ] AnswerRepository 테스트 코드 작성
 - [ ] DeleteHistoryRepository 테스트 코드 작성
 - [ ] QuestionRepository 테스트 코드 작성
