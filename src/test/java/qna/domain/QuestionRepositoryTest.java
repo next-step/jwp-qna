@@ -64,6 +64,10 @@ class QuestionRepositoryTest {
         saveQuestion.setTitle("테스트1");
         Question findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestion.getId()).get();
 
-        assertThat(findQuestion.getTitle()).isEqualTo(saveQuestion.getTitle());
+        assertAll(
+            () -> assertThat(findQuestion.getTitle()).isEqualTo(saveQuestion.getTitle()),
+            () -> assertThat(findQuestion.getCreatedAt()).isEqualTo(saveQuestion.getCreatedAt()),
+            () -> assertThat(findQuestion.getUpdatedAt()).isNotNull()
+        );
     }
 }
