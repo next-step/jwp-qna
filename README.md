@@ -6,6 +6,6 @@
 - [x] Question 도메인 객체에 JPA 엔티티 매핑
 - [x] User 도메인 객체에 JPA 엔티티 매핑
 - [x] AnswerRepository 테스트 코드 작성
-- [ ] DeleteHistoryRepository 테스트 코드 작성
-- [ ] QuestionRepository 테스트 코드 작성
+- [x] DeleteHistoryRepository 테스트 코드 작성
+- [x] QuestionRepository 테스트 코드 작성
 - [ ] UserRepository 테스트 코드 작성
