@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.question;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,7 +7,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
+import qna.domain.answer.Answer;
 import qna.domain.common.BaseEntity;
+import qna.domain.user.User;
 
 @Entity
 public class Question extends BaseEntity {

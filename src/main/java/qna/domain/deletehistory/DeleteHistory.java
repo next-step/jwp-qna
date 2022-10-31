@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.deletehistory;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import qna.domain.ContentType;
 import qna.domain.common.BaseEntity;
 
 @Entity

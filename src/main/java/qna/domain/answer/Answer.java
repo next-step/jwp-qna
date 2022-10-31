@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.answer;
 
 import java.util.Objects;
 
@@ -12,6 +12,8 @@ import javax.persistence.Lob;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.common.BaseEntity;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 
 @Entity
 public class Answer extends BaseEntity {
