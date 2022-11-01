@@ -31,6 +31,10 @@ public class DeleteHistory {
 
     }
 
+    public Long getId() {
+        return this.id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
