@@ -2,18 +2,31 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class User {
+@Entity(name = "users")
+public class User  extends AbstractTimestampEntity implements Serializable {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 20, nullable = false)
     private String userId;
+
+    @Column(length = 20, nullable = false)
     private String password;
+
+    @Column(length = 20, nullable = false)
     private String name;
+
+    @Column(length = 50, nullable = false)
     private String email;
 
-    private User() {
+    public User() {
     }
 
     public User(String userId, String password, String name, String email) {

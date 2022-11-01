@@ -1,17 +1,18 @@
 package qna.domain;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @MappedSuperclass
-public abstract class AbstractTimestampEntity {
+public abstract class  AbstractTimestampEntity {
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist
