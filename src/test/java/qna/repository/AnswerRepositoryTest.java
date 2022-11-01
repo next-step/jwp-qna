@@ -38,6 +38,7 @@ public class AnswerRepositoryTest {
     Collection<DynamicTest> 저장된_답변의_삭제여부에_따라_findByIdAndDeletedFalse메소드_조회_결과가_다르게_반환된다() {
         //given
         Answer saveAnswer = answerRepository.save(A2);
+        saveAnswer.setDeleted(false);
         Long saveAnswerId = saveAnswer.getId();
         return Arrays.asList(
                 DynamicTest.dynamicTest("저장한 답변은 findByIdAndDeletedFalse()로 조회하면 정상적으로 조회가 된다.", () -> {
@@ -45,7 +46,7 @@ public class AnswerRepositoryTest {
                     Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
 
                     //then
-                    assertThat(findAnswer.isPresent()).isTrue();
+                    assertThat(findAnswer).isPresent();
                     assertAll(
                             () -> assertThat(findAnswer.get().getContents()).isEqualTo(saveAnswer.getContents()),
                             () -> assertThat(findAnswer.get().isDeleted()).isFalse()
@@ -57,7 +58,7 @@ public class AnswerRepositoryTest {
                     Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
 
                     //then
-                    assertThat(findAnswer.isPresent()).isFalse();
+                    assertThat(findAnswer).isNotPresent();
                 })
         );
     }
@@ -70,10 +71,10 @@ public class AnswerRepositoryTest {
         return Arrays.asList(
                 DynamicTest.dynamicTest("저장한 답변의 id로 답변을 조회하면 정상적으로 조회가 된다.", () -> {
                     //when
-                    Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
+                    Optional<Answer> findAnswer = answerRepository.findById(saveAnswerId);
 
                     //then
-                    assertThat(findAnswer.isPresent()).isTrue();
+                    assertThat(findAnswer).isPresent();
                 }),
                 DynamicTest.dynamicTest("저장한 답변을 삭제하고, 다시 조회하면 해당 답변이 조회되지 않는다.", () -> {
                     //when
@@ -81,7 +82,7 @@ public class AnswerRepositoryTest {
                     Optional<Answer> deleteAnswer = answerRepository.findById(saveAnswerId);
 
                     //then
-                    assertThat(deleteAnswer.isPresent()).isFalse();
+                    assertThat(deleteAnswer).isNotPresent();
                 })
         );
     }
