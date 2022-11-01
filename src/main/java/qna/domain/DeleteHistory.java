@@ -1,9 +1,8 @@
 package qna.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.hibernate.annotations.Columns;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -12,10 +11,15 @@ public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 255)
     private ContentType contentType;
     private Long contentId;
     private Long deletedById;
     private LocalDateTime createDate = LocalDateTime.now();
+
+    protected DeleteHistory() {
+    }
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
@@ -49,5 +53,13 @@ public class DeleteHistory {
                 ", deletedById=" + deletedById +
                 ", createDate=" + createDate +
                 '}';
+    }
+
+    public boolean hasContent(ContentType contentType) {
+        return this.contentType.equals(contentType);
+    }
+
+    public boolean saved() {
+        return !Objects.isNull(this.id) && this.id > 0;
     }
 }
