@@ -7,7 +7,7 @@ public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(length = 100, nullable = false)
     private String title;
     @Lob
     private String contents;
