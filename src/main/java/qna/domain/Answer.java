@@ -19,7 +19,7 @@ public class Answer extends BaseEntity {
     private String contents;
     private boolean deleted = false;
 
-    public Answer() {
+    protected Answer() {
 
     }
 

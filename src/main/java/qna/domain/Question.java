@@ -14,7 +14,7 @@ public class Question extends BaseEntity {
     private Long writerId;
     private boolean deleted = false;
 
-    public Question() {
+    protected Question() {
 
     }
 
