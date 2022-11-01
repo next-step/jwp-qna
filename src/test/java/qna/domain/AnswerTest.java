@@ -14,22 +14,22 @@ public class AnswerTest {
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Autowired
-    private AnswerRepository repository;
+    private AnswerRepository answerRepository;
 
     @Test
     void 답변_아이디로_조회() {
-        Answer answer = repository.save(A1);
+        Answer answer = answerRepository.save(A1);
 
-        List<Answer> retrievedAnswer = repository.findByQuestionIdAndDeletedFalse(answer.getQuestionId());
+        List<Answer> retrievedAnswer = answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestionId());
 
         assertThat(retrievedAnswer).hasSize(1);
     }
 
     @Test
     void 질문_아이디로_조회() {
-        Answer answer = repository.save(A1);
+        Answer answer = answerRepository.save(A1);
 
-        Answer retrievedAnswer = repository.findByIdAndDeletedFalse(answer.getId()).get();
+        Answer retrievedAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId()).get();
 
         assertThat(retrievedAnswer).isEqualTo(answer);
     }
