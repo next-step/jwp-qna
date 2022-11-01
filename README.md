@@ -25,6 +25,11 @@
   - [x] QuestionRepositoryTest
   - [x] UserRepositoryTest
   - [x] DeleteHistoryRepositoryTest
+- 연관 관계 매핑
+  - [ ] Question - Answer 연관 관계 매핑
+  - [ ] User - Answer 연관 관계 매핑
+  - [ ] User - Question 연관 관계 매핑
+  - [ ] User - DeleteHistory 연관 관계 매핑
 
 ### DDL
 ```SQL
