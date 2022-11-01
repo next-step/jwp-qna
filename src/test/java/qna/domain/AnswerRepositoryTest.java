@@ -21,11 +21,11 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("Answer 저장 테스트")
-    void save() {
-        Answer answer = answerRepository.save(answerTest);
-        assertThat(answer.getId()).isNotNull();
+    @DisplayName("Answer 저장한 엔티티의 id로 조회한 경우 동일성 테스트")
+    void find() {
+        Answer saveAnswer = answerRepository.save(answerTest);
+        Answer findAnswer = answerRepository.findById(saveAnswer.getId()).orElse(null);
+        assertThat(saveAnswer).isEqualTo(findAnswer);
     }
-
 
 }

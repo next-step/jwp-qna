@@ -21,9 +21,10 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("User 저장 테스트")
-    void save() {
-        Question question = questionRepository.save(questionTest);
-        assertThat(question.getId()).isNotNull();
+    @DisplayName("Question 저장한 엔티티의 id로 조회한 경우 동일성 테스트")
+    void find() {
+        Question saveQuestion = questionRepository.save(questionTest);
+        Question findQuestion = questionRepository.findById(saveQuestion.getId()).orElse(null);
+        assertThat(saveQuestion).isEqualTo(findQuestion);
     }
 }
