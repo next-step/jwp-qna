@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DisplayName("질문 저장소 테스트")
@@ -28,10 +29,12 @@ public class QuestionRepositoryTest {
         Question question = QuestionTest.Q1;
         Question saved = questionRepository.save(question);
 
-        assertThat(saved.getId()).isNotNull();
-        assertThat(question.getContents()).isEqualTo(saved.getContents());
-        assertThat(question.getWriterId()).isEqualTo(saved.getWriterId());
-        assertThat(question.getTitle()).isEqualTo(saved.getTitle());
+        assertAll(
+                () -> assertThat(saved.getId()).isNotNull(),
+                () -> assertThat(question.getContents()).isEqualTo(saved.getContents()),
+                () -> assertThat(question.getWriterId()).isEqualTo(saved.getWriterId()),
+                () -> assertThat(question.getTitle()).isEqualTo(saved.getTitle())
+        );
     }
 
     @Test
@@ -60,9 +63,12 @@ public class QuestionRepositoryTest {
         Question saved = questionRepository.save(QuestionTest.Q1);
         Question expected = questionRepository.findByIdAndDeletedFalse(saved.getId()).get();
 
-        assertThat(saved.getId()).isEqualTo(expected.getId());
-        assertThat(saved.getContents()).isEqualTo(expected.getContents());
-        assertThat(saved.getWriterId()).isEqualTo(expected.getWriterId());
-        assertThat(saved.getTitle()).isEqualTo(expected.getTitle());
+        assertAll(
+                () -> assertThat(saved.getId()).isEqualTo(expected.getId()),
+                () -> assertThat(saved.getContents()).isEqualTo(expected.getContents()),
+                () -> assertThat(saved.getWriterId()).isEqualTo(expected.getWriterId()),
+                () -> assertThat(saved.getTitle()).isEqualTo(expected.getTitle())
+        );
+
     }
 }

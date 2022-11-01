@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DisplayName("답변 저장소 테스트")
@@ -28,11 +29,14 @@ public class AnswerRepositoryTest {
         Answer answer = AnswerTest.A1;
         Answer savedAnswer = answerRepository.save(answer);
 
-        assertThat(savedAnswer.getId()).isNotNull();
-        assertThat(answer.getQuestionId()).isEqualTo(savedAnswer.getQuestionId());
-        assertThat(answer.getContents()).isEqualTo(savedAnswer.getContents());
-        assertThat(answer.getWriterId()).isEqualTo(savedAnswer.getWriterId());
-        assertThat(answer.isDeleted()).isEqualTo(savedAnswer.isDeleted());
+        assertAll(
+                () -> assertThat(savedAnswer.getId()).isNotNull(),
+                () -> assertThat(answer.getQuestionId()).isEqualTo(savedAnswer.getQuestionId()),
+                () -> assertThat(answer.getContents()).isEqualTo(savedAnswer.getContents()),
+                () -> assertThat(answer.getWriterId()).isEqualTo(savedAnswer.getWriterId()),
+                () -> assertThat(answer.isDeleted()).isEqualTo(savedAnswer.isDeleted())
+        );
+
     }
 
     @Test
@@ -60,11 +64,13 @@ public class AnswerRepositoryTest {
         Answer savedAnswer = answerRepository.save(AnswerTest.A1);
         Answer expected = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId()).get();
 
-        assertThat(savedAnswer.getId()).isEqualTo(expected.getId());
-        assertThat(savedAnswer.getQuestionId()).isEqualTo(expected.getQuestionId());
-        assertThat(savedAnswer.getContents()).isEqualTo(expected.getContents());
-        assertThat(savedAnswer.getWriterId()).isEqualTo(expected.getWriterId());
-        assertThat(savedAnswer.isDeleted()).isEqualTo(expected.isDeleted());
+        assertAll(
+                () -> assertThat(savedAnswer.getId()).isEqualTo(expected.getId()),
+                () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(expected.getQuestionId()),
+                () -> assertThat(savedAnswer.getContents()).isEqualTo(expected.getContents()),
+                () -> assertThat(savedAnswer.getWriterId()).isEqualTo(expected.getWriterId()),
+                () -> assertThat(savedAnswer.isDeleted()).isEqualTo(expected.isDeleted())
+        );
     }
 
     @Test

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DisplayName("삭제이력 저장소 테스트")
@@ -25,11 +26,13 @@ public class DeleteHistoryRepositoryTest {
         DeleteHistory deleteHistory = DeleteHistoryTest.D1;
         DeleteHistory saved = deleteHistoryRepository.save(deleteHistory);
 
-        assertThat(saved.getId()).isNotNull();
-        assertThat(deleteHistory.getDeletedById()).isEqualTo(saved.getDeletedById());
-        assertThat(deleteHistory.getContentId()).isEqualTo(saved.getContentId());
-        assertThat(deleteHistory.getCreateDate()).isEqualTo(saved.getCreateDate());
-        assertThat(deleteHistory.getContentType()).isEqualTo(saved.getContentType());
+        assertAll(
+                () -> assertThat(saved.getId()).isNotNull(),
+                () -> assertThat(deleteHistory.getDeletedById()).isEqualTo(saved.getDeletedById()),
+                () -> assertThat(deleteHistory.getContentId()).isEqualTo(saved.getContentId()),
+                () -> assertThat(deleteHistory.getCreateDate()).isEqualTo(saved.getCreateDate()),
+                () -> assertThat(deleteHistory.getContentType()).isEqualTo(saved.getContentType())
+        );
     }
 
     @Test
