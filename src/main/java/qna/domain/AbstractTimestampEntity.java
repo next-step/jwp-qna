@@ -7,12 +7,9 @@ import java.time.LocalTime;
 @MappedSuperclass
 public abstract class  AbstractTimestampEntity {
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist
