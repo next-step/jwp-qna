@@ -1,34 +1,31 @@
 package qna.domain;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
     @Autowired
     AnswerRepository answerRepository;
-    
+
+    public Answer answerTest;
+
     @BeforeEach
     void setUp() {
-        answerRepository.deleteAllInBatch();
+        answerTest = AnswerTest.A1;
     }
-    
+
     @Test
+    @DisplayName("Answer 저장 테스트")
     void save() {
-        Answer answerTest = AnswerTest.A1;
         Answer answer = answerRepository.save(answerTest);
-        assertAll(
-                () -> assertThat(answer.getId()).isNotNull(),
-                () -> assertThat(answer.getContents()).isEqualTo(answerTest.getContents()),
-                () -> assertThat(answer.getWriterId()).isEqualTo(answerTest.getWriterId()),
-                () -> assertThat(answer.getQuestionId()).isEqualTo(answerTest.getQuestionId()),
-                () -> assertThat(answer.isDeleted()).isEqualTo(answerTest.isDeleted())
-        );
+        assertThat(answer.getId()).isNotNull();
     }
-    
+
+
 }
