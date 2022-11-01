@@ -40,7 +40,9 @@ public class UserRepositoryTest {
     @DisplayName("사용자 수정")
     void 수정() {
         User user = userRepository.save(UserTest.JAVAJIGI);
-        user.setName("윤채은");
+        User target = new User(user.getId(), user.getUserId(), user.getPassword(), "윤채은", user.getEmail());
+        user.update(user, target);
+
         User updatedUser = userRepository.findById(user.getId()).get();
 
         assertThat(updatedUser.getName()).isEqualTo(user.getName());

@@ -51,44 +51,28 @@ public class Answer extends BaseEntity {
         this.questionId = question.getId();
     }
 
-    public Long getId() {
-        return id;
+    public void updateContents(String contents) {
+        this.contents = contents;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public Long getWriterId() {
         return writerId;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
     public Long getQuestionId() {
         return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -113,5 +97,9 @@ public class Answer extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, writerId, questionId, contents, deleted);
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 }

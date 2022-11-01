@@ -39,7 +39,7 @@ public class AnswerRepositoryTest {
     @DisplayName("답변 수정")
     void 수정() {
         Answer answer = answerRepository.save(AnswerTest.A1);
-        answer.setContents("답변 수정 테스트");
+        answer.updateContents("답변 수정 테스트");
         Answer updatedAnswer = answerRepository.findById(answer.getId()).get();
 
         assertThat(updatedAnswer.getContents()).isEqualTo(answer.getContents());
