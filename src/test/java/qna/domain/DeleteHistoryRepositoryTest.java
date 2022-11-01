@@ -23,7 +23,7 @@ public class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("삭제이력 저장")
     void 저장() {
-        DeleteHistory deleteHistory = DeleteHistoryTest.D1;
+        DeleteHistory deleteHistory = DeleteHistoryTestFixture.D1;
         DeleteHistory saved = deleteHistoryRepository.save(deleteHistory);
 
         assertAll(
@@ -38,7 +38,7 @@ public class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("삭제이력 삭제")
     void 삭제() {
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(DeleteHistoryTest.D1);
+        DeleteHistory deleteHistory = deleteHistoryRepository.save(DeleteHistoryTestFixture.D1);
         deleteHistoryRepository.delete(deleteHistory);
 
         assertThat(deleteHistoryRepository.findById(deleteHistory.getId())).isEmpty();

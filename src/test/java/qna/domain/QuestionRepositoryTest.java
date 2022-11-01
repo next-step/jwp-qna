@@ -26,7 +26,7 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("질문 저장")
     void 저장() {
-        Question question = QuestionTest.Q1;
+        Question question = QuestionTestFixture.Q1;
         Question saved = questionRepository.save(question);
 
         assertAll(
@@ -40,7 +40,7 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("질문 삭제")
     void 삭제() {
-        Question question = questionRepository.save(QuestionTest.Q1);
+        Question question = questionRepository.save(QuestionTestFixture.Q1);
         questionRepository.delete(question);
 
         assertThat(questionRepository.findById(question.getId())).isEmpty();
@@ -49,18 +49,18 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 질문 목록 조회")
     void 삭제되지_않은_질문목록_조회() {
-        questionRepository.save(QuestionTest.Q1);
-        questionRepository.save(QuestionTest.Q2);
+        questionRepository.save(QuestionTestFixture.Q1);
+        questionRepository.save(QuestionTestFixture.Q2);
         List<Question> questionList = questionRepository.findByDeletedFalse();
 
         assertThat(questionList).hasSize(2);
-        assertThat(questionList).containsAll(Arrays.asList(QuestionTest.Q1, QuestionTest.Q2));
+        assertThat(questionList).containsAll(Arrays.asList(QuestionTestFixture.Q1, QuestionTestFixture.Q2));
     }
 
     @Test
     @DisplayName("질문 ID로 삭제되지 않은 질문 조회")
     void 질문_ID로_삭제되지_않은_질문_조회() {
-        Question saved = questionRepository.save(QuestionTest.Q1);
+        Question saved = questionRepository.save(QuestionTestFixture.Q1);
         Question expected = questionRepository.findByIdAndDeletedFalse(saved.getId()).get();
 
         assertAll(

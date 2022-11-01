@@ -26,7 +26,7 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 저장")
     void 저장() {
-        Answer answer = AnswerTest.A1;
+        Answer answer = AnswerTestFixture.A1;
         Answer savedAnswer = answerRepository.save(answer);
 
         assertAll(
@@ -42,7 +42,7 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 수정")
     void 수정() {
-        Answer answer = answerRepository.save(AnswerTest.A1);
+        Answer answer = answerRepository.save(AnswerTestFixture.A1);
         answer.updateContents("답변 수정 테스트");
         Answer updatedAnswer = answerRepository.findById(answer.getId()).get();
 
@@ -52,7 +52,7 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 삭제")
     void 삭제() {
-        Answer answer = answerRepository.save(AnswerTest.A1);
+        Answer answer = answerRepository.save(AnswerTestFixture.A1);
         answerRepository.delete(answer);
 
         assertThat(answerRepository.findById(answer.getId())).isEmpty();
@@ -61,7 +61,7 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 ID로 삭제되지 않은 답변 조회")
     void 답변_ID로_삭제되지_않은_답변_조회() {
-        Answer savedAnswer = answerRepository.save(AnswerTest.A1);
+        Answer savedAnswer = answerRepository.save(AnswerTestFixture.A1);
         Answer expected = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId()).get();
 
         assertAll(
@@ -76,11 +76,11 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("질문 ID로 삭제되지 않은 답변 목록 조회")
     void 질문_ID로_삭제되지_않은_답변목록_조회() {
-        answerRepository.save(AnswerTest.A1);
-        answerRepository.save(AnswerTest.A2);
-        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(AnswerTest.A1.getQuestionId());
+        answerRepository.save(AnswerTestFixture.A1);
+        answerRepository.save(AnswerTestFixture.A2);
+        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(AnswerTestFixture.A1.getQuestionId());
 
         assertThat(answerList).hasSize(2);
-        assertThat(answerList).containsAll(Arrays.asList(AnswerTest.A1, AnswerTest.A2));
+        assertThat(answerList).containsAll(Arrays.asList(AnswerTestFixture.A1, AnswerTestFixture.A2));
     }
 }
