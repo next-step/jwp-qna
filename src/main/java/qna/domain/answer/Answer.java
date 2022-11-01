@@ -1,15 +1,39 @@
-package qna.domain;
-
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+package qna.domain.answer;
 
 import java.util.Objects;
 
-public class Answer {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
+import qna.domain.common.BaseEntity;
+import qna.domain.question.Question;
+import qna.domain.user.User;
+
+@Entity
+public class Answer extends BaseEntity {
+
+    protected Answer() {
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long id;
+
     private Long writerId;
+
     private Long questionId;
+
+    @Lob
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
