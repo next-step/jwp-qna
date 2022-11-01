@@ -1,0 +1,22 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  jpa:
+    properties:
+      hibernate:
+        didialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        format_sql: true
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/wootechcamp;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL;
+    username: sa
+    driver-class-name: org.h2.Driver
+
+
+
