@@ -7,10 +7,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import org.springframework.data.annotation.LastModifiedDate;
+import qna.domain.common.BaseEntity;
 
 @Entity
-public class Question {
+public class Question  extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,10 +21,6 @@ public class Question {
     private Long writerId;
     @Column(nullable = false)
     private boolean deleted = false;
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     public Question(String title, String contents) {
         this(null, title, contents);
