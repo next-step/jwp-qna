@@ -1,15 +1,35 @@
 package qna.domain;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+@Table(name = "answer")
+@Where(clause = "deleted = false")
+@SQLDelete(sql = "UPDATE answer SET deleted = true WHERE id = ?")
+public class Answer extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
+    @Column(name = "writer_id")
     private Long writerId;
+    @Column(name = "question_id")
     private Long questionId;
+    @Lob
     private String contents;
+    @Column(name = "deleted")
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
@@ -30,6 +50,9 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
+    }
+
+    protected Answer() {
     }
 
     public boolean isOwner(User writer) {
