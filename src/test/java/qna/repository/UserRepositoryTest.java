@@ -44,7 +44,7 @@ public class UserRepositoryTest {
         Optional<User> findUser = userRepository.findByUserId(saveUser.getUserId());
 
         //then
-        assertThat(findUser.isPresent()).isTrue();
+        assertThat(findUser).isPresent();
         findUser.ifPresent(user -> assertAll(
                 () -> assertThat(user).isEqualTo(saveUser),
                 () -> assertThat(user.getUserId()).isEqualTo(saveUser.getUserId())
@@ -85,7 +85,7 @@ public class UserRepositoryTest {
                     Optional<User> findUser = userRepository.findById(saveUserId);
 
                     //then
-                    assertThat(findUser.isPresent()).isTrue();
+                    assertThat(findUser).isPresent();
                 }),
                 DynamicTest.dynamicTest("저장한 유저를 삭제하고, 다시 조회하면 해당 유저가 조회되지 않는다.", () -> {
                     //when
@@ -93,7 +93,7 @@ public class UserRepositoryTest {
                     Optional<User> deleteUser = userRepository.findById(saveUserId);
 
                     //then
-                    assertThat(deleteUser.isPresent()).isFalse();
+                    assertThat(deleteUser).isNotPresent();
                 }));
     }
 }
