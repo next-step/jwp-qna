@@ -5,9 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.AnswerTest.A1;
 import static qna.domain.AnswerTest.A2;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
@@ -18,14 +21,12 @@ public class AnswerRepositoryTest {
     @Autowired
     AnswerRepository answerRepository;
 
-    @BeforeEach
-    void setUp() {
-        answerRepository.deleteAllInBatch();
-    }
-
     @Test
-    void 답변_저장_테스트() {
+    void 답변을_저장하면_저장한_답변_객체를_반환한다() {
+        //when
         Answer answer = answerRepository.save(A1);
+
+        //then
         assertAll(
                 () -> assertThat(answer.getId()).isNotNull(),
                 () -> assertThat(answer.getContents()).isEqualTo(A1.getContents()),
@@ -33,42 +34,55 @@ public class AnswerRepositoryTest {
         );
     }
 
-    @Test
-    void 답변_저장_후_삭제되지_않은_답변_ID로_조회_테스트() {
-        Answer saveAnswer = answerRepository.save(A1);
-        Long saveAnswerId = saveAnswer.getId();
-        answerRepository.save(A2);
-        Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
-
-        assertThat(findAnswer.isPresent()).isTrue();
-        findAnswer.ifPresent(answer -> assertAll(
-                () -> assertThat(answer).isEqualTo(saveAnswer),
-                () -> assertThat(answer.isDeleted()).isFalse(),
-                () -> assertThat(answer).isNotEqualTo(A2)
-        ));
-    }
-
-    @Test
-    void 답변_저장_후_삭제여부_true로_업데이트하여_조회_안됨_테스트() {
-        Answer saveAnswer = answerRepository.save(A1);
-        Long saveAnswerId = saveAnswer.getId();
-
-        saveAnswer.setDeleted(true);
-        Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
-
-        assertThat(findAnswer.isPresent()).isFalse();
-    }
-
-    @Test
-    void 답변_조회_후_삭제하면_조회가_되지_않음_테스트() {
+    @TestFactory
+    Collection<DynamicTest> 저장된_답변의_삭제여부에_따라_findByIdAndDeletedFalse메소드_조회_결과가_다르게_반환된다() {
+        //given
         Answer saveAnswer = answerRepository.save(A2);
         Long saveAnswerId = saveAnswer.getId();
-        Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
+        return Arrays.asList(
+                DynamicTest.dynamicTest("저장한 답변은 findByIdAndDeletedFalse()로 조회하면 정상적으로 조회가 된다.", () -> {
+                    //when
+                    Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
 
-        assertThat(findAnswer.isPresent()).isTrue();
-        findAnswer.ifPresent(answer -> answerRepository.delete(answer));
-        Optional<Answer> deletedAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
+                    //then
+                    assertThat(findAnswer.isPresent()).isTrue();
+                    assertAll(
+                            () -> assertThat(findAnswer.get().getContents()).isEqualTo(saveAnswer.getContents()),
+                            () -> assertThat(findAnswer.get().isDeleted()).isFalse()
+                    );
+                }),
+                DynamicTest.dynamicTest("저장한 답변의 삭제여부를 true로 업데이트하면, 더 이상 findByIdAndDeletedFalse() 조회 시 조회되지 않는다.", () -> {
+                    //when
+                    saveAnswer.setDeleted(true);
+                    Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
 
-        assertThat(deletedAnswer.isPresent()).isFalse();
+                    //then
+                    assertThat(findAnswer.isPresent()).isFalse();
+                })
+        );
+    }
+
+    @TestFactory
+    Collection<DynamicTest> 답변을_저장하면_조회가_되지만_해당_답변을_삭제하고_조회하면_더_이상_조회되지_않는다() {
+        //given
+        Answer saveAnswer = answerRepository.save(A1);
+        Long saveAnswerId = saveAnswer.getId();
+        return Arrays.asList(
+                DynamicTest.dynamicTest("저장한 답변의 id로 답변을 조회하면 정상적으로 조회가 된다.", () -> {
+                    //when
+                    Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
+
+                    //then
+                    assertThat(findAnswer.isPresent()).isTrue();
+                }),
+                DynamicTest.dynamicTest("저장한 답변을 삭제하고, 다시 조회하면 해당 답변이 조회되지 않는다.", () -> {
+                    //when
+                    answerRepository.delete(saveAnswer);
+                    Optional<Answer> deleteAnswer = answerRepository.findById(saveAnswerId);
+
+                    //then
+                    assertThat(deleteAnswer.isPresent()).isFalse();
+                })
+        );
     }
 }

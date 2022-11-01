@@ -12,13 +12,15 @@ public class AnswerTest {
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Test
-    void Answer_객체_생성_시_Writer가_비어있으면_에러_발생() {
+    void 질문_객체_생성_시_writer가_비어있으면_UnAuthorizedException_예외가_발생한다() {
+        //when
         assertThatThrownBy(() -> new Answer(null, QuestionTest.Q1, "Writer가 비어있음"))
                 .isInstanceOf(UnAuthorizedException.class);
     }
 
     @Test
-    void Answer_객체_생성_시_Question이_비어있으면_에러_발생() {
+    void 질문_객체_생성_시_question이_비어있으면_NotFoundException_예외가_발생한다() {
+        //when
         assertThatThrownBy(() -> new Answer(UserTest.JAVAJIGI, null, "Question이 비어있음"))
                 .isInstanceOf(NotFoundException.class);
     }
