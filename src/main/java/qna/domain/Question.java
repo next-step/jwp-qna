@@ -1,11 +1,29 @@
 package qna.domain;
 
-public class Question {
+import qna.common.AuditingEntity;
+
+import javax.persistence.*;
+import java.util.Objects;
+
+@Entity
+public class Question extends AuditingEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 100, nullable = false)
     private String title;
+
+    @Lob
     private String contents;
+
     private Long writerId;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    public Question() {}
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -68,6 +86,25 @@ public class Question {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Question question = (Question) o;
+        return Objects.equals(id, question.id) && Objects.equals(writerId, question.writerId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, writerId);
     }
 
     @Override
