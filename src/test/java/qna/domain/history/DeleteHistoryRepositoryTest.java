@@ -33,6 +33,7 @@ public class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("삭제이력이 삭제되는지 테스트한다")
     void deleteHistoryRepository(){
+        deleteHistoryRepository.save(questiDelete);
         deleteHistoryRepository.deleteById(questiDelete.getId());
         Optional<DeleteHistory> getHistoryRepository = deleteHistoryRepository.findById(questiDelete.getId());
         assertThat(getHistoryRepository.isPresent()).isFalse();
