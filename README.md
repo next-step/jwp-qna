@@ -146,3 +146,59 @@ spring:
 4. [x] Question 객체 생성 시 예외처리 테스트
 5. [x] User 등록/조회/삭제 테스트
 7. [x] DeleteHistory 등록/조회/삭제 테스트
+
+## 2단계 - 연관 관계 매핑
+### 요구 사항
+1. QnA 서비스를 만들면서 JPA로 실 도메인 모델 구성 및 객체와 테이블간 매핑
+  * 객체에서는 참조를 사용하고, 테이블에서는 외래 키를 사용
+```text
+Answer : Question = N : 1 (연관관계 주인: Answer)
+Answer : User = N : 1 (연관관계 주인: Answer)
+DeleteHistory : User = N : 1 (연관관계 주인: DeleteHistory)
+Question : User = N : 1 (연관관계 주인: Question)
+```
+* 답변은 하나의 질문에만 속할 수 있다. -> 답변과 질문은 다대일 관계이다.
+* 답변은 한명의 작성자만 가질 수 있다. -> 답변과 유저는 다대일 관계이다.
+  * 유저는 여러 답변을 할 수 있다.
+* 질문은 한명의 작성자만 가질 수 있다. -> 질문과 유저는 다대일 관계이다.
+  * 유저는 여러 질문을 할 수 있다.
+* 삭제이력은 한명에 의해서만 삭제된다. -> 삭제이력과 유저는 다대일 관계이다.
+  * 유저가 질문/답변을 삭제했을 때 삭제이력이 남는다.
+
+* 연관관계 주인 - 외래 키 관리자
+  * [ ] 양방향 정의 시, 연관관계 편의 메소드를 이용해 순수한 객체까지 고려한 양방향 연관관계 설정
+  * [ ] 반드시 필요한 경우에만 양방향 관계를 사용해야 함
+  ```java
+  // 예시
+  public void setTeam(Team team) {
+    if(this.team != null) {
+        this.team.getMembers().remove(this);
+    }
+    this.team = team;
+    team.getMembers().add(this);
+  }
+  ```
+
+### 테이블 정의
+* 아래 DDL(Data Definition Language)을 보고 유추하여 작성
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
+```
