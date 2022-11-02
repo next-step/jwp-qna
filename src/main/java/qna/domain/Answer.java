@@ -1,15 +1,29 @@
 package qna.domain;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
-
+@Entity
+@Table("answer")
+@SQLDelete(sql = "UPDATE answer SET deleted = ture WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Answer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id", updatable = false, nullable = false, unique = true)
     private Long id;
+
+    @Column(name="writer_id")
     private Long writerId;
+    @Column(name="question_id")
     private Long questionId;
+    @Lob        //Large Object
     private String contents;
+    @Column(name="deleted", nullable = false)
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
