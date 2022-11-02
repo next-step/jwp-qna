@@ -8,8 +8,8 @@
 * [x] created_at, updated_at baseEntity로 처리
 
 ## 2단계 요구사항
-* [ ] 아래 DDL을 참고하여 연관 관계 매핑
-* [ ] 깨진 테스트 수정
+* [x] 아래 DDL을 참고하여 연관 관계 매핑
+* [x] 깨진 테스트 수정
 
 ## DDL
 ```sql
