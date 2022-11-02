@@ -86,11 +86,6 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    // TODO 전체 연관관계 매핑 이후 삭제 필요
-    public Long getWriterId() {
-        return writer.getId();
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
