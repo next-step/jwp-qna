@@ -1,11 +1,7 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -13,11 +9,7 @@ import qna.UnAuthorizedException;
 import java.util.Objects;
 
 @Entity
-public class Answer {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Answer extends DateEntity {
 
     @Column(nullable = true)
     private Long writerId;
@@ -31,12 +23,6 @@ public class Answer {
 
     @Column(nullable = false)
     private boolean deleted = false;
-
-    @Column(nullable = false, updatable = false)
-    private final LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = true)
-    private LocalDateTime updatedAt;
 
     protected Answer() { }
 
@@ -66,14 +52,6 @@ public class Answer {
 
     public void toQuestion(Question question) {
         this.questionId = question.getId();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getWriterId() {
@@ -106,6 +84,11 @@ public class Answer {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public Long getId() {
+        return super.getId();
     }
 
     @Override

@@ -1,22 +1,14 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
 @Entity
-public class User {
+public class User extends DateEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(length = 20, nullable = false)
     private String userId;
@@ -29,12 +21,6 @@ public class User {
 
     @Column(length = 50, nullable = true)
     private String email;
-
-    @Column(nullable = false, updatable = false)
-    private final LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = true)
-    private LocalDateTime updatedAt;
 
     protected User() { }
 
@@ -82,14 +68,6 @@ public class User {
 
     public boolean isGuestUser() {
         return false;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getUserId() {
