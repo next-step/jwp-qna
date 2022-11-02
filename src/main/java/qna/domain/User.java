@@ -54,6 +54,10 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
+    public User(User user) {
+        this(user.userId, user.password, user.name, user.email);
+    }
+
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.userId)) {
             throw new UnAuthorizedException();

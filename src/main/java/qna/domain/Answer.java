@@ -15,7 +15,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
-public class Answer extends BaseEntity {
+public class Answer extends DeletableBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,9 +32,6 @@ public class Answer extends BaseEntity {
     @Lob
     @Column(nullable = true)
     private String contents;
-
-    @Column(nullable = false)
-    private boolean deleted = false;
 
     protected Answer() {
     }
@@ -88,11 +85,19 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return isDeleted();
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        super.delete();
+    }
+
+    public void modify(String contents) {
+        this.contents = contents;
+    }
+
+    public String getContents() {
+        return this.contents;
     }
 
     @Override
@@ -102,7 +107,7 @@ public class Answer extends BaseEntity {
             ", writer=" + writer +
             ", question=" + question +
             ", contents='" + contents + '\'' +
-            ", deleted=" + deleted +
+            ", deleted=" + isDeleted() +
             '}';
     }
 }

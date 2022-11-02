@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Question extends BaseEntity {
+public class Question extends DeletableBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,9 +33,6 @@ public class Question extends BaseEntity {
 
     @OneToMany(mappedBy = "question")
     private List<Answer> answers;
-
-    @Column(nullable = false)
-    private boolean deleted = false;
 
     protected Question() {
     }
@@ -67,10 +64,6 @@ public class Question extends BaseEntity {
         return writer.getId();
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
     public void setWriter(User writer) {
         if (Objects.nonNull(writer)) {
             this.writer.getQuestions().remove(this);
@@ -88,8 +81,9 @@ public class Question extends BaseEntity {
         return answers;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void modify(String title, String contents) {
+        this.title = title;
+        this.contents = contents;
     }
 
     @Override
@@ -99,7 +93,7 @@ public class Question extends BaseEntity {
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
             ", writer=" + writer +
-            ", deleted=" + deleted +
+            ", deleted=" + isDeleted() +
             '}';
     }
 }
