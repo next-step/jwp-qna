@@ -1,5 +1,18 @@
 # JPA
 
+## 용어사전
+```text
+테스트코드에서 사용되는 단어들을 정리하였습니다.
+하기 단어들은 이후에 변경될 수 있습니다:)
+```
+* Question: 질문
+* Answer: 답변
+* Writer: 작성자
+* User: 유저
+* DeleteHistory: 삭제이력
+* isDeleted: 삭제여부
+* userId: 유저Id
+
 ## 1단계 - 엔티티 매핑
 ### 요구 사항
 1. 주어진 DDL을 보고 entity 클래스와 리포지토리 클래스 작성
