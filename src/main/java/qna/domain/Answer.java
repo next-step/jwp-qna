@@ -1,16 +1,28 @@
 package qna.domain;
 
+import org.hibernate.annotations.DynamicUpdate;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+@DynamicUpdate
+public class Answer extends BaseEntity{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Lob
+    private String contents;
     private Long writerId;
     private Long questionId;
-    private String contents;
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    protected Answer(){
+
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -26,6 +38,7 @@ public class Answer {
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
+
 
         this.writerId = writer.getId();
         this.questionId = question.getId();
