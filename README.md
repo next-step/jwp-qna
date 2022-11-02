@@ -92,6 +92,22 @@ alter table answer
     - 객체 관계에서 Answer 는 Question 에 접근할 수 있지만 Question 은 Answer 로 접근할 수 없다.
     - 관계형 데이터베이스에서는 Answer 의 외래키(question_id)를 통해 조인으로 Answer <-> Question 접근이 가능하다.
 
+다대일 연관관계 설정 후 Answer 생성 시 다음과 같은 쿼리가 발생하는지 확인한다.
+
+```sql
+insert
+into question
+    (id, created_at, updated_at, contents, deleted, title, writer_id)
+values (null, ?, ?, ?, ?, ?, ?)
+```
+
+```sql
+insert
+into answer
+    (id, created_at, updated_at, contents, deleted, question_id, writer_id)
+values (null, ?, ?, ?, ?, ?, ?)
+```
+
 #### 2. Answer 와 User 간의 연관관계를 매핑한다.
 
 ```h2
