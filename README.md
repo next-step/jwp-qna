@@ -181,6 +181,13 @@ Question : User = N : 1 (연관관계 주인: Question)
   ```
 * [ ] equals() 사용 시 overriding 필요한지 확인
 
+* 연속성 전이(cascade) 사용
+  * 테스트를 진행할 때, 연관된 엔티티를 save하지 않아도 함께 영속되도록 PERSIST로 설정
+
+* 즉시 로딩/지연 로딩
+  * QnA 서비스에서는 Question을 조회할 때, 작성자를 함께 조회하는 것이 유리하다고 판단(EAGER)
+    * 해당 질문을 한 사람인지 보통 체크를 진행할 것으로 보임(deleteQuestion)
+
 ### 테이블 정의
 * 아래 DDL(Data Definition Language)을 보고 유추하여 작성
 ```sql
