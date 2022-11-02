@@ -60,13 +60,13 @@ create table user
 alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
-- [ ] 엔티티 클래스 매핑
-  - [ ] Answer
+- [x] 엔티티 클래스 매핑
+  - [x] Answer
   - [x] DeleteHistory
   - [x] Question
   - [x] User
-- [ ] `@DataJpaTest`를 사용한 학습 테스트
-  - [ ] AnswerRepositoryTest
+- [x] `@DataJpaTest`를 사용한 학습 테스트
+  - [x] AnswerRepositoryTest
   - [x] DeleteHistoryRepositoryTest
   - [x] QuestionRepositoryTest
   - [x] UserRepositoryTest
