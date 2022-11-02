@@ -63,10 +63,10 @@ alter table user
 - [ ] 엔티티 클래스 매핑
   - [ ] Answer
   - [ ] DeleteHistory
-  - [ ] Question
+  - [x] Question
   - [x] User
 - [ ] `@DataJpaTest`를 사용한 학습 테스트
   - [ ] AnswerRepositoryTest
   - [ ] DeleteHistoryRepositoryTest
-  - [ ] QuestionRepositoryTest
+  - [x] QuestionRepositoryTest
   - [x] UserRepositoryTest
