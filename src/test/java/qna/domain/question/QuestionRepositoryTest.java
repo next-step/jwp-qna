@@ -1,5 +1,6 @@
 package qna.domain.question;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.question.QuestionTest.Q1;
+import static qna.domain.question.QuestionTest.Q2;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
@@ -33,8 +35,17 @@ public class QuestionRepositoryTest {
     }
     
     @Test
-    @DisplayName("id로 삭제되지 않은 질문 조회를 테스트한다")
+    @DisplayName("삭제되지 않은 질문 목록 조회를 테스트한다")
     void findByDeletedFalseTest(){
+        questionRepository.save(Q1);
+        questionRepository.save(Q2);
+        List<Question> questions = questionRepository.findByDeletedFalse();
+        assertThat(questions.size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("id로 삭제되지 않은 질문 한 건 조회를 테스트한다")
+    void findByIdAndDeletedFalse(){
         Question question = questionRepository.save(Q1);
         Question getQuestion = questionRepository.findByIdAndDeletedFalse(question.getId())
                 .orElseThrow(() -> new NotFoundException());
@@ -47,7 +58,7 @@ public class QuestionRepositoryTest {
                 () -> assertThat(getQuestion.getUpdatedAt()).isEqualTo(Q1.getUpdatedAt())
         );
     }
-    
+
     @Test
     @DisplayName("질문의 삭제여부가 true로 변경되었는지 테스트한다")
     void IsDeleteChangeTest(){
