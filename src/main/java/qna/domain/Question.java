@@ -1,12 +1,31 @@
 package qna.domain;
 
-public class Question {
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "question")
+@Where(clause = "deleted = false")
+@SQLDelete(sql = "UPDATE question SET deleted = true WHERE id = ?")
+public class Question extends BaseEntity{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
     private Long id;
+    @Column(name = "id", nullable = false, length = 100)
     private String title;
+    @Lob
     private String contents;
+    @Column(name = "writer_id")
     private Long writerId;
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
+    protected Question() {
+
+    }
     public Question(String title, String contents) {
         this(null, title, contents);
     }

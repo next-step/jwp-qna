@@ -12,7 +12,7 @@ public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false, unique = true)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
     @Column(name = "user_id", nullable = false, length = 20, unique = true)
     private String userId;

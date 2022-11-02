@@ -14,7 +14,7 @@ import java.util.Objects;
 public class Answer extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id", updatable = false, nullable = false, unique = true)
+    @Column(name="id", updatable = false, nullable = false)
     private Long id;
     @Column(name="writer_id")
     private Long writerId;
