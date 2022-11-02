@@ -20,7 +20,7 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    private Question() {
+    protected Question() {
 
     }
 

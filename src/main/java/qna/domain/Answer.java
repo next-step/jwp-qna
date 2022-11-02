@@ -24,7 +24,7 @@ public class Answer extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    private Answer() {
+    protected Answer() {
 
     }
 
