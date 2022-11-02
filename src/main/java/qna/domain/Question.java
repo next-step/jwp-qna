@@ -78,6 +78,11 @@ public class Question extends DateEntity {
     }
 
     @Override
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +

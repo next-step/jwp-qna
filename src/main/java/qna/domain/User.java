@@ -103,6 +103,11 @@ public class User extends DateEntity {
     }
 
     @Override
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
     public String toString() {
         return "User{" +
                 "id=" + id +

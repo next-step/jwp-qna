@@ -33,6 +33,11 @@ public class DeleteHistory extends BaseEntity {
     }
 
     @Override
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
