@@ -12,7 +12,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-public class Question {
+public class Question extends BaseEntity{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -20,13 +20,9 @@ public class Question {
 	private String title;
 	@Lob
 	private String contents;
-	@Column(columnDefinition = "timestamp", nullable = false)
-	private LocalDateTime createdAt;
 	private Long writerId;
 	@Column(nullable = false)
 	private boolean deleted = false;
-	@Column(columnDefinition = "timestamp")
-	private LocalDateTime updatedAt;
 
 	protected Question() {
 	}
