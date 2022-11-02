@@ -23,7 +23,7 @@ public class QuestionRepositoryTest {
     QuestionRepository questionRepository;
 
     @Test
-    void 질문을_저장하면_저장한_질문_객체를_반환한다() {
+    void 질문을_저장하면_저장한_질문을_반환한다() {
         //when
         Question question = questionRepository.save(Q1);
 
@@ -36,7 +36,7 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    void 질문을_저장한_후_삭제되지_않은_질문들을_조회하면_삭제여부가_false인_질문_리스트가_반환된다() {
+    void 삭제여부가_거짓인_질문들을_조회한다() {
         //given
         Question saveQuestion1 = questionRepository.save(Q1);
         Question saveQuestion2 = questionRepository.save(Q2);
@@ -55,12 +55,12 @@ public class QuestionRepositoryTest {
     }
 
     @TestFactory
-    Collection<DynamicTest> 질문을_저장한_후_삭제여부값에_따라_findByIdAndDeletedFalse메소드_조회_결과가_달라진다() {
+    Collection<DynamicTest> 질문_삭제여부_변경_시나리오() {
         //given
         Question saveQuestion = questionRepository.save(Q2);
         Long saveQuestionId = saveQuestion.getId();
         return Arrays.asList(
-                DynamicTest.dynamicTest("저장한 질문은 findByIdAndDeletedFalse()로 조회하면 정상적으로 조회가 된다.", () -> {
+                DynamicTest.dynamicTest("삭제여부가 거짓인 질문을 조회한다.", () -> {
                     //when
                     saveQuestion.setDeleted(false);
                     Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestionId);
@@ -68,7 +68,7 @@ public class QuestionRepositoryTest {
                     //then
                     assertThat(findQuestion).isPresent();
                 }),
-                DynamicTest.dynamicTest("저장한 질문의 삭제여부가 true이면 findByIdAndDeletedFalse() 조회 시 조회되지 않는다.", () -> {
+                DynamicTest.dynamicTest("질문의 삭제여부를 참으로 바꾸면 조회할 수 없다.", () -> {
                     //when
                     saveQuestion.setDeleted(true);
                     Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestionId);
@@ -80,19 +80,19 @@ public class QuestionRepositoryTest {
     }
 
     @TestFactory
-    Collection<DynamicTest> 질문을_저장하면_조회가_되지만_해당_질문을_삭제하고_조회하면_더_이상_조회되지_않는다() {
+    Collection<DynamicTest> 질문_조회_시나리오() {
         //given
         Question saveQuestion = questionRepository.save(Q2);
         Long saveQuestionId = saveQuestion.getId();
         return Arrays.asList(
-                DynamicTest.dynamicTest("저장한 질문의 id로 질문을 조회하면 정상적으로 조회가 된다.", () -> {
+                DynamicTest.dynamicTest("id로 질문을 조회한다.", () -> {
                     //when
                     Optional<Question> findQuestion = questionRepository.findById(saveQuestionId);
 
                     //then
                     assertThat(findQuestion).isPresent();
                 }),
-                DynamicTest.dynamicTest("저장한 질문을 삭제하고, 다시 조회하면 해당 질문이 조회되지 않는다.", () -> {
+                DynamicTest.dynamicTest("질문을 삭제하면 조회할 수 없다.", () -> {
                     //when
                     questionRepository.delete(saveQuestion);
                     Optional<Question> deleteQuestion = questionRepository.findById(saveQuestionId);

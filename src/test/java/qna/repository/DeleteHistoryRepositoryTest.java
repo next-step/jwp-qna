@@ -22,7 +22,7 @@ public class DeleteHistoryRepositoryTest {
     DeleteHistoryRepository deleteHistoryRepository;
 
     @Test
-    void 삭제이력을_저장하면_반환된_삭제이력_객체의_id는_비어있지_않다() {
+    void 삭제이력을_저장하면_반환된_삭제이력의_id는_비어있지_않다() {
         //when
         DeleteHistory deleteHistory = deleteHistoryRepository.save(D1);
 
@@ -31,7 +31,7 @@ public class DeleteHistoryRepositoryTest {
     }
 
     @Test
-    void 삭제이력을_두개_저장한_후_전체_조회를_하면_총_두개의_삭제이력_리스트를_반환한다() {
+    void 저장한_삭제이력들_전체를_조회한다() {
         //given
         deleteHistoryRepository.save(D1);
         deleteHistoryRepository.save(D2);
@@ -44,19 +44,19 @@ public class DeleteHistoryRepositoryTest {
     }
 
     @TestFactory
-    Collection<DynamicTest> 삭제이력을_저장하면_조회가_되지만_해당_삭제이력을_삭제하고_조회하면_해당_이력이_조회되지_않는다() {
+    Collection<DynamicTest> 삭제이력_조회_시나리오() {
         //given
         DeleteHistory saveDeleteHistory = deleteHistoryRepository.save(D2);
         Long saveDeleteHistoryId = saveDeleteHistory.getId();
         return Arrays.asList(
-                DynamicTest.dynamicTest("저장한 삭제이력의 id로 삭제이력을 조회하면 정상적으로 조회가 된다.", () -> {
+                DynamicTest.dynamicTest("id로 삭제이력을 조회한다.", () -> {
                     //when
                     Optional<DeleteHistory> findDeleteHistory = deleteHistoryRepository.findById(saveDeleteHistoryId);
 
                     //then
                     assertThat(findDeleteHistory).isPresent();
                 }),
-                DynamicTest.dynamicTest("저장한 삭제이력을 삭제하고, 다시 조회하면 해당 삭제이력이 조회되지 않는다.", () -> {
+                DynamicTest.dynamicTest("삭제이력을 삭제하면 조회할 수 없다.", () -> {
                     //when
                     deleteHistoryRepository.delete(saveDeleteHistory);
                     Optional<DeleteHistory> findDeleteHistory = deleteHistoryRepository.findById(saveDeleteHistoryId);

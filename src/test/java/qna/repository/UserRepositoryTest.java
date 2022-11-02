@@ -24,7 +24,7 @@ public class UserRepositoryTest {
     UserRepository userRepository;
 
     @Test
-    void 유저를_저장하면_저장한_유저_객체를_반환한다() {
+    void 유저를_저장하면_저장한_유저를_반환한다() {
         //when
         User saveUser = userRepository.save(JAVAJIGI);
 
@@ -36,7 +36,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void 유저를_저장한_후_해당_userId로_조회하면_저장한_유저가_조회된다() {
+    void 유저id로_조회한다() {
         //given
         User saveUser = userRepository.save(JAVAJIGI);
 
@@ -52,7 +52,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void 동일한_userId를_가진_유저가_레포지토리에_존재하면_예외를_발생시킨다() {
+    void 유저Id가_중복되면_예외를_발생시킨다() {
         //given
         User saveUser = userRepository.save(SANJIGI);
         User duplicateUser = new User(null, saveUser.getUserId(), "password", "name", "email@gmail.com");
@@ -63,7 +63,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void id가_null인_유저를_저장하면_null이_아닌_id를_가진_유저를_반환한다() {
+    void 유저를_저장하면_반환된_유저의_id는_비어있지_않다() {
         //given
         User user = new User(null, "javajigi", "password", "name", "javajigi@slipp.net");
 
@@ -75,19 +75,19 @@ public class UserRepositoryTest {
     }
 
     @TestFactory
-    Collection<DynamicTest> 유저를_저장하면_조회가_되지만_해당_유저를_삭제하고_조회하면_해당_유저가_조회되지_않는다() {
+    Collection<DynamicTest> 유저_조회_시나리오() {
         //given
         User saveUser = userRepository.save(SANJIGI);
         Long saveUserId = saveUser.getId();
         return Arrays.asList(
-                DynamicTest.dynamicTest("저장한 유저의 id로 유저를 조회하면 정상적으로 조회가 된다.", () -> {
+                DynamicTest.dynamicTest("id로 유저를 조회한다.", () -> {
                     //when
                     Optional<User> findUser = userRepository.findById(saveUserId);
 
                     //then
                     assertThat(findUser).isPresent();
                 }),
-                DynamicTest.dynamicTest("저장한 유저를 삭제하고, 다시 조회하면 해당 유저가 조회되지 않는다.", () -> {
+                DynamicTest.dynamicTest("유저를 삭제하면 조회할 수 없다.", () -> {
                     //when
                     userRepository.delete(saveUser);
                     Optional<User> deleteUser = userRepository.findById(saveUserId);

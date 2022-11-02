@@ -22,7 +22,7 @@ public class AnswerRepositoryTest {
     AnswerRepository answerRepository;
 
     @Test
-    void 답변을_저장하면_저장한_답변_객체를_반환한다() {
+    void 답변을_저장하면_저장한_답변을_반환한다() {
         //when
         Answer answer = answerRepository.save(A1);
 
@@ -35,13 +35,13 @@ public class AnswerRepositoryTest {
     }
 
     @TestFactory
-    Collection<DynamicTest> 저장된_답변의_삭제여부에_따라_findByIdAndDeletedFalse메소드_조회_결과가_다르게_반환된다() {
+    Collection<DynamicTest> 답변_삭제여부_변경_시나리오() {
         //given
         Answer saveAnswer = answerRepository.save(A2);
         saveAnswer.setDeleted(false);
         Long saveAnswerId = saveAnswer.getId();
         return Arrays.asList(
-                DynamicTest.dynamicTest("저장한 답변은 findByIdAndDeletedFalse()로 조회하면 정상적으로 조회가 된다.", () -> {
+                DynamicTest.dynamicTest("삭제여부가 거짓인 답변을 조회한다.", () -> {
                     //when
                     Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
 
@@ -52,7 +52,7 @@ public class AnswerRepositoryTest {
                             () -> assertThat(findAnswer.get().isDeleted()).isFalse()
                     );
                 }),
-                DynamicTest.dynamicTest("저장한 답변의 삭제여부를 true로 업데이트하면, 더 이상 findByIdAndDeletedFalse() 조회 시 조회되지 않는다.", () -> {
+                DynamicTest.dynamicTest("답변의 삭제여부를 참으로 바꾸면 조회할 수 없다.", () -> {
                     //when
                     saveAnswer.setDeleted(true);
                     Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
@@ -64,19 +64,19 @@ public class AnswerRepositoryTest {
     }
 
     @TestFactory
-    Collection<DynamicTest> 답변을_저장하면_조회가_되지만_해당_답변을_삭제하고_조회하면_더_이상_조회되지_않는다() {
+    Collection<DynamicTest> 답변_조회_시나리오() {
         //given
         Answer saveAnswer = answerRepository.save(A1);
         Long saveAnswerId = saveAnswer.getId();
         return Arrays.asList(
-                DynamicTest.dynamicTest("저장한 답변의 id로 답변을 조회하면 정상적으로 조회가 된다.", () -> {
+                DynamicTest.dynamicTest("id로 답변을 조회한다.", () -> {
                     //when
                     Optional<Answer> findAnswer = answerRepository.findById(saveAnswerId);
 
                     //then
                     assertThat(findAnswer).isPresent();
                 }),
-                DynamicTest.dynamicTest("저장한 답변을 삭제하고, 다시 조회하면 해당 답변이 조회되지 않는다.", () -> {
+                DynamicTest.dynamicTest("답변을 삭제하면 조회할 수 없다.", () -> {
                     //when
                     answerRepository.delete(saveAnswer);
                     Optional<Answer> deleteAnswer = answerRepository.findById(saveAnswerId);
