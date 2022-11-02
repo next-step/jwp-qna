@@ -11,6 +11,7 @@ public class Question extends AbstractTimestampEntity implements Serializable {
     private Long id;
     @Column(length = 100, nullable = false)
     private String title;
+    @Lob
     private String contents;
     private Long writerId;
     @Column(length = 20, nullable = false)

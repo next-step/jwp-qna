@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Entity(name = "users")
+@Entity(name = "user")
 public class User  extends AbstractTimestampEntity implements Serializable {
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -14,7 +14,7 @@ public class User  extends AbstractTimestampEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
     @Column(length = 20, nullable = false)
@@ -23,7 +23,7 @@ public class User  extends AbstractTimestampEntity implements Serializable {
     @Column(length = 20, nullable = false)
     private String name;
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 50)
     private String email;
 
     public User() {
