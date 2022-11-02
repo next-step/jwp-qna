@@ -12,9 +12,9 @@ import javax.persistence.*;
 public class Question extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
-    @Column(name = "id", nullable = false, length = 100)
+    @Column(name = "title", nullable = false, length = 100)
     private String title;
     @Lob
     private String contents;
