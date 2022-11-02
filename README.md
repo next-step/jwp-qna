@@ -6,9 +6,9 @@
   - [x] Answer
   - [x] Question
   - [x] User
-  - [ ] DeleteHistory
+  - [x] DeleteHistory
 - [ ] DataJpaTest를 사용한 테스트를 코드 작성
   - [x] AnswerRepositoryTest
   - [x] QuestionRepositoryTest
   - [x] UserRepositoryTest
-  - [ ] DeleteHistoryRepositoryTest
+  - [x] DeleteHistoryRepositoryTest

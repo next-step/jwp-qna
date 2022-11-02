@@ -31,6 +31,26 @@ public class DeleteHistory {
 
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
+    public Long getDeletedById() {
+        return deletedById;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
