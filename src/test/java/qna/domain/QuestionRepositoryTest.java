@@ -49,12 +49,12 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 질문 목록 조회")
     void 삭제되지_않은_질문목록_조회() {
-        questionRepository.save(QuestionTestFixture.Q1);
-        questionRepository.save(QuestionTestFixture.Q2);
+        Question savedQuestion1 = questionRepository.save(QuestionTestFixture.Q1);
+        Question savedQuestion2 = questionRepository.save(QuestionTestFixture.Q2);
         List<Question> questionList = questionRepository.findByDeletedFalse();
 
         assertThat(questionList).hasSize(2);
-        assertThat(questionList).containsAll(Arrays.asList(QuestionTestFixture.Q1, QuestionTestFixture.Q2));
+        assertThat(questionList).containsAll(Arrays.asList(savedQuestion1, savedQuestion2));
     }
 
     @Test
