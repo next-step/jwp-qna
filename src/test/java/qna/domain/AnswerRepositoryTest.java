@@ -8,15 +8,16 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJpaTest
+import qna.NoneDdlDataJpaTest;
+
+@NoneDdlDataJpaTest
 class AnswerRepositoryTest {
     @Autowired
     AnswerRepository answerRepository;
 
     @Test
-    void save_and_find() {
+    void 답변_저장_및_찾기() {
         Answer actual = answerRepository.save(A1);
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
@@ -27,12 +28,11 @@ class AnswerRepositoryTest {
             () -> assertThat(actual.getQuestionId()).isEqualTo(A1.getQuestionId()),
             () -> assertThat(actual.getWriterId()).isEqualTo(A1.getWriterId())
         );
-        assertThat(answerRepository.findByIdAndDeletedFalse(actual.getId()).orElseThrow(RuntimeException::new))
-            .isEqualTo(actual);
+        assertThat(answerRepository.findByIdAndDeletedFalse(actual.getId())).contains(actual);
     }
 
     @Test
-    void 삭제여부_변경후_find() {
+    void 답변_삭제여부_변경() {
         Answer actual = answerRepository.save(A1);
         assertThat(answerRepository.findByIdAndDeletedFalse(actual.getId())).isNotEmpty();
         actual.setDeleted(true);
@@ -40,7 +40,7 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    void 질문찾기() {
+    void 삭제되지않은_질문에대한_답변들_찾기() {
         Answer savedA1 = answerRepository.save(A1);
         Answer savedA2 = answerRepository.save(A2);
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());

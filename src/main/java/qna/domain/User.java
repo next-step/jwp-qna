@@ -2,20 +2,13 @@ package qna.domain;
 
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
-import org.hibernate.annotations.DynamicUpdate;
-
-import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-@DynamicUpdate
-@Table(name = "user")
 @Entity
 public class User extends BaseTime {
     public static final GuestUser GUEST_USER = new GuestUser();
@@ -23,7 +16,6 @@ public class User extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
     private String userId;
     private String password;
     private String name;
@@ -38,9 +30,6 @@ public class User extends BaseTime {
 
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
-        if (Objects.isNull(userId) || Objects.isNull(name) || Objects.isNull(password)) {
-            throw new NotFoundException();
-        }
         this.userId = userId;
         this.password = password;
         this.name = name;

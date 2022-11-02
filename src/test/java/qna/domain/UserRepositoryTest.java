@@ -6,20 +6,23 @@ import static qna.domain.UserTest.*;
 
 import java.util.UUID;
 
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import qna.NotFoundException;
+import qna.NoneDdlDataJpaTest;
 
-@DataJpaTest
+@NoneDdlDataJpaTest
 class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    EntityManager em;
 
     @Test
-    void user_save_and_find() {
+    void 유저_저장_및_찾() {
         User actual = userRepository.save(JAVAJIGI);
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
@@ -31,33 +34,27 @@ class UserRepositoryTest {
             () -> assertThat(actual.getUpdatedAt()).isNotNull(),
             () -> assertThat(actual.getUpdatedAt()).isEqualTo(actual.getCreatedAt())
         );
-        assertThat(userRepository.findByUserId(JAVAJIGI.getUserId()).orElseThrow(RuntimeException::new))
-            .isEqualTo(actual);
+        assertThat(userRepository.findByUserId(JAVAJIGI.getUserId())).contains(actual);
     }
 
     @Test
-    void user_update() {
+    void 유저_비밀번호_변경() {
         User user = userRepository.save(JAVAJIGI);
-        String newPassword = UUID.randomUUID().toString();
+        String newPassword = "password2";
         user.setPassword(newPassword);
-        User actual = userRepository.findByUserId(user.getUserId())
-            .orElseThrow(RuntimeException::new);
-        assertThat(actual.getPassword()).isEqualTo(newPassword);
+        em.flush();
+        String password = userRepository.findById(user.getId()).orElseThrow(RuntimeException::new)
+            .getPassword();
+        assertThat(password).isEqualTo(newPassword);
     }
 
     @Test
-    void userId_unique() {
+    void 유저아이디는_유니크() {
         userRepository.save(JAVAJIGI);
-        User sameUserIdUser = new User(JAVAJIGI.getUserId(), UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+        User sameUserIdUser = new User(JAVAJIGI.getUserId(), "password", "test@email.com",
             UUID.randomUUID().toString());
         assertThatThrownBy(() -> userRepository.save(sameUserIdUser))
             .isInstanceOf(DataIntegrityViolationException.class);
-    }
-
-    @Test
-    void not_null_필드를_null_로_생성할경우_예외처리한다() {
-        assertThatThrownBy(() -> new User(null, UUID.randomUUID().toString(), "name", "email@test.com"))
-            .isInstanceOf(NotFoundException.class);
     }
 
 }

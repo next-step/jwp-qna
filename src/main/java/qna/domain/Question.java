@@ -1,25 +1,18 @@
 package qna.domain;
 
-import java.util.Objects;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.Lob;
 
-import org.hibernate.annotations.DynamicUpdate;
-
-import qna.NotFoundException;
-
-@DynamicUpdate
-@Table(name = "question")
 @Entity
 public class Question extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+    @Lob
     private String contents;
     private Long writerId;
     private boolean deleted = false;
@@ -33,9 +26,6 @@ public class Question extends BaseTime {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        if (Objects.isNull(title)) {
-            throw new NotFoundException();
-        }
         this.title = title;
         this.contents = contents;
     }

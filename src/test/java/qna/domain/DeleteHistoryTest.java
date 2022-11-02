@@ -9,15 +9,16 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJpaTest
+import qna.NoneDdlDataJpaTest;
+
+@NoneDdlDataJpaTest
 class DeleteHistoryTest {
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
 
     @Test
-    void save_and_find() {
+    void 삭제히스토리_저장_및_찾기() {
         DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, Q1.getId(), JAVAJIGI.getId(),
             LocalDateTime.now());
         DeleteHistory actual = deleteHistoryRepository.save(expected);
@@ -28,7 +29,6 @@ class DeleteHistoryTest {
             () -> assertThat(actual.getCreateDate()).isEqualTo(expected.getCreateDate()),
             () -> assertThat(actual.getDeletedById()).isEqualTo(JAVAJIGI.getId())
         );
-        assertThat(deleteHistoryRepository.findById(actual.getId()).orElseThrow(RuntimeException::new))
-            .isEqualTo(actual);
+        assertThat(deleteHistoryRepository.findById(actual.getId())).contains(actual);
     }
 }

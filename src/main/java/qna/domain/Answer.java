@@ -6,15 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.DynamicUpdate;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-@DynamicUpdate
-@Table(name = "answer")
 @Entity
 public class Answer extends BaseTime {
     @Id
