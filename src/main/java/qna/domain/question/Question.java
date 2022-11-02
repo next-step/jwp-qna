@@ -1,9 +1,10 @@
-package qna.domain;
+package qna.domain.question;
 
+import qna.domain.user.User;
+import qna.domain.answer.Answer;
 import qna.domain.common.BaseEntity;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 public class Question  extends BaseEntity {

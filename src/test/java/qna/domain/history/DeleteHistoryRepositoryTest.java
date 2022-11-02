@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.history;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.DeleteHistoryTest.questiDelete;
+import static qna.domain.history.DeleteHistoryTest.questiDelete;
 
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {

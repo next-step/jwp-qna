@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.answer;
 
 import java.util.Objects;
 import javax.persistence.Column;
@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 import qna.domain.common.BaseEntity;
 
 @Entity

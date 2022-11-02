@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.question;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.QuestionTest.Q1;
+import static qna.domain.question.QuestionTest.Q1;
 
 @DataJpaTest
 public class QuestionRepositoryTest {

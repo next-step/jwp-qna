@@ -1,6 +1,8 @@
-package qna.domain;
+package qna.domain.history;
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.common.ContentType;
+import qna.domain.history.DeleteHistory;
 
 import java.time.LocalDateTime;
 
