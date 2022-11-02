@@ -1,20 +1,36 @@
 package qna.domain;
 
 import qna.UnAuthorizedException;
+import qna.common.AuditingEntity;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class User {
+@Entity
+@Table(name = "user", uniqueConstraints = {@UniqueConstraint(
+        name = "user_id_unique",
+        columnNames = {"user_id"}
+)})
+public class User extends AuditingEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "user_id", length = 20, nullable = false)
     private String userId;
+
+    @Column(length = 20, nullable = false)
     private String password;
+
+    @Column(length = 20, nullable = false)
     private String name;
+
+    @Column(length = 50)
     private String email;
 
-    private User() {
-    }
+    public User() {}
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
@@ -100,6 +116,25 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(userId, user.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId);
     }
 
     @Override
