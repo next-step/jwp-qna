@@ -35,10 +35,8 @@ class AnswerRepositoryTest {
 			() -> assertThat(answer.getId()).isEqualTo(A1.getId()),
 			() -> assertThat(answer.getContents()).isEqualTo(A1.getContents()),
 			() -> assertThat(answer.isDeleted()).isEqualTo(A1.isDeleted()),
-			() -> assertThat(answer.getQuestionId()).isEqualTo(A1.getQuestionId()),
-			() -> assertThat(answer.getWriterId()).isEqualTo(A1.getWriterId()),
-			() -> assertThat(answer.getCreatedAt()).isEqualTo(A1.getCreatedAt()),
-			() -> assertThat(answer.getUpdatedAt()).isEqualTo(A1.getUpdatedAt())
+			() -> assertThat(answer.getQuestion()).isEqualTo(A1.getQuestion()),
+			() -> assertThat(answer.getWriter()).isEqualTo(A1.getWriter())
 		);
 	}
 
@@ -55,10 +53,8 @@ class AnswerRepositoryTest {
 			() -> assertThat(foundAnswer.getId()).isEqualTo(answer.getId()),
 			() -> assertThat(foundAnswer.getContents()).isEqualTo(answer.getContents()),
 			() -> assertThat(foundAnswer.isDeleted()).isEqualTo(answer.isDeleted()),
-			() -> assertThat(foundAnswer.getQuestionId()).isEqualTo(answer.getQuestionId()),
-			() -> assertThat(foundAnswer.getWriterId()).isEqualTo(answer.getWriterId()),
-			() -> assertThat(foundAnswer.getCreatedAt()).isEqualTo(answer.getCreatedAt()),
-			() -> assertThat(foundAnswer.getUpdatedAt()).isEqualTo(answer.getUpdatedAt())
+			() -> assertThat(foundAnswer.getQuestion()).isEqualTo(answer.getQuestion()),
+			() -> assertThat(foundAnswer.getWriter()).isEqualTo(answer.getWriter())
 		);
 	}
 

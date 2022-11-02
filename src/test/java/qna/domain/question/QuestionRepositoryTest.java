@@ -40,9 +40,7 @@ class QuestionRepositoryTest {
 			() -> assertThat(question.getTitle()).isEqualTo(Q1.getTitle()),
 			() -> assertThat(question.getContents()).isEqualTo(Q1.getContents()),
 			() -> assertThat(question.isDeleted()).isEqualTo(Q1.isDeleted()),
-			() -> assertThat(question.getWriterId()).isEqualTo(Q1.getWriterId()),
-			() -> assertThat(question.getCreatedAt()).isEqualTo(Q1.getCreatedAt()),
-			() -> assertThat(question.getUpdatedAt()).isEqualTo(Q1.getUpdatedAt())
+			() -> assertThat(question.getWriterId()).isEqualTo(Q1.getWriterId())
 		);
 	}
 
@@ -60,9 +58,7 @@ class QuestionRepositoryTest {
 			() -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
 			() -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
 			() -> assertThat(actual.isDeleted()).isEqualTo(question.isDeleted()),
-			() -> assertThat(actual.getWriterId()).isEqualTo(question.getWriterId()),
-			() -> assertThat(actual.getCreatedAt()).isEqualTo(question.getCreatedAt()),
-			() -> assertThat(actual.getUpdatedAt()).isEqualTo(question.getUpdatedAt())
+			() -> assertThat(actual.getWriterId()).isEqualTo(question.getWriterId())
 		);
 	}
 
