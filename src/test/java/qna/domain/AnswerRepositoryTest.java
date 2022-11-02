@@ -1,15 +1,18 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.AnswerTest.A1;
-
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.NotFoundException;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.domain.AnswerTest.A1;
+import static qna.domain.QuestionTest.Q1;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -18,7 +21,7 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("답변이 정상적으로 등록되있는지 테스트 한다")
-    void saveTest(){
+    void saveAnswerTest(){
         Answer answer = answerRepository.save(A1);
         assertAll(
                 () -> assertThat(answer.getId()).isNotNull(),
