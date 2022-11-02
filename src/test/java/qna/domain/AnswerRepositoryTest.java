@@ -77,7 +77,6 @@ class AnswerRepositoryTest {
     @DisplayName("Answer 의 deleted 가 false 일 때 findByIdAndDeletedFalse 로 조회된 Answer 가 있는지 확인")
     void findByIdAndDeletedFalse() {
         Answer savedAnswer = answerRepository.save(AnswerTest.A1);
-        savedAnswer.setDeleted(false);
 
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
 
@@ -89,7 +88,7 @@ class AnswerRepositoryTest {
     @DisplayName("Answer 의 deleted 가 true 일 때 findByIdAndDeletedFalse 조회 시 empty 로 조회되는지 확인")
     void findByIdAndDeletedFalse2() {
         Answer savedAnswer = answerRepository.save(AnswerTest.A1);
-        savedAnswer.setDeleted(true);
+        savedAnswer.deleted();
 
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
 
@@ -102,11 +101,9 @@ class AnswerRepositoryTest {
     void findByQuestionIdAndDeletedFalse() {
         Answer savedAnswer1 = answerRepository.save(AnswerTest.A1);
         savedAnswer1.toQuestion(QuestionTest.Q2);
-        savedAnswer1.setDeleted(false);
 
         Answer savedAnswer2 = answerRepository.save(AnswerTest.A2);
         savedAnswer2.toQuestion(QuestionTest.Q2);
-        savedAnswer2.setDeleted(false);
 
         List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(savedAnswer1.getQuestionId());
 
@@ -122,11 +119,10 @@ class AnswerRepositoryTest {
     void findByQuestionIdAndDeletedFalse2() {
         Answer savedAnswer1 = answerRepository.save(AnswerTest.A1);
         savedAnswer1.toQuestion(QuestionTest.Q2);
-        savedAnswer1.setDeleted(true);
+        savedAnswer1.deleted();
 
         Answer savedAnswer2 = answerRepository.save(AnswerTest.A2);
         savedAnswer2.toQuestion(QuestionTest.Q2);
-        savedAnswer2.setDeleted(false);
 
         List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(savedAnswer1.getQuestionId());
 

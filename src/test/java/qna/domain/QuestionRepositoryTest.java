@@ -51,7 +51,6 @@ class QuestionRepositoryTest {
     @DisplayName("Question 의 deleted 가 false 일 때 findByIdAndDeletedFalse 로 조회된 Question 가 있는지 확인")
     void findByIdAndDeletedFalse() {
         Question saveQuestion = questionRepository.save(QuestionTest.Q1);
-        saveQuestion.setDeleted(false);
 
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestion.getId());
 
@@ -63,7 +62,7 @@ class QuestionRepositoryTest {
     @DisplayName("Question 의 deleted 가 true 일 때 findByIdAndDeletedFalse 조회 시 empty 로 조회되는지 확인")
     void findByIdAndDeletedFalse2() {
         Question saveQuestion = questionRepository.save(QuestionTest.Q1);
-        saveQuestion.setDeleted(true);
+        saveQuestion.deleted();
 
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestion.getId());
 
@@ -75,10 +74,8 @@ class QuestionRepositoryTest {
     @DisplayName("id 로 Question 조회 시 Question 의 deleted 가 false 인 것만 조회되는지 확인 (모두 false 였을 때)")
     void findByQuestionIdAndDeletedFalse() {
         Question savedQuestion1 = questionRepository.save(QuestionTest.Q1);
-        savedQuestion1.setDeleted(false);
 
         Question savedQuestion2 = questionRepository.save(QuestionTest.Q2);
-        savedQuestion2.setDeleted(false);
 
         List<Question> findQuestions = questionRepository.findByDeletedFalse();
 
@@ -93,10 +90,9 @@ class QuestionRepositoryTest {
     @DisplayName("question id 로 Question 조회 시 Question 의 deleted 가 false 인 것만 조회되는지 확인 (각각 true, false 였을 때)")
     void findByQuestionIdAndDeletedFalse2() {
         Question savedQuestion1 = questionRepository.save(QuestionTest.Q1);
-        savedQuestion1.setDeleted(true);
+        savedQuestion1.deleted();
 
         Question savedQuestion2 = questionRepository.save(QuestionTest.Q2);
-        savedQuestion2.setDeleted(false);
 
         List<Question> findQuestions = questionRepository.findByDeletedFalse();
 
