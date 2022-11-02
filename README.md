@@ -168,6 +168,7 @@ Question : User = N : 1 (연관관계 주인: Question)
 * 연관관계 주인 - 외래 키 관리자
   * [ ] 양방향 정의 시, 연관관계 편의 메소드를 이용해 순수한 객체까지 고려한 양방향 연관관계 설정
   * [ ] 반드시 필요한 경우에만 양방향 관계를 사용해야 함
+    * toString() 시 무한루프 위험 있음(양방향 사용 시 잘 막아야함)
   ```java
   // 예시
   public void setTeam(Team team) {
@@ -178,6 +179,7 @@ Question : User = N : 1 (연관관계 주인: Question)
     team.getMembers().add(this);
   }
   ```
+* [ ] equals() 사용 시 overriding 필요한지 확인
 
 ### 테이블 정의
 * 아래 DDL(Data Definition Language)을 보고 유추하여 작성
