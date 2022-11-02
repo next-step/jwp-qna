@@ -8,24 +8,26 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.util.Objects;
 @Entity
-@Table("answer")
+@Table(name = "answer")
 @SQLDelete(sql = "UPDATE answer SET deleted = ture WHERE id = ?")
 @Where(clause = "deleted = false")
-public class Answer {
+public class Answer extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id", updatable = false, nullable = false, unique = true)
     private Long id;
-
     @Column(name="writer_id")
     private Long writerId;
     @Column(name="question_id")
     private Long questionId;
-    @Lob        //Large Object
+    @Lob        // clob
     private String contents;
     @Column(name="deleted", nullable = false)
     private boolean deleted = false;
 
+    protected Answer() {
+
+    }
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }

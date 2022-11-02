@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table("user")
+@Table(name = "user")
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
