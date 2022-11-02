@@ -1,15 +1,12 @@
 package qna.domain;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.util.List;
 
 @DataJpaTest
 public class AnswerTest {
@@ -24,8 +21,8 @@ public class AnswerTest {
     void save() {
         Answer expected = answerRepository.save(A1);
         assertAll(
-                () -> assertThat(expected.getId()).isNotNull(),
-                () -> assertThat(expected.getWriterId()).isEqualTo(A1.getWriterId())
+            () -> assertThat(expected.getId()).isNotNull(),
+            () -> assertThat(expected.getWriterId()).isEqualTo(A1.getWriterId())
         );
     }
 
