@@ -64,9 +64,9 @@ alter table user
   - [ ] Answer
   - [ ] DeleteHistory
   - [ ] Question
-  - [ ] User
+  - [x] User
 - [ ] `@DataJpaTest`를 사용한 학습 테스트
   - [ ] AnswerRepositoryTest
   - [ ] DeleteHistoryRepositoryTest
   - [ ] QuestionRepositoryTest
-  - [ ] UserRepositoryTest
+  - [x] UserRepositoryTest
