@@ -6,5 +6,5 @@
   * [ ] delete_history
   * [ ] question
   * [ ] user
-
+* [ ] @DataJpaTest를 활용하여 테스트 진행
 
