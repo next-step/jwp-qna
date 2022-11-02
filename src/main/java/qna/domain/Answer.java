@@ -3,14 +3,30 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+public class Answer extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long writerId;
     private Long questionId;
+    @Lob
     private String contents;
     private boolean deleted = false;
+
+    protected Answer() {
+    }
+
+    public Answer(Long id, Long writerId, Long questionId, String contents, boolean deleted) {
+        this.id = id;
+        this.writerId = writerId;
+        this.questionId = questionId;
+        this.contents = contents;
+        this.deleted = deleted;
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -82,12 +98,7 @@ public class Answer {
 
     @Override
     public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+        return "Answer{" + "id=" + id + ", writerId=" + writerId + ", questionId=" + questionId + ", contents='"
+                + contents + '\'' + ", deleted=" + deleted + '}';
     }
 }
