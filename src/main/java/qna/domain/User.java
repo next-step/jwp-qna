@@ -2,6 +2,7 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.UniqueConstraint;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
@@ -10,7 +11,7 @@ import java.util.Objects;
 public class User extends DateEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
     @Column(length = 20, nullable = false)
