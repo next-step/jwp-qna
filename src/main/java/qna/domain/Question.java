@@ -26,7 +26,7 @@ public class Question extends BaseEntity {
     private String contents;
     @Column(name = "writer_id")
     private Long writerId;
-    @Column(name = "deleted")
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
     protected Question() {
