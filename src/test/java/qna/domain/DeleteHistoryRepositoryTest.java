@@ -12,6 +12,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
@@ -23,8 +25,8 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("저장된 entity는 id가 양수이고 각각 지정한 content를 문자열로 가진다")
     void test1() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, 2L, 2L, LocalDateTime.now())
+                new DeleteHistory(ContentType.QUESTION, 1L, JAVAJIGI, LocalDateTime.now()),
+                new DeleteHistory(ContentType.ANSWER, 2L, SANJIGI, LocalDateTime.now())
         );
 
         List<DeleteHistory> deleted = repository.saveAll(deleteHistories);

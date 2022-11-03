@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -61,9 +60,9 @@ public class AnswerTest {
     @Test
     @DisplayName("writer id가  정상적으로 설정됨")
     void test6() {
-        A1.setWriterId(SANJIGI.getId());
+        A1.setWriter(SANJIGI);
 
-        assertThat(A1.getWriterId()).isEqualTo(SANJIGI.getId());
+        assertThat(A1.getWriter()).isEqualTo(SANJIGI.getId());
     }
 
     @Test

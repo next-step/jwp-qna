@@ -14,6 +14,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.QuestionTest.Q1;
+import static qna.domain.QuestionTest.Q2;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
@@ -43,7 +44,7 @@ class AnswerRepositoryTest {
                 () -> assertThat(save.getId()).isPositive(),
                 () -> assertThat(save.getCreatedAt()).isNotNull(),
                 () -> assertThat(save.getUpdatedAt()).isNotNull(),
-                () -> assertThat(save.getWriterId()).isPositive(),
+                () -> assertThat(save.getWriter()).isNotNull(),
                 () -> assertThat(save.getQuestionId()).isNull(),
                 () -> assertThat(save.isOwner(JAVAJIGI)).isTrue()
         );
@@ -51,11 +52,11 @@ class AnswerRepositoryTest {
 
     @Test
     @DisplayName("Question Id와 삭제되지 않은 Answer를 검색하면 한 건이 조회됨")
-    void findByQuestionIdAndDeletedFalse() {
-        A1.setQuestionId(1L);
-        A2.setQuestionId(2L);
+    void findByQuestionQIdAndDeletedFalse() {
+        A1.setQuestion(Q1);
+        A2.setQuestion(Q2);
         Answer deletedAnswer = new Answer(JAVAJIGI, Q1, "some contents");
-        deletedAnswer.setQuestionId(1L);
+        deletedAnswer.setQuestion(Q2);
         deletedAnswer.setDeleted(true);
 
         answerRepository.saveAll(Arrays.asList(A1, A2, deletedAnswer));
