@@ -24,6 +24,9 @@ public class AnswerRepositoryTest {
     @Autowired
     AnswerRepository answerRepository;
 
+    @Autowired
+    QuestionRepository questionRepository;
+
     @Test
     void 답변을_저장하면_저장한_답변을_반환한다() {
         //given
@@ -99,5 +102,21 @@ public class AnswerRepositoryTest {
                     assertThat(deleteAnswer).isNotPresent();
                 })
         );
+    }
+
+    @Test
+    void cascade_REMOVE_테스트() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = TestAnswerFactory.create(writer, question);
+        Answer saveAnswer = answerRepository.save(answer);
+        Question saveQuestion = questionRepository.save(question);
+
+        //when
+        answerRepository.delete(saveAnswer);
+        Optional<Question> findQuestion = questionRepository.findById(saveQuestion.getId());
+
+        assertThat(findQuestion).isPresent();
     }
 }
