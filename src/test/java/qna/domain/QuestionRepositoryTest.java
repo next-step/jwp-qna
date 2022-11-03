@@ -18,11 +18,6 @@ public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
-    @BeforeEach
-    void 테스트_수행_전_데이터_일괄삭제() {
-        questionRepository.deleteAll();
-    }
-
     @Test
     @DisplayName("질문 저장")
     void 저장() {

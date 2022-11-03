@@ -15,11 +15,6 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
-    void 테스트_수행_전_데이터_일괄삭제() {
-        userRepository.deleteAll();
-    }
-
     @Test
     @DisplayName("사용자 저장")
     void 저장() {

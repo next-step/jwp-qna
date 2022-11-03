@@ -15,11 +15,6 @@ public class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
-    @BeforeEach
-    void 테스트_수행_전_데이터_일괄삭제() {
-        deleteHistoryRepository.deleteAll();
-    }
-
     @Test
     @DisplayName("삭제이력 저장")
     void 저장() {
