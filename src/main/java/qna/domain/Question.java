@@ -18,7 +18,7 @@ public class Question extends BaseEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
-    private User writerId;
+    private User writer;
 
     @Column(length = 20, nullable = false)
     private boolean deleted = false;
@@ -38,12 +38,12 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer;
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer);
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -74,12 +74,12 @@ public class Question extends BaseEntity implements Serializable {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId.getId();
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(User writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -96,7 +96,7 @@ public class Question extends BaseEntity implements Serializable {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }
