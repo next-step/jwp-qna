@@ -119,6 +119,11 @@ alter table user
     - [x] Question Id로 조회
     - [x] Id로 조회
   - Question
+    - [ ] Question작성자 변경이 가능하다.
+  - QuestionRepository
+    - [ ] 등록, 조회, 삭제
+    - [ ] 삭제되지 않은 목록 조회
+    - [ ] id로 삭제되지 않은 Question 조회
   - User
   - DeleteHistory
   - DeleteHistoryRepository
