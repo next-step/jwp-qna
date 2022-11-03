@@ -4,8 +4,8 @@
 
 ### 요구 사항
 
-- [ ] 아래의 DDL (Data Definition Language) 을 보고 엔티티 클래스와 레포지토리 클래스 작성
-- [ ] `@DataJpaTest`를 사용하여 테스트 작성
+- [X] 아래의 DDL (Data Definition Language) 을 보고 엔티티 클래스와 레포지토리 클래스 작성
+- [X] `@DataJpaTest`를 사용하여 테스트 작성
 
 ```sql
 create table answer
@@ -62,4 +62,57 @@ create table user
 
 alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
+```
+
+## 2단계 - 연관 관계 매핑
+
+### 요구 사항
+
+- [ ] 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+
+- H2
+
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
+```
+
+- Mysql
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question (id)
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user (id)
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user (id)
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user (id)
 ```
