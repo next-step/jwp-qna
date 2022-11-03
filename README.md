@@ -125,8 +125,8 @@ alter table user
     - [x] 삭제되지 않은 목록 조회
     - [x] id로 삭제되지 않은 Question 조회
   - User
-    - [ ] update Exception 테스트
-    - [ ] 이름, 이메일 비교
+    - [x] update Exception 테스트
+    - [x] 이름, 이메일 비교
   - UserRepository
     - [ ] 등록, 조회, 삭제
     - [ ] userId로 조회
