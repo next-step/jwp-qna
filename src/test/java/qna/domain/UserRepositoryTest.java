@@ -7,6 +7,7 @@ import static qna.domain.UserTest.*;
 import java.util.UUID;
 
 import javax.persistence.EntityManager;
+import javax.validation.ConstraintViolationException;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,13 @@ class UserRepositoryTest {
             UUID.randomUUID().toString());
         assertThatThrownBy(() -> userRepository.save(sameUserIdUser))
             .isInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @Test
+    void 유저아이디_null_validation() {
+        User user = new User(null, "password", "name", "test@email.com");
+        assertThatThrownBy(() -> userRepository.save(user))
+            .isInstanceOf(ConstraintViolationException.class);
     }
 
 }
