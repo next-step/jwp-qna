@@ -17,6 +17,7 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
     private Long writerId;
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Question() {
@@ -88,11 +89,11 @@ public class Question extends BaseEntity {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", contents='" + contents + '\'' +
+            ", writerId=" + writerId +
+            ", deleted=" + deleted +
+            '}';
     }
 }
