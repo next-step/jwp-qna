@@ -5,16 +5,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.domain.*;
+import qna.domain.AnswerTest;
+import qna.domain.ContentType;
+import qna.domain.DeleteHistory;
+import qna.domain.UserTest;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
 
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
@@ -33,6 +31,7 @@ public class DeleteHistoryRepositoryTest {
         DeleteHistory D1 = new DeleteHistory(ContentType.ANSWER, AnswerTest.A1.getId(),
                 UserTest.JAVAJIGI.getId(),
                 LocalDateTime.now());
+
         DeleteHistory deleteHistory = deleteHistoryRepository.save(D1);
 
         assertThat(deleteHistory).isNotNull();
