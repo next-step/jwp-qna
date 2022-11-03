@@ -38,7 +38,7 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = new Question(1L, "title1", "contents1").writeBy(UserTestFixture.JAVAJIGI);
+        question = new Question(1L, UserTestFixture.SANJIGI, "title1", "contents1").writeBy(UserTestFixture.JAVAJIGI);
         answer = new Answer(1L, UserTestFixture.JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
     }
@@ -89,8 +89,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
+                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriteBy(), LocalDateTime.now()),
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriteBy(), LocalDateTime.now())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

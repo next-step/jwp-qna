@@ -12,8 +12,8 @@ public class Question extends BaseEntity {
     private String title;
     @Column(columnDefinition = "LONGTEXT")
     private String contents;
-    @ManyToOne(optional = false)
-    private User writer;
+    @ManyToOne
+    private User writeBy;
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -21,23 +21,20 @@ public class Question extends BaseEntity {
 
     }
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, User writeBy, String title, String contents) {
         this.id = id;
+        this.writeBy = writeBy;
         this.title = title;
         this.contents = contents;
     }
 
     public Question writeBy(User writer) {
-        this.writer = writer;
+        this.writeBy = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+        return this.writeBy.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -56,8 +53,8 @@ public class Question extends BaseEntity {
         return contents;
     }
 
-    public User getWriter() {
-        return writer;
+    public User getWriteBy() {
+        return writeBy;
     }
 
     public boolean isDeleted() {
@@ -70,7 +67,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writer.getId() +
+                ", writerId=" + writeBy.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
@@ -80,12 +77,12 @@ public class Question extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Question question = (Question) o;
-        return deleted == question.deleted && id.equals(question.id) && title.equals(question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer, question.writer);
+        return deleted == question.deleted && id.equals(question.id) && title.equals(question.title) && Objects.equals(contents, question.contents) && Objects.equals(writeBy, question.writeBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writer, deleted);
+        return Objects.hash(id, title, contents, writeBy, deleted);
     }
 
     public void delete() {
