@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.AnswerTest.A1;
+import static qna.domain.AnswerTest.A2;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -27,11 +29,11 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("questionId와 일치하고 삭제상태가 false인 Answer목록을 반환")
     void findByQuestionIdAndDeletedFalse() {
-        Answer savedAnswer = answerRepository.save(A1);
+        answerRepository.saveAll(Arrays.asList(A1, A2));
 
-        List<Answer> findAnswer = answerRepository.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestionId());
+        List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
 
-        assertThat(findAnswer).containsExactly(savedAnswer);
+        assertThat(findAnswers).containsExactly(A1,A2);
     }
 
     @Test
