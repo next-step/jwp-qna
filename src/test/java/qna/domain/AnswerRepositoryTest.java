@@ -26,9 +26,9 @@ public class AnswerRepositoryTest {
 
         assertAll(
                 () -> assertThat(savedAnswer.getId()).isNotNull(),
-                () -> assertThat(answer.getQuestionId()).isEqualTo(savedAnswer.getQuestionId()),
+                () -> assertThat(answer.getQuestion()).isEqualTo(savedAnswer.getQuestion()),
                 () -> assertThat(answer.getContents()).isEqualTo(savedAnswer.getContents()),
-                () -> assertThat(answer.getWriterId()).isEqualTo(savedAnswer.getWriterId()),
+                () -> assertThat(answer.getWriter()).isEqualTo(savedAnswer.getWriter()),
                 () -> assertThat(answer.isDeleted()).isEqualTo(savedAnswer.isDeleted())
         );
 
@@ -61,9 +61,9 @@ public class AnswerRepositoryTest {
 
         assertAll(
                 () -> assertThat(savedAnswer.getId()).isEqualTo(expected.getId()),
-                () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(expected.getQuestionId()),
+                () -> assertThat(savedAnswer.getQuestion()).isEqualTo(expected.getQuestion()),
                 () -> assertThat(savedAnswer.getContents()).isEqualTo(expected.getContents()),
-                () -> assertThat(savedAnswer.getWriterId()).isEqualTo(expected.getWriterId()),
+                () -> assertThat(savedAnswer.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(savedAnswer.isDeleted()).isEqualTo(expected.isDeleted())
         );
     }
@@ -73,7 +73,7 @@ public class AnswerRepositoryTest {
     void 질문_ID로_삭제되지_않은_답변목록_조회() {
         answerRepository.save(AnswerTestFixture.A1);
         answerRepository.save(AnswerTestFixture.A2);
-        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(AnswerTestFixture.A1.getQuestionId());
+        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(AnswerTestFixture.A1.getQuestion().getId());
 
         assertThat(answerList).hasSize(2);
         assertThat(answerList).containsAll(Arrays.asList(AnswerTestFixture.A1, AnswerTestFixture.A2));
