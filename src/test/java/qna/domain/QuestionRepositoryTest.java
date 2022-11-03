@@ -27,7 +27,7 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("질문을 저장할 수 있어야 한다.")
-    void save() {
+    void save_question() {
         Question question = Q1;
         Question savedQuestion = questionRepository.save(question);
         assertThat(savedQuestion.getId()).isNotNull();
