@@ -131,7 +131,7 @@ class QuestionRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("삭제 여부 true 로 변경 후 조회 테스트")
+	@DisplayName("삭제 여부 true 로 변경 후 조회 테스트 - dirty checking")
 	void deleteTest() {
 		// given
 		User writer = userGenerator.savedUser();
