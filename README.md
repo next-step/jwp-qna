@@ -26,10 +26,12 @@
   - [x] UserRepositoryTest
   - [x] DeleteHistoryRepositoryTest
 - 연관 관계 매핑
-  - [ ] Question - Answer 연관 관계 매핑
-  - [ ] User - Answer 연관 관계 매핑
-  - [ ] User - Question 연관 관계 매핑
-  - [ ] User - DeleteHistory 연관 관계 매핑
+  - [x] Question - Answer 연관 관계 매핑
+  - [x] User - Answer 연관 관계 매핑
+  - [x] User - Question 연관 관계 매핑
+  - [x] User - DeleteHistory 연관 관계 매핑
+- 테스트 데이터 generator 생성
+  - static 객체 활용 시 테스트 데이터가 공유되는 문제가 발생
 
 ### DDL
 ```SQL
