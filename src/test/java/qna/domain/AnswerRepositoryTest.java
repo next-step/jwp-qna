@@ -63,7 +63,7 @@ class AnswerRepositoryTest {
     @Test
     void toQuestion() {
         final Answer answer = new Answer(answerWriter, question1, "test");
-        answer.toQuestion(question2);
+        answer.setQuestion(question2);
         final Answer saved = answerRepository.save(answer);
         assertThat(saved.getQuestion()).isEqualTo(question2);
     }
