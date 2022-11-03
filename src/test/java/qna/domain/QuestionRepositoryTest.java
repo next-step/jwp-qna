@@ -73,7 +73,7 @@ class QuestionRepositoryTest {
         Question question = QuestionTest.Q2.writeBy(user);
         Question saveQuestion = questionRepository.save(question);
 
-        saveQuestion.setTitle("테스트1");
+        saveQuestion.changeTitle("테스트1");
         Question findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestion.getId()).get();
 
         assertAll(

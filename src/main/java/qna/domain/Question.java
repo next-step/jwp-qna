@@ -63,15 +63,11 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void changeTitle(String title) {
         this.title = title;
     }
 
@@ -79,24 +75,16 @@ public class Question extends BaseEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriteBy() {
         return writeBy;
-    }
-
-    public void setWriteBy(User writerBy) {
-        this.writeBy = writerBy;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
     }
 
     @Override
