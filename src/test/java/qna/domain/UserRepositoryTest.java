@@ -10,11 +10,10 @@ import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import qna.NoneDdlDataJpaTest;
-
-@NoneDdlDataJpaTest
+@DataJpaTest(properties = {"spring.jpa.hibernate.ddl-auto=validate"})
 class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
@@ -22,7 +21,7 @@ class UserRepositoryTest {
     EntityManager em;
 
     @Test
-    void 유저_저장_및_찾() {
+    void 유저_저장_및_찾기() {
         User actual = userRepository.save(JAVAJIGI);
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),

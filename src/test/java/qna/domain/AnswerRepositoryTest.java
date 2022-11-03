@@ -8,10 +8,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import qna.NoneDdlDataJpaTest;
-
-@NoneDdlDataJpaTest
+@DataJpaTest(properties = {"spring.jpa.hibernate.ddl-auto=validate"})
 class AnswerRepositoryTest {
     @Autowired
     AnswerRepository answerRepository;
