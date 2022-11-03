@@ -12,9 +12,15 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        show_sql: false
     hibernate:
       ddl-auto: create-drop
 
 logging:
   level:
-    org.hibernate.SQL: debug
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
+        SQL: debug
