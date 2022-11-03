@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,22 @@ public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @BeforeEach
+    void setUp() {
+        answerRepository.deleteAll();
+    }
+
     @DisplayName("답변을 저장 후 확인")
     @Test
     void save() {
         Answer answer = answerRepository.save(AnswerTest.A1);
 
-        assertThat(answer).isEqualTo(AnswerTest.A1);
+        assertAll(
+            () -> assertThat(answer.getId()).isNotNull(),
+            () -> assertThat(answer.getWriterId()).isEqualTo(AnswerTest.A1.getWriterId()),
+            () -> assertThat(answer.getContents()).isEqualTo(AnswerTest.A1.getContents()),
+            () -> assertThat(answer.getQuestionId()).isEqualTo(AnswerTest.A1.getQuestionId())
+        );
     }
 
     @DisplayName("답변을 저장 후 조회 확인")

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,23 @@ class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
+    @BeforeEach
+    void setUp() {
+        userRepository.deleteAll();
+    }
+
     @DisplayName("유저를 저장 후 확인")
     @Test
     void save() {
         User user = userRepository.save(UserTest.JAVAJIGI);
 
-        assertThat(user).isEqualTo(UserTest.JAVAJIGI);
+        assertAll(
+            () -> assertThat(user.getId()).isNotNull(),
+            () -> assertThat(user.getUserId()).isEqualTo(UserTest.JAVAJIGI.getUserId()),
+            () -> assertThat(user.getPassword()).isEqualTo(UserTest.JAVAJIGI.getPassword()),
+            () -> assertThat(user.getName()).isEqualTo(UserTest.JAVAJIGI.getName()),
+            () -> assertThat(user.getEmail()).isEqualTo(UserTest.JAVAJIGI.getEmail())
+        );
     }
 
     @DisplayName("유저를 저장 후 조회 확인")
