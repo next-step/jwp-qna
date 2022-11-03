@@ -54,8 +54,8 @@ public class QuestionTest {
         assertAll(
             () -> assertThat(expectList).isNotNull(),
             () -> assertThat(expectList.size()).isEqualTo(2),
-            () -> assertThat(questionRepository.findById(Q1.getId()).get().getWriter()).isEqualTo(writer1),
-            () -> assertThat(questionRepository.findById(Q2.getId()).get().getWriter()).isEqualTo(writer2)
+            () -> assertThat(expected1.getWriter()).isEqualTo(writer1),
+            () -> assertThat(expected2.getWriter()).isEqualTo(writer2)
         );
     }
 
