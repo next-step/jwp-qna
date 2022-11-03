@@ -33,8 +33,8 @@ public class QuestionTest {
         assertAll(
             () -> assertThat(expectList).isNotNull(),
             () -> assertThat(expectList.size()).isEqualTo(2),
-            () -> assertThat(questionRepository.findByContents("contents1").getWriterId()).isEqualTo(UserTest.JAVAJIGI.getId()),
-            () -> assertThat(questionRepository.findByContents("contents2").getWriterId()).isEqualTo(UserTest.SANJIGI.getId())
+            () -> assertThat(questionRepository.findById(1L).get().getId()).isEqualTo(UserTest.JAVAJIGI.getId()),
+            () -> assertThat(questionRepository.findById(2L).get().getId()).isEqualTo(UserTest.SANJIGI.getId())
         );
     }
 
