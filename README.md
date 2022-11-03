@@ -115,9 +115,9 @@ alter table user
     - [x] writer 확인 테스트
     - [x] Question 변경 테스트
   - AnswerRepository
-    - [ ] 등록, 조회, 삭제
-    - [ ] Question Id로 조회
-    - [ ] Id로 조회
+    - [x] 등록, 조회, 삭제
+    - [x] Question Id로 조회
+    - [x] Id로 조회
   - Question
   - User
   - DeleteHistory
