@@ -71,6 +71,4 @@ public class AnswerRepositoryTest {
         assertThat(savedAnswers).usingFieldByFieldElementComparator()
                 .containsExactly(A1, A2);
     }
-
-
 }
