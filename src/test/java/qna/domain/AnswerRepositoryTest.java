@@ -53,7 +53,7 @@ class AnswerRepositoryTest {
     @DisplayName("저장한 엔티티와 동일한 id로 조회한 엔티티는 동일성 보장한다.")
     @Test
     void sameEntity() {
-        final Answer saved = answerRepository.save(AnswerTest.A2);
+        final Answer saved = answerRepository.save(new Answer(answerWriter, question1, "Answers Contents1"));
         final Answer answer = answerRepository.findById(saved.getId()).get();
         assertThat(answer.getId()).isEqualTo(saved.getId());
         assertThat(answer).isEqualTo(saved);
