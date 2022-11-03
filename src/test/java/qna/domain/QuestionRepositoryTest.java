@@ -27,7 +27,7 @@ public class QuestionRepositoryTest {
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
                 () -> assertThat(question.getContents()).isEqualTo(saved.getContents()),
-                () -> assertThat(question.getWriterId()).isEqualTo(saved.getWriterId()),
+                () -> assertThat(question.getWriter()).isEqualTo(saved.getWriter()),
                 () -> assertThat(question.getTitle()).isEqualTo(saved.getTitle())
         );
     }
@@ -61,7 +61,7 @@ public class QuestionRepositoryTest {
         assertAll(
                 () -> assertThat(saved.getId()).isEqualTo(expected.getId()),
                 () -> assertThat(saved.getContents()).isEqualTo(expected.getContents()),
-                () -> assertThat(saved.getWriterId()).isEqualTo(expected.getWriterId()),
+                () -> assertThat(saved.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(saved.getTitle()).isEqualTo(expected.getTitle())
         );
 

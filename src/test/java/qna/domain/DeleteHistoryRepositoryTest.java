@@ -23,7 +23,7 @@ public class DeleteHistoryRepositoryTest {
 
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(deleteHistory.getDeletedById()).isEqualTo(saved.getDeletedById()),
+                () -> assertThat(deleteHistory.getDeletedUser()).isEqualTo(saved.getDeletedUser()),
                 () -> assertThat(deleteHistory.getContentId()).isEqualTo(saved.getContentId()),
                 () -> assertThat(deleteHistory.getCreateDate()).isEqualTo(saved.getCreateDate()),
                 () -> assertThat(deleteHistory.getContentType()).isEqualTo(saved.getContentType())
