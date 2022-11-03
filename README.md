@@ -134,7 +134,10 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: create-drop
-    show-sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
 ```
 * H2 콘솔에 접근할 수도 있다고 생각해 콘솔 설정 진행
 * application 실행 시마다 기존 테이블 삭제되고 생성되도록 ddl-auto를 create-drop으로 설정

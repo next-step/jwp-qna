@@ -14,4 +14,7 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: create-drop
-    show-sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
