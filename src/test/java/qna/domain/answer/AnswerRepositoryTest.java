@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.TestConstructor;
 
+import qna.domain.generator.AnswerGenerator;
 import qna.domain.generator.QuestionGenerator;
 import qna.domain.generator.UserGenerator;
-import qna.domain.question.AnswerGenerator;
 import qna.domain.question.Question;
 import qna.domain.user.User;
 

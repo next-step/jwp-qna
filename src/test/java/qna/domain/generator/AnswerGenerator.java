@@ -1,7 +1,8 @@
-package qna.domain.question;
+package qna.domain.generator;
 
 import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
+import qna.domain.question.Question;
 import qna.domain.user.User;
 
 public class AnswerGenerator {
