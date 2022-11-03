@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -57,15 +58,19 @@ public class AnswerRepositoryTest {
         assertThat(saved.getQuestionId()).isEqualTo(1L);
     }
 
-//    @Test
-//    @DisplayName("삭제 상태가 아닌 결과를 리턴한다.")
-//    void findByQuestionIdAndDeleted() {
-//        answerRepository.saveAll(Arrays.asList(A1, A2));
-//
-//        List<Answer> savedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
-//
-//        assertThat(savedAnswers).usingFieldByFieldElementComparator()
-//                .containsExactly(A1, A2);
-//    }
+    @Test
+    @DisplayName("삭제 상태가 아닌 결과를 리턴한다.")
+    void findByQuestionIdAndDeleted() {
+        answerRepository.saveAll(Arrays.asList(A1, A2));
+        List<Answer> savedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
+
+        savedAnswers.forEach(answer -> {
+            assertThat(answer.isDeleted()).isEqualTo(false);
+        });
+
+        assertThat(savedAnswers).usingFieldByFieldElementComparator()
+                .containsExactly(A1, A2);
+    }
+
 
 }

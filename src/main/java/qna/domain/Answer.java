@@ -23,6 +23,7 @@ public class Answer extends BaseEntity{
     @Column(name="question_id")
     private Long questionId;
 
+
     @Column(name="contents")
     @Lob
     private String contents;
