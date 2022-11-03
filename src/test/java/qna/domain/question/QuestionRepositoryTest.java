@@ -2,26 +2,46 @@ package qna.domain.question;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static qna.domain.question.QuestionTest.*;
 
 import java.util.List;
-import java.util.Optional;
 
+import javax.persistence.EntityManager;
+
+import org.hibernate.proxy.HibernateProxy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.TestConstructor;
 
-import qna.domain.user.UserTest;
+import qna.domain.generator.QuestionGenerator;
+import qna.domain.generator.UserGenerator;
+import qna.domain.user.User;
 
 @DataJpaTest
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+@Import({QuestionGenerator.class, UserGenerator.class})
 @DisplayName("Question Repository 테스트")
 class QuestionRepositoryTest {
 
-	@Autowired
-	private QuestionRepository questionRepository;
+	private final QuestionRepository questionRepository;
+	private final QuestionGenerator questionGenerator;
+	private final UserGenerator userGenerator;
+	private final EntityManager entityManager;
+
+	public QuestionRepositoryTest(
+		QuestionRepository questionRepository,
+		QuestionGenerator questionGenerator,
+		UserGenerator userGenerator,
+		EntityManager entityManager
+	) {
+		this.questionRepository = questionRepository;
+		this.questionGenerator = questionGenerator;
+		this.userGenerator = userGenerator;
+		this.entityManager = entityManager;
+	}
 
 	@BeforeEach
 	void setUp() {
@@ -31,50 +51,68 @@ class QuestionRepositoryTest {
 	@Test
 	@DisplayName("질문 저장 테스트")
 	void saveTest() {
-		Question question = questionRepository.save(Q1);
+		User writer = userGenerator.savedUser();
+		Question question = questionRepository.save(questionGenerator.savedQuestion(writer));
 
 		assertAll(
 			() -> assertThat(question).isNotNull(),
 			() -> assertThat(question.getId()).isNotNull(),
-			() -> assertThat(question.getId()).isEqualTo(Q1.getId()),
-			() -> assertThat(question.getTitle()).isEqualTo(Q1.getTitle()),
-			() -> assertThat(question.getContents()).isEqualTo(Q1.getContents()),
-			() -> assertThat(question.isDeleted()).isEqualTo(Q1.isDeleted()),
-			() -> assertThat(question.getWriter()).isEqualTo(Q1.getWriter())
+			() -> assertThat(question.isOwner(writer)).isTrue(),
+			() -> assertThat(question.isDeleted()).isFalse()
 		);
 	}
 
 	@Test
-	@DisplayName("질문 저장 후 조회 테스트")
+	@DisplayName("질문 저장 후 조회 테스트 - id")
 	void findByIdTest() {
-		Question question = questionRepository.save(Q1);
+		// given
+		User writer = userGenerator.savedUser();
+		Question question = questionRepository.save(questionGenerator.savedQuestion(writer));
+		entityManager.clear();
 
+		// when
 		Question actual = questionRepository.findById(question.getId())
 			.orElseThrow(() -> new IllegalArgumentException("entity is not found"));
 
+		// then
 		assertAll(
 			() -> assertThat(actual).isNotNull(),
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
 			() -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
 			() -> assertThat(actual.isDeleted()).isEqualTo(question.isDeleted()),
-			() -> assertThat(actual.getWriter()).isEqualTo(question.getWriter())
+			() -> assertThat(actual.getWriter()).isEqualTo(question.getWriter()),
+			() -> assertThat(actual.getWriter())
+				.as("엔티티 매니저 clear() 했기 때문에 LazyLoading 에 의해 User 는 proxy 객체")
+				.isInstanceOf(HibernateProxy.class)
 		);
 	}
 
 	@Test
 	@DisplayName("질문 리스트 조회 테스트")
 	void findAllTest() {
-		Question question1 = questionRepository.save(Q1);
-		Question question2 = questionRepository.save(Q2);
+		// given
+		User writer = userGenerator.savedUser();
+		questionGenerator.savedQuestion(writer);
+		questionGenerator.savedQuestion(writer);
+		entityManager.clear();
 
+		// when
 		List<Question> questions = questionRepository.findByDeletedFalse();
 
-		assertAll(
-			() -> assertThat(questions).isNotNull(),
-			() -> assertThat(questions).hasSize(2),
-			() -> assertThat(questions).containsExactly(question1, question2)
-		);
+		// then
+		assertThat(questions)
+			.hasSize(2)
+			.allSatisfy(question ->
+				assertAll(
+					() -> assertThat(question).isNotNull(),
+					() -> assertThat(question.getId()).isNotNull(),
+					() -> assertThat(question.isOwner(writer)).isTrue(),
+					() -> assertThat(question.isDeleted()).isFalse(),
+					() -> assertThat(question.getWriter())
+						.as("엔티티 매니저 clear() 했기 때문에 LazyLoading 에 의해 User 는 proxy 객체")
+						.isInstanceOf(HibernateProxy.class)
+				));
 	}
 
 	@Test
@@ -85,7 +123,7 @@ class QuestionRepositoryTest {
 		for (int i = 0; i < 100; i++) {
 			title.append("a");
 		}
-		Question questions = new Question(title.toString(), "contents1").writeBy(UserTest.JAVAJIGI);
+		Question questions = new Question(title.toString(), "contents1").writeBy(userGenerator.savedUser());
 
 		// when, then
 		assertThatThrownBy(() -> questionRepository.save(questions))
@@ -96,37 +134,14 @@ class QuestionRepositoryTest {
 	@DisplayName("삭제 여부 true 로 변경 후 조회 테스트")
 	void deleteTest() {
 		// given
-		Question question = questionRepository.save(Q1);
-		Long id = question.getId();
+		User writer = userGenerator.savedUser();
+		Question question = questionGenerator.savedQuestion(writer);
 
 		// when
 		question.setDeleted(true);
-		Optional<Question> byIdAndDeletedFalse = questionRepository.findByIdAndDeletedFalse(id);
+		entityManager.flush();
 
 		// then
-		assertAll(
-			() -> assertThat(byIdAndDeletedFalse).isEmpty(),
-			() -> assertThat(question.isDeleted()).isTrue(),
-			() -> assertThat(questionRepository.findById(id)).isNotEmpty(),
-			() -> assertThat(questionRepository.findByIdAndDeletedFalse(id)).isEmpty()
-		);
+		assertThat(question.isDeleted()).isTrue();
 	}
-
-	@Test
-	@DisplayName("질문 저장 후 삭제 테스트")
-	void deleteByIdTest() {
-		// given
-		Question question = questionRepository.save(Q1);
-		Long id = question.getId();
-
-		// when
-		questionRepository.deleteById(id);
-
-		// then
-		assertAll(
-			() -> assertThat(questionRepository.findById(id)).isEmpty(),
-			() -> assertThat(questionRepository.findByIdAndDeletedFalse(id)).isEmpty()
-		);
-	}
-
 }
