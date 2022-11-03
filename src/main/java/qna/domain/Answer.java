@@ -14,16 +14,17 @@ public class Answer extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
-    private User writerId;
+    private User writer;
 
-    @ManyToOne
-    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-    private Question questionId;
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name="fk_answer_to_question"))
+    private Question question;
 
     @Lob
     private String contents;
+
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -42,8 +43,9 @@ public class Answer extends BaseEntity implements Serializable {
             throw new NotFoundException();
         }
 
-        this.writerId = writer;
-        this.questionId = question;
+        this.writer = writer;
+        this.question = question;
+        question.addAnswer(this);
         this.contents = contents;
     }
 
@@ -51,11 +53,11 @@ public class Answer extends BaseEntity implements Serializable {
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer);
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question;
+        this.question = question;
     }
 
     public Long getId() {
@@ -66,20 +68,20 @@ public class Answer extends BaseEntity implements Serializable {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId.getId();
+    public User getWriter() {
+        return writer;
     }
 
     public void setWriterId(User writerId) {
-        this.writerId = writerId;
+        this.writer = writerId;
     }
 
-    public Long getQuestionId() {
-        return questionId.getId();
+    public Question getQuestion() {
+        return question;
     }
 
-//    public void setQuestionId(Long questionId) {
-//        this.questionId.setQuestionId(questionId);
+//    public void setQuestion(Question question) {
+//        this.question.setQuestionId(question);
 //    }
 
     public String getContents() {
@@ -102,8 +104,8 @@ public class Answer extends BaseEntity implements Serializable {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
