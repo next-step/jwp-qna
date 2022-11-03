@@ -23,8 +23,6 @@ public class AnswerTest {
 			.isInstanceOf(NotFoundException.class);
 	}
 
-
-
 	@Test
 	void 동등성() {
 		assertThat(new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents"))
