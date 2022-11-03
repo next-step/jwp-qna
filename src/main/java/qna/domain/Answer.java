@@ -6,12 +6,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import org.hibernate.annotations.SQLDelete;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
 @Entity
+@SQLDelete(sql = "update answer set deleted = true where id = ?")
 public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
