@@ -128,8 +128,8 @@ alter table user
     - [x] update Exception 테스트
     - [x] 이름, 이메일 비교
   - UserRepository
-    - [ ] 등록, 조회, 삭제
-    - [ ] userId로 조회
+    - [x] 등록, 조회, 삭제
+    - [x] userId로 조회
   - DeleteHistory
   - DeleteHistoryRepository
     - [x] 등록, 조회, 삭제
