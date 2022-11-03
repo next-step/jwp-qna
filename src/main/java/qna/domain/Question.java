@@ -9,11 +9,17 @@ public class Question extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(length = 100, nullable = false)
     private String title;
+
     @Lob
     private String contents;
-    private Long writerId;
+
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writerId;
+
     @Column(length = 20, nullable = false)
     private boolean deleted = false;
 
@@ -32,12 +38,12 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writerId = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writerId.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -69,10 +75,10 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return writerId.getId();
     }
 
-    public void setWriterId(Long writerId) {
+    public void setWriterId(User writerId) {
         this.writerId = writerId;
     }
 

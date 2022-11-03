@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.sql.Clob;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -14,8 +13,15 @@ public class Answer extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writerId;
+
+    @ManyToOne
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question questionId;
+
     @Lob
     private String contents;
     @Column(nullable = false)
@@ -36,8 +42,8 @@ public class Answer extends BaseEntity implements Serializable {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writerId = writer;
+        this.questionId = question;
         this.contents = contents;
     }
 
@@ -45,11 +51,11 @@ public class Answer extends BaseEntity implements Serializable {
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writerId.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.questionId = question;
     }
 
     public Long getId() {
@@ -61,20 +67,20 @@ public class Answer extends BaseEntity implements Serializable {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return writerId.getId();
     }
 
-    public void setWriterId(Long writerId) {
+    public void setWriterId(User writerId) {
         this.writerId = writerId;
     }
 
     public Long getQuestionId() {
-        return questionId;
+        return questionId.getId();
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
+//    public void setQuestionId(Long questionId) {
+//        this.questionId.setQuestionId(questionId);
+//    }
 
     public String getContents() {
         return contents;
