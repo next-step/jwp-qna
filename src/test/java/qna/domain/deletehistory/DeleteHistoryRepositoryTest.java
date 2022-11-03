@@ -6,7 +6,6 @@ import static qna.domain.deletehistory.DeleteHistoryTest.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +17,6 @@ class DeleteHistoryRepositoryTest {
 
 	@Autowired
 	private DeleteHistoryRepository deleteHistoryRepository;
-
-	@BeforeEach
-	void setUp() {
-		deleteHistoryRepository.deleteAllInBatch();
-	}
 
 	@Test
 	@DisplayName("삭제 이력 저장 테스트")

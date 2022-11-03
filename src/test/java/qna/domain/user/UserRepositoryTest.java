@@ -6,7 +6,6 @@ import static qna.domain.user.UserTest.*;
 
 import javax.persistence.EntityManager;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -29,11 +28,6 @@ class UserRepositoryTest {
 		this.userRepository = userRepository;
 		this.userGenerator = userGenerator;
 		this.entityManager = entityManager;
-	}
-
-	@BeforeEach
-	void setUp() {
-		userRepository.deleteAllInBatch();
 	}
 
 	@Test

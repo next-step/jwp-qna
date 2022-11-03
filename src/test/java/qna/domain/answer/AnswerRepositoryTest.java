@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import javax.persistence.EntityManager;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -43,12 +42,6 @@ class AnswerRepositoryTest {
 		this.questionGenerator = questionGenerator;
 		this.userGenerator = userGenerator;
 		this.entityManager = entityManager;
-	}
-
-	// TODO 삭제
-	@BeforeEach
-	void setUp() {
-		answerRepository.deleteAllInBatch();
 	}
 
 	@Test

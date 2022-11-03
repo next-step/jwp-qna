@@ -8,7 +8,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.hibernate.proxy.HibernateProxy;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -41,11 +40,6 @@ class QuestionRepositoryTest {
 		this.questionGenerator = questionGenerator;
 		this.userGenerator = userGenerator;
 		this.entityManager = entityManager;
-	}
-
-	@BeforeEach
-	void setUp() {
-		questionRepository.deleteAllInBatch();
 	}
 
 	@Test
