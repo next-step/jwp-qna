@@ -57,6 +57,15 @@ alter table user
 <details>
 <summary> </summary>
 
+* Domain
+  * DDL을 이용해 엔티티를 매핑한다.
+    * @Lob 사용
+    * @EnableJpaAuditing를 사용해 공통 컬럼 처리
+    * @SQLDelete를 사용
 
+* Test
+  * AnswerRepositoryTest 구현
+  * QuestionRepositoryTest 구현
+  * UserRepositoryTest 구현
 
 </details>

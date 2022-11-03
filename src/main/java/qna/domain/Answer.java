@@ -20,7 +20,7 @@ public class Answer extends BaseEntity{
     private Long writerId;
     @Column(name="question_id")
     private Long questionId;
-    @Lob        // clob
+    @Lob
     private String contents;
     @Column(name="deleted", nullable = false)
     private boolean deleted = false;

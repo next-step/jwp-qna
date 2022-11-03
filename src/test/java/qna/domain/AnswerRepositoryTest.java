@@ -26,7 +26,7 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("답변을 저장한다.")
+    @DisplayName("답변을 저장할 수 있어야 한다.")
     void save() {
         Answer answer = A1;
         Answer savedAnswer = answerRepository.save(answer);
@@ -39,18 +39,7 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제 상태가 아닌 결과를 리턴한다.")
-    void findByQuestionIdAndDeleted() {
-        answerRepository.saveAll(Arrays.asList(A1, A2));
-
-        List<Answer> savedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
-
-        assertThat(savedAnswers).usingFieldByFieldElementComparator()
-                .containsExactly(A1, A2);
-    }
-
-    @Test
-    @DisplayName("입력된 AnswerId에 해당하면서 삭제상태가 아닌 Answer를 가져올 수 있어야 한다")
+    @DisplayName("AnswerId로 삭제상태가 아닌 Answer를 가져올 수 있어야 한다.")
     void findByIdAndDeletedFalse() {
         answerRepository.save(A1);
 
@@ -59,13 +48,24 @@ public class AnswerRepositoryTest {
         assertThat(answer).contains(A1);
     }
 
-    @DisplayName("Answer에 대한 Question을 변경한다.")
+    @DisplayName("toQuestion을 이용해 Answer에 대한 Question을 변경한다.")
     @Test
-    void toQuestion() {
+    void modifyQuestion() {
         final Answer answer = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "test");
         answer.toQuestion(new Question(1L, "test title", "test contents"));
         final Answer saved = answerRepository.save(answer);
         assertThat(saved.getQuestionId()).isEqualTo(1L);
     }
+
+//    @Test
+//    @DisplayName("삭제 상태가 아닌 결과를 리턴한다.")
+//    void findByQuestionIdAndDeleted() {
+//        answerRepository.saveAll(Arrays.asList(A1, A2));
+//
+//        List<Answer> savedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
+//
+//        assertThat(savedAnswers).usingFieldByFieldElementComparator()
+//                .containsExactly(A1, A2);
+//    }
 
 }
