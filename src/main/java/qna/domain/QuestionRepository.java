@@ -11,9 +11,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     Optional<Question> findByIdAndDeletedFalse(Long id);
 
-    @Override
-    List<Question> findAll();
-
     Question findByContents(String contents);
 
 
