@@ -121,3 +121,5 @@ alter table user
   - Question
   - User
   - DeleteHistory
+  - DeleteHistoryRepository
+    - [ ] 등록, 조회, 삭제
