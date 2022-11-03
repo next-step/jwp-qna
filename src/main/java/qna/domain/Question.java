@@ -27,7 +27,7 @@ public class Question extends BaseEntity implements Serializable {
         this.contents = contents;
     }
 
-    public Question() {
+    protected Question() {
 
     }
 

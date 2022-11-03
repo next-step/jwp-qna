@@ -41,7 +41,7 @@ public class Answer extends BaseEntity implements Serializable {
         this.contents = contents;
     }
 
-    public Answer() {
+    protected Answer() {
     }
 
     public boolean isOwner(User writer) {
