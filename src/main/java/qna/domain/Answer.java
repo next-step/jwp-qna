@@ -12,7 +12,8 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long writerId;
-    private Long questionId;
+    @ManyToOne(optional = false)
+    private Question question;
     @Column(columnDefinition = "LONGTEXT")
     private String contents;
     @Column(nullable = false)
@@ -38,7 +39,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -47,7 +48,7 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public void updateContents(String contents) {
@@ -62,8 +63,8 @@ public class Answer extends BaseEntity {
         return writerId;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
@@ -79,7 +80,7 @@ public class Answer extends BaseEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
@@ -90,12 +91,12 @@ public class Answer extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Answer answer = (Answer) o;
-        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writerId, answer.writerId) && Objects.equals(questionId, answer.questionId) && Objects.equals(contents, answer.contents);
+        return deleted == answer.deleted && id.equals(answer.id) && Objects.equals(writerId, answer.writerId) && Objects.equals(question, answer.question) && Objects.equals(contents, answer.contents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, writerId, questionId, contents, deleted);
+        return Objects.hash(id, writerId, question, contents, deleted);
     }
 
     public void delete() {
