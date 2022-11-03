@@ -54,7 +54,7 @@ alter table user
 </details>
 
 ## 기능 구현 목록
-<details>
+<details open>
 <summary> </summary>
 
 * Domain
