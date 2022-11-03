@@ -122,4 +122,4 @@ alter table user
   - User
   - DeleteHistory
   - DeleteHistoryRepository
-    - [ ] 등록, 조회, 삭제
+    - [x] 등록, 조회, 삭제
