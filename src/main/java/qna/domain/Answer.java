@@ -3,10 +3,7 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -16,7 +13,9 @@ public class Answer extends BaseEntity {
     private Long id;
     private Long writerId;
     private Long questionId;
+    @Column(columnDefinition = "LONGTEXT")
     private String contents;
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Answer() {

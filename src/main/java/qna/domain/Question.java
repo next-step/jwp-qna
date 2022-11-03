@@ -10,8 +10,10 @@ public class Question extends BaseEntity {
     private Long id;
     @Column(nullable = false, length = 100)
     private String title;
+    @Column(columnDefinition = "LONGTEXT")
     private String contents;
     private Long writerId;
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Question() {
