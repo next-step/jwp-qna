@@ -79,13 +79,6 @@ public class User extends BaseEntity {
     public String getUserId() {
         return userId;
     }
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
 
     public String getEmail() {
         return email;
@@ -100,14 +93,12 @@ public class User extends BaseEntity {
             return false;
         }
         User user = (User) o;
-        return Objects.equals(getUserId(), user.getUserId()) && Objects.equals(getPassword(),
-                user.getPassword()) && Objects.equals(getName(), user.getName()) && Objects.equals(
-                getEmail(), user.getEmail());
+        return Objects.equals(getUserId(), user.getUserId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUserId(), getPassword(), getName(), getEmail());
+        return Objects.hash(getUserId());
     }
 
     @Override
