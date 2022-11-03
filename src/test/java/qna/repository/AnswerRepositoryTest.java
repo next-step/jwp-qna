@@ -28,7 +28,7 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("questionId와 일치하고 삭제상태가 false인 Answer목록을 반환")
-    void findByQuestionIdAndDeletedFalse() {
+    void test_returns_answers_with_questionId_and_deleted_is_false() {
         answerRepository.saveAll(Arrays.asList(A1, A2));
 
         List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
@@ -38,7 +38,7 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("Answer의 id와 일치하고 삭제상태가 false인 Answer를 반환")
-    void findByIdAndDeletedFalse() {
+    void test_returns_answer_with_answerId_and_deleted_is_false() {
         answerRepository.save(A1);
 
         Optional<Answer> answer = answerRepository.findByIdAndDeletedFalse(A1.getId());
