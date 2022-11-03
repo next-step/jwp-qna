@@ -111,9 +111,9 @@ alter table user
 ### 테스트
 - DataJpaTest를 사용한 테스트 작성
   - Answer
-    - [ ] 생성자 Exception 테스트
-    - [ ] writer 확인 테스트
-    - [ ] Question 변경 테스트
+    - [x] 생성자 Exception 테스트
+    - [x] writer 확인 테스트
+    - [x] Question 변경 테스트
   - AnswerRepository
     - [ ] 등록, 조회, 삭제
     - [ ] Question Id로 조회
