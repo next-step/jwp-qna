@@ -40,17 +40,7 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제상태가 아닌 Question을 가져올 수 있어야 한다.")
-    void get_all_deleted_false() {
-        questionRepository.saveAll(Arrays.asList(Q1, Q2));
-
-        List<Question> questions = questionRepository.findByDeletedFalse();
-
-        assertThat(questions.size()).isEqualTo(Arrays.asList(Q1, Q2).size());
-    }
-
-    @Test
-    @DisplayName("QuestionId로 삭제 상태가 아닌 Question을 가져올 수 있어야 한다.")
+    @DisplayName("QuestionId로 삭제 상태가 아닌 Question 가져올 수 있어야 한다.")
     void get_question_by_id() {
         questionRepository.save(Q1);
 
@@ -58,7 +48,6 @@ public class QuestionRepositoryTest {
 
         assertThat(question).contains(Q1);
     }
-
     @Test
     @DisplayName("삭제된 Question은 조회되지 않는다.")
     void do_not_get_deleted_question() {
