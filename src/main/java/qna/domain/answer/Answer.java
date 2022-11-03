@@ -27,7 +27,6 @@ public class Answer extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(updatable = false)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -3,7 +3,6 @@ package qna.domain.deletehistory;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -27,7 +26,6 @@ public class DeleteHistory extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(updatable = false)
 	private Long id;
 
 	@Enumerated(EnumType.STRING)
