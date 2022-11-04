@@ -22,14 +22,14 @@ class QuestionRepositoryTest {
     @DisplayName("질문을 저장할 수 있다")
     @Test
     void save() {
-        Question actual = questionRepository.save(Q1);
+        Question result = questionRepository.save(Q1);
 
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.isDeleted()).isEqualTo(Q1.isDeleted()),
-                () -> assertThat(actual.getWriterId()).isEqualTo(Q1.getWriterId()),
-                () -> assertThat(actual.getContents()).isEqualTo(Q1.getContents()),
-                () -> assertThat(actual.getTitle()).isEqualTo(Q1.getTitle())
+                () -> assertThat(result.getId()).isNotNull(),
+                () -> assertThat(result.isDeleted()).isEqualTo(Q1.isDeleted()),
+                () -> assertThat(result.getWriterId()).isEqualTo(Q1.getWriterId()),
+                () -> assertThat(result.getContents()).isEqualTo(Q1.getContents()),
+                () -> assertThat(result.getTitle()).isEqualTo(Q1.getTitle())
         );
     }
 
@@ -56,11 +56,11 @@ class QuestionRepositoryTest {
     @DisplayName("id로 조회할 수 있다")
     @Test
     void findById() {
-        Question actual = questionRepository.save(Q1);
+        Question expect = questionRepository.save(Q1);
 
-        Question result = questionRepository.findByIdAndDeletedFalse(actual.getId()).get();
+        Question result = questionRepository.findByIdAndDeletedFalse(expect.getId()).get();
 
-        assertThat(actual == result).isTrue();
+        assertThat(expect == result).isTrue();
     }
 
     @DisplayName("삭제된 질문은 findByIdAndDeletedFalse 함수로 조회할 수 없다")

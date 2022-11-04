@@ -22,34 +22,34 @@ class AnswerRepositoryTest {
     @DisplayName("답변을 저장할 수 있다")
     @Test
     void save() {
-        Answer actual = answerRepository.save(A1);
+        Answer result = answerRepository.save(A1);
 
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.isDeleted()).isEqualTo(A1.isDeleted()),
-                () -> assertThat(actual.getContents()).isEqualTo(A1.getContents()),
-                () -> assertThat(actual.getQuestionId()).isEqualTo(A1.getQuestionId()),
-                () -> assertThat(actual.getWriterId()).isEqualTo(A1.getWriterId())
+                () -> assertThat(result.getId()).isNotNull(),
+                () -> assertThat(result.isDeleted()).isEqualTo(A1.isDeleted()),
+                () -> assertThat(result.getContents()).isEqualTo(A1.getContents()),
+                () -> assertThat(result.getQuestionId()).isEqualTo(A1.getQuestionId()),
+                () -> assertThat(result.getWriterId()).isEqualTo(A1.getWriterId())
         );
     }
 
     @DisplayName("id로 조회할 수 있다")
     @Test
     void findById() {
-        Answer actual = answerRepository.save(A1);
+        Answer expect = answerRepository.save(A1);
 
-        Answer result = answerRepository.findByIdAndDeletedFalse(actual.getId()).get();
+        Answer result = answerRepository.findByIdAndDeletedFalse(expect.getId()).get();
 
-        assertThat(actual == result).isTrue();
+        assertThat(expect == result).isTrue();
     }
 
     @DisplayName("답변이 삭제되었을 경우, findByIdAndDeletedFalse 함수로 조회할 수 없다")
     @Test
     void findDeletedById() {
-        Answer actual = answerRepository.save(A2);
-        actual.setDeleted(true);
+        Answer answer = answerRepository.save(A2);
+        answer.setDeleted(true);
 
-        Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(actual.getId());
+        Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(answer.getId());
 
         assertThat(result).isNotPresent();
     }
@@ -57,20 +57,20 @@ class AnswerRepositoryTest {
     @DisplayName("질문의 id로 조회할 수 있다")
     @Test
     void findByQuestionId() {
-        Answer actual = answerRepository.save(A1);
+        Answer expect = answerRepository.save(A1);
 
-        Answer result = answerRepository.findByQuestionIdAndDeletedFalse(actual.getQuestionId()).get(0);
+        Answer result = answerRepository.findByQuestionIdAndDeletedFalse(expect.getQuestionId()).get(0);
 
-        assertThat(actual == result).isTrue();
+        assertThat(expect == result).isTrue();
     }
 
     @DisplayName("답변이 삭제되었을 경우, findByQuestionIdAndDeletedFalse 함수로 조회할 수 없다")
     @Test
     void findDeletedByQuestionId() {
-        Answer actual = answerRepository.save(A2);
-        actual.setDeleted(true);
+        Answer answer = answerRepository.save(A2);
+        answer.setDeleted(true);
 
-        List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(actual.getQuestionId());
+        List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestionId());
 
         assertThat(result).hasSize(0);
     }

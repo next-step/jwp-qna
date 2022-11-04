@@ -18,13 +18,13 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("삭제 이력을 저장할 수 있다")
     @Test
     void save() {
-        DeleteHistory actual = deleteHistoryRepository.save(DH1);
+        DeleteHistory result = deleteHistoryRepository.save(DH1);
 
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getContentId()).isEqualTo(DH1.getContentId()),
-                () -> assertThat(actual.getDeletedById()).isEqualTo(DH1.getDeletedById()),
-                () -> assertThat(actual.getCreateDate()).isEqualTo(DH1.getCreateDate())
+                () -> assertThat(result.getId()).isNotNull(),
+                () -> assertThat(result.getContentId()).isEqualTo(DH1.getContentId()),
+                () -> assertThat(result.getDeletedById()).isEqualTo(DH1.getDeletedById()),
+                () -> assertThat(result.getCreateDate()).isEqualTo(DH1.getCreateDate())
         );
     }
 }

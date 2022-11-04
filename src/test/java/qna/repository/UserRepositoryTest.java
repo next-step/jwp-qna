@@ -18,24 +18,24 @@ class UserRepositoryTest {
     @DisplayName("사용자를 저장할 수 있다")
     @Test
     void save() {
-        User actual = userRepository.save(JAVAJIGI);
+        User result = userRepository.save(JAVAJIGI);
 
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getUserId()).isEqualTo(JAVAJIGI.getUserId()),
-                () -> assertThat(actual.getName()).isEqualTo(JAVAJIGI.getName()),
-                () -> assertThat(actual.getPassword()).isEqualTo(JAVAJIGI.getPassword()),
-                () -> assertThat(actual.getEmail()).isEqualTo(JAVAJIGI.getEmail())
+                () -> assertThat(result.getId()).isNotNull(),
+                () -> assertThat(result.getUserId()).isEqualTo(JAVAJIGI.getUserId()),
+                () -> assertThat(result.getName()).isEqualTo(JAVAJIGI.getName()),
+                () -> assertThat(result.getPassword()).isEqualTo(JAVAJIGI.getPassword()),
+                () -> assertThat(result.getEmail()).isEqualTo(JAVAJIGI.getEmail())
         );
     }
 
     @DisplayName("사용자 계정으로 조회할 수 있다")
     @Test
     void findByUserId() {
-        User actual = userRepository.save(JAVAJIGI);
+        User expect = userRepository.save(JAVAJIGI);
 
-        User result = userRepository.findByUserId(actual.getUserId()).get();
+        User result = userRepository.findByUserId(expect.getUserId()).get();
 
-        assertThat(actual == result).isTrue();
+        assertThat(expect == result).isTrue();
     }
 }
