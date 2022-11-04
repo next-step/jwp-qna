@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
+import static qna.domain.QuestionTestFixture.Q1;
+import static qna.domain.QuestionTestFixture.Q2;
 
 import java.util.List;
 import java.util.Optional;

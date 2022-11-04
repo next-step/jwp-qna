@@ -2,8 +2,8 @@ package qna.domain;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static qna.domain.DeleteHistoryTest.AH;
-import static qna.domain.DeleteHistoryTest.QH;
+import static qna.domain.DeleteHistoryTestFixture.AH;
+import static qna.domain.DeleteHistoryTestFixture.QH;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

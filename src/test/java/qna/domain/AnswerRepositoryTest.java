@@ -3,8 +3,8 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
+import static qna.domain.AnswerTestFixture.A1;
+import static qna.domain.AnswerTestFixture.A2;
 
 import java.util.List;
 import java.util.Optional;

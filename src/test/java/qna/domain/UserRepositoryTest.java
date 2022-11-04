@@ -2,8 +2,8 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
+import static qna.domain.UserTestFixture.JAVAJIGI;
+import static qna.domain.UserTestFixture.SANJIGI;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
