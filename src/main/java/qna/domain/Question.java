@@ -13,12 +13,16 @@ import javax.persistence.Table;
 public class Question extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(length = 100, nullable = false)
     private String title;
+
     @Lob
     private String contents;
+
     @Column(name = "writer_id")
     private Long writerId;
+
     @Column(nullable = false)
     private boolean deleted = false;
 
