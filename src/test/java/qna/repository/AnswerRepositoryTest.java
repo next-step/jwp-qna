@@ -5,13 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.Answer;
-import qna.domain.AnswerTest;
+import qna.domain.Question;
+import qna.domain.QuestionTest;
+import qna.domain.User;
 
 @DataJpaTest
 @DisplayName("Answer")
@@ -23,23 +26,33 @@ public class AnswerRepositoryTest {
     @Autowired
     private TestEntityManager testEntityManager;
 
+    private static Answer A1;
+    private static Answer A2;
+
+    @BeforeAll
+    public static void init() {
+        User user = new User(1L, "taewon", "password", "name", "htw1800@naver.com");
+        Question question = new Question("title1", "contents1").writeBy(user);
+        A1 = new Answer(user, question, "Answers Contents1");
+        A2 = new Answer(user, question, "Answers Contents2");
+    }
+
     @Test
     @DisplayName("저장")
     public void save() {
-        Answer target = AnswerTest.A1;
-        Answer saved = saveAndRefetch(target);
+        Answer saved = saveAndRefetch(A1);
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.getContents()).isEqualTo(target.getContents()),
-                () -> assertThat(saved.getQuestionId()).isEqualTo(target.getQuestionId()),
-                () -> assertThat(saved.getWriterId()).isEqualTo(target.getWriterId())
+                () -> assertThat(saved.getContents()).isEqualTo(A1.getContents()),
+                () -> assertThat(saved.getQuestionId()).isEqualTo(A1.getQuestionId()),
+                () -> assertThat(saved.getWriterId()).isEqualTo(A1.getWriterId())
         );
     }
 
     @Test
     @DisplayName("개별 조회 by id")
     public void findById() {
-        Answer saved = saveAndClear(AnswerTest.A1);
+        Answer saved = saveAndClear(A1);
         Optional<Answer> optional = repository.findById(saved.getId());
         assertThat(optional).isNotEmpty();
         Answer fetched = optional.get();
@@ -49,7 +62,7 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("개별 조회 by id, deleted(false)")
     public void findByIdAndDeletedFalse() {
-        Answer saved = saveAndClear(AnswerTest.A1);
+        Answer saved = saveAndClear(A1);
         Optional<Answer> optional = repository.findByIdAndDeletedFalse(saved.getId());
         assertThat(optional).isNotEmpty();
         Answer fetched = optional.get();
@@ -59,9 +72,9 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("목록 조회 by questionId, deleted(false)")
     public void findByQuestionIdAndDeletedFalse() {
-        saveAndClear(AnswerTest.A1);
-        saveAndClear(AnswerTest.A2);
-        List<Answer> actives = repository.findByQuestionIdAndDeletedFalse(AnswerTest.A1.getQuestionId());
+        saveAndClear(A1);
+        saveAndClear(A2);
+        List<Answer> actives = repository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
         assertThat(actives).isNotEmpty();
         assertThat(actives.size()).isEqualTo(2);
     }
@@ -69,7 +82,7 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("제거")
     public void delete() {
-        Answer saved = saveAndRefetch(AnswerTest.A1);
+        Answer saved = saveAndRefetch(A1);
         repository.delete(saved);
         Optional<Answer> optional = repository.findById(saved.getId());
         assertThat(optional).isEmpty();

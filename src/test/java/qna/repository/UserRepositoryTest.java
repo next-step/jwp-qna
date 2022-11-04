@@ -4,13 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.User;
-import qna.domain.UserTest;
 
 @DataJpaTest
 @DisplayName("User")
@@ -22,24 +22,30 @@ public class UserRepositoryTest {
     @Autowired
     private TestEntityManager testEntityManager;
 
+    private static User U1;
+
+    @BeforeAll
+    public static void init() {
+        U1 = new User(1L, "taewon", "password", "name", "htw1800@naver.com");
+    }
+
     @Test
     @DisplayName("저장")
     public void save() {
-        User target = UserTest.JAVAJIGI;
-        User saved = saveAndRefetch(target);
+        User saved = saveAndRefetch(U1);
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.getUserId()).isEqualTo(target.getUserId()),
-                () -> assertThat(saved.getEmail()).isEqualTo(target.getEmail()),
-                () -> assertThat(saved.getName()).isEqualTo(target.getName()),
-                () -> assertThat(saved.getPassword()).isEqualTo(target.getPassword())
+                () -> assertThat(saved.getUserId()).isEqualTo(U1.getUserId()),
+                () -> assertThat(saved.getEmail()).isEqualTo(U1.getEmail()),
+                () -> assertThat(saved.getName()).isEqualTo(U1.getName()),
+                () -> assertThat(saved.getPassword()).isEqualTo(U1.getPassword())
         );
     }
 
     @Test
     @DisplayName("개별 조회 by id")
     public void findById() {
-        User saved = saveAndClear(UserTest.JAVAJIGI);
+        User saved = saveAndClear(U1);
         Optional<User> optional = repository.findById(saved.getId());
         assertThat(optional).isNotEmpty();
         User fetched = optional.get();
@@ -49,7 +55,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("개별 조회 by userId")
     public void findByUserId() {
-        User saved = saveAndClear(UserTest.JAVAJIGI);
+        User saved = saveAndClear(U1);
         Optional<User> optional = repository.findByUserId(saved.getUserId());
         assertThat(optional).isNotEmpty();
         User fetched = optional.get();
@@ -60,7 +66,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("제거")
     public void delete() {
-        User saved = saveAndRefetch(UserTest.JAVAJIGI);
+        User saved = saveAndRefetch(U1);
         repository.delete(saved);
         Optional<User> optional = repository.findById(saved.getId());
         assertThat(optional).isEmpty();
