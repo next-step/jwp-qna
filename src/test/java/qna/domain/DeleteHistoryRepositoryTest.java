@@ -13,15 +13,15 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class DeleteHistoryRepositoryTest {
 
-	public static final DeleteHistory D1 = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+    public static final DeleteHistory D1 = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
 
-	@Autowired
-	DeleteHistoryRepository deleteHistoryRepository;
+    @Autowired
+    DeleteHistoryRepository deleteHistoryRepository;
 
-	@Test
-	void 저장() {
-		DeleteHistory actual = deleteHistoryRepository.save(D1);
-		assertThat(actual).isNotNull();
-		assertThat(actual.getId()).isNotNull();
-	}
+    @Test
+    void 저장() {
+        DeleteHistory actual = deleteHistoryRepository.save(D1);
+        assertThat(actual).isNotNull();
+        assertThat(actual.getId()).isNotNull();
+    }
 }

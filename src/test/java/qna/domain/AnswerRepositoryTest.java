@@ -14,36 +14,36 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class AnswerRepositoryTest {
-	@Autowired
-	AnswerRepository answerRepository;
+    @Autowired
+    AnswerRepository answerRepository;
 
-	private Answer A1;
-	private Answer A2;
+    private Answer A1;
+    private Answer A2;
 
-	@BeforeEach
-	void setup() {
-		A1 = answerRepository.save(AnswerTest.A1);
-		A2 = answerRepository.save(AnswerTest.A2);
-	}
+    @BeforeEach
+    void setup() {
+        A1 = answerRepository.save(AnswerTest.A1);
+        A2 = answerRepository.save(AnswerTest.A2);
+    }
 
-	@Test
-	void createdAt_updatedAt_반영_확인() {
-		assertThat(A1.getCreatedAt()).isNotNull();
-		assertThat(A1.getUpdatedAt()).isNotNull();
-	}
+    @Test
+    void createdAt_updatedAt_반영_확인() {
+        assertThat(A1.getCreatedAt()).isNotNull();
+        assertThat(A1.getUpdatedAt()).isNotNull();
+    }
 
-	@Test
-	void findByQuestionIdAndDeletedFalse() {
-		List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
-		actual.forEach(answer -> {
-			assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId());
-			assertThat(answer.isDeleted()).isFalse();
-		});
-	}
+    @Test
+    void findByQuestionIdAndDeletedFalse() {
+        List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        actual.forEach(answer -> {
+            assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId());
+            assertThat(answer.isDeleted()).isFalse();
+        });
+    }
 
-	@Test
-	void findByIdAndDeletedFalse() {
-		Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(A1.getId());
-		assertThat(actual).isEqualTo(Optional.of(A1));
-	}
+    @Test
+    void findByIdAndDeletedFalse() {
+        Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(A1.getId());
+        assertThat(actual).isEqualTo(Optional.of(A1));
+    }
 }
