@@ -134,3 +134,28 @@ alter table question
     - Question 는 User 의 id를 외래키로 관리하기 때문에 연관관계 주인이 된다.
     - 객체 관계에서 Question 는 User 에 접근할 수 있지만 User 는 Question 로 접근할 수 없다.
     - 관계형 데이터베이스에서는 Question 의 외래키(writer_id)를 통해 조인으로 Question <-> User 접근이 가능하다.
+
+---
+
+## 3단계 - 질문 삭제하기 리팩터링
+
+### 기능 요구사항
+
+#### 1. Question 삭제
+
+- Question 삭제 시 deleted 필드를 true 로 변경 (soft delete : 데이터를 완전히 삭제하는 것이 아니라 데이터의 상태를 삭제 상태로 변경)
+- 삭제 조건
+    - 로그인 사용자와 질문한 사림이 같은 경우
+    - 답변이 없는 경우
+    - 질문자와 답변 글의 모든 답변자가 같은 경우
+
+#### 2. Answer 삭제
+
+- Question 삭제 시 Answer 도 같이 삭제한다. (deleted 필드를 true 로 변경)
+- 삭제 조건
+    - 질문자와 답변자가 다른 경우는 삭제 할 수 없다. (같은 경우만 삭제)
+
+#### 3. Question 및 Answer 삭제 이력을 DeleteHistory 를 활용해 남긴다.
+
+- Question 삭제에 대한 이력을 남긴다.
+- Answer 삭제에 대한 이력을 남긴다.
