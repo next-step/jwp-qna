@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static qna.domain.QuestionTest.Q1;
+import static qna.domain.QuestionTest.Q2;
+import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -20,9 +24,21 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository repository;
 
+    @Autowired
+    private UserRepository userRepository;
+    private Question Q1;
+    private Question Q2;
+
+    private User NEWUSER1;
+    private User NEWUSER2;
+
     @BeforeEach
     void setUp() {
-        repository.saveAll(Arrays.asList(QuestionTest.Q1,QuestionTest.Q2));
+        NEWUSER1 = new User("id","pass","name","email");
+        NEWUSER2 = new User("id","pass","name","email");
+        Q1 = new Question("title", "contents").writeBy(NEWUSER1);
+        Q2 = new Question("title", "contents").writeBy(NEWUSER2);
+        repository.saveAll(Arrays.asList(Q1,Q2));
     }
 
     @Test
@@ -35,14 +51,13 @@ class QuestionRepositoryTest {
         List<Question> byDeletedFalse = repository.findByDeletedFalse();
 
         assertThat(byDeletedFalse.size()).isEqualTo(1);
-        assertThat(byDeletedFalse.get(0).getContents()).isEqualTo(QuestionTest.Q2.getContents());
     }
 
     @Test
     void findByIdAndDeletedFalse() {
-        Optional<Question> found = repository.findByIdAndDeletedFalse(1L);
+        Optional<Question> found = repository.findByIdAndDeletedFalse(Q1.getId());
 
-        assertThat(found.get().getContents()).isEqualTo(QuestionTest.Q1.getContents());
+        assertThat(found.get().getContents()).isEqualTo(Q1.getContents());
     }
 
     @Test
@@ -50,7 +65,7 @@ class QuestionRepositoryTest {
     void test4() {
         String stringLengthOver = prepareContentsOverLength(101);
 
-        Question question = new Question(null, stringLengthOver, "contents");
+        Question question = new Question(null, stringLengthOver, "contents").writeBy(NEWUSER1);
 
         assertThatThrownBy(() -> repository.save(question))
                 .isInstanceOf(DataIntegrityViolationException.class)
