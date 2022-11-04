@@ -52,7 +52,7 @@ public class AnswerRepositoryTest {
         Question question = TestQuestionFactory.create(writer);
         Answer answer = TestAnswerFactory.create(writer, question);
         Answer saveAnswer = answerRepository.save(answer);
-        saveAnswer.setDeleted(false);
+        saveAnswer.changeDeleted(false);
         Long saveAnswerId = saveAnswer.getId();
         return Arrays.asList(
                 DynamicTest.dynamicTest("삭제여부가 거짓인 답변을 조회한다.", () -> {
@@ -68,7 +68,7 @@ public class AnswerRepositoryTest {
                 }),
                 DynamicTest.dynamicTest("답변의 삭제여부를 참으로 바꾸면 조회할 수 없다.", () -> {
                     //when
-                    saveAnswer.setDeleted(true);
+                    saveAnswer.changeDeleted(true);
                     Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
 
                     //then

@@ -72,4 +72,32 @@ public class AnswerTest {
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage(ErrorCode.답변_중_다른_사람이_쓴_답변_있어_삭제_못함.getErrorMessage());
     }
+
+    @Test
+    void 답변_삭제여부_true_변경() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = new Answer(writer, question, "답변 삭제 여부 true 변경");
+
+        //when
+        answer.changeDeleted(true);
+
+        //then
+        assertThat(answer.isDeleted()).isTrue();
+    }
+
+    @Test
+    void 답변_삭제여부_false_변경() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = new Answer(writer, question, "답변 삭제 여부 false 변경");
+
+        //when
+        answer.changeDeleted(false);
+
+        //then
+        assertThat(answer.isDeleted()).isFalse();
+    }
 }
