@@ -32,7 +32,7 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("답변이 정상적으로 등록되있는지 테스트 한다")
-    void saveAnswerTest(){
+    void saveAnswerTest() {
         User writerUser = userRepository.save(UserTest.createUser("user1"));
         Question question = questionRepository.save(QuestionTest.createQuestion(writerUser));
         Answer answer = answerRepository.save(new Answer(writerUser, question, "contents"));
@@ -46,7 +46,7 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("id로 삭제되지 않은 답변 조회를 테스트한다")
-    void byIdAndDeletedFalseTest(){
+    void byIdAndDeletedFalseTest() {
         Answer answer = answerRepository.save(AnswerTest.createAnswer(UserTest.createUser("user1")));
         Answer getAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId())
                 .orElseThrow(() -> new NotFoundException());
@@ -64,7 +64,7 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("답변의 삭제여부가 true로 변경되었는지 테스트한다")
-    void IsDeleteChangeTest(){
+    void IsDeleteChangeTest() {
         Answer answer = answerRepository.save(AnswerTest.createAnswer(UserTest.createUser("user1")));
         answer.setDeleted(true);
         Long id = answer.getId();
@@ -78,7 +78,7 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("답변이 실제 삭제되었는지 테스트한다")
-    void deleteByIdTest(){
+    void deleteByIdTest() {
         Answer answer = answerRepository.save(AnswerTest.createAnswer(UserTest.createUser("user1")));
         answerRepository.deleteById(answer.getId());
         assertAll(

@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Question  extends BaseEntity {
+public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -105,8 +105,12 @@ public class Question  extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Question question = (Question) o;
         return id.equals(question.id);
     }

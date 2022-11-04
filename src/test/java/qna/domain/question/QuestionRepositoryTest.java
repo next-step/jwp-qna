@@ -29,7 +29,7 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("질문이 등록되있는지 테스트 한다")
-    void saveQuestionTest(){
+    void saveQuestionTest() {
         User writeUser = userRepository.save(UserTest.createUser("user1"));
         Question question = QuestionTest.createQuestion(writeUser);
         Question save = questionRepository.save(question);
@@ -47,7 +47,7 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("삭제되지 않은 질문 목록 조회를 테스트한다")
-    void findByDeletedFalseTest(){
+    void findByDeletedFalseTest() {
         User writeUser1 = userRepository.save(UserTest.createUser("user1"));
         Question question1 = QuestionTest.createQuestion(writeUser1);
         User writeUser2 = userRepository.save(UserTest.createUser("user2"));
@@ -60,7 +60,7 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("id로 삭제되지 않은 질문 한 건 조회를 테스트한다")
-    void findByIdAndDeletedFalse(){
+    void findByIdAndDeletedFalse() {
         User writeUser = userRepository.save(UserTest.createUser("user1"));
         Question question = QuestionTest.createQuestion(writeUser);
         Question save = questionRepository.save(question);
@@ -81,7 +81,7 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("질문의 삭제여부가 true로 변경되었는지 테스트한다")
-    void isDeleteChangeTest(){
+    void isDeleteChangeTest() {
         User writeUser = userRepository.save(UserTest.createUser("user2"));
         Question question = QuestionTest.createQuestion(writeUser);
         question.setDeleted(true);
@@ -97,7 +97,7 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("질문이 실제 삭제되었는지 테스트한다")
-    void deleteByIdTest(){
+    void deleteByIdTest() {
         User writeUser = userRepository.save(UserTest.createUser("user1"));
         Question question = QuestionTest.createQuestion(writeUser);
 
@@ -112,7 +112,7 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("질문의 작성자를 확인한다")
-    void getQuestionByWriterId(){
+    void getQuestionByWriterId() {
         User writeUser = userRepository.save(UserTest.createUser("user1"));
         Question question = QuestionTest.createQuestion(writeUser);
 

@@ -18,21 +18,22 @@ public class DeleteHistoryRepositoryTest {
 
     @Test
     @DisplayName("삭제이력이 저장되는지 테스트한다")
-    void saveQuestiDeleteHistory(){
+    void saveQuestiDeleteHistory() {
         DeleteHistory questiDeleteHistory = deleteHistoryRepository.save(createQuestiDelete());
         assertAll(
                 () -> assertThat(questiDeleteHistory.getId()).isNotNull(),
                 () -> assertThat(questiDeleteHistory.getContentId()).isEqualTo(questiDeleteHistory.getContentId()),
                 () -> assertThat(questiDeleteHistory.getContentType()).isEqualTo(questiDeleteHistory.getContentType()),
                 () -> assertThat(questiDeleteHistory.getCreateDate()).isEqualTo(questiDeleteHistory.getCreateDate()),
-                () -> assertThat(questiDeleteHistory.getDeletedByUser()).isEqualTo(questiDeleteHistory.getDeletedByUser())
+                () -> assertThat(questiDeleteHistory.getDeletedByUser()).isEqualTo(
+                        questiDeleteHistory.getDeletedByUser())
         );
 
     }
 
     @Test
     @DisplayName("삭제이력이 삭제되는지 테스트한다")
-    void deleteHistoryRepository(){
+    void deleteHistoryRepository() {
         DeleteHistory save = deleteHistoryRepository.save(createQuestiDelete());
         deleteHistoryRepository.deleteById(save.getId());
         Optional<DeleteHistory> getHistoryRepository = deleteHistoryRepository.findById(save.getId());

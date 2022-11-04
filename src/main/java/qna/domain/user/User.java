@@ -13,12 +13,12 @@ import qna.domain.common.BaseEntity;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-public class User  extends BaseEntity {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 20, nullable = false, unique=true)
+    @Column(length = 20, nullable = false, unique = true)
     private String userId;
     @Column(length = 20, nullable = false)
     private String password;
@@ -137,8 +137,12 @@ public class User  extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         User user = (User) o;
         return id.equals(user.id);
     }
