@@ -6,8 +6,7 @@ import java.util.Objects;
 
 @Entity
 public class DeleteHistory {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
@@ -22,10 +21,28 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    protected DeleteHistory() {}
+    public DeleteHistory() {
+
+    }
 
     public Long getId() {
         return id;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public Long getDeletedById() {
+        return deletedById;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
     }
 
     @Override

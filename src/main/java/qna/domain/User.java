@@ -9,8 +9,7 @@ import java.util.Objects;
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
@@ -18,6 +17,7 @@ public class User extends BaseEntity {
     private String password;
     @Column(length = 20, nullable = false)
     private String name;
+
     @Column(length = 50)
     private String email;
 
@@ -44,16 +44,22 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
 
     public String getUserId() {
         return userId;
     }
 
+
     public String getPassword() {
         return password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override

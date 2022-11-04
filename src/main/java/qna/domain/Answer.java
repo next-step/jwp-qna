@@ -60,6 +60,10 @@ public class Answer extends BaseEntity {
         return questionId;
     }
 
+    public String getContents() {
+        return contents;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }

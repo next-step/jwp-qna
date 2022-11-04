@@ -3,9 +3,8 @@ package qna.domain;
 import javax.persistence.*;
 
 @Entity
-public class Question extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class Question extends BaseEntity  {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(length = 100, nullable = false)
     private String title;
@@ -25,7 +24,9 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    protected Question() {}
+    public Question() {
+
+    }
 
     public Question writeBy(User writer) {
         this.writerId = writer.getId();
@@ -50,6 +51,14 @@ public class Question extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContents() {
+        return contents;
     }
 
     public void setDeleted(boolean deleted) {
