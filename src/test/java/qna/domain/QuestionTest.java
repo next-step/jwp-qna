@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
 
 public class QuestionTest {
@@ -16,5 +17,18 @@ public class QuestionTest {
         //when
         assertThatThrownBy(() -> question.writeBy(null))
                 .isInstanceOf(UnAuthorizedException.class);
+    }
+
+    @Test
+    void 질문한_작성자가_아니면_예외를_발생시킨다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        User fakeWriter = TestUserFactory.create("sanjigi");
+        Question question = TestQuestionFactory.create(writer);
+
+        //when
+        assertThatThrownBy(() -> question.validateSameUser(fakeWriter))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("질문을 삭제할 권한이 없습니다.");
     }
 }

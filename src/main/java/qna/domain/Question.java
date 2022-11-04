@@ -14,7 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
+import qna.constant.ErrorCode;
 
 @Entity
 public class Question extends BaseEntity {
@@ -89,6 +91,12 @@ public class Question extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void validateSameUser(User user) {
+        if(!isOwner(user)) {
+            throw new CannotDeleteException(ErrorCode.질문_삭제_권한_없음.getErrorMessage());
+        }
     }
 
     @Override
