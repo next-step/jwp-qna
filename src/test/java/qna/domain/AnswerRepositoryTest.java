@@ -17,7 +17,7 @@ import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
-class AnswerRepositoryTest {
+class AnswerRepositoryTest extends NewEntityTestBase{
 
     private Answer A1;
     private Answer A2;
@@ -33,20 +33,12 @@ class AnswerRepositoryTest {
     @Autowired
     private EntityManager em;
 
-    private static Question q1;
-    private static Question q2;
-    private User user1;
-    private User user2;
-
+    @Override
     @BeforeEach
     void setUp() {
-        List<User> users1 = userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));
-        user1 = users1.get(0);
-        user2 = users1.get(1);
-        q1 = questionRepository.save(new Question("title","contents").writeBy(user1));
-        q2 = questionRepository.save(new Question("title","contents").writeBy(user2));
-        A1 = new Answer(user1, q1, "Answers Contents1");
-        A2 = new Answer(user2, q2, "Answers Contents2");
+        super.setUp();
+        A1 = new Answer(NEWUSER1, Q1, "Answers Contents1");
+        A2 = new Answer(NEWUSER2, Q2, "Answers Contents2");
         answerRepository.saveAll(Arrays.asList(A1,A2));
     }
 
@@ -70,11 +62,11 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("Question Id와 삭제되지 않은 Answer를 검색하면  두 건이 조회됨")
     void findByQuestionQIdAndDeletedFalse() {
-        Answer deletedAnswer = new Answer(user1, q2, "some contents");
+        Answer deletedAnswer = new Answer(NEWUSER1, Q2, "some contents");
         deletedAnswer.setDeleted(true);
 
         answerRepository.save(deletedAnswer);
-        List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(q2);
+        List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(Q2);
 
         assertThat(answers.size()).isEqualTo(1);
     }

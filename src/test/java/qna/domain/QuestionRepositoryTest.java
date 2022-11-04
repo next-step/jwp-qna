@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,36 +7,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
-import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
-class QuestionRepositoryTest {
+class QuestionRepositoryTest extends NewEntityTestBase{
 
     @Autowired
     private QuestionRepository repository;
 
     @Autowired
     private UserRepository userRepository;
-    private Question Q1;
-    private Question Q2;
 
-    private User NEWUSER1;
-    private User NEWUSER2;
-
+    @Override
     @BeforeEach
     void setUp() {
-        NEWUSER1 = new User("id","pass","name","email");
-        NEWUSER2 = new User("id","pass","name","email");
-        Q1 = new Question("title", "contents").writeBy(NEWUSER1);
-        Q2 = new Question("title", "contents").writeBy(NEWUSER2);
+        super.setUp();
         repository.saveAll(Arrays.asList(Q1,Q2));
     }
 
