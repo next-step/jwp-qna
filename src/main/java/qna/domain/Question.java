@@ -3,13 +3,21 @@ package qna.domain;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "question")
@@ -24,9 +32,12 @@ public class Question extends BaseEntity {
     private String title;
     @Lob
     private String contents;
-    @Column(name = "writer_id")
-    private Long writerId;
-    @Column(name = "deleted")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
+    private List<Answer> answers = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writeBy;
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
     protected Question() {
@@ -43,31 +54,35 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writeBy = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writeBy.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        if (!answers.contains(answer)) {
+            answers.add(answer);
+        }
+        answer.setQuestion(this);
+    }
+
+    public void deleteAnswer(Answer answer) {
+        answers.remove(answer);
+        answer.delete();
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void changeTitle(String title) {
         this.title = title;
     }
 
@@ -75,24 +90,20 @@ public class Question extends BaseEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriteBy() {
+        return writeBy;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete() {
+        this.deleted = true;
     }
 
     @Override
@@ -101,7 +112,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writeBy.getId() +
                 ", deleted=" + deleted +
                 '}';
     }

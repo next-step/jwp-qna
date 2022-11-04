@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +59,7 @@ class UserRepositoryTest {
         User javajigi = UserTest.JAVAJIGI;
         User savedUser = userRepository.save(javajigi);
 
-        javajigi.setName("넥스트스텝");
+        javajigi.changeName("넥스트스텝");
         savedUser.update(savedUser, javajigi);
         User findUser = userRepository.findById(savedUser.getId()).get();
 

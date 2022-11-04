@@ -4,9 +4,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -23,19 +26,28 @@ public class DeleteHistory extends BaseEntity {
     private ContentType contentType;
     @Column(name = "content_id")
     private Long contentId;
-    @Column(name = "deleted_by_id")
-    private Long deletedById;
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedBy;
     @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedBy = deletedBy;
         this.createDate = createDate;
     }
 
     protected DeleteHistory() {
+    }
+
+    public static DeleteHistory ofQuestion(Question question, User deletedBy) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), deletedBy, LocalDateTime.now());
+    }
+
+    public static DeleteHistory ofAnswer(Answer answer, User deletedBy) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), deletedBy, LocalDateTime.now());
     }
 
     @Override
@@ -46,12 +58,12 @@ public class DeleteHistory extends BaseEntity {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, deletedBy);
     }
 
     @Override
@@ -60,7 +72,7 @@ public class DeleteHistory extends BaseEntity {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + deletedBy.getId() +
                 ", createDate=" + createDate +
                 '}';
     }
