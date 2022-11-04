@@ -2,19 +2,30 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class User {
+@Entity
+public class User extends BaseTime {
+
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true)
     private String userId;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
     private String name;
+
     private String email;
 
-    private User() {
-    }
+    protected User() {}
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
