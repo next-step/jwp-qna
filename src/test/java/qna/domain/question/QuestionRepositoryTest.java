@@ -1,44 +1,58 @@
 package qna.domain.question;
 
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 import qna.NotFoundException;
+import qna.domain.user.User;
+import qna.domain.user.UserRepository;
+import qna.domain.user.UserTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.question.QuestionTest.Q1;
-import static qna.domain.question.QuestionTest.Q2;
 
+@DirtiesContext
 @DataJpaTest
 public class QuestionRepositoryTest {
-    
+
     @Autowired
     QuestionRepository questionRepository;
-    
+
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     @DisplayName("질문이 정상적으로 등록되있는지 테스트 한다")
     void saveQuestionTest(){
-        Question question = questionRepository.save(Q1);
+        User writeUser = userRepository.save(UserTest.createUser("user1"));
+        Question question = QuestionTest.createQuestion(writeUser);
+        Question save = questionRepository.save(question);
+
         assertAll(
-                () -> assertThat(question.getId()).isNotNull(),
-                () -> assertThat(question.getId()).isEqualTo(Q1.getId()),
-                () -> assertThat(question.getContents()).isEqualTo(Q1.getContents()),
-                () -> assertThat(question.getWriterId()).isEqualTo(Q1.getWriterId()),
-                () -> assertThat(question.getCreatedAt()).isEqualTo(Q1.getCreatedAt()),
-                () -> assertThat(question.getUpdatedAt()).isEqualTo(Q1.getUpdatedAt())
+                () -> assertThat(save.getId()).isNotNull(),
+                () -> assertThat(save.isOwner(writeUser)).isTrue(),
+                () -> assertThat(save.getId()).isEqualTo(question.getId()),
+                () -> assertThat(save.getContents()).isEqualTo(question.getContents()),
+                () -> assertThat(save.getWriterId()).isEqualTo(question.getWriterId()),
+                () -> assertThat(question.getCreatedAt()).isEqualTo(question.getCreatedAt()),
+                () -> assertThat(question.getUpdatedAt()).isEqualTo(question.getUpdatedAt())
         );
     }
-    
+
     @Test
     @DisplayName("삭제되지 않은 질문 목록 조회를 테스트한다")
     void findByDeletedFalseTest(){
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
+        User writeUser1 = userRepository.save(UserTest.createUser("user1"));
+        Question question1 = QuestionTest.createQuestion(writeUser1);
+        User writeUser2 = userRepository.save(UserTest.createUser("user2"));
+        Question question2 = QuestionTest.createQuestion(writeUser2);
+        questionRepository.save(question1);
+        questionRepository.save(question2);
         List<Question> questions = questionRepository.findByDeletedFalse();
         assertThat(questions.size()).isEqualTo(2);
     }
@@ -46,26 +60,31 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("id로 삭제되지 않은 질문 한 건 조회를 테스트한다")
     void findByIdAndDeletedFalse(){
-        Question question = questionRepository.save(Q1);
-        Question getQuestion = questionRepository.findByIdAndDeletedFalse(question.getId())
+        User writeUser = userRepository.save(UserTest.createUser("user1"));
+        Question question = QuestionTest.createQuestion(writeUser);
+        Question save = questionRepository.save(question);
+        Question getQuestion = questionRepository.findByIdAndDeletedFalse(save.getId())
                 .orElseThrow(() -> new NotFoundException());
+
         assertAll(
                 () -> assertThat(getQuestion).isNotNull(),
-                () -> assertThat(getQuestion.getId()).isEqualTo(Q1.getId()),
-                () -> assertThat(getQuestion.getContents()).isEqualTo(Q1.getContents()),
-                () -> assertThat(getQuestion.getWriterId()).isEqualTo(Q1.getWriterId()),
-                () -> assertThat(getQuestion.getCreatedAt()).isEqualTo(Q1.getCreatedAt()),
-                () -> assertThat(getQuestion.getUpdatedAt()).isEqualTo(Q1.getUpdatedAt())
+                () -> assertThat(getQuestion.getId()).isEqualTo(save.getId()),
+                () -> assertThat(getQuestion.getContents()).isEqualTo(save.getContents()),
+                () -> assertThat(getQuestion.getWriterId()).isEqualTo(save.getWriterId()),
+                () -> assertThat(getQuestion.getCreatedAt()).isEqualTo(save.getCreatedAt()),
+                () -> assertThat(getQuestion.getUpdatedAt()).isEqualTo(save.getUpdatedAt())
         );
     }
 
     @Test
     @DisplayName("질문의 삭제여부가 true로 변경되었는지 테스트한다")
     void IsDeleteChangeTest(){
-        Question question = questionRepository.save(Q1);
+        User writeUser = userRepository.save(UserTest.createUser("user2"));
+        Question question = QuestionTest.createQuestion(writeUser);
         question.setDeleted(true);
         Long id = question.getId();
         Optional<Question> byIdAndDeletedFalse = questionRepository.findByIdAndDeletedFalse(id);
+
         assertAll(
                 () -> assertThat(byIdAndDeletedFalse).isEmpty(),
                 () -> assertThat(question.isDeleted()).isTrue()
@@ -75,13 +94,17 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("질문이 실제 삭제되었는지 테스트한다")
-    void deleteByIdTest(){
-        Question question = questionRepository.save(Q1);
-        questionRepository.deleteById(question.getId());
+    void deleteByIdTest() {
+        User writeUser = userRepository.save(UserTest.createUser("user1"));
+        Question question = QuestionTest.createQuestion(writeUser);
+
+        Question save = questionRepository.save(question);
+
+        questionRepository.deleteById(save.getId());
         assertAll(
-                () -> assertThat(questionRepository.findById(question.getId())).isEmpty(),
-                () -> assertThat(questionRepository.findByIdAndDeletedFalse(question.getId())).isEmpty()
+                () -> assertThat(questionRepository.findById(save.getId())).isEmpty(),
+                () -> assertThat(questionRepository.findByIdAndDeletedFalse(save.getId())).isEmpty()
         );
     }
-    
+
 }
