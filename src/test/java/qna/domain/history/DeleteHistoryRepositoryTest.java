@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.history.DeleteHistoryTest.questiDelete;
+import static qna.domain.history.DeleteHistoryTest.createQuestiDelete;
 
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
@@ -19,7 +19,7 @@ public class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("삭제이력이 저장되는지 테스트한다")
     void saveQuestiDeleteHistory(){
-        DeleteHistory questiDeleteHistory = deleteHistoryRepository.save(questiDelete);
+        DeleteHistory questiDeleteHistory = deleteHistoryRepository.save(createQuestiDelete());
         assertAll(
                 () -> assertThat(questiDeleteHistory.getId()).isNotNull(),
                 () -> assertThat(questiDeleteHistory.getContentId()).isEqualTo(questiDeleteHistory.getContentId()),
@@ -33,9 +33,9 @@ public class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("삭제이력이 삭제되는지 테스트한다")
     void deleteHistoryRepository(){
-        deleteHistoryRepository.save(questiDelete);
-        deleteHistoryRepository.deleteById(questiDelete.getId());
-        Optional<DeleteHistory> getHistoryRepository = deleteHistoryRepository.findById(questiDelete.getId());
+        DeleteHistory save = deleteHistoryRepository.save(createQuestiDelete());
+        deleteHistoryRepository.deleteById(save.getId());
+        Optional<DeleteHistory> getHistoryRepository = deleteHistoryRepository.findById(save.getId());
         assertThat(getHistoryRepository.isPresent()).isFalse();
     }
 
