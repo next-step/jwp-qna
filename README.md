@@ -123,5 +123,20 @@ alter table question
         foreign key (writer_id)
             references user (id)
 ```
+</details>
+
+## 기능 목록 정리
+<details open>
+<summary> </summary>
+
+* Domain
+  * JPA 디버깅이 용이한 properties 확인
+  * 조인이 필요한 테이블 @JoinColumn 사용하기
+    * 객체를 참조함                        
+  * @ManyToOne, @OneToMany 중 적절한 것 사용하기
+    * User -> Question [(1:N), Question이 주테이블]
+    * Question -> Answer [(1:N), Answer이 주테이블]
+* Test
+  * 객체 참조가 정상적으로 되는가
 
 </details>
