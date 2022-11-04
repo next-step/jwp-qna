@@ -58,6 +58,18 @@ public class Answer extends DateEntity {
         return writerId;
     }
 
+    public Long getQuestionId() {
+        return questionId;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
