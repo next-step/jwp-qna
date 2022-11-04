@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Optional;
 
@@ -27,8 +28,10 @@ class UserRepositoryTest {
 
     @Test
     void createdAt_updatedAt_반영_확인() {
-        assertThat(JAVAJIGI.getCreatedAt()).isNotNull();
-        assertThat(JAVAJIGI.getUpdatedAt()).isNotNull();
+        assertAll(
+            () -> assertThat(JAVAJIGI.getCreatedAt()).isNotNull(),
+            () -> assertThat(JAVAJIGI.getUpdatedAt()).isNotNull()
+        );
     }
 
     @Test

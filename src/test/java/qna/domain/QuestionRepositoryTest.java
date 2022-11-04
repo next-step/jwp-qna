@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,8 +29,10 @@ class QuestionRepositoryTest {
 
     @Test
     void createdAt_updatedAt_반영_확인() {
-        assertThat(Q1.getCreatedAt()).isNotNull();
-        assertThat(Q1.getUpdatedAt()).isNotNull();
+        assertAll(
+            () -> assertThat(Q1.getCreatedAt()).isNotNull(),
+            () -> assertThat(Q1.getUpdatedAt()).isNotNull()
+        );
     }
 
     @Test

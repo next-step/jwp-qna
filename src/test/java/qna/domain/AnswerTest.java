@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,27 +26,33 @@ public class AnswerTest {
 
     @Test
     void 동등성() {
-        assertThat(new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents"))
-            .isEqualTo(new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents"));
-
-        assertThat(new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents"))
-            .isNotEqualTo(new Answer(2L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents"));
+        assertAll(
+            () -> assertThat(new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents"))
+                .isEqualTo(new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents")),
+            () -> assertThat(new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents"))
+                .isNotEqualTo(new Answer(2L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents"))
+        );
     }
 
     @Test
     void 작성자_확인() {
-        assertThat(A1.isOwner(UserTest.JAVAJIGI)).isTrue();
-        assertThat(A1.isOwner(UserTest.SANJIGI)).isFalse();
+        assertAll(
+            () -> assertThat(A1.isOwner(UserTest.JAVAJIGI)).isTrue(),
+            () -> assertThat(A1.isOwner(UserTest.SANJIGI)).isFalse()
+        );
     }
 
     @Test
     void 질문_변경() {
         Question question1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
         Question question2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
-        Answer answer = new Answer(1L, UserTest.JAVAJIGI, question1, "Answers Contents");
 
+        Answer answer = new Answer(1L, UserTest.JAVAJIGI, question1, "Answers Contents");
         answer.toQuestion(question2);
-        assertThat(answer.getQuestionId()).isNotEqualTo(question1.getId());
-        assertThat(answer.getQuestionId()).isEqualTo(question2.getId());
+
+        assertAll(
+            () -> assertThat(answer.getQuestionId()).isNotEqualTo(question1.getId()),
+            () -> assertThat(answer.getQuestionId()).isEqualTo(question2.getId())
+        );
     }
 }

@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,17 +13,20 @@ public class UserTest {
 
     @Test
     void 동등성() {
-        assertThat(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"))
-            .isEqualTo(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
-
-        assertThat(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"))
-            .isNotEqualTo(new User(2L, "javajigi", "password", "name", "javajigi@slipp.net"));
+        assertAll(
+            () -> assertThat(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"))
+                .isEqualTo(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net")),
+            () -> assertThat(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"))
+                .isNotEqualTo(new User(2L, "javajigi", "password", "name", "javajigi@slipp.net"))
+        );
     }
 
     @Test
     void 패스워드_일치_체크() {
-        assertThat(JAVAJIGI.matchPassword("password")).isTrue();
-        assertThat(JAVAJIGI.matchPassword("wrongPassword")).isFalse();
+        assertAll(
+            () -> assertThat(JAVAJIGI.matchPassword("password")).isTrue(),
+            () -> assertThat(JAVAJIGI.matchPassword("wrongPassword")).isFalse()
+        );
     }
 
     @Test
@@ -53,7 +57,9 @@ public class UserTest {
         User target = new User("sanjigi", "password", "name", "javajigi@slipp.net");
         user.update(JAVAJIGI, target);
 
-        assertThat(user.getUserId()).isEqualTo("javajigi");
-        assertThat(user.getPassword()).isEqualTo("password");
+        assertAll(
+            () -> assertThat(user.getUserId()).isEqualTo("javajigi"),
+            () -> assertThat(user.getPassword()).isEqualTo("password")
+        );
     }
 }

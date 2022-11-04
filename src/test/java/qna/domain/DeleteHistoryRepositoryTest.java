@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 
@@ -21,7 +22,9 @@ class DeleteHistoryRepositoryTest {
     @Test
     void 저장() {
         DeleteHistory actual = deleteHistoryRepository.save(D1);
-        assertThat(actual).isNotNull();
-        assertThat(actual.getId()).isNotNull();
+        assertAll(
+            () -> assertThat(actual).isNotNull(),
+            () -> assertThat(actual.getId()).isNotNull()
+        );
     }
 }
