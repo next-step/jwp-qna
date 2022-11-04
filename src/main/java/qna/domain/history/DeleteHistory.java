@@ -2,14 +2,8 @@ package qna.domain.history;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.domain.common.ContentType;
@@ -25,7 +19,7 @@ public class DeleteHistory {
     private Long contentId;
     @CreatedDate
     private LocalDateTime createDate;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "delete_by_id")
     private User deletedByUser;
 

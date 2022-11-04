@@ -1,15 +1,7 @@
 package qna.domain.question;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.domain.answer.Answer;
 import qna.domain.common.BaseEntity;
@@ -27,7 +19,7 @@ public class Question  extends BaseEntity {
     private String title;
     @Lob
     private String contents;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
     @Column(nullable = false)

@@ -24,3 +24,4 @@
   - [x] AnswerRepository 테스트
   - [x] QuestionRepository 테스트
 - [x] equals method, hashcode override 
+- [x] 연관 entity 필요시에만 조회하도록 fatch 타입을 LAZY로 설정
