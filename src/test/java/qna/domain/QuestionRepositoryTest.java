@@ -18,17 +18,24 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Transactional
     @Test
     @DisplayName("Question 생성 시 id가 null 이 아닌지, 저장 전/후의 데이터 값이 같은지 확인")
     void create() {
-        Question savedQuestion = questionRepository.save(QuestionTest.Q1);
+        User writer = new User("user", "password", "name", "test@email.com");
+        userRepository.save(writer);
+
+        Question question = new Question("title1", "contents").writeBy(writer);
+        Question savedQuestion = questionRepository.save(question);
 
         assertAll(
                 () -> assertThat(savedQuestion.getId()).isNotNull(),
-                () -> assertThat(savedQuestion.getContents()).isEqualTo(QuestionTest.Q1.getContents()),
-                () -> assertThat(savedQuestion.getTitle()).isEqualTo(QuestionTest.Q1.getTitle()),
-                () -> assertThat(savedQuestion.getWriterId()).isEqualTo(QuestionTest.Q1.getWriterId())
+                () -> assertThat(savedQuestion.getContents()).isEqualTo(question.getContents()),
+                () -> assertThat(savedQuestion.getTitle()).isEqualTo(question.getTitle()),
+                () -> assertThat(savedQuestion.getWriter()).isEqualTo(question.getWriter())
         );
     }
 
@@ -36,7 +43,11 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("저장한 Question 와 조회한 Question 가 같은지 (동일성)확인")
     void read() {
-        Question savedQuestion = questionRepository.save(QuestionTest.Q1);
+        User writer = new User("user", "password", "name", "test@email.com");
+        userRepository.save(writer);
+
+        Question question = new Question("title1", "contents").writeBy(writer);
+        Question savedQuestion = questionRepository.save(question);
 
         Optional<Question> Question = questionRepository.findById(savedQuestion.getId());
 
@@ -50,7 +61,11 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("Question 의 deleted 가 false 일 때 findByIdAndDeletedFalse 로 조회된 Question 가 있는지 확인")
     void findByIdAndDeletedFalse() {
-        Question saveQuestion = questionRepository.save(QuestionTest.Q1);
+        User writer = new User("user", "password", "name", "test@email.com");
+        userRepository.save(writer);
+
+        Question question = new Question("title1", "contents").writeBy(writer);
+        Question saveQuestion = questionRepository.save(question);
 
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestion.getId());
 
@@ -61,7 +76,11 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("Question 의 deleted 가 true 일 때 findByIdAndDeletedFalse 조회 시 empty 로 조회되는지 확인")
     void findByIdAndDeletedFalse2() {
-        Question saveQuestion = questionRepository.save(QuestionTest.Q1);
+        User writer = new User("user", "password", "name", "test@email.com");
+        userRepository.save(writer);
+
+        Question question = new Question("title1", "contents").writeBy(writer);
+        Question saveQuestion = questionRepository.save(question);
         saveQuestion.deleted();
 
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestion.getId());
@@ -73,9 +92,13 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("id 로 Question 조회 시 Question 의 deleted 가 false 인 것만 조회되는지 확인 (모두 false 였을 때)")
     void findByQuestionIdAndDeletedFalse() {
-        Question savedQuestion1 = questionRepository.save(QuestionTest.Q1);
+        User writer = new User("user", "password", "name", "test@email.com");
+        userRepository.save(writer);
 
-        Question savedQuestion2 = questionRepository.save(QuestionTest.Q2);
+        Question question1 = new Question("title1", "contents").writeBy(writer);
+        Question question2 = new Question("title2", "contents").writeBy(writer);
+        Question savedQuestion1 = questionRepository.save(question1);
+        Question savedQuestion2 = questionRepository.save(question2);
 
         List<Question> findQuestions = questionRepository.findByDeletedFalse();
 
@@ -89,10 +112,15 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("question id 로 Question 조회 시 Question 의 deleted 가 false 인 것만 조회되는지 확인 (각각 true, false 였을 때)")
     void findByQuestionIdAndDeletedFalse2() {
-        Question savedQuestion1 = questionRepository.save(QuestionTest.Q1);
-        savedQuestion1.deleted();
+        User writer = new User("user", "password", "name", "test@email.com");
+        userRepository.save(writer);
 
-        Question savedQuestion2 = questionRepository.save(QuestionTest.Q2);
+        Question question1 = new Question("title1", "contents").writeBy(writer);
+        Question question2 = new Question("title2", "contents").writeBy(writer);
+        Question savedQuestion1 = questionRepository.save(question1);
+        Question savedQuestion2 = questionRepository.save(question2);
+
+        savedQuestion1.deleted();
 
         List<Question> findQuestions = questionRepository.findByDeletedFalse();
 
@@ -106,7 +134,12 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("저장한 Question 삭제 후 조회 시 Question 가 없는지 확인")
     void delete() {
-        Question savedQuestion = questionRepository.save(QuestionTest.Q1);
+        User writer = new User("user", "password", "name", "test@email.com");
+        userRepository.save(writer);
+
+        Question question = new Question("title1", "contents").writeBy(writer);
+        Question savedQuestion = questionRepository.save(question);
+
         questionRepository.delete(savedQuestion);
 
         Optional<Question> findQuestion = questionRepository.findById(savedQuestion.getId());
