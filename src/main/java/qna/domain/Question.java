@@ -65,6 +65,11 @@ public class Question extends BaseTime {
         this.deleted = deleted;
     }
 
+    public void updateTitleAndContents(String title, String contents) {
+        this.title = title;
+        this.contents = contents;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -75,4 +80,6 @@ public class Question extends BaseTime {
                 ", deleted=" + deleted +
                 '}';
     }
+
+
 }
