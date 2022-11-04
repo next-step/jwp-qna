@@ -39,31 +39,20 @@ public class QuestionRepositoryTest {
         );
     }
 
-    @TestFactory
-    Collection<DynamicTest> 질문_삭제여부_변경_시나리오() {
+    @Test
+    void 질문의_삭제여부를_참으로_바꾸면_조회할_수_없다() {
         //given
         User writer = TestUserFactory.create("sanjigi");
         Question question = TestQuestionFactory.create(writer);
         Question saveQuestion = questionRepository.save(question);
         Long saveQuestionId = saveQuestion.getId();
-        return Arrays.asList(
-                DynamicTest.dynamicTest("삭제여부가 거짓인 질문을 조회한다.", () -> {
-                    //when
-                    saveQuestion.changeDeleted(false);
-                    Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestionId);
 
-                    //then
-                    assertThat(findQuestion).isPresent();
-                }),
-                DynamicTest.dynamicTest("질문의 삭제여부를 참으로 바꾸면 조회할 수 없다.", () -> {
-                    //when
-                    saveQuestion.changeDeleted(true);
-                    Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestionId);
+        //when
+        saveQuestion.delete(writer);
+        Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestionId);
 
-                    //then
-                    assertThat(findQuestion).isNotPresent();
-                })
-        );
+        //then
+        assertThat(findQuestion).isNotPresent();
     }
 
     @TestFactory

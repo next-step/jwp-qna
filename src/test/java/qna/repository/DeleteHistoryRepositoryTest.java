@@ -27,6 +27,12 @@ public class DeleteHistoryRepositoryTest {
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    QuestionRepository questionRepository;
+
+    @Autowired
+    AnswerRepository answerRepository;
+
     @Test
     void 삭제이력을_저장하면_반환된_삭제이력의_id는_비어있지_않다() {
         //given
@@ -86,5 +92,38 @@ public class DeleteHistoryRepositoryTest {
                     assertThat(findDeleteHistory).isNotPresent();
                 })
         );
+    }
+
+    @Test
+    void 질문_삭제여부_변경_시_삭제이력_추가() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        Question saveQuestion = questionRepository.save(question);
+
+        //when
+        List<DeleteHistory> deleteHistories = saveQuestion.delete(writer);
+        deleteHistoryRepository.saveAll(deleteHistories);
+        List<DeleteHistory> findDeleteHistories = deleteHistoryRepository.findAll();
+
+        //then
+        assertThat(findDeleteHistories).containsAll(deleteHistories);
+    }
+
+    @Test
+    void 답변_삭제여부_변경_시_삭제이력_추가() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = TestAnswerFactory.create(writer, question);
+        Answer saveAnswer = answerRepository.save(answer);
+
+        //when
+        DeleteHistory deleteHistory = saveAnswer.changeDeleted(true);
+        deleteHistoryRepository.save(deleteHistory);
+        List<DeleteHistory> deleteHistories = deleteHistoryRepository.findAll();
+
+        //then
+        assertThat(deleteHistories).contains(deleteHistory);
     }
 }

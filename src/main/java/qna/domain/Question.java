@@ -95,19 +95,22 @@ public class Question extends BaseEntity {
         }
     }
 
-    public void changeDeleted(boolean deleted) {
+    private DeleteHistory changeDeleted(boolean deleted) {
         this.deleted = deleted;
+        return DeleteHistory.createDeleteHistory(ContentType.QUESTION, this.id, this.writer);
     }
 
-    public void delete(User user) {
+    public List<DeleteHistory> delete(User user) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         validateSameUser(user);
         for(Answer answer: this.answers) {
             answer.validateSameUser(user);
         }
-        changeDeleted(true);
+        deleteHistories.add(changeDeleted(true));
         for(Answer answer: this.answers) {
-            answer.changeDeleted(true);
+            deleteHistories.add(answer.changeDeleted(true));
         }
+        return deleteHistories;
     }
 
     @Override
