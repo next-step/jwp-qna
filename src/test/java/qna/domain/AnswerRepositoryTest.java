@@ -21,6 +21,9 @@ class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Transactional
     @Test
     @DisplayName("다대일(Answer:Question) 연관관계 설정 후 Answer 생성 테스트")
@@ -28,7 +31,10 @@ class AnswerRepositoryTest {
         Question question = new Question("title", "contents");
         questionRepository.save(question);
 
-        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        User writer = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(writer);
+
+        Answer answer = new Answer(writer, question, "contents");
         Answer savedAnswer = answerRepository.save(answer);
 
         Assertions.assertThat(savedAnswer.getId()).isNotNull();
@@ -41,7 +47,10 @@ class AnswerRepositoryTest {
         Question question = new Question("title", "contents");
         questionRepository.save(question);
 
-        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        User writer = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(writer);
+
+        Answer answer = new Answer(writer, question, "contents");
         Answer savedAnswer = answerRepository.save(answer);
 
         Optional<Answer> findAnswer = answerRepository.findById(savedAnswer.getId());
@@ -59,7 +68,10 @@ class AnswerRepositoryTest {
         Question question = new Question("title", "contents");
         questionRepository.save(question);
 
-        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        User writer = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(writer);
+
+        Answer answer = new Answer(writer, question, "contents");
         Answer savedAnswer = answerRepository.save(answer);
 
         savedAnswer.toQuestion(new Question("new title", "new contents"));
@@ -76,7 +88,10 @@ class AnswerRepositoryTest {
         Question question = new Question("title", "contents");
         questionRepository.save(question);
 
-        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        User writer = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(writer);
+
+        Answer answer = new Answer(writer, question, "contents");
         Answer savedAnswer = answerRepository.save(answer);
 
         answerRepository.delete(savedAnswer);
@@ -93,7 +108,10 @@ class AnswerRepositoryTest {
         Question question = new Question("title", "contents");
         questionRepository.save(question);
 
-        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        User writer = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(writer);
+
+        Answer answer = new Answer(writer, question, "contents");
         Answer savedAnswer = answerRepository.save(answer);
 
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
@@ -108,7 +126,10 @@ class AnswerRepositoryTest {
         Question question = new Question("title", "contents");
         questionRepository.save(question);
 
-        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        User writer = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(writer);
+
+        Answer answer = new Answer(writer, question, "contents");
         Answer savedAnswer = answerRepository.save(answer);
         savedAnswer.deleted();
 
@@ -124,8 +145,13 @@ class AnswerRepositoryTest {
         Question question = new Question("title", "contents");
         questionRepository.save(question);
 
-        Answer savedAnswer1 = answerRepository.save(new Answer(UserTest.JAVAJIGI, question, "contents"));
-        Answer savedAnswer2 = answerRepository.save(new Answer(UserTest.SANJIGI, question, "contents"));
+        User writer1 = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(writer1);
+        User writer2 = new User("user2", "password", "name", "test@email.com");
+        userRepository.save(writer2);
+
+        Answer savedAnswer1 = answerRepository.save(new Answer(writer1, question, "contents"));
+        Answer savedAnswer2 = answerRepository.save(new Answer(writer2, question, "contents"));
 
         List<Answer> findAnswers = answerRepository.findByQuestionAndDeletedFalse(question);
 
@@ -142,8 +168,13 @@ class AnswerRepositoryTest {
         Question question = new Question("title", "contents");
         questionRepository.save(question);
 
-        Answer savedAnswer1 = answerRepository.save(new Answer(UserTest.JAVAJIGI, question, "contents"));
-        Answer savedAnswer2 = answerRepository.save(new Answer(UserTest.SANJIGI, question, "contents"));
+        User writer1 = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(writer1);
+        User writer2 = new User("user2", "password", "name", "test@email.com");
+        userRepository.save(writer2);
+
+        Answer savedAnswer1 = answerRepository.save(new Answer(writer1, question, "contents"));
+        Answer savedAnswer2 = answerRepository.save(new Answer(writer2, question, "contents"));
         savedAnswer1.deleted();
 
         List<Answer> findAnswers = answerRepository.findByQuestionAndDeletedFalse(question);
