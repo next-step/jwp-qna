@@ -6,10 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DisplayName("사용자 저장소 테스트")
@@ -17,30 +15,29 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
-    void 테스트_수행_전_데이터_일괄삭제() {
-        userRepository.deleteAll();
-    }
-
     @Test
     @DisplayName("사용자 저장")
     void 저장() {
-        User user = UserTest.JAVAJIGI;
+        User user = UserTestFixture.JAVAJIGI;
         User saved = userRepository.save(user);
 
-        assertThat(saved.getId()).isNotNull();
-        assertThat(user.getUserId()).isEqualTo(saved.getUserId());
-        assertThat(user.getEmail()).isEqualTo(saved.getEmail());
-        assertThat(user.getName()).isEqualTo(saved.getName());
-        assertThat(user.getPassword()).isEqualTo(saved.getPassword());
-        assertThat(user.isGuestUser()).isEqualTo(saved.isGuestUser());
+        assertAll(
+                () -> assertThat(saved.getId()).isNotNull(),
+                () -> assertThat(user.getUserId()).isEqualTo(saved.getUserId()),
+                () -> assertThat(user.getEmail()).isEqualTo(saved.getEmail()),
+                () -> assertThat(user.getName()).isEqualTo(saved.getName()),
+                () -> assertThat(user.getPassword()).isEqualTo(saved.getPassword()),
+                () -> assertThat(user.isGuestUser()).isEqualTo(saved.isGuestUser())
+        );
     }
 
     @Test
     @DisplayName("사용자 수정")
     void 수정() {
-        User user = userRepository.save(UserTest.JAVAJIGI);
-        user.setName("윤채은");
+        User user = userRepository.save(UserTestFixture.JAVAJIGI);
+        User target = new User(user.getId(), user.getUserId(), user.getPassword(), "윤채은", user.getEmail());
+        user.update(user, target);
+
         User updatedUser = userRepository.findById(user.getId()).get();
 
         assertThat(updatedUser.getName()).isEqualTo(user.getName());
@@ -49,7 +46,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("사용자 삭제")
     void 삭제() {
-        User user = userRepository.save(UserTest.JAVAJIGI);
+        User user = userRepository.save(UserTestFixture.JAVAJIGI);
         userRepository.delete(user);
 
         assertThat(userRepository.findById(user.getId())).isEmpty();
@@ -58,14 +55,16 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("사용자 USER ID로 사용자 조회")
     void 사용자_USER_ID로_사용자_조회() {
-        User saved = userRepository.save(UserTest.JAVAJIGI);
+        User saved = userRepository.save(UserTestFixture.JAVAJIGI);
         User expected = userRepository.findByUserId(saved.getUserId()).get();
 
-        assertThat(saved.getId()).isEqualTo(expected.getId());
-        assertThat(saved.getUserId()).isEqualTo(expected.getUserId());
-        assertThat(saved.getEmail()).isEqualTo(expected.getEmail());
-        assertThat(saved.getName()).isEqualTo(expected.getName());
-        assertThat(saved.getPassword()).isEqualTo(expected.getPassword());
-        assertThat(saved.isGuestUser()).isEqualTo(expected.isGuestUser());
+        assertAll(
+                () -> assertThat(saved.getId()).isEqualTo(expected.getId()),
+                () -> assertThat(saved.getUserId()).isEqualTo(expected.getUserId()),
+                () -> assertThat(saved.getEmail()).isEqualTo(expected.getEmail()),
+                () -> assertThat(saved.getName()).isEqualTo(expected.getName()),
+                () -> assertThat(saved.getPassword()).isEqualTo(expected.getPassword()),
+                () -> assertThat(saved.isGuestUser()).isEqualTo(expected.isGuestUser())
+        );
     }
 }

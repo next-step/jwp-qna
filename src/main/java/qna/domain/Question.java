@@ -10,31 +10,31 @@ public class Question extends BaseEntity {
     private Long id;
     @Column(nullable = false, length = 100)
     private String title;
+    @Column(columnDefinition = "LONGTEXT")
     private String contents;
-    private Long writerId;
+    @ManyToOne
+    private User writeBy;
+    @Column(nullable = false)
     private boolean deleted = false;
 
-    public Question() {
+    protected Question() {
 
     }
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, User writeBy, String title, String contents) {
         this.id = id;
+        this.writeBy = writeBy;
         this.title = title;
         this.contents = contents;
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writeBy = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writeBy.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -45,40 +45,20 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriteBy() {
+        return writeBy;
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -87,7 +67,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writeBy.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
@@ -97,11 +77,15 @@ public class Question extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Question question = (Question) o;
-        return deleted == question.deleted && id.equals(question.id) && title.equals(question.title) && Objects.equals(contents, question.contents) && Objects.equals(writerId, question.writerId);
+        return deleted == question.deleted && id.equals(question.id) && title.equals(question.title) && Objects.equals(contents, question.contents) && Objects.equals(writeBy, question.writeBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writerId, deleted);
+        return Objects.hash(id, title, contents, writeBy, deleted);
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 }
