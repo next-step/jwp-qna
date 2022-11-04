@@ -83,10 +83,6 @@ public class Answer extends BaseEntity {
 		return question;
 	}
 
-	public void setQuestion(Question question) {
-		this.question = question;
-	}
-
 	public String getContents() {
 		return contents;
 	}
