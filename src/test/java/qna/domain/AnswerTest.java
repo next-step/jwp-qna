@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.constant.ErrorCode;
 
 public class AnswerTest {
 
@@ -55,5 +57,19 @@ public class AnswerTest {
         //then
         System.out.println("question= "+question);
         System.out.println("answer= "+answer);
+    }
+
+    @Test
+    void 답변한_작성자가_아니면_예외를_발생시킨다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        User fakeWriter = TestUserFactory.create("sanjigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = new Answer(writer, question, "답변한 작성자가 아니면 예외 발생");
+
+        //when
+        assertThatThrownBy(() -> answer.validateSameUser(fakeWriter))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage(ErrorCode.답변_중_다른_사람이_쓴_답변_있어_삭제_못함.getErrorMessage());
     }
 }
