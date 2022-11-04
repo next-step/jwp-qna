@@ -1,11 +1,21 @@
 package qna.domain.question;
 
-import qna.domain.user.User;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.domain.answer.Answer;
 import qna.domain.common.BaseEntity;
+import qna.domain.user.User;
 
-import javax.persistence.*;
-
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class Question  extends BaseEntity {
     @Id
@@ -15,7 +25,9 @@ public class Question  extends BaseEntity {
     private String title;
     @Lob
     private String contents;
-    private Long writerId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "writer_id")
+    private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -34,12 +46,12 @@ public class Question  extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -70,12 +82,12 @@ public class Question  extends BaseEntity {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writerId) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -92,7 +104,7 @@ public class Question  extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }

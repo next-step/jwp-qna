@@ -5,18 +5,14 @@ import qna.domain.common.ContentType;
 
 import java.time.LocalDateTime;
 
+import static qna.domain.user.UserTest.JAVAJIGI;
+
 @DataJpaTest
 public class DeleteHistoryTest {
 
     public static final DeleteHistory questiDelete =
-            new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+            new DeleteHistory(ContentType.QUESTION, 1L, JAVAJIGI, LocalDateTime.now());
     public static final DeleteHistory answerDelete =
-            new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
+            new DeleteHistory(ContentType.ANSWER, 1L, JAVAJIGI, LocalDateTime.now());
 
-    public static final DeleteHistory createQuestiDelete(){
-        return new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
-    }
-    public static final DeleteHistory createAnswerDelete(){
-        return new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
-    }
 }

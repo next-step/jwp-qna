@@ -14,7 +14,8 @@
   - [x] DeleteHistoryRepositoryTest
 
 ### 2단계 - 연관 관계 매핑
-- [ ] Answer -> Question
-- [ ] Answer -> User
-- [ ] DeleteHistory-> User
-- [ ] Question-> User
+- [x] Answer -> Question refactor
+- [x] Answer -> User refactor
+- [x] DeleteHistory-> User refactor
+- [x] Question-> User refactor
+- [ ] test code 코드 리팩토링
