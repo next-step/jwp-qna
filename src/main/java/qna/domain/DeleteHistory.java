@@ -64,4 +64,24 @@ public class DeleteHistory {
         return "DeleteHistory{" + "id=" + id + ", contentType=" + contentType + ", contentId=" + contentId
             + ", deletedById=" + deletedById + ", createDate=" + createDate + '}';
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public Long getDeletedById() {
+        return deletedById;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
 }
