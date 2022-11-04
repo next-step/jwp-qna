@@ -1,14 +1,11 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
+@DisplayName("답변 테스트")
 class AnswerRepositoryTest {
 
     @Autowired
@@ -25,7 +23,7 @@ class AnswerRepositoryTest {
     @DisplayName("데이터 저장 확인")
     void save() {
         Answer answer = AnswerTest.A1;
-        Answer savedAnswer = answerRepository.save(answer);
+        Answer savedAnswer = answerRepository.save(AnswerTest.A1);
 
         assertAll(
                 () -> assertThat(savedAnswer.getId()).isNotNull(),
