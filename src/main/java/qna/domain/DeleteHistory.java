@@ -4,33 +4,36 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "delete_history")
+@EntityListeners(AuditingEntityListener.class)
 public class DeleteHistory {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "content_type", columnDefinition = "varchar(255)")
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "content_type", columnDefinition = "varchar(255)")
     private ContentType contentType;
+
     @Column(name = "content_id")
     private Long contentId;
+
     @Column(name = "deleted_by_id")
     private Long deletedById;
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
 
-    @PrePersist
-    public void prePersist() {
-        this.createDate = LocalDateTime.now();
-    }
+    @CreatedDate
+    @Column(name = "create_date", updatable = false)
+    private LocalDateTime createDate;
 
     protected DeleteHistory() {
     }
