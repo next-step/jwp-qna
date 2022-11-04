@@ -1,8 +1,11 @@
 # JPA
+
 ## Step1. 요구사항
+
 - QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
 
 ### answer 테이블
+
 ```sql
 create table answer
 (
@@ -18,6 +21,7 @@ create table answer
 ```
 
 ### delete_history 테이블
+
 ```sql
 create table delete_history
 (
@@ -31,6 +35,7 @@ create table delete_history
 ```
 
 ### question 테이블
+
 ```sql
 create table question
 (
@@ -46,6 +51,7 @@ create table question
 ```
 
 ### user
+
 ```sql
 create table user
 (
@@ -63,19 +69,21 @@ alter table user
 ```
 
 * 엔티티매핑 기능명세서 (기본)
-- [ ] DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
-  - [ ] answer 엔티티 클래스, 레포지토리 클래스 작성
-  - [ ] delete_history 엔티티 클래스, 레포지토리 클래스 작성
-  - [ ] question 엔티티 클래스, 레포지토리 클래스 작성
-  - [ ] user 엔티티 클래스, 레포지토리 클래스 작성
-- [ ] @DataJpaTest를 사용하여 학습 테스트를 해 본다.
-    - [ ] answer 엔티티의 학습테스트를 해 본다.
-    - [ ] delete_history 엔티티의 학습테스트를 해 본다.
-    - [ ] question 엔티티의 학습테스트를 해 본다.
-    - [ ] user 엔티티의 학습테스트를 해 본다.
+
+- [X] DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
+    - [X] answer 엔티티 클래스, 레포지토리 클래스 작성
+    - [X] delete_history 엔티티 클래스, 레포지토리 클래스 작성
+    - [X] question 엔티티 클래스, 레포지토리 클래스 작성
+    - [X] user 엔티티 클래스, 레포지토리 클래스 작성
+- [X] @DataJpaTest를 사용하여 학습 테스트를 해 본다.
+    - [X] answer 엔티티의 학습테스트를 해 본다.
+    - [X] delete_history 엔티티의 학습테스트를 해 본다.
+    - [X] question 엔티티의 학습테스트를 해 본다.
+    - [X] user 엔티티의 학습테스트를 해 본다.
 
 * 힌트 및 추가 요구사항
-- [ ] 프로퍼티를 변경하여 좀 더 고도화된 JPA 개발을 준비한다.
-  - [ ] Spring Data JPA 사용 하여 동작 쿼리를 로그로 확인할 수 있게 한다.
-  - [ ] MySQL Dialect를 사용한다.
-- [ ] BaseEntity를 활용하여 엔티티의 통일된 동작을 추가한다.
+
+- [X] 프로퍼티를 변경하여 좀 더 고도화된 JPA 개발을 준비한다.
+    - [X] Spring Data JPA 사용 하여 동작 쿼리를 로그로 확인할 수 있게 한다.
+    - [X] MySQL Dialect를 사용한다.
+- [X] BaseEntity를 활용하여 엔티티의 통일된 동작을 추가한다.
