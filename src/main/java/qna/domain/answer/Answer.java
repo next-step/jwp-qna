@@ -1,15 +1,28 @@
-package qna.domain;
-
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+package qna.domain.answer;
 
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
+import qna.domain.question.Question;
+import qna.domain.user.User;
+import qna.domain.common.BaseEntity;
 
-public class Answer {
+@Entity
+public class Answer extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long writerId;
     private Long questionId;
+    @Lob
     private String contents;
+    @Column(nullable = false)
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
@@ -30,6 +43,10 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
+    }
+
+    protected Answer() {
+
     }
 
     public boolean isOwner(User writer) {
