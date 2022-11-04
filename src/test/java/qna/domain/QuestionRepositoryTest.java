@@ -46,6 +46,7 @@ class QuestionRepositoryTest {
     void find_question_by_id_and_deleted_false() {
         Question saveQuestion = questionRepository.save(Q1);
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestion.getId());
+
         assertTrue(findQuestion.isPresent());
         findQuestion.ifPresent(question ->
                 assertAll(
@@ -54,6 +55,7 @@ class QuestionRepositoryTest {
                         () -> assertThat(question.getTitle()).isEqualTo(saveQuestion.getTitle()),
                         () -> assertThat(question.getContents()).isEqualTo(saveQuestion.getContents()),
                         () -> assertThat(question.getWriterId()).isEqualTo(saveQuestion.getWriterId()),
+                        () -> assertFalse(question.isDeleted()),
                         () -> assertThat(question.getCreatedAt()).isEqualTo(saveQuestion.getCreatedAt()),
                         () -> assertThat(question.getUpdatedAt()).isEqualTo(saveQuestion.getUpdatedAt())
                 )
@@ -62,6 +64,28 @@ class QuestionRepositoryTest {
 
     @Test
     @Order(3)
+    @DisplayName("ID로 질문 조회 (삭제)")
+    void find_question_by_id_and_deleted_true() {
+        Question saveQuestion = questionRepository.save(Q1);
+        saveQuestion.setDeleted(true);
+        Optional<Question> findQuestion = questionRepository.findByIdAndDeletedTrue(saveQuestion.getId());
+        assertTrue(findQuestion.isPresent());
+        findQuestion.ifPresent(question ->
+                assertAll(
+                        () -> assertThat(question.getId()).isNotNull(),
+                        () -> assertThat(question.getId()).isEqualTo(saveQuestion.getId()),
+                        () -> assertThat(question.getTitle()).isEqualTo(saveQuestion.getTitle()),
+                        () -> assertThat(question.getContents()).isEqualTo(saveQuestion.getContents()),
+                        () -> assertThat(question.getWriterId()).isEqualTo(saveQuestion.getWriterId()),
+                        () -> assertTrue(question.isDeleted()),
+                        () -> assertThat(question.getCreatedAt()).isEqualTo(saveQuestion.getCreatedAt()),
+                        () -> assertThat(question.getUpdatedAt()).isEqualTo(saveQuestion.getUpdatedAt())
+                )
+        );
+    }
+
+    @Test
+    @Order(4)
     @DisplayName("질문 목록 조회 (삭제되지 않음)")
     void find_question_by_deleted_false() {
         questionRepository.save(Q1);
@@ -71,7 +95,7 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     @DisplayName("질문 삭제여부 변경")
     void question_deleted_true() {
         Question question = questionRepository.save(Q1);
