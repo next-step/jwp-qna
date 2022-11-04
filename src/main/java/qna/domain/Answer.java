@@ -57,7 +57,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -68,8 +68,8 @@ public class Answer extends BaseTimeEntity {
         return id;
     }
 
-    public Long getWriterId() {
-        return this.writer.getId();
+    public User getWriter() {
+        return writer;
     }
 
     public Question getQuestion() {

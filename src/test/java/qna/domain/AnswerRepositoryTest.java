@@ -28,15 +28,7 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("다대일(Answer:Question) 연관관계 설정 후 Answer 생성 테스트")
     void createWithQuestion() {
-        Question question = new Question("title", "contents");
-        questionRepository.save(question);
-
-        User writer = new User("user1", "password", "name", "test@email.com");
-        userRepository.save(writer);
-
-        Answer answer = new Answer(writer, question, "contents");
-        Answer savedAnswer = answerRepository.save(answer);
-
+        Answer savedAnswer = getSavedAnswer();
         Assertions.assertThat(savedAnswer.getId()).isNotNull();
     }
 
@@ -44,14 +36,7 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("저장한 Answer 와 조회한 Answer 가 같은지 (동일성)확인")
     void read() {
-        Question question = new Question("title", "contents");
-        questionRepository.save(question);
-
-        User writer = new User("user1", "password", "name", "test@email.com");
-        userRepository.save(writer);
-
-        Answer answer = new Answer(writer, question, "contents");
-        Answer savedAnswer = answerRepository.save(answer);
+        Answer savedAnswer = getSavedAnswer();
 
         Optional<Answer> findAnswer = answerRepository.findById(savedAnswer.getId());
 
@@ -65,15 +50,7 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("저장한 Answer 의 Question 변경 후 조회한 Answer 의 Question 과 같은지 확인")
     void updateWithQuestion() {
-        Question question = new Question("title", "contents");
-        questionRepository.save(question);
-
-        User writer = new User("user1", "password", "name", "test@email.com");
-        userRepository.save(writer);
-
-        Answer answer = new Answer(writer, question, "contents");
-        Answer savedAnswer = answerRepository.save(answer);
-
+        Answer savedAnswer = getSavedAnswer();
         savedAnswer.toQuestion(new Question("new title", "new contents"));
 
         Optional<Answer> findAnswer = answerRepository.findById(savedAnswer.getId());
@@ -85,15 +62,7 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("저장한 Answer 삭제 후 조회 시 Answer 가 없는지 확인")
     void delete() {
-        Question question = new Question("title", "contents");
-        questionRepository.save(question);
-
-        User writer = new User("user1", "password", "name", "test@email.com");
-        userRepository.save(writer);
-
-        Answer answer = new Answer(writer, question, "contents");
-        Answer savedAnswer = answerRepository.save(answer);
-
+        Answer savedAnswer = getSavedAnswer();
         answerRepository.delete(savedAnswer);
 
         Optional<Answer> findAnswer = answerRepository.findById(savedAnswer.getId());
@@ -105,14 +74,7 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("Answer 의 deleted 가 false 일 때 findByIdAndDeletedFalse 로 조회된 Answer 가 있는지 확인")
     void findByIdAndDeletedFalse() {
-        Question question = new Question("title", "contents");
-        questionRepository.save(question);
-
-        User writer = new User("user1", "password", "name", "test@email.com");
-        userRepository.save(writer);
-
-        Answer answer = new Answer(writer, question, "contents");
-        Answer savedAnswer = answerRepository.save(answer);
+        Answer savedAnswer = getSavedAnswer();
 
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
 
@@ -123,14 +85,7 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("Answer 의 deleted 가 true 일 때 findByIdAndDeletedFalse 조회 시 empty 로 조회되는지 확인")
     void findByIdAndDeletedFalse2() {
-        Question question = new Question("title", "contents");
-        questionRepository.save(question);
-
-        User writer = new User("user1", "password", "name", "test@email.com");
-        userRepository.save(writer);
-
-        Answer answer = new Answer(writer, question, "contents");
-        Answer savedAnswer = answerRepository.save(answer);
+        Answer savedAnswer = getSavedAnswer();
         savedAnswer.deleted();
 
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
@@ -142,16 +97,15 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("question id 로 Answer 조회 시 Answer 의 deleted 가 false 인 것만 조회되는지 확인 (모두 false 였을 때)")
     void findByQuestionAndDeletedFalse() {
-        Question question = new Question("title", "contents");
-        questionRepository.save(question);
+        Question question = getQuestion();
 
-        User writer1 = new User("user1", "password", "name", "test@email.com");
-        userRepository.save(writer1);
-        User writer2 = new User("user2", "password", "name", "test@email.com");
-        userRepository.save(writer2);
+        User answerWriter1 = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(answerWriter1);
+        User answerWriter2 = new User("user2", "password", "name", "test@email.com");
+        userRepository.save(answerWriter2);
 
-        Answer savedAnswer1 = answerRepository.save(new Answer(writer1, question, "contents"));
-        Answer savedAnswer2 = answerRepository.save(new Answer(writer2, question, "contents"));
+        Answer savedAnswer1 = answerRepository.save(new Answer(answerWriter1, question, "contents"));
+        Answer savedAnswer2 = answerRepository.save(new Answer(answerWriter2, question, "contents"));
 
         List<Answer> findAnswers = answerRepository.findByQuestionAndDeletedFalse(question);
 
@@ -165,16 +119,15 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("question id 로 Answer 조회 시 Answer 의 deleted 가 false 인 것만 조회되는지 확인 (각각 true, false 였을 때)")
     void findByQuestionAndDeletedFalse2() {
-        Question question = new Question("title", "contents");
-        questionRepository.save(question);
+        Question question = getQuestion();
 
-        User writer1 = new User("user1", "password", "name", "test@email.com");
-        userRepository.save(writer1);
-        User writer2 = new User("user2", "password", "name", "test@email.com");
-        userRepository.save(writer2);
+        User answerWriter1 = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(answerWriter1);
+        User answerWriter2 = new User("user2", "password", "name", "test@email.com");
+        userRepository.save(answerWriter2);
 
-        Answer savedAnswer1 = answerRepository.save(new Answer(writer1, question, "contents"));
-        Answer savedAnswer2 = answerRepository.save(new Answer(writer2, question, "contents"));
+        Answer savedAnswer1 = answerRepository.save(new Answer(answerWriter1, question, "contents"));
+        Answer savedAnswer2 = answerRepository.save(new Answer(answerWriter2, question, "contents"));
         savedAnswer1.deleted();
 
         List<Answer> findAnswers = answerRepository.findByQuestionAndDeletedFalse(question);
@@ -183,5 +136,24 @@ class AnswerRepositoryTest {
                 () -> assertThat(findAnswers).hasSize(1),
                 () -> assertThat(findAnswers).containsExactlyInAnyOrder(savedAnswer2)
         );
+    }
+
+    private Answer getSavedAnswer() {
+        Question question = getQuestion();
+
+        User answerWriter = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(answerWriter);
+
+        Answer answer = new Answer(answerWriter, question, "contents");
+        return answerRepository.save(answer);
+    }
+
+    private Question getQuestion() {
+        User questionWriter = new User("questionWriter", "password", "name", "test@email.com");
+        userRepository.save(questionWriter);
+
+        Question question = new Question("title", "contents").writeBy(questionWriter);
+        questionRepository.save(question);
+        return question;
     }
 }
