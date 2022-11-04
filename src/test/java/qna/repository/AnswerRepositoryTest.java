@@ -109,14 +109,19 @@ public class AnswerRepositoryTest {
         //given
         User writer = TestUserFactory.create("javajigi");
         Question question = TestQuestionFactory.create(writer);
-        Answer answer = TestAnswerFactory.create(writer, question);
-        Answer saveAnswer = answerRepository.save(answer);
+        Answer answer1 = TestAnswerFactory.create(writer, question);
+        Answer answer2 = TestAnswerFactory.create(writer, question);
+        Answer saveAnswer1 = answerRepository.save(answer1);
+        Answer saveAnswer2 = answerRepository.save(answer2);
         Question saveQuestion = questionRepository.save(question);
 
         //when
-        answerRepository.delete(saveAnswer);
+        answerRepository.delete(saveAnswer1);
         Optional<Question> findQuestion = questionRepository.findById(saveQuestion.getId());
+        Optional<Answer> findAnswer = answerRepository.findById(saveAnswer2.getId());
 
+        //then
         assertThat(findQuestion).isPresent();
+        assertThat(findAnswer).isPresent();
     }
 }

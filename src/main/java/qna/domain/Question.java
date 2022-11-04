@@ -30,7 +30,7 @@ public class Question extends BaseEntity {
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
     private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
