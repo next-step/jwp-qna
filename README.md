@@ -12,3 +12,9 @@
   - [x] QuestionRepositoryTest
   - [x] UserRepositoryTest
   - [x] DeleteHistoryRepositoryTest
+
+### 2단계 - 연관 관계 매핑
+- [ ] Answer -> Question
+- [ ] Answer -> User
+- [ ] DeleteHistory-> User
+- [ ] Question-> User
