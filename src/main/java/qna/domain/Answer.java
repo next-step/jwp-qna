@@ -2,6 +2,9 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Lob;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -10,6 +13,10 @@ import java.util.Objects;
 
 @Entity
 public class Answer extends DateEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = true)
     private Long writerId;
@@ -46,6 +53,14 @@ public class Answer extends DateEntity {
         this.contents = contents;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
     }
@@ -72,11 +87,6 @@ public class Answer extends DateEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    @Override
-    public Long getId() {
-        return super.getId();
     }
 
     @Override

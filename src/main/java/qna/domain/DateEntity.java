@@ -10,7 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class DateEntity extends BaseEntity {
+public abstract class DateEntity {
 
     @Column(nullable = false, updatable = false)
     @CreatedDate
