@@ -23,3 +23,4 @@
   - [x] UserRepository 테스트
   - [x] AnswerRepository 테스트
   - [x] QuestionRepository 테스트
+- [x] equals method, hashcode override 

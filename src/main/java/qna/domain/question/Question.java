@@ -15,6 +15,8 @@ import qna.domain.answer.Answer;
 import qna.domain.common.BaseEntity;
 import qna.domain.user.User;
 
+import java.util.Objects;
+
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 public class Question  extends BaseEntity {
@@ -107,6 +109,19 @@ public class Question  extends BaseEntity {
                 ", writerId=" + writer +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return id.equals(question.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
 }

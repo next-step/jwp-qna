@@ -117,6 +117,13 @@ public class User  extends BaseEntity {
         this.email = email;
     }
 
+    private static class GuestUser extends User {
+        @Override
+        public boolean isGuestUser() {
+            return true;
+        }
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -128,10 +135,17 @@ public class User  extends BaseEntity {
                 '}';
     }
 
-    private static class GuestUser extends User {
-        @Override
-        public boolean isGuestUser() {
-            return true;
-        }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
 }
