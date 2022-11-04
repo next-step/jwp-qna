@@ -18,6 +18,8 @@
 - [x] Answer -> User refactor
 - [x] DeleteHistory-> User refactor
 - [x] Question-> User refactor
-- [ ] 테스트 코드 리팩토링
+- [x] 테스트 코드 리팩토링
   - [x] DeleteHistoryRepository 테스트
   - [x] UserRepository 테스트
+  - [x] AnswerRepository 테스트
+  - [x] QuestionRepository 테스트
