@@ -89,14 +89,14 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public void validateSameUser(User user) {
         if(!isOwner(user)) {
             throw new CannotDeleteException(ErrorCode.질문_삭제_권한_없음.getErrorMessage());
         }
+    }
+
+    public void changeDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

@@ -49,7 +49,7 @@ public class QuestionRepositoryTest {
         return Arrays.asList(
                 DynamicTest.dynamicTest("삭제여부가 거짓인 질문을 조회한다.", () -> {
                     //when
-                    saveQuestion.setDeleted(false);
+                    saveQuestion.changeDeleted(false);
                     Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestionId);
 
                     //then
@@ -57,7 +57,7 @@ public class QuestionRepositoryTest {
                 }),
                 DynamicTest.dynamicTest("질문의 삭제여부를 참으로 바꾸면 조회할 수 없다.", () -> {
                     //when
-                    saveQuestion.setDeleted(true);
+                    saveQuestion.changeDeleted(true);
                     Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestionId);
 
                     //then

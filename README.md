@@ -230,7 +230,7 @@ alter table question
 
 ### 기능 목록
 * [x] Question - 질문 삭제 권한 확인 -> 권한 없을 경우 CannotDeleteException 발생("질문을 삭제할 권한이 없습니다.")
-* [ ] Question - 질문 삭제여부 변경
+* [x] Question - 질문 삭제여부 변경
 * [ ] Answer - 답변 삭제 권한 확인 -> 권한 없을 경우 CannotDeleteException 발생("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.")
 * [ ] Answer - 답변 삭제여부 변경
 * [x] User - 유저 동일여부 확인

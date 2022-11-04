@@ -1,5 +1,6 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.Test;
@@ -30,5 +31,31 @@ public class QuestionTest {
         assertThatThrownBy(() -> question.validateSameUser(fakeWriter))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("질문을 삭제할 권한이 없습니다.");
+    }
+
+    @Test
+    void 질문_삭제여부_true_변경() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+
+        //when
+        question.changeDeleted(true);
+
+        //then
+        assertThat(question.isDeleted()).isTrue();
+    }
+
+    @Test
+    void 질문_삭제여부_false_변경() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+
+        //when
+        question.changeDeleted(false);
+
+        //then
+        assertThat(question.isDeleted()).isFalse();
     }
 }
