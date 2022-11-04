@@ -1,8 +1,6 @@
 package qna.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.DeleteHistoryTest.D1;
-import static qna.domain.DeleteHistoryTest.D2;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,7 +11,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.Answer;
+import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
+import qna.domain.Question;
+import qna.domain.TestAnswerFactory;
+import qna.domain.TestDeleteHistoryFactory;
+import qna.domain.TestQuestionFactory;
+import qna.domain.TestUserFactory;
+import qna.domain.User;
 
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
@@ -22,19 +28,31 @@ public class DeleteHistoryRepositoryTest {
     DeleteHistoryRepository deleteHistoryRepository;
 
     @Test
-    void 삭제이력을_저장하면_반환된_삭제이력_객체의_id는_비어있지_않다() {
+    void 삭제이력을_저장하면_반환된_삭제이력의_id는_비어있지_않다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = TestAnswerFactory.create(writer, question);
+        DeleteHistory deleteHistory = TestDeleteHistoryFactory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
+
         //when
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(D1);
+        DeleteHistory saveDeleteHistory = deleteHistoryRepository.save(deleteHistory);
 
         //then
-        assertThat(deleteHistory.getId()).isNotNull();
+        assertThat(saveDeleteHistory.getId()).isNotNull();
     }
 
     @Test
-    void 삭제이력을_두개_저장한_후_전체_조회를_하면_총_두개의_삭제이력_리스트를_반환한다() {
+    void 저장한_삭제이력들_전체를_조회한다() {
         //given
-        deleteHistoryRepository.save(D1);
-        deleteHistoryRepository.save(D2);
+        User writer = TestUserFactory.create("sanjigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = TestAnswerFactory.create(writer, question);
+        DeleteHistory deleteHistory1 = TestDeleteHistoryFactory.create(ContentType.QUESTION, question.getId(), question.getWriter());
+        DeleteHistory deleteHistory2 = TestDeleteHistoryFactory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
+
+        deleteHistoryRepository.save(deleteHistory1);
+        deleteHistoryRepository.save(deleteHistory2);
 
         //when
         List<DeleteHistory> findDeleteHistorys = deleteHistoryRepository.findAll();
@@ -44,19 +62,22 @@ public class DeleteHistoryRepositoryTest {
     }
 
     @TestFactory
-    Collection<DynamicTest> 삭제이력을_저장하면_조회가_되지만_해당_삭제이력을_삭제하고_조회하면_해당_이력이_조회되지_않는다() {
+    Collection<DynamicTest> 삭제이력_조회_시나리오() {
         //given
-        DeleteHistory saveDeleteHistory = deleteHistoryRepository.save(D2);
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        DeleteHistory deleteHistory = TestDeleteHistoryFactory.create(ContentType.QUESTION, question.getId(), question.getWriter());
+        DeleteHistory saveDeleteHistory = deleteHistoryRepository.save(deleteHistory);
         Long saveDeleteHistoryId = saveDeleteHistory.getId();
         return Arrays.asList(
-                DynamicTest.dynamicTest("저장한 삭제이력의 id로 삭제이력을 조회하면 정상적으로 조회가 된다.", () -> {
+                DynamicTest.dynamicTest("id로 삭제이력을 조회한다.", () -> {
                     //when
                     Optional<DeleteHistory> findDeleteHistory = deleteHistoryRepository.findById(saveDeleteHistoryId);
 
                     //then
                     assertThat(findDeleteHistory).isPresent();
                 }),
-                DynamicTest.dynamicTest("저장한 삭제이력을 삭제하고, 다시 조회하면 해당 삭제이력이 조회되지 않는다.", () -> {
+                DynamicTest.dynamicTest("삭제이력을 삭제하면 조회할 수 없다.", () -> {
                     //when
                     deleteHistoryRepository.delete(saveDeleteHistory);
                     Optional<DeleteHistory> findDeleteHistory = deleteHistoryRepository.findById(saveDeleteHistoryId);
