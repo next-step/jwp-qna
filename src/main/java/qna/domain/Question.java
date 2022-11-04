@@ -5,6 +5,10 @@ import javax.persistence.*;
 @Entity
 public class Question extends BaseTimeEntity {
 
+    protected Question() {
+
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

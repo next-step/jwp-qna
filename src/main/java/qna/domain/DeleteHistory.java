@@ -7,6 +7,10 @@ import java.util.Objects;
 @Entity
 public class DeleteHistory {
 
+    protected DeleteHistory() {
+
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

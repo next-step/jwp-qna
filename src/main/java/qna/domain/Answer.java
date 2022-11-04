@@ -9,6 +9,10 @@ import java.util.Objects;
 @Entity
 public class Answer extends BaseTimeEntity {
 
+    protected Answer() {
+
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,10 +26,6 @@ public class Answer extends BaseTimeEntity {
 
     @Column(nullable = false)
     private boolean deleted = false;
-
-    protected Answer() {
-
-    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
