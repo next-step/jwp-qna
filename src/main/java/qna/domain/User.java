@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Entity(name = "users")
+@Entity(name = "user")
 public class User  extends BaseEntity implements Serializable {
     public static final GuestUser GUEST_USER = new GuestUser();
 
