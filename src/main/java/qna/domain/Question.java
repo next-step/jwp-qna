@@ -60,12 +60,16 @@ public class Question extends DeletableBaseEntity {
         return id;
     }
 
+    public User getWriter() {
+        return writer;
+    }
+
     public Long getWriterId() {
         return writer.getId();
     }
 
     public void setWriter(User writer) {
-        if (Objects.nonNull(writer)) {
+        if (Objects.nonNull(this.writer)) {
             this.writer.getQuestions().remove(this);
         }
         this.writer = writer;

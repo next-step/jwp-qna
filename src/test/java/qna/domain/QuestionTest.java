@@ -1,5 +1,7 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -7,6 +9,7 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 public class QuestionTest extends BaseDomainTest<Question> {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
@@ -15,9 +18,16 @@ public class QuestionTest extends BaseDomainTest<Question> {
     @Autowired
     QuestionRepository questions;
 
+    @Autowired
+    UserRepository users;
+
+    @Autowired
+    TestEntityManager entityManager;
+
     @BeforeEach
     void setUp() {
-        questions.deleteAll();
+        questions.saveAll(질문_생성());
+        flush();
     }
 
     @Test
@@ -46,6 +56,18 @@ public class QuestionTest extends BaseDomainTest<Question> {
         도메인.forEach(this::생성날짜_수정날짜_검증);
     }
 
+    @Test
+    void 질문을_등록한_사용자를_조회할_수_있다() {
+        Question 질문 = 질문_생성().get(0);
+        User 작성자 = 작성자_1();
+        질문.setWriter(작성자);
+        flush();
+
+        작성자 = 질문.getWriter();
+        assertThat(작성자).isNotNull();
+        assertThat(작성자.getQuestions()).contains(질문);
+    }
+
     public static Question 질문_생성(String 제목) {
         return new Question(제목, "내용");
     }
@@ -63,5 +85,14 @@ public class QuestionTest extends BaseDomainTest<Question> {
         수정할_도메인.forEach(e -> e.modify(수정_제목, 수정_본문));
         questions.saveAll(수정할_도메인);
         questions.flush();
+    }
+
+    private User 작성자_1() {
+        return users.save(new User("user", "password", "name", "email@mail.com"));
+    }
+
+    void flush() {
+        entityManager.flush();
+        entityManager.clear();
     }
 }
