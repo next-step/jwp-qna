@@ -48,20 +48,21 @@ public class DeleteHistory extends BaseEntity {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+		if (o == null || getClass() != o.getClass()) {
 			return false;
+		}
+
 		DeleteHistory that = (DeleteHistory)o;
-		return Objects.equals(id, that.id) &&
-			contentType == that.contentType &&
-			Objects.equals(contentId, that.contentId) &&
-			Objects.equals(deletedBy, that.deletedBy);
+
+		return Objects.equals(id, that.id);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, contentType, contentId, deletedBy);
+		return id != null ? id.hashCode() : 0;
 	}
 
 	@Override
