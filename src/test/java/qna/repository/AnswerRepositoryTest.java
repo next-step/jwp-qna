@@ -37,9 +37,9 @@ class AnswerRepositoryTest {
     @Test
     void findById() {
         Answer actual = answerRepository.save(A1);
-        System.out.println(A1.isDeleted());
+
         Answer result = answerRepository.findByIdAndDeletedFalse(actual.getId()).get();
-        System.out.println(result);
+
         assertThat(actual == result).isTrue();
     }
 
