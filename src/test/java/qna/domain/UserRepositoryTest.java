@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
+@DisplayName("사용자 테스트")
 class UserRepositoryTest {
 
     @Autowired

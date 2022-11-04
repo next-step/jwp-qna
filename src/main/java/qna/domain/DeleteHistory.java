@@ -59,4 +59,7 @@ public class DeleteHistory {
                 '}';
     }
 
+    public Long getId() {
+        return id;
+    }
 }
