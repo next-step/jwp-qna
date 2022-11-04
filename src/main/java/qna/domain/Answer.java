@@ -13,102 +13,102 @@ import qna.UnAuthorizedException;
 @Entity
 public class Answer {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(name = "writer_id")
-  private Long writerId;
+    @Column(name = "writer_id")
+    private Long writerId;
 
-  @Column(name = "question_id")
-  private Long questionId;
+    @Column(name = "question_id")
+    private Long questionId;
 
-  @Lob
-  @Column(name = "contents")
-  private String contents;
+    @Lob
+    @Column(name = "contents")
+    private String contents;
 
-  @Column(name = "deleted", nullable = false)
-  private boolean deleted = false;
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
 
-  protected Answer() {
-  }
-
-  public Answer(User writer, Question question, String contents) {
-    this(null, writer, question, contents);
-  }
-
-  public Answer(Long id, User writer, Question question, String contents) {
-    this.id = id;
-
-    if (Objects.isNull(writer)) {
-      throw new UnAuthorizedException();
+    protected Answer() {
     }
 
-    if (Objects.isNull(question)) {
-      throw new NotFoundException();
+    public Answer(User writer, Question question, String contents) {
+        this(null, writer, question, contents);
     }
 
-    this.writerId = writer.getId();
-    this.questionId = question.getId();
-    this.contents = contents;
-  }
+    public Answer(Long id, User writer, Question question, String contents) {
+        this.id = id;
 
-  public boolean isOwner(User writer) {
-    return this.writerId.equals(writer.getId());
-  }
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
 
-  public void toQuestion(Question question) {
-    this.questionId = question.getId();
-  }
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
 
-  public Long getId() {
-    return id;
-  }
+        this.writerId = writer.getId();
+        this.questionId = question.getId();
+        this.contents = contents;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public boolean isOwner(User writer) {
+        return this.writerId.equals(writer.getId());
+    }
 
-  public Long getWriterId() {
-    return writerId;
-  }
+    public void toQuestion(Question question) {
+        this.questionId = question.getId();
+    }
 
-  public void setWriterId(Long writerId) {
-    this.writerId = writerId;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public Long getQuestionId() {
-    return questionId;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public void setQuestionId(Long questionId) {
-    this.questionId = questionId;
-  }
+    public Long getWriterId() {
+        return writerId;
+    }
 
-  public String getContents() {
-    return contents;
-  }
+    public void setWriterId(Long writerId) {
+        this.writerId = writerId;
+    }
 
-  public void setContents(String contents) {
-    this.contents = contents;
-  }
+    public Long getQuestionId() {
+        return questionId;
+    }
 
-  public boolean isDeleted() {
-    return deleted;
-  }
+    public void setQuestionId(Long questionId) {
+        this.questionId = questionId;
+    }
 
-  public void setDeleted(boolean deleted) {
-    this.deleted = deleted;
-  }
+    public String getContents() {
+        return contents;
+    }
 
-  @Override
-  public String toString() {
-    return "Answer{" +
-        "id=" + id +
-        ", writerId=" + writerId +
-        ", questionId=" + questionId +
-        ", contents='" + contents + '\'' +
-        ", deleted=" + deleted +
-        '}';
-  }
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+            "id=" + id +
+            ", writerId=" + writerId +
+            ", questionId=" + questionId +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            '}';
+    }
 }
