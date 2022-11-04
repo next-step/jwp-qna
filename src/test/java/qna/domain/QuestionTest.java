@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
+import qna.constant.ErrorCode;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
@@ -30,7 +31,7 @@ public class QuestionTest {
         //when
         assertThatThrownBy(() -> question.validateSameUser(fakeWriter))
                 .isInstanceOf(CannotDeleteException.class)
-                .hasMessage("질문을 삭제할 권한이 없습니다.");
+                .hasMessage(ErrorCode.질문_삭제_권한_없음.getErrorMessage());
     }
 
     @Test
