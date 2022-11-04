@@ -68,9 +68,7 @@ alter table user
 
 ## 2단계 - 연관 관계 매핑
 
-### 요구사항
-
-주어진 DDL을 통해 객체 간의 연관 관계를 매핑한다.
+### 요구사항 (주어진 DDL을 통해 객체 간의 연관 관계를 매핑한다.)
 
 ```text
 객체는 연관된 객체를 찾을 때 참조를 사용한다.
@@ -87,26 +85,10 @@ alter table answer
 ```
 
 - Answer 는 하나의 Question 에만 속한다.
-    - Answer 와 Question 의 연관관계는 다대일 연관관계이다.
+    - Answer 와 Question 의 연관관계는 다대일 단방향 연관관계이다.
     - Answer 는 Question 의 id를 외래키로 관리하기 때문에 연관관계 주인이 된다.
     - 객체 관계에서 Answer 는 Question 에 접근할 수 있지만 Question 은 Answer 로 접근할 수 없다.
     - 관계형 데이터베이스에서는 Answer 의 외래키(question_id)를 통해 조인으로 Answer <-> Question 접근이 가능하다.
-
-다대일 연관관계 설정 후 Answer 생성 시 다음과 같은 쿼리가 발생하는지 확인한다.
-
-```sql
-insert
-into question
-    (id, created_at, updated_at, contents, deleted, title, writer_id)
-values (null, ?, ?, ?, ?, ?, ?)
-```
-
-```sql
-insert
-into answer
-    (id, created_at, updated_at, contents, deleted, question_id, writer_id)
-values (null, ?, ?, ?, ?, ?, ?)
-```
 
 #### 2. Answer 와 User 간의 연관관계를 매핑한다.
 
@@ -118,7 +100,7 @@ alter table answer
 ```
 
 - Answer 는 하나의 User 에만 속한다.
-    - Answer 와 User 의 연관관계는 다대일 연관관계이다.
+    - Answer 와 User 의 연관관계는 다대일 단방향 연관관계이다.
     - Answer 는 User 의 id를 외래키로 관리하기 때문에 연관관계 주인이 된다.
     - 객체 관계에서 Answer 는 User 에 접근할 수 있지만 User 는 Answer 로 접근할 수 없다.
     - 관계형 데이터베이스에서는 Answer 의 외래키(writer_id)를 통해 조인으로 Answer <-> User 접근이 가능하다.
@@ -133,7 +115,7 @@ alter table delete_history
 ```
 
 - DeleteHistory 는 하나의 User 에만 속한다.
-    - DeleteHistory 와 User 의 연관관계는 다대일 연관관계이다.
+    - DeleteHistory 와 User 의 연관관계는 다대일 단방향 연관관계이다.
     - DeleteHistory 는 User 의 id를 외래키로 관리하기 때문에 연관관계 주인이 된다.
     - 객체 관계에서 DeleteHistory 는 User 에 접근할 수 있지만 User 는 DeleteHistory 로 접근할 수 없다.
     - 관계형 데이터베이스에서는 DeleteHistory 의 외래키(deleted_by_id)를 통해 조인으로 DeleteHistory <-> User 접근이 가능하다.
@@ -148,7 +130,7 @@ alter table question
 ```
 
 - Question 은 하나의 User 에만 속한다.
-    - Question 와 User 의 연관관계는 다대일 연관관계이다.
+    - Question 와 User 의 연관관계는 다대일 단방향 연관관계이다.
     - Question 는 User 의 id를 외래키로 관리하기 때문에 연관관계 주인이 된다.
     - 객체 관계에서 Question 는 User 에 접근할 수 있지만 User 는 Question 로 접근할 수 없다.
     - 관계형 데이터베이스에서는 Question 의 외래키(writer_id)를 통해 조인으로 Question <-> User 접근이 가능하다.
