@@ -15,11 +15,11 @@ public class Answer extends BaseEntity{
     private Long id;
     @Lob
     private String contents;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "writer_id")
     private User writer;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id")
     private Question question;
     @Column(nullable = false)

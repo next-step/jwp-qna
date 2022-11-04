@@ -13,7 +13,7 @@ public class Question extends BaseEntity {
     @Lob
     private String contents;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "writer_id", nullable = false)
     private User writer;
     @Column(nullable = false)
