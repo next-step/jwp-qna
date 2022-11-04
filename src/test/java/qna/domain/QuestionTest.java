@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
@@ -58,5 +59,73 @@ public class QuestionTest {
 
         //then
         assertThat(question.isDeleted()).isFalse();
+    }
+
+    @Test
+    void 질문자와_동일한_유저이면_질문을_삭제한다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        question.changeDeleted(false);
+
+        //when
+        question.delete(writer);
+
+        //then
+        assertThat(question.isDeleted()).isTrue();
+    }
+
+    @Test
+    void 질문자와_동일한_유저가_질문_삭제_요청_시_예외를_발생시킨다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        User fakeWriter = TestUserFactory.create("sanjigi");
+        Question question = TestQuestionFactory.create(writer);
+        question.changeDeleted(false);
+
+        //when
+        assertThatThrownBy(() -> question.delete(fakeWriter))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage(ErrorCode.질문_삭제_권한_없음.getErrorMessage());
+    }
+
+    @Test
+    void 질문_삭제_요청_시_질문자와_동일하지_않은_유저가_쓴_답변이_있다면_예외를_발생시킨다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        User fakeWriter = TestUserFactory.create("sanjigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer1 = new Answer(writer, question, "정상 writer");
+        Answer answer2 = new Answer(fakeWriter, question, "fake writer");
+        question.changeDeleted(false);
+        answer1.changeDeleted(false);
+        answer2.changeDeleted(false);
+
+        //when
+        assertThatThrownBy(() -> question.delete(writer))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage(ErrorCode.답변_중_다른_사람이_쓴_답변_있어_삭제_못함.getErrorMessage());
+    }
+
+    @Test
+    void 질문_삭제_요청_성공() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer1 = new Answer(writer, question, "정상 writer");
+        Answer answer2 = new Answer(writer, question, "정상 writer");
+        question.changeDeleted(false);
+        answer1.changeDeleted(false);
+        answer2.changeDeleted(false);
+
+        //when
+        question.delete(writer);
+
+        //then
+        assertAll(
+                () -> assertThat(question.isDeleted()).isTrue(),
+                () -> assertThat(answer1.isDeleted()).isTrue(),
+                () -> assertThat(answer2.isDeleted()).isTrue()
+        );
     }
 }

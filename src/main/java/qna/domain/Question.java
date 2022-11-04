@@ -99,6 +99,17 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public void delete(User user) {
+        validateSameUser(user);
+        for(Answer answer: this.answers) {
+            answer.validateSameUser(user);
+        }
+        changeDeleted(true);
+        for(Answer answer: this.answers) {
+            answer.changeDeleted(true);
+        }
+    }
+
     @Override
     public String toString() {
         return "Question{" +
