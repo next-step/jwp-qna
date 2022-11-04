@@ -89,9 +89,14 @@ public class Answer extends BaseEntity {
         }
     }
 
-    public DeleteHistory changeDeleted(boolean deleted) {
+    private DeleteHistory changeDeleted(boolean deleted) {
         this.deleted = deleted;
         return DeleteHistory.createDeleteHistory(ContentType.ANSWER, this.id, this.writer);
+    }
+
+    public DeleteHistory delete(User user) {
+        validateSameUser(user);
+        return changeDeleted(true);
     }
 
     @Override

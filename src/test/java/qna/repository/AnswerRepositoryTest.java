@@ -45,36 +45,21 @@ public class AnswerRepositoryTest {
         );
     }
 
-    @TestFactory
-    Collection<DynamicTest> 답변_삭제여부_변경_시나리오() {
+    @Test
+    void 답변의_삭제여부를_참으로_바꾸면_조회할_수_없다() {
         //given
         User writer = TestUserFactory.create("sanjigi");
         Question question = TestQuestionFactory.create(writer);
         Answer answer = TestAnswerFactory.create(writer, question);
         Answer saveAnswer = answerRepository.save(answer);
-        saveAnswer.changeDeleted(false);
         Long saveAnswerId = saveAnswer.getId();
-        return Arrays.asList(
-                DynamicTest.dynamicTest("삭제여부가 거짓인 답변을 조회한다.", () -> {
-                    //when
-                    Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
 
-                    //then
-                    assertThat(findAnswer).isPresent();
-                    assertAll(
-                            () -> assertThat(findAnswer.get().getContents()).isEqualTo(saveAnswer.getContents()),
-                            () -> assertThat(findAnswer.get().isDeleted()).isFalse()
-                    );
-                }),
-                DynamicTest.dynamicTest("답변의 삭제여부를 참으로 바꾸면 조회할 수 없다.", () -> {
-                    //when
-                    saveAnswer.changeDeleted(true);
-                    Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
+        //when
+        saveAnswer.delete(writer);
+        Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
 
-                    //then
-                    assertThat(findAnswer).isNotPresent();
-                })
-        );
+        //then
+        assertThat(findAnswer).isNotPresent();
     }
 
     @TestFactory

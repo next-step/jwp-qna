@@ -119,7 +119,7 @@ public class DeleteHistoryRepositoryTest {
         Answer saveAnswer = answerRepository.save(answer);
 
         //when
-        DeleteHistory deleteHistory = saveAnswer.changeDeleted(true);
+        DeleteHistory deleteHistory = saveAnswer.delete(writer);
         deleteHistoryRepository.save(deleteHistory);
         List<DeleteHistory> deleteHistories = deleteHistoryRepository.findAll();
 

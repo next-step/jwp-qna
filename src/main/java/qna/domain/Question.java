@@ -108,7 +108,7 @@ public class Question extends BaseEntity {
         }
         deleteHistories.add(changeDeleted(true));
         for(Answer answer: this.answers) {
-            deleteHistories.add(answer.changeDeleted(true));
+            deleteHistories.add(answer.delete(user));
         }
         return deleteHistories;
     }
