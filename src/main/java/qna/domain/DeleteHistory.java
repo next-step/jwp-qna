@@ -30,11 +30,19 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
         this.createDate = createDate;
+    }
+
+    public static DeleteHistory createDeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
+        return new DeleteHistory(contentType, contentId, deletedBy, LocalDateTime.now());
+    }
+
+    public static DeleteHistory createDeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+        return new DeleteHistory(contentType, contentId, deletedBy, createDate);
     }
 
     public Long getId() {

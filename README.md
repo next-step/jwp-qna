@@ -235,5 +235,5 @@ alter table question
 * [x] Answer - 답변 삭제여부 변경
 * [x] User - 유저 동일여부 확인
   * equals() 오버라이딩
-* [ ] DeleteHistory - 삭제이력 추가
+* [x] DeleteHistory - 삭제이력 추가
 
