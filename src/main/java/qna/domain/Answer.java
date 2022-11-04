@@ -15,12 +15,12 @@ public class Answer extends BaseEntity{
     private Long id;
     @Lob
     private String contents;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "writer_id")
     private User writer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "question_id")
     private Question question;
     @Column(nullable = false)
     private boolean deleted = false;
@@ -107,5 +107,9 @@ public class Answer extends BaseEntity{
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public Question getQuestion() {
+        return this.question;
     }
 }

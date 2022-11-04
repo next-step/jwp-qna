@@ -13,8 +13,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
@@ -27,46 +25,58 @@ class AnswerRepositoryTest {
     private AnswerRepository answerRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
     private EntityManager em;
+
+    private static Question q1;
+    private static Question q2;
+    private User user1;
+    private User user2;
 
     @BeforeEach
     void setUp() {
-        A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
-        A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
+        List<User> users1 = userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));
+        user1 = users1.get(0);
+        user2 = users1.get(1);
+        q1 = questionRepository.save(new Question("title","contents").writeBy(user1));
+        q2 = questionRepository.save(new Question("title","contents").writeBy(user2));
+        A1 = new Answer(user1, q1, "Answers Contents1");
+        A2 = new Answer(user2, q2, "Answers Contents2");
+        answerRepository.saveAll(Arrays.asList(A1,A2));
     }
 
     @Test
-    @DisplayName("save하면 id가 자동으로 생성되고, 입력시간/수정 시간이 입력됨. Question은 Id가 null이므로 저장된 것이 없음 ")
+    @DisplayName("연관관계를 맺으면 정상적으로 저장이 되는 것을 확인")
     void test1() {
-        Answer save = answerRepository.save(A1);
+        User user = new User("id","pass","name","email");
+        Question question = new Question("title","contents").writeBy(user);
+        Answer cascade_test = new Answer(user, question, "cascade test");
+        Answer save = answerRepository.save(cascade_test);
 
         assertAll(
-                () -> assertThat(save.getId()).isPositive(),
-                () -> assertThat(save.getCreatedAt()).isNotNull(),
-                () -> assertThat(save.getUpdatedAt()).isNotNull(),
-                () -> assertThat(save.getWriter()).isNotNull(),
-                () -> assertThat(save.getQuestionId()).isNull(),
-                () -> assertThat(save.isOwner(JAVAJIGI)).isTrue()
+                () -> assertThat(save.getQuestion().getWriter().getId()).isPositive(),
+                () -> assertThat(save.getWriter()).isSameAs(save.getQuestion().getWriter()),
+                () -> assertThat(save.getWriter().getUserId()).isEqualTo(user.getUserId()),
+                () -> assertThat(save.getQuestion().getTitle()).isEqualTo(question.getTitle()),
+                () -> assertThat(save.getQuestion().getId()).isPositive()
         );
     }
 
     @Test
-    @DisplayName("Question Id와 삭제되지 않은 Answer를 검색하면 한 건이 조회됨")
+    @DisplayName("Question Id와 삭제되지 않은 Answer를 검색하면  두 건이 조회됨")
     void findByQuestionQIdAndDeletedFalse() {
-        A1.setQuestion(Q1);
-        A2.setQuestion(Q2);
-        Answer deletedAnswer = new Answer(JAVAJIGI, Q1, "some contents");
-        deletedAnswer.setQuestion(Q2);
+        Answer deletedAnswer = new Answer(user1, q2, "some contents");
         deletedAnswer.setDeleted(true);
 
-        answerRepository.saveAll(Arrays.asList(A1, A2, deletedAnswer));
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(1L);
+        answerRepository.save(deletedAnswer);
+        List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(q2);
 
-        assertAll(
-                () -> assertThat(answers.size()).isEqualTo(1),
-                () -> assertThat(answers.get(0).getQuestionId()).isEqualTo(1L),
-                () -> assertThat(answers.get(0).isOwner(JAVAJIGI)).isTrue()
-        );
+        assertThat(answers.size()).isEqualTo(1);
     }
 
     @Test
@@ -75,13 +85,9 @@ class AnswerRepositoryTest {
         A1.setDeleted(true);
         A2.setDeleted(false);
 
-        answerRepository.saveAll(Arrays.asList(A1, A2));
         List<Answer> answers = answerRepository.findByDeletedTrue();
 
-        assertAll(
-                () -> assertThat(answers.size()).isEqualTo(1),
-                () -> assertThat(answers.get(0).isOwner(JAVAJIGI)).isTrue()
-        );
+        assertThat(answers.size()).isEqualTo(1);
     }
 
     @Test

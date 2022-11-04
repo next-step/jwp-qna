@@ -58,11 +58,11 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("writer id가  정상적으로 설정됨")
+    @DisplayName("writer 가  정상적으로 설정됨")
     void test6() {
         A1.setWriter(SANJIGI);
 
-        assertThat(A1.getWriter()).isEqualTo(SANJIGI.getId());
+        assertThat(A1.getWriter()).isEqualTo(SANJIGI);
     }
 
     @Test
