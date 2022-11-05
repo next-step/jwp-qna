@@ -1,5 +1,7 @@
 package qna.domain;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -7,6 +9,7 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 public class AnswerTest extends BaseDomainTest<Answer> {
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
@@ -18,6 +21,9 @@ public class AnswerTest extends BaseDomainTest<Answer> {
     UserRepository users;
     @Autowired
     QuestionRepository questions;
+
+    @Autowired
+    TestEntityManager entityManager;
 
     @BeforeEach
     void setUp() {
@@ -52,21 +58,32 @@ public class AnswerTest extends BaseDomainTest<Answer> {
         도메인.forEach(this::생성날짜_수정날짜_검증);
     }
 
+    @Test
+    void 답변의_질문을_조회할_수_있다() {
+        Answer 답변 = 답변_생성("답변");
+        Question 질문 = 질문_생성("질문1");
+        답변.toQuestion(질문);
+        flush();
+
+        assertThat(답변.getQuestion()).isEqualTo(질문);
+        assertThat(질문.getAnswers()).containsOnlyOnce(답변);
+    }
+
+    private Answer 답변_생성(String 답변1) {
+        return answers.save(답변(답변1));
+    }
+
+    private Answer 답변(String 내용) {
+        return new Answer(유저_생성("유저1"), 질문_생성("질문1"), 내용);
+    }
+
     List<Answer> 유저_생성() {
         User 유저1 = 유저_생성("유저1");
-        Question 질문 = 질문_생성();
+        Question 질문 = 질문_생성("질문1");
         return answers.saveAll(Lists.newArrayList(
             new Answer(유저1, 질문, "본문1"),
             new Answer(유저1, 질문, "본문2")
         ));
-    }
-
-    private Question 질문_생성() {
-        return questions.save(QuestionTest.질문("질문1"));
-    }
-
-    private User 유저_생성(String 유저_아이디) {
-        return users.save(UserTest.사용자(유저_아이디));
     }
 
     void 도메인_수정(List<Answer> 수정할_도메인) {
@@ -74,5 +91,18 @@ public class AnswerTest extends BaseDomainTest<Answer> {
         수정할_도메인.forEach(e -> e.modify(수정_본문));
         answers.saveAll(수정할_도메인);
         answers.flush();
+    }
+
+    private Question 질문_생성(String 제목) {
+        return questions.save(QuestionTest.질문(제목));
+    }
+
+    private User 유저_생성(String 유저_아이디) {
+        return users.save(UserTest.사용자(유저_아이디));
+    }
+
+    private void flush() {
+        entityManager.flush();
+        entityManager.clear();
     }
 }

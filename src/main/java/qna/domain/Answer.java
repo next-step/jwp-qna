@@ -61,11 +61,13 @@ public class Answer extends DeletableBaseEntity {
     }
 
     public void toQuestion(Question question) {
-        if (Objects.nonNull(question)) {
+        if (Objects.nonNull(this.question)) {
             this.question.getAnswers().remove(this);
         }
         this.question = question;
-        question.getAnswers().add(this);
+        if (!question.getAnswers().contains(this)) {
+            question.getAnswers().add(this);
+        }
     }
 
     public void setWriter(User writer) {
@@ -100,12 +102,16 @@ public class Answer extends DeletableBaseEntity {
         return this.contents;
     }
 
+    public Question getQuestion() {
+        return question;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
             "id=" + id +
-            ", writer=" + writer +
-            ", question=" + question +
+            ", writer=" + writer.getUserId() +
+            ", question=" + question.getId() +
             ", contents='" + contents + '\'' +
             ", deleted=" + isDeleted() +
             '}';

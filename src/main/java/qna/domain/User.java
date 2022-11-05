@@ -96,6 +96,10 @@ public class User extends BaseEntity {
         return id;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
     public void addQuestion(Question question) {
         questions.add(question);
         question.setWriter(this);
