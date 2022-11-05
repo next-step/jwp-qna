@@ -14,26 +14,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-class UserRepositoryTest {
+class UserRepositoryTest extends NewEntityTestBase {
 
     @Autowired
     private UserRepository repository;
-    private User user1;
-    private User user2;
 
+    @Override
     @BeforeEach
     void setUp() {
-        user1 = new User(null, "id", "password", "name", "email");
-        user2 = new User(null, "id2", "password2", "name2", "email2");
-        repository.saveAll(Arrays.asList(user1,user2));
+        super.setUp();
+        repository.saveAll(Arrays.asList(NEWUSER1, NEWUSER2));
     }
 
     @Test
     @DisplayName("동일성 테스트")
     void test1() {
-        Optional<User> id2 = repository.findByUserId("id2");
+        Optional<User> id2 = repository.findByUserId(NEWUSER1.getUserId());
 
-        assertThat(id2.get()).isSameAs(user2);
+        assertThat(id2.get()).isSameAs(NEWUSER1);
     }
 
     @Test
@@ -41,6 +39,6 @@ class UserRepositoryTest {
     void test2() {
         List<User> all = repository.findAll();
 
-        assertThat(all).containsExactly(user1,user2);
+        assertThat(all).containsExactly(NEWUSER1, NEWUSER2);
     }
 }

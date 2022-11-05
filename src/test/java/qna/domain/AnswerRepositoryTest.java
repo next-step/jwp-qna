@@ -13,12 +13,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
-class AnswerRepositoryTest {
+class AnswerRepositoryTest extends NewEntityTestBase {
 
     private Answer A1;
     private Answer A2;
@@ -26,61 +23,61 @@ class AnswerRepositoryTest {
     private AnswerRepository answerRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
     private EntityManager em;
 
+    @Override
     @BeforeEach
     void setUp() {
-        A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
-        A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
+        super.setUp();
+        A1 = new Answer(NEWUSER1, Q1, "Answers Contents1");
+        A2 = new Answer(NEWUSER2, Q2, "Answers Contents2");
+        answerRepository.saveAll(Arrays.asList(A1, A2));
     }
 
     @Test
-    @DisplayName("save하면 id가 자동으로 생성되고, 입력시간/수정 시간이 입력됨. Question은 Id가 null이므로 저장된 것이 없음 ")
+    @DisplayName("연관관계를 맺으면 정상적으로 저장이 되는 것을 확인")
     void test1() {
-        Answer save = answerRepository.save(A1);
+        User user = new User("id", "pass", "name", "email");
+        Question question = new Question("title", "contents", user);
+        Answer cascade_test = new Answer(user, question, "cascade test");
+        Answer save = answerRepository.save(cascade_test);
 
         assertAll(
-                () -> assertThat(save.getId()).isPositive(),
-                () -> assertThat(save.getCreatedAt()).isNotNull(),
-                () -> assertThat(save.getUpdatedAt()).isNotNull(),
-                () -> assertThat(save.getWriterId()).isPositive(),
-                () -> assertThat(save.getQuestionId()).isNull(),
-                () -> assertThat(save.isOwner(JAVAJIGI)).isTrue()
+                () -> assertThat(save.getQuestion().getWriter().getId()).isPositive(),
+                () -> assertThat(save.getWriter()).isSameAs(save.getQuestion().getWriter()),
+                () -> assertThat(save.getWriter().getUserId()).isEqualTo(user.getUserId()),
+                () -> assertThat(save.getQuestion().getTitle()).isEqualTo(question.getTitle()),
+                () -> assertThat(save.getQuestion().getId()).isPositive()
         );
     }
 
     @Test
-    @DisplayName("Question Id와 삭제되지 않은 Answer를 검색하면 한 건이 조회됨")
-    void findByQuestionIdAndDeletedFalse() {
-        A1.setQuestionId(1L);
-        A2.setQuestionId(2L);
-        Answer deletedAnswer = new Answer(JAVAJIGI, Q1, "some contents");
-        deletedAnswer.setQuestionId(1L);
-        deletedAnswer.setDeleted(true);
+    @DisplayName("Question Id와 삭제되지 않은 Answer를 검색하면  두 건이 조회됨")
+    void findByQuestionQIdAndDeletedFalse() {
+        Answer deletedAnswer = new Answer(NEWUSER1, Q2, "some contents");
+        deletedAnswer.markDeleted(true);
 
-        answerRepository.saveAll(Arrays.asList(A1, A2, deletedAnswer));
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(1L);
+        answerRepository.save(deletedAnswer);
+        List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(Q2);
 
-        assertAll(
-                () -> assertThat(answers.size()).isEqualTo(1),
-                () -> assertThat(answers.get(0).getQuestionId()).isEqualTo(1L),
-                () -> assertThat(answers.get(0).isOwner(JAVAJIGI)).isTrue()
-        );
+        assertThat(answers.size()).isEqualTo(1);
     }
 
     @Test
     @DisplayName("Question Id와 삭제되지 않은 Answer를 검색하면 한 건이 조회됨")
     void findByDeletedFalse() {
-        A1.setDeleted(true);
-        A2.setDeleted(false);
+        A1.markDeleted(true);
+        A2.markDeleted(false);
 
-        answerRepository.saveAll(Arrays.asList(A1, A2));
         List<Answer> answers = answerRepository.findByDeletedTrue();
 
-        assertAll(
-                () -> assertThat(answers.size()).isEqualTo(1),
-                () -> assertThat(answers.get(0).isOwner(JAVAJIGI)).isTrue()
-        );
+        assertThat(answers.size()).isEqualTo(1);
     }
 
     @Test
@@ -107,7 +104,7 @@ class AnswerRepositoryTest {
     @DisplayName("content가 업데이트 된다. dynamicUpdate적용으로 변경된 컬럼만 쿼리에 포함됨.")
     void update() {
         Answer save = answerRepository.save(A1);
-        save.setContents("updated");
+        save.updateContents("updated");
 
         em.flush();
         em.clear();
@@ -120,8 +117,8 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("contains 로 % ~ % 검색이 가능함")
     void findByRegEx() {
-        A1.setContents("12345");
-        A2.setContents("abcde");
+        A1.updateContents("12345");
+        A2.updateContents("abcde");
         answerRepository.saveAll(Arrays.asList(A1, A2));
 
         List<Answer> matchesRegex = answerRepository.findByContentsContains("123");

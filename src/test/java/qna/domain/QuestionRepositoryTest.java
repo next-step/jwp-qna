@@ -13,36 +13,41 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
-class QuestionRepositoryTest {
+class QuestionRepositoryTest extends NewEntityTestBase {
 
     @Autowired
-    private QuestionRepository repository;
+    private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Override
     @BeforeEach
     void setUp() {
-        repository.saveAll(Arrays.asList(QuestionTest.Q1,QuestionTest.Q2));
+        super.setUp();
+        questionRepository.saveAll(Arrays.asList(Q1, Q2));
     }
 
     @Test
     @DisplayName("조회 후 하나를 Deleted True로 설정하면 Delete False인 것이 하나만 조회됨")
     void findByDeletedFalse() {
 
-        List<Question> all = repository.findAll();
-        all.get(0).setDeleted(true);
+        List<Question> all = questionRepository.findAll();
+        all.get(0).markDeleted(true);
 
-        List<Question> byDeletedFalse = repository.findByDeletedFalse();
+        List<Question> byDeletedFalse = questionRepository.findByDeletedFalse();
 
         assertThat(byDeletedFalse.size()).isEqualTo(1);
-        assertThat(byDeletedFalse.get(0).getContents()).isEqualTo(QuestionTest.Q2.getContents());
     }
 
     @Test
     void findByIdAndDeletedFalse() {
-        Optional<Question> found = repository.findByIdAndDeletedFalse(1L);
+        Optional<Question> found = questionRepository.findByIdAndDeletedFalse(Q1.getId());
 
-        assertThat(found.get().getContents()).isEqualTo(QuestionTest.Q1.getContents());
+        assertThat(found.get().getContents()).isEqualTo(Q1.getContents());
     }
 
     @Test
@@ -50,12 +55,24 @@ class QuestionRepositoryTest {
     void test4() {
         String stringLengthOver = prepareContentsOverLength(101);
 
-        Question question = new Question(null, stringLengthOver, "contents");
+        Question question = new Question(null, stringLengthOver, "contents", NEWUSER1);
 
-        assertThatThrownBy(() -> repository.save(question))
+        assertThatThrownBy(() -> questionRepository.save(question))
                 .isInstanceOf(DataIntegrityViolationException.class)
                 .hasMessageContaining("could not execute statement; SQL [n/a]");
     }
+
+    @Test
+    @DisplayName("신규 Question 엔티티와 신규 User 엔티티를 연결하여 저장하면 모두 Id가 생김")
+    void test5() {
+        Question save = questionRepository.save(Q1);
+
+        assertAll(
+                () -> assertThat(save.getWriter().getId()).isPositive(),
+                () -> assertThat(save.getId()).isPositive()
+        );
+    }
+
 
     private static String prepareContentsOverLength(int length) {
         StringBuilder sb = new StringBuilder(length);

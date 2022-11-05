@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -51,25 +50,9 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("Id가 정상적으로 설정됨")
-    void test5() {
-        A1.setId(3L);
-
-        assertThat(A1.getId()).isEqualTo(3L);
-    }
-
-    @Test
-    @DisplayName("writer id가  정상적으로 설정됨")
-    void test6() {
-        A1.setWriterId(SANJIGI.getId());
-
-        assertThat(A1.getWriterId()).isEqualTo(SANJIGI.getId());
-    }
-
-    @Test
     @DisplayName("Contents가 정상적으로 설정됨")
     void test7() {
-        A1.setContents("changed");
+        A1.updateContents("changed");
 
         assertThat(A1.getContents()).isEqualTo("changed");
     }
@@ -77,7 +60,7 @@ public class AnswerTest {
     @Test
     @DisplayName("deleted가 정상적으로 설정됨")
     void test8() {
-        A1.setDeleted(true);
+        A1.markDeleted(true);
 
         assertThat(A1.isDeleted()).isTrue();
     }
@@ -88,6 +71,4 @@ public class AnswerTest {
                 Arguments.of(SANJIGI,false)
         );
     }
-
-
 }
