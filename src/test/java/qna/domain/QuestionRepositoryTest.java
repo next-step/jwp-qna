@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
@@ -42,12 +43,11 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    void 질문_삭제_시_deleted_true() {
+    void repository_의_delete_를_사용해_질문을_삭제_할_경우_예외가_발생() {
         Question question = questionRepository.save(QuestionTest.Q1);
-        questionRepository.deleteById(question.getId());
-        questionRepository.flush();
-        Question actual = questionRepository.findById(question.getId()).get();
-        assertThat(actual.isDeleted()).isTrue();
+        assertThatThrownBy(() -> questionRepository.deleteById(question.getId()))
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessage("해당 메소드를 사용해 질문을 삭제할 수 없습니다.");
     }
 
     @Test
