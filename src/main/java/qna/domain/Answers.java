@@ -25,17 +25,10 @@ public class Answers {
 
     public List<DeleteHistory> delete(User user) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        validateSameUser(user);
         for(Answer answer: this.answers) {
             deleteHistories.add(answer.delete(user));
         }
         return deleteHistories;
-    }
-
-    private void validateSameUser(User user) {
-        for(Answer answer: this.answers) {
-            answer.validateSameUser(user);
-        }
     }
 
     public void removeAnswer(Answer answer) {

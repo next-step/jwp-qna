@@ -1,6 +1,7 @@
 package qna.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
+import qna.constant.ErrorCode;
 import qna.domain.Answer;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
@@ -125,5 +128,24 @@ public class DeleteHistoryRepositoryTest {
 
         //then
         assertThat(deleteHistories).contains(deleteHistory);
+    }
+
+    @Test
+    void 질문_삭제여부_변경_시_예외가_발생하면_삭제이력_추가_안된다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        User fakeWriter = TestUserFactory.create("sanjigi");
+        Question question = TestQuestionFactory.create(writer);
+        answerRepository.save(new Answer(fakeWriter, question, "답변자가 질문자와 다르면 예외 발생"));
+        List<DeleteHistory> actual = deleteHistoryRepository.findAll();
+
+        //when
+        assertThatThrownBy(() -> question.delete(writer))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage(ErrorCode.답변_중_다른_사람이_쓴_답변_있어_삭제_못함.getErrorMessage());
+        List<DeleteHistory> expect = deleteHistoryRepository.findAll();
+
+        //then
+        assertThat(actual).hasSize(expect.size());
     }
 }
