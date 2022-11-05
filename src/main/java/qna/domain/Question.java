@@ -1,14 +1,12 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Question {
+public class Question extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,13 +23,6 @@ public class Question {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
-
-    @Column(name = "created_at", nullable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     public Question(String title, String contents) {
         this(null, title, contents);

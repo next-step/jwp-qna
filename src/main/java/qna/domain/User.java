@@ -11,7 +11,7 @@ import java.util.Objects;
 @Entity
 @Table(name =  "user")
 @EntityListeners(AuditingEntityListener.class)
-public class User {
+public class User extends BaseTime {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -30,12 +30,12 @@ public class User {
     @Column(name = "email", length = 50)
     private String email;
 
-    @Column(name = "created_at", nullable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+//    @Column(name = "created_at", nullable = false)
+//    @CreatedDate
+//    private LocalDateTime createdAt;
+//
+//    @Column(name = "updated_at")
+//    private LocalDateTime updatedAt;
 
     private User() {
     }
