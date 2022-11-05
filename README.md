@@ -12,3 +12,17 @@
   - [x] QuestionRepositoryTest
   - [x] UserRepositoryTest
   - [x] DeleteHistoryRepositoryTest
+
+### 2단계 - 연관 관계 매핑
+- [x] Answer -> Question refactor
+- [x] Answer -> User refactor
+- [x] DeleteHistory-> User refactor
+- [x] Question-> User refactor
+- [x] 테스트 코드 리팩토링
+  - [x] DeleteHistoryRepository 테스트
+  - [x] UserRepository 테스트
+  - [x] AnswerRepository 테스트
+  - [x] QuestionRepository 테스트
+- [x] equals method, hashcode override 
+- [x] 연관 entity 필요시에만 조회하도록 fatch 타입을 LAZY로 설정
+- [x] 코드 포매팅

@@ -1,22 +1,24 @@
 package qna.domain.user;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
-
-import java.util.Objects;
 import qna.domain.common.BaseEntity;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class User  extends BaseEntity {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 20, nullable = false, unique=true)
+    @Column(length = 20, nullable = false, unique = true)
     private String userId;
     @Column(length = 20, nullable = false)
     private String password;
@@ -115,6 +117,13 @@ public class User  extends BaseEntity {
         this.email = email;
     }
 
+    private static class GuestUser extends User {
+        @Override
+        public boolean isGuestUser() {
+            return true;
+        }
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -126,10 +135,21 @@ public class User  extends BaseEntity {
                 '}';
     }
 
-    private static class GuestUser extends User {
-        @Override
-        public boolean isGuestUser() {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return id.equals(user.id);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
 }
