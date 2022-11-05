@@ -51,6 +51,10 @@ public class Answers {
         values.forEach(Answer::deleted);
     }
 
+    public boolean isAllDeleted() {
+        return values.stream().allMatch(Answer::isDeleted);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
