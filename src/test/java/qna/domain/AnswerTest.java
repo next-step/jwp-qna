@@ -86,4 +86,16 @@ public class AnswerTest {
         //then
         assertThat(answer.isDeleted()).isTrue();
     }
+
+    @Test
+    void 삭제여부가_참인_질문에_답변을_생성하면_예외를_발생시킨다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        question.delete(writer);
+
+        //when
+        assertThatThrownBy(() -> TestAnswerFactory.create(writer, question)).isInstanceOf(NotFoundException.class)
+                .hasMessage(ErrorCode.삭제된_질문에는_답변할_수_없음.getErrorMessage());
+    }
 }

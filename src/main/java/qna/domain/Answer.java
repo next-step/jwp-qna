@@ -45,9 +45,11 @@ public class Answer extends BaseEntity {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
-
         if (Objects.isNull(question)) {
-            throw new NotFoundException();
+            throw new NotFoundException(ErrorCode.질문이_존재하지_않음.getErrorMessage());
+        }
+        if(question.isDeleted()) {
+            throw new NotFoundException(ErrorCode.삭제된_질문에는_답변할_수_없음.getErrorMessage());
         }
 
         this.writer = writer;

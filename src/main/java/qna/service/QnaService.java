@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.NotFoundException;
+import qna.constant.ErrorCode;
 import qna.domain.Question;
 import qna.domain.User;
 import qna.repository.QuestionRepository;
@@ -24,7 +25,7 @@ public class QnaService {
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {
         return questionRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(ErrorCode.질문이_존재하지_않음.getErrorMessage()));
     }
 
     @Transactional
