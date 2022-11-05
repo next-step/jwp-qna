@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -59,24 +60,16 @@ public class Question extends BaseTimeEntity {
         return id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public User getWriter() {
-        return writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
     public void deleted() {
         this.deleted = true;
+    }
+
+    public DeleteHistory toDeletedHistory() {
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
     @Override

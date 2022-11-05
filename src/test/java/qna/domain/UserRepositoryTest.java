@@ -24,14 +24,7 @@ class UserRepositoryTest {
     void create() {
         User user = UserTest.JAVAJIGI;
         User savedUser = userRepository.save(user);
-
-        assertAll(
-                () -> assertThat(savedUser.getId()).isNotNull(),
-                () -> assertThat(savedUser.getUserId()).isEqualTo(user.getUserId()),
-                () -> assertThat(savedUser.getEmail()).isEqualTo(user.getEmail()),
-                () -> assertThat(savedUser.getName()).isEqualTo(user.getName()),
-                () -> assertThat(savedUser.getPassword()).isEqualTo(user.getPassword())
-        );
+        Assertions.assertThat(savedUser.getId()).isNotNull();
     }
 
     @Transactional
@@ -39,7 +32,7 @@ class UserRepositoryTest {
     @DisplayName("이미 존재하는 userId 로 User 생성 시 예외를 발생시킨다. (unique = true 테스트)")
     void create2() {
         User savedUser = userRepository.save(UserTest.JAVAJIGI);
-        User duplicatedUser = new User(null, savedUser.getUserId(), "password", "user", "user@gmail.com");
+        User duplicatedUser = new User(null, "javajigi", "password", "user", "user@gmail.com");
 
         Assertions.assertThatThrownBy(() -> userRepository.save(duplicatedUser))
                 .isInstanceOf(DataIntegrityViolationException.class);
@@ -69,9 +62,9 @@ class UserRepositoryTest {
     @Test
     @DisplayName("userId로 User 조회 시 조회되는지 확인")
     void read() {
-        User savedUser = userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.JAVAJIGI);
 
-        Optional<User> findUser = userRepository.findByUserId(savedUser.getUserId());
+        Optional<User> findUser = userRepository.findByUserId("javajigi");
 
         Assertions.assertThat(findUser).isPresent();
     }

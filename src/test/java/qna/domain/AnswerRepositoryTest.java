@@ -51,11 +51,13 @@ class AnswerRepositoryTest {
     @DisplayName("저장한 Answer 의 Question 변경 후 조회한 Answer 의 Question 과 같은지 확인")
     void updateWithQuestion() {
         Answer savedAnswer = getSavedAnswer();
-        savedAnswer.toQuestion(new Question("new title", "new contents"));
+        Question question = questionRepository.save(new Question("title", "contents")
+                .writeBy(userRepository.save(new User("user3", "password", "name", "test@email.com"))));
+        savedAnswer.toQuestion(question);
 
-        Optional<Answer> findAnswer = answerRepository.findById(savedAnswer.getId());
+        Question findQuestion = questionRepository.findById(question.getId()).get();
 
-        Assertions.assertThat(savedAnswer.getQuestion()).isEqualTo(findAnswer.get().getQuestion());
+        Assertions.assertThat(question.getId()).isEqualTo(findQuestion.getId());
     }
 
     @Transactional
@@ -149,11 +151,16 @@ class AnswerRepositoryTest {
     }
 
     private Question getQuestion() {
-        User questionWriter = new User("questionWriter", "password", "name", "test@email.com");
-        userRepository.save(questionWriter);
+        User questionWriter = getUser();
 
         Question question = new Question("title", "contents").writeBy(questionWriter);
         questionRepository.save(question);
         return question;
+    }
+
+    private User getUser() {
+        User questionWriter = new User("questionWriter", "password", "name", "test@email.com");
+        userRepository.save(questionWriter);
+        return questionWriter;
     }
 }

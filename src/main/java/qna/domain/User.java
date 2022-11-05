@@ -77,22 +77,6 @@ public class User extends BaseTimeEntity {
         return id;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

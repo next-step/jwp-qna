@@ -31,12 +31,7 @@ class QuestionRepositoryTest {
         Question question = new Question("title1", "contents").writeBy(writer);
         Question savedQuestion = questionRepository.save(question);
 
-        assertAll(
-                () -> assertThat(savedQuestion.getId()).isNotNull(),
-                () -> assertThat(savedQuestion.getContents()).isEqualTo(question.getContents()),
-                () -> assertThat(savedQuestion.getTitle()).isEqualTo(question.getTitle()),
-                () -> assertThat(savedQuestion.getWriter()).isEqualTo(question.getWriter())
-        );
+        Assertions.assertThat(savedQuestion.getId()).isNotNull();
     }
 
     @Transactional
