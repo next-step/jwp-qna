@@ -6,4 +6,6 @@ import qna.domain.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserId(String userId);
+
+    int countByName(String name);
 }
