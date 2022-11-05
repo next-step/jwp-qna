@@ -1,14 +1,23 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Question extends BaseEntity {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,8 +26,15 @@ public class Question extends BaseEntity {
     private String title;
     @Lob
     private String contents;
-    private Long writerId;
+
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    private final List<Answer> answers = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -35,12 +51,12 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -50,9 +66,13 @@ public class Question extends BaseEntity {
     public Long getId() {
         return id;
     }
-    
-    public Long getWriterId() {
-        return writerId;
+
+    public User getWriter() {
+        return writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public boolean isDeleted() {
@@ -69,7 +89,7 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer.toString() +
                 ", deleted=" + deleted +
                 '}';
     }
