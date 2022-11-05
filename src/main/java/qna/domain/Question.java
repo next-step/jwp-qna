@@ -21,7 +21,7 @@ public class Question extends BaseEntity{
 	@OneToOne
 	@JoinColumn(name = "writer_id")
 	private User writer;
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "question_id")
 	private List<Answer> answers = new ArrayList<>();
 	@Column(nullable = false)
