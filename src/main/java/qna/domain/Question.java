@@ -2,13 +2,13 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -17,11 +17,11 @@ public class Question extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String title;
+    @Embedded
+    private Title title;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @ManyToOne
     @JoinColumn(name = "writer_id", nullable = false, foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -36,8 +36,8 @@ public class Question extends BaseTimeEntity {
 
     public Question(Long id, String title, String contents) {
         this.id = id;
-        this.title = title;
-        this.contents = contents;
+        this.title = Title.from(title);
+        this.contents = Contents.from(contents);
     }
 
     protected Question() {

@@ -1,7 +1,7 @@
 package qna.domain;
 
 import java.util.Objects;
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,14 +13,18 @@ public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true, nullable = false, length = 20)
-    private String userId;
-    @Column(nullable = false, length = 20)
-    private String password;
-    @Column(nullable = false, length = 20)
-    private String name;
-    @Column(length = 50)
-    private String email;
+
+    @Embedded
+    private UserId userId;
+
+    @Embedded
+    private Password password;
+
+    @Embedded
+    private Name name;
+
+    @Embedded
+    private Email email;
 
     protected User() {
     }
@@ -31,10 +35,10 @@ public class User extends BaseTimeEntity {
 
     public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+        this.userId = UserId.from(userId);
+        this.password = Password.from(password);
+        this.name = Name.from(name);
+        this.email = Email.from(email);
     }
 
     public Long getId() {

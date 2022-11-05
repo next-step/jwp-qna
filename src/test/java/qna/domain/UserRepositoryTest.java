@@ -31,30 +31,10 @@ class UserRepositoryTest {
     @Test
     @DisplayName("이미 존재하는 userId 로 User 생성 시 예외를 발생시킨다. (unique = true 테스트)")
     void create2() {
-        User savedUser = userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.JAVAJIGI);
         User duplicatedUser = new User(null, "javajigi", "password", "user", "user@gmail.com");
 
         Assertions.assertThatThrownBy(() -> userRepository.save(duplicatedUser))
-                .isInstanceOf(DataIntegrityViolationException.class);
-    }
-
-    @Transactional
-    @Test
-    @DisplayName("userId 가 null 이면 예외를 발생시킨다. (nullable = false 테스트)")
-    void create3() {
-        User user = new User(null, null, "password", "user", "user@gmail.com");
-
-        Assertions.assertThatThrownBy(() -> userRepository.save(user))
-                .isInstanceOf(DataIntegrityViolationException.class);
-    }
-
-    @Transactional
-    @Test
-    @DisplayName("userId 가 20자 초과하면 예외를 발생시킨다. (length = 20 테스트)")
-    void create4() {
-        User user = new User(null, "123456789012345678901", "password", "user", "user@gmail.com");
-
-        Assertions.assertThatThrownBy(() -> userRepository.save(user))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -64,7 +44,7 @@ class UserRepositoryTest {
     void read() {
         userRepository.save(UserTest.JAVAJIGI);
 
-        Optional<User> findUser = userRepository.findByUserId("javajigi");
+        Optional<User> findUser = userRepository.findByUserId(UserId.from("javajigi"));
 
         Assertions.assertThat(findUser).isPresent();
     }

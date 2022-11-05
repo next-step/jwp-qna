@@ -3,13 +3,13 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -28,8 +28,8 @@ public class Answer extends BaseTimeEntity {
     @JoinColumn(name = "question_id", nullable = false, foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -54,7 +54,7 @@ public class Answer extends BaseTimeEntity {
 
         this.writer = writer;
         this.question = question;
-        this.contents = contents;
+        this.contents = Contents.from(contents);
     }
 
     public boolean isOwner(User writer) {
