@@ -25,9 +25,13 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("question테이블 save 테스트")
     void save() {
-        Question question = new Question("타이틀2", "콘텐츠2");
+        Question expected = new Question("타이틀2", "콘텐츠2");
+        Question actual = questions.save(expected);
 
-        questions.save(question);
+        assertAll(
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getContents()).isEqualTo(expected.getContents())
+        );
     }
 
     @Test
