@@ -1,5 +1,6 @@
 package qna.repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -25,13 +24,20 @@ public class AnswerRepositoryTest {
     UserRepository userRepository;
     @Autowired
     QuestionRepository questionRepository;
+    User savedUser;
+    Question savedQuestion;
+
+    @BeforeEach
+    void setUp() {
+        savedUser = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        savedQuestion = questionRepository.save(new Question("title1", "contents1")
+                .writeBy(savedUser));
+    }
 
     @Test
     @DisplayName("questionId와 일치하고 삭제상태가 false인 Answer목록을 반환")
     void test_returns_answers_with_questionId_and_deleted_is_false() {
-        User user = userRepository.save(JAVAJIGI);
-        Question question = questionRepository.save(Q1);
-        Answer savedAnswer = answerRepository.save(new Answer(user, question, "contents"));
+        Answer savedAnswer = answerRepository.save(new Answer(savedUser, savedQuestion, "contents"));
 
         List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestion().getId());
 
@@ -44,9 +50,7 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("Answer의 id와 일치하고 삭제상태가 false인 Answer를 반환")
     void test_returns_answer_with_answerId_and_deleted_is_false() {
-        User user = userRepository.save(JAVAJIGI);
-        Question question = questionRepository.save(Q1);
-        Answer savedAnswer = answerRepository.save(new Answer(user, question, "contents"));
+        Answer savedAnswer = answerRepository.save(new Answer(savedUser, savedQuestion, "contents"));
 
         Optional<Answer> answer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
 
