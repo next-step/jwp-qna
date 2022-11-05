@@ -44,14 +44,14 @@ class AnswerRepositoryTest {
         Question question = questionRepository.save(TestQuestionFactory.create(writer));
         Answer expect = TestAnswerFactory.create(writer, question);
 
-        Answer actual = answerRepository.save(expect);
+        Answer result = answerRepository.save(expect);
 
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.isDeleted()).isEqualTo(expect.isDeleted()),
-                () -> assertThat(actual.getContents()).isEqualTo(expect.getContents()),
-                () -> assertThat(actual.getQuestion()).isEqualTo(expect.getQuestion()),
-                () -> assertThat(actual.getWriter()).isEqualTo(expect.getWriter())
+                () -> assertThat(result.getId()).isNotNull(),
+                () -> assertThat(result.isDeleted()).isEqualTo(expect.isDeleted()),
+                () -> assertThat(result.getContents()).isEqualTo(expect.getContents()),
+                () -> assertThat(result.getQuestion()).isEqualTo(expect.getQuestion()),
+                () -> assertThat(result.getWriter()).isEqualTo(expect.getWriter())
         );
     }
 
