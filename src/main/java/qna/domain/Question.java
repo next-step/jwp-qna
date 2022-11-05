@@ -1,11 +1,30 @@
 package qna.domain;
 
-public class Question {
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import org.hibernate.annotations.SQLDelete;
+
+@Entity
+@SQLDelete(sql = "update question set deleted = true where id = ?")
+public class Question extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false, length = 100)
     private String title;
+    @Lob
     private String contents;
     private Long writerId;
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    protected Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -68,6 +87,23 @@ public class Question {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Question question = (Question) o;
+        return Objects.equals(id, question.id) && Objects.equals(writerId, question.writerId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, writerId);
     }
 
     @Override
