@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -63,7 +64,7 @@ class AnswerRepositoryTest {
 
         Answer result = answerRepository.findByIdAndDeletedFalse(expect.getId()).get();
 
-        assertThat(result == expect).isTrue();
+        assertEquals(expect, result);
     }
 
     @DisplayName("답변이 삭제되었을 경우, findByIdAndDeletedFalse 함수로 조회할 수 없다")
@@ -88,7 +89,7 @@ class AnswerRepositoryTest {
 
         Answer result = answerRepository.findByQuestionIdAndDeletedFalse(expect.getQuestion().getId()).get(0);
 
-        assertThat(expect == result).isTrue();
+        assertEquals(expect, result);
     }
 
     @DisplayName("답변이 삭제되었을 경우, findByQuestionIdAndDeletedFalse 함수로 조회할 수 없다")

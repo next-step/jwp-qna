@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -69,7 +70,7 @@ class QuestionRepositoryTest {
 
         Question result = questionRepository.findByIdAndDeletedFalse(expect.getId()).get();
 
-        assertThat(expect == result).isTrue();
+        assertEquals(expect, result);
     }
 
     @DisplayName("삭제된 질문은 findByIdAndDeletedFalse 함수로 조회할 수 없다")
