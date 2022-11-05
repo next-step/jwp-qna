@@ -21,7 +21,13 @@ public class AnswerTest {
 
 
     @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
     private AnswerRepository answerRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private TestEntityManager manager;
@@ -36,8 +42,7 @@ public class AnswerTest {
     public  final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @BeforeEach
-    void before(@Autowired QuestionRepository questionRepository,
-                @Autowired UserRepository userRepository) {
+    void before() {
         writer = userRepository.save(UserTest.JAVAJIGI);
         question = questionRepository.save(QuestionTest.Q1.writeBy(writer));
         answer = new Answer(writer, question, "Answers Contents1");
@@ -58,13 +63,14 @@ public class AnswerTest {
     @DisplayName("식별자로 답변을 조회한다.")
     void findById() {
         Answer expected = answerRepository.save(answer);
+        manager.clear(); // 1차 캐시 제거
         Answer answer = answerRepository.findById(expected.getId()).get();
-
         assertAll(
                 () -> assertThat(answer.getId()).isEqualTo(expected.getId()),
                 () -> assertThat(answer.getContents()).isEqualTo(expected.getContents()),
-                () -> assertThat(answer.getQuestion()).isEqualTo(expected.getQuestion()),
-                () -> assertThat(answer.getWriter()).isEqualTo(expected.getWriter()),
+                () -> assertThat(answer.getQuestion()).isNotEqualTo(expected.getQuestion()),
+                () -> assertThat(answer.getWriter()).isNotEqualTo(expected.getWriter()),
+                () -> assertThat(answer.getWriter().getId()).isEqualTo(expected.getWriter().getId()),
                 () -> assertThat(answer.isDeleted()).isEqualTo(expected.isDeleted())
         );
     }
