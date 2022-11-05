@@ -28,8 +28,8 @@ class AnswerRepositoryTest {
                 () -> assertThat(result.getId()).isNotNull(),
                 () -> assertThat(result.isDeleted()).isEqualTo(A1.isDeleted()),
                 () -> assertThat(result.getContents()).isEqualTo(A1.getContents()),
-                () -> assertThat(result.getQuestionId()).isEqualTo(A1.getQuestionId()),
-                () -> assertThat(result.getWriterId()).isEqualTo(A1.getWriterId())
+                () -> assertThat(result.getQuestion()).isEqualTo(A1.getQuestion()),
+                () -> assertThat(result.getWriter()).isEqualTo(A1.getWriter())
         );
     }
 
@@ -37,19 +37,17 @@ class AnswerRepositoryTest {
     @Test
     void findById() {
         Answer expect = answerRepository.save(A1);
-
         Answer result = answerRepository.findByIdAndDeletedFalse(expect.getId()).get();
-
         assertThat(expect == result).isTrue();
     }
 
     @DisplayName("답변이 삭제되었을 경우, findByIdAndDeletedFalse 함수로 조회할 수 없다")
     @Test
     void findDeletedById() {
-        Answer answer = answerRepository.save(A2);
-        answer.setDeleted(true);
+        Answer actual = answerRepository.save(A2);
+        actual.setDeleted(true);
 
-        Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(answer.getId());
+        Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(actual.getId());
 
         assertThat(result).isNotPresent();
     }
@@ -57,20 +55,20 @@ class AnswerRepositoryTest {
     @DisplayName("질문의 id로 조회할 수 있다")
     @Test
     void findByQuestionId() {
-        Answer expect = answerRepository.save(A1);
+        Answer actual = answerRepository.save(A1);
 
-        Answer result = answerRepository.findByQuestionIdAndDeletedFalse(expect.getQuestionId()).get(0);
+        Answer result = answerRepository.findByQuestionIdAndDeletedFalse(actual.getQuestion().getId()).get(0);
 
-        assertThat(expect == result).isTrue();
+        assertThat(actual == result).isTrue();
     }
 
     @DisplayName("답변이 삭제되었을 경우, findByQuestionIdAndDeletedFalse 함수로 조회할 수 없다")
     @Test
     void findDeletedByQuestionId() {
-        Answer answer = answerRepository.save(A2);
-        answer.setDeleted(true);
+        Answer actual = answerRepository.save(A2);
+        actual.setDeleted(true);
 
-        List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestionId());
+        List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(actual.getQuestion().getId());
 
         assertThat(result).hasSize(0);
     }
