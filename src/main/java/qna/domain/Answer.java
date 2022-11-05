@@ -17,6 +17,9 @@ public class Answer extends BaseEntity{
 	@OneToOne
 	@JoinColumn(name = "writer_id")
 	private User writer;
+	@ManyToOne
+	@JoinColumn(name = "question_id")
+	private Question question;
 	@Lob
 	private String contents;
 	private boolean deleted = false;
@@ -41,6 +44,10 @@ public class Answer extends BaseEntity{
 
 		this.writer = writer;
 		this.contents = contents;
+	}
+
+	public void toQuestion(Question question) {
+		this.question = question;
 	}
 
 	public DeleteHistory delete(final User loginUser) throws CannotDeleteException {

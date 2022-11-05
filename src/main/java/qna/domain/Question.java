@@ -21,8 +21,7 @@ public class Question extends BaseEntity{
 	@OneToOne
 	@JoinColumn(name = "writer_id")
 	private User writer;
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "question_id")
+	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Answer> answers = new ArrayList<>();
 	@Column(nullable = false)
 	private boolean deleted = false;
@@ -46,7 +45,7 @@ public class Question extends BaseEntity{
 	}
 
 	public List<DeleteHistory> delete(final User loginUser) throws CannotDeleteException {
-		if (writer != loginUser) {
+		if (!writer.equals(loginUser)) {
 			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
 		}
 		this.deleted = true;
@@ -61,7 +60,12 @@ public class Question extends BaseEntity{
 				.collect(Collectors.toList());
 	}
 
+	public void changeContent(final String contents){
+		this.contents = contents;
+	}
+
 	public void addAnswer(Answer answer) {
+		answer.toQuestion(this);
 		answers.add(answer);
 	}
 
