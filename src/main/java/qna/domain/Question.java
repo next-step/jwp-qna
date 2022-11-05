@@ -14,6 +14,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import qna.CannotDeleteException;
+
 @Entity
 public class Question extends DeletableBaseEntity {
 
@@ -91,6 +93,18 @@ public class Question extends DeletableBaseEntity {
     public void modify(String title, String contents) {
         this.title = title;
         this.contents = contents;
+    }
+
+    @Deprecated
+    public void delete() {
+        super.delete();
+    }
+
+    public void delete(User writer) {
+        if (!this.writer.equals(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        super.delete();
     }
 
     @Override

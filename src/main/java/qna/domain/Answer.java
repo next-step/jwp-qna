@@ -101,6 +101,10 @@ public class Answer extends DeletableBaseEntity {
         super.delete();
     }
 
+    public void delete(User writer) {
+        super.delete();
+    }
+
     public void modify(String contents) {
         this.contents = contents;
     }

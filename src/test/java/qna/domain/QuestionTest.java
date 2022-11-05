@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import qna.CannotDeleteException;
 
 public class QuestionTest extends BaseDomainTest<Question> {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
@@ -149,13 +152,35 @@ public class QuestionTest extends BaseDomainTest<Question> {
     }
 
     @Test
-    void 질문_데이터_삭제는_칼럼의_삭제_상태_deleted_로_표현된다() {
-        Question 질문1 = 질문_생성("질문1");
-        질문1.delete();
-        flush();
+    void 질문은_로그인_사용자와_작성자가_같은_경우_삭제할_수_있다() {
+        Question 질문1 = 질문_생성("질문1", "작성자1");
+        User 작성자 = 질문1.getWriter();
 
+        질문1.delete(작성자);
+
+        질문_삭제됨(질문1);
+    }
+
+    @Test
+    void 질문_삭제시_로그인_사용자와_작성자가_다른_경우_예외가_발생한다() {
+        Question 질문 = 질문_생성("질문1", "작성자1");
+        User 작성자2 = 작성자_생성("작성자2");
+
+        assertThatThrownBy(() -> 질문.delete(작성자2))
+            .isInstanceOf(CannotDeleteException.class);
+    }
+
+    private Question 질문_생성(String 질문_제목, String 작성자_이름) {
+        Question 질문 = 질문_생성(질문_제목);
+        User 작성자 = 작성자_생성(작성자_이름);
+        작성자.addQuestion(질문);
+        flush();
+        return 질문;
+    }
+
+    private void 질문_삭제됨(Question 질문) {
         List<Question> 삭제되지_않은_질문 = questions.findByDeletedFalse();
-        assertThat(삭제되지_않은_질문).doesNotContain(질문1);
+        assertThat(삭제되지_않은_질문).doesNotContain(질문);
     }
 
     private Answer 답변_생성(String 내용, Question 질문) {
