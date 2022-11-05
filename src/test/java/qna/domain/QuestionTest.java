@@ -27,7 +27,6 @@ public class QuestionTest extends BaseDomainTest<Question> {
     @BeforeEach
     void setUp() {
         questions.saveAll(질문_생성());
-        flush();
     }
 
     @Test
@@ -59,17 +58,13 @@ public class QuestionTest extends BaseDomainTest<Question> {
     @Test
     void 질문을_등록한_사용자를_조회할_수_있다() {
         Question 질문 = 질문_생성().get(0);
-        User 작성자 = 작성자_1();
+        User 작성자 = 작성자_생성();
         질문.setWriter(작성자);
         flush();
 
         작성자 = 질문.getWriter();
         assertThat(작성자).isNotNull();
         assertThat(작성자.getQuestions()).contains(질문);
-    }
-
-    public static Question 질문_생성(String 제목) {
-        return new Question(제목, "내용");
     }
 
     List<Question> 질문_생성() {
@@ -87,12 +82,16 @@ public class QuestionTest extends BaseDomainTest<Question> {
         questions.flush();
     }
 
-    private User 작성자_1() {
-        return users.save(new User("user", "password", "name", "email@mail.com"));
+    private User 작성자_생성() {
+        return users.save(UserTest.사용자("작성자1"));
     }
 
     void flush() {
         entityManager.flush();
         entityManager.clear();
+    }
+
+    public static Question 질문(String 제목) {
+        return new Question(제목, "내용");
     }
 }

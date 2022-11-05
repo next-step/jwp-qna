@@ -62,11 +62,11 @@ public class AnswerTest extends BaseDomainTest<Answer> {
     }
 
     private Question 질문_생성() {
-        return questions.save(QuestionTest.질문_생성("질문1"));
+        return questions.save(QuestionTest.질문("질문1"));
     }
 
     private User 유저_생성(String 유저_아이디) {
-        return users.save(UserTest.유저_생성(유저_아이디));
+        return users.save(UserTest.사용자(유저_아이디));
     }
 
     void 도메인_수정(List<Answer> 수정할_도메인) {

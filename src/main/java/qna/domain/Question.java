@@ -73,7 +73,9 @@ public class Question extends DeletableBaseEntity {
             this.writer.getQuestions().remove(this);
         }
         this.writer = writer;
-        writer.getQuestions().add(this);
+        if (!writer.getQuestions().contains(this)) {
+            writer.getQuestions().add(this);
+        }
     }
 
     public void addAnswer(Answer answer) {
