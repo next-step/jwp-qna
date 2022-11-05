@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.assertj.core.util.Lists;
@@ -175,7 +177,6 @@ public class QuestionTest extends BaseDomainTest<Question> {
         Question 질문 = 질문_생성("질문1", "작성자1");
         User 작성자 = 질문.getWriter();
         답변_생성("답변1", 질문, 작성자_생성("답변자1"));
-        flush();
 
         assertThatThrownBy(() -> 질문.delete(작성자))
             .isInstanceOf(CannotDeleteException.class);
@@ -186,7 +187,6 @@ public class QuestionTest extends BaseDomainTest<Question> {
         Question 질문 = 질문_생성("질문1", "작성자1");
         User 작성자 = 질문.getWriter();
         답변_생성("답변1", 질문, 작성자);
-        flush();
 
         질문.delete(작성자);
 
@@ -199,10 +199,30 @@ public class QuestionTest extends BaseDomainTest<Question> {
         User 작성자 = 질문.getWriter();
         User 다른_작성자 = 작성자_생성("작성자2");
         답변_생성("답변1", 질문, 다른_작성자);
-        flush();
 
         assertThatThrownBy(() -> 질문.delete(작성자))
             .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void 질문을_삭제할_때_답변_또한_삭제돼야_한다() {
+        Question 질문 = 질문_생성("질문1", "작성자1");
+        User 작성자 = 질문.getWriter();
+        Answer 답변1 = 답변_생성("답변1", 질문, 작성자);
+        Answer 답변2 = 답변_생성("답변2", 질문, 작성자);
+
+        질문.delete(작성자);
+
+        질문_삭제됨(질문);
+        답변_삭제됨(답변1, 답변2);
+    }
+
+    private void 답변_삭제됨(Answer... 답변) {
+        assertThat(Arrays.stream(답변))
+            .extracting(Answer::getId)
+            .extracting(answers::findByIdAndDeletedFalse)
+            .extracting(Optional::isPresent)
+            .containsOnly(false);
     }
 
     private Question 질문_생성(String 질문_제목, String 작성자_이름) {
