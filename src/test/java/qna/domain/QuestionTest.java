@@ -170,6 +170,17 @@ public class QuestionTest extends BaseDomainTest<Question> {
             .isInstanceOf(CannotDeleteException.class);
     }
 
+    @Test
+    void 작성자가_질문_삭제시_답변이_존재할_경우_예외가_발생한다() {
+        Question 질문 = 질문_생성("질문1", "작성자1");
+        User 작성자 = 질문.getWriter();
+        답변_생성("답변1", 질문, 작성자_생성("답변자1"));
+        flush();
+
+        assertThatThrownBy(() -> 질문.delete(작성자))
+            .isInstanceOf(CannotDeleteException.class);
+    }
+
     private Question 질문_생성(String 질문_제목, String 작성자_이름) {
         Question 질문 = 질문_생성(질문_제목);
         User 작성자 = 작성자_생성(작성자_이름);
@@ -185,6 +196,10 @@ public class QuestionTest extends BaseDomainTest<Question> {
 
     private Answer 답변_생성(String 내용, Question 질문) {
         return answers.save(new Answer(작성자_생성("답변_작성자1"), 질문, 내용));
+    }
+
+    private Answer 답변_생성(String 내용, Question 질문, User 답변자) {
+        return answers.save(new Answer(답변자, 질문, 내용));
     }
 
     List<Question> 질문_생성() {

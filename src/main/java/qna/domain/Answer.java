@@ -51,9 +51,10 @@ public class Answer extends DeletableBaseEntity {
             throw new NotFoundException();
         }
 
-        this.writer = writer;
-        this.question = question;
         this.contents = contents;
+
+        toQuestion(question);
+        setWriter(writer);
     }
 
     public boolean isOwner(User writer) {
