@@ -18,11 +18,6 @@ public class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        userRepository.deleteAll();
-    }
-
     @Test
     @DisplayName("userId에 해당하는 user가 반환")
     void test_returns_questions_with_deleted_is_false() {
