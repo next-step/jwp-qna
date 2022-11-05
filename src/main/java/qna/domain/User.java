@@ -3,7 +3,9 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -20,6 +22,12 @@ public class User {
     private String name;
     private String email;
 
+    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Question> questions = new HashSet<>();
+
+    public void addQuestion(Question question){
+        this.questions.add(question);
+    }
     protected User() {
     }
 

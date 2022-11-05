@@ -34,6 +34,7 @@ public class Question extends BaseEntity {
 
     public Question writeBy(User writer) {
         this.writer = writer;
+        this.writer.addQuestion(this);
         return this;
     }
 
