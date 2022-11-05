@@ -34,7 +34,7 @@ public class AnswerTest extends BaseDomainTest<Answer> {
 
     @Test
     void 도메인을_생성할_수_있다() {
-        List<Answer> 생성된_답변 = 유저_생성();
+        List<Answer> 생성된_답변 = 작성자_생성();
 
         List<Answer> 답변목록 = answers.findAll();
 
@@ -43,7 +43,7 @@ public class AnswerTest extends BaseDomainTest<Answer> {
 
     @Test
     void 도메인을_수정할_수_있다() {
-        List<Answer> 수정할_도메인 = 유저_생성();
+        List<Answer> 수정할_도메인 = 작성자_생성();
 
         List<LocalDateTime> 최종_수정_일자 = 최종_수정_일자(수정할_도메인);
 
@@ -54,7 +54,7 @@ public class AnswerTest extends BaseDomainTest<Answer> {
 
     @Test
     void 생성날짜_수정날짜가_입력되어_있다() {
-        List<Answer> 도메인 = 유저_생성();
+        List<Answer> 도메인 = 작성자_생성();
         도메인.forEach(this::생성날짜_수정날짜_검증);
     }
 
@@ -84,16 +84,29 @@ public class AnswerTest extends BaseDomainTest<Answer> {
         assertThat(질문1.getAnswers()).doesNotContain(답변);
     }
 
+    @Test
+    void 답변의_작성자를_교체하면_이전_작성자는_해당_답변을_조회할_수_없다() {
+        Answer 답변 = 답변_생성("답변1");
+        User 이전_작성자 = 작성자_생성("작성자1");
+        User 교체한_작성자 = 작성자_생성("작성자2");
+
+        답변.setWriter(이전_작성자);
+        답변.setWriter(교체한_작성자);
+
+        assertThat(답변.getWriter()).isEqualTo(교체한_작성자);
+        assertThat(이전_작성자.getAnswers()).doesNotContain(답변);
+    }
+
     private Answer 답변_생성(String 내용) {
         return answers.save(답변(내용));
     }
 
     private Answer 답변(String 내용) {
-        return new Answer(유저_생성("유저1"), 질문_생성("질문1"), 내용);
+        return new Answer(작성자_생성("유저1"), 질문_생성("질문1"), 내용);
     }
 
-    List<Answer> 유저_생성() {
-        User 유저1 = 유저_생성("유저1");
+    List<Answer> 작성자_생성() {
+        User 유저1 = 작성자_생성("유저1");
         Question 질문 = 질문_생성("질문1");
         return answers.saveAll(Lists.newArrayList(
             new Answer(유저1, 질문, "본문1"),
@@ -112,8 +125,8 @@ public class AnswerTest extends BaseDomainTest<Answer> {
         return questions.save(QuestionTest.질문(제목));
     }
 
-    private User 유저_생성(String 유저_아이디) {
-        return users.save(UserTest.사용자(유저_아이디));
+    private User 작성자_생성(String 이름) {
+        return users.save(UserTest.사용자(이름));
     }
 
     private void flush() {
