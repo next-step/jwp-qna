@@ -25,7 +25,7 @@ public class AnswerTest {
     }
 
     @Test
-    void 답변_삭제(){
+    void 답변_삭제() {
         A1.delete(JAVAJIGI);
         assertThat(A1.isDeleted()).isTrue();
     }

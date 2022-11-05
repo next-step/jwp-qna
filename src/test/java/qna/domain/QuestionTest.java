@@ -33,7 +33,7 @@ public class QuestionTest {
     }
 
     @Test
-    void 삭제(){
+    void 삭제() {
         Q1.delete(JAVAJIGI);
         assertThat(Q1.isDeleted()).isTrue();
     }
