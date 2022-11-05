@@ -96,15 +96,19 @@ public class Question extends BaseEntity {
         }
     }
 
-    private DeleteHistory changeDeleted(boolean deleted) {
+    private void changeDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    private DeleteHistory createDeleteHistory() {
         return DeleteHistory.createDeleteHistory(ContentType.QUESTION, this.id, this.writer);
     }
 
     public List<DeleteHistory> delete(User user) {
         validateSameUser(user);
         List<DeleteHistory> deleteHistories = new ArrayList<>(this.answers.delete(user));
-        deleteHistories.add(changeDeleted(true));
+        changeDeleted(true);
+        deleteHistories.add(createDeleteHistory());
         return deleteHistories;
     }
 
