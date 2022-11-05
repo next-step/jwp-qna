@@ -91,7 +91,7 @@ alter table answer
         foreign key (writer_id)
             references user
 ```
-- [ ] Answer - User 연관관계를 매핑한다.
+- [X] Answer - User 연관관계를 매핑한다.
 ```sql
 alter table delete_history
     add constraint fk_delete_history_to_user
