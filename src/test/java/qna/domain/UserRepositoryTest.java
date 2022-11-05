@@ -6,7 +6,6 @@ import static qna.domain.UserTest.*;
 
 import java.util.UUID;
 
-import javax.persistence.EntityManager;
 import javax.validation.ConstraintViolationException;
 
 import org.junit.jupiter.api.Test;
@@ -14,35 +13,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-@DataJpaTest(properties = {"spring.jpa.hibernate.ddl-auto=validate"})
+@DataJpaTest
 class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    EntityManager em;
 
     @Test
     void 유저_저장_및_찾기() {
-        User actual = userRepository.save(JAVAJIGI);
+        User user = newUser("1");
+        User actual = userRepository.save(user);
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getUserId()).isEqualTo(JAVAJIGI.getUserId()),
-            () -> assertThat(actual.getPassword()).isEqualTo(JAVAJIGI.getPassword()),
-            () -> assertThat(actual.getName()).isEqualTo(JAVAJIGI.getName()),
-            () -> assertThat(actual.getEmail()).isEqualTo(JAVAJIGI.getEmail()),
+            () -> assertThat(actual.getUserId()).isEqualTo(user.getUserId()),
+            () -> assertThat(actual.getPassword()).isEqualTo(user.getPassword()),
+            () -> assertThat(actual.getName()).isEqualTo(user.getName()),
+            () -> assertThat(actual.getEmail()).isEqualTo(user.getEmail()),
             () -> assertThat(actual.getCreatedAt()).isNotNull(),
             () -> assertThat(actual.getUpdatedAt()).isNotNull(),
             () -> assertThat(actual.getUpdatedAt()).isEqualTo(actual.getCreatedAt())
         );
-        assertThat(userRepository.findByUserId(JAVAJIGI.getUserId())).contains(actual);
+        assertThat(userRepository.findByUserId(user.getUserId())).contains(actual);
     }
 
     @Test
     void 유저_비밀번호_변경() {
-        User user = userRepository.save(JAVAJIGI);
+        User user = userRepository.save(newUser("1"));
         String newPassword = "password2";
         user.setPassword(newPassword);
-        em.flush();
         String password = userRepository.findById(user.getId()).orElseThrow(RuntimeException::new)
             .getPassword();
         assertThat(password).isEqualTo(newPassword);
@@ -50,8 +47,8 @@ class UserRepositoryTest {
 
     @Test
     void 유저아이디는_유니크() {
-        userRepository.save(JAVAJIGI);
-        User sameUserIdUser = new User(JAVAJIGI.getUserId(), "password", "test@email.com",
+        User savedUser = userRepository.save(newUser("1"));
+        User sameUserIdUser = new User(savedUser.getUserId(), "password", "test@email.com",
             UUID.randomUUID().toString());
         assertThatThrownBy(() -> userRepository.save(sameUserIdUser))
             .isInstanceOf(DataIntegrityViolationException.class);

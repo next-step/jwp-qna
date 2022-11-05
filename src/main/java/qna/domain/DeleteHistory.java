@@ -8,28 +8,51 @@ import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import qna.UnAuthorizedException;
 
 @Entity
 public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
     @Enumerated(value = STRING)
     private ContentType contentType;
+
     private Long contentId;
-    private Long deletedById;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id")
+    private User deletedByUser;
+
     private LocalDateTime createDate = LocalDateTime.now();
 
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
+        if (Objects.isNull(deletedByUser)) {
+            throw new UnAuthorizedException();
+        }
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedByUser = deletedByUser;
+        toDeletedUser(deletedByUser);
         this.createDate = createDate;
+    }
+
+    public void toDeletedUser(User deletedByUser) {
+        if (Objects.nonNull(deletedByUser)) {
+            deletedByUser.getDeleteHistories().remove(this);
+        }
+        this.deletedByUser = deletedByUser;
+        deletedByUser.getDeleteHistories().add(this);
     }
 
     public Long getId() {
@@ -44,8 +67,8 @@ public class DeleteHistory {
         return contentId;
     }
 
-    public Long getDeletedById() {
-        return deletedById;
+    public User getDeletedByUser() {
+        return deletedByUser;
     }
 
     public LocalDateTime getCreateDate() {
@@ -54,32 +77,28 @@ public class DeleteHistory {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (this == o)
             return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass())
             return false;
-        }
+
         DeleteHistory that = (DeleteHistory)o;
-        return Objects.equals(id, that.id) &&
-            contentType == that.contentType &&
-            Objects.equals(contentId, that.contentId) &&
-            Objects.equals(deletedById, that.deletedById);
+
+        if (id != null ? !id.equals(that.id) : that.id != null)
+            return false;
+        if (contentType != that.contentType)
+            return false;
+        if (contentId != null ? !contentId.equals(that.contentId) : that.contentId != null)
+            return false;
+        return deletedByUser != null ? deletedByUser.equals(that.deletedByUser) : that.deletedByUser == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
-    }
-
-    @Override
-    public String toString() {
-        return "DeleteHistory{" +
-            "id=" + id +
-            ", contentType=" + contentType +
-            ", contentId=" + contentId +
-            ", deletedById=" + deletedById +
-            ", createDate=" + createDate +
-            '}';
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
+        result = 31 * result + (contentId != null ? contentId.hashCode() : 0);
+        result = 31 * result + (deletedByUser != null ? deletedByUser.hashCode() : 0);
+        return result;
     }
 }
