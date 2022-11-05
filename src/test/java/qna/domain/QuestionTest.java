@@ -99,15 +99,28 @@ public class QuestionTest extends BaseDomainTest<Question> {
         assertThat(질문.getAnswers()).containsOnlyOnce(답변1, 답변2);
     }
 
+    @Test
+    void 답변을_등록한_사용자를_조회할_수_있다() {
+        User 작성자 = 작성자_생성("작성자1");
+        Answer 답변 = 답변_생성("답변1", 질문_생성("질문1"));
+
+        답변.setWriter(작성자);
+        flush();
+
+        assertThat(답변.getWriter()).isEqualTo(작성자);
+        assertThat(작성자.getAnswers()).contains(답변);
+    }
+
     private Answer 답변_생성(String 내용, Question 질문) {
         return answers.save(new Answer(작성자_생성("답변_작성자1"), 질문, 내용));
     }
 
     List<Question> 질문_생성() {
-        return questions.saveAll(Lists.newArrayList(
-            new Question("제목1", "본문1"),
-            new Question("제목2", "본문2")
-        ));
+        return Lists.newArrayList(질문_생성("질문1"), 질문_생성("질문2"));
+    }
+
+    Question 질문_생성(String 제목) {
+        return questions.save(질문(제목));
     }
 
     void 도메인_수정(List<Question> 수정할_도메인) {
