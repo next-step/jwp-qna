@@ -1,7 +1,9 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,12 +43,20 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-    public static DeleteHistory ofQuestion(Question question, User writer) {
-        return new DeleteHistory(ContentType.QUESTION, question.getId(), writer.getId(), LocalDateTime.now());
+    public static DeleteHistories of(Question question) {
+        return DeleteHistories.of(ofQuestion(question), ofAnswers(question.getAnswers()));
     }
 
-    public static DeleteHistory ofAnswer(Answer answer, User writer) {
-        return new DeleteHistory(ContentType.ANSWER, answer.getId(), writer.getId(), LocalDateTime.now());
+    private static DeleteHistory ofQuestion(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriterId(), LocalDateTime.now());
+    }
+
+    private static List<DeleteHistory> ofAnswers(List<Answer> answers) {
+        return answers.stream().map(DeleteHistory::ofAnswer).collect(Collectors.toList());
+    }
+
+    private static DeleteHistory ofAnswer(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId(), LocalDateTime.now());
     }
 
     public Long getContentId() {
