@@ -41,6 +41,10 @@ public class Question extends BaseEntity {
         answer.toQuestion(this);
     }
 
+    public void delete() {
+        this.deleted = true;
+    }
+
     public Long getId() {
         return id;
     }
@@ -83,9 +87,5 @@ public class Question extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public void delete() {
-        this.deleted = true;
     }
 }
