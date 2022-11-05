@@ -12,8 +12,8 @@ import qna.UnAuthorizedException;
 
 public class UserTest {
 
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+    public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
+    public static final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
 
     @DisplayName("유저 정보 변경시 유저의 아이디와 로그인 유저의 아이디와 같지 않으면 UnAuthorizedException 발생")
     @Test

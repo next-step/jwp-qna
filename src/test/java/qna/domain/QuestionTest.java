@@ -19,7 +19,7 @@ public class QuestionTest {
 
         question.writeBy(UserTest.SANJIGI);
 
-        assertEquals(question.getWriterId(), UserTest.SANJIGI.getId());
+        assertEquals(question.getWriter(), UserTest.SANJIGI);
     }
 
     @DisplayName("질문의 작성자를 확인할 수 있다")
@@ -39,6 +39,6 @@ public class QuestionTest {
         // when
         question2.addAnswer(answer);
         // then
-        assertThat(answer.getQuestionId()).isEqualTo(question2.getId());
+        assertThat(answer.getQuestion()).isEqualTo(question2);
     }
 }
