@@ -1,11 +1,7 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,8 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "delete_history")
-@EntityListeners(AuditingEntityListener.class)
-public class DeleteHistory {
+public class DeleteHistory extends BaseDateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,15 +21,12 @@ public class DeleteHistory {
     private Long contentId;
     @Column(name = "deleted_by_id")
     private Long deletedById;
-    @CreatedDate
-    @Column(name = "created_date")
-    private LocalDateTime createDate;
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createdAt) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
-        this.createDate = createDate;
+        super.createdAt = createdAt;
     }
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
@@ -73,7 +65,7 @@ public class DeleteHistory {
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
                 ", deletedById=" + deletedById +
-                ", createDate=" + createDate +
+                ", createDate=" + super.createdAt +
                 '}';
     }
 }

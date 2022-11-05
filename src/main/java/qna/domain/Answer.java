@@ -1,14 +1,10 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,8 +15,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-@EntityListeners(AuditingEntityListener.class)
-public class Answer {
+public class Answer extends BaseDateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,14 +29,6 @@ public class Answer {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -144,12 +131,11 @@ public class Answer {
         Answer answer = (Answer) o;
         return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writerId,
                 answer.writerId) && Objects.equals(questionId, answer.questionId) && Objects.equals(
-                contents, answer.contents) && Objects.equals(createdAt, answer.createdAt)
-                && Objects.equals(updatedAt, answer.updatedAt);
+                contents, answer.contents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, writerId, questionId, contents, deleted, createdAt, updatedAt);
+        return Objects.hash(id, writerId, questionId, contents, deleted);
     }
 }
