@@ -1,14 +1,27 @@
 package qna.domain;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "delete_history")
+@Getter
+@NoArgsConstructor
 public class DeleteHistory {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private ContentType contentType;
     private Long contentId;
-    private Long deletedById;
+    @Enumerated(EnumType.STRING)
+    private ContentType contentType;
+    @CreatedDate
     private LocalDateTime createDate = LocalDateTime.now();
+    private Long deletedById;
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;

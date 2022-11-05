@@ -1,20 +1,42 @@
 package qna.domain;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "user")
+@Getter
+@NoArgsConstructor
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+    @CreatedDate
+    @NotNull
+    private LocalDateTime createdAt;
+    @Column(length = 50)
     private String email;
-
-    private User() {
-    }
+    @Column(length = 20)
+    @NotNull
+    private String name;
+    @Column(length = 20)
+    @NotNull
+    private String password;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+    @Column(length = 20)
+    @NotNull
+    private String userId;
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
@@ -62,46 +84,6 @@ public class User {
         return false;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -113,7 +95,16 @@ public class User {
                 '}';
     }
 
+    @NoArgsConstructor
     private static class GuestUser extends User {
+        public GuestUser(String userId, String password, String name, String email) {
+            super(userId, password, name, email);
+        }
+
+        public GuestUser(Long id, String userId, String password, String name, String email) {
+            super(id, userId, password, name, email);
+        }
+
         @Override
         public boolean isGuestUser() {
             return true;

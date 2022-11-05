@@ -1,16 +1,36 @@
 package qna.domain;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "answer")
+@Getter
+@NoArgsConstructor
 public class Answer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+    @Lob
     private String contents;
+    @CreatedDate
+    @NotNull
+    private LocalDateTime createAt;
+    @NotNull
     private boolean deleted = false;
+    private Long questionId;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+    private Long writerId;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -40,38 +60,6 @@ public class Answer {
         this.questionId = question.getId();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -84,10 +72,12 @@ public class Answer {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
+                ", createAt=" + createAt +
                 ", deleted=" + deleted +
+                ", questionId=" + questionId +
+                ", updatedAt=" + updatedAt +
+                ", writerId=" + writerId +
                 '}';
     }
 }
