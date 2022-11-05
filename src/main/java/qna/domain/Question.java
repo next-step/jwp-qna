@@ -7,20 +7,18 @@ import javax.persistence.*;
 public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "title", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String title;
 
     @Lob
-    @Column(name = "contents", nullable = false)
+    @Column(nullable = false)
     private String contents;
 
-    @Column(name = "writer_id")
     private Long writerId;
 
-    @Column(name = "deleted", nullable = false)
+    @Column(nullable = false)
     private boolean deleted = false;
 
     protected Question() {
