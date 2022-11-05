@@ -99,7 +99,7 @@ public class Question extends DeletableBaseEntity {
             "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", writer=" + writer.getUserId() +
+            ", writer=" + (Objects.isNull(writer) ? "" : writer.getUserId()) +
             ", deleted=" + isDeleted() +
             '}';
     }

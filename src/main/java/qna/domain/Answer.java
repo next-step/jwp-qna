@@ -87,7 +87,7 @@ public class Answer extends DeletableBaseEntity {
     }
 
     public boolean isDeleted() {
-        return isDeleted();
+        return super.isDeleted();
     }
 
     public void delete() {
@@ -110,7 +110,7 @@ public class Answer extends DeletableBaseEntity {
     public String toString() {
         return "Answer{" +
             "id=" + id +
-            ", writer=" + writer.getUserId() +
+            ", writer=" + (Objects.isNull(writer) ? "" : writer.getUserId()) +
             ", question=" + question.getId() +
             ", contents='" + contents + '\'' +
             ", deleted=" + isDeleted() +

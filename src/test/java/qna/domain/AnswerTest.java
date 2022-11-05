@@ -69,8 +69,23 @@ public class AnswerTest extends BaseDomainTest<Answer> {
         assertThat(질문.getAnswers()).containsOnlyOnce(답변);
     }
 
-    private Answer 답변_생성(String 답변1) {
-        return answers.save(답변(답변1));
+    @Test
+    void 답변의_질문을_교체하면_이전_질문의_해당_답변은_조회할_수_없다() {
+        Answer 답변 = 답변_생성("답변1");
+
+        Question 질문1 = 질문_생성("질문1");
+        Question 질문2 = 질문_생성("질문2");
+
+        답변.toQuestion(질문1);
+        답변.toQuestion(질문2);
+        flush();
+
+        assertThat(답변.getQuestion()).isEqualTo(질문2);
+        assertThat(질문1.getAnswers()).doesNotContain(답변);
+    }
+
+    private Answer 답변_생성(String 내용) {
+        return answers.save(답변(내용));
     }
 
     private Answer 답변(String 내용) {
