@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
-@TestPropertySource(locations = "/application-data.properties")
+@TestPropertySource(locations = "/application.properties")
 class ApplicationTest {
     @Test
     void contextLoads() {
