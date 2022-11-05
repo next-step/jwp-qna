@@ -1,7 +1,5 @@
 package qna.domain;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -53,28 +51,14 @@ public class UserTest extends BaseDomainTest<User> {
         생성날짜_수정날짜_검증(도메인);
     }
 
-    @Test
-    void 사용자의_질문들을_조회할_수_있다() {
-        User 사용자 = 사용자_생성().get(0);
-        Question 질문1 = QuestionTest.질문("질문1");
-        Question 질문2 = QuestionTest.질문("질문2");
-        사용자.addQuestion(질문1);
-        사용자.addQuestion(질문2);
-        flush();
-
-        List<Question> 사용자의_질문 = 사용자.getQuestions();
-
-        assertThat(사용자의_질문).isNotEmpty();
-        assertThat(사용자의_질문)
-            .flatExtracting(Question::getWriter)
-            .hasSize(2)
-            .containsExactlyInAnyOrder(사용자, 사용자);
+    private List<User> 사용자_생성() {
+        return Lists.newArrayList(
+            사용자_생성("유저1"),
+            사용자_생성("유저2"));
     }
 
-    private List<User> 사용자_생성() {
-        return this.users.saveAll(Lists.newArrayList(
-            사용자("유저1"),
-            사용자("유저2")));
+    private User 사용자_생성(String 이름) {
+        return users.save(사용자(이름));
     }
 
     void 도메인_수정(List<User> 수정할_도메인) {

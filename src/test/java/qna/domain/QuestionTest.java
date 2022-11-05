@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,6 +72,24 @@ public class QuestionTest extends BaseDomainTest<Question> {
     }
 
     @Test
+    void 사용자의_질문들을_조회할_수_있다() {
+        User 작성자 = 작성자_생성("작성자");
+        Question 질문1 = 질문_생성("질문1");
+        Question 질문2 = 질문_생성("질문2");
+        작성자.addQuestion(질문1);
+        작성자.addQuestion(질문2);
+        flush();
+
+        List<Question> 사용자의_질문 = 작성자.getQuestions();
+
+        AssertionsForInterfaceTypes.assertThat(사용자의_질문).isNotEmpty();
+        AssertionsForInterfaceTypes.assertThat(사용자의_질문)
+            .flatExtracting(Question::getWriter)
+            .hasSize(2)
+            .containsExactlyInAnyOrder(작성자, 작성자);
+    }
+
+    @Test
     void 질문의_작성자를_교체하면_이전_작성자는_해당_질문을_조회할_수_없다() {
         User 작성자1 = 작성자_생성("작성자1");
         Question 질문 = 질문_생성().get(0);
@@ -109,6 +128,21 @@ public class QuestionTest extends BaseDomainTest<Question> {
 
         assertThat(답변.getWriter()).isEqualTo(작성자);
         assertThat(작성자.getAnswers()).contains(답변);
+    }
+
+    @Test
+    void 사용자가_등록한_답변들을_조회할_수_있다() {
+        User 사용자 = 작성자_생성("사용자1");
+        Answer 답변1 = 답변_생성("답변1", 질문_생성("질문1"));
+        Answer 답변2 = 답변_생성("답변2", 질문_생성("질문1"));
+
+        사용자.addAnswer(답변1);
+        사용자.addAnswer(답변2);
+        flush();
+
+        assertThat(답변1.getWriter()).isEqualTo(사용자);
+        assertThat(답변2.getWriter()).isEqualTo(사용자);
+        assertThat(사용자.getAnswers()).containsOnlyOnce(답변1, 답변2);
     }
 
     private Answer 답변_생성(String 내용, Question 질문) {

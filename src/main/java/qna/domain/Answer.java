@@ -71,11 +71,14 @@ public class Answer extends DeletableBaseEntity {
     }
 
     public void setWriter(User writer) {
-        if (Objects.nonNull(writer)) {
+        if (Objects.nonNull(this.writer)) {
             this.writer.getAnswers().remove(this);
         }
         this.writer = writer;
-        writer.getAnswers().add(this);
+
+        if (!this.writer.getAnswers().contains(this)) {
+            this.writer.getAnswers().add(this);
+        }
     }
 
     public Long getId() {
