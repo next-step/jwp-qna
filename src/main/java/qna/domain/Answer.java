@@ -1,16 +1,37 @@
 package qna.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
-public class Answer {
+@Entity
+public class Answer extends DateEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = true)
     private Long writerId;
+
+    @Column(nullable = true)
     private Long questionId;
+
+    @Lob
+    @Column(nullable = true)
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
+
+    protected Answer() { }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -32,14 +53,6 @@ public class Answer {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
-    }
-
     public Long getId() {
         return id;
     }
@@ -48,28 +61,24 @@ public class Answer {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public boolean isOwner(User writer) {
+        return this.writerId.equals(writer.getId());
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void toQuestion(Question question) {
+        this.questionId = question.getId();
+    }
+
+    public Long getWriterId() {
+        return writerId;
     }
 
     public Long getQuestionId() {
         return questionId;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
