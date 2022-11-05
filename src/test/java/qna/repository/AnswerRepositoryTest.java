@@ -35,7 +35,7 @@ class AnswerRepositoryTest {
 
     @Test
     @DisplayName("answer을 저장하고 데이터에 존재하는지 찾아본다")
-    void saveAnswerAnFind() {
+    void saveAnswerAndFind() {
         Answer saveAnswer = answerRepository.save(AnswerTest.A1);
         saveAnswer.setDeleted(false);
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswer.getId());
