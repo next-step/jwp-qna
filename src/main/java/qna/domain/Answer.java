@@ -64,32 +64,16 @@ public class Answer extends BaseEntity implements Serializable {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriterId(User writerId) {
-        this.writer = writerId;
     }
 
     public Question getQuestion() {
         return question;
     }
 
-//    public void setQuestion(Question question) {
-//        this.question.setQuestionId(question);
-//    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
