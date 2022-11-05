@@ -21,7 +21,7 @@ public class Question extends BaseTimeEntity {
     @Column(name = "contents")
     private String contents;
 
-    @Column(name = "write_id")
+    @Column(name = "writer_id")
     private Long writerId;
 
     @Column(name = "deleted", nullable = false)
