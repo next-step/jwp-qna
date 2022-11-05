@@ -1,20 +1,53 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "delete_history")
+@EntityListeners(AuditingEntityListener.class)
 public class DeleteHistory {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "content_type")
+    @Enumerated(EnumType.STRING)
     private ContentType contentType;
+
+    @Column(name = "content_id")
     private Long contentId;
+
+    @Column(name = "delete_by_id")
     private Long deletedById;
-    private LocalDateTime createDate = LocalDateTime.now();
+
+    @Column(name = "create_date")
+    @CreatedDate
+    private LocalDateTime createDate;
+
+    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+        this.deletedById = deletedById;
+    }
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
         this.createDate = createDate;
+    }
+
+    public Long getDeletedById() {
+        return deletedById;
+    }
+
+    public void setDeletedById(Long deletedById) {
+        this.deletedById = deletedById;
     }
 
     @Override
