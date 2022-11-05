@@ -20,4 +20,22 @@ class TitleTest {
                         "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901"))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    @DisplayName("equals 테스트 (동등한 경우)")
+    void equals1() {
+        Title actual = Title.from("1");
+        Title expected = Title.from("1");
+
+        Assertions.assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("equals 테스트 (동등하지 않은 경우)")
+    void equals2() {
+        Title actual = Title.from("1");
+        Title expected = Title.from("2");
+
+        Assertions.assertThat(actual).isNotEqualTo(expected);
+    }
 }

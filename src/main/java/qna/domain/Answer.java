@@ -62,7 +62,20 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
+        if (Objects.equals(this.question, question)) {
+            return;
+        }
+
+        if (this.question != null) {
+            this.question.removeAnswer(this);
+        }
+
+        if (question != null) {
+            question.addAnswer(this);
+        }
+
         this.question = question;
+
     }
 
     public Long getId() {
@@ -79,6 +92,27 @@ public class Answer extends BaseTimeEntity {
 
     public DeleteHistory toDeletedHistory() {
         return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Answer answer = (Answer) o;
+        return deleted == answer.deleted &&
+                Objects.equals(id, answer.id) &&
+                writer.equals(answer.writer) &&
+                question.equals(answer.question) &&
+                Objects.equals(contents, answer.contents);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, writer, question, contents, deleted);
     }
 
     @Override

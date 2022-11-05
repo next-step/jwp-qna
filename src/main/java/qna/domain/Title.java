@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import qna.domain.message.ExceptionMessage;
@@ -34,6 +35,23 @@ public class Title {
         if (title.length() > MAX_TITLE_LENGTH) {
             throw new IllegalArgumentException(String.format(ExceptionMessage.INVALID_TITLE_LENGTH, title.length()));
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Title title1 = (Title) o;
+        return title.equals(title1.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title);
     }
 
     @Override

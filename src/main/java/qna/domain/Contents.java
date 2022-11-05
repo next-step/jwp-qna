@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.Objects;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 
@@ -18,6 +19,23 @@ public class Contents {
 
     public static Contents from(String contents) {
         return new Contents(contents);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Contents contents1 = (Contents) o;
+        return Objects.equals(contents, contents1.contents);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(contents);
     }
 
     @Override

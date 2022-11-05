@@ -29,4 +29,22 @@ public class QuestionTest {
         Question question = new Question(1L, "title", "contents");
         Assertions.assertThat(question.isDeleted()).isFalse();
     }
+
+    @Test
+    @DisplayName("equals 테스트 (동등한 경우)")
+    void equals1() {
+        Question actual = new Question(1L, "title", "contents").writeBy(UserTest.JAVAJIGI);
+        Question expected = new Question(1L, "title", "contents").writeBy(UserTest.JAVAJIGI);
+
+        Assertions.assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("equals 테스트 (동등하지 않은 경우)")
+    void equals2() {
+        Question actual = new Question(1L, "title", "contents").writeBy(UserTest.JAVAJIGI);
+        Question expected = new Question(2L, "title", "contents").writeBy(UserTest.JAVAJIGI);
+
+        Assertions.assertThat(actual).isNotEqualTo(expected);
+    }
 }

@@ -21,7 +21,7 @@ class UserIdTest {
     }
 
     @Test
-    @DisplayName("equals 테스트 (동일한 경우)")
+    @DisplayName("equals 테스트 (동등한 경우)")
     void equals1() {
         UserId user1 = UserId.from("user1");
         UserId user2 = UserId.from("user1");
@@ -29,7 +29,7 @@ class UserIdTest {
     }
 
     @Test
-    @DisplayName("equals 테스트 (동일하지 않은 경우)")
+    @DisplayName("equals 테스트 (동등하지 않은 경우)")
     void equals2() {
         UserId user1 = UserId.from("user1");
         UserId user2 = UserId.from("user2");
