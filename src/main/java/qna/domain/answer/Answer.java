@@ -47,7 +47,6 @@ public class Answer extends BaseEntity implements Serializable {
         }
 
         this.writer = writer;
-        this.question = question;
         question.addAnswer(this);
         this.contents = contents;
     }
