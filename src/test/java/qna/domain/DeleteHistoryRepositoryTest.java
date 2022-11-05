@@ -24,9 +24,6 @@ class DeleteHistoryRepositoryTest {
     private UserRepository userRepository;
 
     @Autowired
-    private AnswerRepository answerRepository;
-
-    @Autowired
     private QuestionRepository questionRepository;
 
     @BeforeEach
@@ -76,6 +73,5 @@ class DeleteHistoryRepositoryTest {
         Question question = questionRepository.save(Q2.writeBy(user));
         return new DeleteHistory(ContentType.QUESTION, question.getId(), user, LocalDateTime.now());
     }
-
 
 }
