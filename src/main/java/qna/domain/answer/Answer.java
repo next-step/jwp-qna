@@ -1,7 +1,10 @@
-package qna.domain;
+package qna.domain.answer;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
+import qna.domain.BaseEntity;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 
 import javax.persistence.*;
 import java.io.Serializable;

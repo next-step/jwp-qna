@@ -1,6 +1,7 @@
-package qna.domain;
+package qna.domain.user;
 
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
+import qna.domain.BaseEntity;
 
 import javax.persistence.*;
 import java.io.Serializable;

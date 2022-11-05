@@ -1,4 +1,8 @@
-package qna.domain;
+package qna.domain.question;
+
+import qna.domain.BaseEntity;
+import qna.domain.user.User;
+import qna.domain.answer.Answer;
 
 import javax.persistence.*;
 import java.io.Serializable;

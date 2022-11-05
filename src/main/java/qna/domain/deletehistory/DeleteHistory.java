@@ -1,6 +1,8 @@
-package qna.domain;
+package qna.domain.deletehistory;
 
 import org.springframework.data.annotation.CreatedDate;
+import qna.domain.ContentType;
+import qna.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
