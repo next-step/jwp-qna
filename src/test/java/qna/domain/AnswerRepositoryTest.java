@@ -4,6 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.AnswerTest.A1;
 import static qna.domain.AnswerTest.A2;
 
+import static qna.domain.QuestionTest.Q1;
+import static qna.domain.QuestionTest.Q2;
+import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -19,19 +24,29 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
     @BeforeEach
     void init() {
         answerRepository.deleteAll();
+        userRepository.deleteAll();
+        questionRepository.deleteAll();
     }
 
     @Test
     @DisplayName("입력된 questionId를 가지고, 삭제상태가 아닌 Answer를 가져올 수 있어야 한다")
     void findByQuestionIdAndDeletedFalse() {
         // given
+        userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));
+        questionRepository.saveAll(Arrays.asList(Q1, Q2));
         answerRepository.saveAll(Arrays.asList(A1, A2));
 
         // when
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestion().getId());
 
         // then
         assertThat(answers).usingFieldByFieldElementComparator()
@@ -42,6 +57,8 @@ class AnswerRepositoryTest {
     @DisplayName("입력된 AnswerId에 해당하면서 삭제상태가 아닌 Answer를 가져올 수 있어야 한다")
     void findByIdAndDeletedFalse() {
         // given
+        userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));
+        questionRepository.save(Q1);
         answerRepository.save(A2);
 
         // when
