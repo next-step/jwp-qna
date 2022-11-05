@@ -84,7 +84,7 @@ alter table answer
         foreign key (question_id)
             references question
 ```
-- [ ] Answer - Question 연관관계를 매핑한다.
+- [X] Answer - Question 연관관계를 매핑한다.
 ```sql
 alter table answer
     add constraint fk_answer_writer

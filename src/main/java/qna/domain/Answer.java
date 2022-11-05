@@ -12,7 +12,9 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long writerId;
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
     @Lob
     private String contents;
     @Column(nullable = false)
@@ -37,8 +39,9 @@ public class Answer extends BaseEntity {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
+        question.addAnswer(this);
     }
 
     public boolean isOwner(User writer) {
@@ -46,47 +49,31 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void changeDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Question getQuestion() {
+        return question;
     }
 
     @Override
@@ -94,7 +81,7 @@ public class Answer extends BaseEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
