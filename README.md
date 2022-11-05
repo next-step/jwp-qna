@@ -56,3 +56,30 @@ create table user
 alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
+
+## 2단계 연관 관계 매핑
+아래의 DDL을 통해 유추하여 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+```sql
+alter table answer
+add constraint fk_answer_to_question
+foreign key (question_id)
+references question
+
+alter table answer
+add constraint fk_answer_writer
+foreign key (writer_id)
+references user
+
+alter table delete_history
+add constraint fk_delete_history_to_user
+foreign key (deleted_by_id)
+references user
+
+alter table question
+add constraint fk_question_writer
+foreign key (writer_id)
+references user
+```
+- [ ]  Answer 엔티티에 연관 관계 매핑
+- [ ]  DeleteHistory 엔티티에 연관 관계 매핑
+- [ ]  Question 엔티티에 연관 관계 매핑
