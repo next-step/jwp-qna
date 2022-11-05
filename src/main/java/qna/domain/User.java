@@ -1,11 +1,15 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 import qna.UnAuthorizedException;
@@ -17,13 +21,30 @@ public class User extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotNull
+    @Column(length = 20, unique = true)
     private String userId;
+
     @NotNull
+    @Column(length = 20)
     private String password;
+
     @NotNull
+    @Column(length = 20)
     private String name;
+
+    @Column(length = 50)
     private String email;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "deletedByUser")
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected User() {
     }
@@ -78,16 +99,8 @@ public class User extends BaseTime {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getPassword() {
@@ -102,27 +115,20 @@ public class User extends BaseTime {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public List<Question> getQuestions() {
+        return questions;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-            "id=" + id +
-            ", userId='" + userId + '\'' +
-            ", password='" + password + '\'' +
-            ", name='" + name + '\'' +
-            ", email='" + email + '\'' +
-            '}';
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
     }
 
     private static class GuestUser extends User {
@@ -131,4 +137,5 @@ public class User extends BaseTime {
             return true;
         }
     }
+
 }
