@@ -15,28 +15,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.QuestionTest.Q2;
+import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
 
     @Autowired
     QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
-        questionRepository.deleteAll();
+        userRepository.save(JAVAJIGI);
+        userRepository.save(SANJIGI);
     }
 
     @Test
     @DisplayName("삭제상태가 false인 Question목록을 반환")
     void test_returns_questions_with_deleted_is_false() {
-        questionRepository.saveAll(Arrays.asList(Q1, Q2));
+        List<Question> savedQuestions = questionRepository.saveAll(Arrays.asList(Q1, Q2));
 
-        List<Question> questions = questionRepository.findByDeletedFalse();
+        List<Question> findQuestions = questionRepository.findByDeletedFalse();
 
         assertAll(
-                () -> assertThat(questions.size()).isEqualTo(2),
-                () -> assertThat(questions).containsExactly(Q1, Q2)
+                () -> assertThat(findQuestions.size()).isEqualTo(2),
+                () -> assertThat(findQuestions).containsExactly(savedQuestions.get(0), savedQuestions.get(1))
         );
     }
 
