@@ -27,4 +27,16 @@ public class QuestionTest {
             () -> assertThat(Q1.isOwner(UserTest.SANJIGI)).isFalse()
         );
     }
+
+    @Test
+    void 답변_추가() {
+        Question question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        Answer answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
+        question.addAnswer(answer);
+
+        assertAll(
+            () -> assertThat(question.getAnswers()).contains(answer),
+            () -> assertThat(answer.getQuestion()).isEqualTo(question)
+        );
+    }
 }

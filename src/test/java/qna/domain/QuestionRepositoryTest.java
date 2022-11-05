@@ -19,12 +19,10 @@ class QuestionRepositoryTest {
     QuestionRepository questionRepository;
 
     private Question Q1;
-    private Question Q2;
 
     @BeforeEach
     void setup() {
-        Q1 = questionRepository.save(QuestionTest.Q1);
-        Q2 = questionRepository.save(QuestionTest.Q2);
+        Q1 = questionRepository.save(new Question(1L, "title1", "contents1"));
     }
 
     @Test

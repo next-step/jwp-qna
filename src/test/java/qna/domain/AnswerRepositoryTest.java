@@ -3,7 +3,6 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,14 +16,17 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 class AnswerRepositoryTest {
     @Autowired
     AnswerRepository answerRepository;
+    @Autowired
+    QuestionRepository questionRepository;
 
     private Answer A1;
-    private Answer A2;
+    private Question Q1;
 
     @BeforeEach
     void setup() {
-        A1 = answerRepository.save(AnswerTest.A1);
-        A2 = answerRepository.save(AnswerTest.A2);
+        A1 = answerRepository.save(new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1"));
+        Q1 = questionRepository.save(new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI));
+        A1.toQuestion(Q1);
     }
 
     @Test
@@ -32,17 +34,6 @@ class AnswerRepositoryTest {
         assertAll(
             () -> assertThat(A1.getCreatedAt()).isNotNull(),
             () -> assertThat(A1.getUpdatedAt()).isNotNull()
-        );
-    }
-
-    @Test
-    void findByQuestionIdAndDeletedFalse() {
-        List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
-        actual.forEach(answer ->
-            assertAll(
-                () -> assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q1.getId()),
-                () -> assertThat(answer.isDeleted()).isFalse()
-            )
         );
     }
 

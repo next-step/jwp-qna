@@ -12,6 +12,8 @@ public class AnswerTest {
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
+    private Answer answer;
+
     @Test
     void 객체_생성_유저_null일경우_UnAuthorizedException() {
         assertThatThrownBy(() -> new Answer(null, QuestionTest.Q1, "Answers Contents"))
@@ -51,8 +53,19 @@ public class AnswerTest {
         answer.toQuestion(question2);
 
         assertAll(
-            () -> assertThat(answer.getQuestionId()).isNotEqualTo(question1.getId()),
-            () -> assertThat(answer.getQuestionId()).isEqualTo(question2.getId())
+            () -> assertThat(answer.getQuestion()).isNotEqualTo(question1),
+            () -> assertThat(answer.getQuestion()).isEqualTo(question2),
+            () -> assertThat(question1.getAnswers()).doesNotContain(answer),
+            () -> assertThat(question2.getAnswers()).contains(answer)
         );
+    }
+
+    @Test
+    void toString_순환참조_테스트() {
+        assertDoesNotThrow(() -> {
+            Question question = new Question(1L, "title1", "contents1");
+            Answer answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents");
+            assertThat(answer.toString()).isNotNull();
+        });
     }
 }

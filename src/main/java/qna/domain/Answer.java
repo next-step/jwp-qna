@@ -4,10 +4,13 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -20,7 +23,9 @@ public class Answer extends BaseEntity {
 
     private Long writerId;
 
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     @Lob
     private String contents;
@@ -47,7 +52,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        toQuestion(question);
         this.contents = contents;
     }
 
@@ -56,7 +61,11 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        if (Objects.nonNull(this.question)) {
+            this.question.getAnswers().remove(this);
+        }
+        this.question = question;
+        question.getAnswers().add(this);
     }
 
     public Long getId() {
@@ -67,8 +76,8 @@ public class Answer extends BaseEntity {
         return writerId;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return this.question;
     }
 
     public boolean isDeleted() {
@@ -78,13 +87,12 @@ public class Answer extends BaseEntity {
     public void delete() {
         this.deleted = true;
     }
-    
+
     @Override
     public String toString() {
         return "Answer{" +
             "id=" + id +
             ", writerId=" + writerId +
-            ", questionId=" + questionId +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';

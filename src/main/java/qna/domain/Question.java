@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -8,9 +10,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Question extends BaseEntity {
+    @OneToMany(mappedBy = "question")
+    private final List<Answer> answers = new ArrayList<>();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -68,10 +74,15 @@ public class Question extends BaseEntity {
         this.deleted = true;
     }
 
+    public List<Answer> getAnswers() {
+        return this.answers;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
-            "id=" + id +
+            "answers=" + answers +
+            ", id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
             ", writerId=" + writerId +
