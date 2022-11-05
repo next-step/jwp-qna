@@ -5,26 +5,33 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.DeleteHistory;
+import qna.domain.User;
+import qna.fixture.TestDeleteHistoryFactory;
+import qna.fixture.TestUserFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.DeleteHistoryTest.DH1;
 
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @DisplayName("삭제 이력을 저장할 수 있다")
     @Test
     void save() {
-        DeleteHistory actual = deleteHistoryRepository.save(DH1);
+        User deleteBy = userRepository.save(TestUserFactory.create("서정국"));
+        DeleteHistory expect = TestDeleteHistoryFactory.create(deleteBy);
+        DeleteHistory result = deleteHistoryRepository.save(expect);
 
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getContentId()).isEqualTo(DH1.getContentId()),
-                () -> assertThat(actual.getDeletedBy()).isEqualTo(DH1.getDeletedBy()),
-                () -> assertThat(actual.getCreateDate()).isEqualTo(DH1.getCreateDate())
+                () -> assertThat(result.getId()).isNotNull(),
+                () -> assertThat(result.getContentId()).isEqualTo(expect.getContentId()),
+                () -> assertThat(result.getDeletedBy()).isEqualTo(expect.getDeletedBy()),
+                () -> assertThat(result.getCreateDate()).isEqualTo(expect.getCreateDate())
         );
     }
 }
