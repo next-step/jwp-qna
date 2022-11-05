@@ -9,7 +9,6 @@ import qna.NotFoundException;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.User;
-import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
 
 @Service
