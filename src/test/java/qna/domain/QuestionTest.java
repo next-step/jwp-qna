@@ -58,13 +58,26 @@ public class QuestionTest extends BaseDomainTest<Question> {
     @Test
     void 질문을_등록한_사용자를_조회할_수_있다() {
         Question 질문 = 질문_생성().get(0);
-        User 작성자 = 작성자_생성();
+        User 작성자 = 작성자_생성("작성자1");
         질문.setWriter(작성자);
         flush();
 
         작성자 = 질문.getWriter();
         assertThat(작성자).isNotNull();
         assertThat(작성자.getQuestions()).contains(질문);
+    }
+
+    @Test
+    void 질문의_작성자를_교체하면_이전_작성자는_해당_질문을_조회할_수_없다() {
+        User 작성자1 = 작성자_생성("작성자1");
+        Question 질문 = 질문_생성().get(0);
+        질문.setWriter(작성자1);
+
+        User 작성자2 = 작성자_생성("작성자2");
+        질문.setWriter(작성자2);
+        flush();
+        assertThat(작성자2.getQuestions()).containsOnlyOnce(질문);
+        assertThat(작성자1.getQuestions()).doesNotContain(질문);
     }
 
     List<Question> 질문_생성() {
@@ -82,8 +95,8 @@ public class QuestionTest extends BaseDomainTest<Question> {
         questions.flush();
     }
 
-    private User 작성자_생성() {
-        return users.save(UserTest.사용자("작성자1"));
+    private User 작성자_생성(String 이름) {
+        return users.save(UserTest.사용자(이름));
     }
 
     void flush() {

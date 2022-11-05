@@ -28,7 +28,7 @@ public class UserTest extends BaseDomainTest<User> {
 
     @Test
     void 도메인을_생성할_수_있다() {
-        List<User> 생성된_유저 = 사용자();
+        List<User> 생성된_유저 = 사용자_생성();
 
         List<User> 사용자목록 = users.findAll();
 
@@ -37,7 +37,7 @@ public class UserTest extends BaseDomainTest<User> {
 
     @Test
     void 도메인을_수정할_수_있다() {
-        List<User> 수정할_도메인 = 사용자();
+        List<User> 수정할_도메인 = 사용자_생성();
 
         List<LocalDateTime> 최종_수정_일자 = 최종_수정_일자(수정할_도메인);
 
@@ -48,13 +48,13 @@ public class UserTest extends BaseDomainTest<User> {
 
     @Test
     void 생성날짜_수정날짜가_입력되어_있다() {
-        List<User> 도메인 = 사용자();
+        List<User> 도메인 = 사용자_생성();
         생성날짜_수정날짜_검증(도메인);
     }
 
     @Test
     void 사용자의_질문들을_조회할_수_있다() {
-        User 사용자 = 사용자().get(0);
+        User 사용자 = 사용자_생성().get(0);
         Question 질문1 = QuestionTest.질문("질문1");
         Question 질문2 = QuestionTest.질문("질문2");
         사용자.addQuestion(질문1);
@@ -68,10 +68,9 @@ public class UserTest extends BaseDomainTest<User> {
             .flatExtracting(Question::getWriter)
             .hasSize(2)
             .containsExactlyInAnyOrder(사용자, 사용자);
-
     }
 
-    private List<User> 사용자() {
+    private List<User> 사용자_생성() {
         return this.users.saveAll(Lists.newArrayList(
             사용자("유저1"),
             사용자("유저2")));
