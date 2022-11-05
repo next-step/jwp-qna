@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import qna.CannotDeleteException;
@@ -42,13 +43,15 @@ public class Answers {
         return this.values.contains(answer);
     }
 
-    public void deleted(User writer) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User writer) throws CannotDeleteException {
         boolean isNotOwner = values.stream().anyMatch(answer -> !answer.isOwner(writer));
         if (isNotOwner) {
             throw new CannotDeleteException(ExceptionMessage.NO_PERMISSION_DELETE_ANSWER);
         }
 
-        values.forEach(Answer::deleted);
+        return values.stream()
+                .map(Answer::delete)
+                .collect(Collectors.toList());
     }
 
     public boolean isAllDeleted() {

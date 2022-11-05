@@ -1,6 +1,7 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -86,17 +87,23 @@ public class Question extends BaseTimeEntity {
         this.deleted = true;
     }
 
-    public DeleteHistory toDeletedHistory() {
-        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
-    }
-
-    public void delete(User writer) throws CannotDeleteException {
+    public DeleteHistories delete(User writer) throws CannotDeleteException {
         if (!isOwner(writer)) {
             throw new CannotDeleteException(ExceptionMessage.NO_PERMISSION_DELETE_QUESTION);
         }
 
-        answers.deleted(writer);
         this.deleted();
+
+        return getDeleteHistories(writer);
+    }
+
+    private DeleteHistories getDeleteHistories(User writer) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        deleteHistories.add(DeleteHistory.ofQuestion(id, writer));
+        deleteHistories.addAll(answers.delete(writer));
+
+        return DeleteHistories.from(deleteHistories);
     }
 
     @Override
