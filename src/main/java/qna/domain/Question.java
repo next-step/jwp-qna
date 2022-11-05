@@ -1,10 +1,27 @@
 package qna.domain;
 
-public class Question {
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+public class Question extends BaseTime {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
+
+    @Column(name = "contents")
+    @Lob
     private String contents;
+
+    @Column(name = "writer_id")
     private Long writerId;
+
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
     public Question(String title, String contents) {
