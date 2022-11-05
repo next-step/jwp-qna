@@ -14,7 +14,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String userId;
     @Column(nullable = false)
     private String password;
@@ -22,12 +22,6 @@ public class User {
     private String name;
     private String email;
 
-    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Question> questions = new HashSet<>();
-
-    public void addQuestion(Question question){
-        this.questions.add(question);
-    }
     protected User() {
     }
 

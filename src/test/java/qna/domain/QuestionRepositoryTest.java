@@ -24,9 +24,6 @@ class QuestionRepositoryTest extends NewEntityTestBase {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private EntityManager entityManager;
-
     @Override
     @BeforeEach
     void setUp() {
@@ -76,67 +73,6 @@ class QuestionRepositoryTest extends NewEntityTestBase {
         );
     }
 
-    @Test
-    @DisplayName("Question을 지우면 User가 함께 지워진다! (Question -> User의 Cascade가 ALL인 상태, User->Question은 Cascade.Persist")
-    void test6() {
-        Long questionId = Q1.getId();
-        Long userId = Q1.getWriter().getId();
-
-        questionRepository.delete(Q1);
-        flushAndClear();
-
-        Optional<Question> question = questionRepository.findById(questionId);
-        Optional<User> user = userRepository.findById(userId);
-
-
-        assertAll(
-                () -> assertThat(question).isEmpty(),
-                () -> assertThat(user).isEmpty()
-        );
-    }
-
-    @Test
-    @DisplayName("Question을 하나 지울 때 User가 다른 Question도 있더라도 모두 지워짐 - 양쪽 Cascade.ALL은 설정하면 안될듯..")
-    void test6_2() {
-        Question save = questionRepository.save(new Question("title","contents").writeBy(NEWUSER1));
-        Long questionId = save.getId();
-        Long userId = save.getWriter().getId();
-
-        questionRepository.delete(save);
-        flushAndClear();
-
-        Optional<Question> question = questionRepository.findById(questionId);
-        Optional<User> user = userRepository.findById(userId);
-
-        assertAll(
-                () -> assertThat(question).isEmpty(),
-                () -> assertThat(user).isEmpty()
-        );
-    }
-
-    @Test
-    @DisplayName("User를 지우면 user만 사라지고 Question은 남아 있음. User -> Question OneToMany 연결")
-    void test7() {
-        questionRepository.save(new Question("title","contents").writeBy(NEWUSER1));
-        List<Question> questionsByNewUser = questionRepository.findByWriterAndDeletedFalse(NEWUSER1);
-
-        userRepository.deleteById(NEWUSER1.getId());
-        flushAndClear();
-
-
-        List<Question> afterDeleteQuestionsByNewUser = questionRepository.findByWriterAndDeletedFalse(NEWUSER1);
-        Optional<User> user = userRepository.findById(NEWUSER1.getId());
-
-        assertAll(
-                () -> assertThat(afterDeleteQuestionsByNewUser).isEmpty(),
-                () -> assertThat(user).isEmpty()
-        );
-    }
-
-    private void flushAndClear() {
-        entityManager.flush();
-        entityManager.clear();
-    }
 
     private static String prepareContentsOverLength(int length) {
         StringBuilder sb = new StringBuilder(length);

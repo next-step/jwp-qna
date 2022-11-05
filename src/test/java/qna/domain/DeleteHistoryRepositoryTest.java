@@ -5,20 +5,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
-class DeleteHistoryRepositoryTest extends NewEntityTestBase{
+class DeleteHistoryRepositoryTest extends NewEntityTestBase {
 
     @Autowired
     private DeleteHistoryRepository repository;
@@ -33,8 +29,8 @@ class DeleteHistoryRepositoryTest extends NewEntityTestBase{
     @BeforeEach
     void setUp() {
         super.setUp();
-        questionRepository.saveAll(Arrays.asList(Q1,Q2));
-        answerRepository.save(new Answer(NEWUSER1,Q1,"answer"));
+        questionRepository.saveAll(Arrays.asList(Q1, Q2));
+        answerRepository.save(new Answer(NEWUSER1, Q1, "answer"));
     }
 
     @Test

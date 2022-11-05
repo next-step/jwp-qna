@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-class UserRepositoryTest extends NewEntityTestBase{
+class UserRepositoryTest extends NewEntityTestBase {
 
     @Autowired
     private UserRepository repository;
@@ -23,7 +23,7 @@ class UserRepositoryTest extends NewEntityTestBase{
     @BeforeEach
     void setUp() {
         super.setUp();
-        repository.saveAll(Arrays.asList(NEWUSER1,NEWUSER2));
+        repository.saveAll(Arrays.asList(NEWUSER1, NEWUSER2));
     }
 
     @Test
@@ -39,6 +39,6 @@ class UserRepositoryTest extends NewEntityTestBase{
     void test2() {
         List<User> all = repository.findAll();
 
-        assertThat(all).containsExactly(NEWUSER1,NEWUSER2);
+        assertThat(all).containsExactly(NEWUSER1, NEWUSER2);
     }
 }

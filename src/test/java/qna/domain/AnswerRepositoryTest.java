@@ -13,11 +13,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
-class AnswerRepositoryTest extends NewEntityTestBase{
+class AnswerRepositoryTest extends NewEntityTestBase {
 
     private Answer A1;
     private Answer A2;
@@ -39,14 +37,14 @@ class AnswerRepositoryTest extends NewEntityTestBase{
         super.setUp();
         A1 = new Answer(NEWUSER1, Q1, "Answers Contents1");
         A2 = new Answer(NEWUSER2, Q2, "Answers Contents2");
-        answerRepository.saveAll(Arrays.asList(A1,A2));
+        answerRepository.saveAll(Arrays.asList(A1, A2));
     }
 
     @Test
     @DisplayName("연관관계를 맺으면 정상적으로 저장이 되는 것을 확인")
     void test1() {
-        User user = new User("id","pass","name","email");
-        Question question = new Question("title","contents").writeBy(user);
+        User user = new User("id", "pass", "name", "email");
+        Question question = new Question("title", "contents").writeBy(user);
         Answer cascade_test = new Answer(user, question, "cascade test");
         Answer save = answerRepository.save(cascade_test);
 
