@@ -109,10 +109,11 @@ public class Question extends BaseEntity {
 
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         checkOwnerOrThrow(loginUser);
-        boolean deletable = deletableChecker.check(loginUser, this.answers);
-        if (!deletable) {
-            return new ArrayList<>();
-        }
+        deletableChecker.check(loginUser, this.answers);
+        return getDeleteHistory();
+    }
+
+    private List<DeleteHistory> getDeleteHistory() {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(this.toDeleteHistory());
         deleteHistories.addAll(getAnswerDeleteHistories());
