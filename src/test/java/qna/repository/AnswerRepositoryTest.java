@@ -42,7 +42,7 @@ public class AnswerRepositoryTest {
         List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestion().getId());
 
         assertAll(
-                () -> assertThat(findAnswers.size()).isEqualTo(1),
+                () -> assertThat(findAnswers).hasSize(1),
                 () -> assertThat(findAnswers).contains(savedAnswer)
         );
     }
