@@ -193,6 +193,18 @@ public class QuestionTest extends BaseDomainTest<Question> {
         질문_삭제됨(질문);
     }
 
+    @Test
+    void 질문자와_답변자가_다른_경우_답변을_삭제할_수_없다() {
+        Question 질문 = 질문_생성("질문1", "작성자1");
+        User 작성자 = 질문.getWriter();
+        User 다른_작성자 = 작성자_생성("작성자2");
+        답변_생성("답변1", 질문, 다른_작성자);
+        flush();
+
+        assertThatThrownBy(() -> 질문.delete(작성자))
+            .isInstanceOf(CannotDeleteException.class);
+    }
+
     private Question 질문_생성(String 질문_제목, String 작성자_이름) {
         Question 질문 = 질문_생성(질문_제목);
         User 작성자 = 작성자_생성(작성자_이름);
