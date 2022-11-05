@@ -16,7 +16,7 @@ public class Answers {
     }
 
     public Answers(List<Answer> answers) {
-        this.answers = answers;
+        this.answers = new ArrayList<>(answers);
     }
 
     public DeleteHistories delete(User user) {
