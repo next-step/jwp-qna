@@ -22,7 +22,6 @@ public class Question {
     @OneToMany(mappedBy = "question")
     private final List<Answer> answers = new ArrayList<>();
 
-
     protected Question() {
     }
 
