@@ -49,8 +49,7 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("questionId에 해당하고 삭제상태가 false인 Question을 반환")
     void test_returns_question_deleted_is_false() {
-        Question savedQuestion = questionRepository.save(new Question("title1", "contents1")
-                .writeBy(savedUser1));
+        Question savedQuestion = questionRepository.save(new Question("title1", "contents1").writeBy(savedUser1));
 
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
 
