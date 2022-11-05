@@ -44,7 +44,7 @@ class AnswerRepositoryTest extends NewEntityTestBase {
     @DisplayName("연관관계를 맺으면 정상적으로 저장이 되는 것을 확인")
     void test1() {
         User user = new User("id", "pass", "name", "email");
-        Question question = new Question("title", "contents").writeBy(user);
+        Question question = new Question("title", "contents", user);
         Answer cascade_test = new Answer(user, question, "cascade test");
         Answer save = answerRepository.save(cascade_test);
 
@@ -61,7 +61,7 @@ class AnswerRepositoryTest extends NewEntityTestBase {
     @DisplayName("Question Id와 삭제되지 않은 Answer를 검색하면  두 건이 조회됨")
     void findByQuestionQIdAndDeletedFalse() {
         Answer deletedAnswer = new Answer(NEWUSER1, Q2, "some contents");
-        deletedAnswer.setDeleted(true);
+        deletedAnswer.markDeleted(true);
 
         answerRepository.save(deletedAnswer);
         List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(Q2);
@@ -72,8 +72,8 @@ class AnswerRepositoryTest extends NewEntityTestBase {
     @Test
     @DisplayName("Question Id와 삭제되지 않은 Answer를 검색하면 한 건이 조회됨")
     void findByDeletedFalse() {
-        A1.setDeleted(true);
-        A2.setDeleted(false);
+        A1.markDeleted(true);
+        A2.markDeleted(false);
 
         List<Answer> answers = answerRepository.findByDeletedTrue();
 
@@ -104,7 +104,7 @@ class AnswerRepositoryTest extends NewEntityTestBase {
     @DisplayName("content가 업데이트 된다. dynamicUpdate적용으로 변경된 컬럼만 쿼리에 포함됨.")
     void update() {
         Answer save = answerRepository.save(A1);
-        save.setContents("updated");
+        save.updateContents("updated");
 
         em.flush();
         em.clear();
@@ -117,8 +117,8 @@ class AnswerRepositoryTest extends NewEntityTestBase {
     @Test
     @DisplayName("contains 로 % ~ % 검색이 가능함")
     void findByRegEx() {
-        A1.setContents("12345");
-        A2.setContents("abcde");
+        A1.updateContents("12345");
+        A2.updateContents("abcde");
         answerRepository.saveAll(Arrays.asList(A1, A2));
 
         List<Answer> matchesRegex = answerRepository.findByContentsContains("123");

@@ -36,7 +36,7 @@ class QuestionRepositoryTest extends NewEntityTestBase {
     void findByDeletedFalse() {
 
         List<Question> all = questionRepository.findAll();
-        all.get(0).setDeleted(true);
+        all.get(0).markDeleted(true);
 
         List<Question> byDeletedFalse = questionRepository.findByDeletedFalse();
 
@@ -55,7 +55,7 @@ class QuestionRepositoryTest extends NewEntityTestBase {
     void test4() {
         String stringLengthOver = prepareContentsOverLength(101);
 
-        Question question = new Question(null, stringLengthOver, "contents").writeBy(NEWUSER1);
+        Question question = new Question(null, stringLengthOver, "contents", NEWUSER1);
 
         assertThatThrownBy(() -> questionRepository.save(question))
                 .isInstanceOf(DataIntegrityViolationException.class)

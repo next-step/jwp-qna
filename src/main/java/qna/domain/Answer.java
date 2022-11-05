@@ -9,23 +9,23 @@ import java.util.Objects;
 
 @Entity
 @DynamicUpdate
-public class Answer extends BaseEntity{
+public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
     private String contents;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "writer_id")
     private User writer;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "question_id")
     private Question question;
     @Column(nullable = false)
     private boolean deleted = false;
 
-    protected Answer(){
+    protected Answer() {
 
     }
 
@@ -44,7 +44,6 @@ public class Answer extends BaseEntity{
             throw new NotFoundException();
         }
 
-
         this.writer = writer;
         this.question = question;
         this.contents = contents;
@@ -62,40 +61,20 @@ public class Answer extends BaseEntity{
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User writer) {
-        this.writer = writer;
     }
 
     public Long getQuestionId() {
         return this.question.getId();
     }
 
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -111,5 +90,13 @@ public class Answer extends BaseEntity{
 
     public Question getQuestion() {
         return this.question;
+    }
+
+    public void markDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public void updateContents(String updated) {
+        this.contents = updated;
     }
 }

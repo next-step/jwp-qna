@@ -50,7 +50,7 @@ public class QnaService {
     private List<DeleteHistory> getDeleteHistories(List<Answer> answers) {
         return answers.stream()
                 .map(answer -> {
-                    answer.setDeleted(true);
+                    answer.markDeleted(true);
                     return DeleteHistory.ofAnswer(answer.getId(), answer.getWriter());
                 }).
                 collect(Collectors.toList());
@@ -71,7 +71,7 @@ public class QnaService {
         if (!question.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        question.setDeleted(true);
+        question.markDeleted(true);
         return question;
     }
 }

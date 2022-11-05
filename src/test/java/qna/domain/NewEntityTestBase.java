@@ -12,9 +12,9 @@ public class NewEntityTestBase {
 
     @BeforeEach
     void setUp() {
-        NEWUSER1 = new User("id1","pass","name","email");
-        NEWUSER2 = new User("id2","pass","name","email");
-        Q1 = new Question("title", "contents").writeBy(NEWUSER1);
-        Q2 = new Question("title", "contents").writeBy(NEWUSER2);
+        NEWUSER1 = new User("id1", "pass", "name", "email");
+        NEWUSER2 = new User("id2", "pass", "name", "email");
+        Q1 = new Question("title", "contents", NEWUSER1);
+        Q2 = new Question("title", "contents", NEWUSER2);
     }
 }
