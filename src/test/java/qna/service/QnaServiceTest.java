@@ -80,8 +80,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                DeleteHistory.createDeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()),
-                DeleteHistory.createDeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter())
+                DeleteHistory.createDeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()),
+                DeleteHistory.createDeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter())
         );
         verify(deleteHistoryService).saveAll(new DeleteHistories(deleteHistories));
     }
@@ -102,5 +102,27 @@ class QnaServiceTest {
         //then
         assertThat(question.isDeleted()).isTrue();
         verify(deleteHistoryService).saveAll(new DeleteHistories(deleteHistories));
+    }
+
+    @Test
+    void 질문자와_답변자_달라_예외_발생하면_질문_삭제여부는_거짓() {
+        //given
+        User writer = TestUserFactory.create("sanjigi");
+        User fakeWriter = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer1 = TestAnswerFactory.create(writer, question);
+        Answer answer2 = TestAnswerFactory.create(fakeWriter, question);
+        questionRepository.save(question);
+
+        //when
+        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+        assertThat(question.isDeleted()).isFalse();
+        assertThat(question.answersCount()).isEqualTo(2);
+        assertThatThrownBy(() -> qnaService.deleteQuestion(writer, question.getId()))
+                .isInstanceOf(CannotDeleteException.class);
+
+        //then
+        assertThat(question.isDeleted()).isFalse();
+        assertThat(answer1.isDeleted()).isFalse();
     }
 }

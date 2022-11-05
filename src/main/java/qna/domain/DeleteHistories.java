@@ -13,18 +13,12 @@ public class DeleteHistories {
         this.deleteHistories = new ArrayList<>(deleteHistories);
     }
 
-    public DeleteHistories(DeleteHistory deleteHistory) {
-        this.deleteHistories = Collections.singletonList(deleteHistory);
-    }
-
     public List<DeleteHistory> unmodifiedDeleteHistories() {
         return Collections.unmodifiableList(deleteHistories);
     }
 
-    public DeleteHistories merge(DeleteHistories deleteHistories) {
-        List<DeleteHistory> newDeleteHistories = new ArrayList<>(this.deleteHistories);
-        newDeleteHistories.addAll(deleteHistories.deleteHistories);
-        return new DeleteHistories(newDeleteHistories);
+    public void add(DeleteHistory deleteHistory) {
+        this.deleteHistories.add(deleteHistory);
     }
 
     @Override

@@ -101,9 +101,10 @@ public class Question extends BaseEntity {
 
     public DeleteHistories delete(User user) {
         validateSameUser(user);
+        DeleteHistories deleteHistories = this.answers.delete(user);
         changeDeleted(true);
-        DeleteHistories deleteHistories = new DeleteHistories(createDeleteHistory());
-        return deleteHistories.merge(this.answers.delete(user));
+        deleteHistories.add(createDeleteHistory());
+        return deleteHistories;
     }
 
     public int answersCount() {

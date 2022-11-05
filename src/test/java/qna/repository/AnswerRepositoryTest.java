@@ -1,6 +1,7 @@
 package qna.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
+import qna.constant.ErrorCode;
 import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.TestAnswerFactory;
@@ -108,5 +111,26 @@ public class AnswerRepositoryTest {
         //then
         assertThat(findQuestion).isPresent();
         assertThat(findAnswer).isPresent();
+    }
+
+    @Test
+    void 질문자와_답변자_달라_예외_발생하면_질문_삭제여부는_거짓이다() {
+        //given
+        User writer = TestUserFactory.create("sanjigi");
+        User fakeWriter = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = TestAnswerFactory.create(fakeWriter, question);
+        answerRepository.save(answer);
+        Long questionId = question.getId();
+
+        //when
+        assertThatThrownBy(() -> question.delete(writer))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage(ErrorCode.답변_중_다른_사람이_쓴_답변_있어_삭제_못함.getErrorMessage());
+        questionRepository.saveAndFlush(question);
+        Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(questionId);
+
+        //then
+        assertThat(findQuestion).isPresent();
     }
 }
