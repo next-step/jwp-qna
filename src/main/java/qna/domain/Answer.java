@@ -81,15 +81,4 @@ public class Answer extends BaseEntity {
     public Question getQuestion() {
         return question;
     }
-
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writer=" + writer +
-                ", question=" + question +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
-    }
 }

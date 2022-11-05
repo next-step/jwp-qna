@@ -76,16 +76,4 @@ public class Question {
     public void changeDeleted(final boolean deleted) {
         this.deleted = deleted;
     }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writer=" + writer +
-                ", deleted=" + deleted +
-                ", answers=" + answers +
-                '}';
-    }
 }
