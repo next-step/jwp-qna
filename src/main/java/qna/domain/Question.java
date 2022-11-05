@@ -74,10 +74,6 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public List<Answer> getAnswers() {
-        return answers.getAnswers();
-    }
-
     public void removeAnswer(Answer answer) {
         answers.removeAnswer(answer);
     }
@@ -110,6 +106,10 @@ public class Question extends BaseEntity {
         changeDeleted(true);
         deleteHistories.add(createDeleteHistory());
         return deleteHistories;
+    }
+
+    public int answersCount() {
+        return answers.answersCount();
     }
 
     @Override

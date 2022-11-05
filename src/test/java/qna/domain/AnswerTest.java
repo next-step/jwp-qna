@@ -37,11 +37,11 @@ public class AnswerTest {
         //given
         User writer = TestUserFactory.create("javajigi");
         Question question = TestQuestionFactory.create(writer);
-        int actual = question.getAnswers().size();
+        int actual = question.answersCount();
 
         //when
         new Answer(writer, question, "Question 리스트 추가");
-        int expect = question.getAnswers().size();
+        int expect = question.answersCount();
 
         //then
         assertThat(actual+1).isEqualTo(expect);

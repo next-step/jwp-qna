@@ -19,10 +19,6 @@ public class Answers {
         this.answers = answers;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
     public List<DeleteHistory> delete(User user) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for(Answer answer: this.answers) {
@@ -39,5 +35,13 @@ public class Answers {
         if(!answers.contains(answer)) {
             answers.add(answer);
         }
+    }
+
+    public int answersCount() {
+        return answers.size();
+    }
+
+    public boolean contains(Answer answer) {
+        return this.answers.contains(answer);
     }
 }

@@ -13,25 +13,6 @@ import qna.constant.ErrorCode;
 public class AnswersTest {
 
     @Test
-    void 답변들_삭제여부_참_변경() {
-        //given
-        User writer = TestUserFactory.create("javajigi");
-        Question question = TestQuestionFactory.create(writer);
-        Answer answer1 = new Answer(writer, question, "답변 삭제 여부 true 변경");
-        Answer answer2 = new Answer(writer, question, "답변 삭제 여부 true 변경");
-        Answers answer = new Answers(Arrays.asList(answer1, answer2));
-
-        //when
-        answer.delete(writer);
-
-        //then
-        assertAll(
-                () -> assertThat(answer.getAnswers()).hasSize(2),
-                () -> assertThat(answer.getAnswers()).allMatch(Answer::isDeleted)
-        );
-    }
-
-    @Test
     void 답변들_중_답변한_작성자가_아니면_예외를_발생시킨다() {
         //given
         User writer = TestUserFactory.create("javajigi");
@@ -59,7 +40,7 @@ public class AnswersTest {
         answers.addAnswer(answer);
 
         //then
-        assertThat(answers.getAnswers()).contains(answer);
+        assertThat(answers.contains(answer)).isTrue();
     }
 
     @Test
@@ -74,6 +55,6 @@ public class AnswersTest {
         answers.removeAnswer(answer);
 
         //then
-        assertThat(answers.getAnswers().contains(answer)).isFalse();
+        assertThat(answers.contains(answer)).isFalse();
     }
 }
