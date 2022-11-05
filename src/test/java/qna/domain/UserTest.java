@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,7 +89,7 @@ public class UserTest extends BaseDomainTest<User> {
         entityManager.clear();
     }
 
-    public static User 사용자(String 사용자_아이디) {
-        return new User(사용자_아이디, "password", "name", "email");
+    public static User 사용자(String 이름) {
+        return new User(UUID.randomUUID().toString(), "password", 이름, "email");
     }
 }
