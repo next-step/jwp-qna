@@ -7,11 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 public class Question extends BaseEntity {
 
-    public static final QuestionDeletableChecker deletableChecker = new QuestionDeletableChecker (
+    public static final QuestionDeletableChecker deletableChecker = new QuestionDeletableChecker(
             Arrays.asList(
                     new NoAnswerRule(),
                     new AllWriterIsSameRule())
@@ -109,7 +110,22 @@ public class Question extends BaseEntity {
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         checkOwnerOrThrow(loginUser);
         boolean deletable = deletableChecker.check(loginUser, this.answers);
-        return new ArrayList<>();
+        if (!deletable) {
+            return new ArrayList<>();
+        }
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(this.toDeleteHistory());
+        deleteHistories.addAll(getAnswerDeleteHistories());
+        return deleteHistories;
+    }
+
+    private List<DeleteHistory> getAnswerDeleteHistories() {
+        return this.answers.stream().map(Answer::toDeleteHistory).collect(Collectors.toList());
+    }
+
+    private DeleteHistory toDeleteHistory() {
+        this.markDeleted(true);
+        return DeleteHistory.ofQuestion(this.getId(), this.writer);
     }
 
     public void checkOwnerOrThrow(User loginUser) throws CannotDeleteException {

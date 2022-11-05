@@ -43,10 +43,8 @@ public class Answer extends BaseEntity {
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
-
         this.writer = writer;
         this.question = question;
-        this.question.addAnswer(this);
         this.contents = contents;
     }
 
@@ -56,6 +54,7 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
+        this.question.addAnswer(this);
     }
 
     public Long getId() {
@@ -99,5 +98,10 @@ public class Answer extends BaseEntity {
 
     public void updateContents(String updated) {
         this.contents = updated;
+    }
+
+    public DeleteHistory toDeleteHistory() {
+        this.markDeleted(true);
+        return DeleteHistory.ofAnswer(this.getId(), writer);
     }
 }

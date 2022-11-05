@@ -40,32 +40,4 @@ public class QnaService {
         List<DeleteHistory> deleteHistories = question.delete(loginUser);
         deleteHistoryService.saveAll(deleteHistories);
     }
-
-    private List<DeleteHistory> getDeleteHistories(List<Answer> answers) {
-        return answers.stream()
-                .map(answer -> {
-                    answer.markDeleted(true);
-                    return DeleteHistory.ofAnswer(answer.getId(), answer.getWriter());
-                }).
-                collect(Collectors.toList());
-    }
-
-    private List<Answer> getAnswersToDelete(User loginUser, Question question) throws CannotDeleteException {
-        List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(question);
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
-        }
-        return answers;
-    }
-
-    private Question getQuestionToDelete(User loginUser, Long questionId) throws CannotDeleteException {
-        Question question = findQuestionById(questionId);
-        if (!question.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-        question.markDeleted(true);
-        return question;
-    }
 }

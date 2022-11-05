@@ -19,10 +19,11 @@ public class QuestionTest {
     void delete() throws CannotDeleteException {
 
         Question question = new Question("title", "contets", UserTest.JAVAJIGI);
-        Arrays.asList(
-                new Answer(UserTest.JAVAJIGI,question,"contents"),
-                new Answer(UserTest.JAVAJIGI,question,"contents"),
-                new Answer(UserTest.JAVAJIGI,question,"contents"));
+        List<Answer> answers = Arrays.asList(
+                new Answer(UserTest.JAVAJIGI, question, "contents"),
+                new Answer(UserTest.JAVAJIGI, question, "contents"),
+                new Answer(UserTest.JAVAJIGI, question, "contents"));
+        answers.forEach(question::addAnswer);
 
         List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
 
@@ -46,15 +47,14 @@ public class QuestionTest {
     void delete3() throws CannotDeleteException {
 
         Question question = new Question("title", "contets", UserTest.JAVAJIGI);
-        Arrays.asList(
-                new Answer(UserTest.JAVAJIGI,question,"contents"),
-                new Answer(UserTest.SANJIGI,question,"contents"),
-                new Answer(UserTest.SANJIGI,question,"contents"));
+        List<Answer> answers = Arrays.asList(
+                new Answer(UserTest.JAVAJIGI, question, "contents"),
+                new Answer(UserTest.SANJIGI, question, "contents"),
+                new Answer(UserTest.SANJIGI, question, "contents"));
+        answers.forEach(question::addAnswer);
 
-        List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
-
-        assertThat(deleteHistories.size()).isEqualTo(0);
-        assertThat(question.isDeleted()).isFalse();
+        assertThatThrownBy(()-> question.delete(UserTest.JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
@@ -67,10 +67,12 @@ public class QuestionTest {
                 new Answer(UserTest.JAVAJIGI, question, "contents")
                 );
 
+        answers.forEach(question::addAnswer);
+
         List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
 
         assertThat(question.isDeleted()).isTrue();
-        assertThat(deleteHistories.size()).isEqualTo(2);
+        assertThat(deleteHistories.size()).isEqualTo(3);
         assertThat(answers.stream().allMatch(Answer::isDeleted)).isTrue();
     }
 
