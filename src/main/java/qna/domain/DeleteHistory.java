@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -20,6 +22,7 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
 
+    @CreatedDate
     private LocalDateTime createDate;
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
