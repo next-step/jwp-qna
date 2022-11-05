@@ -125,33 +125,33 @@ alter table user
 - QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
 
 
-- [ ] 연관관계 매핑
-    - [ ] Answer와 Question의 다대일 양방향 연관관계를 설정한다.
-        - [ ] Question이 생성/변경될때 Answer도 생성/변경할 수 있다. (Cascade.ALL)
-        - [ ] Question이 삭제되면 Answer도 삭제된다. (Cascade.ALL)
-    - [ ] Answer와 User의 다대일 양방향 연관관계를 설정한다.
-        - [ ] User가 생성/변경될때 Answer도 생성/변경할 수 있다. (Cascade.PERSIST, Cascade.MERGE)
-        - [ ] User가 삭제되어도 Answer는 삭제되지 않는다.
-    - [ ] DeleteHistory와 User의 다대일 양방향 연관관계를 설정한다.
-        - [ ] User가 생성/변경될때 DeleteHistory도 생성/변경할 수 있다. (Cascade.ALL)
-        - [ ] User가 삭제되면 DeleteHistory도 삭제된다. (Cascade.ALL)
-    - [ ] Question과 User의 다대일 양방향 연관관계를 설정한다.
-        - [ ] User가 생성/변경될때 Question도 생성/변경할 수 있다. (Cascade.PERSIST, Cascade.MERGE)
-        - [ ] User가 삭제되어도 Question은 삭제되지 않는다.
-- [ ] 레포지토리 테스트 코드 수정
-    - [ ] AnswerRepository 테스트
-        - [ ] Answer 저장 테스트
-        - [ ] Answer 수정 테스트
-        - [ ] Answer 삭제 테스트
-        - [ ] Answer 조회시 LazyLoading 검증
-        - [ ] Answer 조회시 Question 정보도 조회
-        - [ ] Answer 조회시 User 정보도 조회
-    - [ ] DeleteHistoryRepository 테스트
-        - [ ] DeleteHistory 저장 테스트
-    - [ ] QuestionRepository 테스트
-        - [ ] Question 저장 테스트
-        - [ ] Question을 조회하면 연관된 Answer도 조회된다.
-        - [ ] Question을 삭제하면 Answer도 삭제된다.
-    - [ ] UserRepository 테스트
-        - [ ] User를 조회하면 연관된 Answer/Question/DeleteHistory 모두 지연 로딩이 된다.
-        - [ ] User를 삭제하면 DeleteHistory도 삭제되는지 테스트
+- [x] 연관관계 매핑
+    - [x] Answer와 Question의 다대일 양방향 연관관계를 설정한다.
+        - [x] Question이 생성/변경될때 Answer도 생성/변경할 수 있다. (Cascade.ALL)
+        - [x] Question이 삭제되면 Answer도 삭제된다. (Cascade.ALL)
+    - [x] Answer와 User의 다대일 양방향 연관관계를 설정한다.
+        - [x] User가 생성/변경될때 Answer도 생성/변경할 수 있다. (Cascade.PERSIST, Cascade.MERGE)
+        - [x] User가 삭제되어도 Answer는 삭제되지 않는다.
+    - [x] DeleteHistory와 User의 다대일 양방향 연관관계를 설정한다.
+        - [x] User가 생성/변경될때 DeleteHistory도 생성/변경할 수 있다. (Cascade.ALL)
+        - [x] User가 삭제되면 DeleteHistory도 삭제된다. (Cascade.ALL)
+    - [x] Question과 User의 다대일 양방향 연관관계를 설정한다.
+        - [x] User가 생성/변경될때 Question도 생성/변경할 수 있다. (Cascade.PERSIST, Cascade.MERGE)
+        - [x] User가 삭제되어도 Question은 삭제되지 않는다.
+- [x] 레포지토리 테스트 코드 수정
+    - [x] AnswerRepository 테스트
+        - [x] Answer 저장 테스트
+        - [x] Answer 수정 테스트
+        - [x] Answer 삭제 테스트
+        - [x] Answer 조회시 LazyLoading 검증
+        - [x] Answer 조회시 Question 정보도 조회
+        - [x] Answer 조회시 User 정보도 조회
+    - [x] DeleteHistoryRepository 테스트
+        - [x] DeleteHistory 저장 테스트
+    - [x] QuestionRepository 테스트
+        - [x] Question 저장 테스트
+        - [x] Question을 조회하면 연관된 Answer도 조회된다.
+        - [x] Question을 삭제하면 Answer도 삭제된다.
+    - [x] UserRepository 테스트
+        - [x] User를 조회하면 연관된 Answer/Question/DeleteHistory 모두 지연 로딩이 된다.
+        - [x] User를 삭제하면 DeleteHistory도 삭제되는지 테스트
