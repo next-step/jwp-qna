@@ -21,24 +21,22 @@ class UserRepositoryTest {
     @Test
     @DisplayName("user save() 테스트를 진행한다")
     void saveUser() {
-        User user = userRepository.save(UserTest.JAVAJIGI);
-        assertAll(
-                () -> assertThat(user.getId()).isNotNull(),
-                () -> assertThat(user.getUserId()).isEqualTo(UserTest.JAVAJIGI.getUserId()),
-                () -> assertThat(user.getEmail()).isEqualTo(UserTest.JAVAJIGI.getEmail()),
-                () -> assertThat(user.getName()).isEqualTo(UserTest.JAVAJIGI.getName()),
-                () -> assertThat(user.getPassword()).isEqualTo(UserTest.JAVAJIGI.getPassword())
-        );
+        User user = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+
+        User saveUser = userRepository.save(user);
+
+        assertThat(saveUser).isEqualTo(user);
     }
 
     @Test
     @DisplayName("user가 삭제가 되는지 확인한다")
     void userDelete() {
-        User user = userRepository.save(UserTest.SANJIGI);
+        User user = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+        User saveUser = userRepository.save(user);
 
-        userRepository.deleteById(user.getId());
+        userRepository.deleteById(saveUser.getId());
 
-        Optional<User> result = userRepository.findById(user.getId());
+        Optional<User> result = userRepository.findById(saveUser.getId());
 
         assertThat(result).isEmpty();
         assertThat(result).isNotPresent();
@@ -47,10 +45,11 @@ class UserRepositoryTest {
     @Test
     @DisplayName("user를 조회한다")
     void userFind() {
-        User user = userRepository.save(UserTest.SANJIGI);
+        User user = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+        User saveUser = userRepository.save(UserTest.SANJIGI);
 
-        Optional<User> result = userRepository.findByUserId(user.getUserId());
+        Optional<User> result = userRepository.findByUserId(saveUser.getUserId());
 
-        assertThat(result.get().getUserId()).isEqualTo(user.getUserId());
+        assertThat(result.get().matchUserId(saveUser.getUserId())).isTrue();
     }
 }
