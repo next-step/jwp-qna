@@ -32,12 +32,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "deletedBy", cascade = CascadeType.ALL)
     private final List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "writer", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    private final List<Question> questions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "writer", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    private final List<Answer> answers = new ArrayList<>();
-
     protected User() {
     }
 
@@ -109,14 +103,7 @@ public class User extends BaseEntity {
     public List<DeleteHistory> getDeleteHistories() {
         return deleteHistories;
     }
-
-    public List<Question> getQuestions() {
-        return questions;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
-    }
+    
 
     @Override
     public String toString() {

@@ -129,14 +129,12 @@ alter table user
     - [x] Answer와 Question의 다대일 양방향 연관관계를 설정한다.
         - [x] Question이 생성/변경될때 Answer도 생성/변경할 수 있다. (Cascade.ALL)
         - [x] Question이 삭제되면 Answer도 삭제된다. (Cascade.ALL)
-    - [x] Answer와 User의 다대일 양방향 연관관계를 설정한다.
-        - [x] User가 생성/변경될때 Answer도 생성/변경할 수 있다. (Cascade.PERSIST, Cascade.MERGE)
+    - [x] Answer와 User의 다대일 단방향 연관관계를 설정한다.
         - [x] User가 삭제되어도 Answer는 삭제되지 않는다.
     - [x] DeleteHistory와 User의 다대일 양방향 연관관계를 설정한다.
         - [x] User가 생성/변경될때 DeleteHistory도 생성/변경할 수 있다. (Cascade.ALL)
         - [x] User가 삭제되면 DeleteHistory도 삭제된다. (Cascade.ALL)
-    - [x] Question과 User의 다대일 양방향 연관관계를 설정한다.
-        - [x] User가 생성/변경될때 Question도 생성/변경할 수 있다. (Cascade.PERSIST, Cascade.MERGE)
+    - [x] Question과 User의 다대일 단방향 연관관계를 설정한다.
         - [x] User가 삭제되어도 Question은 삭제되지 않는다.
 - [x] 레포지토리 테스트 코드 수정
     - [x] AnswerRepository 테스트

@@ -42,9 +42,7 @@ class UserRepositoryTest {
     private User u1;
     private User u2;
     private Question q1;
-    private Question q2;
     private Answer a1;
-    private Answer a2;
 
     private DeleteHistory d1;
     private DeleteHistory d2;
@@ -54,9 +52,7 @@ class UserRepositoryTest {
         u1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
         u2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
         q1 = new Question("title1", "contents1").writeBy(u1);
-        q2 = new Question("title2", "contents2").writeBy(u2);
         a1 = new Answer(u1, q1, "contents");
-        a2 = new Answer(u2, q2, "contents");
         d1 = new DeleteHistory(ContentType.ANSWER, a1.getId(), u1,
                 LocalDateTime.now());
         d2 = new DeleteHistory(ContentType.QUESTION, q1.getId(), u1,
@@ -67,17 +63,13 @@ class UserRepositoryTest {
     @Test
     void save_test() {
         u1.getDeleteHistories().add(d1);
-        u1.getAnswers().add(a1);
-        u1.getQuestions().add(q1);
         User saved = userRepository.save(u1);
 
         assertAll(
                 () -> assertNotNull(saved.getId()),
                 () -> assertEquals(saved.getUserId(), u1.getUserId()),
                 () -> assertEquals(saved.getPassword(), u1.getPassword()),
-                () -> assertNotNull(saved.getDeleteHistories().get(0).getId()),
-                () -> assertNotNull(saved.getAnswers().get(0).getId()),
-                () -> assertNotNull(saved.getQuestions().get(0).getId())
+                () -> assertNotNull(saved.getDeleteHistories().get(0).getId())
         );
     }
 
