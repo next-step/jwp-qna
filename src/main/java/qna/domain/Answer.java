@@ -15,7 +15,7 @@ public class Answer extends BaseEntity {
     private User writeBy;
     @ManyToOne
     private Question question;
-    @Column(columnDefinition = "LONGTEXT")
+    @Lob
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;

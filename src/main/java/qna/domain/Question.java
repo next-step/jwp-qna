@@ -10,7 +10,7 @@ public class Question extends BaseEntity {
     private Long id;
     @Column(nullable = false, length = 100)
     private String title;
-    @Column(columnDefinition = "LONGTEXT")
+    @Lob
     private String contents;
     @ManyToOne
     private User writeBy;
