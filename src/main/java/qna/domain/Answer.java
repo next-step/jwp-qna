@@ -24,7 +24,7 @@ public class Answer {
     private String contents;
     @CreatedDate
     @NotNull
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     @NotNull
     private boolean deleted = false;
     private Long questionId;
@@ -52,6 +52,16 @@ public class Answer {
         this.contents = contents;
     }
 
+    @PrePersist
+    void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
     }
@@ -73,7 +83,7 @@ public class Answer {
         return "Answer{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
-                ", createAt=" + createAt +
+                ", createdAt=" + createdAt +
                 ", deleted=" + deleted +
                 ", questionId=" + questionId +
                 ", updatedAt=" + updatedAt +

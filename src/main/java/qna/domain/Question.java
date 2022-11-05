@@ -41,6 +41,16 @@ public class Question {
         this.contents = contents;
     }
 
+    @PrePersist
+    void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     public Question writeBy(User writer) {
         this.writerId = writer.getId();
         return this;
