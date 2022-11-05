@@ -181,6 +181,18 @@ public class QuestionTest extends BaseDomainTest<Question> {
             .isInstanceOf(CannotDeleteException.class);
     }
 
+    @Test
+    void 질문과_답변의_모든_작성자가_동일할_경우_삭제가_가능하다() {
+        Question 질문 = 질문_생성("질문1", "작성자1");
+        User 작성자 = 질문.getWriter();
+        답변_생성("답변1", 질문, 작성자);
+        flush();
+
+        질문.delete(작성자);
+
+        질문_삭제됨(질문);
+    }
+
     private Question 질문_생성(String 질문_제목, String 작성자_이름) {
         Question 질문 = 질문_생성(질문_제목);
         User 작성자 = 작성자_생성(작성자_이름);
