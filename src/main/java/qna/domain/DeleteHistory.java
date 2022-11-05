@@ -10,6 +10,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "delete_history")
 public class DeleteHistory {
+    @javax.persistence.Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -64,5 +65,10 @@ public class DeleteHistory {
                 ", deletedById=" + deletedById +
                 ", createDate=" + createDate +
                 '}';
+    }
+
+
+    public Long getId() {
+        return id;
     }
 }

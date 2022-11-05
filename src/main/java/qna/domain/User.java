@@ -2,12 +2,11 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
+@Table
+@Entity(name = "user")
 public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 

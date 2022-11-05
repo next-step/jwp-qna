@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends BaseTimeEntity{
+public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -50,7 +50,8 @@ public class Answer extends BaseTimeEntity{
     }
 
 
-    protected Answer() {}
+    protected Answer() {
+    }
 
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
