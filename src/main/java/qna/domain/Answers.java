@@ -19,12 +19,12 @@ public class Answers {
         this.answers = answers;
     }
 
-    public List<DeleteHistory> delete(User user) {
+    public DeleteHistories delete(User user) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for(Answer answer: this.answers) {
             deleteHistories.add(answer.delete(user));
         }
-        return deleteHistories;
+        return new DeleteHistories(deleteHistories);
     }
 
     public void removeAnswer(Answer answer) {

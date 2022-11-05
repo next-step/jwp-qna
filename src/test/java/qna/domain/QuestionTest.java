@@ -73,14 +73,14 @@ public class QuestionTest {
         Answer answer2 = new Answer(writer, question, "정상 writer");
 
         //when
-        List<DeleteHistory> deleteHistories = question.delete(writer);
+        DeleteHistories deleteHistories = question.delete(writer);
 
         //then
         assertAll(
                 () -> assertThat(question.isDeleted()).isTrue(),
                 () -> assertThat(answer1.isDeleted()).isTrue(),
                 () -> assertThat(answer2.isDeleted()).isTrue(),
-                () -> assertThat(deleteHistories).hasSize(3)
+                () -> assertThat(deleteHistories.unmodifiedDeleteHistories()).hasSize(3)
         );
     }
 }

@@ -1,7 +1,6 @@
 package qna.domain;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -100,12 +99,11 @@ public class Question extends BaseEntity {
         return DeleteHistory.createDeleteHistory(ContentType.QUESTION, this.id, this.writer);
     }
 
-    public List<DeleteHistory> delete(User user) {
+    public DeleteHistories delete(User user) {
         validateSameUser(user);
-        List<DeleteHistory> deleteHistories = new ArrayList<>(this.answers.delete(user));
         changeDeleted(true);
-        deleteHistories.add(createDeleteHistory());
-        return deleteHistories;
+        DeleteHistories deleteHistories = new DeleteHistories(createDeleteHistory());
+        return deleteHistories.merge(this.answers.delete(user));
     }
 
     public int answersCount() {

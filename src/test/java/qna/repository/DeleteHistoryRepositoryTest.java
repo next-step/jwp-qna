@@ -16,6 +16,7 @@ import qna.CannotDeleteException;
 import qna.constant.ErrorCode;
 import qna.domain.Answer;
 import qna.domain.ContentType;
+import qna.domain.DeleteHistories;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.TestAnswerFactory;
@@ -105,12 +106,12 @@ public class DeleteHistoryRepositoryTest {
         Question saveQuestion = questionRepository.save(question);
 
         //when
-        List<DeleteHistory> deleteHistories = saveQuestion.delete(writer);
-        deleteHistoryRepository.saveAll(deleteHistories);
-        List<DeleteHistory> findDeleteHistories = deleteHistoryRepository.findAll();
+        DeleteHistories deleteHistories = saveQuestion.delete(writer);
+        deleteHistoryRepository.saveAll(deleteHistories.unmodifiedDeleteHistories());
+        DeleteHistories findDeleteHistories = new DeleteHistories(deleteHistoryRepository.findAll());
 
         //then
-        assertThat(findDeleteHistories).containsAll(deleteHistories);
+        assertThat(findDeleteHistories).isEqualTo(deleteHistories);
     }
 
     @Test
