@@ -77,12 +77,12 @@ public class Question extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Question question = (Question) o;
-        return deleted == question.deleted && id.equals(question.id) && title.equals(question.title) && Objects.equals(contents, question.contents) && Objects.equals(writeBy, question.writeBy);
+        return Objects.equals(id, question.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writeBy, deleted);
+        return Objects.hash(id);
     }
 
     public void delete() {
