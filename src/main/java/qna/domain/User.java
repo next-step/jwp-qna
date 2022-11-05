@@ -1,17 +1,22 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import qna.UnAuthorizedException;
 
 @Entity
 public class User extends BaseEntity {
 
     public static final GuestUser GUEST_USER = new GuestUser();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,15 +29,19 @@ public class User extends BaseEntity {
     @Column(length = 50)
     private String email;
 
+    @OneToMany(mappedBy = "deletedBy", cascade = CascadeType.ALL)
+    private final List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private final List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private final List<Answer> answers = new ArrayList<>();
+
     protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
-    }
-
-    public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -81,6 +90,10 @@ public class User extends BaseEntity {
         return userId;
     }
 
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -93,6 +106,17 @@ public class User extends BaseEntity {
         return email;
     }
 
+    public List<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
 
     @Override
     public String toString() {
