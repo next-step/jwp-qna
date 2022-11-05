@@ -1,19 +1,51 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "user", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "user_id" })
+})
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "user_id", length = 20, nullable = false)
     private String userId;
+    @Column(name = "password", length = 20, nullable = false)
     private String password;
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
+    @Column(name = "email", length = 50)
     private String email;
 
-    private User() {
+    @CreatedDate
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    protected User() {
+
     }
 
     public User(String userId, String password, String name, String email) {
