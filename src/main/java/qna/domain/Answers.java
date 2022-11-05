@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
+import qna.domain.message.ExceptionMessage;
 
 @Embeddable
 public class Answers {
@@ -38,6 +40,15 @@ public class Answers {
 
     public boolean contains(Answer answer) {
         return this.values.contains(answer);
+    }
+
+    public void deleted(User writer) throws CannotDeleteException {
+        boolean isNotOwner = values.stream().anyMatch(answer -> !answer.isOwner(writer));
+        if (isNotOwner) {
+            throw new CannotDeleteException(ExceptionMessage.NO_PERMISSION_DELETE_ANSWER);
+        }
+
+        values.forEach(Answer::deleted);
     }
 
     @Override

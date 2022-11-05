@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
+import qna.domain.message.ExceptionMessage;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -88,6 +90,15 @@ public class Question extends BaseTimeEntity {
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
+    public void delete(User writer) throws CannotDeleteException {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException(ExceptionMessage.NO_PERMISSION_DELETE_QUESTION);
+        }
+
+        answers.deleted(writer);
+        this.deleted();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -101,13 +112,12 @@ public class Question extends BaseTimeEntity {
                 Objects.equals(id, question.id) &&
                 title.equals(question.title) &&
                 Objects.equals(contents, question.contents) &&
-                writer.equals(question.writer) &&
-                Objects.equals(answers, question.answers);
+                writer.equals(question.writer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writer, deleted, answers);
+        return Objects.hash(id, title, contents, writer, deleted);
     }
 
     @Override
