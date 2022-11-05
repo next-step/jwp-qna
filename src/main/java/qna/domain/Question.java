@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -13,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
 import qna.constant.ErrorCode;
@@ -32,8 +32,8 @@ public class Question extends BaseEntity {
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
 
     protected Question() {
     }
@@ -46,6 +46,7 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers(new ArrayList<>());
     }
 
     public Question writeBy(User writer) {
@@ -69,16 +70,20 @@ public class Question extends BaseEntity {
         return title;
     }
 
-    public String getContents() {
-        return contents;
-    }
-
     public User getWriter() {
         return writer;
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.getAnswers();
+    }
+
+    public void removeAnswer(Answer answer) {
+        answers.removeAnswer(answer);
+    }
+
+    public void addAnswer(Answer answer) {
+        answers.addAnswer(answer);
     }
 
     public boolean isDeleted() {
@@ -97,15 +102,9 @@ public class Question extends BaseEntity {
     }
 
     public List<DeleteHistory> delete(User user) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
         validateSameUser(user);
-        for(Answer answer: this.answers) {
-            answer.validateSameUser(user);
-        }
+        List<DeleteHistory> deleteHistories = new ArrayList<>(this.answers.delete(user));
         deleteHistories.add(changeDeleted(true));
-        for(Answer answer: this.answers) {
-            deleteHistories.add(answer.delete(user));
-        }
         return deleteHistories;
     }
 

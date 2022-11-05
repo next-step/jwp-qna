@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
@@ -44,5 +45,35 @@ public class AnswersTest {
         assertThatThrownBy(() -> answer.delete(writer))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage(ErrorCode.답변_중_다른_사람이_쓴_답변_있어_삭제_못함.getErrorMessage());
+    }
+
+    @Test
+    void 답변을_추가한다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = new Answer(writer, question, "답변 추가");
+        Answers answers = new Answers(new ArrayList<>());
+
+        //when
+        answers.addAnswer(answer);
+
+        //then
+        assertThat(answers.getAnswers()).contains(answer);
+    }
+
+    @Test
+    void 답변을_제거한다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = new Answer(writer, question, "답변 추가");
+        Answers answers = new Answers(new ArrayList<>(Arrays.asList(answer)));
+
+        //when
+        answers.removeAnswer(answer);
+
+        //then
+        assertThat(answers.getAnswers().contains(answer)).isFalse();
     }
 }

@@ -2,10 +2,18 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 
+@Embeddable
 public class Answers {
 
-    private final List<Answer> answers;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
+    private List<Answer> answers = new ArrayList<>();
+
+    protected Answers() {
+    }
 
     public Answers(List<Answer> answers) {
         this.answers = answers;
@@ -27,6 +35,16 @@ public class Answers {
     private void validateSameUser(User user) {
         for(Answer answer: this.answers) {
             answer.validateSameUser(user);
+        }
+    }
+
+    public void removeAnswer(Answer answer) {
+        answers.remove(answer);
+    }
+
+    public void addAnswer(Answer answer) {
+        if(!answers.contains(answer)) {
+            answers.add(answer);
         }
     }
 }
