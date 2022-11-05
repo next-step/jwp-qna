@@ -8,7 +8,6 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 public class UserTest extends BaseDomainTest<User> {
     public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
@@ -16,9 +15,6 @@ public class UserTest extends BaseDomainTest<User> {
 
     @Autowired
     UserRepository users;
-
-    @Autowired
-    TestEntityManager entityManager;
 
     @BeforeEach
     void setUp() {
@@ -66,11 +62,6 @@ public class UserTest extends BaseDomainTest<User> {
             e.update(e, new User("updated", "password", "updated-name", "updated@java.com")));
         users.saveAll(수정할_도메인);
         users.flush();
-    }
-
-    void flush() {
-        entityManager.flush();
-        entityManager.clear();
     }
 
     public static User 사용자(String 이름) {

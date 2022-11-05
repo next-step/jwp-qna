@@ -30,6 +30,7 @@ public class AnswerTest extends BaseDomainTest<Answer> {
         answers.deleteAll();
         questions.deleteAll();
         users.deleteAll();
+        flush();
     }
 
     @Test

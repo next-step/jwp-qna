@@ -30,7 +30,10 @@ public class QuestionTest extends BaseDomainTest<Question> {
 
     @BeforeEach
     void setUp() {
-        questions.saveAll(질문_생성());
+        answers.deleteAll();
+        questions.deleteAll();
+        users.deleteAll();
+        flush();
     }
 
     @Test
@@ -169,12 +172,12 @@ public class QuestionTest extends BaseDomainTest<Question> {
         return users.save(UserTest.사용자(이름));
     }
 
+    public static Question 질문(String 제목) {
+        return new Question(제목, "내용");
+    }
+
     void flush() {
         entityManager.flush();
         entityManager.clear();
-    }
-
-    public static Question 질문(String 제목) {
-        return new Question(제목, "내용");
     }
 }
