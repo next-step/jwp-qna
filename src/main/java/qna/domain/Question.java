@@ -62,6 +62,10 @@ public class Question {
         return contents;
     }
 
+    public User getWriter() {
+        return writer;
+    }
+
     public Long getWriterId() {
         return writer.getId();
     }

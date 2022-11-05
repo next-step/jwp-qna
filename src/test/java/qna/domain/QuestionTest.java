@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+    public static final Question Q1 = new Question("title1", "contents1");
 
     private Question question1;
     private Question question2;
@@ -35,12 +35,12 @@ public class QuestionTest {
         question2.writeBy(user);
         question1 = questionRepository.save(question1);
         question2 = questionRepository.save(question2);
-
     }
 
     @DisplayName("save 검증 성공")
     @Test
     void saveTest() {
+        Q1.writeBy(user);
         Question savedQuestion = questionRepository.save(Q1);
 
         assertAll(

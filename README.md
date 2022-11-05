@@ -98,7 +98,7 @@ alter table delete_history
         foreign key (deleted_by_id)
             references user
 ```
-- [ ] DeleteHistory - User 연관관계를 매핑한다.
+- [X] DeleteHistory - User 연관관계를 매핑한다.
 ```sql
 alter table question
     add constraint fk_question_writer

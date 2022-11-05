@@ -58,6 +58,10 @@ public class Answer extends BaseEntity {
         return id;
     }
 
+    public User getWriter() {
+        return writer;
+    }
+
     public Long getWriterId() {
         return writer.getId();
     }
