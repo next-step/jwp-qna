@@ -86,11 +86,11 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    void 영속성_컨텍스트_초기화_후_동일성_비교() {
+    void 질문_ID가_같을경우_같은_객체이다() {
         Answer answer = answerRepository.save(AnswerTest.A1);
         flushAndClear();
         Answer actual = answerRepository.findById(answer.getId()).orElseThrow(EntityNotFoundException::new);
-        assertThat(actual == answer).isFalse();
+        assertThat(actual).isEqualTo(answer);
     }
 
     private void flushAndClear() {
