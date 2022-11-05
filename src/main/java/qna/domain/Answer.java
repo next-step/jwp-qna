@@ -57,20 +57,16 @@ public class Answer extends BaseEntity {
         return writerId;
     }
 
-    public Long getQuestionId() {
-        return question.getId();
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Question getQuestion() {
+        return question;
     }
 
     @Override

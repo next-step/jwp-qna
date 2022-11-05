@@ -32,7 +32,7 @@ public class AnswerRepositoryTest {
         answerRepository.save(A1);
         Answer savedAnswer = answerRepository.save(A2);
 
-        List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestionId());
+        List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(savedAnswer.getQuestion().getId());
 
         assertAll(
                 () -> assertThat(findAnswers.size()).isEqualTo(2),
