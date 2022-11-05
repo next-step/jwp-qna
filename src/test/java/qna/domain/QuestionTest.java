@@ -18,16 +18,24 @@ public class QuestionTest {
 
     private Question question1;
     private Question question2;
+    private User user;
 
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
+        user = userRepository.save(new User("kim9418", "123123", "김대겸", "koreatech93@naver.com"));
         question1 = new Question(1L, "title1", "contents1");
         question2 = new Question(2L, "title2", "contents2");
+        question1.writeBy(user);
+        question2.writeBy(user);
         question1 = questionRepository.save(question1);
         question2 = questionRepository.save(question2);
+
     }
 
     @DisplayName("save 검증 성공")

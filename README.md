@@ -105,4 +105,4 @@ alter table question
         foreign key (writer_id)
             references user
 ```
-- [ ] Question - User 연관관계를 매핑한다.
+- [X] Question - User 연관관계를 매핑한다.
