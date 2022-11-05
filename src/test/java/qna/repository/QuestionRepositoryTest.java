@@ -10,8 +10,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.QuestionTest;
+import qna.domain.User;
+import qna.domain.UserTest;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -19,29 +22,35 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
+        userRepository.deleteAll();
         questionRepository.deleteAll();
     }
 
     @DisplayName("질문을 저장 후 확인")
     @Test
     void save() {
-        Question question = questionRepository.save(QuestionTest.Q1);
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+
+        Optional<Question> result = questionRepository.findById(question.getId());
 
         assertAll(
-            () -> assertThat(question.getId()).isNotNull(),
-            () -> assertThat(question.getTitle()).isEqualTo(QuestionTest.Q1.getTitle()),
-            () -> assertThat(question.getContents()).isEqualTo(QuestionTest.Q1.getContents()),
-            () -> assertThat(question.getWriterId()).isEqualTo(QuestionTest.Q1.getWriterId())
+            () -> assertThat(result).isPresent(),
+            () -> assertThat(result.get()).isEqualTo(question)
         );
     }
 
     @DisplayName("질문을 저장 후 조회 확인")
     @Test
     void findAll() {
-        Question question1 = questionRepository.save(QuestionTest.Q1);
-        Question question2 = questionRepository.save(QuestionTest.Q2);
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question question1 = questionRepository.save(new Question("title", "contents").writeBy(user));
+        Question question2 = questionRepository.save(new Question("title", "contents").writeBy(user));
 
         List<Question> result = questionRepository.findAll();
 
@@ -54,8 +63,9 @@ class QuestionRepositoryTest {
     @DisplayName("질문을 저장 후 수정 확인")
     @Test
     void update() {
-        Question question = questionRepository.save(QuestionTest.Q1);
-        question.setTitle(QuestionTest.Q2.getTitle());
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        question.setTitle("update title");
 
         Optional<Question> result = questionRepository.findById(question.getId());
 
@@ -68,7 +78,8 @@ class QuestionRepositoryTest {
     @DisplayName("질문 저장 후 삭제 확인")
     @Test
     void remove() {
-        Question question = questionRepository.save(QuestionTest.Q1);
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
         questionRepository.delete(question);
 
         Optional<Question> result = questionRepository.findById(question.getId());
@@ -79,7 +90,8 @@ class QuestionRepositoryTest {
     @DisplayName("삭제되지 않은 질문 조회")
     @Test
     void findByDeletedFalse() {
-        Question question = questionRepository.save(QuestionTest.Q1);
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
 
         List<Question> result = questionRepository.findByDeletedFalse();
 
@@ -93,7 +105,8 @@ class QuestionRepositoryTest {
     @DisplayName("질문 식별자로 삭제되지 않은 질문 조회")
     @Test
     void findByIdAndDeletedFalse() {
-        Question question = questionRepository.save(QuestionTest.Q1);
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
 
         Optional<Question> result = questionRepository.findByIdAndDeletedFalse(question.getId());
 

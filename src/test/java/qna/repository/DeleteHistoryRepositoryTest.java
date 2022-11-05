@@ -11,8 +11,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.Answer;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
+import qna.domain.Question;
+import qna.domain.User;
 import qna.domain.UserTest;
 
 @DataJpaTest
@@ -21,38 +24,49 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    private AnswerRepository answerRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
         deleteHistoryRepository.deleteAll();
+        answerRepository.deleteAll();
+        questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @DisplayName("삭제 이력을 저장 후 확인")
     @Test
     void save() {
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L,
-            UserTest.JAVAJIGI.getId(),
-            LocalDateTime.now());
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        DeleteHistory deleteHistory = deleteHistoryRepository.save(
+            new DeleteHistory(ContentType.QUESTION, question.getId(), user, LocalDateTime.now()));
 
-        DeleteHistory result = deleteHistoryRepository.save(deleteHistory);
+        Optional<DeleteHistory> result = deleteHistoryRepository.findById(deleteHistory.getId());
 
         assertAll(
-            () -> assertThat(result.getId()).isNotNull(),
-            () -> assertThat(result.getContentType()).isEqualTo(deleteHistory.getContentType()),
-            () -> assertThat(result.getContentId()).isEqualTo(deleteHistory.getContentId()),
-            () -> assertThat(result.getDeletedById()).isEqualTo(deleteHistory.getDeletedById())
+            () -> assertThat(result).isPresent(),
+            () -> assertThat(result.get()).isEqualTo(deleteHistory)
         );
     }
 
     @DisplayName("삭제 이력을 저장 후 조회 확인")
     @Test
     void findAll() {
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        Answer answer = answerRepository.save(new Answer(user, question, "contents"));
         DeleteHistory deleteHistory1 = deleteHistoryRepository.save(
-            new DeleteHistory(ContentType.QUESTION, 1L,
-                UserTest.JAVAJIGI.getId(),
-                LocalDateTime.now()));
+            new DeleteHistory(ContentType.QUESTION, question.getId(), user, LocalDateTime.now()));
         DeleteHistory deleteHistory2 = deleteHistoryRepository.save(
-            new DeleteHistory(ContentType.ANSWER, 2L,
-                UserTest.SANJIGI.getId(), LocalDateTime.now()));
+            new DeleteHistory(ContentType.ANSWER, answer.getId(), user, LocalDateTime.now()));
 
         List<DeleteHistory> result = deleteHistoryRepository.findAll();
 
@@ -65,10 +79,10 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("삭제 이력을 저장 후 삭제 확인")
     @Test
     void remove() {
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
         DeleteHistory deleteHistory = deleteHistoryRepository.save(
-            new DeleteHistory(ContentType.QUESTION, 1L,
-                UserTest.JAVAJIGI.getId(),
-                LocalDateTime.now()));
+            new DeleteHistory(ContentType.QUESTION, question.getId(), UserTest.JAVAJIGI, LocalDateTime.now()));
         deleteHistoryRepository.delete(deleteHistory);
 
         Optional<DeleteHistory> result = deleteHistoryRepository.findById(deleteHistory.getId());
