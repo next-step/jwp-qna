@@ -19,7 +19,7 @@ class AllWriterIsSameRuleTest {
         List<Answer> answers = Arrays.asList(
                 new Answer(JAVAJIGI, question, ""),
                 new Answer(JAVAJIGI, question, "")
-                );
+        );
         AllWriterIsSameRule allWriterIsSameRule = new AllWriterIsSameRule();
         boolean deletable = allWriterIsSameRule.deletable(JAVAJIGI, answers);
 
