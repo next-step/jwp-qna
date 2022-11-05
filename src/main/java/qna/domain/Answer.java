@@ -58,11 +58,11 @@ public class Answer extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.question.equals(question);
+        this.question = question;
     }
 
     public void delete() {
