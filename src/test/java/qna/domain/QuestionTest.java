@@ -148,6 +148,16 @@ public class QuestionTest extends BaseDomainTest<Question> {
         assertThat(사용자.getAnswers()).containsOnlyOnce(답변1, 답변2);
     }
 
+    @Test
+    void 질문_데이터_삭제는_칼럼의_삭제_상태_deleted_로_표현된다() {
+        Question 질문1 = 질문_생성("질문1");
+        질문1.delete();
+        flush();
+
+        List<Question> 삭제되지_않은_질문 = questions.findByDeletedFalse();
+        assertThat(삭제되지_않은_질문).doesNotContain(질문1);
+    }
+
     private Answer 답변_생성(String 내용, Question 질문) {
         return answers.save(new Answer(작성자_생성("답변_작성자1"), 질문, 내용));
     }
