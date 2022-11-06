@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
@@ -14,6 +15,8 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
     private boolean deleted = false;
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "question")
+    private List<Answer> answers;
 
     protected Question() {
     }
