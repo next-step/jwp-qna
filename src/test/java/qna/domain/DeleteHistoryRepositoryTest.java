@@ -19,20 +19,6 @@ class DeleteHistoryRepositoryTest extends NewEntityTestBase {
     @Autowired
     private DeleteHistoryRepository repository;
 
-    @Autowired
-    private QuestionRepository questionRepository;
-
-    @Autowired
-    private AnswerRepository answerRepository;
-
-    @Override
-    @BeforeEach
-    void setUp() {
-        super.setUp();
-        questionRepository.saveAll(Arrays.asList(Q1, Q2));
-        answerRepository.save(new Answer(NEWUSER1, Q1, "answer"));
-    }
-
     @Test
     @DisplayName("저장된 entity는 id가 양수이고 각각 지정한 content를 문자열로 가진다")
     void test1() {

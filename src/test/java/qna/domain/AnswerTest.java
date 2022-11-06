@@ -19,18 +19,18 @@ import static qna.domain.UserTest.SANJIGI;
 
 public class AnswerTest {
     public static final Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(SANJIGI, Q1, "Answers Contents2");
 
     @Test
     @DisplayName("사용자가 null이면 UnAuthorized exception발생")
     void test1() {
-        assertThatThrownBy(()-> new Answer(null, Q1, "some contents"))
+        assertThatThrownBy(() -> new Answer(null, Q1, "some contents"))
                 .isExactlyInstanceOf(UnAuthorizedException.class);
     }
+
     @Test
     @DisplayName("Question이 null이면 NotFound exception발생")
     void test2() {
-        assertThatThrownBy(()-> new Answer(JAVAJIGI, null, "some contents"))
+        assertThatThrownBy(() -> new Answer(JAVAJIGI, null, "some contents"))
                 .isExactlyInstanceOf(NotFoundException.class);
     }
 
@@ -65,10 +65,10 @@ public class AnswerTest {
         assertThat(A1.isDeleted()).isTrue();
     }
 
-    private static Stream<Arguments> writerSource(){
+    private static Stream<Arguments> writerSource() {
         return Stream.of(
-                Arguments.of(JAVAJIGI,true),
-                Arguments.of(SANJIGI,false)
+                Arguments.of(JAVAJIGI, true),
+                Arguments.of(SANJIGI, false)
         );
     }
 }

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -44,7 +43,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("Question에 답변이 있지만 작성자가 다른 경우 삭제할 수 없다")
-    void delete3() throws CannotDeleteException {
+    void delete3() {
 
         Question question = new Question("title", "contets", UserTest.JAVAJIGI);
         List<Answer> answers = Arrays.asList(
@@ -53,7 +52,7 @@ public class QuestionTest {
                 new Answer(UserTest.SANJIGI, question, "contents"));
         answers.forEach(question::addAnswer);
 
-        assertThatThrownBy(()-> question.delete(UserTest.JAVAJIGI))
+        assertThatThrownBy(() -> question.delete(UserTest.JAVAJIGI))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
@@ -65,7 +64,7 @@ public class QuestionTest {
         List<Answer> answers = Arrays.asList(
                 new Answer(UserTest.JAVAJIGI, question, "contents"),
                 new Answer(UserTest.JAVAJIGI, question, "contents")
-                );
+        );
 
         answers.forEach(question::addAnswer);
 

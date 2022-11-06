@@ -16,49 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 class AnswerRepositoryTest extends NewEntityTestBase {
-
-    private Answer A1;
-    private Answer A2;
-    @Autowired
-    private AnswerRepository answerRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private QuestionRepository questionRepository;
-
     @Autowired
     private EntityManager em;
 
-    @Override
-    @BeforeEach
-    void setUp() {
-        super.setUp();
-        A1 = new Answer(NEWUSER1, Q1, "Answers Contents1");
-        A2 = new Answer(NEWUSER2, Q2, "Answers Contents2");
-        answerRepository.saveAll(Arrays.asList(A1, A2));
-    }
-
     @Test
-    @DisplayName("연관관계를 맺으면 정상적으로 저장이 되는 것을 확인")
-    void test1() {
-        User user = new User("id", "pass", "name", "email");
-        Question question = new Question("title", "contents", user);
-        Answer cascade_test = new Answer(user, question, "cascade test");
-        Answer save = answerRepository.save(cascade_test);
-
-        assertAll(
-                () -> assertThat(save.getQuestion().getWriter().getId()).isPositive(),
-                () -> assertThat(save.getWriter()).isSameAs(save.getQuestion().getWriter()),
-                () -> assertThat(save.getWriter().getUserId()).isEqualTo(user.getUserId()),
-                () -> assertThat(save.getQuestion().getTitle()).isEqualTo(question.getTitle()),
-                () -> assertThat(save.getQuestion().getId()).isPositive()
-        );
-    }
-
-    @Test
-    @DisplayName("Question Id와 삭제되지 않은 Answer를 검색하면  두 건이 조회됨")
+    @DisplayName("Question Id와 삭제되지 않은 Answer를 검색하면 한 건이 조회됨")
     void findByQuestionQIdAndDeletedFalse() {
         Answer deletedAnswer = new Answer(NEWUSER1, Q2, "some contents");
         deletedAnswer.markDeleted(true);
