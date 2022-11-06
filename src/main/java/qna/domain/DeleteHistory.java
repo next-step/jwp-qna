@@ -43,16 +43,11 @@ public class DeleteHistory {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
-        toDeletedUser(deletedByUser);
         this.createDate = createDate;
     }
 
-    public void toDeletedUser(User deletedByUser) {
-        if (Objects.nonNull(deletedByUser)) {
-            deletedByUser.getDeleteHistories().remove(this);
-        }
-        this.deletedByUser = deletedByUser;
-        deletedByUser.getDeleteHistories().add(this);
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
+        this(contentType, contentId, deletedByUser, LocalDateTime.now());
     }
 
     public Long getId() {
@@ -77,20 +72,25 @@ public class DeleteHistory {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
 
         DeleteHistory that = (DeleteHistory)o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null)
+        if (!Objects.equals(id, that.id)) {
             return false;
-        if (contentType != that.contentType)
+        }
+        if (contentType != that.contentType) {
             return false;
-        if (contentId != null ? !contentId.equals(that.contentId) : that.contentId != null)
+        }
+        if (!Objects.equals(contentId, that.contentId)) {
             return false;
-        return deletedByUser != null ? deletedByUser.equals(that.deletedByUser) : that.deletedByUser == null;
+        }
+        return Objects.equals(deletedByUser, that.deletedByUser);
     }
 
     @Override
