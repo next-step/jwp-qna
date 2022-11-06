@@ -7,6 +7,7 @@ import javax.persistence.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.CannotDeleteException;
 import qna.domain.answer.Answer;
+import qna.domain.answer.Answers;
 import qna.domain.common.BaseEntity;
 import qna.domain.history.DeleteHistory;
 import qna.domain.user.User;
@@ -50,12 +51,18 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         this.deleted = true;
-        return DeleteHistory.createQuestionDeleteHistory(this);
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.createQuestionDeleteHistory(this));
+
+        Answers answers = new Answers(this.answers);
+        deleteHistories.addAll(answers.deleteAll(loginUser));
+        return deleteHistories;
     }
 
     public boolean isOwner(User writer) {
@@ -64,6 +71,7 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {

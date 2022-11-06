@@ -59,6 +59,21 @@ public class QnaService {
             answer.setDeleted(true);
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), question.getWriter(), LocalDateTime.now()));
         }
+
         deleteHistoryService.saveAll(deleteHistories);
     }
+
+    @Transactional
+    public void softDeleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
+        Question question = findQuestionById(questionId);
+
+        // 질문 삭제
+        List<DeleteHistory> delete = question.delete(loginUser);
+        // 질문 > 답변 삭제
+        // 질문 > 답변 : 삭제 조건
+        // 질문 > 답변 이력 저장
+        // 질문, 삭제 이력 저장
+        deleteHistoryService.saveAll(delete);
+    }
+
 }

@@ -4,9 +4,11 @@ import java.util.Objects;
 import javax.persistence.*;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.common.BaseEntity;
+import qna.domain.history.DeleteHistory;
 import qna.domain.question.Question;
 import qna.domain.user.User;
 
@@ -57,6 +59,14 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!writer.equals(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.deleted = true;
+        return DeleteHistory.createAnswerDeleteHistory(this);
     }
 
     public Long getId() {
