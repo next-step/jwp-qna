@@ -96,7 +96,7 @@ public class Question extends BaseEntity {
     }
 
     private DeleteHistory createDeleteHistory() {
-        return DeleteHistory.createDeleteHistory(ContentType.QUESTION, this.id, this.writer);
+        return DeleteHistory.ofQuestion(this.id, this.writer);
     }
 
     public DeleteHistories delete(User user) {

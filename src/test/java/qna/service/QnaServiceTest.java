@@ -80,8 +80,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                DeleteHistory.createDeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()),
-                DeleteHistory.createDeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter())
+                DeleteHistory.ofAnswer(answer.getId(), answer.getWriter()),
+                DeleteHistory.ofQuestion(question.getId(), question.getWriter())
         );
         verify(deleteHistoryService).saveAll(new DeleteHistories(deleteHistories));
     }
@@ -91,7 +91,7 @@ class QnaServiceTest {
         //given
         Question question = TestQuestionFactory.create(UserTest.JAVAJIGI);
         questionRepository.save(question);
-        List<DeleteHistory> deleteHistories = Arrays.asList(DeleteHistory.createDeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()));
+        List<DeleteHistory> deleteHistories = Arrays.asList(DeleteHistory.ofQuestion(question.getId(), question.getWriter()));
 
         //when
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));

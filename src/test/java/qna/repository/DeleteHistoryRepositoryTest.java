@@ -3,6 +3,7 @@ package qna.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 import qna.constant.ErrorCode;
 import qna.domain.Answer;
-import qna.domain.ContentType;
 import qna.domain.DeleteHistories;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
@@ -43,7 +43,7 @@ public class DeleteHistoryRepositoryTest {
         User writer = TestUserFactory.create("javajigi");
         Question question = TestQuestionFactory.create(writer);
         Answer answer = TestAnswerFactory.create(writer, question);
-        DeleteHistory deleteHistory = TestDeleteHistoryFactory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
+        DeleteHistory deleteHistory = TestDeleteHistoryFactory.createAnswerDeleteHistory(answer.getId(), answer.getWriter());
 
         //when
         DeleteHistory saveDeleteHistory = deleteHistoryRepository.save(deleteHistory);
@@ -58,8 +58,8 @@ public class DeleteHistoryRepositoryTest {
         User writer = TestUserFactory.create("sanjigi");
         Question question = TestQuestionFactory.create(writer);
         Answer answer = TestAnswerFactory.create(writer, question);
-        DeleteHistory deleteHistory1 = TestDeleteHistoryFactory.create(ContentType.QUESTION, question.getId(), question.getWriter());
-        DeleteHistory deleteHistory2 = TestDeleteHistoryFactory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
+        DeleteHistory deleteHistory1 = TestDeleteHistoryFactory.createQuestionDeleteHistory(question.getId(), question.getWriter());
+        DeleteHistory deleteHistory2 = TestDeleteHistoryFactory.createAnswerDeleteHistory(answer.getId(), answer.getWriter());
 
         deleteHistoryRepository.save(deleteHistory1);
         deleteHistoryRepository.save(deleteHistory2);
@@ -76,7 +76,7 @@ public class DeleteHistoryRepositoryTest {
         //given
         User writer = TestUserFactory.create("javajigi");
         Question question = TestQuestionFactory.create(writer);
-        DeleteHistory deleteHistory = TestDeleteHistoryFactory.create(ContentType.QUESTION, question.getId(), question.getWriter());
+        DeleteHistory deleteHistory = TestDeleteHistoryFactory.createQuestionDeleteHistory(question.getId(), question.getWriter());
         DeleteHistory saveDeleteHistory = deleteHistoryRepository.save(deleteHistory);
         Long saveDeleteHistoryId = saveDeleteHistory.getId();
         return Arrays.asList(

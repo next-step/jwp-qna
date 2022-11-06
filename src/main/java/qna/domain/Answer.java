@@ -97,7 +97,7 @@ public class Answer extends BaseEntity {
 
     private DeleteHistory changeDeleted(boolean deleted) {
         this.deleted = deleted;
-        return DeleteHistory.createDeleteHistory(ContentType.ANSWER, this.id, this.writer);
+        return DeleteHistory.ofAnswer(this.id, this.writer);
     }
 
     public DeleteHistory delete(User user) {

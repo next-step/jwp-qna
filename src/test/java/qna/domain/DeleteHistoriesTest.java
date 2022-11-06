@@ -17,7 +17,7 @@ public class DeleteHistoriesTest {
         Answer answer2 = new Answer(writer, question, "삭제 이력 추가 테스트");
         Answers answers = new Answers(Arrays.asList(answer1, answer2));
         DeleteHistories deleteHistories = answers.delete(writer);
-        DeleteHistory deleteHistory = DeleteHistory.createDeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter());
+        DeleteHistory deleteHistory = DeleteHistory.ofQuestion(question.getId(), question.getWriter());
 
         //when
         deleteHistories.add(deleteHistory);

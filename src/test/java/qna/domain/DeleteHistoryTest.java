@@ -13,10 +13,10 @@ public class DeleteHistoryTest {
         User writer = TestUserFactory.create("javajigi");
         Question question = TestQuestionFactory.create(writer);
         LocalDateTime now = LocalDateTime.now();
-        DeleteHistory actualDeleteHistory = DeleteHistory.createDeleteHistory(ContentType.QUESTION, question.getId(), writer, now);
+        DeleteHistory actualDeleteHistory = DeleteHistory.ofQuestion(question.getId(), writer, now);
 
         //when
-        DeleteHistory expectDeleteHistory = DeleteHistory.createDeleteHistory(ContentType.QUESTION, question.getId(), writer, now);
+        DeleteHistory expectDeleteHistory = DeleteHistory.ofQuestion(question.getId(), writer, now);
 
         //then
         assertThat(actualDeleteHistory).isEqualTo(expectDeleteHistory);
@@ -29,10 +29,10 @@ public class DeleteHistoryTest {
         Question question = TestQuestionFactory.create(writer);
         Answer answer = new Answer(writer, question, "답변 삭제이력 추가 테스트");
         LocalDateTime now = LocalDateTime.now();
-        DeleteHistory actualDeleteHistory = DeleteHistory.createDeleteHistory(ContentType.ANSWER, answer.getId(), writer, now);
+        DeleteHistory actualDeleteHistory = DeleteHistory.ofAnswer(answer.getId(), writer, now);
 
         //when
-        DeleteHistory expectDeleteHistory = DeleteHistory.createDeleteHistory(ContentType.ANSWER, answer.getId(), writer, now);
+        DeleteHistory expectDeleteHistory = DeleteHistory.ofAnswer(answer.getId(), writer, now);
 
         //then
         assertThat(actualDeleteHistory).isEqualTo(expectDeleteHistory);
