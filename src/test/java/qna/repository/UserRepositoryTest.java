@@ -24,13 +24,9 @@ class UserRepositoryTest {
     void save() {
         User user = userRepository.save(UserTest.JAVAJIGI);
 
-        assertAll(
-            () -> assertThat(user.getId()).isNotNull(),
-            () -> assertThat(user.getUserId()).isEqualTo(UserTest.JAVAJIGI.getUserId()),
-            () -> assertThat(user.getPassword()).isEqualTo(UserTest.JAVAJIGI.getPassword()),
-            () -> assertThat(user.getName()).isEqualTo(UserTest.JAVAJIGI.getName()),
-            () -> assertThat(user.getEmail()).isEqualTo(UserTest.JAVAJIGI.getEmail())
-        );
+        Optional<User> result = userRepository.findById(user.getId());
+
+        assertThat(result).get().isEqualTo(user);
     }
 
     @DisplayName("유저를 저장 후 조회 확인")

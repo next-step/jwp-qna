@@ -5,14 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.domain.Answer;
 import qna.domain.Question;
-import qna.domain.QuestionTest;
 import qna.domain.User;
 import qna.domain.UserTest;
 
@@ -33,10 +30,7 @@ class QuestionRepositoryTest {
 
         Optional<Question> result = questionRepository.findById(question.getId());
 
-        assertAll(
-            () -> assertThat(result).isPresent(),
-            () -> assertThat(result).get().isEqualTo(question)
-        );
+        assertThat(result).get().isEqualTo(question);
     }
 
     @DisplayName("질문을 저장 후 조회 확인")

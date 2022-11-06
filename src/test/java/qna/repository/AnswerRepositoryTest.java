@@ -35,15 +35,13 @@ public class AnswerRepositoryTest {
     @Test
     void save() {
         User user = userRepository.save(UserTest.JAVAJIGI);
-        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        Question question = questionRepository.save(
+            new Question("title", "contents").writeBy(user));
         Answer answer = answerRepository.save(new Answer(user, question, "contents"));
 
         Optional<Answer> result = answerRepository.findById(answer.getId());
 
-        assertAll(
-            () -> assertThat(result).isPresent(),
-            () -> assertThat(result).get().isEqualTo(answer)
-        );
+        assertThat(result).get().isEqualTo(answer);
     }
 
     @DisplayName("답변을 저장 후 조회 확인")
@@ -51,10 +49,10 @@ public class AnswerRepositoryTest {
     void findAll() {
         User user1 = userRepository.save(UserTest.JAVAJIGI);
         User user2 = userRepository.save(UserTest.SANJIGI);
-        Question question1 = questionRepository.save(new Question("title", "contents").writeBy(user1));
-        Question question2 = questionRepository.save(new Question("title", "contents").writeBy(user2));
-        Answer answer1 = answerRepository.save(new Answer(user1, question1, "contents"));
-        Answer answer2 = answerRepository.save(new Answer(user2, question2, "contents"));
+        Answer answer1 = answerRepository.save(new Answer(user1,
+            questionRepository.save(new Question("title", "contents").writeBy(user1)), "contents"));
+        Answer answer2 = answerRepository.save(new Answer(user2,
+            questionRepository.save(new Question("title", "contents").writeBy(user2)), "contents"));
 
         List<Answer> result = answerRepository.findAll();
 
@@ -68,7 +66,8 @@ public class AnswerRepositoryTest {
     @Test
     void update() {
         User user = userRepository.save(UserTest.JAVAJIGI);
-        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        Question question = questionRepository.save(
+            new Question("title", "contents").writeBy(user));
         Answer answer = answerRepository.save(new Answer(user, question, "contents"));
         answer.setContents("update contents");
 
@@ -84,7 +83,8 @@ public class AnswerRepositoryTest {
     @Test
     void remove() {
         User user = userRepository.save(UserTest.JAVAJIGI);
-        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        Question question = questionRepository.save(
+            new Question("title", "contents").writeBy(user));
         Answer answer = answerRepository.save(new Answer(user, question, "contents"));
         answerRepository.delete(answer);
 
@@ -97,7 +97,8 @@ public class AnswerRepositoryTest {
     @Test
     void findByQuestionIdAndDeletedFalse() {
         User user = userRepository.save(UserTest.JAVAJIGI);
-        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        Question question = questionRepository.save(
+            new Question("title", "contents").writeBy(user));
         Answer answer = answerRepository.save(new Answer(user, question, "contents"));
 
         List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(
@@ -114,7 +115,8 @@ public class AnswerRepositoryTest {
     @Test
     void findByIdAndDeletedFalse() {
         User user = userRepository.save(UserTest.JAVAJIGI);
-        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        Question question = questionRepository.save(
+            new Question("title", "contents").writeBy(user));
         Answer answer = answerRepository.save(new Answer(user, question, "contents"));
 
         Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(answer.getId());

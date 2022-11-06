@@ -43,10 +43,7 @@ class DeleteHistoryRepositoryTest {
 
         Optional<DeleteHistory> result = deleteHistoryRepository.findById(deleteHistory.getId());
 
-        assertAll(
-            () -> assertThat(result).isPresent(),
-            () -> assertThat(result).get().isEqualTo(deleteHistory)
-        );
+        assertThat(result).get().isEqualTo(deleteHistory);
     }
 
     @DisplayName("삭제 이력을 저장 후 조회 확인")
@@ -62,10 +59,8 @@ class DeleteHistoryRepositoryTest {
 
         List<DeleteHistory> result = deleteHistoryRepository.findAll();
 
-        assertAll(
-            () -> assertThat(result).hasSize(2),
-            () -> assertThat(result).contains(deleteHistory1, deleteHistory2)
-        );
+        assertThat(result).hasSize(2)
+            .containsExactly(deleteHistory1, deleteHistory2);
     }
 
     @DisplayName("삭제 이력을 저장 후 삭제 확인")
