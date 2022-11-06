@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "question")
@@ -39,7 +40,7 @@ public class Question extends BaseDateTimeEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.createdAt = createdAt;
+        setCreatedAt(createdAt);
     }
 
     protected Question() {
@@ -107,5 +108,22 @@ public class Question extends BaseDateTimeEntity {
                 ", writerId=" + writerId +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Question question = (Question) o;
+        return id.equals(question.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

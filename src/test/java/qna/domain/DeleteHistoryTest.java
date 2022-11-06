@@ -18,7 +18,7 @@ public class DeleteHistoryTest {
 
     @DisplayName("save 성공")
     @Test
-    void save_question_success() {
+    void save_deleteHistory_success() {
         assertThatNoException().isThrownBy(() -> deleteHistoryRepository.save(DELETE_QUESTION_HISTORY));
     }
 }

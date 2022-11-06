@@ -15,11 +15,11 @@ public abstract class BaseDateTimeEntity {
 
     @CreatedDate
     @Column(name = "created_at", nullable = false)
-    protected LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at")
-    protected LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
@@ -27,5 +27,13 @@ public abstract class BaseDateTimeEntity {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    protected void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    protected void setUpdatedAt(LocalDateTime updatedA) {
+        this.updatedAt = updatedA;
     }
 }

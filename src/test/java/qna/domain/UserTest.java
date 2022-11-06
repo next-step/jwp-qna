@@ -3,15 +3,20 @@ package qna.domain;
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.params.ParameterizedTest.DEFAULT_DISPLAY_NAME;
 
 @DisplayName("user 엔티티 테스트")
 @DataJpaTest
@@ -19,6 +24,7 @@ public class UserTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
     public static final User MINGVEL = new User(3L, "mingvel", "password", "name", "dlsqo2005@naver.com");
+    public static final User DELETE_SOON_USER = new User(4L, "delete", "password", "deleteSoon", "asdf@naver.com");
 
     @Autowired
     private UserRepository userRepository;
@@ -40,71 +46,9 @@ public class UserTest {
         assertThat(expected.getUserId()).isEqualTo(user.getUserId());
     }
 
-    @DisplayName("userId 가 null 인 엔티티 저장")
-    @Test
-    void saveNullUserId_user_DataIntegrityViolationException() {
-        //given:
-        User user = new User(1L, null, "password", "name", "dlsqo2005@naver.com");
-        //when, then:
-        assertThatThrownBy(() -> userRepository.save(user))
-                .isInstanceOf(DataIntegrityViolationException.class);
-    }
-
-    @DisplayName("password 가 null 인 엔티티 저장")
-    @Test
-    void saveNullPassword_user_DataIntegrityViolationException() {
-        //given:
-        User user = new User(1L, "mingvel", null, "name", "dlsqo2005@naver.com");
-        //when, then:
-        assertThatThrownBy(() -> userRepository.save(user))
-                .isInstanceOf(DataIntegrityViolationException.class);
-    }
-
-    @DisplayName("name 이 null 인 엔티티 저장")
-    @Test
-    void saveNullName_user_DataIntegrityViolationException() {
-        //given:
-        User user = new User(1L, "mingvel", "password", null, "dlsqo2005@naver.com");
-        //when, then:
-        assertThatThrownBy(() -> userRepository.save(user))
-                .isInstanceOf(DataIntegrityViolationException.class);
-    }
-
-    @DisplayName("길이가 20 이상인 userId 를 가지는 엔티티 저장")
-    @Test
-    void saveOverLengthUserId_user_DataIntegrityViolationException() {
-        //given:
-        User user = new User(1L, RandomString.make(21), "password", "name", "dlsqo2005@naver.com");
-        //when, then:
-        assertThatThrownBy(() -> userRepository.save(user))
-                .isInstanceOf(DataIntegrityViolationException.class);
-    }
-
-    @DisplayName("길이가 20 이상인 password 를 가지는 엔티티 저장")
-    @Test
-    void saveOverLengthPassword_user_DataIntegrityViolationException() {
-        //given:
-        User user = new User(1L, "mingvel", RandomString.make(21), "name", "dlsqo2005@naver.com");
-        //when, then:
-        assertThatThrownBy(() -> userRepository.save(user))
-                .isInstanceOf(DataIntegrityViolationException.class);
-    }
-
-    @DisplayName("길이가 20 이상인 name 을 가지는 엔티티 저장")
-    @Test
-    void saveOverLengthName_user_DataIntegrityViolationException() {
-        //given:
-        User user = new User(1L, "mingvel", "password", RandomString.make(21), "dlsqo2005@naver.com");
-        //when, then:
-        assertThatThrownBy(() -> userRepository.save(user))
-                .isInstanceOf(DataIntegrityViolationException.class);
-    }
-
-    @DisplayName("길이가 50 이상인 email 을 가지는 엔티티 저장")
-    @Test
-    void saveOverLengthEmail_user_DataIntegrityViolationException() {
-        //given:
-        User user = new User(1L, "mingvel", "password", "name", RandomString.make(51));
+    @ParameterizedTest(name = "제약 조건 위반 테스트" + DEFAULT_DISPLAY_NAME)
+    @MethodSource("invalidUsers")
+    void save_user_DataIntegrityViolationException(User user) {
         //when, then:
         assertThatThrownBy(() -> userRepository.save(user))
                 .isInstanceOf(DataIntegrityViolationException.class);
@@ -119,5 +63,41 @@ public class UserTest {
         //when, then:
         assertThatThrownBy(() -> userRepository.saveAll(Arrays.asList(user, duplicatedUserIdUser)))
                 .isInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @DisplayName("save - update 동작 테스트")
+    @Test
+    void saveUpdate_user_success() {
+        //given:
+        User user = userRepository.save(SANJIGI);
+        String modifiedName = "changed name";
+        //when:
+        user.setName(modifiedName);
+        User modifiedUser = userRepository.findById(user.getId()).orElse(new User());
+        //then:
+        assertThat(modifiedUser.getName()).isEqualTo(modifiedName);
+    }
+
+    @DisplayName("delete 메서드 테스트")
+    @Test
+    void delete_user_success() {
+        //given:
+        User user = userRepository.save(DELETE_SOON_USER);
+        //when:
+        userRepository.delete(user);
+        User deleted = userRepository.findById(user.getId()).orElse(null);
+        assertThat(deleted).isNull();
+    }
+
+    private static Stream<Arguments> invalidUsers() {
+        return Stream.of(
+                Arguments.of(new User(1L, null, "password", "name", "dlsqo2005@naver.com")),
+                Arguments.of(new User(1L, "mingvel", null, "name", "dlsqo2005@naver.com")),
+                Arguments.of(new User(1L, "mingvel", "password", null, "dlsqo2005@naver.com")),
+                Arguments.of(new User(1L, RandomString.make(21), "password", "name", "dlsqo2005@naver.com")),
+                Arguments.of(new User(1L, "mingvel", RandomString.make(21), "name", "dlsqo2005@naver.com")),
+                Arguments.of(new User(1L, "mingvel", "password", RandomString.make(21), "dlsqo2005@naver.com")),
+                Arguments.of(new User(1L, "mingvel", "password", "name", RandomString.make(51))
+                ));
     }
 }

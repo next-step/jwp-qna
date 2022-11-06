@@ -9,13 +9,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
 
 @DisplayName("answer 엔티티 테스트")
 @DataJpaTest
 class AnswerTest {
     public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents2");
+    public static final Answer DELETE_SOON_ANSWER = new Answer(3L, UserTest.MINGVEL, QuestionTest.Q3,
+            "Answers Contents3");
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -26,7 +27,9 @@ class AnswerTest {
     @DisplayName("save 성공")
     @Test
     void save_answer_success() {
-        assertThatNoException().isThrownBy(() -> answerRepository.save(A1));
+        //given:
+        Answer answer = answerRepository.save(A2);
+        assertThat(answer).isEqualTo(A2);
     }
 
     @DisplayName("createdAt 자동 생성 여부 테스트")
@@ -68,5 +71,29 @@ class AnswerTest {
         Answer answer = answerRepository.save(A1);
         //when, then:
         assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId())).containsSame(answer);
+    }
+
+    @DisplayName("save - Update 동작 테스트")
+    @Test
+    void saveUpdate_answer_success() {
+        //given:
+        Answer answer = answerRepository.save(A1);
+        String modifiedContent = "updated Content";
+        //when:
+        answer.setContents(modifiedContent);
+        Answer modifiedAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId()).orElse(new Answer());
+        //then:
+        assertThat(modifiedAnswer.getContents()).isEqualTo(modifiedContent);
+    }
+
+    @DisplayName("delete 메서드 테스트")
+    @Test
+    void delete_answer_success() {
+        //given:
+        Answer answer = answerRepository.save(DELETE_SOON_ANSWER);
+        //when:
+        answerRepository.delete(answer);
+        Answer resultAnswer = answerRepository.findById(answer.getId()).orElse(null);
+        assertThat(resultAnswer).isNull();
     }
 }

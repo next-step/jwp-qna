@@ -102,11 +102,11 @@ public class Answer extends BaseDateTimeEntity {
     }
 
     public LocalDateTime getCreatedAt() {
-        return createdAt;
+        return super.getCreatedAt();
     }
 
     public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+        return super.getUpdatedAt();
     }
 
     @Override
@@ -129,9 +129,7 @@ public class Answer extends BaseDateTimeEntity {
             return false;
         }
         Answer answer = (Answer) o;
-        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writerId,
-                answer.writerId) && Objects.equals(questionId, answer.questionId) && Objects.equals(
-                contents, answer.contents);
+        return id.equals(answer.id);
     }
 
     @Override
