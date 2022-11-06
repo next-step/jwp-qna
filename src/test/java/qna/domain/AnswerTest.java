@@ -46,6 +46,6 @@ public class AnswerTest {
     void toQuestion_test() {
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "contents");
         answer.toQuestion(QuestionTest.Q2);
-        assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q2.getId());
+        assertThat(answer.getQuestion()).isEqualTo(QuestionTest.Q2);
     }
 }

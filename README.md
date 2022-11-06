@@ -1,6 +1,6 @@
 # JPA
 
-## Step1. 요구사항
+## Step1. 엔티티 매핑 요구사항
 
 - QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
 
@@ -68,7 +68,7 @@ alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
 
-* 엔티티매핑 기능명세서 (기본)
+## Step1. 엔티티 매핑 기능명세서
 
 - [X] DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
     - [X] answer 엔티티 클래스, 레포지토리 클래스 작성
@@ -87,3 +87,69 @@ alter table user
     - [X] Spring Data JPA 사용 하여 동작 쿼리를 로그로 확인할 수 있게 한다.
     - [X] MySQL Dialect를 사용한다.
 - [X] BaseEntity를 활용하여 엔티티의 통일된 동작을 추가한다.
+
+## Step2. 연관관계 매핑 요구사항
+
+- QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
+
+* 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+
+### 아래의 DDL을 보고 연관관계를 유추하라
+
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user )
+alter table user
+    add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
+```
+
+## Step2. 연관관계 매핑 기능명세서
+
+- QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
+
+
+- [x] 연관관계 매핑
+    - [x] Answer와 Question의 다대일 양방향 연관관계를 설정한다.
+        - [x] Question이 생성/변경될때 Answer도 생성/변경할 수 있다. (Cascade.ALL)
+        - [x] Question이 삭제되면 Answer도 삭제된다. (Cascade.ALL)
+    - [x] Answer와 User의 다대일 단방향 연관관계를 설정한다.
+        - [x] User가 삭제되어도 Answer는 삭제되지 않는다.
+    - [x] DeleteHistory와 User의 다대일 양방향 연관관계를 설정한다.
+        - [x] User가 생성/변경될때 DeleteHistory도 생성/변경할 수 있다. (Cascade.ALL)
+        - [x] User가 삭제되면 DeleteHistory도 삭제된다. (Cascade.ALL)
+    - [x] Question과 User의 다대일 단방향 연관관계를 설정한다.
+        - [x] User가 삭제되어도 Question은 삭제되지 않는다.
+- [x] 레포지토리 테스트 코드 수정
+    - [x] AnswerRepository 테스트
+        - [x] Answer 저장 테스트
+        - [x] Answer 수정 테스트
+        - [x] Answer 삭제 테스트
+        - [x] Answer 조회시 LazyLoading 검증
+        - [x] Answer 조회시 Question 정보도 조회
+        - [x] Answer 조회시 User 정보도 조회
+    - [x] DeleteHistoryRepository 테스트
+        - [x] DeleteHistory 저장 테스트
+    - [x] QuestionRepository 테스트
+        - [x] Question 저장 테스트
+        - [x] Question을 조회하면 연관된 Answer도 조회된다.
+        - [x] Question을 삭제하면 Answer도 삭제된다.
+    - [x] UserRepository 테스트
+        - [x] User를 조회하면 연관된 Answer/Question/DeleteHistory 모두 지연 로딩이 된다.
+        - [x] User를 삭제하면 DeleteHistory도 삭제되는지 테스트
