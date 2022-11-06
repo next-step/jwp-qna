@@ -3,9 +3,12 @@ package qna.domain;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import qna.constant.ErrorCode;
 
 @Embeddable
 public class Name {
+
+    private static final int MAX_LENGTH = 20;
 
     @Column(nullable = false, length = 20)
     private String name;
@@ -14,11 +17,18 @@ public class Name {
     }
 
     private Name(String name) {
+        validateLength(name);
         this.name = name;
     }
 
     public static Name of(String name) {
         return new Name(name);
+    }
+
+    private void validateLength(String name) {
+        if(name.length() > MAX_LENGTH) {
+            throw new IllegalArgumentException(ErrorCode.이름의_길이가_너무_김.getErrorMessage());
+        }
     }
 
     public boolean isEqualName(Name name) {

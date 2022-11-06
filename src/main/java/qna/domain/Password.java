@@ -4,9 +4,12 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import qna.UnAuthorizedException;
+import qna.constant.ErrorCode;
 
 @Embeddable
 public class Password {
+
+    private static final int MAX_LENGTH = 20;
 
     @Column(nullable = false, length = 20)
     private String password;
@@ -15,7 +18,14 @@ public class Password {
     }
 
     private Password(String password) {
+        validateLength(password);
         this.password = password;
+    }
+
+    private void validateLength(String password) {
+        if(password.length() > MAX_LENGTH) {
+            throw new IllegalArgumentException(ErrorCode.비밀번호의_길이가_너무_김.getErrorMessage());
+        }
     }
 
     public static Password of(String password) {

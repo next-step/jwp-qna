@@ -1,9 +1,11 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import qna.constant.ErrorCode;
 
 class EmailTest {
 
@@ -45,5 +47,14 @@ class EmailTest {
 
         //then
         assertThat(email.toString()).contains("Email{email='" + actual);
+    }
+
+    @Test
+    void 이메일_길이가_길면_예외를_발생시킨다() {
+        //given
+        String actual = "12345678901234567890123456789012345678901234567890123";
+
+        //then
+        assertThatThrownBy(() -> Email.of(actual)).isInstanceOf(IllegalArgumentException.class).hasMessage(ErrorCode.이메일의_길이가_너무_김.getErrorMessage());
     }
 }

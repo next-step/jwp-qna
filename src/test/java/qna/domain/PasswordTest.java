@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.Test;
 import qna.UnAuthorizedException;
+import qna.constant.ErrorCode;
 
 class PasswordTest {
 
@@ -50,5 +51,14 @@ class PasswordTest {
 
         //when
         assertThatThrownBy(() -> actual.validateMatchPassword(expect)).isInstanceOf(UnAuthorizedException.class);
+    }
+
+    @Test
+    void 비밀번호_길이가_길면_예외를_발생시킨다() {
+        //given
+        String actual = "12345678901234567890123";
+
+        //then
+        assertThatThrownBy(() -> Password.of(actual)).isInstanceOf(IllegalArgumentException.class).hasMessage(ErrorCode.비밀번호의_길이가_너무_김.getErrorMessage());
     }
 }
