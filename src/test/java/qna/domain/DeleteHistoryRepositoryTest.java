@@ -29,8 +29,6 @@ class DeleteHistoryRepositoryTest {
     void save_delete_history() {
         DeleteHistory actual = deleteHistoryRepository.save(questionHistory);
         DeleteHistory actual2 = deleteHistoryRepository.save(answerHistory);
-        System.out.println("actual = " + actual);
-        System.out.println("actual2 = " + actual2);
         assertAll(
                 () -> assertEquals(questionHistory, actual),
                 () -> assertEquals(answerHistory, actual2)
