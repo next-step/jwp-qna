@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.hibernate.annotations.CreationTimestamp;
+import qna.domain.content.ContentType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,19 +17,20 @@ public class DeleteHistory {
     private ContentType contentType;
 
     private Long contentId;
-    private Long deletedById;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delete_by_id")
+    private User deletedBy;
 
     @CreationTimestamp
-    private LocalDateTime createDate;
+    private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory() {}
+    protected DeleteHistory() {}
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById,
-        LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
-        this.createDate = createDate;
+        this.deletedBy = deletedBy;
     }
 
     public Long getId() {
@@ -43,12 +45,8 @@ public class DeleteHistory {
         return contentId;
     }
 
-    public Long getDeletedById() {
-        return deletedById;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
+    public User getDeletedBy() {
+        return deletedBy;
     }
 
     @Override
@@ -65,22 +63,11 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
-    }
-
-    @Override
-    public String toString() {
-        return "DeleteHistory{" +
-                "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
-                ", createDate=" + createDate +
-                '}';
+        return Objects.hash(id, contentType, contentId, deletedBy);
     }
 }

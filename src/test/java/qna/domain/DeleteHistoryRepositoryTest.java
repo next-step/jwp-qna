@@ -1,12 +1,14 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.content.*;
 
-import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,43 +19,59 @@ import static org.junit.jupiter.api.Assertions.*;
 class DeleteHistoryRepositoryTest {
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
-    private static final DeleteHistory questionDeleted =
-            new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
-    private static final DeleteHistory answerDeleted =
-            new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
+    private User user;
+    private Question question;
+    private DeleteHistory questionDeleteHistory;
 
+    @BeforeEach
+    void setUp() {
+        user = userRepository.save(
+                new User("user1", "password", "user1", "user1@test.com"));
+        question = questionRepository.save(new Question(user, "title", "contents"));
+        questionDeleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), user);
+    }
 
     @Test
-    void deleteHistory_저장_테스트() {
-        DeleteHistory actual = deleteHistoryRepository.save(questionDeleted);
+    @DisplayName("삭제 이력을 저장한다")
+    void save() {
+        DeleteHistory actual = deleteHistoryRepository.save(questionDeleteHistory);
 
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertEquals(ContentType.QUESTION, actual.getContentType()),
-                () -> assertEquals(1L, actual.getContentId()),
-                () -> assertEquals(1L, actual.getDeletedById()),
-                () -> assertThat(actual.getCreateDate()).isNotNull()
+                () -> assertEquals(question.getId(), actual.getContentId()),
+                () -> assertEquals(user, actual.getDeletedBy())
         );
     }
 
     @Test
-    void deleteHistory_동일성_보장_테스트() {
-        DeleteHistory deleteHistorySaved = deleteHistoryRepository.save(questionDeleted);
-        DeleteHistory deleteHistoryFound =
-                deleteHistoryRepository.findById(deleteHistorySaved.getId()).get();
+    @DisplayName("DeleteHistory entity의 동일성을 확인한다")
+    void identity() {
+        DeleteHistory deleteHistorySaved = deleteHistoryRepository.save(questionDeleteHistory);
+        DeleteHistory deleteHistoryFound = deleteHistoryRepository
+                .findById(deleteHistorySaved.getId()).get();
 
         assertTrue(deleteHistorySaved == deleteHistoryFound);
     }
 
     @Test
-    void answer_삭제_테스트() {
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(answerDeleted);
+    @DisplayName("삭제 이력을 삭제한다")
+    void delete() {
+        DeleteHistory deleteHistorySaved = deleteHistoryRepository.save(questionDeleteHistory);
+        deleteHistoryRepository.delete(deleteHistorySaved);
+        deleteHistoryRepository.flush();
 
-        deleteHistoryRepository.deleteById(deleteHistory.getId());
+        Optional<DeleteHistory> deleteHistoryFound = deleteHistoryRepository
+                .findById(deleteHistorySaved.getId());
 
-        assertThat(deleteHistoryRepository.findById(deleteHistory.getId())).isEmpty();
+        assertFalse(deleteHistoryFound.isPresent());
     }
-
 }
