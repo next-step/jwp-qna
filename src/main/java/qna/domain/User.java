@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,8 +20,8 @@ public class User extends BaseEntity {
     private String userId;
     @Column(nullable = false, length = 20)
     private String password;
-    @Column(nullable = false, length = 20)
-    private String name;
+    @Embedded
+    private Name name;
     @Column(length = 50)
     private String email;
 
@@ -35,7 +36,7 @@ public class User extends BaseEntity {
         this.id = id;
         this.userId = userId;
         this.password = password;
-        this.name = name;
+        this.name = Name.of(name);
         this.email = email;
     }
 
@@ -107,7 +108,7 @@ public class User extends BaseEntity {
                 "id=" + id +
                 ", userId='" + userId + '\'' +
                 ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
+                ", name=" + name +
                 ", email='" + email + '\'' +
                 '}';
     }
