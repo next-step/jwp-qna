@@ -34,7 +34,7 @@ class AnswerRepositoryTest {
 
     @Test
     void 엔티티_저장() {
-        User javajigi = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+        User javajigi = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
         Question question = new Question("title1", "contents1").writeBy(javajigi);
         Answer expected = new Answer(javajigi, question, question.getContents());
         Answer actual = answers.save(expected);
@@ -44,8 +44,8 @@ class AnswerRepositoryTest {
 
     @Test
     void Id로_삭제() {
-        User javajigi = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-        Question question = new Question("title1", "contents1").writeBy(javajigi);
+        User javajigi = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        Question question = questions.save(new Question("title1", "contents1").writeBy(javajigi));
         Answer actual = answers.save(new Answer(javajigi, question, question.getContents()));
         answers.delete(actual);
         answers.flush();
@@ -54,8 +54,8 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("질문 게시글에 달린 답변 목록 조회")
     void findByQuestionIdAndDeletedFalse() {
-        User javajigi = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-        Question question = new Question("title1", "contents1").writeBy(javajigi);
+        User javajigi = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        Question question = questions.save(new Question("title1", "contents1").writeBy(javajigi));
         Answer expected = answers.save(new Answer(javajigi, question, question.getContents()));
         List<Answer> findAnswers = answers.findByQuestionIdAndDeletedFalse(expected.getQuestion().getId());
         assertThat(findAnswers).hasSize(1);
@@ -64,8 +64,8 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 답변 조회")
     void findByIdAndDeletedFalse() {
-        User javajigi = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-        Question question = new Question("title1", "contents1").writeBy(javajigi);
+        User javajigi = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        Question question = questions.save(new Question("title1", "contents1").writeBy(javajigi));
         Answer expected = answers.save(new Answer(javajigi, question, question.getContents()));
         Answer actual = answers.findByIdAndDeletedFalse(expected.getId()).get();
         assertThat(actual.getId()).isEqualTo(expected.getId());
