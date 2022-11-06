@@ -33,14 +33,6 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        deleteHistoryRepository.deleteAll();
-        answerRepository.deleteAll();
-        questionRepository.deleteAll();
-        userRepository.deleteAll();
-    }
-
     @DisplayName("삭제 이력을 저장 후 확인")
     @Test
     void save() {
@@ -53,7 +45,7 @@ class DeleteHistoryRepositoryTest {
 
         assertAll(
             () -> assertThat(result).isPresent(),
-            () -> assertThat(result.get()).isEqualTo(deleteHistory)
+            () -> assertThat(result).get().isEqualTo(deleteHistory)
         );
     }
 
@@ -82,7 +74,7 @@ class DeleteHistoryRepositoryTest {
         User user = userRepository.save(UserTest.JAVAJIGI);
         Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
         DeleteHistory deleteHistory = deleteHistoryRepository.save(
-            new DeleteHistory(ContentType.QUESTION, question.getId(), UserTest.JAVAJIGI, LocalDateTime.now()));
+            new DeleteHistory(ContentType.QUESTION, question.getId(), user, LocalDateTime.now()));
         deleteHistoryRepository.delete(deleteHistory);
 
         Optional<DeleteHistory> result = deleteHistoryRepository.findById(deleteHistory.getId());

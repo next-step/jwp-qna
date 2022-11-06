@@ -25,12 +25,6 @@ class QuestionRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        userRepository.deleteAll();
-        questionRepository.deleteAll();
-    }
-
     @DisplayName("질문을 저장 후 확인")
     @Test
     void save() {
@@ -41,7 +35,7 @@ class QuestionRepositoryTest {
 
         assertAll(
             () -> assertThat(result).isPresent(),
-            () -> assertThat(result.get()).isEqualTo(question)
+            () -> assertThat(result).get().isEqualTo(question)
         );
     }
 

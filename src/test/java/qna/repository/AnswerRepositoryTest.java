@@ -31,13 +31,6 @@ public class AnswerRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        answerRepository.deleteAll();
-        questionRepository.deleteAll();
-        userRepository.deleteAll();
-    }
-
     @DisplayName("답변을 저장 후 확인")
     @Test
     void save() {
@@ -49,7 +42,7 @@ public class AnswerRepositoryTest {
 
         assertAll(
             () -> assertThat(result).isPresent(),
-            () -> assertThat(result.get()).isEqualTo(answer)
+            () -> assertThat(result).get().isEqualTo(answer)
         );
     }
 

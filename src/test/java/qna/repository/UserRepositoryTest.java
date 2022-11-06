@@ -19,11 +19,6 @@ class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        userRepository.deleteAll();
-    }
-
     @DisplayName("유저를 저장 후 확인")
     @Test
     void save() {
