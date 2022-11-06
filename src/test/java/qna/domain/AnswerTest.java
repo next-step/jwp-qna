@@ -44,10 +44,10 @@ public class AnswerTest {
     @DisplayName("answer 조회 확인")
     void read_answer() {
         //given
-        Answer answer = answerRepository.save(A2);
+        Answer answer = answerRepository.save(new Answer(UserTest.JAVAJIGI, QuestionTest.Q2, "Test Content2"));
 
         //when
-        Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(A2.getId());
+        Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(answer.getId());
 
         // then
         assertAll(

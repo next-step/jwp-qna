@@ -30,19 +30,21 @@ public class QuestionTest {
     @Test
     void save_question() {
         // given // when
-        Question question = questionRepository.save(Q1);
+        Question question = questionRepository.save(
+            new Question("Test Title", "Test Contesnts").writeBy(UserTest.JAVAJIGI));
 
         // then
         assertAll(
-            () -> assertThat(question.getId()).isEqualTo(Q1.getId()),
-            () -> assertThat(question.getTitle()).isEqualTo(Q1.getTitle())
+            () -> assertThat(question.getTitle()).isEqualTo("Test Title"),
+            () -> assertThat(question.getWriter()).isEqualTo(UserTest.JAVAJIGI)
         );
     }
 
     @Test
     void read_question() {
         // given
-        Question expectQuestion = questionRepository.save(Q2);
+        Question expectQuestion = questionRepository.save(
+            new Question("Test Title", "Test Contesnts").writeBy(UserTest.JAVAJIGI));
 
         // when
         Optional<Question> question = questionRepository.findById(expectQuestion.getId());

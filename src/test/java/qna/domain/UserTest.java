@@ -34,23 +34,26 @@ public class UserTest {
     void input_user_email_over_length_range() {
         // given
         String email = "12345678910123456789qweqw4e56qw4e56wq45e4wq56e45wq64e65wq45e6wq121233";
-        SANJIGI.setEmail(email);
+        User user = new User(3L, "test_user_id", "test_password", "test_name",
+            email);
 
         // when // then
         assertThatThrownBy(() -> {
-            userRepository.save(SANJIGI);
+            userRepository.save(user);
         }).isInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test
     void input_user_id_already_save() {
         //given
-        userRepository.save(JAVAJIGI);
-        User user = new User("javajigi", "test", "password", "name");
+        User user_1 = new User("test_user_id", "test_password", "test_name", "test@test.com");
+        User user_2 = new User("test_user_id", "test_password", "test_name", "test@test.com");
+
+        userRepository.save(user_1);
 
         //when, then
         assertThatThrownBy(() -> {
-            userRepository.save(user);
+            userRepository.save(user_2);
         }).isInstanceOf(DataIntegrityViolationException.class);
     }
 
