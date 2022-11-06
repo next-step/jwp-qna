@@ -23,24 +23,24 @@ public class DeleteHistoryRepositoryTest {
     @Autowired
     private TestEntityManager testEntityManager;
 
-    private static DeleteHistory D1;
+    private static DeleteHistory deleteHistory;
 
     @BeforeAll
     public static void init() {
-        D1 = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+        deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
     }
 
     @Test
     @DisplayName("저장")
     public void save() {
-        DeleteHistory saved = saveAndRefetch(D1);
+        DeleteHistory saved = saveAndRefetch(deleteHistory);
         assertThat(saved.getId()).isNotNull();
     }
 
     @Test
     @DisplayName("개별 조회 by id")
     public void findById() {
-        DeleteHistory saved = saveAndClear(D1);
+        DeleteHistory saved = saveAndClear(deleteHistory);
         Optional<DeleteHistory> optional = repository.findById(saved.getId());
         assertThat(optional).isNotEmpty();
         DeleteHistory fetched = optional.get();
@@ -50,7 +50,7 @@ public class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("제거")
     public void delete() {
-        DeleteHistory saved = saveAndRefetch(D1);
+        DeleteHistory saved = saveAndRefetch(deleteHistory);
         repository.delete(saved);
         Optional<DeleteHistory> optional = repository.findById(saved.getId());
         assertThat(optional).isEmpty();

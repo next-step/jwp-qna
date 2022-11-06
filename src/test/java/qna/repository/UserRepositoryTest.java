@@ -22,30 +22,30 @@ public class UserRepositoryTest {
     @Autowired
     private TestEntityManager testEntityManager;
 
-    private static User U1;
+    private static User user;
 
     @BeforeAll
     public static void init() {
-        U1 = new User(1L, "taewon", "password", "name", "htw1800@naver.com");
+        user = new User(1L, "taewon", "password", "name", "htw1800@naver.com");
     }
 
     @Test
     @DisplayName("저장")
     public void save() {
-        User saved = saveAndRefetch(U1);
+        User saved = saveAndRefetch(user);
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.getUserId()).isEqualTo(U1.getUserId()),
-                () -> assertThat(saved.getEmail()).isEqualTo(U1.getEmail()),
-                () -> assertThat(saved.getName()).isEqualTo(U1.getName()),
-                () -> assertThat(saved.getPassword()).isEqualTo(U1.getPassword())
+                () -> assertThat(saved.getUserId()).isEqualTo(user.getUserId()),
+                () -> assertThat(saved.getEmail()).isEqualTo(user.getEmail()),
+                () -> assertThat(saved.getName()).isEqualTo(user.getName()),
+                () -> assertThat(saved.getPassword()).isEqualTo(user.getPassword())
         );
     }
 
     @Test
     @DisplayName("개별 조회 by id")
     public void findById() {
-        User saved = saveAndClear(U1);
+        User saved = saveAndClear(user);
         Optional<User> optional = repository.findById(saved.getId());
         assertThat(optional).isNotEmpty();
         User fetched = optional.get();
@@ -55,7 +55,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("개별 조회 by userId")
     public void findByUserId() {
-        User saved = saveAndClear(U1);
+        User saved = saveAndClear(user);
         Optional<User> optional = repository.findByUserId(saved.getUserId());
         assertThat(optional).isNotEmpty();
         User fetched = optional.get();
@@ -66,7 +66,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("제거")
     public void delete() {
-        User saved = saveAndRefetch(U1);
+        User saved = saveAndRefetch(user);
         repository.delete(saved);
         Optional<User> optional = repository.findById(saved.getId());
         assertThat(optional).isEmpty();

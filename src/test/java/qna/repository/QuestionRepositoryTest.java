@@ -25,30 +25,30 @@ public class QuestionRepositoryTest {
     @Autowired
     private TestEntityManager testEntityManager;
 
-    private static Question Q1;
+    private static Question question;
 
     @BeforeAll
     public static void init() {
         User user = new User(1L, "taewon", "password", "name", "htw1800@naver.com");
-        Q1 = new Question("title1", "contents1").writeBy(user);
+        question = new Question("title1", "contents1").writeBy(user);
     }
 
     @Test
     @DisplayName("저장")
     public void save() {
-        Question saved = saveAndRefetch(Q1);
+        Question saved = saveAndRefetch(question);
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.getTitle()).isEqualTo(Q1.getTitle()),
-                () -> assertThat(saved.getWriterId()).isEqualTo(Q1.getWriterId()),
-                () -> assertThat(saved.getContents()).isEqualTo(Q1.getContents())
+                () -> assertThat(saved.getTitle()).isEqualTo(question.getTitle()),
+                () -> assertThat(saved.getWriterId()).isEqualTo(question.getWriterId()),
+                () -> assertThat(saved.getContents()).isEqualTo(question.getContents())
         );
     }
 
     @Test
     @DisplayName("개별 조회 by id")
     public void findById() {
-        Question saved = saveAndClear(Q1);
+        Question saved = saveAndClear(question);
         Optional<Question> optional = repository.findById(saved.getId());
         assertThat(optional).isNotEmpty();
         Question fetched = optional.get();
@@ -58,7 +58,7 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("개별 조회 by id, deleted(false)")
     public void findByIdAndDeletedFalse() {
-        Question saved = saveAndClear(Q1);
+        Question saved = saveAndClear(question);
         Optional<Question> optional = repository.findByIdAndDeletedFalse(saved.getId());
         assertThat(optional).isNotEmpty();
         Question fetched = optional.get();
@@ -69,7 +69,7 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("목록 조회 by deleted(false)")
     public void findByDeletedFalse() {
-        saveAndClear(Q1);
+        saveAndClear(question);
         saveAndClear(QuestionTest.Q2);
         List<Question> actives = repository.findByDeletedFalse();
         assertThat(actives).isNotEmpty();
@@ -79,7 +79,7 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("제거")
     public void delete() {
-        Question saved = saveAndRefetch(Q1);
+        Question saved = saveAndRefetch(question);
         repository.delete(saved);
         Optional<Question> optional = repository.findById(saved.getId());
         assertThat(optional).isEmpty();
