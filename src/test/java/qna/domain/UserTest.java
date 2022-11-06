@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class UserTest {
@@ -22,9 +23,12 @@ public class UserTest {
     void save() {
         User user = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
         assertThat(user.getId()).isNull();
+
         User actual = userRepository.save(user);
-        assertThat(actual.getId()).isNotNull();
-        assertThat(actual.getUpdatedAt()).isNull();
+        assertAll(
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getUpdatedAt()).isNull()
+        );
     }
 
     @Test
@@ -32,9 +36,11 @@ public class UserTest {
             "또한 동일한 객체면 담긴 값도 동일하다.")
     void findByUserId() {
         User actual = userRepository.save(JAVAJIGI);
-        assertThat(userRepository.findByUserId("javajigi").isPresent()).isTrue();
-        assertThat(userRepository.findByUserId("javajigi").get().getName()).isEqualTo(actual.getName());
-        assertThat(userRepository.findByUserId("eunhye").isPresent()).isFalse();
+        assertAll(
+                () -> assertThat(userRepository.findByUserId("javajigi"))
+                        .isPresent().get().extracting(User::getName).isEqualTo(actual.getName()),
+                () -> assertThat(userRepository.findByUserId("eunhye")).isEmpty()
+        );
     }
 
     @Test
@@ -47,9 +53,10 @@ public class UserTest {
         actual.setUserId(id);
 
         User updated = userRepository.findByUserId(id).get();
-
-        assertThat(updated.getUpdatedAt()).isNotNull();
-        assertThat(updated.getUserId()).isEqualTo(id);
+        assertAll(
+                () -> assertThat(updated.getUpdatedAt()).isNotNull(),
+                () -> assertThat(updated.getUserId()).isEqualTo(id)
+        );
     }
 
 }

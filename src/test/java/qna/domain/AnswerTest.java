@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.repository.AnswerRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
@@ -24,9 +25,12 @@ public class AnswerTest {
     void save() {
         Answer answer = new Answer(JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
         assertThat(answer.getId()).isNull();
+
         Answer actual = answerRepository.save(answer);
-        assertThat(actual.getId()).isNotNull();
-        assertThat(actual.getUpdatedAt()).isNull();
+        assertAll(
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getUpdatedAt()).isNull()
+        );
     }
 
     @Test
@@ -34,9 +38,11 @@ public class AnswerTest {
             "또한 동일한 객체면 담긴 값도 동일하다.")
     void findByWriterId() {
         answerRepository.save(A1);
-        assertThat(answerRepository.findByWriterId(1L).isPresent()).isTrue();
-        assertThat(answerRepository.findByWriterId(1L).get().getContents()).isEqualTo(A1.getContents());
-        assertThat(answerRepository.findByWriterId(10L).isPresent()).isFalse();
+        assertAll(
+                () -> assertThat(answerRepository.findByWriterId(1L))
+                        .isPresent().get().extracting(Answer::getContents).isEqualTo(A1.getContents()),
+                () -> assertThat(answerRepository.findByWriterId(10L).isPresent()).isFalse()
+        );
     }
 
     @Test
@@ -49,9 +55,10 @@ public class AnswerTest {
         actual.setWriterId(writerId);
 
         Answer updated = answerRepository.findByWriterId(writerId).get();
-
-        assertThat(updated.getUpdatedAt()).isNotNull();
-        assertThat(updated.getWriterId()).isEqualTo(writerId);
+        assertAll(
+                () -> assertThat(updated.getUpdatedAt()).isNotNull(),
+                () -> assertThat(updated.getWriterId()).isEqualTo(writerId)
+        );
     }
 
 }
