@@ -21,7 +21,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("user save() 테스트를 진행한다")
     void saveUser() {
-        User user = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+        User user = new User("javajigi", "password", "name", "javajigi@slipp.net");
 
         User saveUser = userRepository.save(user);
 
