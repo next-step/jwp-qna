@@ -20,6 +20,8 @@ import static qna.domain.AnswerTest.A2;
 public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @BeforeEach
     void init() {
@@ -63,7 +65,9 @@ public class AnswerRepositoryTest {
     @DisplayName("삭제 상태가 아닌 결과를 리턴한다.")
     void findByQuestionIdAndDeleted() {
         answerRepository.saveAll(Arrays.asList(A1, A2));
-        List<Answer> savedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
+
+        Question question = questionRepository.findByIdAndDeletedFalse(A1.getQuestionId()).get();
+        List<Answer> savedAnswers = question.getAnswers();
 
         savedAnswers.forEach(answer -> {
             assertThat(answer.isDeleted()).isEqualTo(false);
