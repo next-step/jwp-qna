@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.Question;
-import qna.domain.QuestionTest;
 import qna.domain.User;
 
 @DataJpaTest
@@ -47,7 +46,7 @@ public class QuestionRepositoryTest {
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
                 () -> assertThat(saved.getTitle()).isEqualTo(question1.getTitle()),
-                () -> assertThat(saved.getWriterId()).isEqualTo(question1.getWriterId()),
+                () -> assertThat(saved.getWriter()).isEqualTo(question1.getWriter()),
                 () -> assertThat(saved.getContents()).isEqualTo(question1.getContents())
         );
     }

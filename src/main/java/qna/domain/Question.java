@@ -78,8 +78,8 @@ public class Question extends DateEntity {
         return contents;
     }
 
-    public Long getWriterId() {
-        return user.getId();
+    public User getWriter() {
+        return user;
     }
 
     public List<Answer> getAnswers() {
