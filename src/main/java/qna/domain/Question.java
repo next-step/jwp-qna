@@ -60,6 +60,10 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
