@@ -10,9 +10,6 @@ import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.User;
 import qna.domain.UserTest;
-import qna.repository.AnswerRepository;
-import qna.repository.QuestionRepository;
-import qna.repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -21,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DataJpaTest
 public class AnswerRepositoryTest {
     @Autowired
-    private AnswerRepository answerRepository;
+    AnswerRepository answerRepository;
     @Autowired
-    private QuestionRepository questionRepository;
+    QuestionRepository questionRepository;
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     public Answer answerTest;
     public Question question;
@@ -53,12 +50,12 @@ public class AnswerRepositoryTest {
     @Test
     void findByQuestionIdAndDeletedFalseTest() {
         Answer saveAnswer = answerRepository.save(answerTest);
-        List<Answer> answers1 = answerRepository.findByQuestionAndDeletedFalse(question);
+        List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(question);
         saveAnswer.setDeleted(true);
-        List<Answer> answers2 = answerRepository.findByQuestionAndDeletedFalse(question);
+        List<Answer> deletedAnswers = answerRepository.findByQuestionAndDeletedFalse(question);
         assertAll(
-                () -> assertThat(answers1).hasSize(1),
-                () -> assertThat(answers2).isEmpty()
+                () -> assertThat(answers).hasSize(1),
+                () -> assertThat(deletedAnswers).isEmpty()
         );
     }
 
