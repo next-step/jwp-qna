@@ -1,7 +1,9 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,11 +43,41 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
+    public static DeleteHistories of(Question question) {
+        return DeleteHistories.of(ofQuestion(question), ofAnswers(question.getAnswers()));
+    }
+
+    private static DeleteHistory ofQuestion(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriterId(), LocalDateTime.now());
+    }
+
+    private static List<DeleteHistory> ofAnswers(List<Answer> answers) {
+        return answers.stream().map(DeleteHistory::ofAnswer).collect(Collectors.toList());
+    }
+
+    private static DeleteHistory ofAnswer(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId(), LocalDateTime.now());
+    }
+
+    public Long getContentId() {
+        return contentId;
+    }
+
+    public boolean isQuestion() {
+        return this.contentType == ContentType.QUESTION;
+    }
+
+    public boolean isAnswer() {
+        return this.contentType == ContentType.ANSWER;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        DeleteHistory that = (DeleteHistory)o;
         return Objects.equals(id, that.id) &&
             contentType == that.contentType &&
             Objects.equals(contentId, that.contentId) &&

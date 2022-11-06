@@ -98,6 +98,10 @@ public class AnswerTest extends BaseDomainTest<Answer> {
         assertThat(이전_작성자.getAnswers()).doesNotContain(답변);
     }
 
+    public static Answer 답변(String 제목, Question 질문, User 작성자) {
+        return new Answer(작성자, 질문, 제목);
+    }
+
     private Answer 답변_생성(String 내용) {
         return answers.save(답변(내용));
     }

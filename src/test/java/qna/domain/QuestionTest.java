@@ -1,9 +1,12 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.assertj.core.util.Lists;
@@ -11,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import qna.CannotDeleteException;
 
 public class QuestionTest extends BaseDomainTest<Question> {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
@@ -148,8 +153,97 @@ public class QuestionTest extends BaseDomainTest<Question> {
         assertThat(사용자.getAnswers()).containsOnlyOnce(답변1, 답변2);
     }
 
+    @Test
+    void 질문은_로그인_사용자와_작성자가_같은_경우_삭제할_수_있다() {
+        Question 질문1 = 질문_생성("질문1", "작성자1");
+        User 작성자 = 질문1.getWriter();
+
+        질문1.delete(작성자);
+
+        질문_삭제됨(질문1);
+    }
+
+    @Test
+    void 질문_삭제시_로그인_사용자와_작성자가_다른_경우_예외가_발생한다() {
+        Question 질문 = 질문_생성("질문1", "작성자1");
+        User 작성자2 = 작성자_생성("작성자2");
+
+        assertThatThrownBy(() -> 질문.delete(작성자2))
+            .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void 작성자가_질문_삭제시_답변이_존재할_경우_예외가_발생한다() {
+        Question 질문 = 질문_생성("질문1", "작성자1");
+        User 작성자 = 질문.getWriter();
+        답변_생성("답변1", 질문, 작성자_생성("답변자1"));
+
+        assertThatThrownBy(() -> 질문.delete(작성자))
+            .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void 질문과_답변의_모든_작성자가_동일할_경우_삭제가_가능하다() {
+        Question 질문 = 질문_생성("질문1", "작성자1");
+        User 작성자 = 질문.getWriter();
+        답변_생성("답변1", 질문, 작성자);
+
+        질문.delete(작성자);
+
+        질문_삭제됨(질문);
+    }
+
+    @Test
+    void 질문자와_답변자가_다른_경우_답변을_삭제할_수_없다() {
+        Question 질문 = 질문_생성("질문1", "작성자1");
+        User 작성자 = 질문.getWriter();
+        User 다른_작성자 = 작성자_생성("작성자2");
+        답변_생성("답변1", 질문, 다른_작성자);
+
+        assertThatThrownBy(() -> 질문.delete(작성자))
+            .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void 질문을_삭제할_때_답변_또한_삭제돼야_한다() {
+        Question 질문 = 질문_생성("질문1", "작성자1");
+        User 작성자 = 질문.getWriter();
+        Answer 답변1 = 답변_생성("답변1", 질문, 작성자);
+        Answer 답변2 = 답변_생성("답변2", 질문, 작성자);
+
+        질문.delete(작성자);
+
+        질문_삭제됨(질문);
+        답변_삭제됨(답변1, 답변2);
+    }
+
+    private void 답변_삭제됨(Answer... 답변) {
+        assertThat(Arrays.stream(답변))
+            .extracting(Answer::getId)
+            .extracting(answers::findByIdAndDeletedFalse)
+            .extracting(Optional::isPresent)
+            .containsOnly(false);
+    }
+
+    private Question 질문_생성(String 질문_제목, String 작성자_이름) {
+        Question 질문 = 질문_생성(질문_제목);
+        User 작성자 = 작성자_생성(작성자_이름);
+        작성자.addQuestion(질문);
+        flush();
+        return 질문;
+    }
+
+    private void 질문_삭제됨(Question 질문) {
+        List<Question> 삭제되지_않은_질문 = questions.findByDeletedFalse();
+        assertThat(삭제되지_않은_질문).doesNotContain(질문);
+    }
+
     private Answer 답변_생성(String 내용, Question 질문) {
         return answers.save(new Answer(작성자_생성("답변_작성자1"), 질문, 내용));
+    }
+
+    private Answer 답변_생성(String 내용, Question 질문, User 답변자) {
+        return answers.save(new Answer(답변자, 질문, 내용));
     }
 
     List<Question> 질문_생성() {

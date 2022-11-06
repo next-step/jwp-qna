@@ -13,7 +13,7 @@ public abstract class DeletableBaseEntity extends BaseEntity {
 	@Column(nullable = false)
 	private boolean deleted = false;
 
-	public void delete() {
+	protected void delete() {
 		this.deleted = true;
 	}
 
