@@ -15,12 +15,12 @@ public class DeleteHistory {
     private ContentType contentType;
     private Long contentId;
     @ManyToOne
-    @JoinColumn(name="deleted_by_id")
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
     @CreatedDate
     private LocalDateTime createDate = LocalDateTime.now();
-    
-    protected DeleteHistory(){
+
+    protected DeleteHistory() {
     }
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
@@ -32,8 +32,12 @@ public class DeleteHistory {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
