@@ -37,10 +37,8 @@ class UserRepositoryTest {
 
         List<User> result = userRepository.findAll();
 
-        assertAll(
-            () -> assertThat(result).hasSize(2),
-            () -> assertThat(result).contains(user1, user2)
-        );
+        assertThat(result).hasSize(2)
+                .containsExactly(user1, user2);
     }
 
     @DisplayName("유저를 저장 후 수정 확인")

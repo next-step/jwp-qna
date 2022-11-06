@@ -42,10 +42,8 @@ class QuestionRepositoryTest {
 
         List<Question> result = questionRepository.findAll();
 
-        assertAll(
-            () -> assertThat(result).hasSize(2),
-            () -> assertThat(result).contains(question1, question2)
-        );
+        assertThat(result).hasSize(2)
+                .containsExactly(question1, question2);
     }
 
     @DisplayName("질문을 저장 후 수정 확인")

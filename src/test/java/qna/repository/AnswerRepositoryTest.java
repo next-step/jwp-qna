@@ -56,10 +56,8 @@ public class AnswerRepositoryTest {
 
         List<Answer> result = answerRepository.findAll();
 
-        assertAll(
-            () -> assertThat(result).hasSize(2),
-            () -> assertThat(result).contains(answer1, answer2)
-        );
+        assertThat(result).hasSize(2)
+            .containsExactly(answer1, answer2);
     }
 
     @DisplayName("답변을 저장 후 수정 확인")
