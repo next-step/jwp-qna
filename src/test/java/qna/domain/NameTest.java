@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +16,10 @@ public class NameTest {
         Name expect = Name.of("javajigi");
 
         //then
-        assertThat(actual).isEqualTo(expect);
-        assertThat(actual.isEqualName(expect)).isTrue();
+        assertAll(
+                () -> assertThat(actual).isEqualTo(expect),
+                () -> assertThat(actual.isEqualName(expect)).isTrue()
+        );
     }
 
     @Test
@@ -28,8 +31,10 @@ public class NameTest {
         Name expect = Name.of("sanjigi");
 
         //then
-        assertThat(actual).isNotEqualTo(expect);
-        assertThat(actual.isEqualName(expect)).isFalse();
+        assertAll(
+                () -> assertThat(actual).isNotEqualTo(expect),
+                () -> assertThat(actual.isEqualName(expect)).isFalse()
+        );
     }
 
     @Test
