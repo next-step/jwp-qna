@@ -8,9 +8,9 @@ import static qna.domain.UserTest.SANJIGI;
 import java.time.LocalDateTime;
 
 public class DeleteHistoryTest {
-    public static final DeleteHistory D1 = new DeleteHistory(ContentType.ANSWER, A1.getId(), JAVAJIGI.getId(),
+    public static final DeleteHistory D1 = new DeleteHistory(ContentType.ANSWER, A1.getId(), JAVAJIGI,
             LocalDateTime.now());
-    public static final DeleteHistory D2 = new DeleteHistory(ContentType.ANSWER, A2.getId(), SANJIGI.getId(),
+    public static final DeleteHistory D2 = new DeleteHistory(ContentType.ANSWER, A2.getId(), SANJIGI,
             LocalDateTime.now());
 
 }
