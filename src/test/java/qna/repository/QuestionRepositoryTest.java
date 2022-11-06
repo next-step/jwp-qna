@@ -1,5 +1,6 @@
 package qna.repository;
 
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,18 @@ public class QuestionRepositoryTest {
             () -> assertEquals(savedQuestion.getTitle(), question.getTitle()),
             () -> assertEquals(savedQuestion.getContents(), question.getContents()),
             () -> assertEquals(savedQuestion.getWriterId(), question.getWriterId())
+        );
+    }
+
+    @Test
+    @DisplayName("저장한 question 와 조회한 question 이 같은지 동등성 테스트")
+    void read() {
+        Question savedQuestion = questionRepository.save(QuestionTest.Q1);
+        Optional<Question> question = questionRepository.findById(savedQuestion.getId());
+
+        assertAll(
+            () -> assertThat(question).isPresent(),
+            () -> assertThat(savedQuestion).isSameAs(question.get())
         );
     }
 
