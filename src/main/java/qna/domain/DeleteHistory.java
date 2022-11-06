@@ -1,14 +1,38 @@
 package qna.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "delete_history")
+@EntityListeners(AuditingEntityListener.class)
 public class DeleteHistory {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "content_type", length = 255)
     private ContentType contentType;
+    @Column(name = "content_id")
     private Long contentId;
+    @Column(name = "deleted_by_id")
     private Long deletedById;
-    private LocalDateTime createDate = LocalDateTime.now();
+    @CreatedDate
+    @Column(name = "created_date")
+    private LocalDateTime createDate;
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;
@@ -17,10 +41,23 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
+    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+        this.deletedById = deletedById;
+    }
+
+    protected DeleteHistory() {
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
@@ -44,3 +81,5 @@ public class DeleteHistory {
                 '}';
     }
 }
+
+
