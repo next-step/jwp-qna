@@ -2,6 +2,7 @@ package qna.domain.question;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -96,8 +97,23 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("질문 삭제 후 답변 삭제 테스트")
-    void delete_question_delete_answer() {
+    @DisplayName("질문 삭제시 후 답변도 같이 삭제되는지 테스트")
+    void delete_question_delete_answer() throws CannotDeleteException {
+        User loginUser = userRepository.save(UserTest.createUser("loginUser"));
+
+        Question question = createQuestion(loginUser);
+        question.addAnswer(new Answer(loginUser, question, "contents1"));
+        question.addAnswer(new Answer(loginUser, question, "contents2"));
+        questionRepository.saveAndFlush(question);
+        question.delete(loginUser);
+
+        Question findQuestion = questionRepository.findById(loginUser.getId()).get();
+        assertAll(
+                () -> assertThat(findQuestion.isDeleted()).isTrue()
+        );
+
+        // TODO:answer 모든 항목 삭제 검증
+        findQuestion.getAnswers();
 
     }
 
