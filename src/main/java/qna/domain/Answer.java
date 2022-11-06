@@ -76,8 +76,8 @@ public class Answer extends BaseTimeEntity {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return this.writer.getId();
+    public User getWriter() {
+        return this.writer;
     }
 
     public void setWriterId(User writerId) {
@@ -112,8 +112,8 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writer.getId() +
-                ", questionId=" + question +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
