@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -54,6 +55,13 @@ public class Answer extends BaseTimeEntity {
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+    }
+
+    public void deleteByUser(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        delete();
     }
 
     public void delete() {

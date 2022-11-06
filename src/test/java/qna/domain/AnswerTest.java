@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Optional;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 public class AnswerTest {
@@ -65,7 +67,7 @@ public class AnswerTest {
         //when
         String updateContents = "update contents";
         answer.updateContents(updateContents);
-        
+
         Answer result = answerRepository.save(answer);
 
         // then
@@ -76,15 +78,29 @@ public class AnswerTest {
 
     @Test
     @DisplayName("answer 삭제 확인")
-    void delete_repository() {
+    void delete_answer() throws CannotDeleteException {
         // given
         Answer answer = answerRepository.save(new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Test Content 1"));
 
         // when
-        answerRepository.delete(answer);
-        Optional<Answer> expectAnswer = answerRepository.findById(UserTest.SANJIGI.getId());
+        answer.deleteByUser(UserTest.SANJIGI);
+        Optional<Answer> expectAnswer = answerRepository.findByIdAndDeletedFalse(UserTest.SANJIGI.getId());
 
         // then
         assertThat(expectAnswer.isPresent()).isFalse();
+    }
+
+    @Test
+    @DisplayName("answer 작성자가 아닌 사용자가 삭제시 예외 발생")
+    void delete_repository_other_writer() {
+        // given
+        Answer answer = answerRepository.save(new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Test Content 1"));
+
+        // when, then
+        assertThatThrownBy(
+            () -> {
+                answer.deleteByUser(UserTest.JAVAJIGI);
+            }
+        ).isInstanceOf(CannotDeleteException.class).hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }
