@@ -115,7 +115,6 @@ public class Question extends BaseTimeEntity {
                 ", contents='" + contents + '\'' +
                 ", writer=" + writer +
                 ", deleted=" + deleted +
-                ", answers=" + answers +
                 '}';
     }
 }
