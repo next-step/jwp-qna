@@ -59,9 +59,10 @@ public class DeleteHistory {
             return false;
         }
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(
-                contentId, that.contentId) && Objects.equals(deletedBy, that.deletedBy)
-                && Objects.equals(createDate, that.createDate);
+        return Objects.equals(id, that.id)
+                && contentType == that.contentType
+                && Objects.equals(contentId, that.contentId)
+                && Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override

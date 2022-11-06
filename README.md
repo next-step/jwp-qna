@@ -105,6 +105,11 @@ alter table question
             references user (id)
 ```
 
-- [ ] Answer 연관관계 매핑
-- [ ] Question 연관관계 매핑
-- [ ] DeleteHistory 연관관계 매핑
+- [x] Answer 연관관계 매핑
+- [x] Question 연관관계 매핑
+- [x] DeleteHistory 연관관계 매핑
+- [x] QnaServiceTest 수정
+- [ ] AnswerRepositoryTest 수정
+- [ ] QuestionRepositoryTest 수정
+- [ ] UserRepositoryTest 수정
+- [ ] DeleteHistoryTest 수정

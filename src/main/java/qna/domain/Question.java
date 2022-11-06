@@ -83,6 +83,10 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
+    public User getWriter() {
+        return writer;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
