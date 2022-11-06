@@ -21,7 +21,7 @@ public class DeleteHistory {
     protected DeleteHistory(){
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User writer, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
