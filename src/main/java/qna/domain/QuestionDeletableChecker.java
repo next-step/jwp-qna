@@ -13,7 +13,7 @@ public class QuestionDeletableChecker {
         this.checkingRules = checkingRules;
     }
 
-    public boolean check(User writer, List<Answer> answers) throws CannotDeleteException {
+    public boolean isDeletable(User writer, List<Answer> answers) throws CannotDeleteException {
         Collection<Boolean> results = new ArrayList<>();
         for (DeleteCheckRule rule : this.checkingRules) {
             results.add(rule.deletable(writer, answers));
