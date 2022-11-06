@@ -30,13 +30,13 @@ class QuestionRepositoryTest {
     @Autowired
     TestEntityManager em;
 
-    User user;
+    User writer;
     Question question;
 
     @BeforeEach
     void setUp() {
-        user = userRepository.save(new User("user", "password", "name", "email@email.com"));
-        question = new Question("title", "contents").writeBy(user);
+        writer = userRepository.save(new User("user", "password", "name", "email@email.com"));
+        question = new Question("title", "contents").writeBy(writer);
     }
 
     @Test
@@ -88,7 +88,7 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("writeBy 테스트")
+    @DisplayName("질문의 작성자를 지정")
     void write_by() {
         User expected = userRepository.save(new User("user2", "password", "name2", "email2@email.com"));
         Question actual = questionRepository.save(question).writeBy(expected);
@@ -96,7 +96,7 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("addAnswer 테스트")
+    @DisplayName("질문에 답변을 추가")
     void add_answer() {
         Question saveQuestion = questionRepository.save(question);
         Answer expected = new Answer(saveQuestion.getWriter(), saveQuestion, "contents");
@@ -107,9 +107,9 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("isOwner 테스트")
-    void is_owner() {
+    @DisplayName("질문의 주인일 경우 true를 리턴")
+    void is_owner_return_true() {
         Question actual = questionRepository.save(question);
-        assertTrue(actual.isOwner(user));
+        assertTrue(actual.isOwner(writer));
     }
 }

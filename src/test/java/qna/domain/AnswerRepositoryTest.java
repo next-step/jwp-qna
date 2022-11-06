@@ -80,14 +80,14 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("isOwner 테스트")
-    void is_owner() {
+    @DisplayName("답변의 주인이라면 true를 리턴")
+    void is_owner_return_true() {
         Answer actual = answerRepository.save(answer);
         assertTrue(actual.isOwner(user));
     }
 
     @Test
-    @DisplayName("toQuestion 테스트")
+    @DisplayName("질문 변경하기")
     void to_question() {
         Answer saveAnswer = answerRepository.save(answer);
         Question expected = questionRepository.save(new Question("question2", "contents2")).writeBy(user);

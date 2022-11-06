@@ -58,7 +58,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("update 테스트")
+    @DisplayName("유저 변경")
     void update() {
         User loginUser = userRepository.save(user);
         User updateUser = new User("user2", "password", "name2", "email2@email.com");
