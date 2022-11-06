@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static qna.domain.FixtureUtils.*;
 
 import java.util.Optional;
 
@@ -22,8 +23,8 @@ class UserRepositoryTest {
 
     @BeforeEach
     void setup() {
-        JAVAJIGI = userRepository.save(UserTest.JAVAJIGI);
-        SANJIGI = userRepository.save(UserTest.SANJIGI);
+        JAVAJIGI = userRepository.save(JAVAJIGI());
+        SANJIGI = userRepository.save(SANJIGI());
     }
 
     @Test

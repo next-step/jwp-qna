@@ -2,41 +2,37 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static qna.domain.FixtureUtils.*;
 
 import org.junit.jupiter.api.Test;
 
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
-
     @Test
     void 동등성() {
         assertAll(
-            () -> assertThat(new Question(1L, "title", "contents"))
-                .isEqualTo(new Question(1L, "title", "contents")),
-            () -> assertThat(new Question(1L, "title", "contents"))
-                .isNotEqualTo(new Question(2L, "title", "contents"))
+            () -> assertThat(Q1()).isEqualTo(Q1()),
+            () -> assertThat(Q1()).isNotEqualTo(Q2())
         );
     }
 
     @Test
     void 작성자_등록() {
-        Q1.writeBy(UserTest.JAVAJIGI);
         assertAll(
-            () -> assertThat(Q1.isOwner(UserTest.JAVAJIGI)).isTrue(),
-            () -> assertThat(Q1.isOwner(UserTest.SANJIGI)).isFalse()
+            () -> assertThat(Q1().isOwner(JAVAJIGI())).isTrue(),
+            () -> assertThat(Q1().isOwner(SANJIGI())).isFalse()
         );
     }
 
     @Test
     void 답변_추가() {
-        Question question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-        Answer answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
-        question.addAnswer(answer);
+        User JAVAJIGI = JAVAJIGI();
+        Question q1 = Q1(JAVAJIGI);
+        Answer answer = A1(JAVAJIGI, q1);
+        q1.addAnswer(answer);
 
         assertAll(
-            () -> assertThat(question.getAnswers()).contains(answer),
-            () -> assertThat(answer.getQuestion()).isEqualTo(question)
+            () -> assertThat(q1.getAnswers()).contains(answer),
+            () -> assertThat(answer.getQuestion()).isEqualTo(q1)
         );
     }
 }

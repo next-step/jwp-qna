@@ -2,6 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static qna.domain.FixtureUtils.*;
 
 import java.util.Optional;
 
@@ -21,15 +22,16 @@ class AnswerRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
-    private User U1;
+    private User JAVAJIGI;
     private Answer A1;
     private Question Q1;
 
     @BeforeEach
     void setup() {
-        U1 = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
-        Q1 = questionRepository.save(new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI));
-        A1 = answerRepository.save(new Answer(1L, U1, Q1, "Answers Contents1"));
+        JAVAJIGI = userRepository.save(JAVAJIGI());
+        Q1 = questionRepository.save(Q1(JAVAJIGI));
+        A1 = answerRepository.save(A1(JAVAJIGI, Q1));
+
     }
 
     @Test
