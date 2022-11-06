@@ -2,10 +2,13 @@ package qna.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -21,8 +24,9 @@ public class Answer extends DateEntity {
     @Column(nullable = true)
     private Long writerId;
 
-    @Column(nullable = true)
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     @Lob
     @Column(nullable = true)
@@ -49,7 +53,8 @@ public class Answer extends DateEntity {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        question.addAnswer(this);
+        this.question = question;
         this.contents = contents;
     }
 
@@ -65,16 +70,12 @@ public class Answer extends DateEntity {
         return this.writerId.equals(writer.getId());
     }
 
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
-    }
-
     public Long getWriterId() {
         return writerId;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
@@ -94,7 +95,7 @@ public class Answer extends DateEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
