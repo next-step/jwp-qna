@@ -12,10 +12,10 @@
 - [X] AnswerRepository 테스트 코드 작성
 ### 연관관계 맵핑
 주어진 요구사항 DDL을 보고 연관관계 맵핑을 진행한다.
-- [ ] Answer 연관관계 맵핑
-- [ ] User 연관관계 맵핑
-- [ ] DeleteHistory 연관관계 맵핑
-- [ ] Question 연관관계 맵핑
+- [X] Answer 연관관계 맵핑
+- [X] User 연관관계 맵핑
+- [X] DeleteHistory 연관관계 맵핑
+- [X] Question 연관관계 맵핑
 - [ ] Answer 연관관계 맵핑에 따른 테스트 코드 수정
 - [ ] User 연관관계 맵핑에 따른 테스트 코드 수정
 - [ ] DeleteHistory 연관관계 맵핑에 따른 테스트 코드 수정
