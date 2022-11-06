@@ -49,15 +49,6 @@ public class AnswerRepositoryTest {
                 () -> assertThat(savedAnswer.getCreatedAt()).isNotNull());
     }
 
-//    @Test
-//    @DisplayName("AnswerId로 삭제상태가 아닌 Answer를 가져올 수 있어야 한다.")
-//    void findByIdAndDeletedFalse() {
-//        answerRepository.save(A1);
-//
-//        Optional<Answer> answer = answerRepository.findByIdAndDeletedFalse(A1.getId());
-//
-//        assertThat(answer).contains(A1);
-//    }
 
     @DisplayName("toQuestion을 이용해 Answer에 대한 Question을 변경한다.")
     @Test

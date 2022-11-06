@@ -86,6 +86,10 @@ public class Question extends BaseEntity{
         return writer.getId();
     }
 
+    public void updateContents(String contents) {
+        this.contents = contents;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -96,6 +100,7 @@ public class Question extends BaseEntity{
                 ", deleted=" + deleted +
                 '}';
     }
+
 
 
 }

@@ -58,10 +58,23 @@ public class QuestionRepositoryTest {
     @DisplayName("삭제된 Question 조회되지 않는다.")
     void do_not_get_deleted_question() {
         List<Question> savedQuestions = questionRepository.saveAll(Arrays.asList(Q1, Q2));
-        questionRepository.deleteById(savedQuestions.get(1).getId());
+        questionRepository.deleteById(savedQuestions.get(0).getId());
 
         List<Question> restQuestions = questionRepository.findByDeletedFalse();
 
         assertThat(savedQuestions.size()-1).isEqualTo(restQuestions.size());
+    }
+
+    @Test
+    @DisplayName("Question 내용 변경")
+    void change_question_writer() {
+        List<Question> savedQuestions = questionRepository.saveAll(Arrays.asList(Q1, Q2));
+
+        Question question1 = savedQuestions.get(0);
+        question1.updateContents("다른 내용");
+
+        Question updatedQuestion = questionRepository.findByIdAndDeletedFalse(question1.getId()).get();
+
+        assertThat(question1.getContents()).isEqualTo(updatedQuestion.getContents());
     }
 }
