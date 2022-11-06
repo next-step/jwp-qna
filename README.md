@@ -167,6 +167,13 @@ alter table question
 ### ERD
 <img src= https://user-images.githubusercontent.com/20774279/200162364-cf9b47b0-08de-4c97-805b-fc7ede19d56b.png width="800" alt="ERD">
 
+### 객체연관 관계
+- N인 Entity가 연관관계의 주인
+- answer (N) - (1) question
+- answer (N) - (1) user
+- question (N) - (1) user
+- delete_history (N) - (1) user
+
 ### 테스트
 - Answer
 - AnswerRepository
