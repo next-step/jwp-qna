@@ -1,5 +1,7 @@
 package qna.domain;
 
+import static qna.domain.ContentType.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
+
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseTime {
@@ -90,6 +94,31 @@ public class Question extends BaseTime {
     public void addAnswer(Answer answer) {
         if (!this.answers.contains(answer)) {
             this.answers.add(answer);
+        }
+    }
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(deleteQuestion(loginUser));
+        for (Answer answer : answers) {
+            deleteHistories.add(deleteAnswer(answer, loginUser));
+        }
+        this.deleted = true;
+        return deleteHistories;
+    }
+
+    private DeleteHistory deleteQuestion(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        return new DeleteHistory(QUESTION, id, loginUser);
+    }
+
+    private DeleteHistory deleteAnswer(Answer answer, User loginUser) throws CannotDeleteException {
+        try {
+            return answer.delete(loginUser);
+        } catch (CannotDeleteException e) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
     }
 }
