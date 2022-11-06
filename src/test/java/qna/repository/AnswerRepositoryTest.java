@@ -28,8 +28,8 @@ class AnswerRepositoryTest {
 
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriterId()).isEqualTo(AnswerTest.A1.getWriterId()),
-                () -> assertThat(actual.getQuestionId()).isEqualTo(AnswerTest.A1.getQuestionId()),
+                () -> assertThat(actual.getWriter()).isEqualTo(AnswerTest.A1.getWriter()),
+                () -> assertThat(actual.getQuestion()).isEqualTo(AnswerTest.A1.getQuestion()),
                 () -> assertThat(actual.getContents()).isEqualTo(AnswerTest.A1.getContents())
         );
     }
@@ -63,7 +63,7 @@ class AnswerRepositoryTest {
         actual.toQuestion(QuestionTest.Q2);
         Optional<Answer> findAnswer = answerRepository.findById(actual.getId());
 
-        assertThat(findAnswer.orElseThrow(NotFoundException::new).getQuestionId()).isEqualTo(QuestionTest.Q2.getId());
+        assertThat(findAnswer.orElseThrow(NotFoundException::new).getQuestion()).isEqualTo(QuestionTest.Q2);
 
     }
 
