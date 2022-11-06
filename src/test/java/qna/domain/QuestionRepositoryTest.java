@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import qna.CannotDeleteException;
+
 @DataJpaTest
 class QuestionRepositoryTest {
     @Autowired
@@ -60,9 +62,9 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    void 질문_삭제여부_변경() {
+    void 질문_삭제여부_변경() throws CannotDeleteException {
         assertThat(questionRepository.findByIdAndDeletedFalse(savedQuestion.getId())).contains(savedQuestion);
-        savedQuestion.changeDeleted(true);
+        savedQuestion.delete(savedWriter);
         assertThat(questionRepository.findByIdAndDeletedFalse(savedQuestion.getId())).isEmpty();
     }
 

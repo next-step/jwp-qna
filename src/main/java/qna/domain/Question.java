@@ -63,10 +63,6 @@ public class Question extends BaseTime {
         return this.writer.equals(writer);
     }
 
-    public void changeDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public Long getId() {
         return id;
     }
@@ -103,15 +99,15 @@ public class Question extends BaseTime {
         for (Answer answer : answers) {
             deleteHistories.add(deleteAnswer(answer, loginUser));
         }
+        this.deleted = true;
         return deleteHistories;
     }
 
     private DeleteHistory deleteQuestion(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        if (isOwner(loginUser)) {
+            return new DeleteHistory(QUESTION, id, loginUser);
         }
-        this.deleted = true;
-        return new DeleteHistory(QUESTION, id, loginUser);
+        throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
     }
 
     private DeleteHistory deleteAnswer(Answer answer, User loginUser) throws CannotDeleteException {
