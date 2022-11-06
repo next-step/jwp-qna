@@ -93,64 +93,35 @@ public class User extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public List<Answer> getAnswerList() {
         return answerList;
-    }
-
-    public void setAnswerList(List<Answer> answerList) {
-        this.answerList = answerList;
     }
 
     public List<Question> getQuestionList() {
         return questionList;
     }
 
-    public void setQuestionList(List<Question> questionList) {
-        this.questionList = questionList;
-    }
-
     public List<DeleteHistory> getDeleteHistoryList() {
         return deleteHistoryList;
-    }
-
-    public void setDeleteHistoryList(List<DeleteHistory> deleteHistoryList) {
-        this.deleteHistoryList = deleteHistoryList;
     }
 
     @Override
