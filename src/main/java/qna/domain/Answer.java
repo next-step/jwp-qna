@@ -18,21 +18,20 @@ public class Answer extends BaseEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "writer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
+
+    @JoinColumn(name = "question_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Question question;
+
     @Column(name = "contents")
     @Lob
     private String contents;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
-
-    @JoinColumn(name = "question_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Question question;
-
-    @JoinColumn(name = "writer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User writer;
-
 
     protected Answer() {
     }
@@ -54,7 +53,7 @@ public class Answer extends BaseEntity {
 
         this.writer = writer;
         this.question = question;
-
+        toQuestion(question);
         this.contents = contents;
     }
 
@@ -63,7 +62,11 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
+        if (Objects.nonNull(question)) {
+            question.getAnswers().remove(this);
+        }
         this.question = question;
+        question.getAnswers().add(this);
     }
 
     public Long getId() {
@@ -88,10 +91,6 @@ public class Answer extends BaseEntity {
 
     public void updateDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public Long getQuestionId() {
-        return question.getId();
     }
 
     public Long getWriterId() {

@@ -14,15 +14,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.QuestionTest.Q2;
+import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void init() {
         questionRepository.deleteAll();
+        userRepository.deleteAll();
+        userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));
     }
 
     @Test
@@ -49,7 +55,7 @@ public class QuestionRepositoryTest {
         assertThat(question).contains(Q1);
     }
     @Test
-    @DisplayName("삭제된 Question은 조회되지 않는다.")
+    @DisplayName("삭제된 Question 조회되지 않는다.")
     void do_not_get_deleted_question() {
         List<Question> savedQuestions = questionRepository.saveAll(Arrays.asList(Q1, Q2));
         questionRepository.deleteById(savedQuestions.get(1).getId());
