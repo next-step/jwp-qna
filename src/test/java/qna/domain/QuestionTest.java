@@ -110,5 +110,20 @@ public class QuestionTest {
             }
         ).isInstanceOf(CannotDeleteException.class).hasMessage("질문을 삭제할 권한이 없습니다.");
     }
+
+    @Test
+    void delete_question_include_answer_by_other() {
+        // given
+        Question question = new Question("title", "contents").writeBy(UserTest.JAVAJIGI);
+        Answer answer = new Answer(UserTest.SANJIGI, question, "answer_contents");
+
+        // when, then
+        assertThatThrownBy(
+            () -> {
+                question.deleteByUser(UserTest.JAVAJIGI, Arrays.asList(answer));
+            }
+        ).isInstanceOf(CannotDeleteException.class).hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+
+    }
 }
 
