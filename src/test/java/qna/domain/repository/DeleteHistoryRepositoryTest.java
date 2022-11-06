@@ -72,7 +72,7 @@ class DeleteHistoryRepositoryTest {
         DeleteHistory deleteHistory = deleteHistorys.findByContentId(Long.valueOf(1)).get();
         User actual = new User("diqksrk123", "diqksrk123", "강민준", "diqksrk123@naver.com");
 
-        DeleteHistory savedDeleteHistory = setUserInfo(deleteHistory, actual);
+        DeleteHistory savedDeleteHistory = savedUserInfo(deleteHistory, actual);
         User expected = savedDeleteHistory.getUser();
 
         assertAll(
@@ -82,7 +82,7 @@ class DeleteHistoryRepositoryTest {
         );
     }
 
-    private DeleteHistory setUserInfo(DeleteHistory deleteHistory, User actual) {
+    private DeleteHistory savedUserInfo(DeleteHistory deleteHistory, User actual) {
         deleteHistory.setUser(actual);
         DeleteHistory savedDeleteHistory = deleteHistorys.save(deleteHistory);
         deleteHistorys.flush();
