@@ -65,7 +65,7 @@ alter table user
 ### 구현 기능 목록
 - [x] BaseEntity 생성
 - [x] Answer 엔티티 클래스 작성
-- [ ] DeleteHistory 엔티티 클래스 작성
+- [x] DeleteHistory 엔티티 클래스 작성
 - [ ] Question 엔티티 클래스 작성
 - [ ] User 엔티티 클래스 작성
 - [ ] @DataJpaTest를 이용해 추가, 업데이트, 삭제 등 테스트
