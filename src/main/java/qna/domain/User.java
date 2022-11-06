@@ -1,28 +1,23 @@
 package qna.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
-
 @Entity
-@Table(uniqueConstraints = {
-        @UniqueConstraint(name = "UK_USER_USER_ID",
-        columnNames = {"user_id"})
-})
+@Table
 public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false, length = 20)
+    @Column(name = "user_id", unique = true, nullable = false, length = 20)
     private String userId;
 
     @Column(nullable = false, length = 20)
