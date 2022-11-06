@@ -30,13 +30,6 @@ public class User extends BaseTime {
     @Column(name = "email", length = 50)
     private String email;
 
-//    @Column(name = "created_at", nullable = false)
-//    @CreatedDate
-//    private LocalDateTime createdAt;
-//
-//    @Column(name = "updated_at")
-//    private LocalDateTime updatedAt;
-
     private User() {
     }
 
