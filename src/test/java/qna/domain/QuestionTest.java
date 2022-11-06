@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @Import(value = {JpaAuditingConfiguration.class})
@@ -28,7 +29,12 @@ public class QuestionTest {
         Question question = questionRepository.save(Q1);
 
         //expect
-        assertThat(question).isNotNull();
+        assertAll(
+                () -> assertThat(question).isNotNull(),
+                () -> assertThat(question.getId()).isNotNull(),
+                () -> assertThat(question.getCreatedAt()).isNotNull(),
+                () -> assertThat(question.getUpdatedAt()).isNotNull()
+        );
     }
 
     @Test

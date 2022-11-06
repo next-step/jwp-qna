@@ -10,6 +10,7 @@ import qna.config.JpaAuditingConfiguration;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @Import(value = {JpaAuditingConfiguration.class})
@@ -27,7 +28,12 @@ public class UserTest {
         User user = userRepository.save(JAVAJIGI);
 
         //expect
-        assertThat(user).isNotNull();
+        assertAll(
+                () -> assertThat(user).isNotNull(),
+                () -> assertThat(user.getId()).isNotNull(),
+                () -> assertThat(user.getCreatedAt()).isNotNull(),
+                () -> assertThat(user.getUpdatedAt()).isNotNull()
+        );
     }
 
     @Test
