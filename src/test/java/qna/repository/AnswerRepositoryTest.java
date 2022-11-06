@@ -103,7 +103,6 @@ class AnswerRepositoryTest {
         answerB.setDeleted(true);
 
         List<Answer> findAnswers = answerRepository.findByQuestionAndDeletedFalse(answerB.getQuestion());
-
         assertThat(findAnswers).doesNotContain(answerA, answerB);
         assertThat(findAnswers).hasSize(0);
     }

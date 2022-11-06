@@ -102,7 +102,6 @@ class QuestionRepositoryTest {
                 new Question("title1", "contents1").writeBy(userA));
         Question questionB = questionRepository.save(
                 new Question("title2", "contents2").writeBy(userB));
-
         questionB.setDeleted(true);
 
         List<Question> result = questionRepository.findByDeletedFalse();
