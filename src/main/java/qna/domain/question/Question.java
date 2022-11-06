@@ -31,7 +31,7 @@ public class Question extends BaseEntity implements Serializable {
     private User writer;
 
     @Embedded
-    private Answers answers;
+    private Answers answers = new Answers();
 
     @Column(length = 20, nullable = false)
     private boolean deleted = false;

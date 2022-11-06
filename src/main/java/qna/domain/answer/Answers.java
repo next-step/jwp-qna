@@ -9,6 +9,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class Answers implements Iterable<Answer> {
     @OneToMany(mappedBy = "question"/*외래키는 Answer 객체에 question필드에서 관리하고 있음을 뜻함 */, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private final List<Answer> answers = new ArrayList<>();
 
-    protected Answers() {
+    public Answers() {
     }
 
     public List<DeleteHistory> deleteAll(User loginUser) throws CannotDeleteException {
@@ -45,6 +46,6 @@ public class Answers implements Iterable<Answer> {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return Collections.unmodifiableList(answers);
     }
 }
