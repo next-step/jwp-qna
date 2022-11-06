@@ -25,14 +25,19 @@ public class AnswerRepositoryTest {
     private QuestionRepository questionRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private TestEntityManager testEntityManager;
 
+    private User user;
     private Answer answer1;
     private Answer answer2;
 
     @BeforeEach
     public void init() {
-        User user = new User(1L, "taewon", "password", "name", "htw1800@naver.com");
+        user = new User("taewon", "password", "name", "htw1800@naver.com");
+        userRepository.save(user);
         Question question = new Question("title1", "contents1").writeBy(user);
         questionRepository.save(question);
         answer1 = new Answer(user, question, "Answers Contents1");
@@ -47,7 +52,7 @@ public class AnswerRepositoryTest {
                 () -> assertThat(saved.getId()).isNotNull(),
                 () -> assertThat(saved.getContents()).isEqualTo(answer1.getContents()),
                 () -> assertThat(saved.getQuestion().getId()).isEqualTo(answer1.getQuestion().getId()),
-                () -> assertThat(saved.getWriterId()).isEqualTo(answer1.getWriterId())
+                () -> assertThat(saved.getWriter().getId()).isEqualTo(answer1.getWriter().getId())
         );
     }
 

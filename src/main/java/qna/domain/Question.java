@@ -8,7 +8,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -25,8 +27,9 @@ public class Question extends DateEntity {
     @Column(nullable = true)
     private String contents;
 
-    @Column(nullable = true)
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "writer_id")
+    private User user;
 
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
     private final List<Answer> answers = new ArrayList<>();
@@ -55,12 +58,12 @@ public class Question extends DateEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.user = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.user.getId().equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -76,7 +79,7 @@ public class Question extends DateEntity {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return user.getId();
     }
 
     public List<Answer> getAnswers() {
@@ -97,7 +100,7 @@ public class Question extends DateEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + user.getId() +
                 ", deleted=" + deleted +
                 '}';
     }

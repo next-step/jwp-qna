@@ -21,8 +21,9 @@ public class Answer extends DateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = true)
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "writer_id")
+    private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "question_id")
@@ -52,7 +53,7 @@ public class Answer extends DateEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
+        this.user = writer;
         question.addAnswer(this);
         this.question = question;
         this.contents = contents;
@@ -67,11 +68,11 @@ public class Answer extends DateEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return user.getId().equals(writer.getId());
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return user;
     }
 
     public Question getQuestion() {
@@ -94,7 +95,7 @@ public class Answer extends DateEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
+                ", writerId=" + user.getId() +
                 ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +

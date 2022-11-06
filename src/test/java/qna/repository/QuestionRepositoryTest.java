@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,36 +20,43 @@ import qna.domain.User;
 public class QuestionRepositoryTest {
 
     @Autowired
-    private QuestionRepository repository;
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private TestEntityManager testEntityManager;
 
-    private static Question question;
+    private User user;
+    private Question question1;
+    private Question question2;
 
-    @BeforeAll
-    public static void init() {
-        User user = new User(1L, "taewon", "password", "name", "htw1800@naver.com");
-        question = new Question("title1", "contents1").writeBy(user);
+    @BeforeEach
+    public void init() {
+        user = new User("taewon", "password", "name", "htw1800@naver.com");
+        userRepository.save(user);
+        question1 = new Question("title1", "contents1").writeBy(user);
+        question2 = new Question("title2", "contents2").writeBy(user);
     }
 
     @Test
     @DisplayName("저장")
     public void save() {
-        Question saved = saveAndRefetch(question);
+        Question saved = saveAndRefetch(question1);
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.getTitle()).isEqualTo(question.getTitle()),
-                () -> assertThat(saved.getWriterId()).isEqualTo(question.getWriterId()),
-                () -> assertThat(saved.getContents()).isEqualTo(question.getContents())
+                () -> assertThat(saved.getTitle()).isEqualTo(question1.getTitle()),
+                () -> assertThat(saved.getWriterId()).isEqualTo(question1.getWriterId()),
+                () -> assertThat(saved.getContents()).isEqualTo(question1.getContents())
         );
     }
 
     @Test
     @DisplayName("개별 조회 by id")
     public void findById() {
-        Question saved = saveAndClear(question);
-        Optional<Question> optional = repository.findById(saved.getId());
+        Question saved = saveAndClear(question1);
+        Optional<Question> optional = questionRepository.findById(saved.getId());
         assertThat(optional).isNotEmpty();
         Question fetched = optional.get();
         assertThat(fetched.getId()).isEqualTo(saved.getId());
@@ -58,8 +65,8 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("개별 조회 by id, deleted(false)")
     public void findByIdAndDeletedFalse() {
-        Question saved = saveAndClear(question);
-        Optional<Question> optional = repository.findByIdAndDeletedFalse(saved.getId());
+        Question saved = saveAndClear(question1);
+        Optional<Question> optional = questionRepository.findByIdAndDeletedFalse(saved.getId());
         assertThat(optional).isNotEmpty();
         Question fetched = optional.get();
         assertThat(fetched.getId()).isEqualTo(saved.getId());
@@ -69,9 +76,9 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("목록 조회 by deleted(false)")
     public void findByDeletedFalse() {
-        saveAndClear(question);
-        saveAndClear(QuestionTest.Q2);
-        List<Question> actives = repository.findByDeletedFalse();
+        saveAndClear(question1);
+        saveAndClear(question2);
+        List<Question> actives = questionRepository.findByDeletedFalse();
         assertThat(actives).isNotEmpty();
         assertThat(actives.size()).isEqualTo(2);
     }
@@ -79,20 +86,20 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("제거")
     public void delete() {
-        Question saved = saveAndRefetch(question);
-        repository.delete(saved);
-        Optional<Question> optional = repository.findById(saved.getId());
+        Question saved = saveAndRefetch(question1);
+        questionRepository.delete(saved);
+        Optional<Question> optional = questionRepository.findById(saved.getId());
         assertThat(optional).isEmpty();
     }
 
     private Question saveAndRefetch(Question question) {
         Question saved = saveAndClear(question);
-        return repository.findById(saved.getId())
+        return questionRepository.findById(saved.getId())
                 .orElseThrow(() -> new NullPointerException("Question not saved!"));
     }
 
     private Question saveAndClear(Question question) {
-        Question saved = repository.save(question);
+        Question saved = questionRepository.save(question);
         testEntityManager.clear();
         return saved;
     }
