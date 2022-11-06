@@ -6,10 +6,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Optional;
+import org.hibernate.proxy.HibernateProxy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -17,6 +19,8 @@ class QuestionRepositoryTest {
     private QuestionRepository questionRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private TestEntityManager testEntityManager;
     private User user;
 
     @BeforeEach
@@ -73,5 +77,14 @@ class QuestionRepositoryTest {
         questionRepository.save(new Question("question", "answer").writeBy(user));
         List<Question> actual = questionRepository.findByDeletedFalse();
         assertThat(actual).hasSize(2);
+    }
+
+    @Test
+    void 연관된_엔티티는_프록시_객체로_조회된다() {
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        testEntityManager.flush();
+        testEntityManager.clear();
+        Question actual = questionRepository.findById(question.getId()).get();
+        assertThat(actual.getWriter() instanceof HibernateProxy).isTrue();
     }
 }
