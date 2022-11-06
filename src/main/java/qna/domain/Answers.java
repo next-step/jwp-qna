@@ -20,8 +20,8 @@ public class Answers {
         this.answers = new ArrayList<>(answers);
     }
 
-    public List<DeleteHistory> deleteAll(User questionWriter) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+    public DeleteHistories deleteAll(User questionWriter) throws CannotDeleteException {
+        DeleteHistories deleteHistories = new DeleteHistories(new ArrayList<>());
         for (Answer answer : answers) {
             if (!answer.isOwner(questionWriter)) {
                 throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
