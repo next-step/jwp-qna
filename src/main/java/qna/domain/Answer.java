@@ -4,6 +4,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -40,7 +41,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writeBy = writeBy;
-        this.question = question;
+        toQuestion(question);
         this.contents = contents;
     }
 
@@ -49,6 +50,18 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
+        if (Objects.equals(this.question, question)) {
+            return;
+        }
+
+        if (this.question != null) {
+            this.question.removeAnswer(this);
+        }
+
+        if (question != null) {
+            question.addAnswer(this);
+        }
+
         this.question = question;
     }
 
@@ -56,8 +69,9 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public void delete() {
+    public DeleteHistory delete() {
         this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writeBy, LocalDateTime.now());
     }
 
     public Long getId() {

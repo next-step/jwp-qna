@@ -3,19 +3,21 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.Embeddable;
-import java.time.LocalDateTime;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
 @Embeddable
 public class Answers {
+    @OneToMany(mappedBy = "question")
     private List<Answer> answers;
 
     protected Answers() {
+        this.answers = new ArrayList<>();
     }
 
     public Answers(List<Answer> answers) {
-        this.answers = answers;
+        this.answers = new ArrayList<>(answers);
     }
 
     public List<DeleteHistory> deleteAll(User questionWriter) throws CannotDeleteException {
@@ -24,9 +26,20 @@ public class Answers {
             if (!answer.isOwner(questionWriter)) {
                 throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
             }
-            answer.delete();
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriteBy(), LocalDateTime.now()));
+            deleteHistories.add(answer.delete());
         }
         return deleteHistories;
+    }
+
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+    }
+
+    public void removeAnswer(Answer answer) {
+        answers.remove(answer);
+    }
+
+    public boolean contains(Answer answer) {
+        return answers.contains(answer);
     }
 }
