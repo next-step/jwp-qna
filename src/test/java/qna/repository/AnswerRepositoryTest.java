@@ -40,13 +40,6 @@ class AnswerRepositoryTest {
     @Autowired
     private TestEntityManager testEntityManager;
 
-    @BeforeEach
-    void clear() {
-        answerRepository.deleteAll();
-        userRepository.deleteAll();
-        questionRepository.deleteAll();
-    }
-
     @DisplayName("답변을 저장할 수 있다")
     @Test
     void save() {
@@ -117,7 +110,6 @@ class AnswerRepositoryTest {
 
     @DisplayName("답변 조회시 writer, question이 지연로딩 되는지 확인한다")
     @Test
-    @Transactional
     void lazyLoadingTest() {
         PersistenceUnitUtil persistenceUnitUtil = factory.getPersistenceUnitUtil();
         User writer = userRepository.save(TestUserFactory.create("writer"));
