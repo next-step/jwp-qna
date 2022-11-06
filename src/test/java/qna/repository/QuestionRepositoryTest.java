@@ -68,13 +68,14 @@ public class QuestionRepositoryTest {
         Question savedQuestion = questionRepository.save(new Question("title1", "contents1")
                 .writeBy(savedUser1));
         User user1 = userRepository.save(new User("jongmin", "password", "name", "javajigi@slipp.net"));
-        Answer answer1 = answerRepository.save(new Answer(user1, savedQuestion, "contents"));
+        answerRepository.save(new Answer(user1, savedQuestion, "contents"));
         User user2 = userRepository.save(new User("minu", "password", "name", "minu@slipp.net"));
-        Answer answer2 = answerRepository.save(new Answer(user2, savedQuestion, "contents"));
+        answerRepository.save(new Answer(user2, savedQuestion, "contents"));
         entityManager.flush();
         entityManager.clear();
 
         Question findQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId()).get();
+
         assertThat(findQuestion.getAnswers()).hasSize(2);
 
     }
