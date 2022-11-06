@@ -109,7 +109,7 @@ alter table question
 - [x] Question 연관관계 매핑
 - [x] DeleteHistory 연관관계 매핑
 - [x] QnaServiceTest 수정
-- [ ] AnswerRepositoryTest 수정
+- [x] AnswerRepositoryTest 수정
 - [ ] QuestionRepositoryTest 수정
 - [ ] UserRepositoryTest 수정
 - [ ] DeleteHistoryTest 수정
