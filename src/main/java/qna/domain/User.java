@@ -28,6 +28,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "writer")     // 주인 속성의 필드명과 일치(Question-writer)
     private List<Question> questions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers = new ArrayList<>();
+
     protected User() {
     }
 

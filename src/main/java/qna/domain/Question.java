@@ -4,6 +4,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -24,6 +26,10 @@ public class Question extends BaseEntity{
     @ManyToOne      // 외래키를 가지는 다 쪽으로 주인
     @JoinColumn(name= "writer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
+
 
     protected Question() {
     }
