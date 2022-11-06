@@ -7,6 +7,7 @@ import javax.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.domain.common.ContentType;
+import qna.domain.question.Question;
 import qna.domain.user.User;
 
 @EntityListeners(AuditingEntityListener.class)
@@ -32,6 +33,10 @@ public class DeleteHistory {
 
     protected DeleteHistory() {
 
+    }
+
+    public static DeleteHistory createQuestionDeleteHistory(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
     }
 
     public Long getId() {
