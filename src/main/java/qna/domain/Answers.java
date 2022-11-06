@@ -1,7 +1,10 @@
 package qna.domain;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -20,12 +23,14 @@ public class Answers {
     }
 
     public DeleteHistories delete(User user) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
         validateSameUser(user);
-        for(Answer answer: this.answers) {
-            deleteHistories.add(answer.delete(user));
-        }
-        return new DeleteHistories(deleteHistories);
+        return deleteAll(user);
+    }
+
+    private DeleteHistories deleteAll(User user) {
+        return this.answers.stream()
+                .map(answer -> answer.delete(user))
+                .collect(Collectors.collectingAndThen(toList(), DeleteHistories::new));
     }
 
     private void validateSameUser(User user) {
