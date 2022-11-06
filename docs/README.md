@@ -6,7 +6,7 @@
 * [x] User 매핑, UserRepository 학습테스트
 
 ### 연관 관계 매핑
-* [ ] Question으로 User를 참조할 수 있게 매핑
+* [x] Question으로 User를 참조할 수 있게 매핑
 * [ ] DeleteHistory로 User를 참조할 수 있게 매핑
 * [ ] Answer로 User를 참조할 수 있게 매핑
 * [ ] Answer로 Question을 참조할 수 있게 매핑

@@ -5,15 +5,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.Question;
+import qna.domain.User;
 
 @DataJpaTest
 class QuestionRepositoryTest {
 
     @Autowired
     QuestionRepository questions;
+
+    @Autowired
+    UserRepository users;
+
+    @Autowired
+    TestEntityManager em;
 
     @Test
     void 엔티티_저장() {
@@ -45,5 +55,21 @@ class QuestionRepositoryTest {
         Question expected = questions.save(new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다."));
         Question actual = questions.findByIdAndDeletedFalse(expected.getId()).get();
         assertThat(actual.getId()).isEqualTo(expected.getId());
+    }
+
+    @ParameterizedTest
+    @DisplayName("(지연로딩)Question 에서 User 로 참조할 수 있다")
+    @ValueSource(strings = "writer")
+    void question_to_user_lazy(String expected) {
+        User loginUser = users.save(new User(expected, "1111", "작성자", "writer@naver.com"));
+        Question question = questions.save(new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다.").writeBy(loginUser));
+        flushAndClear();
+        Question findQuestion = questions.findById(question.getId()).get();
+        assertThat(findQuestion.getWriter().getId()).isEqualTo(loginUser.getId());
+    }
+
+    void flushAndClear() {
+        em.flush();
+        em.clear();
     }
 }
