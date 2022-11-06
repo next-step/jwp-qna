@@ -61,7 +61,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deleter +
+                ", deleter=" + deleter +
                 ", createDate=" + createDate +
                 '}';
     }
