@@ -1,8 +1,11 @@
 package qna.domain.question;
 
 import qna.domain.BaseEntity;
+import qna.domain.answer.Answers;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.user.User;
 import qna.domain.answer.Answer;
+import qna.exception.CannotDeleteException;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,8 +30,8 @@ public class Question extends BaseEntity implements Serializable {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question"/*외래키는 Answer 객체에 question필드에서 관리하고 있음을 뜻함 */, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    private List<Answer> answers = new ArrayList<Answer>();
+    @Embedded
+    private Answers answers;
 
     @Column(length = 20, nullable = false)
     private boolean deleted = false;
@@ -77,7 +80,6 @@ public class Question extends BaseEntity implements Serializable {
         return contents;
     }
 
-
     public User getWriter() {
         return writer;
     }
@@ -90,7 +92,21 @@ public class Question extends BaseEntity implements Serializable {
         this.deleted = deleted;
     }
 
-//    public void setAn
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        deleted = true;
+        return assembleDeleteHistories(loginUser);
+    }
+
+    private List<DeleteHistory> assembleDeleteHistories(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.of(this));
+        deleteHistories.addAll(answers.deleteAll(loginUser));
+        return deleteHistories;
+    }
 
     @Override
     public String toString() {
@@ -104,7 +120,7 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.getAnswers();
     }
 
     @Override
