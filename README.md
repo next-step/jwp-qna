@@ -110,6 +110,6 @@ alter table question
 - [x] DeleteHistory 연관관계 매핑
 - [x] QnaServiceTest 수정
 - [x] AnswerRepositoryTest 수정
-- [ ] QuestionRepositoryTest 수정
+- [x] QuestionRepositoryTest 수정
 - [ ] UserRepositoryTest 수정
 - [ ] DeleteHistoryTest 수정
