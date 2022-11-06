@@ -52,7 +52,7 @@ public class AnswerRepositoryTest {
                 () -> assertThat(saved.getId()).isNotNull(),
                 () -> assertThat(saved.getContents()).isEqualTo(answer1.getContents()),
                 () -> assertThat(saved.getQuestion().getId()).isEqualTo(answer1.getQuestion().getId()),
-                () -> assertThat(saved.getWriter().getId()).isEqualTo(answer1.getWriter().getId())
+                () -> assertThat(saved.getWriter()).isEqualTo(answer1.getWriter())
         );
     }
 

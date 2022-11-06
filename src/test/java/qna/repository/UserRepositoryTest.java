@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,11 @@ public class UserRepositoryTest {
     @Autowired
     private TestEntityManager testEntityManager;
 
-    private static User user;
+    private User user;
 
-    @BeforeAll
-    public static void init() {
-        user = new User(1L, "taewon", "password", "name", "htw1800@naver.com");
+    @BeforeEach
+    public void init() {
+        user = new User("taewon", "password", "name", "htw1800@naver.com");
     }
 
     @Test
@@ -34,7 +35,7 @@ public class UserRepositoryTest {
     public void save() {
         User saved = saveAndRefetch(user);
         assertAll(
-                () -> assertThat(saved.getId()).isNotNull(),
+                () -> assertThat(saved).isEqualTo(user),
                 () -> assertThat(saved.getUserId()).isEqualTo(user.getUserId()),
                 () -> assertThat(saved.getEmail()).isEqualTo(user.getEmail()),
                 () -> assertThat(saved.getName()).isEqualTo(user.getName()),
@@ -49,7 +50,7 @@ public class UserRepositoryTest {
         Optional<User> optional = repository.findById(saved.getId());
         assertThat(optional).isNotEmpty();
         User fetched = optional.get();
-        assertThat(fetched.getId()).isEqualTo(saved.getId());
+        assertThat(fetched).isEqualTo(saved);
     }
 
     @Test
@@ -59,7 +60,7 @@ public class UserRepositoryTest {
         Optional<User> optional = repository.findByUserId(saved.getUserId());
         assertThat(optional).isNotEmpty();
         User fetched = optional.get();
-        assertThat(fetched.getId()).isEqualTo(saved.getId());
+        assertThat(fetched).isEqualTo(saved);
         assertThat(fetched.getUserId()).isEqualTo(saved.getUserId());
     }
 

@@ -64,7 +64,7 @@ public class Question extends DateEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.user.getId().equals(writer.getId());
+        return this.user.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -101,7 +101,7 @@ public class Question extends DateEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + user.getId() +
+                ", writerId=" + user.getUserId() +
                 ", deleted=" + deleted +
                 '}';
     }

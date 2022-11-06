@@ -64,12 +64,8 @@ public class Answer extends DateEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public boolean isOwner(User writer) {
-        return user.getId().equals(writer.getId());
+        return user.equals(writer);
     }
 
     public User getWriter() {
@@ -96,7 +92,7 @@ public class Answer extends DateEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + user.getId() +
+                ", writerId=" + user.getUserId() +
                 ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
