@@ -10,10 +10,14 @@ public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private ContentType contentType;
+    @Column(name = "content_id")
     private Long contentId;
-    private Long deletedById;
+    @Column(name = "content_type")
+    private ContentType contentType;
+    @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
+    @Column(name = "deleted_by_id")
+    private Long deletedById;
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
         this.contentType = contentType;

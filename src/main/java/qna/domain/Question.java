@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "question")
@@ -8,12 +9,18 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "title", nullable = false)
-    private String title;
+    @Column(name = "contents")
     private String contents;
-    private Long writerId;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+    @Column(name = "title", nullable = false)
+    private String title;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    @Column(name = "writer_id")
+    private Long writerId;
 
     public Question(String title, String contents) {
         this(null, title, contents);

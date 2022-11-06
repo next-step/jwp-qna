@@ -4,6 +4,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -12,11 +13,18 @@ public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+    @Column(name = "contents")
     private String contents;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+    @Column(name = "questionId")
+    private Long questionId;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    @Column(name = "writerId")
+    private Long writerId;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);

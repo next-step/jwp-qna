@@ -3,6 +3,7 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -13,13 +14,18 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "userId", nullable = false)
-    private String userId;
-    @Column(name = "password", nullable = false)
-    private String password;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+    @Column(name = "email")
+    private String email;
     @Column(name = "name", nullable = false)
     private String name;
-    private String email;
+    @Column(name = "password", nullable = false)
+    private String password;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    @Column(name = "userId", nullable = false)
+    private String userId;
 
     private User() {
     }
