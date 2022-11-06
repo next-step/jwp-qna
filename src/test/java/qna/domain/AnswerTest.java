@@ -45,4 +45,22 @@ class AnswerTest {
         Answer answer = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "contents");
         Assertions.assertThat(answer.isDeleted()).isFalse();
     }
+
+    @Test
+    @DisplayName("equals 테스트 (동등한 경우)")
+    void equals1() {
+        Answer actual = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "contents");
+        Answer expected = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "contents");
+
+        Assertions.assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("equals 테스트 (동등하지 않은 경우)")
+    void equals2() {
+        Answer actual = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "contents");
+        Answer expected = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "contents");
+
+        Assertions.assertThat(actual).isNotEqualTo(expected);
+    }
 }

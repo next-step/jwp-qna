@@ -21,7 +21,7 @@ class PasswordTest {
     }
 
     @Test
-    @DisplayName("equals 테스트 (동일한 경우)")
+    @DisplayName("equals 테스트 (동등한 경우)")
     void equals1() {
         Password pw1 = Password.from("pw1");
         Password pw2 = Password.from("pw1");
@@ -29,7 +29,7 @@ class PasswordTest {
     }
 
     @Test
-    @DisplayName("equals 테스트 (동일하지 않은 경우)")
+    @DisplayName("equals 테스트 (동등하지 않은 경우)")
     void equals2() {
         Password pw1 = Password.from("pw1");
         Password pw2 = Password.from("pw2");

@@ -40,6 +40,14 @@ public class DeleteHistory {
 
     }
 
+    public static DeleteHistory ofAnswer(Long contentId, User deleter) {
+        return new DeleteHistory(ContentType.ANSWER, contentId, deleter, LocalDateTime.now());
+    }
+
+    public static DeleteHistory ofQuestion(Long contentId, User deleter) {
+        return new DeleteHistory(ContentType.QUESTION, contentId, deleter, LocalDateTime.now());
+    }
+
     public Long getId() {
         return this.id;
     }

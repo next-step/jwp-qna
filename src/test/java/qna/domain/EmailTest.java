@@ -14,7 +14,7 @@ class EmailTest {
     }
 
     @Test
-    @DisplayName("equals 테스트 (동일한 경우)")
+    @DisplayName("equals 테스트 (동등한 경우)")
     void equals1() {
         Email email1 = Email.from("test@email.com");
         Email email2 = Email.from("test@email.com");
@@ -22,7 +22,7 @@ class EmailTest {
     }
 
     @Test
-    @DisplayName("equals 테스트 (동일하지 않은 경우)")
+    @DisplayName("equals 테스트 (동등하지 않은 경우)")
     void equals2() {
         Email email1 = Email.from("test@email.com");
         Email email2 = Email.from("test123@email.com");
