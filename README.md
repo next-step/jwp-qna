@@ -25,5 +25,5 @@
 
 - [X] Answer - Question 연관 관계 매핑
 - [X] Answer - User 연관 관계 매핑
-- [ ] DeleteHistory - User 연관 관계 매핑
+- [X] DeleteHistory - User 연관 관계 매핑
 - [X] Question - User 연관 관계 매핑

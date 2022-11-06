@@ -6,9 +6,12 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class DeleteHistory {
@@ -21,23 +24,25 @@ public class DeleteHistory {
 
     private Long contentId;
 
-    private Long deletedById;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id")
+    private User deletedBy;
 
     private LocalDateTime createDate = LocalDateTime.now();
 
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(Long id, ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(Long id, ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedBy = deletedBy;
         this.createDate = createDate;
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
-        this(null, contentType, contentId, deletedById, createDate);
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+        this(null, contentType, contentId, deletedBy, createDate);
     }
 
     public Long getId() {
@@ -65,7 +70,6 @@ public class DeleteHistory {
             "id=" + id +
             ", contentType=" + contentType +
             ", contentId=" + contentId +
-            ", deletedById=" + deletedById +
             ", createDate=" + createDate +
             '}';
     }
