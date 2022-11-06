@@ -43,7 +43,7 @@ class AnswerRepositoryTest {
 
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswer.getId());
 
-        assertThat(saveAnswer).isEqualTo(findAnswer.get());
+        assertThat(findAnswer).get().isEqualTo(saveAnswer);
     }
 
     @Test

@@ -16,7 +16,7 @@
 - [X] User 연관관계 맵핑
 - [X] DeleteHistory 연관관계 맵핑
 - [X] Question 연관관계 맵핑
-- [ ] Answer 연관관계 맵핑에 따른 테스트 코드 수정
-- [ ] User 연관관계 맵핑에 따른 테스트 코드 수정
-- [ ] DeleteHistory 연관관계 맵핑에 따른 테스트 코드 수정
-- [ ] Question 연관관계 맵핑에 따른 테스트 코드 수정
+- [X] Answer 연관관계 맵핑에 따른 테스트 코드 수정
+- [X] User 연관관계 맵핑에 따른 테스트 코드 수정
+- [X] DeleteHistory 연관관계 맵핑에 따른 테스트 코드 수정
+- [X] Question 연관관계 맵핑에 따른 테스트 코드 수정

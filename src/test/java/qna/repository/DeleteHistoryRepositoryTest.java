@@ -42,9 +42,9 @@ class DeleteHistoryRepositoryTest {
         DeleteHistory history = deleteHistoryRepository.save(
                 new DeleteHistory(ContentType.QUESTION, 1L, user, LocalDateTime.now()));
 
-        Optional<DeleteHistory> findDeleteHistory = deleteHistoryRepository.findById(history.getId());
+        Optional<DeleteHistory> result = deleteHistoryRepository.findById(history.getId());
 
-        assertThat(history).isEqualTo(findDeleteHistory.get());
+        assertThat(result).get().isEqualTo(history);
     }
 
     @Test
