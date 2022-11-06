@@ -24,3 +24,8 @@
   - [x] Entity
   - [x] Repository
   - [x] 학습 테스트
+  
+#### Step1 리뷰 사항 반영
+- [ ] Step1 1차 리뷰 사항 반영
+    - [ ] 불필요한 주석 지우기.
+    - [ ] Entity, Repository 패키지 분리하기.
