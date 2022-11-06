@@ -18,8 +18,9 @@ public class Question extends BaseTime {
     @Lob
     private String contents;
 
-    @Column(name = "writer_id")
-    private Long writerId;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "writer_id")
+    private User user;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
@@ -35,12 +36,12 @@ public class Question extends BaseTime {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.user = user;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.user.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -71,12 +72,12 @@ public class Question extends BaseTime {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getUser() {
+        return user;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public boolean isDeleted() {
@@ -93,7 +94,7 @@ public class Question extends BaseTime {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", user=" + user.toString() +
                 ", deleted=" + deleted +
                 '}';
     }

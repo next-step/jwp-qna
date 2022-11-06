@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.entity.Question;
-import qna.domain.repository.QuestionRepository;
+import qna.domain.entity.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,4 +71,21 @@ class QuestionRepositoryTest {
         assertThat(questions.findByTitle("타이틀").isPresent()).isFalse();
     }
 
+    @Test
+    @DisplayName("user연관관계 매핑 테스트")
+    void getUserTest() {
+        Question question = questions.findByTitle("타이틀").get();
+        User actual = new User("diqksrk", "diqksrk", "강민준", "diqksrk123@naver.com");
+
+        question.setUser(actual);
+        Question savedQuestion = questions.save(question);
+        questions.flush();
+        User expected = savedQuestion.getUser();
+
+        assertAll(
+                () -> assertThat(expected.getId()).isNotNull(),
+                () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
+                () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail())
+        );
+    }
 }
