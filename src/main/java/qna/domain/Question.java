@@ -11,7 +11,7 @@ public class Question extends BaseEntity {
     private String title;
     @Lob
     private String contents;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
     private boolean deleted = false;
 

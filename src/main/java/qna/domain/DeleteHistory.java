@@ -12,7 +12,7 @@ public class DeleteHistory {
     @Enumerated(value = EnumType.STRING)
     private ContentType contentType;
     private Long contentId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User deletedBy;
     private LocalDateTime createDate = LocalDateTime.now();
 

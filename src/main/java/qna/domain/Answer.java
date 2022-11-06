@@ -11,9 +11,9 @@ public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
     @Lob
     private String contents;
