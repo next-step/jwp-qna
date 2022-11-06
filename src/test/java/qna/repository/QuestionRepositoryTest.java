@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.repository;
 
 import java.util.List;
 import org.assertj.core.api.Assertions;
@@ -7,6 +7,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.Question;
+import qna.domain.QuestionTest;
+import qna.domain.User;
+import qna.domain.UserTest;
+import qna.repository.QuestionRepository;
+import qna.repository.UserRepository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -56,5 +62,12 @@ public class QuestionRepositoryTest {
                 () -> assertEquals(updateQuestion.getWriter(), otherWriter),
                 () -> assertEquals(questionRepository.findById(updateQuestion.getId()).orElse(null).getWriter(), otherWriter)
         );
+    }
+
+    @DisplayName("작성자 수정 검증")
+    @Test
+    void test() {
+        User otherWriter = userRepository.save(UserTest.SANJIGI);
+        Question updateQuestion = saveQuestion.writeBy(otherWriter);
     }
 }
