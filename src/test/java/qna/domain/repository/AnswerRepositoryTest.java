@@ -8,20 +8,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.entity.Answer;
 import qna.domain.entity.Question;
 import qna.domain.entity.User;
-import qna.domain.repository.AnswerRepository;
-import qna.domain.repository.QuestionRepository;
-import qna.domain.repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class AnswerRepositoryTest {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private QuestionRepository questions;
 
     @Autowired
     private AnswerRepository answers;
@@ -37,7 +29,7 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("answer테이블 save 테스트")
     void save() {
-        User user = new User("diqksrk", "diqksrk", "강민준", "diqksrk123@naver.com");
+        User user = new User("diqksrk123", "diqksrk123", "강민준", "diqksrk123@naver.com");
         Question question = new Question("타이틀", "콘텐츠2");
 
         Answer expected = new Answer(user, question, "콘텐츠2");
@@ -77,5 +69,52 @@ class AnswerRepositoryTest {
         answers.delete(expected);
 
         assertThat(answers.findByContents("콘텐츠").isPresent()).isFalse();
+    }
+
+    @Test
+    @DisplayName("answer연관관계 매핑 테스트( user )")
+    void getUserTest() {
+        Answer answer = answers.findByContents("콘텐츠").get();
+        User actual = new User("diqksrk123", "diqksrk123", "강민준", "diqksrk123@naver.com");
+
+
+        Answer savedAnswer = saveUserInfo(answer, actual);
+        User expected = savedAnswer.getUser();
+
+        assertAll(
+                () -> assertThat(expected.getId()).isNotNull(),
+                () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
+                () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail())
+        );
+    }
+
+    private Answer saveUserInfo(Answer answer, User actual) {
+        answer.setUser(actual);
+        Answer savedDeleteHistory = answers.save(answer);
+        answers.flush();
+        return savedDeleteHistory;
+    }
+
+    @Test
+    @DisplayName("answer연관관계 매핑 테스트( question )")
+    void getQuestionTest() {
+        Answer answer = answers.findByContents("콘텐츠").get();
+        Question actual = new Question("타이틀", "콘텐츠");
+
+        Answer savedAnswer = saveQuestionInfo(answer, actual);
+        Question expected = savedAnswer.getQuestion();
+
+        assertAll(
+                () -> assertThat(expected.getId()).isNotNull(),
+                () -> assertThat(actual.getContents()).isEqualTo(expected.getContents()),
+                () -> assertThat(actual.getTitle()).isEqualTo(expected.getTitle())
+        );
+    }
+
+    private Answer saveQuestionInfo(Answer answer, Question actual) {
+        answer.setQuestion(actual);
+        Answer savedDeleteHistory = answers.save(answer);
+        answers.flush();
+        return savedDeleteHistory;
     }
 }
