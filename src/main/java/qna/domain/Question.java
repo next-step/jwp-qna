@@ -23,7 +23,7 @@ public class Question extends BaseEntity{
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @ManyToOne      // 외래키를 가지는 다 쪽으로 주인
+    @ManyToOne(fetch = FetchType.LAZY)      // 외래키를 가지는 다 쪽으로 주인
     @JoinColumn(name= "writer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 

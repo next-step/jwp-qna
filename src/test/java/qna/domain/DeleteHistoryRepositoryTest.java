@@ -10,21 +10,26 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void init() {
         deleteHistoryRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
     @DisplayName("deleteHistory 저장")
     void save_delete_history() {
-        DeleteHistory target = new DeleteHistory(ContentType.QUESTION, 1L, 2L, LocalDateTime.now());
+        User user = userRepository.save(JAVAJIGI);
+        DeleteHistory target = new DeleteHistory(ContentType.QUESTION, 1L, user, LocalDateTime.now());
         deleteHistoryRepository.save(target);
 
         List<DeleteHistory> savedHistories = deleteHistoryRepository.findAll();

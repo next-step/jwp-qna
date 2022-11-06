@@ -7,34 +7,38 @@ import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
+
 @Entity
 @Table(name = "answer")
 @SQLDelete(sql = "UPDATE answer SET deleted = ture WHERE id = ?")
 @Where(clause = "deleted = false")
-public class Answer extends BaseEntity{
+public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name="contents")
+    @Column(name = "contents")
     @Lob
     private String contents;
 
-    @Column(name="deleted", nullable = false)
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @JoinColumn(name="question_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-    @ManyToOne()
+    //    @JoinColumn(name="question_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @JoinColumn(name = "question_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
 
-    @JoinColumn(name="writer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
-    @ManyToOne()
+    //    @JoinColumn(name = "writer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    @JoinColumn(name = "writer_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
 
     protected Answer() {
     }
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
@@ -52,6 +56,7 @@ public class Answer extends BaseEntity{
 
         this.writer = writer;
         this.question = question;
+
         this.contents = contents;
     }
 
@@ -105,7 +110,6 @@ public class Answer extends BaseEntity{
                 ", deleted=" + deleted +
                 '}';
     }
-
 
 
 }

@@ -25,15 +25,6 @@ public class User extends BaseEntity {
     @Column(name = "email", length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "writer")     // 주인 속성의 필드명과 일치(Question-writer)
-    private List<Question> questions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "writer")
-    private List<Answer> answers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "deleteByUser")
-    private List<DeleteHistory> deleteHistories = new ArrayList<>();
-
     protected User() {
     }
 
@@ -103,6 +94,10 @@ public class User extends BaseEntity {
         return email;
     }
 
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -113,6 +108,8 @@ public class User extends BaseEntity {
                 ", email='" + email + '\'' +
                 '}';
     }
+
+
 
     private static class GuestUser extends User {
         @Override
