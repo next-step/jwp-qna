@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,16 +23,16 @@ public class UserTest extends BaseDomainTest<User> {
 
     @Test
     void 도메인을_생성할_수_있다() {
-        List<User> 생성된_유저 = 유저_생성();
+        List<User> 생성된_유저 = 사용자_생성();
 
-        List<User> 유저목록 = users.findAll();
+        List<User> 사용자목록 = users.findAll();
 
-        도메인_생성_검증(유저목록, 생성된_유저);
+        도메인_생성_검증(사용자목록, 생성된_유저);
     }
 
     @Test
     void 도메인을_수정할_수_있다() {
-        List<User> 수정할_도메인 = 유저_생성();
+        List<User> 수정할_도메인 = 사용자_생성();
 
         List<LocalDateTime> 최종_수정_일자 = 최종_수정_일자(수정할_도메인);
 
@@ -42,18 +43,18 @@ public class UserTest extends BaseDomainTest<User> {
 
     @Test
     void 생성날짜_수정날짜가_입력되어_있다() {
-        List<User> 도메인 = 유저_생성();
+        List<User> 도메인 = 사용자_생성();
         생성날짜_수정날짜_검증(도메인);
     }
 
-    public static User 유저_생성(String 유저_아이디) {
-        return new User(유저_아이디, "password", "name", "email");
+    private List<User> 사용자_생성() {
+        return Lists.newArrayList(
+            사용자_생성("유저1"),
+            사용자_생성("유저2"));
     }
 
-    private List<User> 유저_생성() {
-        return this.users.saveAll(Lists.newArrayList(
-            유저_생성("유저1"),
-            유저_생성("유저2")));
+    private User 사용자_생성(String 이름) {
+        return users.save(사용자(이름));
     }
 
     void 도메인_수정(List<User> 수정할_도메인) {
@@ -63,4 +64,7 @@ public class UserTest extends BaseDomainTest<User> {
         users.flush();
     }
 
+    public static User 사용자(String 이름) {
+        return new User(UUID.randomUUID().toString(), "password", 이름, "email");
+    }
 }

@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,7 +33,7 @@ public class Question extends DeletableBaseEntity {
     private User writer;
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers;
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -60,16 +61,22 @@ public class Question extends DeletableBaseEntity {
         return id;
     }
 
+    public User getWriter() {
+        return writer;
+    }
+
     public Long getWriterId() {
         return writer.getId();
     }
 
     public void setWriter(User writer) {
-        if (Objects.nonNull(writer)) {
+        if (Objects.nonNull(this.writer)) {
             this.writer.getQuestions().remove(this);
         }
         this.writer = writer;
-        writer.getQuestions().add(this);
+        if (!writer.getQuestions().contains(this)) {
+            writer.getQuestions().add(this);
+        }
     }
 
     public void addAnswer(Answer answer) {
@@ -92,7 +99,7 @@ public class Question extends DeletableBaseEntity {
             "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", writer=" + writer +
+            ", writer=" + (Objects.isNull(writer) ? "" : writer.getUserId()) +
             ", deleted=" + isDeleted() +
             '}';
     }

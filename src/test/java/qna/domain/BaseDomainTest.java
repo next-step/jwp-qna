@@ -16,7 +16,7 @@ import qna.config.EntityConfig;
 public abstract class BaseDomainTest<T extends BaseEntity> {
 
 	void 도메인_생성_검증(List<T> 생성된_도메인, List<T> 비교_도메인) {
-		assertThat(비교_도메인).containsExactlyElementsOf(생성된_도메인);
+		assertThat(비교_도메인).containsAnyElementsOf(생성된_도메인);
 	}
 
 	List<LocalDateTime> 최종_수정_일자(List<T> 수정할_도메인) {
