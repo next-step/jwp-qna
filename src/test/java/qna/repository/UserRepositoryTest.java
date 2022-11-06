@@ -5,12 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.User;
+import qna.fixture.TestUserFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.UserTest.JAVAJIGI;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DataJpaTest
+@DataJpaTest(showSql = false)
 class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
@@ -18,24 +19,25 @@ class UserRepositoryTest {
     @DisplayName("사용자를 저장할 수 있다")
     @Test
     void save() {
-        User result = userRepository.save(JAVAJIGI);
+        User expect = TestUserFactory.create("서정국");
+        User result = userRepository.save(expect);
 
         assertAll(
                 () -> assertThat(result.getId()).isNotNull(),
-                () -> assertThat(result.getUserId()).isEqualTo(JAVAJIGI.getUserId()),
-                () -> assertThat(result.getName()).isEqualTo(JAVAJIGI.getName()),
-                () -> assertThat(result.getPassword()).isEqualTo(JAVAJIGI.getPassword()),
-                () -> assertThat(result.getEmail()).isEqualTo(JAVAJIGI.getEmail())
+                () -> assertThat(result.getUserId()).isEqualTo(expect.getUserId()),
+                () -> assertThat(result.getName()).isEqualTo(expect.getName()),
+                () -> assertThat(result.getPassword()).isEqualTo(expect.getPassword()),
+                () -> assertThat(result.getEmail()).isEqualTo(expect.getEmail())
         );
     }
 
     @DisplayName("사용자 계정으로 조회할 수 있다")
     @Test
     void findByUserId() {
-        User expect = userRepository.save(JAVAJIGI);
+        User expect = userRepository.save(TestUserFactory.create("서정국"));
 
         User result = userRepository.findByUserId(expect.getUserId()).get();
 
-        assertThat(expect == result).isTrue();
+        assertEquals(expect, result);
     }
 }

@@ -1,9 +1,6 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
-
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 public class User extends BaseEntity {
