@@ -43,4 +43,13 @@ public class UserTest {
 
         assertThat(user1).isNotEqualTo(user2);
     }
+
+    @Test
+    void 유저_toString_테스트() {
+        //given
+        User user = TestUserFactory.create("javajigi");
+
+        //then
+        assertThat(user.toString()).contains("Password{password=").contains("Name{name=");
+    }
 }
