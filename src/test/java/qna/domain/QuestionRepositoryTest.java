@@ -1,9 +1,9 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.QuestionTest.Q2;
+import static qna.domain.UserTest.JAVAJIGI;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,23 +20,27 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void init() {
         questionRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
     @DisplayName("삭제되지 않은 모든 질문들을 조회할 수 있어야 한다")
     void findByDeletedFalse() {
         // given
-        List<Question> expected = Arrays.asList(Q1, Q2);
-        questionRepository.saveAll(expected);
+        User user = userRepository.save(JAVAJIGI);
+        List<Question> expected = questionRepository.saveAll(Arrays.asList(Q1.writeBy(user), Q2.writeBy(user)));
 
         // when
-        List<Question> questions = questionRepository.findByDeletedFalse();
+        List<Question> actual = questionRepository.findByDeletedFalse();
 
         // then
-        assertThat(questions).usingRecursiveComparison()
+        assertThat(actual).usingRecursiveComparison()
                 .ignoringFields("id", "createdAt", "updatedAt")
                 .isEqualTo(expected);
     }
@@ -45,7 +49,8 @@ class QuestionRepositoryTest {
     @DisplayName("입력된 아이디에 해당하면서, 삭제되지 않은 질문을 조회할 수 있어야 한다")
     void findByIdAndDeletedFalse() {
         // given
-        Question expected = questionRepository.save(Q1);
+        User user = userRepository.save(JAVAJIGI);
+        Question expected = questionRepository.save(Q1.writeBy(user));
 
         // when
         Optional<Question> result = questionRepository.findByIdAndDeletedFalse(expected.getId());

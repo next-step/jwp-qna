@@ -1,10 +1,9 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
+import static qna.domain.QuestionTest.Q1;
+import static qna.domain.UserTest.JAVAJIGI;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,35 +18,52 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
     @BeforeEach
     void init() {
         answerRepository.deleteAll();
+        userRepository.deleteAll();
+        questionRepository.deleteAll();
     }
 
     @Test
     @DisplayName("입력된 questionId를 가지고, 삭제상태가 아닌 Answer를 가져올 수 있어야 한다")
     void findByQuestionIdAndDeletedFalse() {
         // given
-        answerRepository.saveAll(Arrays.asList(A1, A2));
+        Answer expected = answerRepository.save(getAnswer());
 
         // when
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(A1.getQuestionId());
+        List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(expected.getQuestion().getId());
 
         // then
-        assertThat(answers).usingFieldByFieldElementComparator()
-                .containsExactly(A1, A2);
+        assertThat(actual).usingFieldByFieldElementComparator()
+                .containsExactly(expected);
     }
 
     @Test
     @DisplayName("입력된 AnswerId에 해당하면서 삭제상태가 아닌 Answer를 가져올 수 있어야 한다")
     void findByIdAndDeletedFalse() {
         // given
-        answerRepository.save(A2);
+        Answer expected = getAnswer();
+        answerRepository.save(expected);
 
         // when
-        Optional<Answer> answer = answerRepository.findByIdAndDeletedFalse(A2.getId());
+        Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(expected.getId());
 
         // then
-        assertThat(answer).contains(A2);
+        assertThat(actual).contains(expected);
+    }
+
+    private Answer getAnswer() {
+        User user = userRepository.save(JAVAJIGI);
+        Question question = questionRepository.save(Q1.writeBy(user));
+        Answer a1 = new Answer(user, question, "answer1");
+        a1.toQuestion(question);
+        return a1;
     }
 }
