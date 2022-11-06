@@ -62,11 +62,10 @@ public class Answer extends BaseTime {
     }
 
     public void toQuestion(Question question) {
-        if (Objects.nonNull(question)) {
-            question.getAnswers().remove(this);
-        }
         this.question = question;
-        question.getAnswers().add(this);
+        if (Objects.nonNull(question)) {
+            question.addAnswer(this);
+        }
     }
 
     public void changeDeleted(boolean deleted) {

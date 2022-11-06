@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static qna.domain.QuestionTest.*;
 import static qna.domain.UserTest.*;
 
-import java.util.List;
-
+import org.assertj.core.api.InstanceOfAssertFactories;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,36 +20,39 @@ class AnswerRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
+    private User savedQuestionWriter;
+    private User savedAnswerWriter;
+    private Question savedQuestion;
+    private Answer savedAnswer;
+
+    @BeforeEach
+    void setUp() {
+        userRepository.deleteAllInBatch();
+        questionRepository.deleteAllInBatch();
+        answerRepository.deleteAllInBatch();
+        this.savedQuestionWriter = userRepository.save(newUser("1"));
+        this.savedAnswerWriter = userRepository.save(newUser("2"));
+        this.savedQuestion = questionRepository.save(newQuestion("1").writeBy(this.savedQuestionWriter));
+        savedAnswer = answerRepository.save(new Answer(savedAnswerWriter, savedQuestion, "answerContents"));
+    }
+
     @Test
     void 답변_저장_및_찾기() {
-        User questionWriter = userRepository.save(newUser("1"));
-        Question question = questionRepository.save(newQuestion("1"));
-        question.writeBy(questionWriter);
-        User answerWriter = userRepository.save(newUser("2"));
-        Answer answer = new Answer(answerWriter, question, "answerContents");
-        Answer actual = answerRepository.save(answer);
         assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getCreatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isEqualTo(actual.getCreatedAt()),
-            () -> assertThat(actual.isDeleted()).isFalse(),
-            () -> assertThat(actual.getQuestion()).isEqualTo(answer.getQuestion()),
-            () -> assertThat(actual.getContents()).isEqualTo(answer.getContents()),
-            () -> assertThat(actual.getWriter()).isEqualTo(answer.getWriter())
+            () -> assertThat(savedAnswer.getId()).isNotNull(),
+            () -> assertThat(savedAnswer.getCreatedAt()).isNotNull(),
+            () -> assertThat(savedAnswer.getUpdatedAt()).isNotNull(),
+            () -> assertThat(savedAnswer.getUpdatedAt()).isEqualTo(savedAnswer.getCreatedAt()),
+            () -> assertThat(savedAnswer.isDeleted()).isFalse(),
+            () -> assertThat(savedAnswer.getQuestion()).isEqualTo(savedQuestion),
+            () -> assertThat(savedAnswer.getContents()).isEqualTo("answerContents"),
+            () -> assertThat(savedAnswer.getWriter()).isEqualTo(savedAnswerWriter)
         );
-        assertThat(answerRepository.findByIdAndDeletedFalse(actual.getId())).contains(answer);
+        assertThat(answerRepository.findByIdAndDeletedFalse(savedAnswer.getId())).contains(savedAnswer);
     }
 
     @Test
     void 답변_삭제여부_변경() {
-        User questionWriter = userRepository.save(newUser("1"));
-        Question question = questionRepository.save(newQuestion("1"));
-        question.writeBy(questionWriter);
-        User answerWriter = userRepository.save(newUser("2"));
-        Answer answer = new Answer(answerWriter, question, "answerContents");
-        Answer savedAnswer = answerRepository.save(answer);
-
         Answer findAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId())
             .orElseThrow(RuntimeException::new);
         assertThat(findAnswer).isEqualTo(savedAnswer);
@@ -59,20 +62,13 @@ class AnswerRepositoryTest {
 
     @Test
     void 삭제되지않은_질문에대한_답변들_찾기() {
-        User questionWriter = userRepository.save(newUser("1"));
-        Question question = newQuestion("1");
-        Question savedQuestion = questionRepository.save(question);
-        savedQuestion.writeBy(questionWriter);
+        User savedAnswerWriter2 = userRepository.save(newUser("3"));
+        Answer savedAnswer2 = answerRepository.save(new Answer(savedAnswerWriter2, savedQuestion, "answerContents2"));
 
-        User answerWriter = userRepository.save(newUser("2"));
-        Answer savedAnswer1 = answerRepository.save(new Answer(answerWriter, savedQuestion, "answerContents1"));
-        Answer savedAnswer2 = answerRepository.save(new Answer(answerWriter, savedQuestion, "answerContents2"));
-
-        Question findQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId())
-            .orElseThrow(RuntimeException::new);
-
-        List<Answer> findAnswers = findQuestion.getAnswers();
-        assertThat(findAnswers).hasSize(2);
-        assertThat(findAnswers).containsExactly(savedAnswer1, savedAnswer2);
+        assertThat(questionRepository.findByIdAndDeletedFalse(savedQuestion.getId()))
+            .get()
+            .extracting(Question::getAnswers, InstanceOfAssertFactories.LIST)
+            .hasSize(2)
+            .containsExactly(savedAnswer, savedAnswer2);
     }
 }

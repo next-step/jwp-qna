@@ -6,8 +6,10 @@ import static qna.domain.UserTest.*;
 
 import java.util.UUID;
 
+import javax.persistence.EntityManager;
 import javax.validation.ConstraintViolationException;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -17,37 +19,46 @@ import org.springframework.dao.DataIntegrityViolationException;
 class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    EntityManager em;
+
+    private User savedUser;
+
+    @BeforeEach
+    void setUp() {
+        userRepository.deleteAllInBatch();
+        this.savedUser = userRepository.save(newUser("1"));
+    }
 
     @Test
     void 유저_저장_및_찾기() {
         User user = newUser("1");
-        User actual = userRepository.save(user);
         assertAll(
-            () -> assertThat(actual.getId()).isNotNull(),
-            () -> assertThat(actual.getUserId()).isEqualTo(user.getUserId()),
-            () -> assertThat(actual.getPassword()).isEqualTo(user.getPassword()),
-            () -> assertThat(actual.getName()).isEqualTo(user.getName()),
-            () -> assertThat(actual.getEmail()).isEqualTo(user.getEmail()),
-            () -> assertThat(actual.getCreatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isNotNull(),
-            () -> assertThat(actual.getUpdatedAt()).isEqualTo(actual.getCreatedAt())
+            () -> assertThat(savedUser.getId()).isNotNull(),
+            () -> assertThat(savedUser.getUserId()).isEqualTo(user.getUserId()),
+            () -> assertThat(savedUser.getPassword()).isEqualTo(user.getPassword()),
+            () -> assertThat(savedUser.getName()).isEqualTo(user.getName()),
+            () -> assertThat(savedUser.getEmail()).isEqualTo(user.getEmail()),
+            () -> assertThat(savedUser.getCreatedAt()).isNotNull(),
+            () -> assertThat(savedUser.getUpdatedAt()).isNotNull(),
+            () -> assertThat(savedUser.getUpdatedAt()).isEqualTo(savedUser.getCreatedAt())
         );
-        assertThat(userRepository.findByUserId(user.getUserId())).contains(actual);
+        assertThat(userRepository.findByUserId(user.getUserId())).contains(savedUser);
     }
 
     @Test
     void 유저_비밀번호_변경() {
-        User user = userRepository.save(newUser("1"));
         String newPassword = "password2";
-        user.setPassword(newPassword);
-        String password = userRepository.findById(user.getId()).orElseThrow(RuntimeException::new)
-            .getPassword();
-        assertThat(password).isEqualTo(newPassword);
+        savedUser.setPassword(newPassword);
+        em.flush();
+        assertThat(userRepository.findById(savedUser.getId()))
+            .get()
+            .extracting(User::getPassword)
+            .isEqualTo(newPassword);
     }
 
     @Test
     void 유저아이디는_유니크() {
-        User savedUser = userRepository.save(newUser("1"));
         User sameUserIdUser = new User(savedUser.getUserId(), "password", "test@email.com",
             UUID.randomUUID().toString());
         assertThatThrownBy(() -> userRepository.save(sameUserIdUser))

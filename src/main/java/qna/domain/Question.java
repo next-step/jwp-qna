@@ -2,7 +2,6 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,11 +51,7 @@ public class Question extends BaseTime {
     }
 
     public Question writeBy(User writer) {
-        if (Objects.nonNull(writer)) {
-            writer.getQuestions().remove(this);
-        }
         this.writer = writer;
-        writer.getQuestions().add(this);
         return this;
     }
 
@@ -92,4 +87,9 @@ public class Question extends BaseTime {
         return answers;
     }
 
+    public void addAnswer(Answer answer) {
+        if (!this.answers.contains(answer)) {
+            this.answers.add(answer);
+        }
+    }
 }
