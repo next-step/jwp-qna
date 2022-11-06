@@ -63,7 +63,7 @@ alter table user
 ```
 
 ### 구현 기능 목록
-- [ ] BaseEntity 생성
+- [x] BaseEntity 생성
 - [ ] Answer 엔티티 클래스 작성 및 테스트
 - [ ] DeleteHistory 엔티티 클래스 작성 및 테스트
 - [ ] Question 엔티티 클래스 작성 및 테스트
