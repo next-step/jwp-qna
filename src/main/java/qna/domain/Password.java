@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import qna.UnAuthorizedException;
 
 @Embeddable
 public class Password {
@@ -19,6 +20,16 @@ public class Password {
 
     public static Password of(String password) {
         return new Password(password);
+    }
+
+    public void validateMatchPassword(Password password) {
+        if(!matchPassword(password)) {
+            throw new UnAuthorizedException();
+        }
+    }
+
+    private boolean matchPassword(Password password) {
+        return this.equals(password);
     }
 
     @Override
