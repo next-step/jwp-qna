@@ -100,8 +100,6 @@ public class Answer extends BaseTime {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", user=" + user +
-                ", question=" + question+
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

@@ -10,6 +10,7 @@ import qna.domain.entity.DeleteHistory;
 import qna.domain.entity.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -89,5 +90,14 @@ class DeleteHistoryRepositoryTest {
         DeleteHistory savedDeleteHistory = deleteHistorys.save(deleteHistory);
         deleteHistorys.flush();
         return savedDeleteHistory;
+    }
+
+    @Test
+    @DisplayName("toString 테스트")
+    void toStringTest() {
+        DeleteHistory deleteHistory = deleteHistorys.findByContentId(Long.valueOf(1))
+                .get();
+
+        assertThatNoException().isThrownBy(() -> deleteHistory.toString());
     }
 }

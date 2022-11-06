@@ -10,6 +10,7 @@ import qna.domain.entity.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -96,5 +97,14 @@ class QuestionRepositoryTest {
         Question savedQuestion = questions.save(question);
         questions.flush();
         return savedQuestion;
+    }
+
+    @Test
+    @DisplayName("toString 테스트")
+    void toStringTest() {
+        Question question = questions.findByTitle("타이틀")
+                .get();
+
+        assertThatNoException().isThrownBy(() -> question.toString());
     }
 }

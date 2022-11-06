@@ -10,6 +10,7 @@ import qna.domain.entity.Question;
 import qna.domain.entity.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -121,5 +122,14 @@ class AnswerRepositoryTest {
         Answer savedDeleteHistory = answers.save(answer);
         answers.flush();
         return savedDeleteHistory;
+    }
+
+    @Test
+    @DisplayName("toString 테스트")
+    void toStringTest() {
+        Answer answer = answers.findByContents("콘텐츠")
+                .get();
+
+        assertThatNoException().isThrownBy(() -> answer.toString());
     }
 }

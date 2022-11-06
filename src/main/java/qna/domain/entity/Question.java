@@ -94,7 +94,6 @@ public class Question extends BaseTime {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", user=" + user.toString() +
                 ", deleted=" + deleted +
                 '}';
     }
