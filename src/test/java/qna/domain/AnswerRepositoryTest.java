@@ -19,44 +19,57 @@ class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
     @Test
     @DisplayName("데이터 저장 확인")
     void save() {
-        Answer answer = AnswerTest.A1;
-        Answer savedAnswer = answerRepository.save(AnswerTest.A1);
+        Question question = questionRepository.save(QuestionTest.Q3);
 
-        assertAll(
-                () -> assertThat(savedAnswer.getId()).isNotNull(),
-                () -> assertThat(savedAnswer.getWriterId()).isEqualTo(answer.getWriterId()),
-                () -> assertThat(savedAnswer.getQuestionId()).isEqualTo(answer.getQuestionId()),
-                () -> assertThat(savedAnswer.getContents()).isEqualTo(answer.getContents())
-        );
+        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        Answer savedAnswer = answerRepository.save(answer);
+
+        assertThat(savedAnswer).isEqualTo(answer);
+        assertThat(savedAnswer.getQuestion()).isEqualTo(question);
     }
 
     @Test
     @DisplayName("저장한 답변과 해당 답변이 같은지 확인")
     void read() {
-        Answer savedAnswer = answerRepository.save(AnswerTest.A1);
+        Question question = questionRepository.save(QuestionTest.Q3);
+
+        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        Answer savedAnswer = answerRepository.save(answer);
+
         Optional<Answer> findAnswer = answerRepository.findById(savedAnswer.getId());
 
         assertThat(savedAnswer).isEqualTo(findAnswer.get());
     }
 
-    @Transactional
+    @Test
     @DisplayName("저장한 답변의 질문 변경 시 일치 여부 확인")
     void update() {
-        Answer savedAnswer = answerRepository.save(AnswerTest.A1);
-        savedAnswer.toQuestion(QuestionTest.Q2);
+        Question question = questionRepository.save(QuestionTest.Q3);
+
+        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        Answer savedAnswer = answerRepository.save(answer);
+
+        savedAnswer.toQuestion(QuestionTest.Q4);
 
         Optional<Answer> findAnswer = answerRepository.findById(savedAnswer.getId());
 
-        assertThat(savedAnswer.getQuestionId()).isEqualTo(findAnswer.get().getQuestionId());
+        assertThat(savedAnswer.getQuestion()).isEqualTo(findAnswer.get().getQuestion());
     }
 
     @Test
     @DisplayName("저장한 답변 삭제 확인")
     void delete() {
-        Answer savedAnswer = answerRepository.save(AnswerTest.A1);
+        Question question = questionRepository.save(QuestionTest.Q3);
+
+        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        Answer savedAnswer = answerRepository.save(answer);
+
         answerRepository.delete(savedAnswer);
 
         Optional<Answer> findAnswer = answerRepository.findById(savedAnswer.getId());
@@ -68,7 +81,10 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 삭제 불가 확인")
     void answer_cannot_deleted() {
-        Answer savedAnswer = answerRepository.save(AnswerTest.A1);
+        Question question = questionRepository.save(QuestionTest.Q3);
+
+        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        Answer savedAnswer = answerRepository.save(answer);
 
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
 
@@ -78,7 +94,11 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 삭제 확인")
     void answer_can_deleted() {
-        Answer savedAnswer = answerRepository.save(AnswerTest.A1);
+        Question question = questionRepository.save(QuestionTest.Q3);
+
+        Answer answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        Answer savedAnswer = answerRepository.save(answer);
+
         savedAnswer.setDeleted(true);
 
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer.getId());
@@ -89,13 +109,17 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 false 개수 확인 1")
     void find_answer_not_deleted_count() {
-        Answer savedAnswer1 = answerRepository.save(AnswerTest.A1);
+        Question question = questionRepository.save(QuestionTest.Q3);
+
+        Answer answer1 = new Answer(UserTest.JAVAJIGI, question, "contents");
+        Answer savedAnswer1 = answerRepository.save(answer1);
         savedAnswer1.setDeleted(false);
 
-        Answer savedAnswer2 = answerRepository.save(AnswerTest.A2);
+        Answer answer2 = new Answer(UserTest.JAVAJIGI, question, "contents");
+        Answer savedAnswer2 = answerRepository.save(answer2);
         savedAnswer2.setDeleted(false);
 
-        List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(savedAnswer2.getQuestionId());
+        List<Answer> findAnswers = answerRepository.findByQuestionAndDeletedFalse(question);
 
         assertThat(findAnswers).contains(savedAnswer1, savedAnswer2);
         assertThat(findAnswers).hasSize(2);
@@ -105,15 +129,17 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("답변 false 개수 확인 2")
     void find_answer_not_deleted_count_2() {
-        Answer savedAnswer1 = answerRepository.save(AnswerTest.A1);
-        savedAnswer1.toQuestion(QuestionTest.Q2);
+        Question question = questionRepository.save(QuestionTest.Q3);
+
+        Answer answer1 = new Answer(UserTest.JAVAJIGI, question, "contents");
+        Answer savedAnswer1 = answerRepository.save(answer1);
         savedAnswer1.setDeleted(false);
 
-        Answer savedAnswer2 = answerRepository.save(AnswerTest.A2);
-        savedAnswer1.toQuestion(QuestionTest.Q2);
+        Answer answer2 = new Answer(UserTest.JAVAJIGI, question, "contents");
+        Answer savedAnswer2 = answerRepository.save(answer2);
         savedAnswer2.setDeleted(true);
 
-        List<Answer> findAnswers = answerRepository.findByQuestionIdAndDeletedFalse(savedAnswer2.getQuestionId());
+        List<Answer> findAnswers = answerRepository.findByQuestionAndDeletedFalse(question);
 
         assertThat(findAnswers).containsExactlyInAnyOrder(savedAnswer1);
         assertThat(findAnswers).hasSize(1);

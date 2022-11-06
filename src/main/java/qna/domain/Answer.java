@@ -19,7 +19,14 @@ public class Answer extends BaseTimeEntity {
 
     private Long writerId;
 
-    private Long questionId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "question_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_answer_to_question")
+    )
+    private Question question;
 
     @Lob
     private String contents;
@@ -43,7 +50,7 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -52,7 +59,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -71,12 +78,12 @@ public class Answer extends BaseTimeEntity {
         this.writerId = writerId;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public String getContents() {
@@ -100,7 +107,7 @@ public class Answer extends BaseTimeEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", questionId=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
