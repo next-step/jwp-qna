@@ -4,13 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.User;
-import qna.domain.UserTest;
 
 @DataJpaTest
 class UserRepositoryTest {
@@ -24,27 +21,29 @@ class UserRepositoryTest {
     @Test
     @DisplayName("Id가 null 일 경우 em.persist()를 호출하여 영속성 컨텍스트에 저장한다")
     void save_호출시_영속시킴() {
-        User expected = new User("writer", "1111", "작성자", "writer@naver.com");
-        User actual = users.save(expected);
-        actual.setId(2L);
-        assertThat(actual.getId()).isEqualTo(expected.getId());
-        assertThat(actual == expected).isTrue();
+        User loginUser = new User("writer", "1111", "작성자", "writer@naver.com");
+        User target = new User("writer", "1111", "작성자2", "writer2@naver.com");
+        User actual = users.save(loginUser);
+        actual.update(loginUser, target);
+        assertThat(actual.getId()).isEqualTo(loginUser.getId());
+        assertThat(actual == loginUser).isTrue();
+        assertThat(loginUser.equalsNameAndEmail(target)).isTrue();
     }
 
     @Test
     @DisplayName("Id가 이미 존재 할 경우 merge()가 호출되면서 select 쿼리 발생, 동등성과 동일성이 보장되지 않는다")
     void merge() {
-        User expected = UserTest.JAVAJIGI;
-        User actual = users.save(expected);
-        actual.setId(2L);
-        assertThat(actual.getId()).isNotEqualTo(expected.getId());
-        assertThat(actual == expected).isFalse();
+        User loginUser = new User(1L, "writer", "1111", "작성자", "writer@naver.com");
+        User target = new User("writer", "1111", "작성자2", "writer2@naver.com");
+        User actual = users.save(loginUser);
+        actual.update(loginUser, target);
+        assertThat(loginUser.equalsNameAndEmail(actual)).isFalse();
     }
 
     @Test
     @DisplayName("delete() 는 Id 값으로 delete 쿼리 수행")
     void delete() {
-        User expected = UserTest.JAVAJIGI;
+        User expected = new User("writer", "1111", "작성자", "writer@naver.com");
         User actual = users.save(expected);
         users.delete(actual);
         users.flush();
@@ -64,25 +63,22 @@ class UserRepositoryTest {
     @Test
     @DisplayName("메서드 이름으로 카운트 쿼리 생성")
     void countByName() {
-        User makeUser = UserTest.JAVAJIGI;
-        User makeUser2 = UserTest.SANJIGI;
-        users.save(makeUser);
-        users.save(makeUser2);
-        assertThat(users.countByName("name")).isEqualTo(2);
+        User writer = new User("writer", "1111", "작성자", "writer@naver.com");
+        User writer2 = new User("writer2", "2222", "작성자", "writer2@naver.com");
+        users.save(writer);
+        users.save(writer2);
+        assertThat(users.countByName("작성자")).isEqualTo(2);
     }
 
-    @ParameterizedTest
+    @Test
     @DisplayName("변경을 감지하여 update 쿼리가 수행된다")
-    @CsvSource(value = "reader:2222:열람자:reader@naver.com", delimiter = ':')
-    void update(String userId, String password, String name, String email) {
-        User user1 = users.save(UserTest.JAVAJIGI);
-        user1.setUserId(userId);
-        user1.setPassword(password);
-        user1.setName(name);
-        user1.setEmail(email);
+    void update() {
+        User loginUser = users.save(new User("writer", "1111", "작성자", "writer@naver.com"));
+        User target = new User("writer", "1111", "작성자2", "writer2@naver.com");
+        loginUser.update(loginUser, target);
         flushAndClear();
-        User user2 = users.findById(user1.getId()).get();
-        assertThat(user2.getUserId()).isEqualTo(userId);
+        User findLoginUser = users.findById(loginUser.getId()).get();
+        assertThat(findLoginUser.getUserId()).isEqualTo(loginUser.getUserId());
     }
 
     private void flushAndClear() {
