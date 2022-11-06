@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.Rollback;
 
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -90,7 +88,7 @@ class AnswerRepositoryTest {
     @Test
     void 답변_수정() {
         Answer answer = answerRepository.save(new Answer(user, question, "contents"));
-        answer.setContents("Update Contents");
+        answer.changeContents("Update Contents");
         Answer actual = answerRepository.findById(answer.getId()).get();
         assertThat(actual.getContents()).isEqualTo("Update Contents");
     }

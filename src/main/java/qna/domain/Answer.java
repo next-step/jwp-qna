@@ -64,6 +64,14 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
+    public void changeContents(String contents) {
+        this.contents = contents;
+    }
+
+    public void delete() {
+        this.deleted = true;
+    }
+
     public Long getId() {
         return this.id;
     }
@@ -80,16 +88,8 @@ public class Answer extends BaseEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
