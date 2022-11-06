@@ -24,4 +24,8 @@
         - [ ] 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 정의
 2. 기능 목록
     - [ ] DDL 쿼리를 보고 연관관계 유추
+        - [x] Answer의 Question 다대일 매핑
+        - [x] Answer의 Writer 다대일 매핑
+        - [ ] DeleteHistory의 Deleter 다대일 매핑
+        - [ ] Question의 Writer 다대일 매핑
     - [ ] 이와 관련된 테스트 코드 작성
