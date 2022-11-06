@@ -18,10 +18,7 @@ class UserRepositoryTest {
         User user = userRepository.save(UserTest.JAVAJIGI);
         assertAll(
                 () -> assertThat(user.getId()).isNotNull(),
-                () -> assertThat(user.getUserId()).isEqualTo(UserTest.JAVAJIGI.getUserId()),
-                () -> assertThat(user.getEmail()).isEqualTo(UserTest.JAVAJIGI.getEmail()),
-                () -> assertThat(user.getName()).isEqualTo(UserTest.JAVAJIGI.getName()),
-                () -> assertThat(user.getPassword()).isEqualTo(UserTest.JAVAJIGI.getPassword()),
+                () -> assertThat(user.equalsNameAndEmail(UserTest.JAVAJIGI)).isTrue(),
                 () -> assertThat(user.getCreatedAt()).isNotNull(),
                 () -> assertThat(user.getUpdatedAt()).isNotNull()
         );
@@ -33,10 +30,7 @@ class UserRepositoryTest {
         User actual = userRepository.findById(user.getId()).get();
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getUserId()).isEqualTo(UserTest.JAVAJIGI.getUserId()),
-                () -> assertThat(actual.getEmail()).isEqualTo(UserTest.JAVAJIGI.getEmail()),
-                () -> assertThat(actual.getName()).isEqualTo(UserTest.JAVAJIGI.getName()),
-                () -> assertThat(actual.getPassword()).isEqualTo(UserTest.JAVAJIGI.getPassword()),
+                () -> assertThat(user.equalsNameAndEmail(UserTest.JAVAJIGI)).isTrue(),
                 () -> assertThat(actual.getCreatedAt()).isNotNull(),
                 () -> assertThat(actual.getUpdatedAt()).isNotNull()
         );
@@ -58,10 +52,11 @@ class UserRepositoryTest {
     }
 
     @Test
-    void 유저_이름_수정() {
+    void 유저_수정() {
         User user = userRepository.save(UserTest.JAVAJIGI);
-        user.setName("giraffelim");
+        User expected = new User("newUserId", "password", "giraffelim", "email");
+        user.update(user, expected);
         User actual = userRepository.findByUserId(user.getUserId()).get();
-        assertThat(actual.getName()).isEqualTo("giraffelim");
+        assertThat(actual.equalsNameAndEmail(expected)).isTrue();
     }
 }
