@@ -2,6 +2,8 @@ package qna.domain.deletehistory;
 
 import org.springframework.data.annotation.CreatedDate;
 import qna.domain.ContentType;
+import qna.domain.answer.Answer;
+import qna.domain.question.Question;
 import qna.domain.user.User;
 
 import javax.persistence.*;
@@ -35,6 +37,14 @@ public class DeleteHistory {
     }
 
     protected DeleteHistory() {
+    }
+
+    public static DeleteHistory of(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+    }
+
+    public static DeleteHistory of(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
     }
 
     @Override
