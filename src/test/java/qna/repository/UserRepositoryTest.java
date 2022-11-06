@@ -19,23 +19,14 @@ class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        userRepository.deleteAll();
-    }
-
     @DisplayName("유저를 저장 후 확인")
     @Test
     void save() {
         User user = userRepository.save(UserTest.JAVAJIGI);
 
-        assertAll(
-            () -> assertThat(user.getId()).isNotNull(),
-            () -> assertThat(user.getUserId()).isEqualTo(UserTest.JAVAJIGI.getUserId()),
-            () -> assertThat(user.getPassword()).isEqualTo(UserTest.JAVAJIGI.getPassword()),
-            () -> assertThat(user.getName()).isEqualTo(UserTest.JAVAJIGI.getName()),
-            () -> assertThat(user.getEmail()).isEqualTo(UserTest.JAVAJIGI.getEmail())
-        );
+        Optional<User> result = userRepository.findById(user.getId());
+
+        assertThat(result).get().isEqualTo(user);
     }
 
     @DisplayName("유저를 저장 후 조회 확인")
@@ -46,10 +37,8 @@ class UserRepositoryTest {
 
         List<User> result = userRepository.findAll();
 
-        assertAll(
-            () -> assertThat(result).hasSize(2),
-            () -> assertThat(result).contains(user1, user2)
-        );
+        assertThat(result).hasSize(2)
+                .containsExactly(user1, user2);
     }
 
     @DisplayName("유저를 저장 후 수정 확인")
