@@ -21,6 +21,10 @@ public class Name {
         return new Name(name);
     }
 
+    public boolean isEqualName(Name name) {
+        return this.equals(name);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

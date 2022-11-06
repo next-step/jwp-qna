@@ -16,6 +16,7 @@ public class NameTest {
 
         //then
         assertThat(actual).isEqualTo(expect);
+        assertThat(actual.isEqualName(expect)).isTrue();
     }
 
     @Test
@@ -28,6 +29,7 @@ public class NameTest {
 
         //then
         assertThat(actual).isNotEqualTo(expect);
+        assertThat(actual.isEqualName(expect)).isFalse();
     }
 
     @Test

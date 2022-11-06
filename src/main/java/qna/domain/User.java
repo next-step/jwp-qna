@@ -51,16 +51,8 @@ public class User extends BaseEntity {
             return false;
         }
 
-        return isEqualName(target) &&
-                isEqualEmail(target);
-    }
-
-    private boolean isEqualName(User user) {
-        return name.equals(user.name);
-    }
-
-    private boolean isEqualEmail(User user) {
-        return email.equals(user.email);
+        return this.name.isEqualName(target.name) &&
+                email.isEqualEmail(target.email);
     }
 
     public boolean isGuestUser() {
