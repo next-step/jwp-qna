@@ -98,4 +98,14 @@ public class AnswerTest {
         assertThatThrownBy(() -> TestAnswerFactory.create(writer, question)).isInstanceOf(NotFoundException.class)
                 .hasMessage(ErrorCode.삭제된_질문에는_답변할_수_없음.getErrorMessage());
     }
+
+    @Test
+    void 존재하지_않는_질문에_답변을_생성하면_예외를_발생시킨다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+
+        //when
+        assertThatThrownBy(() -> TestAnswerFactory.create(writer, null)).isInstanceOf(NotFoundException.class)
+                .hasMessage(ErrorCode.질문이_존재하지_않음.getErrorMessage());
+    }
 }
