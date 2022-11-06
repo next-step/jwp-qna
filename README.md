@@ -111,5 +111,5 @@ alter table question
 - [x] QnaServiceTest 수정
 - [x] AnswerRepositoryTest 수정
 - [x] QuestionRepositoryTest 수정
-- [ ] UserRepositoryTest 수정
+- [x] UserRepositoryTest 수정
 - [ ] DeleteHistoryTest 수정
