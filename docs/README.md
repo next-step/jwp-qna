@@ -10,4 +10,4 @@
 * [x] DeleteHistory로 User를 참조할 수 있게 매핑
 * [x] Answer로 User를 참조할 수 있게 매핑
 * [x] Answer로 Question을 참조할 수 있게 매핑
-* [ ] Question으로 Answer를 참조할 수 있게 매핑
+* [x] Question으로 Answer를 참조할 수 있게 매핑
