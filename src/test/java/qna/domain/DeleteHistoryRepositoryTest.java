@@ -19,12 +19,17 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Transactional
     @Test
     @DisplayName("저장한 DeleteHistory 의 id 가 null 이 아닌지 확인")
     void create() {
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
+        User deleter = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(deleter);
 
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, deleter, LocalDateTime.now());
         DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
 
         assertThat(savedDeleteHistory.getId()).isNotNull();
@@ -34,7 +39,10 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("(findById 테스트) 저장한 DeleteHistory 와 조회한 DeleteHistory 가 같은지(동일성) 확인")
     void read() {
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
+        User deleter = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(deleter);
+
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, deleter, LocalDateTime.now());
         DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
 
         Optional<DeleteHistory> findDeleteHistory = deleteHistoryRepository.findById(savedDeleteHistory.getId());
@@ -49,8 +57,13 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("(findAll 테스트) 저장한 DeleteHistory 와 조회한 DeleteHistory 가 같은지(동일성) 확인")
     void read2() {
-        DeleteHistory deleteHistory1 = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
-        DeleteHistory deleteHistory2 = new DeleteHistory(ContentType.ANSWER, 2L, 2L, LocalDateTime.now());
+        User deleter1 = new User("user1", "password", "name", "test@email.com");
+        User deleter2 = new User("user2", "password", "name", "test@email.com");
+        userRepository.save(deleter1);
+        userRepository.save(deleter2);
+
+        DeleteHistory deleteHistory1 = new DeleteHistory(ContentType.ANSWER, 1L, deleter1, LocalDateTime.now());
+        DeleteHistory deleteHistory2 = new DeleteHistory(ContentType.ANSWER, 2L, deleter2, LocalDateTime.now());
         DeleteHistory savedDeleteHistory1 = deleteHistoryRepository.save(deleteHistory1);
         DeleteHistory savedDeleteHistory2 = deleteHistoryRepository.save(deleteHistory2);
 
@@ -66,10 +79,11 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("저장한 deleteHistory 삭제 후 조회 시 deleteHistory 가 없는지 확인")
     void delete() {
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(
-                new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now())
-        );
+        User deleter = new User("user1", "password", "name", "test@email.com");
+        userRepository.save(deleter);
 
+        DeleteHistory deleteHistory =
+                deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, 1L, deleter, LocalDateTime.now()));
         deleteHistoryRepository.delete(deleteHistory);
 
         Optional<DeleteHistory> findDeleteHistory = deleteHistoryRepository.findById(deleteHistory.getId());
