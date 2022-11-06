@@ -72,15 +72,6 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("삭제 상태가 아닌 결과를 리턴한다.")
     void findByQuestionIdAndDeleted() {
-//        List<Answer> answers = answerRepository.saveAll(Arrays.asList(A1, A2));
-//
-//        Question question = questionRepository.findByIdAndDeletedFalse(A1.getQuestionId()).get();
-//        List<Answer> savedAnswers = question.getAnswers();
-//
-//        savedAnswers.forEach(answer -> {
-//            assertThat(answer.isDeleted()).isEqualTo(false);
-//        });
-
         User questionWriter = userRepository.findByUserId(JAVAJIGI.getUserId()).get();
         Question savedQuestion = questionRepository.findByIdAndDeletedFalse(Q1.getId()).get();
         savedQuestion.writeBy(questionWriter);
