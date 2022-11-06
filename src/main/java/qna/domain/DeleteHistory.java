@@ -16,18 +16,21 @@ public class DeleteHistory {
     private ContentType contentType;
     @Column(name = "content_id")
     private Long contentId;
-    @Column(name = "deleted_by_id")
-    private Long deletedById;
     @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
+
+    @JoinColumn(name = "deleted_by_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    @ManyToOne
+    private User deleteByUser;
+
 
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deleteByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deleteByUser = deleteByUser;
         this.createDate = createDate;
     }
 
@@ -39,12 +42,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(deleteByUser, that.deleteByUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, deleteByUser);
     }
 
     @Override
@@ -53,7 +56,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + deleteByUser.getId() +
                 ", createDate=" + createDate +
                 '}';
     }

@@ -31,6 +31,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "writer")
     private List<Answer> answers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "deleteByUser")
+    private List<DeleteHistory> deleteHistories = new ArrayList<>();
+
     protected User() {
     }
 
