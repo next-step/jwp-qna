@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.entity;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 

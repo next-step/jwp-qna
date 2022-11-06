@@ -1,7 +1,8 @@
-package qna.domain;
+package qna.domain.entity;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import qna.domain.ContentType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
