@@ -20,9 +20,11 @@ public class UserTest {
     @Test
     @DisplayName("User 객체를 저장하면 Id가 자동생성 되어 Not Null 이다.")
     void save() {
-        assertThat(SANJIGI.getId()).isNull();
-        assertThat(userRepository.save(SANJIGI).getId()).isNotNull();
-        assertThat(userRepository.save(JAVAJIGI).getId()).isNotNull();
+        User user = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        assertThat(user.getId()).isNull();
+        User actual = userRepository.save(user);
+        assertThat(actual.getId()).isNotNull();
+        assertThat(actual.getUpdatedAt()).isNull();
     }
 
     @Test
@@ -40,7 +42,6 @@ public class UserTest {
     void update() {
         User user = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
         User actual = userRepository.save(user);
-        assertThat(actual.getUpdatedAt()).isNull();
 
         String id = "Updated Id";
         actual.setUserId(id);

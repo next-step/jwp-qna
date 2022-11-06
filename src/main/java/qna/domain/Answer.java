@@ -15,6 +15,8 @@ public class Answer extends BaseTime {
 
     private Long writerId;
     private Long questionId;
+
+    @Lob
     private String contents;
 
     @Column(nullable = false)

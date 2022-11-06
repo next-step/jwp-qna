@@ -20,9 +20,11 @@ public class QuestionTest {
     @Test
     @DisplayName("Question 객체를 저장하면 Id가 자동생성 되어 Not Null 이다.")
     void save() {
-        assertThat(Q1.getId()).isNotNull();
-        assertThat(questionRepository.save(Q1).getId()).isNotNull();
-        assertThat(questionRepository.save(Q2).getId()).isNotNull();
+        Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        assertThat(question.getId()).isNull();
+        Question actual = questionRepository.save(question);
+        assertThat(actual.getId()).isNotNull();
+        assertThat(actual.getUpdatedAt()).isNull();
     }
 
     @Test
@@ -40,7 +42,6 @@ public class QuestionTest {
     void update() {
         Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
         Question actual = questionRepository.save(question);
-        assertThat(actual.getUpdatedAt()).isNull();
 
         Long writerId = 5L;
         actual.setWriterId(writerId);

@@ -9,9 +9,10 @@ public class Question extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String title;
 
+    @Lob
     private String contents;
     private Long writerId;
 
