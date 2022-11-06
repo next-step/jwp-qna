@@ -80,6 +80,6 @@ add constraint fk_question_writer
 foreign key (writer_id)
 references user
 ```
-- [ ]  Answer 엔티티에 연관 관계 매핑
-- [ ]  DeleteHistory 엔티티에 연관 관계 매핑
-- [ ]  Question 엔티티에 연관 관계 매핑
+- [x]  Answer 엔티티에 연관 관계 매핑
+- [x]  DeleteHistory 엔티티에 연관 관계 매핑
+- [x]  Question 엔티티에 연관 관계 매핑
