@@ -18,8 +18,7 @@ public class Question extends BaseEntity {
     private String title;
     @Lob
     private String contents;
-    @OneToOne
-    @JoinColumn(name = "writer_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
