@@ -8,6 +8,6 @@ import java.time.LocalDateTime;
 
 public class TestDeleteHistoryFactory {
     public static DeleteHistory create(User deleteBy) {
-        return new DeleteHistory(ContentType.QUESTION,1L , deleteBy, LocalDateTime.now());
+        return new DeleteHistory(ContentType.QUESTION, 1L, deleteBy, LocalDateTime.now());
     }
 }

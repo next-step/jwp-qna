@@ -73,7 +73,7 @@ public class Question extends BaseEntity  {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writer=" + writer +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }

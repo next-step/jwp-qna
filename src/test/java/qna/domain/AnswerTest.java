@@ -8,9 +8,6 @@ import qna.UnAuthorizedException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-
     @DisplayName("작성자가 없는 답변은 예외가 발생한다")
     @Test
     void no_writer_exception_test() {
