@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.NotFoundException;
 import qna.domain.Question;
-import qna.domain.User;
+import qna.domain.UserTest;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -19,22 +19,16 @@ class QuestionRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 
-    @Autowired
-    UserRepository userRepository;
-
-
     @DisplayName("Question을 저장할 수 있다.")
     @Test
     void save() {
-        User user = userRepository.save(new User("id", "password", "테스트", "email@kr.com"));
-        userRepository.save(user);
         Question question = new Question("title", "contents");
-        Question actual = questionRepository.save(question.writeBy(user));
+        Question actual = questionRepository.save(question.writeBy(UserTest.JAVAJIGI));
 
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
-                () -> assertThat(actual.getWriter()).isEqualTo(user),
+                () -> assertThat(actual.getWriter()).isEqualTo(UserTest.JAVAJIGI),
                 () -> assertThat(actual.getContents()).isEqualTo(question.getContents())
         );
     }
@@ -63,14 +57,12 @@ class QuestionRepositoryTest {
     @DisplayName("저장된 Question의 값을 변경할 수 있다.")
     @Test
     void update() {
-        User user1 = userRepository.save(new User("kim", "passKim", "김철수", "kim@kr.com"));
-        User user2 = userRepository.save(new User("lee", "passLee", "이영희", "lee@kr.com"));
-        Question actual = questionRepository.save(new Question("title", "contents").writeBy(user1));
+        Question actual = questionRepository.save(new Question("title", "contents").writeBy(UserTest.JAVAJIGI));
 
-        actual.writeBy(user2);
+        actual.writeBy(UserTest.SANJIGI);
         Optional<Question> expect = questionRepository.findById(actual.getId());
 
-        assertThat(expect.orElseThrow(NotFoundException::new).isOwner(user2)).isTrue();
+        assertThat(expect.orElseThrow(NotFoundException::new).isOwner(UserTest.SANJIGI)).isTrue();
     }
 
     @DisplayName("삭제되지 않은 question 목록을 조회할 수 있다.")

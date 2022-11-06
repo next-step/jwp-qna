@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import qna.UnAuthorizedException;
 
 public class UserTest {
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+    public static final User JAVAJIGI = new User( "javajigi", "password", "name", "javajigi@slipp.net");
+    public static final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
 
     @DisplayName("userId와 password가 동일하면 name과 email 변경이 가능하다.")
     @Test
