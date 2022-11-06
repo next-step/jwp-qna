@@ -46,4 +46,10 @@
 - [x] answer
   - [x] question 연간관계 매핑 ( question_id -> question( id ) )
   - [x] user 연간관계 매핑 ( writer_id -> user( id ) )  
-  - [x  ] 매핑 학습 테스트
+  - [x] 매핑 학습 테스트
+  
+#### Step2 리뷰 사항 반영
+- [ ] Step2 1차 리뷰 사항 반영
+    - [ ] 생명주기를 고려해서 CascadeType.PERSIST 수정
+    - [ ] 환경을 고려해서 fetch 전략 변경하기
+    - [ ] toString 각 entity정보는 자기가 표출하도록 변경    
