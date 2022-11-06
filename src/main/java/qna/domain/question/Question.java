@@ -1,10 +1,14 @@
 package qna.domain.question;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import qna.CannotDeleteException;
 import qna.domain.answer.Answer;
 import qna.domain.common.BaseEntity;
+import qna.domain.history.DeleteHistory;
 import qna.domain.user.User;
 
 import java.util.Objects;
@@ -22,6 +26,8 @@ public class Question extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -44,6 +50,14 @@ public class Question extends BaseEntity {
         return this;
     }
 
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.deleted = true;
+        return DeleteHistory.createQuestionDeleteHistory(this);
+    }
+
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
@@ -60,28 +74,12 @@ public class Question extends BaseEntity {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User writerId) {
-        this.writer = writer;
     }
 
     public boolean isDeleted() {
