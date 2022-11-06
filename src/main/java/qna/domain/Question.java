@@ -1,5 +1,7 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -47,8 +50,26 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public void delete() {
+    private void delete() {
         this.deleted = true;
+    }
+
+    public List<DeleteHistory> deleteByUser(User user, List<Answer> answers) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
+
+        for (Answer answer : answers) {
+            answer.deleteByUser(user);
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, this.id, user));
+        }
+
+        this.delete();
+
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(), writer));
+
+        return deleteHistories;
     }
 
     public boolean isOwner(User writer) {
