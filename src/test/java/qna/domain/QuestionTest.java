@@ -39,7 +39,7 @@ public class QuestionTest {
         assertAll(
                 () -> assertThat(questionRepository.findByWriterId(1L))
                         .isPresent().get().extracting(Question::getContents).isEqualTo(Q1.getContents()),
-                () -> assertThat(questionRepository.findByWriterId(10L).isPresent()).isFalse()
+                () -> assertThat(questionRepository.findByWriterId(10L)).isEmpty()
         );
     }
 

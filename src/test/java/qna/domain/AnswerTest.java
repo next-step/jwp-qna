@@ -41,7 +41,7 @@ public class AnswerTest {
         assertAll(
                 () -> assertThat(answerRepository.findByWriterId(1L))
                         .isPresent().get().extracting(Answer::getContents).isEqualTo(A1.getContents()),
-                () -> assertThat(answerRepository.findByWriterId(10L).isPresent()).isFalse()
+                () -> assertThat(answerRepository.findByWriterId(10L)).isEmpty()
         );
     }
 
