@@ -1,9 +1,15 @@
-package qna.domain;
+package qna.repository;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.Question;
+import qna.domain.QuestionTest;
+import qna.domain.User;
+import qna.domain.UserTest;
+import qna.repository.QuestionRepository;
+import qna.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
