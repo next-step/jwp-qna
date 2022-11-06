@@ -1,103 +1,82 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
+import qna.CannotDeleteException;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.persistence.*;
 
 @Entity
-public class Question extends BaseEntity{
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	@Column(length = 100, nullable = false)
-	private String title;
-	@Lob
-	private String contents;
-	private Long writerId;
-	@Column(nullable = false)
-	private boolean deleted = false;
+public class Question extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(length = 100, nullable = false)
+    private String title;
+    @Lob
+    private String contents;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User writer;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers = new ArrayList<>();
+    @Column(nullable = false)
+    private boolean deleted = false;
 
-	protected Question() {
-	}
+    protected Question() {
+    }
 
-	public Question(String title, String contents) {
-		this(null, title, contents);
-	}
+    public Question(String title, String contents) {
+        this(null, title, contents);
+    }
 
-	public Question(Long id, String title, String contents) {
-		this.id = id;
-		this.title = title;
-		this.contents = contents;
-	}
+    public Question(Long id, String title, String contents) {
+        this.id = id;
+        this.title = title;
+        this.contents = contents;
+    }
 
-	public Question writeBy(User writer) {
-		this.writerId = writer.getId();
-		return this;
-	}
+    public Question writeBy(User writer) {
+        this.writer = writer;
+        return this;
+    }
 
-	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
-	}
+    public List<DeleteHistory> delete(final User loginUser) throws CannotDeleteException {
+        if (!writer.equals(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.deleted = true;
+        List<DeleteHistory> deleteHistories = deleteAnswers(loginUser);
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser.getId(), LocalDateTime.now()));
+        return deleteHistories;
+    }
 
-	public void addAnswer(Answer answer) {
-		answer.toQuestion(this);
-	}
+    private List<DeleteHistory> deleteAnswers(User loginUser) {
+        return answers.stream()
+                .map(answer -> answer.delete(loginUser))
+                .collect(Collectors.toList());
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public void changeContent(final String contents) {
+        this.contents = contents;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void addAnswer(Answer answer) {
+        answer.toQuestion(this);
+        answers.add(answer);
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public boolean isDeleted() {
+        return deleted;
+    }
 
-	public String getContents() {
-		return contents;
-	}
-
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
-	public Long getWriterId() {
-		return writerId;
-	}
-
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
-	}
-
-	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
-
-	@Override
-	public String toString() {
-		return "Question{" +
-			"id=" + id +
-			", title='" + title + '\'' +
-			", contents='" + contents + '\'' +
-			", writerId=" + writerId +
-			", deleted=" + deleted +
-			'}';
-	}
+    public Long getWriterId() {
+        return writer.getId();
+    }
 }

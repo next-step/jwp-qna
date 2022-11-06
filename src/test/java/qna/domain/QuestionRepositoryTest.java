@@ -4,29 +4,35 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.Arrays;
+import javax.persistence.EntityManager;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.AnswerTest.A1;
 import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
+import static qna.domain.UserTest.JAVAJIGI;
 
 @DataJpaTest
 class QuestionRepositoryTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
-    void findByDeletedFalseTest() {
-        Question q2 = Q2;
-        q2.setDeleted(true);
-        questionRepository.saveAll(Arrays.asList(Q1, q2));
+    void 답변_저장_조회후_삭제() {
+        userRepository.save(JAVAJIGI);
+        Q1.addAnswer(A1);
+        questionRepository.save(Q1);
 
-        assertThat(questionRepository.findByDeletedFalse())
-                .hasSize(1)
-                .containsExactly(Q1);
-        assertThat(questionRepository.findByIdAndDeletedFalse(q2.getId()))
-                .isEmpty();
+        entityManager.clear();
+
+        Question question = questionRepository.findById(Q1.getId()).get();
+        question.delete(JAVAJIGI);
+
+        entityManager.flush();
     }
 
 }
