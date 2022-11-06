@@ -1,16 +1,20 @@
 package qna.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
-import qna.domain.*;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import qna.domain.Answer;
+import qna.domain.ContentType;
+import qna.domain.DeleteHistory;
+import qna.domain.Question;
+import qna.domain.User;
+import qna.domain.repository.AnswerRepository;
+import qna.domain.repository.QuestionRepository;
 
 @Service
 public class QnaService {
@@ -20,7 +24,8 @@ public class QnaService {
     private AnswerRepository answerRepository;
     private DeleteHistoryService deleteHistoryService;
 
-    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
+    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository,
+                      DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.deleteHistoryService = deleteHistoryService;
@@ -48,10 +53,13 @@ public class QnaService {
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         question.setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriterId(), LocalDateTime.now()));
+        deleteHistories
+                .add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriterId(),
+                        question.getCreatedAt()));
         for (Answer answer : answers) {
             answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId(), LocalDateTime.now()));
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId(),
+                    answer.getCreatedAt()));
         }
         deleteHistoryService.saveAll(deleteHistories);
     }
