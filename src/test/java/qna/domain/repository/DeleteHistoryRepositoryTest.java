@@ -7,9 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.ContentType;
 import qna.domain.entity.DeleteHistory;
-import qna.domain.repository.DeleteHistoryRepository;
+import qna.domain.entity.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
@@ -18,7 +19,8 @@ class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, Long.valueOf(1), Long.valueOf(1));
+        User user = new User("diqksrk", "diqksrk", "강민준", "diqksrk123@naver.com");
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, Long.valueOf(1), user);
 
         deleteHistorys.save(deleteHistory);
     }
@@ -26,7 +28,8 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("delete_history테이블 save 테스트")
     void save() {
-        DeleteHistory expected =  new DeleteHistory(ContentType.ANSWER, Long.valueOf(2), Long.valueOf(2));
+        User user = new User("diqksrk123", "diqksrk123", "강민준", "diqksrk123@naver.com");
+        DeleteHistory expected =  new DeleteHistory(ContentType.ANSWER, Long.valueOf(2), user);
         DeleteHistory actual = deleteHistorys.save(expected);
 
         assertThat(actual).isEqualTo(expected);
@@ -43,13 +46,14 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("delete_history테이블 update 테스트")
     void updateDeletedById() {
+        User user = new User("diqksrk123", "diqksrk123", "강민준", "diqksrk123@naver.com");
         DeleteHistory expected = deleteHistorys.findByContentId(Long.valueOf(1))
                 .get();
-        expected.setDeletedById(Long.valueOf(2));
+        expected.setUser(user);
         DeleteHistory actual = deleteHistorys.findByContentId(Long.valueOf(1))
                 .get();
 
-        assertThat(actual.getDeletedById()).isEqualTo(Long.valueOf(2));
+        assertThat(actual.getUser()).isEqualTo(user);
     }
 
     @Test
@@ -60,5 +64,28 @@ class DeleteHistoryRepositoryTest {
         deleteHistorys.delete(expected);
 
         assertThat(deleteHistorys.findByContentId(Long.valueOf(1)).isPresent()).isFalse();
+    }
+
+    @Test
+    @DisplayName("deleteHistory연관관계 매핑 테스트")
+    void getUserTest() {
+        DeleteHistory deleteHistory = deleteHistorys.findByContentId(Long.valueOf(1)).get();
+        User actual = new User("diqksrk123", "diqksrk123", "강민준", "diqksrk123@naver.com");
+
+        DeleteHistory savedDeleteHistory = setUserInfo(deleteHistory, actual);
+        User expected = savedDeleteHistory.getUser();
+
+        assertAll(
+                () -> assertThat(expected.getId()).isNotNull(),
+                () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
+                () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail())
+        );
+    }
+
+    private DeleteHistory setUserInfo(DeleteHistory deleteHistory, User actual) {
+        deleteHistory.setUser(actual);
+        DeleteHistory savedDeleteHistory = deleteHistorys.save(deleteHistory);
+        deleteHistorys.flush();
+        return savedDeleteHistory;
     }
 }
