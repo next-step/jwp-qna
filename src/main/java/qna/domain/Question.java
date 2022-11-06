@@ -1,10 +1,18 @@
 package qna.domain;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "question")
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "title", nullable = false)
     private String title;
     private String contents;
     private Long writerId;
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
     public Question(String title, String contents) {

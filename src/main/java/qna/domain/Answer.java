@@ -3,13 +3,19 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
+@Table(name = "answer")
 public class Answer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long writerId;
     private Long questionId;
     private String contents;
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
