@@ -23,7 +23,6 @@ public class Answers {
     }
 
     public DeleteHistories delete(User user) {
-        validateSameUser(user);
         return deleteAll(user);
     }
 
@@ -31,10 +30,6 @@ public class Answers {
         return this.answers.stream()
                 .map(answer -> answer.delete(user))
                 .collect(Collectors.collectingAndThen(toList(), DeleteHistories::new));
-    }
-
-    private void validateSameUser(User user) {
-        this.answers.forEach(answer -> answer.validateSameUser(user));
     }
 
     public void removeAnswer(Answer answer) {
