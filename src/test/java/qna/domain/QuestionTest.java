@@ -62,7 +62,7 @@ public class QuestionTest {
         Question question = questionRepository.save(new Question("t1", "con1").writeBy(UserTest.SANJIGI));
 
         // when
-        question.setWriter(UserTest.JAVAJIGI);
+        question.updateWriter(UserTest.JAVAJIGI);
         Question expectQuestion = questionRepository.save(question);
 
         // then

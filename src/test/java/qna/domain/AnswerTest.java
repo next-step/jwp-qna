@@ -63,12 +63,14 @@ public class AnswerTest {
         Answer answer = answerRepository.save(new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Test Content 1"));
 
         //when
-        answer.setQuestion(QuestionTest.Q2);
+        String updateContents = "update contents";
+        answer.updateContents(updateContents);
+        
         Answer result = answerRepository.save(answer);
 
         // then
         assertAll(
-            () -> assertThat(result.getQuestion()).isEqualTo(QuestionTest.Q2)
+            () -> assertThat(result.getContents()).isEqualTo(updateContents)
         );
     }
 
