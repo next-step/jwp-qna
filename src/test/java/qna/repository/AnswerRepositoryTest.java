@@ -15,7 +15,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -63,8 +64,7 @@ public class AnswerRepositoryTest {
         answers.saveAndFlush(answer);
         entityManager.clear();
         List<Answer> expect = answers.findByQuestionIdAndDeletedFalse(question.getId());
-        assertThat(expect).hasSize(1);
-        expect.forEach(v -> assertEquals(answer, v));
+        assertThat(expect).hasSize(1).containsExactly(answer);
     }
 
     @Test
@@ -96,8 +96,7 @@ public class AnswerRepositoryTest {
         answer.setDeleted(true);
         answers.saveAndFlush(answer);
         entityManager.clear();
-        assertThatThrownBy(() -> answers.findByIdAndDeletedFalse(answer.getId()).orElseThrow(NotFoundException::new))
-                .isInstanceOf(NotFoundException.class);
+        assertThat(answers.findByIdAndDeletedFalse(answer.getId())).isEmpty();
     }
 
 }
