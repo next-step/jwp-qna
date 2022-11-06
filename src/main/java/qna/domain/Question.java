@@ -18,10 +18,12 @@ public class Question extends BaseEntity{
     private String title;
     @Lob
     private String contents;
-    @Column(name = "writer_id")
-    private Long writerId;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    @ManyToOne      // 외래키를 가지는 다 쪽으로 주인
+    @JoinColumn(name= "writer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     protected Question() {
     }
@@ -36,12 +38,12 @@ public class Question extends BaseEntity{
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -60,8 +62,8 @@ public class Question extends BaseEntity{
         return contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -78,7 +80,7 @@ public class Question extends BaseEntity{
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
