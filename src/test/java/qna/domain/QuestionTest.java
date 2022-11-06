@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
@@ -69,8 +68,8 @@ public class QuestionTest {
         //given
         User writer = TestUserFactory.create("javajigi");
         Question question = TestQuestionFactory.create(writer);
-        Answer answer1 = new Answer(writer, question, "정상 writer");
-        Answer answer2 = new Answer(writer, question, "정상 writer");
+        Answer answer1 = new Answer(1L, writer, question, "정상 writer1");
+        Answer answer2 = new Answer(2L, writer, question, "정상 writer2");
 
         //when
         DeleteHistories deleteHistories = question.delete(writer);

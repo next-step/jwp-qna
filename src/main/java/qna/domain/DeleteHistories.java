@@ -14,7 +14,7 @@ public class DeleteHistories {
     }
 
     public List<DeleteHistory> unmodifiedDeleteHistories() {
-        return Collections.unmodifiableList(deleteHistories);
+        return Collections.unmodifiableList(this.deleteHistories);
     }
 
     public void add(DeleteHistory deleteHistory) {
@@ -30,7 +30,10 @@ public class DeleteHistories {
             return false;
         }
         DeleteHistories that = (DeleteHistories) o;
-        return Objects.equals(deleteHistories, that.deleteHistories);
+        if(deleteHistories.size() != that.deleteHistories.size()) {
+            return false;
+        }
+        return deleteHistories.containsAll(that.deleteHistories) && that.deleteHistories.containsAll(deleteHistories);
     }
 
     @Override
