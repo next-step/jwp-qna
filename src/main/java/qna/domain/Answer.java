@@ -4,25 +4,20 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer {
+public class Answer extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "contents")
     private String contents;
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
     @Column(name = "questionId")
     private Long questionId;
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
     @Column(name = "writerId")
     private Long writerId;
 

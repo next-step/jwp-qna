@@ -3,27 +3,22 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "User")
-public class User {
+public class User extends BaseTimeEntity{
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
     @Column(name = "email")
     private String email;
     @Column(name = "name", nullable = false)
     private String name;
     @Column(name = "password", nullable = false)
     private String password;
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
     @Column(name = "userId", nullable = false)
     private String userId;
 
