@@ -47,7 +47,20 @@ public class Answer extends BaseEntity implements Serializable {
         }
 
         this.writer = writer;
-        question.addAnswer(this);
+        this.question = question; //단방향 일때
+//        question.addAnswer(this);   //양방향 일때
+        this.contents = contents;
+    }
+
+    public Answer (User writer, String contents) {
+        id = null;
+
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
+
+        this.writer = writer;
+
         this.contents = contents;
     }
 
@@ -60,6 +73,11 @@ public class Answer extends BaseEntity implements Serializable {
 
     public void toQuestion(Question question) {
         this.question = question;
+//        question.addAnswer(this);  // 무한루프 돌수 있으므로 아래와 같이 변경
+        if(!question.getAnswers().contains(this)){
+            // question이 answer을 중복해서 가지고 있지 않도록 방어 로직 추가
+            question.getAnswers().add(this);
+        }
     }
 
     public Long getId() {

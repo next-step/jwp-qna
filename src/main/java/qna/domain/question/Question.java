@@ -6,6 +6,8 @@ import qna.domain.answer.Answer;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity implements Serializable {
@@ -20,9 +22,12 @@ public class Question extends BaseEntity implements Serializable {
     @Lob
     private String contents;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @OneToMany(mappedBy = "question"/*외래키는 Answer 객체에 question필드에서 관리하고 있음을 뜻함 */, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private List<Answer> answers = new ArrayList<Answer>();
 
     @Column(length = 20, nullable = false)
     private boolean deleted = false;
@@ -50,8 +55,13 @@ public class Question extends BaseEntity implements Serializable {
         return this.writer.equals(writer);
     }
 
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+    public void  addAnswer(Answer answer) {
+        answers.add(answer);
+        /**
+         * 연관관계의 주인은 외래키를 관리 하는 곳, 즉 Answer
+         * 외래키를 관리하는 곳에서 등록, 수정, 삭제가 이루어지도록 넘겨줄것
+         */
+        answer.toQuestion(this); // this.question = question;
     }
 
     public Long getId() {
@@ -79,6 +89,8 @@ public class Question extends BaseEntity implements Serializable {
         this.deleted = deleted;
     }
 
+//    public void setAn
+
     @Override
     public String toString() {
         return "Question{" +
@@ -88,5 +100,9 @@ public class Question extends BaseEntity implements Serializable {
                 ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 }
