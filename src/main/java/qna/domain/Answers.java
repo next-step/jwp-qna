@@ -21,14 +21,20 @@ public class Answers {
     }
 
     public DeleteHistories deleteAll(User questionWriter) throws CannotDeleteException {
+        validateWriter(questionWriter);
+
         DeleteHistories deleteHistories = new DeleteHistories(new ArrayList<>());
         for (Answer answer : answers) {
-            if (!answer.isOwner(questionWriter)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
-            deleteHistories.add(answer.delete());
+            deleteHistories.add(answer.delete(questionWriter));
         }
+
         return deleteHistories;
+    }
+
+    private void validateWriter(User user) throws CannotDeleteException {
+        for(Answer answer : answers) {
+            answer.validateWriter(user);
+        }
     }
 
     public void addAnswer(Answer answer) {
