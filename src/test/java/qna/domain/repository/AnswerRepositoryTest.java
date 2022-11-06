@@ -14,14 +14,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class AnswerRepositoryTest {
+    @Autowired
+    private UserRepository users;
+
+    @Autowired
+    private QuestionRepository questions;
 
     @Autowired
     private AnswerRepository answers;
 
     @BeforeEach
     void setUp() {
-        User user = new User("diqksrk", "diqksrk", "강민준", "diqksrk123@naver.com");
-        Question question = new Question("타이틀", "콘텐츠");
+        User user = users.save(new User("diqksrk", "diqksrk", "강민준", "diqksrk123@naver.com"));
+        Question question = questions.save(new Question("타이틀", "콘텐츠"));
 
         answers.save(new Answer(user, question, "콘텐츠"));
     }
@@ -75,7 +80,7 @@ class AnswerRepositoryTest {
     @DisplayName("answer연관관계 매핑 테스트( user )")
     void getUserTest() {
         Answer answer = answers.findByContents("콘텐츠").get();
-        User actual = new User("diqksrk123", "diqksrk123", "강민준", "diqksrk123@naver.com");
+        User actual = users.save(new User("diqksrk123", "diqksrk123", "강민준", "diqksrk123@naver.com"));
 
 
         Answer savedAnswer = saveUserInfo(answer, actual);
@@ -99,7 +104,7 @@ class AnswerRepositoryTest {
     @DisplayName("answer연관관계 매핑 테스트( question )")
     void getQuestionTest() {
         Answer answer = answers.findByContents("콘텐츠").get();
-        Question actual = new Question("타이틀", "콘텐츠");
+        Question actual = questions.save(new Question("타이틀", "콘텐츠"));
 
         Answer savedAnswer = saveQuestionInfo(answer, actual);
         Question expected = savedAnswer.getQuestion();

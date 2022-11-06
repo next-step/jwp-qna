@@ -23,13 +23,18 @@ public class DeleteHistory {
     @Column(name = "content_id")
     private Long contentId;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "delete_by_id")
     private User user;
 
     @Column(name = "create_date")
     @CreatedDate
     private LocalDateTime createDate;
+
+    public DeleteHistory(ContentType contentType, Long contentId) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+    }
 
     public DeleteHistory(ContentType contentType, Long contentId, User user) {
         this.contentType = contentType;

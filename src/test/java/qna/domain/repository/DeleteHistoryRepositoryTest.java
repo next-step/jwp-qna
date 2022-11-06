@@ -15,12 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
     @Autowired
+    private UserRepository users;
+
+    @Autowired
     private DeleteHistoryRepository deleteHistorys;
 
     @BeforeEach
     void setUp() {
-        User user = new User("diqksrk", "diqksrk", "강민준", "diqksrk123@naver.com");
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, Long.valueOf(1), user);
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, Long.valueOf(1));
 
         deleteHistorys.save(deleteHistory);
     }
@@ -46,7 +48,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("delete_history테이블 update 테스트")
     void updateDeletedById() {
-        User user = new User("diqksrk123", "diqksrk123", "강민준", "diqksrk123@naver.com");
+        User user = users.save(new User("diqksrk123", "diqksrk123", "강민준", "diqksrk123@naver.com"));
         DeleteHistory expected = deleteHistorys.findByContentId(Long.valueOf(1))
                 .get();
         expected.setUser(user);
@@ -69,11 +71,11 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("deleteHistory연관관계 매핑 테스트")
     void getUserTest() {
+        User actual = users.save(new User("diqksrk", "diqksrk", "강민준", "diqksrk123@naver.com"));
         DeleteHistory deleteHistory = deleteHistorys.findByContentId(Long.valueOf(1)).get();
-        User actual = new User("diqksrk123", "diqksrk123", "강민준", "diqksrk123@naver.com");
 
-        DeleteHistory savedDeleteHistory = savedUserInfo(deleteHistory, actual);
-        User expected = savedDeleteHistory.getUser();
+        DeleteHistory savedQuestion = savedUserInfo(deleteHistory, actual);
+        User expected = deleteHistory.getUser();
 
         assertAll(
                 () -> assertThat(expected.getId()).isNotNull(),

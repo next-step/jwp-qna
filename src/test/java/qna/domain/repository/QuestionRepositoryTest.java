@@ -15,6 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class QuestionRepositoryTest {
 
     @Autowired
+    private UserRepository users;
+
+    @Autowired
     private QuestionRepository questions;
 
     @BeforeEach
@@ -74,12 +77,11 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("user연관관계 매핑 테스트")
     void getUserTest() {
-        Question question = questions.findByTitle("타이틀").get();
-        User actual = new User("diqksrk", "diqksrk", "강민준", "diqksrk123@naver.com");
+        User actual = users.save(new User("diqksrk", "diqksrk", "강민준", "diqksrk123@naver.com"));
+        Question question = questions.findByTitle("타이틀")
+                .get();
 
-        question.setUser(actual);
-        Question savedQuestion = questions.save(question);
-        questions.flush();
+        Question savedQuestion = saveQuestionInfo(actual, question);
         User expected = savedQuestion.getUser();
 
         assertAll(
@@ -87,5 +89,12 @@ class QuestionRepositoryTest {
                 () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
                 () -> assertThat(actual.getEmail()).isEqualTo(expected.getEmail())
         );
+    }
+
+    private Question saveQuestionInfo(User actual, Question question) {
+        question.setUser(actual);
+        Question savedQuestion = questions.save(question);
+        questions.flush();
+        return savedQuestion;
     }
 }
