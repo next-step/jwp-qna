@@ -22,8 +22,8 @@ public class User extends BaseEntity {
     private Password password;
     @Embedded
     private Name name;
-    @Column(length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
@@ -37,7 +37,7 @@ public class User extends BaseEntity {
         this.userId = userId;
         this.password = Password.of(password);
         this.name = Name.of(name);
-        this.email = email;
+        this.email = Email.of(email);
     }
 
     public void update(User loginUser, User target) {
@@ -66,8 +66,16 @@ public class User extends BaseEntity {
             return false;
         }
 
-        return name.equals(target.name) &&
-                email.equals(target.email);
+        return isEqualName(target) &&
+                isEqualEmail(target);
+    }
+
+    private boolean isEqualName(User user) {
+        return name.equals(user.name);
+    }
+
+    private boolean isEqualEmail(User user) {
+        return email.equals(user.email);
     }
 
     public boolean isGuestUser() {
@@ -81,8 +89,12 @@ public class User extends BaseEntity {
         return userId;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
+    }
+
+    public Name getName() {
+        return name;
     }
 
     @Override
@@ -109,7 +121,7 @@ public class User extends BaseEntity {
                 ", userId='" + userId + '\'' +
                 ", password=" + password +
                 ", name=" + name +
-                ", email='" + email + '\'' +
+                ", email=" + email +
                 '}';
     }
 
