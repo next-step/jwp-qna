@@ -3,13 +3,13 @@ package qna.domain;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
@@ -27,8 +27,8 @@ public class Answer extends BaseEntity {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name="fk_answer_to_question"))
     private Question question;
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -49,7 +49,7 @@ public class Answer extends BaseEntity {
 
         this.writer = writer;
         toQuestion(question);
-        this.contents = contents;
+        this.contents = Contents.of(contents);
     }
 
     private void validateQuestion(Question question) {
@@ -81,8 +81,8 @@ public class Answer extends BaseEntity {
         return writer;
     }
 
-    public String getContents() {
-        return contents;
+    public Contents getContents() {
+        return this.contents;
     }
 
     public boolean isDeleted() {
@@ -111,7 +111,7 @@ public class Answer extends BaseEntity {
                 "id=" + id +
                 ", writer=" + writer +
                 ", question=" + question +
-                ", contents='" + contents + '\'' +
+                ", contents=" + contents +
                 ", deleted=" + deleted +
                 '}';
     }

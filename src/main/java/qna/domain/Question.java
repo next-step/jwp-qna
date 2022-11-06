@@ -24,8 +24,8 @@ public class Question extends BaseEntity {
     private Long id;
     @Column(nullable = false, length = 100)
     private String title;
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
@@ -44,7 +44,7 @@ public class Question extends BaseEntity {
     public Question(Long id, String title, String contents) {
         this.id = id;
         this.title = title;
-        this.contents = contents;
+        this.contents = Contents.of(contents);
         this.answers = new Answers(new ArrayList<>());
     }
 
@@ -116,9 +116,10 @@ public class Question extends BaseEntity {
         return "Question{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
+                ", contents=" + contents +
                 ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
