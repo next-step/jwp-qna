@@ -6,9 +6,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
@@ -25,8 +29,10 @@ public class DeleteHistory {
     @Column(name = "content_id")
     private Long contentId;
 
-    @Column(name = "delete_by_id")
-    private Long deletedById;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedByUser;
+
     @CreatedDate
     @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
@@ -34,10 +40,10 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedByUser = deletedByUser;
         this.createDate = createDate;
     }
 
@@ -51,18 +57,18 @@ public class DeleteHistory {
         }
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(contentId,
-            that.contentId) && Objects.equals(deletedById, that.deletedById);
+            that.contentId) && Objects.equals(deletedByUser, that.deletedByUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, deletedByUser);
     }
 
     @Override
     public String toString() {
         return "DeleteHistory{" + "id=" + id + ", contentType=" + contentType + ", contentId=" + contentId
-            + ", deletedById=" + deletedById + ", createDate=" + createDate + '}';
+            + ", deletedByUser=" + deletedByUser + ", createDate=" + createDate + '}';
     }
 
     public Long getId() {
@@ -77,8 +83,8 @@ public class DeleteHistory {
         return contentId;
     }
 
-    public Long getDeletedById() {
-        return deletedById;
+    public User getDeletedByUser() {
+        return deletedByUser;
     }
 
     public LocalDateTime getCreateDate() {

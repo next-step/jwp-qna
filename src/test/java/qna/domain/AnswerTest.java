@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +19,24 @@ public class AnswerTest {
     @Autowired
     AnswerRepository answerRepository;
 
+    @BeforeAll
+    static void setUp(@Autowired UserRepository userRepository, @Autowired QuestionRepository questionRepository) {
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
+        questionRepository.save(QuestionTest.Q1);
+        questionRepository.save(QuestionTest.Q2);
+    }
+
     @Test
     @DisplayName("answer 저장 확인")
     void save_answer() {
         //given, when
-        Answer answer = answerRepository.save(A1);
+        Answer answer = answerRepository.save(new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Test Content 1"));
 
         //then
         assertAll(
-            () -> assertThat(answer.getId()).isEqualTo(A1.getId()),
-            () -> assertThat(answer.getQuestionId()).isEqualTo(A1.getQuestionId())
+            () -> assertThat(answer.getWriter()).isEqualTo(UserTest.SANJIGI),
+            () -> assertThat(answer.getQuestion()).isEqualTo(QuestionTest.Q1)
         );
     }
 
@@ -35,10 +44,10 @@ public class AnswerTest {
     @DisplayName("answer 조회 확인")
     void read_answer() {
         //given
-        Answer answer = answerRepository.save(A2);
+        Answer answer = answerRepository.save(new Answer(UserTest.JAVAJIGI, QuestionTest.Q2, "Test Content2"));
 
         //when
-        Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(A2.getId());
+        Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(answer.getId());
 
         // then
         assertAll(
@@ -54,12 +63,14 @@ public class AnswerTest {
         Answer answer = answerRepository.save(new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Test Content 1"));
 
         //when
-        answer.setQuestionId(10L);
+        String updateContents = "update contents";
+        answer.updateContents(updateContents);
+        
         Answer result = answerRepository.save(answer);
 
         // then
         assertAll(
-            () -> assertThat(result.getQuestionId()).isEqualTo(10L)
+            () -> assertThat(result.getContents()).isEqualTo(updateContents)
         );
     }
 

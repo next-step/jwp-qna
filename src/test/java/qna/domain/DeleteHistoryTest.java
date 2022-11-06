@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -16,17 +17,26 @@ class DeleteHistoryTest {
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
 
+    @BeforeAll
+    static void setUp(@Autowired UserRepository userRepository) {
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
+    }
+
+
     @Test
     void save_deleteHistory() {
         // given
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, UserTest.SANJIGI,
+            LocalDateTime.now());
 
         // when
         DeleteHistory expectDeleteHistory = deleteHistoryRepository.save(deleteHistory);
 
         // then
         assertAll(
-            () -> assertThat(expectDeleteHistory.getContentType()).isEqualTo(ContentType.QUESTION)
+            () -> assertThat(expectDeleteHistory.getContentType()).isEqualTo(ContentType.QUESTION),
+            () -> assertThat(expectDeleteHistory.getDeletedByUser()).isEqualTo(UserTest.SANJIGI)
         );
     }
 
@@ -34,10 +44,10 @@ class DeleteHistoryTest {
     void read_deleteHistory() {
         // given
         List<DeleteHistory> deleteHistory = Arrays.asList(
-            new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now()),
-            new DeleteHistory(ContentType.ANSWER, 2L, 1L, LocalDateTime.now()),
-            new DeleteHistory(ContentType.ANSWER, 3L, 1L, LocalDateTime.now()),
-            new DeleteHistory(ContentType.QUESTION, 4L, 1L, LocalDateTime.now())
+            new DeleteHistory(ContentType.QUESTION, 1L, UserTest.SANJIGI, LocalDateTime.now()),
+            new DeleteHistory(ContentType.ANSWER, 2L, UserTest.SANJIGI, LocalDateTime.now()),
+            new DeleteHistory(ContentType.ANSWER, 3L, UserTest.SANJIGI, LocalDateTime.now()),
+            new DeleteHistory(ContentType.QUESTION, 4L, UserTest.SANJIGI, LocalDateTime.now())
         );
         deleteHistoryRepository.saveAll(deleteHistory);
 
@@ -55,10 +65,10 @@ class DeleteHistoryTest {
     void delete_deleteHistory() {
         // given
         List<DeleteHistory> deleteHistory = Arrays.asList(
-            new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now()),
-            new DeleteHistory(ContentType.ANSWER, 2L, 1L, LocalDateTime.now()),
-            new DeleteHistory(ContentType.ANSWER, 3L, 1L, LocalDateTime.now()),
-            new DeleteHistory(ContentType.QUESTION, 4L, 1L, LocalDateTime.now())
+            new DeleteHistory(ContentType.QUESTION, 1L, UserTest.SANJIGI, LocalDateTime.now()),
+            new DeleteHistory(ContentType.ANSWER, 2L, UserTest.SANJIGI, LocalDateTime.now()),
+            new DeleteHistory(ContentType.ANSWER, 3L, UserTest.SANJIGI, LocalDateTime.now()),
+            new DeleteHistory(ContentType.QUESTION, 4L, UserTest.SANJIGI, LocalDateTime.now())
         );
         List<DeleteHistory> expectDeleteHistory = deleteHistoryRepository.saveAll(deleteHistory);
 
