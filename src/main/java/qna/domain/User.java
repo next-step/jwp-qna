@@ -39,8 +39,8 @@ public class User extends BaseEntity {
     }
 
     public void update(User loginUser, User target) {
-        this.userId.validateMatchUserId(userId);
-        this.password.validateMatchPassword(password);
+        this.userId.validateMatchUserId(loginUser.userId);
+        this.password.validateMatchPassword(target.password);
 
         this.name = target.name;
         this.email = target.email;
