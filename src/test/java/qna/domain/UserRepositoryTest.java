@@ -73,7 +73,11 @@ public class UserRepositoryTest {
 
         User updatedUser = userRepository.findByUserId(user.getUserId()).get();
 
-        assertThat(updatedUser).isEqualTo(user);
+
+        assertAll(
+                () -> assertThat(updatedUser).isEqualTo(user),
+                () -> assertThat(updatedUser.equalsNameAndEmail(JAVAJIGI)).isEqualTo(true)
+        );
     }
 
     @Test
