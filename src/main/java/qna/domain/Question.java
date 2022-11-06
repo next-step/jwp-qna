@@ -76,8 +76,12 @@ public class Question extends BaseEntity{
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void updateDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Long getWriterId() {
+        return writer.getId();
     }
 
     @Override
@@ -90,4 +94,6 @@ public class Question extends BaseEntity{
                 ", deleted=" + deleted +
                 '}';
     }
+
+
 }

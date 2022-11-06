@@ -53,9 +53,10 @@ public class AnswerRepositoryTest {
     @Test
     void modifyQuestion() {
         final Answer answer = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "test");
-        answer.toQuestion(new Question(1L, "test title", "test contents"));
+        Question question = new Question(1L, "test title", "test contents");
+        answer.toQuestion(question);
         final Answer saved = answerRepository.save(answer);
-        assertThat(saved.getQuestionId()).isEqualTo(1L);
+        assertThat(saved.getQuestion()).isEqualTo(question);
     }
 
     @Test

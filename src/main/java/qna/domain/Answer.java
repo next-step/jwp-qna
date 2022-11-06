@@ -17,9 +17,6 @@ public class Answer extends BaseEntity{
     @Column(name="id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name="writer_id")
-    private Long writerId;
-
     @Column(name="contents")
     @Lob
     private String contents;
@@ -53,13 +50,13 @@ public class Answer extends BaseEntity{
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
+        this.writer = writer;
         this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -70,8 +67,8 @@ public class Answer extends BaseEntity{
         return id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public Question getQuestion() {
@@ -86,18 +83,29 @@ public class Answer extends BaseEntity{
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void updateDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Long getQuestionId() {
+        return question.getId();
+    }
+
+    public Long getWriterId() {
+        return writer.getId();
     }
 
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
     }
+
+
+
 }
