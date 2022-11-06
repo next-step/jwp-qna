@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
+import org.hibernate.proxy.HibernateProxy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ class AnswerRepositoryTest {
         Answer actual = answerRepository.save(new Answer(user, question, "contents"));
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriter()).isEqualTo(user),
+                () -> assertThat(actual.isOwner(user)).isTrue(),
                 () -> assertThat(actual.getQuestion()).isEqualTo(question),
                 () -> assertThat(actual.getContents()).isEqualTo("contents"),
                 () -> assertThat(actual.isDeleted()).isFalse(),
@@ -55,7 +56,7 @@ class AnswerRepositoryTest {
         Answer actual = answerRepository.findById(answer.getId()).orElseThrow(EntityNotFoundException::new);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getWriter()).isEqualTo(user),
+                () -> assertThat(actual.isOwner(user)).isTrue(),
                 () -> assertThat(actual.getQuestion()).isEqualTo(question),
                 () -> assertThat(actual.getContents()).isEqualTo("contents"),
                 () -> assertThat(actual.isDeleted()).isFalse(),
@@ -107,6 +108,15 @@ class AnswerRepositoryTest {
         flushAndClear();
         Answer actual = answerRepository.findById(answer.getId()).orElseThrow(EntityNotFoundException::new);
         assertThat(actual).isEqualTo(answer);
+    }
+
+    @Test
+    void 연관된_엔티티는_프록시_객체로_조회된다() {
+        Answer answer = answerRepository.save(new Answer(user, question, "contents"));
+        flushAndClear();
+        Answer actual = answerRepository.findById(answer.getId()).get();
+        assertThat(actual.getWriter() instanceof HibernateProxy).isTrue();
+        assertThat(actual.getQuestion() instanceof HibernateProxy).isTrue();
     }
 
     private void flushAndClear() {
