@@ -112,4 +112,4 @@ alter table question
 - [x] AnswerRepositoryTest 수정
 - [x] QuestionRepositoryTest 수정
 - [x] UserRepositoryTest 수정
-- [ ] DeleteHistoryTest 수정
+- [x] DeleteHistoryTest 수정
