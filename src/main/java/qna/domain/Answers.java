@@ -34,9 +34,7 @@ public class Answers {
     }
 
     private void validateSameUser(User user) {
-        for(Answer answer: this.answers) {
-            answer.validateSameUser(user);
-        }
+        this.answers.forEach(answer -> answer.validateSameUser(user));
     }
 
     public void removeAnswer(Answer answer) {
