@@ -1,6 +1,5 @@
 package qna.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -53,10 +52,10 @@ public class QnaService {
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         question.delete();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter(), LocalDateTime.now()));
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter()));
         for (Answer answer : answers) {
             answer.delete();
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()));
         }
         deleteHistoryService.saveAll(deleteHistories);
     }

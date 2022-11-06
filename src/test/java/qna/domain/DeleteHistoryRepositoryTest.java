@@ -3,7 +3,6 @@ package qna.domain;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +20,8 @@ class DeleteHistoryRepositoryTest {
     @BeforeEach
     void setUp() {
         User deletedBy = new User("user", "password", "name", "email@email.com");
-        questionHistory = new DeleteHistory(ContentType.QUESTION, 1L, deletedBy, LocalDateTime.now());
-        answerHistory = new DeleteHistory(ContentType.ANSWER, 1L, deletedBy, LocalDateTime.now());
+        questionHistory = new DeleteHistory(ContentType.QUESTION, 1L, deletedBy);
+        answerHistory = new DeleteHistory(ContentType.ANSWER, 1L, deletedBy);
     }
 
     @Test
@@ -30,6 +29,8 @@ class DeleteHistoryRepositoryTest {
     void save_delete_history() {
         DeleteHistory actual = deleteHistoryRepository.save(questionHistory);
         DeleteHistory actual2 = deleteHistoryRepository.save(answerHistory);
+        System.out.println("actual = " + actual);
+        System.out.println("actual2 = " + actual2);
         assertAll(
                 () -> assertEquals(questionHistory, actual),
                 () -> assertEquals(answerHistory, actual2)
