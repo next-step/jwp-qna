@@ -21,6 +21,7 @@ public class Question extends BaseEntity {
     private boolean deleted = false;
     @Embedded
     private Answers answers;
+
     protected Question() {
     }
 
@@ -40,10 +41,6 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public List<DeleteHistory> delete(User writer) throws CannotDeleteException {
         validateOwner(writer);
         return getDeleteHistories();
@@ -53,7 +50,7 @@ public class Question extends BaseEntity {
         if (!this.writer.equals(writer)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        new Answers(getAnswers()).validateOwner(writer);
+        new Answers(answers.getAnswers()).validateOwner(writer);
     }
 
     public DeleteHistory getDeleteHistory() {
@@ -86,14 +83,6 @@ public class Question extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers.getAnswers();
     }
 
     @Override
