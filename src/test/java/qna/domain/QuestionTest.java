@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +14,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question("title1", "contents1");
+
+    private Question question1;
+    private Question question2;
+    private User user;
 
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @BeforeEach
+    void setUp() {
+        user = userRepository.save(new User("kim9418", "123123", "김대겸", "koreatech93@naver.com"));
+        question1 = new Question(1L, "title1", "contents1");
+        question2 = new Question(2L, "title2", "contents2");
+        question1.writeBy(user);
+        question2.writeBy(user);
+        question1 = questionRepository.save(question1);
+        question2 = questionRepository.save(question2);
+    }
+
     @DisplayName("save 검증 성공")
     @Test
     void saveTest() {
+        Q1.writeBy(user);
         Question savedQuestion = questionRepository.save(Q1);
 
         assertAll(
@@ -36,8 +55,8 @@ public class QuestionTest {
     @Test
     void findByDeletedFalse() {
         List<Question> expectedQuestions = new ArrayList<>();
-        expectedQuestions.add(questionRepository.save(Q1));
-        expectedQuestions.add(questionRepository.save(Q2));
+        expectedQuestions.add(question1);
+        expectedQuestions.add(question2);
 
         List<Question> actualQuestions = questionRepository.findByDeletedFalse();
 
@@ -49,7 +68,7 @@ public class QuestionTest {
     @DisplayName("findByIdAndDeletedFalse 검증 성공")
     @Test
     void findByIdAndDeletedFalse() {
-        Question expectedQuestion = questionRepository.save(Q1);
+        Question expectedQuestion = questionRepository.save(question1);
 
         Question actualQuestion = questionRepository.findByIdAndDeletedFalse(expectedQuestion.getId())
                 .orElseThrow(IllegalArgumentException::new);

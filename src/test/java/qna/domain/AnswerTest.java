@@ -1,6 +1,7 @@
 package qna.domain;
 
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,32 +15,47 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 public class AnswerTest {
 
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    private Question question;
+    private User user;
+
+    @BeforeEach
+    void setUp() {
+        user = userRepository.save(new User("kim9418", "123123", "김대겸", "koreatech93@naver.com"));
+        question = new Question(1L, "title", "contents");
+        question = questionRepository.save(question);
+    }
+
 
     @DisplayName("save 검증 성공")
     @Test
     void saveTest() {
-        Answer savedAnswer = answerRepository.save(A1);
+        Answer answer = new Answer(user, question, "contents");
+        Answer savedAnswer = answerRepository.save(answer);
 
         assertAll(
                 () -> assertNotNull(savedAnswer.getId()),
-                () -> assertEquals(savedAnswer.getWriterId(), A1.getWriterId()),
-                () -> assertEquals(savedAnswer.getQuestionId(), A1.getQuestionId())
+                () -> assertEquals(savedAnswer.getWriterId(), answer.getWriterId()),
+                () -> assertEquals(savedAnswer.getQuestion(), answer.getQuestion())
         );
     }
 
     @DisplayName("findByQuestionIdAndDeletedFalse 검증 성공")
     @Test
     void findByQuestionIdAndDeletedFalseTest() {
+        Answer answer1 = new Answer(user, question, "contents1");
+        Answer answer2 = new Answer(user, question, "contents2");
         List<Answer> expectedAnswers = new ArrayList<>();
-        expectedAnswers.add(answerRepository.save(A1));
-        expectedAnswers.add(answerRepository.save(A2));
+        expectedAnswers.add(answerRepository.save(answer1));
+        expectedAnswers.add(answerRepository.save(answer2));
 
-        List<Answer> actualAnswers = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        List<Answer> actualAnswers = answerRepository.findByQuestionAndDeletedFalse(question);
 
         for (int i = 0; i < expectedAnswers.size(); i++) {
             isEquals(actualAnswers.get(i), expectedAnswers.get(i));
@@ -49,7 +65,8 @@ public class AnswerTest {
     @DisplayName("findByIdAndDeletedFalseTest 검증 성공")
     @Test
     void findByIdAndDeletedFalseTest() {
-        Answer expectedAnswer = answerRepository.save(A2);
+        Answer answer = new Answer(user, question, "contents");
+        Answer expectedAnswer = answerRepository.save(answer);
 
         Answer actualAnswer = answerRepository.findByIdAndDeletedFalse(expectedAnswer.getId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -61,7 +78,7 @@ public class AnswerTest {
         assertAll(
                 () -> assertEquals(actualAnswer.getId(), expectedAnswer.getId()),
                 () -> assertEquals(actualAnswer.getContents(), expectedAnswer.getContents()),
-                () -> assertEquals(actualAnswer.getQuestionId(), expectedAnswer.getQuestionId()),
+                () -> assertEquals(actualAnswer.getQuestion(), expectedAnswer.getQuestion()),
                 () -> assertEquals(actualAnswer.getWriterId(), expectedAnswer.getWriterId())
         );
     }

@@ -1,3 +1,5 @@
+# 1단계 - 엔티티 매핑
+
 ## 요구 사항
 - QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
 
@@ -69,3 +71,38 @@ alter table user
 ```
 - [X] user 테이블의 DDL을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
 - [X] @DataJpaTest를 사용하여 학습 테스트를 해 본다.
+
+# 2단계 - 연관 관계 매핑
+
+## 요구 사항
+- QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
+- 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+```
+- [X] Answer - Question 연관관계를 매핑한다.
+```sql
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+```
+- [X] Answer - User 연관관계를 매핑한다.
+```sql
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+```
+- [X] DeleteHistory - User 연관관계를 매핑한다.
+```sql
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
+```
+- [X] Question - User 연관관계를 매핑한다.
