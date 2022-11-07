@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.hibernate.annotations.DynamicUpdate;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -92,7 +93,7 @@ public class Answer extends BaseEntity {
         return this.question;
     }
 
-    public void markDeleted(boolean deleted) {
+    private void markDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -100,7 +101,10 @@ public class Answer extends BaseEntity {
         this.contents = updated;
     }
 
-    public DeleteHistory toDeleteHistory() {
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if(!isOwner(loginUser)){
+            throw new CannotDeleteException("작성자가 아니면 삭제할 수 없습니다");
+        }
         this.markDeleted(true);
         return DeleteHistory.ofAnswer(this.getId(), writer);
     }
