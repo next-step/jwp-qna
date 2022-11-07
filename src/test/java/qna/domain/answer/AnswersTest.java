@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.domain.QuestionTest;
 import qna.domain.UserTest;
+import qna.domain.content.Contents;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +15,7 @@ class AnswersTest {
     @DisplayName("Answers 동일한 답변 객체 담을 수 없음")
     void isDuplicatedAnswer() {
         Answers answers = new Answers();
-        Answer target = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "contents");
+        Answer target = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, new Contents("Answers Contents1"));
 
         assertThat(answers.isDuplicatedAnswer(target)).isFalse();
         answers.add(target);
@@ -24,8 +25,8 @@ class AnswersTest {
     @Test
     @DisplayName("질문자와 답변자가 동일할 경우 삭제 가능")
     void deleteAll() {
-        Answer answer1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "contents");
-        Answer answer2 = new Answer(2L, UserTest.JAVAJIGI, QuestionTest.Q1, "contents");
+        Answer answer1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, new Contents("Answers Contents1"));
+        Answer answer2 = new Answer(2L, UserTest.JAVAJIGI, QuestionTest.Q1, new Contents("Answers Contents2"));
         Answers answers = new Answers();
         answers.add(answer1);
         answers.add(answer2);
@@ -41,7 +42,7 @@ class AnswersTest {
     void add() {
         Answers answers = new Answers();
 
-        Answer answer = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "contents");
+        Answer answer = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, new Contents("Answers Contents1"));
         assertThat(answers.getAnswers()).hasSize(0);
         answers.add(answer);
         assertThat(answers.getAnswers()).hasSize(1);

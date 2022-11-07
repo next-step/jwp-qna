@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
+import qna.domain.content.Contents;
 import qna.domain.question.Question;
 import qna.domain.question.QuestionRepository;
 import qna.domain.user.User;
@@ -103,7 +104,7 @@ public class QuestionTest {
          * binding parameter [5] as [BIGINT] - [null]  TODO: null값으로 넣어진것 확인
          * binding parameter [6] as [BIGINT] - [1]
          */
-        Answer answer1 = answerRepository.save(new Answer(writer1,"Answers Contents1"));
+        Answer answer1 = answerRepository.save(new Answer(writer1,new Contents("Answers Contents1")));
         assertThat(answer1.getQuestion()).isNull();
         Q1.addAnswer(answer1);
         Question question = questionRepository.save(Q1);
@@ -123,7 +124,7 @@ public class QuestionTest {
         assertThat(answer1.getQuestion()).isNotNull();
         assertThat(question.getAnswers()).hasSize(1);
 
-        Answer answer2 = answerRepository.save(new Answer(writer2,"Answers Contents1"));
+        Answer answer2 = answerRepository.save(new Answer(writer2,new Contents("Answers Contents1")));
         question.addAnswer(answer2);
         manager.flush();
         assertThat(answer2.getQuestion()).isEqualTo(question);

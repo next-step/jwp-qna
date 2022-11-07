@@ -1,5 +1,6 @@
 package qna.domain.answer;
 
+import qna.domain.content.Contents;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
@@ -27,17 +28,17 @@ public class Answer extends BaseEntity implements Serializable {
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name="fk_answer_to_question"))
     private Question question;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @Column(nullable = false)
     private boolean deleted = false;
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer(User writer, Question question, Contents contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, Contents contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -54,7 +55,7 @@ public class Answer extends BaseEntity implements Serializable {
         this.contents = contents;
     }
 
-    public Answer (User writer, String contents) {
+    public Answer (User writer, Contents contents) {
         id = null;
 
         if (Objects.isNull(writer)) {
@@ -94,7 +95,7 @@ public class Answer extends BaseEntity implements Serializable {
         return question;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
