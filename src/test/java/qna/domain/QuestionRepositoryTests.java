@@ -16,23 +16,29 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class QuestionRepositoryTests {
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    private User user;
 
     @BeforeEach
     void setup() {
         questionRepository.deleteAll();
+
+        user = userRepository.save(UserTest.JAVAJIGI);
     }
 
     @Test
     @DisplayName("질문을 저장한다.")
     void save() {
-        Question expected = QuestionTest.Q1;
+        Question expected = QuestionTest.Q1.writeBy(user);
         Question question = questionRepository.save(expected);
 
         assertAll(
                 () -> assertThat(question.getId()).isNotNull(),
                 () -> assertThat(question.getTitle()).isEqualTo(expected.getTitle()),
                 () -> assertThat(question.getContents()).isEqualTo(expected.getContents()),
-                () -> assertThat(question.getWriterId()).isEqualTo(expected.getWriterId()),
+                () -> assertThat(question.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(question.isDeleted()).isEqualTo(expected.isDeleted())
         );
     }
@@ -40,7 +46,7 @@ class QuestionRepositoryTests {
     @Test
     @DisplayName("식별자로 질문을 조회한다.")
     void findById() {
-        Question expected = questionRepository.save(QuestionTest.Q1);
+        Question expected = questionRepository.save(QuestionTest.Q1.writeBy(user));
 
         Question question = questionRepository.findById(expected.getId()).get();
 
@@ -48,7 +54,7 @@ class QuestionRepositoryTests {
                 () -> assertThat(question.getId()).isEqualTo(expected.getId()),
                 () -> assertThat(question.getTitle()).isEqualTo(expected.getTitle()),
                 () -> assertThat(question.getContents()).isEqualTo(expected.getContents()),
-                () -> assertThat(question.getWriterId()).isEqualTo(expected.getWriterId()),
+                () -> assertThat(question.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(question.isDeleted()).isEqualTo(expected.isDeleted())
         );
     }
@@ -56,7 +62,7 @@ class QuestionRepositoryTests {
     @Test
     @DisplayName("삭제되지 않은 질문을 조회한다.")
     void findByDeletedFalse() {
-        Question expected = questionRepository.save(QuestionTest.Q1);
+        Question expected = questionRepository.save(QuestionTest.Q1.writeBy(user));
 
         Question question = questionRepository.findByDeletedFalse().get(0);
 
@@ -64,7 +70,7 @@ class QuestionRepositoryTests {
                 () -> assertThat(question.getId()).isEqualTo(expected.getId()),
                 () -> assertThat(question.getTitle()).isEqualTo(expected.getTitle()),
                 () -> assertThat(question.getContents()).isEqualTo(expected.getContents()),
-                () -> assertThat(question.getWriterId()).isEqualTo(expected.getWriterId()),
+                () -> assertThat(question.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(question.isDeleted()).isEqualTo(expected.isDeleted())
         );
     }
@@ -72,7 +78,7 @@ class QuestionRepositoryTests {
     @Test
     @DisplayName("식별자로 삭제되지 않은 질문을 조회한다.")
     void findByIdAndDeletedFalse() {
-        Question expected = questionRepository.save(QuestionTest.Q1);
+        Question expected = questionRepository.save(QuestionTest.Q1.writeBy(user));
 
         Question question = questionRepository.findByIdAndDeletedFalse(expected.getId()).get();
 
@@ -80,14 +86,15 @@ class QuestionRepositoryTests {
                 () -> assertThat(question.getId()).isEqualTo(expected.getId()),
                 () -> assertThat(question.getTitle()).isEqualTo(expected.getTitle()),
                 () -> assertThat(question.getContents()).isEqualTo(expected.getContents()),
-                () -> assertThat(question.getWriterId()).isEqualTo(expected.getWriterId()),
+                () -> assertThat(question.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(question.isDeleted()).isEqualTo(expected.isDeleted())
         );
     }
+
     @Test
     @DisplayName("질문을 삭제한다.")
     void delete() {
-        Question expected = questionRepository.save(QuestionTest.Q1);
+        Question expected = questionRepository.save(QuestionTest.Q1.writeBy(user));
 
         questionRepository.delete(expected);
 
