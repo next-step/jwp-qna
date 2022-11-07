@@ -126,8 +126,9 @@ alter table question
 - [ ] 질문 삭제 권한 Validation 기능 추가
 
 ### Answer
-- [ ] 답변 삭제 기능 추가
-- [ ] 다른 사람이 작성한 답변 Validation 기능 추가
+- [X] 답변 삭제 기능 추가
+- [X] 답변 생성 기능 추가
+- [X] 답변 작성자 Validation 기능 추가
 
 ### DeleteHistory
 - [X] DeleteHistories 일급 컬렉션 생성
