@@ -67,3 +67,34 @@ create table user
 alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
+
+## STEP 2 - 엔티티 연결관계 맵핑
+
+### 기능 요구 사항
+* answer 와 question 를 관계 맵핑
+* answer 와 user 를 관계 맵핑
+* delete_history 와 user 를 관계 맵핑
+* question 와 user 를 관계 맵핑
+
+#### SQL
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question (id)
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user (id)
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user (id)
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user (id)
+```
