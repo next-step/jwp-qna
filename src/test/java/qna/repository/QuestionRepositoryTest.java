@@ -7,12 +7,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.QuestionTest;
 import qna.domain.User;
 import qna.domain.UserTest;
-import qna.repository.QuestionRepository;
-import qna.repository.UserRepository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -24,14 +23,16 @@ public class QuestionRepositoryTest {
     QuestionRepository questionRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    AnswerRepository answerRepository;
     public User writer;
     public Question saveQuestion;
 
     @BeforeEach
     void setUp() {
         writer = userRepository.save(UserTest.JAVAJIGI);
-        Question questionTest = QuestionTest.Q1.writeBy(writer);
-        saveQuestion = questionRepository.save(questionTest);
+        Question question = QuestionTest.Q1.writeBy(writer);
+        saveQuestion = questionRepository.save(question);
     }
 
     @Test
@@ -64,10 +65,16 @@ public class QuestionRepositoryTest {
         );
     }
 
-    @DisplayName("작성자 수정 검증")
+    @DisplayName("질문삭제시 답변도 삭제 검증")
     @Test
-    void test() {
-        User otherWriter = userRepository.save(UserTest.SANJIGI);
-        Question updateQuestion = saveQuestion.writeBy(otherWriter);
+    void deleted_test() {
+        User tester = userRepository.save(UserTest.TESTER);
+        Question question = questionRepository.save(QuestionTest.testerQuestion);
+        Answer answer = answerRepository.save(new Answer(1L,tester, question, "Answers test"));
+        question.addAnswer(answer);
+
+        questionRepository.delete(question);
+        assertThat(answerRepository.findById(1L)).isEmpty();
     }
+
 }
