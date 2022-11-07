@@ -1,6 +1,5 @@
 package qna.fixture;
 
-import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.User;
 

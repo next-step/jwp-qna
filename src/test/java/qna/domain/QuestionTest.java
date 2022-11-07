@@ -3,13 +3,11 @@ package qna.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
-import qna.UnAuthorizedException;
 import qna.fixture.TestAnswerFactory;
 import qna.fixture.TestQuestionFactory;
 import qna.fixture.TestUserFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);

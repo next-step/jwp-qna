@@ -5,8 +5,6 @@ import java.util.Objects;
 
 @Entity
 public class User extends BaseEntity {
-    public static final GuestUser GUEST_USER = new GuestUser();
-
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(length = 20, nullable = false, unique = true)
@@ -32,10 +30,6 @@ public class User extends BaseEntity {
         this.password = password;
         this.name = name;
         this.email = email;
-    }
-
-    public boolean isGuestUser() {
-        return false;
     }
 
     public Long getId() {
@@ -82,12 +76,5 @@ public class User extends BaseEntity {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
-    }
-
-    private static class GuestUser extends User {
-        @Override
-        public boolean isGuestUser() {
-            return true;
-        }
     }
 }
