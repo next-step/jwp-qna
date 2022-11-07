@@ -24,11 +24,11 @@ public class Answer extends BaseDateEntity{
     private Long id;
     @Lob
     private String contents;
-    @Column(nullable = false)
     private Long questionId;
     @Column(nullable = false)
     private boolean deleted = false;
     private Long writerId;
+
     protected Answer() {}
 
     public Answer(User writer, Question question, String contents) {
