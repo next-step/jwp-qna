@@ -1,8 +1,10 @@
 package qna.domain;
 
+import org.hibernate.sql.Delete;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -46,6 +48,11 @@ public class Question extends BaseEntity {
         if (!this.writer.equals(writer)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
+    }
+
+    public DeleteHistory getDeleteHistory(){
+        this.deleted = true;
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
     public void addAnswer(Answer answer) {
