@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,27 +17,18 @@ public class AnswerTest {
 
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-    private static final Stream<Answer> answerList = Stream.of(A1,A2);
 
     @Autowired
     AnswerRepository answers;
     @Autowired
     DeleteHistoryRepository deletes;
-
-    private static Stream<Answer> save_entity_equal_test() {
-        return answerList;
-    }
-
-    @ParameterizedTest
-    @DisplayName("저장한 엔티티가 동일한지 테스트")
-    @MethodSource
-    void save_entity_equal_test(Answer input) {
-        Answer answer = answers.save(input);
-        assertThat(input).isEqualTo(answer);
-    }
+    @Autowired
+    QuestionRepository questions;
+    @Autowired
+    UserRepository users;
 
     private static Stream<Answer> save_entity_and_find_test() {
-        return answerList;
+        return Stream.of(A1,A2);
     }
 
     @ParameterizedTest
@@ -47,8 +39,28 @@ public class AnswerTest {
         assertThat(answer).isEqualTo(answers.findById(answer.getId()).get());
     }
 
+    @Test
+    @DisplayName("엔티티 저장 후 수정 테스트")
+    void save_entity_and_update_test() {
+        //given
+        User user = users.save(UserTest.JAVAJIGI);
+        Question question = questions.save(QuestionTest.Q1);
+        Answer answer = answers.save(new Answer(user, question, "답변테스트"));
+        Long id = answer.getId();
+        //when
+        Answer searchResult = answers.findById(id).get();
+        String updateContents = "수정된 컨텐츠";
+        answers.save(new Answer(searchResult.getId(),
+                    users.findById(searchResult.getWriterId()).get(),
+                    questions.findById(searchResult.getQuestionId()).get(),
+                updateContents));
+        //then
+        assertThat(answers.findById(id).get().getContents()).isEqualTo(updateContents);
+    }
+
+
     private static Stream<Answer> save_entity_and_delete_test() {
-        return answerList;
+        return Stream.of(A1,A2);
     }
 
     @ParameterizedTest
