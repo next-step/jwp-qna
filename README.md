@@ -183,3 +183,24 @@ alter table question
 - QuestionRepository
 - User
 - UserRepository
+
+
+---
+## 🚀 3단계 - 질문 삭제하기 리팩터링
+
+### 목표
+- QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다.
+
+### 기능 요구 사항
+- 질문 삭제 가능 case
+  - (로그인 사용자 == 질문한 사람) && 답변이 없는 경우
+  - (로그인 사용자 == 질문한 사람) && (질문한 사람 == 답변자)
+- 질문을 삭제할 때 답변 또한 삭제
+- 질문 or 답변 삭제시
+  - 데이터의 상태를 삭제 상태(deleted - boolean type)로 변경
+- 질문과 답변 삭제 이력에 대한 정보를 DeleteHistory를 활용해 남긴다.
+
+### 프로그래밍 요구 사항
+- qna.service.QnaService의 deleteQuestion()
+  - 단위 테스트 어려운 코드와 가능한 코드를 분히해 단위 테스트 구현
+- 리팩터링 후에도 qna.service.QnaServiceTest의 모든 테스트가 통과해야 한다.
