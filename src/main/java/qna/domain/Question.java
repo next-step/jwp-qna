@@ -85,6 +85,10 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
+    public int sizeOfAnswers() {
+        return answers.getAnswers().size();
+    }
+
     @Override
     public String toString() {
         return "Question{" +
