@@ -206,9 +206,9 @@ alter table question
 - 리팩터링 후에도 qna.service.QnaServiceTest의 모든 테스트가 통과해야 한다.
 
 ### 기능 구현 목록
-- [ ] manyToOne FetchType타입 Lazy 설정
-- [ ] question - answer 양방향 연관관계 설정
-- [ ] question 조회시 연관된 answer oneToMany 조회
+- [x] manyToOne FetchType타입 Lazy 설정
+- [x] question - answer 양방향 연관관계 설정
+- [x] question 조회시 연관된 answer oneToMany 조회
 - [ ] question 삭제
   - [ ] question 작성자와 로그인 사용자 검증
   - [ ] question 상태변경

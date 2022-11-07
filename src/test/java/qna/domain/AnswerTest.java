@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.NotFoundException;
@@ -46,5 +47,21 @@ public class AnswerTest {
         answer.toQuestion(QuestionTest.Q2);
 
         assertThat(answer.getQuestion()).isEqualTo(QuestionTest.Q2);
+    }
+
+    @DisplayName("Answer의 Question를 변경하면 연과관계 Qustion의 answers에도 변경 반영된다.")
+    @Test
+    void mapping_question() {
+        Question question1 = new Question("title1", "contents2");
+        Question question2 = new Question("title2", "contents2");
+        Answer answer = new Answer(UserTest.JAVAJIGI, question1, "answer");
+
+        answer.toQuestion(question2);
+
+        Assertions.assertAll(
+                () -> assertThat(answer.getQuestion()).isEqualTo(question2),
+                () -> assertThat(question1.getAnswers()).isEmpty(),
+                () -> assertThat(question2.getAnswers()).containsExactly(answer)
+        );
     }
 }
