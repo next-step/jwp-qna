@@ -22,10 +22,10 @@ public class Answers implements Iterable<Answer> {
     public Answers() {
     }
 
-    public List<DeleteHistory> deleteAll(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> deleteAll(User loginUser)  {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : this) {
-            deleteHistories.add(answer.delete(loginUser));
+            deleteHistories.add(answer.deleteBy(loginUser));
         }
         return deleteHistories;
     }
