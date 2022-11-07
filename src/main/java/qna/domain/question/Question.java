@@ -105,7 +105,7 @@ public class Question extends BaseEntity implements Serializable {
 
     private List<DeleteHistory> assembleDeleteHistories(User loginUser) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(DeleteHistory.of(this));
+        deleteHistories.add(DeleteHistory.ofQuestion(this.id, this.writer));
         deleteHistories.addAll(answers.deleteAll(loginUser));
         return deleteHistories;
     }

@@ -113,7 +113,7 @@ public class Answer extends BaseEntity implements Serializable {
         }
         deleted = true;
 
-        return DeleteHistory.of(this);
+        return DeleteHistory.ofAnswer(this.id, this.writer);
     }
 
     @Override
