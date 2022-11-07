@@ -15,7 +15,8 @@ public class QuestionAnswers {
 
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
     private List<Answer> answers = new ArrayList<>();
-    public QuestionAnswers(){
+
+    public QuestionAnswers() {
     }
 
     public void add(Answer answer) {
@@ -33,10 +34,10 @@ public class QuestionAnswers {
     }
 
     public boolean isDeletable(User loginUser) throws CannotDeleteException {
-        if(noAnswerExist()){
+        if (noAnswerExist()) {
             return true;
         }
-        if(allAnswerWrittenBySameUser(loginUser)){
+        if (allAnswerWrittenBySameUser(loginUser)) {
             return true;
         }
         throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
