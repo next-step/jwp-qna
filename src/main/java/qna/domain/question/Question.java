@@ -4,6 +4,7 @@ import qna.domain.BaseEntity;
 import qna.domain.answer.Answers;
 import qna.domain.content.Contents;
 import qna.domain.deletehistory.DeleteHistory;
+import qna.domain.title.Title;
 import qna.domain.user.User;
 import qna.domain.answer.Answer;
 import qna.exception.CannotDeleteException;
@@ -21,8 +22,8 @@ public class Question extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+    @Embedded
+    private Title title;
 
     @Embedded
     private Contents contents;
@@ -37,11 +38,11 @@ public class Question extends BaseEntity implements Serializable {
     @Column(length = 20, nullable = false)
     private boolean deleted = false;
 
-    public Question(String title, Contents contents) {
+    public Question(Title title, Contents contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, Contents contents) {
+    public Question(Long id, Title title, Contents contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -73,7 +74,7 @@ public class Question extends BaseEntity implements Serializable {
         return id;
     }
 
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 

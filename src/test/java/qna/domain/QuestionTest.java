@@ -11,6 +11,7 @@ import qna.domain.answer.AnswerRepository;
 import qna.domain.content.Contents;
 import qna.domain.question.Question;
 import qna.domain.question.QuestionRepository;
+import qna.domain.title.Title;
 import qna.domain.user.User;
 import qna.domain.user.UserRepository;
 
@@ -22,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DataJpaTest
 public class QuestionTest {
 
-    public static final Question Q1 = new Question("title1", new Contents("contents1")).writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", new Contents("contents2")).writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question(Title.of("title1"),  Contents.of("contents1")).writeBy(UserTest.JAVAJIGI);
+    public static final Question Q2 = new Question(Title.of("title2"),  Contents.of("contents2")).writeBy(UserTest.SANJIGI);
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -124,7 +125,7 @@ public class QuestionTest {
         assertThat(answer1.getQuestion()).isNotNull();
         assertThat(question.getAnswers()).hasSize(1);
 
-        Answer answer2 = answerRepository.save(new Answer(writer2,new Contents("Answers Contents1")));
+        Answer answer2 = answerRepository.save(new Answer(writer2, Contents.of("Answers Contents1")));
         question.addAnswer(answer2);
         manager.flush();
         assertThat(answer2.getQuestion()).isEqualTo(question);
