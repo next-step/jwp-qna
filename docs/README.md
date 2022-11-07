@@ -128,7 +128,7 @@ alter table question
   - [x] Answer
   - [x] Question
   - [x] DeleteHistory
-- [ ] 테스트 코드 동작 하도록 수정
-  - [ ] AnswerTest
+- [x] 테스트 코드 통과 하도록 수정
+  - [x] AnswerTest
   - [x] QuestionTest
   - [x] DeleteHistoryTest
