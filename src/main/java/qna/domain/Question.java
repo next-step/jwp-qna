@@ -53,18 +53,15 @@ public class Question extends BaseEntity {
         answers.validateOwner(writer);
     }
 
-    public DeleteHistory getDeleteHistory() {
+    private DeleteHistory getDeleteHistory() {
         this.deleted = true;
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
-    public List<DeleteHistory> getDeleteHistories() {
+    private List<DeleteHistory> getDeleteHistories() {
         List<DeleteHistory> deleteHistories = new ArrayList();
         deleteHistories.add(getDeleteHistory());
-        for (Answer answer : answers.getAnswers()) {
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
+        deleteHistories.addAll(answers.getDeleteHistories());
         return deleteHistories;
     }
 

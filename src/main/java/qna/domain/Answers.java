@@ -37,6 +37,15 @@ public class Answers {
         return this.answers.size();
     }
 
+    public List<DeleteHistory> getDeleteHistories() {
+        List<DeleteHistory> deleteHistories = new ArrayList();
+        for (Answer answer : answers) {
+            answer.setDeleted(true);
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+        }
+        return deleteHistories;
+    }
+
     private void validateNull(List<Answer> answers) {
         if (answers == null) throw new RuntimeException(NULL_MESSAGE);
     }
