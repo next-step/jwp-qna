@@ -18,12 +18,12 @@ public class Answer extends BaseEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
     @JoinColumn(name = "question_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
 
     @Column(name = "contents")
