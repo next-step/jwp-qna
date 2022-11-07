@@ -106,7 +106,7 @@ public class Answer extends BaseEntity {
 
     public DeleteHistory delete(User user) {
         this.setDeleted(true);
-        return new DeleteHistory(ContentType.ANSWER, id, user, LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER, id, user);
     }
 
     @Override
