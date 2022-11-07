@@ -91,5 +91,7 @@ spring:
 * Mysql 형식으로 설정
 * H2 콘솔 설정 진행
 * ddl-auto를 create으로 설정
-    * 테스트 환경으로 로그 확인하기 위함 
-    * application 실행 시 기존 테이블 삭제되고 생성 로그 확인
+  * 테스트 환경으로 로그 확인하기 위함 
+  * application 실행 시 기존 테이블 삭제되고 생성 로그 확인
+* BaseDateEntity 적용
+  * 공통적인 created_at / updated_at 처리 
