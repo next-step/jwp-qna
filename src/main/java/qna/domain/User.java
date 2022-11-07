@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.ForbiddenException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
@@ -31,7 +32,7 @@ public class User extends BaseDateEntity{
     private String name;
     @Column(nullable = false, length = PASSWORD_LENGTH)
     private String password;
-    @Column(nullable = false, length = USER_ID_LENGTH)
+    @Column(nullable = false, length = USER_ID_LENGTH, unique = true)
     private String userId;
 
 
@@ -42,6 +43,16 @@ public class User extends BaseDateEntity{
     }
 
     public User(Long id, String userId, String password, String name, String email) {
+        if (Objects.isNull(name)) {
+            throw new ForbiddenException();
+        }
+        if (Objects.isNull(password)) {
+            throw new ForbiddenException();
+        }
+        if (Objects.isNull(userId)) {
+            throw new ForbiddenException();
+        }
+
         this.id = id;
         this.userId = userId;
         this.password = password;
