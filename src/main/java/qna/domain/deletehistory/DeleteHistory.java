@@ -39,12 +39,13 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public static DeleteHistory of(Question question) {
-        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+    //단순히 생성을 위한 메서드라면 매개변수를 넘기는 것으로 대체
+    public static DeleteHistory ofQuestion(Long questionId, User writer) {
+        return new DeleteHistory(ContentType.QUESTION, questionId, writer, LocalDateTime.now());
     }
 
-    public static DeleteHistory of(Answer answer) {
-        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
+    public static DeleteHistory ofAnswer(Long answerId, User writer) {
+        return new DeleteHistory(ContentType.ANSWER, answerId, writer, LocalDateTime.now());
     }
 
     @Override
