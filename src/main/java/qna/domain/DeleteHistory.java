@@ -21,6 +21,11 @@ public class DeleteHistory {
     private LocalDateTime createDate = LocalDateTime.now();
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+        this(null, contentType, contentId, deletedById, createDate);
+    }
+
+    public DeleteHistory(Long id, ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+        this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
@@ -29,6 +34,10 @@ public class DeleteHistory {
 
     protected DeleteHistory() {
 
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
