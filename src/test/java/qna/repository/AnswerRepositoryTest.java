@@ -1,6 +1,7 @@
 package qna.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
+import qna.constant.ErrorCode;
 import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.TestAnswerFactory;
@@ -45,36 +48,21 @@ public class AnswerRepositoryTest {
         );
     }
 
-    @TestFactory
-    Collection<DynamicTest> 답변_삭제여부_변경_시나리오() {
+    @Test
+    void 답변의_삭제여부를_참으로_바꾸면_조회할_수_없다() {
         //given
         User writer = TestUserFactory.create("sanjigi");
         Question question = TestQuestionFactory.create(writer);
         Answer answer = TestAnswerFactory.create(writer, question);
         Answer saveAnswer = answerRepository.save(answer);
-        saveAnswer.setDeleted(false);
         Long saveAnswerId = saveAnswer.getId();
-        return Arrays.asList(
-                DynamicTest.dynamicTest("삭제여부가 거짓인 답변을 조회한다.", () -> {
-                    //when
-                    Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
 
-                    //then
-                    assertThat(findAnswer).isPresent();
-                    assertAll(
-                            () -> assertThat(findAnswer.get().getContents()).isEqualTo(saveAnswer.getContents()),
-                            () -> assertThat(findAnswer.get().isDeleted()).isFalse()
-                    );
-                }),
-                DynamicTest.dynamicTest("답변의 삭제여부를 참으로 바꾸면 조회할 수 없다.", () -> {
-                    //when
-                    saveAnswer.setDeleted(true);
-                    Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
+        //when
+        saveAnswer.delete(writer);
+        Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
 
-                    //then
-                    assertThat(findAnswer).isNotPresent();
-                })
-        );
+        //then
+        assertThat(findAnswer).isNotPresent();
     }
 
     @TestFactory
@@ -109,14 +97,40 @@ public class AnswerRepositoryTest {
         //given
         User writer = TestUserFactory.create("javajigi");
         Question question = TestQuestionFactory.create(writer);
-        Answer answer = TestAnswerFactory.create(writer, question);
-        Answer saveAnswer = answerRepository.save(answer);
+        Answer answer1 = TestAnswerFactory.create(writer, question);
+        Answer answer2 = TestAnswerFactory.create(writer, question);
+        Answer saveAnswer1 = answerRepository.save(answer1);
+        Answer saveAnswer2 = answerRepository.save(answer2);
         Question saveQuestion = questionRepository.save(question);
 
         //when
-        answerRepository.delete(saveAnswer);
+        answerRepository.delete(saveAnswer1);
         Optional<Question> findQuestion = questionRepository.findById(saveQuestion.getId());
+        Optional<Answer> findAnswer = answerRepository.findById(saveAnswer2.getId());
 
+        //then
+        assertThat(findQuestion).isPresent();
+        assertThat(findAnswer).isPresent();
+    }
+
+    @Test
+    void 질문자와_답변자_달라_예외_발생하면_질문_삭제여부는_거짓이다() {
+        //given
+        User writer = TestUserFactory.create("sanjigi");
+        User fakeWriter = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = TestAnswerFactory.create(fakeWriter, question);
+        answerRepository.save(answer);
+        Long questionId = question.getId();
+
+        //when
+        assertThatThrownBy(() -> question.delete(writer))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage(ErrorCode.답변_중_다른_사람이_쓴_답변_있어_삭제_못함.getErrorMessage());
+        questionRepository.saveAndFlush(question);
+        Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(questionId);
+
+        //then
         assertThat(findQuestion).isPresent();
     }
 }

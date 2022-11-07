@@ -1,9 +1,13 @@
 package qna.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
+import qna.constant.ErrorCode;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
@@ -16,5 +20,66 @@ public class QuestionTest {
         //when
         assertThatThrownBy(() -> question.writeBy(null))
                 .isInstanceOf(UnAuthorizedException.class);
+    }
+
+    @Test
+    void 질문한_작성자가_아니면_예외를_발생시킨다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        User fakeWriter = TestUserFactory.create("sanjigi");
+        Question question = TestQuestionFactory.create(writer);
+
+        //when
+        assertThatThrownBy(() -> question.validateSameUser(fakeWriter))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage(ErrorCode.질문_삭제_권한_없음.getErrorMessage());
+    }
+
+    @Test
+    void 질문자와_동일한_유저가_질문_삭제_요청_시_예외를_발생시킨다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        User fakeWriter = TestUserFactory.create("sanjigi");
+        Question question = TestQuestionFactory.create(writer);
+
+        //when
+        assertThatThrownBy(() -> question.delete(fakeWriter))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage(ErrorCode.질문_삭제_권한_없음.getErrorMessage());
+    }
+
+    @Test
+    void 질문_삭제_요청_시_질문자와_동일하지_않은_유저가_쓴_답변이_있다면_예외를_발생시킨다() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        User fakeWriter = TestUserFactory.create("sanjigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer1 = new Answer(writer, question, "정상 writer");
+        Answer answer2 = new Answer(fakeWriter, question, "fake writer");
+
+        //when
+        assertThatThrownBy(() -> question.delete(writer))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage(ErrorCode.답변_중_다른_사람이_쓴_답변_있어_삭제_못함.getErrorMessage());
+    }
+
+    @Test
+    void 질문_삭제_요청_성공() {
+        //given
+        User writer = TestUserFactory.create("javajigi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer1 = new Answer(1L, writer, question, "정상 writer1");
+        Answer answer2 = new Answer(2L, writer, question, "정상 writer2");
+
+        //when
+        DeleteHistories deleteHistories = question.delete(writer);
+
+        //then
+        assertAll(
+                () -> assertThat(question.isDeleted()).isTrue(),
+                () -> assertThat(answer1.isDeleted()).isTrue(),
+                () -> assertThat(answer2.isDeleted()).isTrue(),
+                () -> assertThat(deleteHistories.unmodifiedDeleteHistories()).hasSize(3)
+        );
     }
 }

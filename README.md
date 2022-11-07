@@ -214,3 +214,26 @@ alter table question
         foreign key (writer_id)
             references user
 ```
+
+## 3단계 - 질문 삭제하기 리팩터링
+### 기능 요구 사항
+* 질문 삭제 시, 레포지토리에서 삭제하는 것이 아닌 deleted 필드를 true로 변경해야 함
+* 질문 삭제 가능한 조건
+  1. (로그인 사용자 == 질문한 사람) && 답변 없음 
+  2. (로그인 사용자 == 질문한 사람) && (로그인 사용자 == 답변한 사람)
+* 질문 삭제 시, 답변 역시 삭제되어야 함
+* 질문/답변 삭제 시, 삭제 이력 정보를 DeleteHistory에 남겨야 함
+
+### 프로그래밍 요구 사항
+* QnaService의 deleteQuestion() 메소드를 단위 테스트 가능한 부분과 어려운 부분을 분리하여 테스트 가능한 부분에 대해 TDD 구현
+* 리팩토링 이후에도, QnaServiceTest를 통과해야 함
+
+### 기능 목록
+* [x] Question - 질문 삭제 권한 확인 -> 권한 없을 경우 CannotDeleteException 발생("질문을 삭제할 권한이 없습니다.")
+* [x] Question - 질문 삭제여부 변경
+* [x] Answer - 답변 삭제 권한 확인 -> 권한 없을 경우 CannotDeleteException 발생("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.")
+* [x] Answer - 답변 삭제여부 변경
+* [x] User - 유저 동일여부 확인
+  * equals() 오버라이딩
+* [x] DeleteHistory - 삭제이력 추가
+

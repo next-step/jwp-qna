@@ -57,9 +57,10 @@ public class UserRepositoryTest {
     @Test
     void 유저Id가_중복되면_예외를_발생시킨다() {
         //given
-        User user = TestUserFactory.create("sanjigi");
-        User saveUser = userRepository.save(user);
-        User duplicateUser = new User(null, saveUser.getUserId(), "password", "name", "email@gmail.com");
+        String duplicateUserId = "sanjigi";
+        User user = TestUserFactory.create(duplicateUserId);
+        userRepository.save(user);
+        User duplicateUser = new User(null, duplicateUserId, "password", "name", "email@gmail.com");
 
         //when
         assertThatExceptionOfType(DataIntegrityViolationException.class)
