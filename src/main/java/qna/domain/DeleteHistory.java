@@ -27,6 +27,7 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -35,16 +36,14 @@ public class DeleteHistory {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DeleteHistory other = (DeleteHistory) o;
-        if (this.id == null || other.id == null) {
-            return false;
-        }
-        return Objects.equals(id, other.id);
+        DeleteHistory that = (DeleteHistory) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(contentId, that.contentId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, contentId);
     }
 
     @Override
