@@ -5,6 +5,8 @@ import qna.domain.Question;
 import qna.domain.User;
 
 public class TestAnswerFactory {
+    private TestAnswerFactory() {}
+
     public static Answer create(User writer, Question question) {
         return new Answer(writer, question, "contents");
     }

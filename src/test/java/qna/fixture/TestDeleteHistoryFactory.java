@@ -7,6 +7,8 @@ import qna.domain.User;
 import java.time.LocalDateTime;
 
 public class TestDeleteHistoryFactory {
+    private TestDeleteHistoryFactory() {}
+
     public static DeleteHistory create(User deleteBy) {
         return DeleteHistory.createQuestion(1L, deleteBy, LocalDateTime.now());
     }

@@ -4,6 +4,8 @@ import qna.domain.Question;
 import qna.domain.User;
 
 public class TestQuestionFactory {
+    private TestQuestionFactory() {}
+
     public static Question create(User writer) {
         Question question = new Question("title", "contents");
         question.writeBy(writer);
