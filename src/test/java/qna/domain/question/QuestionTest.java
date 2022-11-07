@@ -2,7 +2,6 @@ package qna.domain.question;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -107,7 +106,6 @@ public class QuestionTest {
         questionRepository.saveAndFlush(question);
 
         question.delete(loginUser);
-        List<Question> all = questionRepository.findAll();
         Question findQuestion = questionRepository.findById(question.getId()).get();
 
         assertThat(findQuestion.isDeleted()).isTrue();
