@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ public class Question {
     @Column(nullable = false)
     private boolean deleted = false;
     @OneToMany(mappedBy = "question")
+    @Where(clause = "deleted = false")
     private final List<Answer> answers = new ArrayList<>();
 
     protected Question() {
@@ -75,5 +78,9 @@ public class Question {
 
     public void changeDeleted(final boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 }
