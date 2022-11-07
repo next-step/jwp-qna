@@ -132,3 +132,5 @@ alter table question
   - [x] AnswerTest
   - [x] QuestionTest
   - [x] DeleteHistoryTest
+- [ ] 엔티티 클래스 setId 삭제
+- [x] User 엔티티 클래스 equals 추가
