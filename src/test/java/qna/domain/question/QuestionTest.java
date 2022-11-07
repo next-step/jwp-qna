@@ -72,8 +72,8 @@ public class QuestionTest {
         List<DeleteHistory> deleteQuestionHistory = question.delete(user);
         List<DeleteHistory> deleteHistories = deleteHistoryRepository.saveAll(deleteQuestionHistory);
 
-        for (DeleteHistory h: deleteHistories) { // TODO: 리팩토링 하기
-            assertThat(h.getDeletedByUser()).isEqualTo(user);
+        for (DeleteHistory history : deleteHistories) {
+            assertThat(history.getDeletedByUser()).isEqualTo(user);
         }
 
     }

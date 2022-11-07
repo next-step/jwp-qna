@@ -44,8 +44,7 @@
 - 삭제
   - [x] 질문자와 답변자가 다른 경우 답변을 삭제할 수 없다.
   - [x] 답변 삭제 이력 정보를 DeleteHistory에 남긴다. 
-- 할 일
-- [ ] service 리팩토링
+- [x] 코드 리팩토링
 
 ### 프로그래밍 요구사항
 - `qna.service.QnaService`의 `deleteQuestion()`는 앞의 질문 삭제 기능을 구현한 코드이다.  
