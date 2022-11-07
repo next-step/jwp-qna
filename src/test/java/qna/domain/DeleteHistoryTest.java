@@ -22,7 +22,8 @@ class DeleteHistoryTest {
     @DisplayName("저장")
     void save() {
         //given
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
+        User writer = new User(1L, "sangjae", "password", "name", "javajigi@slipp.net");
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, writer.getId(), writer, LocalDateTime.now());
 
         //expect
         assertThat(deleteHistoryRepository.save(deleteHistory)).isNotNull();
