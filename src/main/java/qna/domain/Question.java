@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.ForbiddenException;
 import subway.domain.Station;
 
 import javax.persistence.Column;
@@ -10,12 +11,14 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 
 @Entity
 @Table(name = "question")
 public class Question extends BaseDateEntity{
     private static final int TITLE_LENGTH = 100;
+    private static final String SPACE = "";
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,6 +37,10 @@ public class Question extends BaseDateEntity{
     }
 
     public Question(Long id, String title, String contents) {
+        if (Objects.isNull(title) || SPACE.equals(title)) {
+            throw new ForbiddenException();
+        }
+
         this.id = id;
         this.title = title;
         this.contents = contents;
