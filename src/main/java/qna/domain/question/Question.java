@@ -2,6 +2,7 @@ package qna.domain.question;
 
 import qna.domain.BaseEntity;
 import qna.domain.answer.Answers;
+import qna.domain.content.Contents;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.user.User;
 import qna.domain.answer.Answer;
@@ -23,8 +24,8 @@ public class Question extends BaseEntity implements Serializable {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -36,11 +37,11 @@ public class Question extends BaseEntity implements Serializable {
     @Column(length = 20, nullable = false)
     private boolean deleted = false;
 
-    public Question(String title, String contents) {
+    public Question(String title, Contents contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, String title, Contents contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -76,7 +77,7 @@ public class Question extends BaseEntity implements Serializable {
         return title;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
