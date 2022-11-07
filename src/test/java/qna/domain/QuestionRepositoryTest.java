@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,33 +15,33 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class QuestionRepositoryTest {
-	@Autowired
-	QuestionRepository questionRepository;
+    @Autowired
+    QuestionRepository questionRepository;
 
-	private Question Q1;
-	private Question Q2;
+    private Question Q1;
 
-	@BeforeEach
-	void setup() {
-		Q1 = questionRepository.save(QuestionTest.Q1);
-		Q2 = questionRepository.save(QuestionTest.Q2);
-	}
+    @BeforeEach
+    void setup() {
+        Q1 = questionRepository.save(new Question(1L, "title1", "contents1"));
+    }
 
-	@Test
-	void createdAt_updatedAt_반영_확인() {
-		assertThat(Q1.getCreatedAt()).isNotNull();
-		assertThat(Q1.getUpdatedAt()).isNotNull();
-	}
+    @Test
+    void createdAt_updatedAt_반영_확인() {
+        assertAll(
+            () -> assertThat(Q1.getCreatedAt()).isNotNull(),
+            () -> assertThat(Q1.getUpdatedAt()).isNotNull()
+        );
+    }
 
-	@Test
-	void findByDeletedFalse() {
-		List<Question> actual = questionRepository.findByDeletedFalse();
-		actual.forEach(question -> assertThat(question.isDeleted()).isFalse());
-	}
+    @Test
+    void findByDeletedFalse() {
+        List<Question> actual = questionRepository.findByDeletedFalse();
+        actual.forEach(question -> assertThat(question.isDeleted()).isFalse());
+    }
 
-	@Test
-	void findByIdAndDeletedFalse() {
-		Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(Q1.getId());
-		assertThat(actual).isEqualTo(Optional.of(Q1));
-	}
+    @Test
+    void findByIdAndDeletedFalse() {
+        Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(Q1.getId());
+        assertThat(actual).isEqualTo(Optional.of(Q1));
+    }
 }

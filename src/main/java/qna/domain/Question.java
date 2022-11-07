@@ -1,120 +1,110 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Question extends BaseEntity {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @OneToMany(mappedBy = "question")
+    private final List<Answer> answers = new ArrayList<>();
 
-	@Column(length = 100, nullable = false)
-	private String title;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Lob
-	private String contents;
+    @Column(length = 100, nullable = false)
+    private String title;
 
-	private Long writerId;
+    @Lob
+    private String contents;
 
-	@Column(nullable = false)
-	private boolean deleted = false;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id")
+    private User writer;
 
-	protected Question() {
-	}
+    @Column(nullable = false)
+    private boolean deleted = false;
 
-	public Question(String title, String contents) {
-		this(null, title, contents);
-	}
+    protected Question() {
+    }
 
-	public Question(Long id, String title, String contents) {
-		this.id = id;
-		this.title = title;
-		this.contents = contents;
-	}
+    public Question(String title, String contents) {
+        this(null, title, contents);
+    }
 
-	public Question writeBy(User writer) {
-		this.writerId = writer.getId();
-		return this;
-	}
+    public Question(Long id, String title, String contents) {
+        this.id = id;
+        this.title = title;
+        this.contents = contents;
+    }
 
-	public boolean isOwner(User writer) {
-		return this.writerId.equals(writer.getId());
-	}
+    public Question writeBy(User writer) {
+        this.writer = writer;
+        return this;
+    }
 
-	public void addAnswer(Answer answer) {
-		answer.toQuestion(this);
-	}
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public void addAnswer(Answer answer) {
+        answer.toQuestion(this);
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public User getWriter() {
+        return this.writer;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public boolean isDeleted() {
+        return deleted;
+    }
 
-	public String getContents() {
-		return contents;
-	}
+    public void delete() {
+        this.deleted = true;
+    }
 
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
+    public List<Answer> getAnswers() {
+        return this.answers;
+    }
 
-	public Long getWriterId() {
-		return writerId;
-	}
+    @Override
+    public String toString() {
+        return "Question{" +
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            '}';
+    }
 
-	public void setWriterId(Long writerId) {
-		this.writerId = writerId;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Question question = (Question)o;
+        return Objects.equals(getId(), question.getId());
+    }
 
-	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
-
-	@Override
-	public String toString() {
-		return "Question{" +
-			"id=" + id +
-			", title='" + title + '\'' +
-			", contents='" + contents + '\'' +
-			", writerId=" + writerId +
-			", deleted=" + deleted +
-			'}';
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Question question = (Question)o;
-		return Objects.equals(getId(), question.getId());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(getId());
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }
