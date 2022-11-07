@@ -23,21 +23,21 @@ public class QuestionTest {
     @Autowired
     DeleteHistoryRepository deletes;
 
-    private static Stream<Question> question_save_equal_test() {
+    private static Stream<Question> save_question_and_find_test() {
         return Stream.of(Q1,Q2);
     }
 
     @ParameterizedTest
     @DisplayName("question 엔티티 저장 후 찾기 테스트")
     @MethodSource
-    void question_save_equal_test(Question input) {
+    void save_question_and_find_test(Question input) {
         Question question = questions.save(input);
         assertThat(questions.findById(question.getId()).get()).isEqualTo(question);
     }
 
     @Test
     @DisplayName("question 엔티티 저장 후 수정 테스트")
-    void question_save_update_test() {
+    void save_question_and_update_test() {
         //given
         Question question = questions.save(Q1);
         Long id = question.getId();
@@ -49,14 +49,14 @@ public class QuestionTest {
         assertThat(questions.findById(id).get().getContents()).isEqualTo(updateContents);
     }
 
-    private static Stream<Question> question_save_delete_test() {
+    private static Stream<Question> save_question_and_delete_test() {
         return Stream.of(Q1,Q2);
     }
 
     @ParameterizedTest
     @DisplayName("question 엔티티 저장 후 삭제 테스트")
     @MethodSource
-    void question_save_delete_test(Question input) {
+    void save_question_and_delete_test(Question input) {
         //given
         Question question = questions.save(input);
         Long id = question.getId();
