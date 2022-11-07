@@ -21,11 +21,9 @@ public class User extends BaseTime {
     private String name;
     @Column(length = 50)
     private String email;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "writer")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "writer")
     List<Answer> answers = new ArrayList<>();
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "deletedByUser")
-    List<DeleteHistory> deleteHistories = new ArrayList<>();
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "writer")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "writer")
     List<Question> questions = new ArrayList<>();
 
     protected User() {
@@ -97,6 +95,13 @@ public class User extends BaseTime {
         return email;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
 
     @Override
     public String toString() {
@@ -128,6 +133,7 @@ public class User extends BaseTime {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 
     private static class GuestUser extends User {
         @Override

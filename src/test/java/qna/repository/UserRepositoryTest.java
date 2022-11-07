@@ -3,11 +3,15 @@ package qna.repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Answers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.NotFoundException;
+import qna.domain.Answer;
+import qna.domain.Question;
 import qna.domain.User;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +22,14 @@ public class UserRepositoryTest {
 
     @Autowired
     private UserRepository users;
+    @Autowired
+    private QuestionRepository questions;
+    @Autowired
+    private AnswerRepository answers;
+    @Autowired
+    private EntityManager entityManager;
+
+
     private User loginUser;
     private User targetUser;
 
@@ -77,4 +89,31 @@ public class UserRepositoryTest {
                 () -> assertThat(actual.getEmail()).isEqualTo(targetUser.getEmail())
         );
     }
+
+    @Test
+    @DisplayName("user에서 자기가 작성한 question조회")
+    void user_get_question() {
+        User expect = users.save(loginUser);
+        Question question = new Question("test_title", "contents").writeBy(expect);
+        questions.save(question);
+        entityManager.flush();
+        entityManager.clear();
+        User dbExpect = users.getOne(loginUser.getId());
+        assertThat(dbExpect.getQuestions()).containsExactly(question);
+    }
+
+    @Test
+    @DisplayName("user에서 자기가 작성한 answer조회")
+    void user_get_answer() {
+        User expect = users.save(loginUser);
+        Question question = new Question("test_title", "contents").writeBy(expect);
+        Answer answer = new Answer(expect, question, "title");
+        question.addAnswer(answer);
+        questions.save(question);
+        entityManager.flush();
+        entityManager.clear();
+        User dbExpect = users.getOne(loginUser.getId());
+        assertThat(dbExpect.getAnswers()).containsExactly(answer);
+    }
+    
 }
