@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -67,9 +68,9 @@ class AnswerRepositoryTest {
 
     @Test
     @DisplayName("삭제되지 않은 답변 조회")
-    void find_by_id_and_deleted_false() {
+    void find_by_id_and_deleted_false() throws CannotDeleteException {
         Answer expected = answerRepository.save(answer);
-        expected.delete();
+        expected.delete(user);
 
         List<Answer> actual = answerRepository.findByQuestionAndDeletedFalse(expected.getQuestion());
         assertAll(
@@ -77,13 +78,6 @@ class AnswerRepositoryTest {
                 () -> assertFalse(actual.contains(expected)),
                 () -> assertTrue(expected.isDeleted())
         );
-    }
-
-    @Test
-    @DisplayName("답변의 주인이라면 true를 리턴")
-    void is_owner_return_true() {
-        Answer actual = answerRepository.save(answer);
-        assertTrue(actual.isOwner(user));
     }
 
     @Test

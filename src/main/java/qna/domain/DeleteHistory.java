@@ -49,6 +49,10 @@ public class DeleteHistory {
         this.deletedBy = deletedBy;
     }
 
+    public static DeleteHistory answerOf(Long answerId, User loginUser) {
+        return new DeleteHistory(ContentType.ANSWER, answerId, loginUser);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
