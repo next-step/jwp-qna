@@ -1,9 +1,15 @@
-package qna.domain;
+package qna.repository;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.Question;
+import qna.domain.QuestionTest;
+import qna.domain.User;
+import qna.domain.UserTest;
+import qna.repository.QuestionRepository;
+import qna.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,24 +24,30 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     @DisplayName("질문 저장 확인")
     void save() {
-        Question question = QuestionTest.Q1;
+        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
+        Question question = QuestionTest.Q1.writeBy(questionWriter);
         Question savedQuestion = questionRepository.save(question);
 
         assertAll(
                 () -> assertThat(savedQuestion.getId()).isNotNull(),
                 () -> assertThat(savedQuestion.getContents()).isEqualTo(question.getContents()),
                 () -> assertThat(savedQuestion.getTitle()).isEqualTo(question.getTitle()),
-                () -> assertThat(savedQuestion.getWriterId()).isEqualTo(question.getWriterId())
+                () -> assertThat(savedQuestion.getWriter()).isEqualTo(question.getWriter())
         );
     }
 
     @Test
     @DisplayName("저장한 질문과 해당 질문이 같은지 확인")
     void read() {
-        Question savedQuestion = questionRepository.save(QuestionTest.Q1);
+        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
+        Question savedQuestion = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
+
         Optional<Question> question = questionRepository.findById(savedQuestion.getId());
 
         assertThat(savedQuestion).isEqualTo(question.get());
@@ -44,7 +56,8 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("저장한 질문 내용 변경 시 내용 일치 여부 확인")
     void update() {
-        Question savedQuestion = questionRepository.save(QuestionTest.Q1);
+        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
+        Question savedQuestion = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
         savedQuestion.setContents(QuestionTest.Q2.getContents());
 
         Optional<Question> findQuestion = questionRepository.findById(savedQuestion.getId());
@@ -55,7 +68,9 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("저장한 질문 삭제 확인")
     void delete() {
-        Question savedQuestion = questionRepository.save(QuestionTest.Q1);
+        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
+        Question savedQuestion = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
+
         questionRepository.delete(savedQuestion);
 
         Optional<Question> findQuestion = questionRepository.findById(savedQuestion.getId());
@@ -67,7 +82,9 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("질문 삭제 불가 확인")
     void question_cannot_deleted() {
-        Question savedQuestion = questionRepository.save(QuestionTest.Q1);
+        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
+        Question savedQuestion = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
+
         savedQuestion.setDeleted(false);
 
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
@@ -78,7 +95,9 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("질문 삭제 확인")
     void question_can_deleted() {
-        Question saveQuestion = questionRepository.save(QuestionTest.Q1);
+        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
+        Question saveQuestion = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
+
         saveQuestion.setDeleted(true);
 
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestion.getId());
@@ -89,10 +108,11 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("질문 false 개수 확인 1")
     void find_question_not_deleted_count() {
-        Question savedQuestion1 = questionRepository.save(QuestionTest.Q1);
+        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
+        Question savedQuestion1 = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
         savedQuestion1.setDeleted(false);
 
-        Question savedQuestion2 = questionRepository.save(QuestionTest.Q2);
+        Question savedQuestion2 = questionRepository.save(QuestionTest.Q2.writeBy(questionWriter));
         savedQuestion2.setDeleted(false);
 
         List<Question> findQuestions = questionRepository.findByDeletedFalse();
@@ -105,10 +125,11 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("질문 false 개수 확인 2")
     void find_question_not_deleted_count_2() {
-        Question savedQuestion1 = questionRepository.save(QuestionTest.Q1);
+        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
+        Question savedQuestion1 = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
         savedQuestion1.setDeleted(false);
 
-        Question savedQuestion2 = questionRepository.save(QuestionTest.Q2);
+        Question savedQuestion2 = questionRepository.save(QuestionTest.Q2.writeBy(questionWriter));
         savedQuestion2.setDeleted(true);
 
         List<Question> findQuestions = questionRepository.findByDeletedFalse();
