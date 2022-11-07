@@ -3,7 +3,7 @@ package qna.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.NotFoundException;
-import qna.UnAuthenticationException;
+import qna.UnAuthorizedException;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -16,7 +16,7 @@ public class AnswerTest {
     void Answer_writer_not_null() {
         assertThatThrownBy(() -> {
            Answer testAnswer = new Answer(null, QuestionTest.Q1, "Answer Contents1");
-        }).isInstanceOf(UnAuthenticationException.class);
+        }).isInstanceOf(UnAuthorizedException.class);
     }
 
     @Test

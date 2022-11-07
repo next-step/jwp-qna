@@ -21,6 +21,7 @@ public class Answer extends BaseTimeEntity{
     @Column(name = "writerId")
     private Long writerId;
 
+    public Answer() {}
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }

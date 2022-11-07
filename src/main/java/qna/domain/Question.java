@@ -27,6 +27,8 @@ public class Question extends BaseTimeEntity{
         this.contents = contents;
     }
 
+    public Question() {}
+
     public Question writeBy(User writer) {
         this.writerId = writer.getId();
         return this;

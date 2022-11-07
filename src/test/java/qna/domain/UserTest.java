@@ -12,10 +12,10 @@ public class UserTest {
 
     @Test
     @DisplayName("User Update loginUser UserId error 테스트")
-    void User_Update_Login_User_Id_Error(){
+    void User_Update_Login_User_Id_Error() {
         assertThatThrownBy(() -> {
             User targetUser = new User("sanjigi", "password", "name", "javajigi@slipp.net");
-            JAVAJIGI.update(JAVAJIGI, targetUser);
+            SANJIGI.update(JAVAJIGI, targetUser);
         }).isInstanceOf(UnAuthorizedException.class);
     }
 
