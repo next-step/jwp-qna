@@ -3,6 +3,7 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
@@ -19,7 +20,7 @@ public class QuestionTest {
         assertAll(
             () -> assertThat(Q1.isDeleted()).isTrue(),
             () -> assertThat(deleteHistories.getDeleteHistories()).containsExactly(
-                new DeleteHistory(ContentType.QUESTION, Q1.getId(), Q1.getWriter()))
+                new DeleteHistory(ContentType.QUESTION, Q1.getId(), Q1.getWriter(), LocalDateTime.now()))
         );
     }
 

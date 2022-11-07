@@ -39,7 +39,7 @@ class DeleteHistoryRepositoryTest {
         User user = userRepository.save(UserTest.JAVAJIGI);
         Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
         DeleteHistory deleteHistory = deleteHistoryRepository.save(
-            new DeleteHistory(ContentType.QUESTION, question.getId(), user));
+            new DeleteHistory(ContentType.QUESTION, question.getId(), user, LocalDateTime.now()));
 
         Optional<DeleteHistory> result = deleteHistoryRepository.findById(deleteHistory.getId());
 
@@ -53,9 +53,9 @@ class DeleteHistoryRepositoryTest {
         Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
         Answer answer = answerRepository.save(new Answer(user, question, "contents"));
         DeleteHistory deleteHistory1 = deleteHistoryRepository.save(
-            new DeleteHistory(ContentType.QUESTION, question.getId(), user));
+            new DeleteHistory(ContentType.QUESTION, question.getId(), user, LocalDateTime.now()));
         DeleteHistory deleteHistory2 = deleteHistoryRepository.save(
-            new DeleteHistory(ContentType.ANSWER, answer.getId(), user));
+            new DeleteHistory(ContentType.ANSWER, answer.getId(), user, LocalDateTime.now()));
 
         List<DeleteHistory> result = deleteHistoryRepository.findAll();
 
@@ -69,7 +69,7 @@ class DeleteHistoryRepositoryTest {
         User user = userRepository.save(UserTest.JAVAJIGI);
         Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
         DeleteHistory deleteHistory = deleteHistoryRepository.save(
-            new DeleteHistory(ContentType.QUESTION, question.getId(), user));
+            new DeleteHistory(ContentType.QUESTION, question.getId(), user, LocalDateTime.now()));
         deleteHistoryRepository.delete(deleteHistory);
 
         Optional<DeleteHistory> result = deleteHistoryRepository.findById(deleteHistory.getId());
