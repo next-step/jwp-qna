@@ -17,7 +17,7 @@ public class Contents {
         this.contents = contents;
     }
 
-    public static Contents from(String contents) {
+    public static Contents of(String contents) {
         return new Contents(contents);
     }
 
