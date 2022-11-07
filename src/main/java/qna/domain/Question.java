@@ -14,10 +14,10 @@ public class Question extends BaseEntity {
     private String title;
     @Lob
     private String contents;
-    @ManyToOne
-    @JoinColumn(name="writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
     private final List<Answer> answers = new ArrayList<>();
     @Column(nullable = false)
     private boolean deleted = false;
@@ -45,6 +45,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
