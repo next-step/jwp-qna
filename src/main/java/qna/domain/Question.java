@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -14,10 +15,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 
 @Entity
 @Table
 public class Question extends BaseTimeEntity {
+    public static final String ERROR_MESSAGE_IS_NOT_WRITER = "질문을 삭제할 권한이 없습니다.";
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -50,8 +53,28 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public void isNotWriter(User loginUser) {
+        if (writer.isNot(loginUser)) {
+            throw new CannotDeleteException(ERROR_MESSAGE_IS_NOT_WRITER);
+        }
+    }
+
+    public List<DeleteHistory> delete(User loginUser) {
+        List<DeleteHistory> deleteHistories = new LinkedList<>();
+        deleteQuestion(loginUser, deleteHistories);
+
+        if (answers.isEmpty()) {
+            return deleteHistories;
+        }
+
+        deleteHistories.addAll(answers.delete(loginUser));
+        return deleteHistories;
+    }
+
+    private void deleteQuestion(User loginUser, List<DeleteHistory> deleteHistories) {
+        isNotWriter(loginUser);
+        this.deleted = true;
+        deleteHistories.add(DeleteHistory.questionOf(this.getId(), loginUser));
     }
 
     public void addAnswer(Answer answer) {
@@ -64,10 +87,6 @@ public class Question extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void delete() {
-        this.deleted = true;
     }
 
     public User getWriter() {

@@ -76,7 +76,7 @@ class QuestionRepositoryTest {
     @DisplayName("ID로 질문 조회 (삭제)")
     void find_question_by_id_and_deleted_true() {
         Question expected = questionRepository.save(question);
-        expected.delete();
+        expected.delete(writer);
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedTrue(expected.getId());
         assertTrue(findQuestion.isPresent());
         findQuestion.ifPresent(actual ->
@@ -105,12 +105,5 @@ class QuestionRepositoryTest {
 
         Optional<Question> findQuestion = questionRepository.findById(saveQuestion.getId());
         findQuestion.ifPresent(actual -> assertThat(actual.getAnswers()).contains(expected));
-    }
-
-    @Test
-    @DisplayName("질문의 주인일 경우 true를 리턴")
-    void is_owner_return_true() {
-        Question actual = questionRepository.save(question);
-        assertTrue(actual.isOwner(writer));
     }
 }

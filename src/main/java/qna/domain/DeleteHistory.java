@@ -53,6 +53,10 @@ public class DeleteHistory {
         return new DeleteHistory(ContentType.ANSWER, answerId, loginUser);
     }
 
+    public static DeleteHistory questionOf(Long questionId, User loginUser) {
+        return new DeleteHistory(ContentType.QUESTION, questionId, loginUser);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

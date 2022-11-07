@@ -130,11 +130,11 @@ QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 
 - `qna.service.QnaService`의 `deleteQuestion()` 메소드를 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드를 분리해 단위 테스트를 구현한다.
 - 리팩터링을 완료한 후에도 `src/test/java` 디렉터리의 `qna.service.QnaServiceTest`의 모든 테스트가 통과해야 한다.
 
-- [ ] Question
-  - [ ] 질문 삭제 권한이 없을 경우 CannotDeleteException 예외 던지기
-  - [ ] 답변들을 가져온다.
-  - [ ] 답변이 있는지 확인한다.
-  - [ ] 질문 삭제 여부를 변경한다.
+- [x] Question
+  - [x] 질문 삭제 권한이 없을 경우 CannotDeleteException 예외 던지기
+  - [x] 답변들을 가져온다.
+  - [x] 답변이 있는지 확인한다.
+  - [x] 질문 삭제 여부를 변경한다.
 - [x] Answers
   - [x] 답변이 없는지 확인한다.
   - [x] 답변을 추가한다.
