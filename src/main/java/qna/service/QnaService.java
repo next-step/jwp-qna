@@ -39,9 +39,6 @@ public class QnaService {
         Question question = findQuestionById(questionId);
         question.validateOwner(loginUser);
 
-        Answers answerCollection = new Answers(question.getAnswers());
-        answerCollection.validateOwner(loginUser);
-
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(question.getDeleteHistory());
         deleteHistories.addAll(new Answers(question.getAnswers()).getDeleteHistorys());
