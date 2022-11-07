@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -59,8 +60,8 @@ public class AnswerTest {
 
     @Test
     @DisplayName("deleted가 정상적으로 설정됨")
-    void test8() {
-        A1.markDeleted(true);
+    void test8() throws CannotDeleteException {
+        A1.delete(JAVAJIGI);
 
         assertThat(A1.isDeleted()).isTrue();
     }

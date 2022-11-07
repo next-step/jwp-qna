@@ -24,7 +24,7 @@ public class Question extends BaseEntity {
     private boolean deleted = false;
 
     @Embedded
-    private final QuestionAnswers answers = new QuestionAnswers(this.writer);
+    private final QuestionAnswers answers = new QuestionAnswers();
 
     protected Question() {
 
@@ -109,7 +109,7 @@ public class Question extends BaseEntity {
     private List<DeleteHistory> getDeleteHistory() {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(this.toDeleteHistory());
-        deleteHistories.addAll(this.answers.getAnswerDeleteHistories());
+        deleteHistories.addAll(this.answers.getAnswerDeleteHistories(this.writer));
         return deleteHistories;
     }
 

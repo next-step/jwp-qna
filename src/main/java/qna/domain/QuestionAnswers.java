@@ -13,23 +13,19 @@ import java.util.stream.Collectors;
 @Embeddable
 public class QuestionAnswers {
 
-    private User questionWriter;
-    public QuestionAnswers(){
-    }
-    public QuestionAnswers(User writer) {
-        this.questionWriter = writer;
-    }
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
     private List<Answer> answers = new ArrayList<>();
+    public QuestionAnswers(){
+    }
 
     public void add(Answer answer) {
         answers.add(answer);
     }
 
-    public Collection<DeleteHistory> getAnswerDeleteHistories() {
+    public Collection<DeleteHistory> getAnswerDeleteHistories(User loginUser) {
         return this.answers.stream().map(answer -> {
             try {
-                return answer.delete(questionWriter);
+                return answer.delete(loginUser);
             } catch (CannotDeleteException e) {
                 throw new RuntimeException(e);
             }

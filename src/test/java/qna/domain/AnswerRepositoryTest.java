@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import javax.persistence.EntityManager;
 import java.util.Arrays;
@@ -21,11 +22,11 @@ class AnswerRepositoryTest extends NewEntityTestBase {
 
     @Test
     @DisplayName("Question Id와 삭제되지 않은 Answer를 검색하면 한 건이 조회됨")
-    void findByQuestionQIdAndDeletedFalse() {
-        Answer deletedAnswer = new Answer(NEWUSER1, Q2, "some contents");
-        deletedAnswer.markDeleted(true);
+    void findByQuestionQIdAndDeletedFalse() throws CannotDeleteException {
+        Answer answer = new Answer(NEWUSER1, Q2, "some contents");
+        answer.delete(NEWUSER1);
 
-        answerRepository.save(deletedAnswer);
+        answerRepository.save(answer);
         List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(Q2);
 
         assertThat(answers.size()).isEqualTo(1);
@@ -33,9 +34,8 @@ class AnswerRepositoryTest extends NewEntityTestBase {
 
     @Test
     @DisplayName("Question Id와 삭제되지 않은 Answer를 검색하면 한 건이 조회됨")
-    void findByDeletedFalse() {
-        A1.markDeleted(true);
-        A2.markDeleted(false);
+    void findByDeletedFalse() throws CannotDeleteException {
+        A1.delete(NEWUSER1);
 
         List<Answer> answers = answerRepository.findByDeletedTrue();
 
