@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Embeddable
 public class Answers implements Iterable<Answer> {
@@ -22,12 +23,10 @@ public class Answers implements Iterable<Answer> {
     public Answers() {
     }
 
-    public List<DeleteHistory> deleteAll(User loginUser)  {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : this) {
-            deleteHistories.add(answer.deleteBy(loginUser));
-        }
-        return deleteHistories;
+    public List<DeleteHistory> deleteAll(User loginUser) {
+        return answers.stream()
+                .map(answer -> answer.deleteBy(loginUser))
+                .collect(Collectors.toList());
     }
 
     @Override
