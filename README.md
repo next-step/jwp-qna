@@ -122,8 +122,8 @@ alter table question
 ## 기능 구현 체크리스트
 
 ### Question
-- [ ] 질문 & 답변 삭제 기능 추가
-- [ ] 질문 삭제 권한 Validation 기능 추가
+- [X] 질문 & 답변 삭제 기능 추가
+- [X] 질문 삭제 권한 Validation 기능 추가
 
 ### Answer
 - [X] 답변 삭제 기능 추가

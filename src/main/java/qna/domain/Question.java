@@ -1,10 +1,13 @@
 package qna.domain;
 
-import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 public class Question {
@@ -21,9 +24,8 @@ public class Question {
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-    @OneToMany(mappedBy = "question")
-    @Where(clause = "deleted = false")
-    private final List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
 
     protected Question() {
     }
@@ -36,6 +38,7 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {
@@ -43,7 +46,7 @@ public class Question {
         return this;
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.getId().equals(writer.getId());
     }
 
@@ -76,11 +79,42 @@ public class Question {
         return deleted;
     }
 
-    public void changeDeleted(final boolean deleted) {
-        this.deleted = deleted;
+    private void changeDeleted() {
+        this.deleted = true;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public List<DeleteHistory> deleteContentsOf(final User loginUser) throws CannotDeleteException {
+        validate(loginUser);
+        validateAnswers(loginUser);
+        return deleteContents();
+    }
+
+    private List<DeleteHistory> deleteContents() {
+        return Stream.of(deleteQuestion().getDeleteHistories(), deleteAnswers().getDeleteHistories())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
+    private DeleteHistories deleteQuestion() {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        changeDeleted();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        return deleteHistories;
+    }
+
+    private DeleteHistories deleteAnswers() {
+        return answers.deleteAll();
+    }
+
+    private void validateAnswers(final User loginUser) throws CannotDeleteException {
+        if (answers.isIncludedFromOtherThan(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
+    private void validate(final User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 }
