@@ -45,8 +45,8 @@ public class Answer extends BaseEntity {
 
     protected Answer() {}
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public boolean isNotOwner(User writer) {
+        return !this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -79,12 +79,16 @@ public class Answer extends BaseEntity {
     }
 
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
+        validateDeleteAuthority(loginUser);
 
         setDeleted(true);
         return DeleteHistory.createAnswer(id, writer, LocalDateTime.now());
+    }
+
+    private void validateDeleteAuthority(User loginUser) throws CannotDeleteException {
+        if (isNotOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     @Override
