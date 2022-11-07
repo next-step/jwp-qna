@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 import org.hibernate.proxy.HibernateProxy;
@@ -69,13 +68,6 @@ class AnswerRepositoryTest {
         assertThatThrownBy(() -> answerRepository.deleteById(answer.getId()))
                 .isInstanceOf(UnsupportedOperationException.class)
                 .hasMessage("해당 메소드를 사용해 답변을 삭제할 수 없습니다.");
-    }
-
-    @Test
-    void 질문을_통한_조회() {
-        answerRepository.save(new Answer(user, question, "contents"));
-        List<Answer> actual = answerRepository.findByQuestionAndDeletedFalse(question);
-        assertThat(actual).hasSize(1);
     }
 
     @Test
