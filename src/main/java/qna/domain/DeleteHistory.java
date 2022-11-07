@@ -1,13 +1,23 @@
 package qna.domain;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
 public class DeleteHistory {
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    @Enumerated(STRING)
+    @Column(columnDefinition = "varchar(255)")
     private ContentType contentType;
     private Long contentId;
     private Long deletedById;
+    @Column(columnDefinition = "datetime(6)")
     private LocalDateTime createDate = LocalDateTime.now();
 
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
@@ -15,6 +25,10 @@ public class DeleteHistory {
         this.contentId = contentId;
         this.deletedById = deletedById;
         this.createDate = createDate;
+    }
+
+    protected DeleteHistory() {
+
     }
 
     @Override
