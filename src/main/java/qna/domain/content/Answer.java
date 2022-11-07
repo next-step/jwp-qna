@@ -1,9 +1,13 @@
 package qna.domain.content;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.domain.history.DeleteHistoryGenerator;
+import qna.exception.CannotDeleteException;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
 import qna.common.AuditingEntity;
+import qna.domain.history.DeleteHistory;
 import qna.domain.User;
+import qna.exception.message.AnswerExceptionCode;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -50,13 +54,13 @@ public class Answer extends AuditingEntity {
 
     private void validateWriter(User writer) {
         if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException(AnswerExceptionCode.REQUIRED_WRITER.getMessage());
         }
     }
 
     private void validateQuestion(Question question) {
         if (Objects.isNull(question)) {
-            throw new NotFoundException();
+            throw new NotFoundException(AnswerExceptionCode.REQUIRED_QUESTION.getMessage());
         }
     }
 
@@ -67,7 +71,24 @@ public class Answer extends AuditingEntity {
         }
     }
 
-    public boolean isOwner(User writer) {
+    public DeleteHistory delete(User loginUser) {
+        checkDeletableAnswer(loginUser);
+        this.deleted = true;
+
+        return DeleteHistoryGenerator.generate(ContentType.ANSWER, id, getWriter());
+    }
+
+    private void checkDeletableAnswer(User loginUser) {
+        if(!isOwner(loginUser)) {
+            throw new CannotDeleteException(AnswerExceptionCode.NOT_MATCH_LOGIN_USER.getMessage());
+        }
+
+        if(isDeleted()) {
+            throw new CannotDeleteException(AnswerExceptionCode.ALREADY_DELETED.getMessage());
+        }
+    }
+
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
@@ -79,12 +100,8 @@ public class Answer extends AuditingEntity {
 
     private void matchUser(User loginUser) {
         if(!this.writer.equals(loginUser)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException(AnswerExceptionCode.NOT_MATCH_LOGIN_USER.getMessage());
         }
-    }
-
-    public void updateDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public Long getId() {
