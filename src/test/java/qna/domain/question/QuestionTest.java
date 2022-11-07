@@ -105,15 +105,15 @@ public class QuestionTest {
         question.addAnswer(new Answer(loginUser, question, "contents1"));
         question.addAnswer(new Answer(loginUser, question, "contents2"));
         questionRepository.saveAndFlush(question);
+
         question.delete(loginUser);
+        List<Question> all = questionRepository.findAll();
+        Question findQuestion = questionRepository.findById(question.getId()).get();
 
-        Question findQuestion = questionRepository.findById(loginUser.getId()).get();
-        assertAll(
-                () -> assertThat(findQuestion.isDeleted()).isTrue()
-        );
-
-        // TODO:answer 모든 항목 삭제 검증
-        findQuestion.getAnswers();
+        assertThat(findQuestion.isDeleted()).isTrue();
+        for (Answer answer : findQuestion.getAnswers()) {
+            assertThat(answer.isDeleted()).isTrue();
+        }
 
     }
 
