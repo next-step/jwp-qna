@@ -11,10 +11,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static qna.fixture.TestFixture.JAVAJIGI;
+import static qna.fixture.TestFixture.Q1;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
-    public static final Question Q1 = new Question("title1", "contents1");
 
     private Question question1;
     private Question question2;
@@ -28,7 +29,7 @@ public class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = userRepository.save(new User("kim9418", "123123", "김대겸", "koreatech93@naver.com"));
+        user = userRepository.save(JAVAJIGI);
         question1 = new Question(1L, "title1", "contents1");
         question2 = new Question(2L, "title2", "contents2");
         question1.writeBy(user);

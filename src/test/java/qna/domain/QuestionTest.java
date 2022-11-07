@@ -7,9 +7,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static qna.domain.QuestionRepositoryTest.Q1;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
+import static qna.fixture.TestFixture.JAVAJIGI;
+import static qna.fixture.TestFixture.Q1;
+import static qna.fixture.TestFixture.SANJIGI;
 
 class QuestionTest {
 
