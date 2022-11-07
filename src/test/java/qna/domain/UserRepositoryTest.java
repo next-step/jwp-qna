@@ -31,9 +31,9 @@ public class UserRepositoryTest {
     @DisplayName("사용자를 저장할 수 있어야 한다.")
     void save_user() {
         User user = userRepository.save(JAVAJIGI);
-        assertThat(user.getId()).isNotNull();
 
         assertAll(
+                () -> assertThat(user.getId()).isNotNull(),
                 () -> assertThat(user.getUserId()).isEqualTo(JAVAJIGI.getUserId()),
                 () -> assertThat(user.getPassword()).isEqualTo(JAVAJIGI.getPassword()),
                 () -> assertThat(user.getName()).isEqualTo(JAVAJIGI.getName()),
@@ -68,12 +68,16 @@ public class UserRepositoryTest {
     void update_user_by_id() {
         User user = userRepository.save(JAVAJIGI);
 
-        JAVAJIGI.setEmail("heollo@test.com");
+        JAVAJIGI.updateEmail("heollo@test.com");
         user.update(user, JAVAJIGI);
 
         User updatedUser = userRepository.findByUserId(user.getUserId()).get();
 
-        assertThat(updatedUser).isEqualTo(user);
+
+        assertAll(
+                () -> assertThat(updatedUser).isEqualTo(user),
+                () -> assertThat(updatedUser.equalsNameAndEmail(JAVAJIGI)).isEqualTo(true)
+        );
     }
 
     @Test
