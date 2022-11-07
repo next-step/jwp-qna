@@ -17,14 +17,14 @@ public class User  extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false, unique = true)
-    private String userId;
+    @Embedded
+    private UserId userId;
 
     @Embedded
     private Password password;
 
-    @Column(length = 20, nullable = false)
-    private String name;
+    @Embedded
+    private Name name;
 
     @Embedded
     private Email email;
@@ -32,11 +32,11 @@ public class User  extends BaseEntity implements Serializable {
     protected User() {
     }
 
-    public User(String userId, Password password, String name, Email email) {
+    public User(UserId userId, Password password, Name name, Email email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, Password password, String name, Email email) {
+    public User(Long id, UserId userId, Password password, Name name, Email email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -57,7 +57,7 @@ public class User  extends BaseEntity implements Serializable {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    private boolean matchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
@@ -82,7 +82,7 @@ public class User  extends BaseEntity implements Serializable {
         return id;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
@@ -90,11 +90,11 @@ public class User  extends BaseEntity implements Serializable {
         return password;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(Name name) {
         this.name = name;
     }
 

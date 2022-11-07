@@ -1,11 +1,14 @@
-package qna.domain;
+package qna.domain.user;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.email.Email;
+import qna.domain.password.Password;
+import qna.domain.user.Name;
 import qna.domain.user.User;
+import qna.domain.user.UserId;
 import qna.domain.user.UserRepository;
 
 import java.util.List;
@@ -16,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DataJpaTest
 public class UserTest {
 
-    public static final User JAVAJIGI = new User("javajigi", "password", "name", new Email ("javajigi@slipp.net")); //셀렉트 없이 인설트
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", new Email("sanjigi@slipp.net")); //셀렉트 하고 인설트 id값이 존재 하기때문에
+    public static final User JAVAJIGI = new User(UserId.of("javajigi"), Password.of("password"), Name.of("name"), new Email ("javajigi@slipp.net")); //셀렉트 없이 인설트
+    public static final User SANJIGI = new User(2L, UserId.of("sanjigi"), Password.of("password"), Name.of("name"), new Email("sanjigi@slipp.net")); //셀렉트 하고 인설트 id값이 존재 하기때문에
 
     @Autowired
     private UserRepository userRepository;

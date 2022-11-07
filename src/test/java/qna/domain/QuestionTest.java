@@ -14,6 +14,7 @@ import qna.domain.question.QuestionRepository;
 import qna.domain.title.Title;
 import qna.domain.user.User;
 import qna.domain.user.UserRepository;
+import qna.domain.user.UserTest;
 
 import java.util.List;
 

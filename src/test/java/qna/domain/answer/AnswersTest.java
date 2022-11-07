@@ -3,7 +3,7 @@ package qna.domain.answer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.domain.QuestionTest;
-import qna.domain.UserTest;
+import qna.domain.user.UserTest;
 import qna.domain.content.Contents;
 
 import static org.assertj.core.api.Assertions.assertThat;
