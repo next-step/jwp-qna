@@ -40,8 +40,7 @@ public class QnaService {
         question.validateOwner(loginUser);
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(question.getDeleteHistory());
-        deleteHistories.addAll(new Answers(question.getAnswers()).getDeleteHistorys());
+        deleteHistories.addAll(question.getDeleteHistories());
         deleteHistoryService.saveAll(deleteHistories);
     }
 }
