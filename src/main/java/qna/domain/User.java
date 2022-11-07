@@ -3,40 +3,28 @@ package qna.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "user")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseCreatedAndUpdatedAt {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @CreatedDate
-    @NotNull
-    private LocalDateTime createdAt;
     @Column(length = 50)
     private String email;
-    @Column(length = 20)
-    @NotNull
+    @Column(length = 20, nullable = false)
     private String name;
-    @Column(length = 20)
-    @NotNull
+    @Column(length = 20, nullable = false)
     private String password;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-    @Column(length = 20)
-    @NotNull
+    @Column(length = 20, nullable = false)
     private String userId;
 
     public User(String userId, String password, String name, String email) {
@@ -49,16 +37,6 @@ public class User {
         this.password = password;
         this.name = name;
         this.email = email;
-    }
-
-    @PrePersist
-    void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    void onUpdate() {
-        updatedAt = LocalDateTime.now();
     }
 
     public void update(User loginUser, User target) {
@@ -99,10 +77,12 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", userId='" + userId + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 

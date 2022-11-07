@@ -3,33 +3,23 @@ package qna.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "question")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Question {
+public class Question extends BaseCreatedAndUpdatedAt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
     private String contents;
-    @CreatedDate
-    @NotNull
-    private LocalDateTime createdAt;
-    @NotNull
+    @Column(nullable = false)
     private boolean deleted = false;
-    @Column(length = 100)
-    @NotNull
+    @Column(length = 100, nullable = false)
     private String title;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
     private Long writerId;
 
     public Question(String title, String contents) {
@@ -40,16 +30,6 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
-    }
-
-    @PrePersist
-    void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    void onUpdate() {
-        updatedAt = LocalDateTime.now();
     }
 
     public Question writeBy(User writer) {
@@ -77,10 +57,12 @@ public class Question {
     public String toString() {
         return "Question{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
                 ", deleted=" + deleted +
+                ", title='" + title + '\'' +
+                ", writerId=" + writerId +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

@@ -3,34 +3,25 @@ package qna.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Answer {
+public class Answer extends BaseCreatedAndUpdatedAt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
     private String contents;
-    @CreatedDate
-    @NotNull
-    private LocalDateTime createdAt;
-    @NotNull
+    @Column(nullable = false)
     private boolean deleted = false;
     private Long questionId;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
     private Long writerId;
 
     public Answer(User writer, Question question, String contents) {
@@ -51,16 +42,6 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
-    }
-
-    @PrePersist
-    void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    void onUpdate() {
-        updatedAt = LocalDateTime.now();
     }
 
     public boolean isOwner(User writer) {
@@ -84,11 +65,11 @@ public class Answer {
         return "Answer{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
-                ", createdAt=" + createdAt +
                 ", deleted=" + deleted +
                 ", questionId=" + questionId +
-                ", updatedAt=" + updatedAt +
                 ", writerId=" + writerId +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }
