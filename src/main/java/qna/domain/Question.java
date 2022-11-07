@@ -50,7 +50,7 @@ public class Question extends BaseEntity {
         if (!this.writer.equals(writer)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        new Answers(answers.getAnswers()).validateOwner(writer);
+        answers.validateOwner(writer);
     }
 
     public DeleteHistory getDeleteHistory() {
@@ -69,7 +69,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answers.getAnswers().add(answer);
+        answers.addAnswer(answer);
         answer.toQuestion(this);
     }
 
@@ -86,7 +86,7 @@ public class Question extends BaseEntity {
     }
 
     public int sizeOfAnswers() {
-        return answers.getAnswers().size();
+        return answers.size();
     }
 
     @Override

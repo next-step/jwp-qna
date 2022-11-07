@@ -29,6 +29,14 @@ public class Answers {
         return answers;
     }
 
+    public void addAnswer(Answer answer){
+        this.answers.add(answer);
+    }
+
+    public int size(){
+        return this.answers.size();
+    }
+
     private void validateNull(List<Answer> answers) {
         if (answers == null) throw new RuntimeException(NULL_MESSAGE);
     }
