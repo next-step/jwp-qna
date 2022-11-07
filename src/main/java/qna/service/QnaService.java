@@ -39,7 +39,6 @@ public class QnaService {
         Question question = findQuestionById(questionId);
         question.validateOwner(loginUser);
 
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
         Answers answerCollection = new Answers(question.getAnswers());
         answerCollection.validateOwner(loginUser);
 
