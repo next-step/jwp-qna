@@ -1,6 +1,7 @@
 package qna.domain.user;
 
 import qna.domain.email.Email;
+import qna.domain.password.Password;
 import qna.exception.UnAuthorizedException;
 import qna.domain.BaseEntity;
 
@@ -19,8 +20,8 @@ public class User  extends BaseEntity implements Serializable {
     @Column(length = 20, nullable = false, unique = true)
     private String userId;
 
-    @Column(length = 20, nullable = false)
-    private String password;
+    @Embedded
+    private Password password;
 
     @Column(length = 20, nullable = false)
     private String name;
@@ -31,11 +32,11 @@ public class User  extends BaseEntity implements Serializable {
     protected User() {
     }
 
-    public User(String userId, String password, String name, Email email) {
+    public User(String userId, Password password, String name, Email email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, Email email) {
+    public User(Long id, String userId, Password password, String name, Email email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -60,7 +61,7 @@ public class User  extends BaseEntity implements Serializable {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
+    public boolean matchPassword(Password targetPassword) {
         return this.password.equals(targetPassword);
     }
 
@@ -85,7 +86,7 @@ public class User  extends BaseEntity implements Serializable {
         return userId;
     }
 
-    public String getPassword() {
+    public Password getPassword() {
         return password;
     }
 
