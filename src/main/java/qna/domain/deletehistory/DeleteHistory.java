@@ -1,4 +1,8 @@
-package qna.domain;
+package qna.domain.deletehistory;
+
+import org.springframework.data.annotation.CreatedDate;
+import qna.domain.ContentType;
+import qna.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -9,21 +13,28 @@ public class DeleteHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(length = 255)
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
-    private Long contentId;
-    private Long deletedById;
-    private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    private Long contentId;
+
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private User deletedBy;
+
+    @CreatedDate
+    private LocalDateTime createDate;
+
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedBy = deletedBy;
         this.createDate = createDate;
     }
 
-    public DeleteHistory() {
+    protected DeleteHistory() {
     }
 
     @Override
@@ -34,12 +45,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, deletedBy);
     }
 
     @Override
@@ -48,7 +59,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + deletedBy +
                 ", createDate=" + createDate +
                 '}';
     }

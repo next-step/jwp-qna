@@ -1,51 +1,57 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.user.User;
+import qna.domain.user.UserRepository;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class UserTest {
 
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-
+    public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net"); //셀렉트 없이 인설트
+    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net"); //셀렉트 하고 인설트 id값이 존재 하기때문에
 
     @Autowired
     private UserRepository userRepository;
-    private List<User> expectList;
+
+    private User user1;
+    private User user2;
 
     @BeforeEach
     void 저장() {
-        userRepository.save(JAVAJIGI);
-        userRepository.save(SANJIGI);
+        user1 = userRepository.save(JAVAJIGI);
+        user2 = userRepository.save(SANJIGI);
+        assertThat(user1.getId()).isNotNull();
+        assertThat(user2.getId()).isNotNull();
     }
 
     @Test
     void 조회() {
-        expectList = userRepository.findAll();
+        List<User> expectList = userRepository.findAll();
         assertAll(
-            () -> assertThat(expectList).isNotNull(),
-            () -> assertThat(expectList.size()).isEqualTo(2),
-            () -> assertThat(userRepository.findByUserId("javajigi").get().getEmail()).isEqualTo(JAVAJIGI.getEmail()),
-            () -> assertThat(userRepository.findByUserId("sanjigi").get().getEmail()).isEqualTo(UserTest.SANJIGI.getEmail())
+                () -> assertThat(expectList).isNotNull(),
+                () -> assertThat(expectList.size()).isEqualTo(2),
+                () -> assertThat(user1.getEmail()).isEqualTo(JAVAJIGI.getEmail()),
+                () -> assertThat(user2.getEmail()).isEqualTo(SANJIGI.getEmail())
         );
     }
 
     @Test
     void 수정() {
-        User expect = userRepository.findById(1L).get();
+
         String previousEmail = JAVAJIGI.getEmail();
         String targetEmail = "wootechcamp@hotmail.com";
-        assertThat(expect.getEmail()).isEqualTo(previousEmail);
+        assertThat(user1.getEmail()).isEqualTo(previousEmail);
 
-        expect.setEmail(targetEmail);
-        assertThat(userRepository.save(expect).getEmail()).isEqualTo(targetEmail);
+        user1.setEmail(targetEmail);
+        assertThat(userRepository.save(user1).getEmail()).isEqualTo(targetEmail);
     }
 
     @Test
