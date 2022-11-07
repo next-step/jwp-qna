@@ -21,7 +21,8 @@ class UserRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = new User("user", "password", "name", "email@email.com");
+        UserAuth userAuth = new UserAuth("user", "password");
+        user = new User(userAuth, "name", "email@email.com");
     }
 
     @Test
@@ -47,7 +48,7 @@ class UserRepositoryTest {
     @DisplayName("유저 조회")
     void find_user_by_user_id() {
         User expected = userRepository.save(user);
-        Optional<User> findUser = userRepository.findByUserId(expected.getUserId());
+        Optional<User> findUser = userRepository.findById(expected.getId());
         Assertions.assertTrue(findUser.isPresent());
         findUser.ifPresent(actual ->
                 assertAll(
@@ -61,7 +62,7 @@ class UserRepositoryTest {
     @DisplayName("유저 변경")
     void update() {
         User loginUser = userRepository.save(user);
-        User updateUser = new User("user2", "password", "name2", "email2@email.com");
+        User updateUser = new User(new UserAuth("user2", "password"), "name2", "email2@email.com");
         loginUser.update(loginUser, updateUser);
         assertTrue(loginUser.equalsNameAndEmail(updateUser));
     }

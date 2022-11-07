@@ -35,7 +35,8 @@ class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        writer = userRepository.save(new User("user", "password", "name", "email@email.com"));
+        UserAuth userAuth = new UserAuth("user", "password");
+        writer = userRepository.save(new User(userAuth, "name", "email@email.com"));
         question = new Question("title", "contents").writeBy(writer);
     }
 
@@ -90,7 +91,7 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("질문의 작성자를 지정")
     void write_by() {
-        User expected = userRepository.save(new User("user2", "password", "name2", "email2@email.com"));
+        User expected = userRepository.save(new User(new UserAuth("user2", "password"), "name2", "email2@email.com"));
         Question actual = questionRepository.save(question).writeBy(expected);
         assertThat(actual.getWriter()).isEqualTo(expected);
     }

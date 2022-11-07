@@ -32,7 +32,8 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        user = userRepository.save(new User("user", "password", "name", "email@email.com"));
+        UserAuth userAuth = new UserAuth("user", "password");
+        user = userRepository.save(new User(userAuth, "name", "email@email.com"));
         question = questionRepository.save(new Question("title", "contents")).writeBy(user);
         answer = new Answer(question.getWriter(), question, "contents");
     }

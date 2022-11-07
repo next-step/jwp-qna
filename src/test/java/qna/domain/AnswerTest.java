@@ -19,7 +19,8 @@ class AnswerTest {
 
     @BeforeEach
     void setUp() {
-        writer = new User("user", "password", "name", "email@email.com");
+        UserAuth userAuth = new UserAuth("user", "password");
+        writer = new User(userAuth, "name", "email@email.com");
         question = new Question("title", "contents").writeBy(writer);
         answer = new Answer(question.getWriter(), question, "contents");
     }
@@ -49,7 +50,7 @@ class AnswerTest {
     @Test
     @DisplayName("답변의 작성자이 아닐 경우 CannotDeleteException 예외 던지기")
     void is_not_writer_throw_CannotDeleteException() {
-        User loginUser = new User("user2", "password", "name2", "email2@email.com");
+        User loginUser = new User(new UserAuth("user2", "password"), "name2", "email2@email.com");
         assertThatThrownBy(() -> answer.isNotWriter(loginUser))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");

@@ -13,14 +13,15 @@ class QuestionTest {
 
     @BeforeEach
     void setUp() {
-        writer = new User("user", "password", "name", "email@email.com");
+        UserAuth userAuth = new UserAuth("user", "password");
+        writer = new User(userAuth, "name", "email@email.com");
         question = new Question("title", "contents").writeBy(writer);
     }
 
     @Test
     @DisplayName("질문의 작성자 지정")
     void write_by() {
-        User expected = new User("user2", "password", "name2", "email2@email.com");
+        User expected = new User(new UserAuth("user2", "password"), "name2", "email2@email.com");
         Question actual = question.writeBy(expected);
         assertThat(actual.getWriter()).isEqualTo(expected);
     }

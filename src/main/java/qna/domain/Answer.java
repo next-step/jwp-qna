@@ -60,7 +60,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void isNotWriter(User loginUser) throws CannotDeleteException {
-        if (!this.writer.equals(loginUser)) {
+        if (writer.isNot(loginUser)) {
             throw new CannotDeleteException(ERROR_MESSAGE_IS_NOT_USER);
         }
     }
