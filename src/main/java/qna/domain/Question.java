@@ -1,11 +1,31 @@
 package qna.domain;
 
+import com.sun.istack.NotNull;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+    @Lob
     private String contents;
-    private Long writerId;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    @Column(nullable = false)
     private boolean deleted = false;
+    @Column(nullable = false, length = 100)
+    private String title;
+    private LocalDateTime updatedAt;
+    private Long writerId;
+
+    protected Question() {
+
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -34,32 +54,16 @@ public class Question {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public boolean isDeleted() {
@@ -74,10 +78,12 @@ public class Question {
     public String toString() {
         return "Question{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", createdAt=" + createdAt +
                 ", deleted=" + deleted +
+                ", title='" + title + '\'' +
+                ", updatedAt=" + updatedAt +
+                ", writerId=" + writerId +
                 '}';
     }
 }
