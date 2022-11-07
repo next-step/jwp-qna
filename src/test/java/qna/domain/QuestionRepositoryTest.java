@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-public class QuestionTest {
+public class QuestionRepositoryTest {
     public static final Question Q1 = new Question("title1", "contents1");
 
     private Question question1;

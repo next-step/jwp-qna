@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
-public class DeleteHistoryTest {
+public class DeleteHistoryRepositoryTest {
     private User user;
 
     @Autowired
