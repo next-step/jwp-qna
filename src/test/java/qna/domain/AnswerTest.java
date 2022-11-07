@@ -2,73 +2,52 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static qna.domain.QuestionTest.Q1;
+import static qna.domain.QuestionTest.Q3;
+import static qna.domain.UserTest.provideUser;
 
 @DisplayName("answer 엔티티 테스트")
-@DataJpaTest
-class AnswerTest {
-    public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+class AnswerTest extends TestBase {
+    public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents2");
-    public static final Answer DELETE_SOON_ANSWER = new Answer(3L, UserTest.MINGVEL, QuestionTest.Q3,
-            "Answers Contents3");
-
-    @Autowired
-    private AnswerRepository answerRepository;
-
-    @Autowired
-    private TestEntityManager testEntityManager;
 
     @DisplayName("save 성공")
     @Test
     void save_answer_success() {
         //given:
-        Answer answer = answerRepository.save(A2);
-        assertThat(answer).isEqualTo(A2);
+        assertThatNoException().isThrownBy(() -> answerRepository.save(provideAnswer()));
     }
 
     @DisplayName("createdAt 자동 생성 여부 테스트")
     @Test
     void save_answer_createdAt() {
         //given, when:
-        final Answer answer = answerRepository.save(A1);
+        final Answer answer = answerRepository.save(provideAnswer());
         //then:
         assertThat(answer.getCreatedAt()).isNotNull();
-    }
-
-    @DisplayName("updatedAt 데이터 변경 여부 테스트")
-    @Test
-    void save_answer_changedUpdatedAt() {
-        //given:
-        final Answer answer = answerRepository.save(A1);
-        final LocalDateTime before = answer.getUpdatedAt();
-        //when:
-        answer.setContents("modified");
-        final Answer updatedAnswer = answerRepository.save(answer);
-        testEntityManager.flush();
-        //then:
-        assertThat(updatedAnswer.getUpdatedAt()).isAfter(before);
     }
 
     @DisplayName("findByQuestionIdAndDeletedFalse 메서드 테스트")
     @Test
     void findByQuestionIdAndDeletedFalse_answer_success() {
         //given:
-        Answer answer = answerRepository.save(A1);
+        User user = userRepository.save(UserTest.MINGVEL);
+        Question question = questionRepository.save(Q3.writeBy(user));
+        Answer answer = answerRepository.save(provideAnswer(user, question));
         //when, then:
-        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestionId())).contains(answer);
+        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestion().getId())).contains(answer);
     }
 
     @DisplayName("findByIdAndDeletedFalse 메서드 테스트")
     @Test
     void findByIdAndDeletedFalse_answer_success() {
         //given:
-        Answer answer = answerRepository.save(A1);
+        User user = userRepository.save(UserTest.MINGVEL);
+        Question question = questionRepository.save(Q3.writeBy(user));
+        Answer answer = answerRepository.save(provideAnswer(user, question));
         //when, then:
         assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId())).containsSame(answer);
     }
@@ -77,11 +56,13 @@ class AnswerTest {
     @Test
     void saveUpdate_answer_success() {
         //given:
-        Answer answer = answerRepository.save(A1);
-        String modifiedContent = "updated Content";
+        final User user = userRepository.save(UserTest.MINGVEL);
+        final Question question = questionRepository.save(Q3.writeBy(user));
+        final Answer answer = answerRepository.save(provideAnswer(user, question));
+        final String modifiedContent = "updated Content";
         //when:
         answer.setContents(modifiedContent);
-        Answer modifiedAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId()).orElse(new Answer());
+        final Answer modifiedAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId()).orElse(new Answer());
         //then:
         assertThat(modifiedAnswer.getContents()).isEqualTo(modifiedContent);
     }
@@ -90,10 +71,36 @@ class AnswerTest {
     @Test
     void delete_answer_success() {
         //given:
-        Answer answer = answerRepository.save(DELETE_SOON_ANSWER);
+        final Answer answer = answerRepository.save(provideAnswer());
         //when:
         answerRepository.delete(answer);
-        Answer resultAnswer = answerRepository.findById(answer.getId()).orElse(null);
+        final Answer resultAnswer = answerRepository.findById(answer.getId()).orElse(null);
         assertThat(resultAnswer).isNull();
+    }
+
+    @DisplayName("setWriter 테스트")
+    @Test
+    void setWriter_answer_success() {
+        //given:
+        final User user = userRepository.save(provideUser());
+        final User changedUser = userRepository.save(UserTest.SANJIGI);
+        flushAndClear();
+        final Question question = questionRepository.save(Q3.writeBy(user));
+        final Answer answer = answerRepository.save(provideAnswer(user, question));
+        //when:
+        answer.setWriter(changedUser);
+        final Answer modifiedAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId()).orElse(new Answer());
+        //then:
+        assertThat(modifiedAnswer.getWriter()).isEqualTo(changedUser);
+    }
+
+    private Answer provideAnswer() {
+        return provideAnswer(
+                new User("userId", "password", "userName", "email@email.com"),
+                new Question("title", "contents"));
+    }
+
+    private Answer provideAnswer(User user, Question question) {
+        return new Answer(user, question, "content");
     }
 }
