@@ -7,7 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 @Table(name = "user")
