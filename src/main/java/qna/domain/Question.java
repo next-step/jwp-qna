@@ -17,7 +17,9 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private String contents;
 
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id")
+    private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -36,12 +38,12 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -52,32 +54,8 @@ public class Question extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -99,22 +77,11 @@ public class Question extends BaseTimeEntity {
         }
 
         Question question = (Question) o;
-        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents) && Objects.equals(writerId, question.writerId);
+        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer, question.writer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writerId, deleted);
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+        return Objects.hash(id, title, contents, writer, deleted);
     }
 }
