@@ -77,8 +77,8 @@ public class QuestionTest {
 
 
     @Test
-    void checkOwnerOrThrow() {
-        assertThatThrownBy(() -> Q1.checkOwnerOrThrow(UserTest.SANJIGI))
+    void checkOwnerOrThrow() throws CannotDeleteException {
+        assertThatThrownBy(() -> Q1.delete(UserTest.SANJIGI))
                 .isInstanceOf(CannotDeleteException.class);
     }
 }

@@ -4,20 +4,11 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Entity
 public class Question extends BaseEntity {
-
-    public static final QuestionDeletableChecker deletableChecker = new QuestionDeletableChecker(
-            Arrays.asList(
-                    new NoAnswerRule(),
-                    new AllWriterIsSameRule())
-    );
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,8 +23,8 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private final QuestionAnswers answers = new QuestionAnswers(this.writer);
 
     protected Question() {
 
@@ -55,7 +46,6 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        //answer.toQuestion(this);
         this.answers.add(answer);
     }
 
@@ -109,7 +99,7 @@ public class Question extends BaseEntity {
 
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         checkOwnerOrThrow(loginUser);
-        boolean deletable = deletableChecker.isDeletable(loginUser, this.answers);
+        boolean deletable = answers.isDeletable(loginUser);
         if (!deletable) {
             return new ArrayList<>();
         }
@@ -119,20 +109,17 @@ public class Question extends BaseEntity {
     private List<DeleteHistory> getDeleteHistory() {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(this.toDeleteHistory());
-        deleteHistories.addAll(getAnswerDeleteHistories());
+        deleteHistories.addAll(this.answers.getAnswerDeleteHistories());
         return deleteHistories;
     }
 
-    private List<DeleteHistory> getAnswerDeleteHistories() {
-        return this.answers.stream().map(Answer::toDeleteHistory).collect(Collectors.toList());
-    }
 
     private DeleteHistory toDeleteHistory() {
         this.markDeleted(true);
         return DeleteHistory.ofQuestion(this.getId(), this.writer);
     }
 
-    public void checkOwnerOrThrow(User loginUser) throws CannotDeleteException {
+    private void checkOwnerOrThrow(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
