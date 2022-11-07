@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class DeleteHistory extends BaseTimeEntity {
+public class DeleteHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +32,9 @@ public class DeleteHistory extends BaseTimeEntity {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedByUser;
 
+    @Column(name = "create_date")
+    private LocalDateTime createDate;
+
     protected DeleteHistory() {
     }
 
@@ -38,6 +42,7 @@ public class DeleteHistory extends BaseTimeEntity {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
+        this.createDate = LocalDateTime.now();
     }
 
     @Override
