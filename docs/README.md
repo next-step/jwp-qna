@@ -126,5 +126,9 @@ alter table question
 ### 구현 기능 목록
 - [x] 엔티티 클래스 연관 관계 매핑
   - [x] Answer
-  - [x] Qestion
+  - [x] Question
   - [x] DeleteHistory
+- [ ] 테스트 코드 동작 하도록 수정
+  - [ ] AnswerTest
+  - [x] QuestionTest
+  - [x] DeleteHistoryTest

@@ -5,8 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import qna.config.JpaAuditingConfiguration;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @Import(value = {JpaAuditingConfiguration.class})
+@DirtiesContext
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
@@ -22,18 +26,25 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Test
-    @DisplayName("저장")
+    @DisplayName("질문 저장 성공")
     void save() {
         //given
-        Question question = questionRepository.save(Q1);
+        User writer = new User(null, "sangjae", "password", "name", "javajigi@slipp.net");
+        Question question = new Question("title1", "contents1").writeBy(writer);
+
+        entityManager.persist(writer);
+        Question questionEntity = questionRepository.save(question);
 
         //expect
         assertAll(
-                () -> assertThat(question).isNotNull(),
-                () -> assertThat(question.getId()).isNotNull(),
-                () -> assertThat(question.getCreatedAt()).isNotNull(),
-                () -> assertThat(question.getUpdatedAt()).isNotNull()
+                () -> assertThat(questionEntity).isNotNull(),
+                () -> assertThat(questionEntity.getId()).isNotNull(),
+                () -> assertThat(questionEntity.getCreatedAt()).isNotNull(),
+                () -> assertThat(questionEntity.getUpdatedAt()).isNotNull()
         );
     }
 
@@ -41,8 +52,13 @@ public class QuestionTest {
     @DisplayName("findByDeletedFalse 조회")
     void findByDeletedFalse() {
         // given
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
+        User writer = new User(null, "sangjae", "password", "name", "javajigi@slipp.net");
+        Question q1 = new Question("title1", "contents1").writeBy(writer);
+        Question q2 = new Question("title2", "contents2").writeBy(writer);
+
+        entityManager.persist(writer);
+        questionRepository.save(q1);
+        questionRepository.save(q2);
 
         // when
         List<Question> questions = questionRepository.findByDeletedFalse();
@@ -56,8 +72,13 @@ public class QuestionTest {
     @DisplayName("findByDeletedFalse는 Deleted true면 조회되지 않는다.")
     void findByDeletedFalse_delete_검증() {
         // given
-        questionRepository.save(Q1);
-        Question q2 = questionRepository.save(Q2);
+        User writer = new User(null, "sangjae", "password", "name", "javajigi@slipp.net");
+        Question q1 = new Question("title1", "contents1").writeBy(writer);
+        Question q2 = new Question("title2", "contents2").writeBy(writer);
+
+        entityManager.persist(writer);
+        questionRepository.save(q1);
+        q2 = questionRepository.save(q2);
         q2.setDeleted(true);
 
         // when
@@ -72,11 +93,14 @@ public class QuestionTest {
     @DisplayName("findByIdAndDeletedFalse 조회")
     void findByIdAndDeletedFalse() {
         // given
-        questionRepository.save(Q1);
-        Question q2 = questionRepository.save(Q2);
+        User writer = new User(null, "sangjae", "password", "name", "javajigi@slipp.net");
+        Question q1 = new Question("title1", "contents1").writeBy(writer);
+
+        entityManager.persist(writer);
+        q1 = questionRepository.save(q1);
 
         // when
-        Optional<Question> question = questionRepository.findByIdAndDeletedFalse(q2.getId());
+        Optional<Question> question = questionRepository.findByIdAndDeletedFalse(q1.getId());
 
         // then
         assertThat(question).isPresent();
@@ -86,8 +110,13 @@ public class QuestionTest {
     @DisplayName("findByIdAndDeletedFalse는 Deleted true면 조회되지 않는다.")
     void findByIdAndDeletedFalse_delete_검증() {
         // given
-        questionRepository.save(Q1);
-        Question q2 = questionRepository.save(Q2);
+        User writer = new User(null, "sangjae", "password", "name", "javajigi@slipp.net");
+        Question q1 = new Question("title1", "contents1").writeBy(writer);
+        Question q2 = new Question("title2", "contents2").writeBy(writer);
+
+        entityManager.persist(writer);
+        questionRepository.save(q1);
+        q2 = questionRepository.save(q2);
         q2.setDeleted(true);
 
         // when
