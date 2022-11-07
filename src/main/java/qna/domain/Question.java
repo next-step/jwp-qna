@@ -3,6 +3,7 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity  {
@@ -69,9 +70,17 @@ public class Question extends BaseEntity  {
         this.deleted = deleted;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public void delete(User loginUser, List<Answer> answers) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        deleteAnswers(loginUser, answers);
+    }
+
+    private void deleteAnswers(User loginUser, List<Answer> answers) throws CannotDeleteException {
+        for (Answer answer : answers) {
+            answer.delete(loginUser);
         }
     }
 
