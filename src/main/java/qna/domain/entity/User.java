@@ -1,11 +1,9 @@
-package qna.domain;
+package qna.domain.entity;
 
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -29,13 +27,6 @@ public class User extends BaseTime {
 
     @Column(name = "email", length = 50)
     private String email;
-
-//    @Column(name = "created_at", nullable = false)
-//    @CreatedDate
-//    private LocalDateTime createdAt;
-//
-//    @Column(name = "updated_at")
-//    private LocalDateTime updatedAt;
 
     private User() {
     }
