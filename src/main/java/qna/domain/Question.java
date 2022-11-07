@@ -49,8 +49,9 @@ public class Question extends BaseCreatedAndUpdatedAt {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public Question setDeleted(boolean deleted) {
         this.deleted = deleted;
+        return this;
     }
 
     @Override
