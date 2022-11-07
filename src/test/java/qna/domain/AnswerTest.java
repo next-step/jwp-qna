@@ -36,7 +36,7 @@ public class AnswerTest {
     @MethodSource
     void save_entity_and_find_test(Answer input) {
         Answer answer = answers.save(input);
-        assertThat(answer).isEqualTo(answers.findById(answer.getId()).get());
+        assertThat(answers.findById(answer.getId()).get()).isEqualTo(answer);
     }
 
     @Test
