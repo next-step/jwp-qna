@@ -23,6 +23,10 @@ public class User extends BaseTime {
     private String email;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "writer")
     List<Answer> answers = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "deletedByUser")
+    List<DeleteHistory> deleteHistories = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "writer")
+    List<Question> questions = new ArrayList<>();
 
     protected User() {
     }
