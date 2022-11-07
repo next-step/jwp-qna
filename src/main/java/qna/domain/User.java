@@ -1,32 +1,31 @@
 package qna.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import qna.UnAuthorizedException;
 
-import java.util.Objects;
-
 @Entity
-@Table(uniqueConstraints = {
-        @UniqueConstraint(name = "UK_USER_USER_ID",
-        columnNames = {"user_id"})
-})
+@Table
 public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "user_id", nullable = false, length = 20)
+
+    @Column(name = "user_id", unique = true, nullable = false, length = 20)
     private String userId;
+
     @Column(nullable = false, length = 20)
     private String password;
+
     @Column(nullable = false, length = 20)
     private String name;
+
     @Column(length = 50)
     private String email;
 
@@ -83,40 +82,33 @@ public class User extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserId() {
         return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id)
+                && Objects.equals(userId, user.userId)
+                && Objects.equals(password, user.password)
+                && Objects.equals(name, user.name)
+                && Objects.equals(email, user.email);
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email);
     }
 
     @Override

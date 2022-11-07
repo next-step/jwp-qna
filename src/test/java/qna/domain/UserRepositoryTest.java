@@ -2,11 +2,11 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,34 +17,52 @@ class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
+    User user;
+
+    @BeforeEach
+    void setUp() {
+        user = new User("user", "password", "name", "email@email.com");
+    }
+
     @Test
     @DisplayName("유저 저장")
     void save_user() {
-        User saveUser = userRepository.save(JAVAJIGI);
+        User actual = userRepository.save(user);
         assertAll(
-                () -> assertThat(saveUser.getId()).isNotNull(),
-                () -> assertThat(saveUser.getId()).isEqualTo(JAVAJIGI.getId()),
-                () -> assertThat(saveUser.getUserId()).isEqualTo(JAVAJIGI.getUserId()),
-                () -> assertThat(saveUser.getPassword()).isEqualTo(JAVAJIGI.getPassword()),
-                () -> assertThat(saveUser.getName()).isEqualTo(JAVAJIGI.getName()),
-                () -> assertThat(saveUser.getEmail()).isEqualTo(JAVAJIGI.getEmail())
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual).isEqualTo(user)
         );
+    }
+
+    @Test
+    @DisplayName("유저 저장 후 조회 결과 동일성 체크")
+    void find_by_id() {
+        User expected = userRepository.save(user);
+        Optional<User> findUser = userRepository.findById(expected.getId());
+        assertTrue(findUser.isPresent());
+        findUser.ifPresent(actual -> assertThat(actual).isEqualTo(expected));
     }
     
     @Test
     @DisplayName("유저 조회")
-    void find_user() {
-        userRepository.save(SANJIGI);
-        Optional<User> findUser = userRepository.findByUserId(SANJIGI.getUserId());
+    void find_user_by_user_id() {
+        User expected = userRepository.save(user);
+        Optional<User> findUser = userRepository.findByUserId(expected.getUserId());
         Assertions.assertTrue(findUser.isPresent());
-        findUser.ifPresent(sanjigi ->
+        findUser.ifPresent(actual ->
                 assertAll(
-                        () -> assertThat(sanjigi.getId()).isNotNull(),
-                        () -> assertThat(sanjigi.getUserId()).isEqualTo(SANJIGI.getUserId()),
-                        () -> assertThat(sanjigi.getPassword()).isEqualTo(SANJIGI.getPassword()),
-                        () -> assertThat(sanjigi.getName()).isEqualTo(SANJIGI.getName()),
-                        () -> assertThat(sanjigi.getEmail()).isEqualTo(SANJIGI.getEmail())
+                        () -> assertThat(actual.getId()).isNotNull(),
+                        () -> assertThat(actual).isEqualTo(expected)
                 )
         );
+    }
+
+    @Test
+    @DisplayName("유저 변경")
+    void update() {
+        User loginUser = userRepository.save(user);
+        User updateUser = new User("user2", "password", "name2", "email2@email.com");
+        loginUser.update(loginUser, updateUser);
+        assertTrue(loginUser.equalsNameAndEmail(updateUser));
     }
 }
