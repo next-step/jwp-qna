@@ -1,10 +1,10 @@
 package qna.domain;
 
-import org.hibernate.sql.Delete;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,7 +20,7 @@ public class Question extends BaseEntity {
     private User writer;
     private boolean deleted = false;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
-    private List<Answer> answers;
+    private List<Answer> answers = new ArrayList();
 
     protected Question() {
     }
@@ -50,12 +50,13 @@ public class Question extends BaseEntity {
         }
     }
 
-    public DeleteHistory getDeleteHistory(){
+    public DeleteHistory getDeleteHistory() {
         this.deleted = true;
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
