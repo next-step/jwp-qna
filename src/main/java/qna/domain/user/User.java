@@ -1,5 +1,6 @@
 package qna.domain.user;
 
+import qna.domain.email.Email;
 import qna.exception.UnAuthorizedException;
 import qna.domain.BaseEntity;
 
@@ -24,17 +25,17 @@ public class User  extends BaseEntity implements Serializable {
     @Column(length = 20, nullable = false)
     private String name;
 
-    @Column(length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
+    public User(String userId, String password, String name, Email email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
+    public User(Long id, String userId, String password, String name, Email email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -96,11 +97,11 @@ public class User  extends BaseEntity implements Serializable {
         this.name = name;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(Email email) {
         this.email = email;
     }
 
