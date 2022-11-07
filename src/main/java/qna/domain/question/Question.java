@@ -2,6 +2,7 @@ package qna.domain.question;
 
 import qna.domain.BaseEntity;
 import qna.domain.answer.Answers;
+import qna.domain.content.ContentId;
 import qna.domain.content.Contents;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.title.Title;
@@ -105,7 +106,7 @@ public class Question extends BaseEntity implements Serializable {
 
     private List<DeleteHistory> assembleDeleteHistories(User loginUser) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(DeleteHistory.ofQuestion(this.id, this.writer));
+        deleteHistories.add(DeleteHistory.ofQuestion(ContentId.of(this.id), this.writer));
         deleteHistories.addAll(answers.deleteAll(loginUser));
         return deleteHistories;
     }

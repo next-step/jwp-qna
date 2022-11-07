@@ -1,5 +1,6 @@
 package qna.domain.answer;
 
+import qna.domain.content.ContentId;
 import qna.domain.content.Contents;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.exception.CannotDeleteException;
@@ -113,7 +114,7 @@ public class Answer extends BaseEntity implements Serializable {
         }
         deleted = true;
 
-        return DeleteHistory.ofAnswer(this.id, this.writer);
+        return DeleteHistory.ofAnswer(ContentId.of(this.id), this.writer);
     }
 
     @Override

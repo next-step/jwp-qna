@@ -10,6 +10,7 @@ import qna.domain.ContentType;
 import qna.domain.QuestionTest;
 import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
+import qna.domain.content.ContentId;
 import qna.domain.content.Contents;
 import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.question.Question;
@@ -95,8 +96,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
+                new DeleteHistory(ContentType.QUESTION, ContentId.of(question.getId()), question.getWriter(), LocalDateTime.now()),
+                new DeleteHistory(ContentType.ANSWER, ContentId.of(answer.getId()), answer.getWriter(), LocalDateTime.now())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

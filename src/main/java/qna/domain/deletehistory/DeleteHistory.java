@@ -3,6 +3,7 @@ package qna.domain.deletehistory;
 import org.springframework.data.annotation.CreatedDate;
 import qna.domain.ContentType;
 import qna.domain.answer.Answer;
+import qna.domain.content.ContentId;
 import qna.domain.question.Question;
 import qna.domain.user.User;
 
@@ -20,7 +21,8 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
-    private Long contentId;
+    @Embedded
+    private ContentId contentId;
 
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
@@ -29,7 +31,7 @@ public class DeleteHistory {
     @CreatedDate
     private LocalDateTime createDate;
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, ContentId contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
@@ -40,11 +42,11 @@ public class DeleteHistory {
     }
 
     //단순히 생성을 위한 메서드라면 매개변수를 넘기는 것으로 대체
-    public static DeleteHistory ofQuestion(Long questionId, User writer) {
+    public static DeleteHistory ofQuestion(ContentId questionId, User writer) {
         return new DeleteHistory(ContentType.QUESTION, questionId, writer, LocalDateTime.now());
     }
 
-    public static DeleteHistory ofAnswer(Long answerId, User writer) {
+    public static DeleteHistory ofAnswer(ContentId answerId, User writer) {
         return new DeleteHistory(ContentType.ANSWER, answerId, writer, LocalDateTime.now());
     }
 

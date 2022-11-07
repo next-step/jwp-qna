@@ -53,8 +53,8 @@ public class QuestionTest {
         Q1.writeBy(writer1);
         Q2.writeBy(writer2);
 
-//        expected1 = questionRepository.save(Q1);
-//        expected2 = questionRepository.save(Q2);
+        expected1 = questionRepository.save(Q1);
+        expected2 = questionRepository.save(Q2);
     }
 
     @Test
