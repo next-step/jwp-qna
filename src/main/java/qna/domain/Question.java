@@ -14,7 +14,7 @@ public class Question extends BaseTime {
     private String title;
     @Lob
     private String contents;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
     @Column(nullable = false)
