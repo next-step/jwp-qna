@@ -19,9 +19,8 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
     private boolean deleted = false;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
-    private List<Answer> answers = new ArrayList();
-
+    @Embedded
+    private Answers answers;
     protected Question() {
     }
 
@@ -33,6 +32,7 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {
@@ -64,7 +64,7 @@ public class Question extends BaseEntity {
     public List<DeleteHistory> getDeleteHistories() {
         List<DeleteHistory> deleteHistories = new ArrayList();
         deleteHistories.add(getDeleteHistory());
-        for (Answer answer : answers) {
+        for (Answer answer : answers.getAnswers()) {
             answer.setDeleted(true);
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
         }
@@ -72,7 +72,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
+        answers.getAnswers().add(answer);
         answer.toQuestion(this);
     }
 
@@ -93,7 +93,7 @@ public class Question extends BaseEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.getAnswers();
     }
 
     @Override
