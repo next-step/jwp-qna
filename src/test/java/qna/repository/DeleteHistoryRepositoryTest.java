@@ -22,12 +22,12 @@ public class DeleteHistoryRepositoryTest {
     @Test
     void save_01() {
         DeleteHistory dummyData = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
-        DeleteHistory answer = deleteHistoryRepository.save(dummyData);
+        DeleteHistory expectedResult = deleteHistoryRepository.save(dummyData);
         assertAll(
-                () -> assertThat(answer.getId()).isNotNull(),
-                () -> assertThat(answer.getContentId()).isEqualTo(dummyData.getContentId()),
-                () -> assertThat(answer.getDeletedById()).isEqualTo(dummyData.getDeletedById()),
-                () -> assertThat(answer.getDeletedById()).isEqualTo(dummyData.getDeletedById())
+                () -> assertThat(expectedResult.getId()).isNotNull(),
+                () -> assertThat(expectedResult.getContentId()).isEqualTo(dummyData.getContentId()),
+                () -> assertThat(expectedResult.getDeletedById()).isEqualTo(dummyData.getDeletedById()),
+                () -> assertThat(expectedResult.getDeletedById()).isEqualTo(dummyData.getDeletedById())
         );
     }
 }
