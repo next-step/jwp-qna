@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.NotFoundException;
 import qna.domain.Answer;
 import qna.domain.Question;
+import qna.domain.User;
 import qna.domain.UserTest;
 
 import javax.persistence.EntityManager;
@@ -27,16 +28,21 @@ public class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questions;
     @Autowired
+    private UserRepository users;
+    @Autowired
     private EntityManager entityManager;
 
     private Answer answer;
     private Question question;
+    private User user;
 
     @BeforeEach
     void init() {
         question = new Question("test_title", "contents");
         questions.save(question);
-        answer = new Answer(UserTest.JAVAJIGI, question, "contents");
+        user = new User("admin", "password", "seungki", "seungki1993@naver.com");
+        users.save(user);
+        answer = new Answer(user, question, "contents");
         answers.save(answer);
         entityManager.flush();
         entityManager.clear();
@@ -49,7 +55,7 @@ public class AnswerRepositoryTest {
         Answer expect = answers.findById(answer.getId()).orElseThrow(NotFoundException::new);
         assertAll(
                 () -> assertThat(answer.getId()).isEqualTo(expect.getId()),
-                () -> assertThat(answer.getWriterId()).isEqualTo(expect.getWriterId()),
+                () -> assertThat(answer.getWriter()).isEqualTo(Hibernate.unproxy(expect.getWriter())),
                 () -> assertThat(answer.getQuestion()).isEqualTo(Hibernate.unproxy(expect.getQuestion())),
                 () -> assertThat(answer.getContents()).isEqualTo(expect.getContents()),
                 () -> assertThat(answer.isDeleted()).isEqualTo(expect.isDeleted())
@@ -60,8 +66,16 @@ public class AnswerRepositoryTest {
     @DisplayName("answer의 question lazy 로딩 확인")
     void answer_to_question_proxy() {
         Answer expect = answers.findById(answer.getId()).orElseThrow(NotFoundException::new);
-        Question question = expect.getQuestion();
-        assertThat(Hibernate.isInitialized(question)).isFalse();
+        Question dbQuestion = expect.getQuestion();
+        assertThat(Hibernate.isInitialized(dbQuestion)).isFalse();
+    }
+
+    @Test
+    @DisplayName("answer의 user lazy 로딩 확인")
+    void answer_to_user_proxy() {
+        Answer expect = answers.findById(answer.getId()).orElseThrow(NotFoundException::new);
+        User dbUser = expect.getWriter();
+        assertThat(Hibernate.isInitialized(dbUser)).isFalse();
     }
 
     @Test
