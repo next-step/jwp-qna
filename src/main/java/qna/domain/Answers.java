@@ -27,7 +27,7 @@ public class Answers {
             .collect(Collectors.toList());
     }
 
-    private void vaildateOwner(User user) throws CannotDeleteException {
+    private void vaildateOwner(User user) {
         if (!isOwner(user)) {
             throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
         }

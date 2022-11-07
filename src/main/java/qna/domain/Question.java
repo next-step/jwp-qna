@@ -99,7 +99,7 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public DeleteHistories delete(User user) throws CannotDeleteException {
+    public DeleteHistories delete(User user) {
         vaildateOwner(user);
 
         this.setDeleted(true);
@@ -111,7 +111,7 @@ public class Question extends BaseEntity {
         return new DeleteHistories(deleteHistories);
     }
 
-    private void vaildateOwner(User user) throws CannotDeleteException {
+    private void vaildateOwner(User user) {
         if (!isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
