@@ -87,16 +87,21 @@ public class User extends BaseTimeEntity {
         return userId;
     }
 
-    public String getPassword() {
-        return password;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof User)) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(getId(), user.getId());
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 
     @Override

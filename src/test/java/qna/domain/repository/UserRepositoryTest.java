@@ -78,7 +78,7 @@ class UserRepositoryTest {
         loginUser.update(loginUser, target);
         flushAndClear();
         User findLoginUser = users.findById(loginUser.getId()).get();
-        assertThat(findLoginUser.getUserId()).isEqualTo(loginUser.getUserId());
+        assertThat(findLoginUser.getId()).isEqualTo(loginUser.getId());
     }
 
     private void flushAndClear() {
