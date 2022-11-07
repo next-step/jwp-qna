@@ -30,12 +30,14 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     @Column(name = "content_type", length = 255)
     private ContentType contentType;
+
     @Column(name = "content_id")
     private Long contentId;
 
     @JoinColumn(name = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User deletedByUser;
+
     @CreatedDate
     @Column(name = "created_date")
     private LocalDateTime createDate;
@@ -54,6 +56,10 @@ public class DeleteHistory {
     }
 
     protected DeleteHistory() {
+    }
+
+    public void toDeletedUser(User user) {
+        this.deletedByUser = user;
     }
 
     @Override

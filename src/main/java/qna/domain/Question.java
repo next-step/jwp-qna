@@ -60,6 +60,9 @@ public class Question extends BaseDateTimeEntity {
         return this;
     }
 
+    public void toWriter(User user) {
+    }
+
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
