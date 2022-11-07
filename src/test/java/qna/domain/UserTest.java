@@ -3,9 +3,8 @@ package qna.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
+import qna.exception.message.UserExceptionCode;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,28 +31,32 @@ public class UserTest {
     void user_객체_생성시_userId가_null이면_IllegalArgumentException_발생() {
         assertThatThrownBy(() -> {
            new User(null, "password", "name", "email");
-        }).isInstanceOf(IllegalArgumentException.class);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(UserExceptionCode.REQUIRED_USER_ID.getMessage());
     }
 
     @Test
     void user_객체_생성시_password가_null이면_IllegalArgumentException_발생() {
         assertThatThrownBy(() -> {
             new User("user", null, "name", "email");
-        }).isInstanceOf(IllegalArgumentException.class);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(UserExceptionCode.REQUIRED_PASSWORD.getMessage());
     }
 
     @Test
     void user_객체_생성시_name이_null이면_IllegalArgumentException_발생() {
         assertThatThrownBy(() -> {
             new User("user", "password", null, "email");
-        }).isInstanceOf(IllegalArgumentException.class);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(UserExceptionCode.REQUIRED_NAME.getMessage());
     }
 
     @Test
     void update_로그인_유저의_userId가_현재_userId와_다르면_UnAuthorizedException_발생() {
         assertThatThrownBy(() -> {
             user.update(loginUser, target);
-        }).isInstanceOf(UnAuthorizedException.class);
+        }).isInstanceOf(UnAuthorizedException.class)
+                .hasMessage(UserExceptionCode.NOT_MATCH_USER_ID.getMessage());
     }
 
     @Test
@@ -62,18 +65,8 @@ public class UserTest {
 
         assertThatThrownBy(() -> {
             user.update(loginUser, target);
-        }).isInstanceOf(UnAuthorizedException.class);
-    }
-
-    @Test
-    void equalsNameAndEmail_현재_유저_객체의_이름과_이메일이_일치() {
-        assertTrue(JAVAJIGI.equalsNameAndEmail(new User("testUser", "password", "name", "javajigi@slipp.net")));
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = { "test:javajigi@slipp.net", "name:test@test.com" }, delimiter = ':')
-    void equalsNameAndEmail_현재_유저_객체의_이름과_이메일이_일치하지_않음(String name, String email) {
-        assertFalse(JAVAJIGI.equalsNameAndEmail(new User("testUser", "password", name, email)));
+        }).isInstanceOf(UnAuthorizedException.class)
+                .hasMessage(UserExceptionCode.NOT_MATCH_PASSWORD.getMessage());
     }
 
     @Test
