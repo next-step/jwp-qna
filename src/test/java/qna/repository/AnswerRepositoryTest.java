@@ -106,7 +106,7 @@ class AnswerRepositoryTest {
 
         List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestion().getId());
 
-        assertThat(result).hasSize(0);
+        assertThat(result).isEmpty();
     }
 
     @DisplayName("답변 조회시 writer, question이 지연로딩 되는지 확인한다")
