@@ -202,5 +202,19 @@ alter table question
 
 ### 프로그래밍 요구 사항
 - qna.service.QnaService의 deleteQuestion()
-  - 단위 테스트 어려운 코드와 가능한 코드를 분히해 단위 테스트 구현
+  - 단위 테스트 어려운 코드와 가능한 코드를 분리해 단위 테스트 구현
 - 리팩터링 후에도 qna.service.QnaServiceTest의 모든 테스트가 통과해야 한다.
+
+### 기능 구현 목록
+- [ ] manyToOne FetchType타입 Lazy 설정
+- [ ] question - answer 양방향 연관관계 설정
+- [ ] question 조회시 연관된 answer oneToMany 조회
+- [ ] question 삭제
+  - [ ] question 작성자와 로그인 사용자 검증
+  - [ ] question 상태변경
+  - [ ] DeleteHistory 리턴
+- [ ] answers 삭제
+  - [ ] answer 작성자와 로그인 사용자 검증
+  - [ ] answer 상태 변경
+  - [ ] DeleteHistory 리턴
+- [ ] DeleteHistory를 저장한다.
