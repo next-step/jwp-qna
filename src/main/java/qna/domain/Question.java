@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -15,7 +17,7 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
     private boolean deleted = false;
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "question")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<Answer> answers;
 
     protected Question() {
@@ -38,6 +40,12 @@ public class Question extends BaseEntity {
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
+    }
+
+    public void validateOwner(User writer) throws CannotDeleteException {
+        if (!this.writer.equals(writer)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public void addAnswer(Answer answer) {
