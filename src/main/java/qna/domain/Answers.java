@@ -11,6 +11,7 @@ import java.util.List;
 
 @Embeddable
 public class Answers {
+
     private static final String NULL_MESSAGE = "질문목록이 없습니다";
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
@@ -21,19 +22,19 @@ public class Answers {
         this.answers = answers;
     }
 
-    public Answers(){
+    public Answers() {
         answers = new ArrayList<>();
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    private void validateNull(List<Answer> answers) {
+        if (answers == null) throw new RuntimeException(NULL_MESSAGE);
     }
 
-    public void addAnswer(Answer answer){
+    public void addAnswer(Answer answer) {
         this.answers.add(answer);
     }
 
-    public int size(){
+    public int size() {
         return this.answers.size();
     }
 
@@ -46,24 +47,10 @@ public class Answers {
         return deleteHistories;
     }
 
-    private void validateNull(List<Answer> answers) {
-        if (answers == null) throw new RuntimeException(NULL_MESSAGE);
-    }
-
     public void validateOwner(User loginUser) throws CannotDeleteException {
         for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
+            answer.validateOwner(loginUser);
         }
     }
 
-    public List<DeleteHistory> getDeleteHistorys() {
-        List<DeleteHistory> deleteHistories = new ArrayList();
-        for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
-        return deleteHistories;
-    }
 }
