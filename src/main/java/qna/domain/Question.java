@@ -1,8 +1,8 @@
 package qna.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -17,6 +17,7 @@ import qna.CannotDeleteException;
 @Entity
 public class Question extends BaseTimeEntity {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,9 +29,12 @@ public class Question extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    @Embedded
+    private final Answers answers = new Answers();
+
 
     protected Question() {
     }
@@ -54,16 +58,12 @@ public class Question extends BaseTimeEntity {
         this.deleted = true;
     }
 
-    public List<DeleteHistory> deleteByUser(User user, List<Answer> answers) throws CannotDeleteException {
+    public DeleteHistories deleteByUser(User user) throws CannotDeleteException {
         if (!isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
 
-        for (Answer answer : answers) {
-            answer.deleteByUser(user);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, this.id, user));
-        }
+        DeleteHistories deleteHistories = getAnswers().deleteAll(user);
 
         this.delete();
 
@@ -77,8 +77,18 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
+
+    public void addAnswers(List<Answer> answerList) {
+        answers.addAll(answerList);
+    }
+
+    public Answers getAnswers() {
+        return answers;
+    }
+
 
     public Long getId() {
         return id;
