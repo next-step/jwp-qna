@@ -10,9 +10,6 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-
 
     @DisplayName("Answer 생성시 User가 없으면 UnAuthorizedException 이 발생한다.")
     @Test
@@ -48,6 +45,6 @@ public class AnswerTest {
 
         answer.toQuestion(QuestionTest.Q2);
 
-        assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q2.getId());
+        assertThat(answer.getQuestion()).isEqualTo(QuestionTest.Q2);
     }
 }

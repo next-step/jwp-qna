@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.NotFoundException;
 import qna.domain.Question;
-import qna.domain.QuestionTest;
 import qna.domain.UserTest;
 
 @DataJpaTest
@@ -23,20 +22,21 @@ class QuestionRepositoryTest {
     @DisplayName("Question을 저장할 수 있다.")
     @Test
     void save() {
-        Question actual = questionRepository.save(QuestionTest.Q1);
+        Question question = new Question("title", "contents");
+        Question actual = questionRepository.save(question.writeBy(UserTest.JAVAJIGI));
 
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getTitle()).isEqualTo(QuestionTest.Q1.getTitle()),
-                () -> assertThat(actual.getWriterId()).isEqualTo(QuestionTest.Q1.getWriterId()),
-                () -> assertThat(actual.getContents()).isEqualTo(QuestionTest.Q1.getContents())
+                () -> assertThat(actual.getTitle()).isEqualTo(question.getTitle()),
+                () -> assertThat(actual.getWriter()).isEqualTo(UserTest.JAVAJIGI),
+                () -> assertThat(actual.getContents()).isEqualTo(question.getContents())
         );
     }
 
     @DisplayName("저장된 Question을 조회할 수 있다.")
     @Test
     void find() {
-        Question actual = questionRepository.save(QuestionTest.Q1);
+        Question actual = questionRepository.save(new Question("title", "contents"));
 
         Optional<Question> expect = questionRepository.findById(actual.getId());
 
@@ -46,7 +46,7 @@ class QuestionRepositoryTest {
     @DisplayName("저장된 Question을 삭제할 수 있다.")
     @Test
     void delete() {
-        Question actual = questionRepository.save(QuestionTest.Q1);
+        Question actual = questionRepository.save(new Question("title", "contents"));
 
         questionRepository.delete(actual);
         Optional<Question> expect = questionRepository.findById(actual.getId());
@@ -57,14 +57,12 @@ class QuestionRepositoryTest {
     @DisplayName("저장된 Question의 값을 변경할 수 있다.")
     @Test
     void update() {
-        Question actual = questionRepository.save(new Question("title", "content")
-                .writeBy(UserTest.SANJIGI));
+        Question actual = questionRepository.save(new Question("title", "contents").writeBy(UserTest.JAVAJIGI));
 
-        actual.writeBy(UserTest.JAVAJIGI);
-
+        actual.writeBy(UserTest.SANJIGI);
         Optional<Question> expect = questionRepository.findById(actual.getId());
 
-        assertThat(expect.orElseThrow(NotFoundException::new).isOwner(UserTest.JAVAJIGI)).isTrue();
+        assertThat(expect.orElseThrow(NotFoundException::new).isOwner(UserTest.SANJIGI)).isTrue();
     }
 
     @DisplayName("삭제되지 않은 question 목록을 조회할 수 있다.")
