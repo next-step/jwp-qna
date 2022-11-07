@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import qna.CannotDeleteException;
 import qna.domain.Answer;
+import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.User;
 import qna.fixture.TestAnswerFactory;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,6 +36,9 @@ class AnswerRepositoryTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private DeleteHistoryRepository deleteHistoryRepository;
 
     @Autowired
     private EntityManagerFactory factory;
@@ -122,5 +128,42 @@ class AnswerRepositoryTest {
 
         assertThat(persistenceUnitUtil.isLoaded(result, "writer")).isFalse();
         assertThat(persistenceUnitUtil.isLoaded(result, "question")).isFalse();
+    }
+
+    @DisplayName("다른 사람이 답변을 삭제를 시도하면 예외가 발생한다")
+    @Test
+    void noOwnerDeleteException() {
+        User writer = userRepository.save(TestUserFactory.create("서정국"));
+        User hacker = userRepository.save(TestUserFactory.create("나쁜놈"));
+        Question question = questionRepository.save(TestQuestionFactory.create(writer));
+        Answer answer = answerRepository.save(TestAnswerFactory.create(writer, question));
+
+        assertThatThrownBy(() -> answer.delete(hacker))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    }
+
+    @DisplayName("답변을 삭제할 수 있다")
+    @Test
+    void delete() throws CannotDeleteException {
+        User writer = userRepository.save(TestUserFactory.create("서정국"));
+        Question question = questionRepository.save(TestQuestionFactory.create(writer));
+        Answer answer = answerRepository.save(TestAnswerFactory.create(writer, question));
+
+        answer.delete(writer);
+
+        assertThat(answerRepository.findByIdAndDeletedFalse(answer.getId())).isNotPresent();
+    }
+
+    @DisplayName("답변이 삭제되면, 삭제 이력이 반환된다")
+    @Test
+    void deleteHistory() throws CannotDeleteException {
+        User writer = userRepository.save(TestUserFactory.create("서정국"));
+        Question question = questionRepository.save(TestQuestionFactory.create(writer));
+        Answer expect = answerRepository.save(TestAnswerFactory.create(writer, question));
+
+        DeleteHistory result = expect.delete(writer);
+
+        assertThat(result.getContentId()).isEqualTo(expect.getId());
     }
 }
