@@ -100,14 +100,12 @@ public class Question extends BaseEntity {
 
     public DeleteHistories delete(User user) {
         vaildateOwner(user);
-
         this.setDeleted(true);
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, user));
+        DeleteHistories deleteHistories = DeleteHistories.ofQuestion(this);
         deleteHistories.addAll(answers.delete(user));
 
-        return new DeleteHistories(deleteHistories);
+        return deleteHistories;
     }
 
     private void vaildateOwner(User user) {
