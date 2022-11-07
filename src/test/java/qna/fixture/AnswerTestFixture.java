@@ -1,4 +1,6 @@
-package qna.domain;
+package qna.fixture;
+
+import qna.domain.Answer;
 
 public class AnswerTestFixture {
     public static final Answer A1 = new Answer(UserTestFixture.JAVAJIGI, QuestionTestFixture.Q1, "Answers Contents1");

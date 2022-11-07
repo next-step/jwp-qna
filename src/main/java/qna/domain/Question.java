@@ -1,6 +1,11 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -10,12 +15,14 @@ public class Question extends BaseEntity {
     private Long id;
     @Column(nullable = false, length = 100)
     private String title;
-    @Column(columnDefinition = "LONGTEXT")
+    @Lob
     private String contents;
     @ManyToOne
     private User writeBy;
     @Column(nullable = false)
     private boolean deleted = false;
+    @Embedded
+    private Answers answers;
 
     protected Question() {
 
@@ -26,6 +33,7 @@ public class Question extends BaseEntity {
         this.writeBy = writeBy;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers(new ArrayList<>());
     }
 
     public Question writeBy(User writer) {
@@ -38,7 +46,31 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        if (answers.contains(answer)) {
+            return;
+        }
+        answers.addAnswer(answer);
         answer.toQuestion(this);
+    }
+
+    public void removeAnswer(Answer answer) {
+        if (!answers.contains(answer)) {
+            return;
+        }
+        answers.removeAnswer(answer);
+        answer.toQuestion(null);
+    }
+
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        DeleteHistories deleteHistories = answers.deleteAll(loginUser);
+        this.deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writeBy, LocalDateTime.now()));
+
+        return deleteHistories;
     }
 
     public Long getId() {
@@ -77,15 +109,11 @@ public class Question extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Question question = (Question) o;
-        return deleted == question.deleted && id.equals(question.id) && title.equals(question.title) && Objects.equals(contents, question.contents) && Objects.equals(writeBy, question.writeBy);
+        return Objects.equals(id, question.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, contents, writeBy, deleted);
-    }
-
-    public void delete() {
-        this.deleted = true;
+        return Objects.hash(id);
     }
 }

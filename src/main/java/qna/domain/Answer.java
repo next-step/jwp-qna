@@ -1,9 +1,11 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -15,7 +17,7 @@ public class Answer extends BaseEntity {
     private User writeBy;
     @ManyToOne
     private Question question;
-    @Column(columnDefinition = "LONGTEXT")
+    @Lob
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
@@ -40,7 +42,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writeBy = writeBy;
-        this.question = question;
+        toQuestion(question);
         this.contents = contents;
     }
 
@@ -49,11 +51,32 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
+        if (Objects.equals(this.question, question)) {
+            return;
+        }
+
+        if (this.question != null) {
+            this.question.removeAnswer(this);
+        }
+
+        if (question != null) {
+            question.addAnswer(this);
+        }
+
         this.question = question;
     }
 
     public void updateContents(String contents) {
         this.contents = contents;
+    }
+
+    public DeleteHistory delete(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writeBy, LocalDateTime.now());
     }
 
     public Long getId() {
@@ -92,15 +115,17 @@ public class Answer extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Answer answer = (Answer) o;
-        return deleted == answer.deleted && id.equals(answer.id) && Objects.equals(writeBy, answer.writeBy) && Objects.equals(question, answer.question) && Objects.equals(contents, answer.contents);
+        return Objects.equals(id, answer.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, writeBy, question, contents, deleted);
+        return Objects.hash(id);
     }
 
-    public void delete() {
-        this.deleted = true;
+    public void validateWriter(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 }

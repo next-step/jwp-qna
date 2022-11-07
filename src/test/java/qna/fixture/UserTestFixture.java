@@ -1,4 +1,6 @@
-package qna.domain;
+package qna.fixture;
+
+import qna.domain.User;
 
 public class UserTestFixture {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");

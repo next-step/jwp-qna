@@ -1,4 +1,7 @@
-package qna.domain;
+package qna.fixture;
+
+import qna.domain.ContentType;
+import qna.domain.DeleteHistory;
 
 import java.time.LocalDateTime;
 
