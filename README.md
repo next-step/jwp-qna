@@ -125,9 +125,10 @@ alter table question
 - [ ] 질문 & 답변 삭제 기능 추가
 - [ ] 질문 삭제 권한 Validation 기능 추가
 
-### Answers
+### Answer
 - [ ] 답변 삭제 기능 추가
 - [ ] 다른 사람이 작성한 답변 Validation 기능 추가
 
-### DeleteHistories
-- [ ] 삭제 히스토리 생성 기능 추가
+### DeleteHistory
+- [X] DeleteHistories 일급 컬렉션 생성
+- [X] 삭제 히스토리 생성 기능 추가
