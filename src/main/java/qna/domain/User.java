@@ -103,16 +103,22 @@ public class User extends BaseTime {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         User user = (User) o;
-        return id.equals(user.id) &&
-                userId.equals(user.userId);
+        if (user.getId() == null || this.getId() == null) {
+            return false;
+        }
+        return Objects.equals(user.getId(), this.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId);
+        return Objects.hash(id);
     }
 
     private static class GuestUser extends User {

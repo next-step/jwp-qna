@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class Question extends BaseTime {
@@ -81,5 +82,23 @@ public class Question extends BaseTime {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Question question = (Question) o;
+        if (this.getId() == null || question.getId() == null) {
+            return false;
+        }
+        return Objects.equals(id, question.id);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
