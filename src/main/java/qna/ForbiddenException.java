@@ -1,6 +1,7 @@
 package qna;
 
 public class ForbiddenException extends RuntimeException {
+
     public ForbiddenException() {
     }
 
