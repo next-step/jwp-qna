@@ -43,7 +43,7 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = new Question(1L, "title1", "contents1").writeBy(UserTestFixture.JAVAJIGI);
+        question = new Question("title1", "contents1").writeBy(UserTestFixture.JAVAJIGI);
         answer = new Answer(UserTestFixture.JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
     }

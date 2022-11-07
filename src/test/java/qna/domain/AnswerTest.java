@@ -2,7 +2,6 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -37,14 +36,6 @@ class AnswerTest {
     void create_answer_question_is_null_throw_NotFoundException() {
         assertThatThrownBy(() -> new Answer(writer, null, "contents"))
                 .isInstanceOf(NotFoundException.class);
-    }
-
-    @Test
-    @DisplayName("질문 변경")
-    void to_question() {
-        Question expected = new Question("title2", "contents2").writeBy(writer);
-        answer.toQuestion(expected);
-        assertEquals(expected, answer.getQuestion());
     }
 
     @Test

@@ -80,16 +80,4 @@ class AnswerRepositoryTest {
                 () -> assertTrue(expected.isDeleted())
         );
     }
-
-    @Test
-    @DisplayName("질문 변경하기")
-    void to_question() {
-        Answer saveAnswer = answerRepository.save(answer);
-        Question expected = questionRepository.save(new Question("question2", "contents2")).writeBy(user);
-        saveAnswer.toQuestion(expected);
-
-        Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswer.getId());
-        assertTrue(findAnswer.isPresent());
-        findAnswer.ifPresent(actual -> assertThat(actual.getQuestion()).isEqualTo(expected));
-    }
 }

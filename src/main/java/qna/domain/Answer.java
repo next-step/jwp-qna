@@ -59,20 +59,16 @@ public class Answer extends BaseTimeEntity {
         }
     }
 
-    public void isNotWriter(User loginUser) throws CannotDeleteException {
+    public void isNotWriter(User loginUser) {
         if (writer.isNot(loginUser)) {
             throw new CannotDeleteException(ERROR_MESSAGE_IS_NOT_USER);
         }
     }
 
-    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) {
         isNotWriter(loginUser);
         this.deleted = true;
         return DeleteHistory.answerOf(this.id, loginUser);
-    }
-
-    public void toQuestion(Question question) {
-        this.question = question;
     }
 
     public Long getId() {
