@@ -1,6 +1,8 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -15,6 +17,9 @@ public class Question extends BaseTime {
     private Long writerId;
     @Column(nullable = false)
     private boolean deleted = false;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "question")
+    List<Answer> answers = new ArrayList<>();
+
 
     protected Question() {
     }
@@ -39,6 +44,7 @@ public class Question extends BaseTime {
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -101,4 +107,5 @@ public class Question extends BaseTime {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }

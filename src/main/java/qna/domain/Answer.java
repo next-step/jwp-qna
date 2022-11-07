@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.springframework.data.util.Lazy;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -12,7 +13,9 @@ public class Answer extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long writerId;
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
     @Lob
     private String contents;
     @Column(nullable = false)
@@ -37,7 +40,7 @@ public class Answer extends BaseTime {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -46,7 +49,7 @@ public class Answer extends BaseTime {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -57,8 +60,8 @@ public class Answer extends BaseTime {
         return writerId;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
@@ -78,7 +81,7 @@ public class Answer extends BaseTime {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
