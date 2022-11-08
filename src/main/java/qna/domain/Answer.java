@@ -20,7 +20,6 @@ import java.util.Objects;
 @Table(name = "answer")
 public class Answer extends BaseDateTimeEntity {
     @Id
-    @Column(name = "answer_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

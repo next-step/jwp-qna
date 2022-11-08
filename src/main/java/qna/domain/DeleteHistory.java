@@ -23,7 +23,6 @@ import java.util.Objects;
 @EntityListeners(AuditingEntityListener.class)
 public class DeleteHistory {
     @Id
-    @Column(name = "delete_history_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
