@@ -22,4 +22,12 @@ class DeleteHistoryTest {
         DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
         assertThat(savedDeleteHistory).isNotNull();
     }
+
+    @Test
+    @DisplayName("equals 테스트")
+    public void equalsTest() {
+        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
+        DeleteHistory savedDeleteHistory = deleteHistoryRepository.save(deleteHistory);
+        assertThat(deleteHistory).isEqualTo(savedDeleteHistory);
+    }
 }
