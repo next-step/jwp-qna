@@ -5,13 +5,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 public class QuestionTest {
@@ -20,6 +20,9 @@ public class QuestionTest {
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
     @Autowired
     QuestionRepository questionRepository;
+
+    @Autowired
+    AnswerRepository answerRepository;
 
     @BeforeAll
     static void setUp(@Autowired UserRepository userRepository) {
@@ -70,26 +73,6 @@ public class QuestionTest {
     }
 
     @Test
-    void delete_question() {
-        // given
-        Question q1 = new Question("t1", "con1").writeBy(UserTest.JAVAJIGI);
-        Question q2 = new Question("t2", "con2").writeBy(UserTest.JAVAJIGI);
-        Question q3 = new Question("t3", "con3").writeBy(UserTest.SANJIGI);
-        Question q4 = new Question("t4", "con4").writeBy(UserTest.JAVAJIGI);
-        List<Question> expectList = Arrays.asList(q1, q2, q3, q4);
-        questionRepository.saveAll(expectList);
-
-        // when
-        List<Question> questionList = questionRepository.findByDeletedFalse();
-
-        // then
-        assertAll(
-            () -> assertThat(questionList).contains(q1),
-            () -> assertThat(questionList).containsAll(expectList)
-        );
-    }
-
-    @Test
     void exception_question_name_null() {
         // given
         Question q1 = new Question(null, null).writeBy(UserTest.SANJIGI);
@@ -98,6 +81,55 @@ public class QuestionTest {
         assertThatThrownBy(() -> {
             questionRepository.save(q1);
         }).isInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @Test
+    void delete_question() throws Exception {
+        // given
+        Question question = new Question("title", "contents").writeBy(UserTest.JAVAJIGI);
+        question.addAnswers(Arrays.asList(
+            new Answer(UserTest.JAVAJIGI, question, "answer_contents")
+        ));
+
+        // when
+        question.deleteByUser(UserTest.JAVAJIGI);
+        Optional<Question> result = questionRepository.findByIdAndDeletedFalse(question.getId());
+
+        // then
+        assertThat(result.isPresent()).isFalse();
+    }
+
+    @Test
+    void delete_question_other_writer() throws Exception {
+        // given
+        Question question = new Question("title", "contents").writeBy(UserTest.JAVAJIGI);
+        question.addAnswers(Arrays.asList(
+            new Answer(UserTest.JAVAJIGI, question, "answer_contents")
+        ));
+
+        // when, then
+        assertThatThrownBy(
+            () -> {
+                question.deleteByUser(UserTest.SANJIGI);
+            }
+        ).isInstanceOf(CannotDeleteException.class).hasMessage("질문을 삭제할 권한이 없습니다.");
+    }
+
+    @Test
+    void delete_question_include_answer_by_other() {
+        // given
+        Question question = new Question("title", "contents").writeBy(UserTest.JAVAJIGI);
+        question.addAnswers(Arrays.asList(
+            new Answer(UserTest.SANJIGI, question, "answer_contents")
+        ));
+
+        // when, then
+        assertThatThrownBy(
+            () -> {
+                question.deleteByUser(UserTest.JAVAJIGI);
+            }
+        ).isInstanceOf(CannotDeleteException.class).hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+
     }
 }
 

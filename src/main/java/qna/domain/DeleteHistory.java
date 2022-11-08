@@ -13,7 +13,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 public class DeleteHistory {
@@ -33,18 +32,17 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedByUser;
 
-    @CreatedDate
     @Column(name = "create_date")
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
 
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
-        this.createDate = createDate;
+        this.createDate = LocalDateTime.now();
     }
 
     @Override
@@ -68,7 +66,7 @@ public class DeleteHistory {
     @Override
     public String toString() {
         return "DeleteHistory{" + "id=" + id + ", contentType=" + contentType + ", contentId=" + contentId
-            + ", deletedByUser=" + deletedByUser + ", createDate=" + createDate + '}';
+            + ", deletedByUser=" + deletedByUser;
     }
 
     public Long getId() {
@@ -85,9 +83,5 @@ public class DeleteHistory {
 
     public User getDeletedByUser() {
         return deletedByUser;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
     }
 }
