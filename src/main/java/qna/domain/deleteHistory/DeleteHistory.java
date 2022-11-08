@@ -1,4 +1,10 @@
-package qna.domain;
+package qna.domain.deleteHistory;
+
+import qna.domain.answer.Answer;
+import qna.domain.answer.Answers;
+import qna.domain.ContentType;
+import qna.domain.Question;
+import qna.domain.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -34,6 +40,14 @@ public class DeleteHistory {
         this.contentId = contentId;
         this.deleteByUser = deleteByUser;
         this.createDate = createDate;
+    }
+
+    public static DeleteHistory ofQuestionDeletedHistory(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+    }
+
+    public static DeleteHistory ofAnswerDeletedHistory(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
     }
 
     public static List<DeleteHistory> addDeleteQuestionHistory(Question question) {

@@ -3,13 +3,13 @@ package qna.domain;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
+import qna.domain.answer.Answer;
+import qna.domain.answer.Answers;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 import static qna.constant.Message.NOT_VALID_DELETE_QUESTION_AUTH;
-import static qna.constant.Message.NOT_VALID_DELETE_QUESTION_WITH_ANSWER;
 
 @Entity
 @Table(name = "question")

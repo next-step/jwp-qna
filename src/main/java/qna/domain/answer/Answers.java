@@ -1,6 +1,7 @@
-package qna.domain;
+package qna.domain.answer;
 
 import qna.CannotDeleteException;
+import qna.domain.User;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;

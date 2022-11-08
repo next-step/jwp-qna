@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.answer.Answer;
+import qna.domain.answer.AnswerRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +14,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.QuestionTest.Q2;
 import static qna.domain.UserTest.JAVAJIGI;

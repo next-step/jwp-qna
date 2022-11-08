@@ -1,9 +1,12 @@
-package qna.domain;
+package qna.domain.answer;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.BaseEntity;
+import qna.domain.Question;
+import qna.domain.User;
 
 import javax.persistence.*;
 import java.util.Objects;
