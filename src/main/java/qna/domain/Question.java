@@ -1,9 +1,8 @@
 package qna.domain;
 
 import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -13,7 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import qna.constant.ErrMsg;
+import qna.exception.CannotDeleteException;
+import qna.exception.CannotUpdateException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -29,8 +30,8 @@ public class Question extends BaseEntity {
 
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    private final List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
@@ -44,6 +45,7 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers(new ArrayList<>());
     }
 
     protected Question() {
@@ -60,7 +62,10 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        if (!answer.getQuestion().equals(this)) {
+            throw new CannotUpdateException(ErrMsg.CANNOT_ADD_ANSWER_TO_WRONG_QUESTION);
+        }
+        answers.update(answer);
     }
 
     public Long getId() {
@@ -71,7 +76,7 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -83,13 +88,32 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        validateDeletable(loginUser);
+        DeleteHistories answerDeleteHistories = answers.deleteAll(loginUser);
+        DeleteHistory questionDeleteHistory = DeleteHistory.of(this);
+
+        this.deleted = true;
+        return DeleteHistories.of(questionDeleteHistory, answerDeleteHistories);
+    }
+
+    private void validateDeletable(User loginUser) {
+        if (this.deleted) {
+            throw new CannotDeleteException(ErrMsg.CANNOT_DELETE_ALREADY_DELETED);
+        }
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(ErrMsg.CANNOT_DELETE_WRONG_USER);
+        }
+    }
+
     @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writer=" + writer.toString() +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }
