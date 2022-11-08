@@ -1,16 +1,24 @@
 package qna.domain;
 
-import qna.CannotDeleteException;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,20 +51,27 @@ public class Question extends BaseEntity {
         return this;
     }
 
+    private boolean isWriter(final User loginUser) {
+        return writer.equals(loginUser);
+    }
+
     public List<DeleteHistory> delete(final User loginUser) throws CannotDeleteException {
-        if (!writer.equals(loginUser)) {
+        if (!isWriter(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         this.deleted = true;
-        List<DeleteHistory> deleteHistories = deleteAnswers(loginUser);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser.getId(), LocalDateTime.now()));
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(
+            new DeleteHistory(ContentType.QUESTION, id, loginUser.getId(), LocalDateTime.now()));
+        deleteHistories.addAll(deleteAnswers(loginUser));
         return deleteHistories;
     }
 
     private List<DeleteHistory> deleteAnswers(User loginUser) {
         return answers.stream()
-                .map(answer -> answer.delete(loginUser))
-                .collect(Collectors.toList());
+            .map(answer -> answer.delete(loginUser))
+            .collect(Collectors.toList());
     }
 
     public void changeContent(final String contents) {
