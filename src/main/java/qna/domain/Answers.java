@@ -41,7 +41,7 @@ public class Answers {
     public List<DeleteHistory> getDeleteHistories() {
         List<DeleteHistory> deleteHistories = new ArrayList();
         for (Answer answer : answers) {
-            answer.setDeleted(true);
+            answer.delete();
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
         }
         return deleteHistories;
@@ -50,6 +50,12 @@ public class Answers {
     public void validateOwner(User loginUser) throws CannotDeleteException {
         for (Answer answer : answers) {
             answer.validateOwner(loginUser);
+        }
+    }
+
+    public void deleteAllAnswer() {
+        for (Answer answer : answers) {
+            answer.delete();
         }
     }
 
