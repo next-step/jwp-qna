@@ -22,8 +22,8 @@ class DeleteHistoryRepositoryTest {
     @Test
     void save_and_find() {
 
-        DeleteHistory actual = deleteHistoryRepository.save(
-                new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now()));
+        DeleteHistory actual = deleteHistoryRepository
+                .save(DeleteHistory.of(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now()));
 
         Optional<DeleteHistory> expect = deleteHistoryRepository.findById(actual.getId());
 
@@ -35,7 +35,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     void delete() {
         DeleteHistory actual = deleteHistoryRepository
-                .save(new DeleteHistory(ContentType.ANSWER, 1L, UserTest.SANJIGI, LocalDateTime.now()));
+                .save(DeleteHistory.of(ContentType.ANSWER, 1L, UserTest.SANJIGI, LocalDateTime.now()));
 
         deleteHistoryRepository.delete(actual);
         Optional<DeleteHistory> byId = deleteHistoryRepository.findById(actual.getId());
