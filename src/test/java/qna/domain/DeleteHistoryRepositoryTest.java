@@ -22,7 +22,7 @@ class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = userRepository.save(new User("test1234", "1234", "테스트", "test1234@gmail.com"));
+        user = userRepository.save(new User("test1234", "1234", new Name("테스트"), "test1234@gmail.com"));
     }
 
     @DisplayName("삭제 내역을 저장한다.")

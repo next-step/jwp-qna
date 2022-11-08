@@ -27,7 +27,7 @@ class QuestionRepositoryTest {
     void setUp() {
         questionRepository.deleteAll();
         userRepository.deleteAll();
-        user = userRepository.save(new User("test1234", "1234", "테스트", "test1234@gmail.com"));
+        user = userRepository.save(new User("test1234", "1234", new Name("테스트"), "test1234@gmail.com"));
     }
     @Test
     @DisplayName("질문을 저장한다")

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -30,10 +30,10 @@ class AnswerRepositoryTest {
         questionRepository.deleteAll();
         answerRepository.deleteAll();
         userRepository.deleteAll();
-        User questionWriter = userRepository.save(new User("test1234", "1234", "테스트", "test1234@gmail.com"));
+        User questionWriter = userRepository.save(new User("test1234", "1234", new Name("테스트"), "test1234@gmail.com"));
         question1 = questionRepository.save(new Question("title1", "contents1").writeBy(questionWriter));
         question2 = questionRepository.save(new Question("title2", "contents2").writeBy(questionWriter));
-        answerWriter = userRepository.save(new User("test5678", "5678", "테스트", "test5678@gmail.com"));
+        answerWriter = userRepository.save(new User("test5678", "5678", new Name("테스트"), "test5678@gmail.com"));
     }
     @DisplayName("답장을 저장한다.")
     @Test

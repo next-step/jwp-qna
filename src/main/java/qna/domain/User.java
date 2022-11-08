@@ -3,6 +3,7 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,19 +24,20 @@ public class User extends BaseEntity {
     private String userId;
     @Column(name = "password", length = 20, nullable = false)
     private String password;
-    @Column(name = "name", length = 20, nullable = false)
-    private String name;
+
+    @Embedded
+    private Name name;
     @Column(name = "email", length = 50)
     private String email;
 
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
+    public User(String userId, String password, Name name, String email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
+    public User(Long id, String userId, String password, Name name, String email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -89,12 +91,8 @@ public class User extends BaseEntity {
         return password;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public void changeName(String name) {
-        this.name = name;
+        this.name.change(name);
     }
 
     public String getEmail() {
