@@ -13,10 +13,12 @@ public class Answer extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writerId", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "questionId")
+    @JoinColumn(name = "questionId", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
     @Lob
@@ -42,13 +44,13 @@ public class Answer extends BaseTime {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
+        this.writer = writer;
         this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -63,12 +65,12 @@ public class Answer extends BaseTime {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public Question getQuestion() {
@@ -99,7 +101,7 @@ public class Answer extends BaseTime {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
+                ", writer=" + writer +
                 ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
