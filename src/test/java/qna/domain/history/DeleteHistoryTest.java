@@ -1,8 +1,10 @@
-package qna.domain;
+package qna.domain.history;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.domain.UserTest;
 import qna.domain.content.ContentType;
+import qna.domain.history.DeleteHistory;
 
 import static org.junit.jupiter.api.Assertions.*;
 

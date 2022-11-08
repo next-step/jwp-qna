@@ -1,13 +1,20 @@
 package qna.domain.content;
 
-import qna.UnAuthorizedException;
+import qna.domain.history.DeleteHistoryGenerator;
+import qna.exception.CannotDeleteException;
+import qna.exception.UnAuthorizedException;
 import qna.common.AuditingEntity;
+import qna.domain.history.DeleteHistory;
 import qna.domain.User;
+import qna.exception.message.QuestionExceptionCode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 public class Question extends AuditingEntity {
@@ -26,8 +33,8 @@ public class Question extends AuditingEntity {
     @JoinColumn(name = "writer_id")
     private User writer;
 
-    @OneToMany(mappedBy = "question", orphanRemoval = true)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
 
     @Column(nullable = false)
@@ -55,29 +62,49 @@ public class Question extends AuditingEntity {
 
     private void validateWriter(User writer) {
         if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException(QuestionExceptionCode.REQUIRED_WRITER.getMessage());
         }
     }
 
     private void validateTitle(String title) {
         if (Objects.isNull(title)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(QuestionExceptionCode.REQUIRED_TITLE.getMessage());
         }
     }
 
-    public boolean isOwner(User writer) {
+    public List<DeleteHistory> delete(User loginUser) {
+        checkDeletableQuestion(loginUser);
+        this.deleted = true;
+
+        return createDeleteHistories(loginUser);
+    }
+
+    private void checkDeletableQuestion(User loginUser) {
+        if(!isOwner(loginUser)) {
+            throw new CannotDeleteException(QuestionExceptionCode.NOT_MATCH_LOGIN_USER.getMessage());
+        }
+
+        if(isDeleted()) {
+            throw new CannotDeleteException(QuestionExceptionCode.ALREADY_DELETED.getMessage());
+        }
+    }
+
+    private List<DeleteHistory> createDeleteHistories(User loginUser) {
+        return DeleteHistoryGenerator.combine(
+                    DeleteHistoryGenerator.generate(ContentType.QUESTION, id, getWriter()),
+                        answers.deleteAnswers(loginUser));
+    }
+
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
     void addAnswer(Answer answer) {
-        if(!hasAnswer(answer)) {
-            this.answers.add(answer);
-            answer.updateQuestion(this);
-        }
+        answers.addAnswer(answer, this);
     }
 
     public boolean hasAnswer(Answer answer) {
-        return this.answers.contains(answer);
+        return answers.hasAnswer(answer);
     }
 
     public void update(User loginUser, String title, String contents) {
@@ -94,12 +121,8 @@ public class Question extends AuditingEntity {
 
     private void matchUser(User loginUser) {
         if(!this.writer.equals(loginUser)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException(QuestionExceptionCode.NOT_MATCH_LOGIN_USER.getMessage());
         }
-    }
-
-    public void updateDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public Long getId() {

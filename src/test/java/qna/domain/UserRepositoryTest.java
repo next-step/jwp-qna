@@ -8,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.content.*;
+import qna.domain.history.DeleteHistory;
+import qna.domain.history.DeleteHistoryRepository;
 
 import java.util.Optional;
 

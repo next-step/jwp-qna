@@ -1,6 +1,7 @@
-package qna.domain;
+package qna.domain.history;
 
 import org.hibernate.annotations.CreationTimestamp;
+import qna.domain.User;
 import qna.domain.content.ContentType;
 
 import javax.persistence.*;

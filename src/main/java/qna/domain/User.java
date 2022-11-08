@@ -1,7 +1,8 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 import qna.common.AuditingEntity;
+import qna.exception.message.UserExceptionCode;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -53,53 +54,44 @@ public class User extends AuditingEntity {
 
     private void validateUserId(String userId) {
         if(Objects.isNull(userId)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(UserExceptionCode.REQUIRED_USER_ID.getMessage());
         }
     }
 
     private void validatePassword(String password) {
         if(Objects.isNull(password)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(UserExceptionCode.REQUIRED_PASSWORD.getMessage());
         }
     }
 
     private void validateName(String name) {
         if(Objects.isNull(name)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(UserExceptionCode.REQUIRED_NAME.getMessage());
         }
     }
 
     public void update(User loginUser, User target) {
-        validateForUpdates(loginUser, target);
+        validateForUpdates(loginUser);
 
         this.name = target.name;
         this.email = target.email;
     }
 
-    private void validateForUpdates(User loginUser, User target) {
+    private void validateForUpdates(User loginUser) {
         matchUserId(loginUser.userId);
         matchPassword(loginUser.password);
     }
 
     private void matchUserId(String userId) {
         if(!this.userId.equals(userId)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException(UserExceptionCode.NOT_MATCH_USER_ID.getMessage());
         }
     }
 
     private void matchPassword(String targetPassword) {
         if(!this.password.equals(targetPassword)) {
-            throw new UnAuthorizedException();
+            throw new UnAuthorizedException(UserExceptionCode.NOT_MATCH_PASSWORD.getMessage());
         }
-    }
-
-    public boolean equalsNameAndEmail(User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
-
-        return name.equals(target.name) &&
-                email.equals(target.email);
     }
 
     public Long getId() {
