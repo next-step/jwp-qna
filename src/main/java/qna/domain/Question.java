@@ -1,6 +1,10 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Entity
 public class Question extends BaseEntity  {
@@ -16,6 +20,9 @@ public class Question extends BaseEntity  {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    @Embedded
+    private Answers answers;
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }
@@ -24,6 +31,7 @@ public class Question extends BaseEntity  {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers(new ArrayList<>());
     }
 
     protected Question() {
@@ -35,12 +43,14 @@ public class Question extends BaseEntity  {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public boolean isNotOwner(User writer) {
+        return !this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        if (!answers.contains(answer)) {
+            answers.add(answer);
+        }
     }
 
     public Long getId() {
@@ -63,8 +73,30 @@ public class Question extends BaseEntity  {
         return contents;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void softDelete() {
+        this.deleted = true;
+    }
+
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        validateDeleteAuthority(loginUser);
+
+        softDelete();
+        return allDeleteHistories(deleteAnswers(loginUser));
+    }
+
+    private void validateDeleteAuthority(User loginUser) throws CannotDeleteException {
+        if (isNotOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private DeleteHistories deleteAnswers(User loginUser) throws CannotDeleteException {
+        return this.answers.delete(loginUser);
+    }
+
+    private DeleteHistories allDeleteHistories(DeleteHistories deleteHistories) {
+        deleteHistories.add(DeleteHistory.createQuestion(id, writer, LocalDateTime.now()));
+        return deleteHistories;
     }
 
     @Override
