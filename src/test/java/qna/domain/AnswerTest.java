@@ -12,7 +12,6 @@ import qna.repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.QuestionTest.Q1;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
@@ -25,22 +24,24 @@ public class AnswerTest {
     private AnswerRepository answerRepository;
 
     @Autowired
-    private TestEntityManager manager;
-
-    @Autowired
     private QuestionRepository questionRepository;
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private TestEntityManager manager;
+
     @BeforeEach
     void setUp() {
-        Question question = questionRepository.save(Q1);
-        User user = userRepository.save(JAVAJIGI);
+        User javajigi = userRepository.save(JAVAJIGI);
+        User sanjigi = userRepository.save(SANJIGI);
 
-        userRepository.save(SANJIGI);
+        Question question = questionRepository.save(
+                new Question("title", "contents").writeBy(javajigi)
+        );
 
-        answer = new Answer(user, question, "Answers Contents");
+        answer = new Answer(javajigi, question, "Answers Contents");
     }
 
     @Test
@@ -64,7 +65,7 @@ public class AnswerTest {
         assertAll(
                 () -> assertThat(answerRepository.findById(actual.getId()))
                         .isPresent().get().extracting(Answer::getContents).isEqualTo(answer.getContents()),
-                () -> assertThat(answerRepository.findByWriterId(10L)).isEmpty()
+                () -> assertThat(answerRepository.findById(10L)).isEmpty()
         );
     }
 

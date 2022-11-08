@@ -14,7 +14,10 @@ public class Question extends BaseTime {
 
     @Lob
     private String contents;
-    private Long writerId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writerId", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -32,12 +35,12 @@ public class Question extends BaseTime {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -68,12 +71,12 @@ public class Question extends BaseTime {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -90,7 +93,7 @@ public class Question extends BaseTime {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
     }

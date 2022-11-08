@@ -24,6 +24,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
+
+    public static final Question Q1 = new Question("title1", "contents").writeBy(UserTest.JAVAJIGI);
+
     @Mock
     private QuestionRepository questionRepository;
 
@@ -80,7 +83,7 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
+        Answer answer2 = new Answer(2L, UserTest.SANJIGI, Q1, "Answers Contents1");
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
@@ -92,7 +95,7 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriterId(), LocalDateTime.now()),
+                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter().getId(), LocalDateTime.now()),
                 new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter().getId(), LocalDateTime.now())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
