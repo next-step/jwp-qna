@@ -27,17 +27,17 @@ public class User extends BaseEntity {
 
     @Embedded
     private Name name;
-    @Column(name = "email", length = 50)
-    private String email;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
 
-    public User(String userId, String password, Name name, String email) {
+    public User(String userId, String password, Name name, Email email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, Name name, String email) {
+    public User(Long id, String userId, String password, Name name, Email email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -95,7 +95,7 @@ public class User extends BaseEntity {
         this.name.change(name);
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
