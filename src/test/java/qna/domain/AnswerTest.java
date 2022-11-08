@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import qna.config.JpaAuditingConfiguration;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,11 +23,9 @@ public class AnswerTest {
     AnswerRepository answerRepository;
 
     @Test
-    @DisplayName("Not Null 테스트")
+    @DisplayName("저장 테스트 : Audit 데이터 Not Null 테스트")
     public void save() {
         Answer answer = answerRepository.save(A1);
-        assertThat(answer).isNotNull();
-        assertThat(answer.getId()).isNotNull();
         assertThat(answer.getCreatedAt()).isNotNull();
         assertThat(answer.getUpdatedAt()).isNotNull();
     }
@@ -57,5 +56,18 @@ public class AnswerTest {
         answer.setDeleted(true);
         Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(answer.getId());
         assertThat(actual).isEmpty();
+    }
+
+    @Test
+    @DisplayName("auditing 호출시점 테스트 : @PreUpdate 에서 호출되므로 persist 시점(@PrePersist)이 아닌 update 시점(@PreUpdate)에 저장되는지 확인")
+    public void auditingTest() {
+        Answer answer = answerRepository.save(A1);
+        LocalDateTime initialUpdatedAt = answer.getUpdatedAt();
+        answer.setContents("test");
+        LocalDateTime persistUpdateAt = answer.getUpdatedAt();
+        assertThat(initialUpdatedAt).isEqualTo(persistUpdateAt);
+        answerRepository.flush();
+        LocalDateTime updatedUpdateAt = answer.getUpdatedAt();
+        assertThat(updatedUpdateAt).isNotEqualTo(persistUpdateAt);
     }
 }
