@@ -65,9 +65,9 @@ alter table user
 ```
 
 ### TODO
-- [ ] Auditing Entity
-- [ ] Application
-- [ ] Answer Entity / Repo
+- [x] JPA Auditing Entity
+- [x] Enable JPA Audit in Application 
+- [ ] Answer Entity / ~~Repo~~
 - [ ] Answer Test (CRUD)
 - [ ] DeleteHistory Entity
 - [ ] DeleteHistory Test(CRUD)
@@ -97,6 +97,7 @@ spring.jpa.show-sql=true
 	* @Tx가 걸려있어, 테스트 끝날 때마다 롤백 지원
 * JPA repo save()한 값을 써라.
 	* Use the returned instance for further operations as the save operation might have changed the entity instance completely.
+* @CreatedDate, You dont have to set value manually .
 
 ### QnA
 
@@ -105,7 +106,7 @@ spring.jpa.show-sql=true
 ##### Q: Generation Type attributes?
 
 ##### Q: 무조건 다 @Column속성 지정해야 하나?
-->  YES
+->  NO
 ```java
 /**
  * Specifies the mapped column for a persistent property or field.
@@ -150,6 +151,7 @@ spring.jpa.show-sql=true
 - Table Constraints -> @UniqueConstraint. 
 - Refer : https://www.baeldung.com/jpa-unique-constraints
 
-
 ##### Q : JPA Buddy plug in으로 무엇이 가능한지?
 - Refer : https://www.jpa-buddy.com/?utm_source=baeldung&utm_medium=display&utm_campaign=npi
+
+Q : 	BaseTimeEntity를 상속한 엔티티클래스에서, Super 생성자를 부르지 않는데,  어떻게 컴파일이 되는건지? @MappedSuperclass 동작 확인
