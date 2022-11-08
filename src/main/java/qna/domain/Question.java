@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.persistence.*;
 
 import org.hibernate.annotations.SQLDelete;
+import qna.CannotDeleteException;
 
 @Entity
 @SQLDelete(sql = "update question set deleted = true where id = ?")
@@ -69,6 +70,13 @@ public class Question extends BaseEntity {
     }
 
     public void delete() {
+        this.deleted = true;
+    }
+
+    public void delete(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
         this.deleted = true;
     }
 

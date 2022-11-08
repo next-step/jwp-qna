@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -86,5 +87,20 @@ class QuestionRepositoryTest {
         testEntityManager.clear();
         Question actual = questionRepository.findById(question.getId()).get();
         assertThat(actual.getWriter() instanceof HibernateProxy).isTrue();
+    }
+
+    @Test
+    void 내가_작성한_질문이_아닌경우_질문을_삭제할_수_없다() {
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        User anotherUser = userRepository.save(new User("another", "pw", "name", "email"));
+        assertThatThrownBy(() -> question.delete(anotherUser))
+                .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void 내가_작성한_질문의_경우_삭제할_수_있다() throws CannotDeleteException {
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        question.delete(user);
+        assertThat(question.isDeleted()).isTrue();
     }
 }
