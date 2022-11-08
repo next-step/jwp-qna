@@ -1,87 +1,50 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static qna.fixture.TestFixture.JAVAJIGI;
+import static qna.fixture.TestFixture.Q1;
+import static qna.fixture.TestFixture.SANJIGI;
 
-@DataJpaTest
-public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1");
+class QuestionTest {
 
-    private Question question1;
-    private Question question2;
-    private User user;
-
-    @Autowired
-    private QuestionRepository questionRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @BeforeEach
-    void setUp() {
-        user = userRepository.save(new User("kim9418", "123123", "김대겸", "koreatech93@naver.com"));
-        question1 = new Question(1L, "title1", "contents1");
-        question2 = new Question(2L, "title2", "contents2");
-        question1.writeBy(user);
-        question2.writeBy(user);
-        question1 = questionRepository.save(question1);
-        question2 = questionRepository.save(question2);
-    }
-
-    @DisplayName("save 검증 성공")
     @Test
-    void saveTest() {
-        Q1.writeBy(user);
-        Question savedQuestion = questionRepository.save(Q1);
+    void writeBy() {
+        Question question = Q1.writeBy(JAVAJIGI);
 
-        assertAll(
-                () -> assertNotNull(savedQuestion.getId()),
-                () -> assertEquals(savedQuestion.getTitle(), Q1.getTitle()),
-                () -> assertEquals(savedQuestion.getContents(), Q1.getContents()),
-                () -> assertEquals(savedQuestion.getWriterId(), Q1.getWriterId())
-        );
+        assertThat(question.getWriter()).isEqualTo(JAVAJIGI);
     }
 
-    @DisplayName("findByDeletedFalse 검증 성공")
     @Test
-    void findByDeletedFalse() {
-        List<Question> expectedQuestions = new ArrayList<>();
-        expectedQuestions.add(question1);
-        expectedQuestions.add(question2);
+    void deleteContentsOf() throws CannotDeleteException {
+        Question question = Q1.writeBy(JAVAJIGI);
 
-        List<Question> actualQuestions = questionRepository.findByDeletedFalse();
+        List<DeleteHistory> deleteHistories = question.deleteContentsOf(JAVAJIGI);
 
-        for (int i = 0; i < expectedQuestions.size(); i++) {
-            isEquals(actualQuestions.get(i), expectedQuestions.get(i));
-        }
+        assertThat(deleteHistories).hasSize(1);
     }
 
-    @DisplayName("findByIdAndDeletedFalse 검증 성공")
     @Test
-    void findByIdAndDeletedFalse() {
-        Question expectedQuestion = questionRepository.save(question1);
+    void deleteContentsOf_QuestionCannotDeleteException() {
+        Question question = Q1.writeBy(JAVAJIGI);
 
-        Question actualQuestion = questionRepository.findByIdAndDeletedFalse(expectedQuestion.getId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        isEquals(actualQuestion, expectedQuestion);
+        assertThatThrownBy(() -> question.deleteContentsOf(SANJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("질문을 삭제할 권한이 없습니다.");
     }
 
-    private void isEquals(final Question actualQuestion, final Question expectedQuestion) {
-        assertAll(
-                () -> assertEquals(actualQuestion.getId(), expectedQuestion.getId()),
-                () -> assertEquals(actualQuestion.getTitle(), expectedQuestion.getTitle()),
-                () -> assertEquals(actualQuestion.getContents(), expectedQuestion.getContents()),
-                () -> assertEquals(actualQuestion.getWriterId(), expectedQuestion.getWriterId())
-        );
+    @Test
+    void deleteContentsOf_AnswerCannotDeleteException() {
+        Question question = Q1.writeBy(JAVAJIGI);
+        question.addAnswer(new Answer(1L, SANJIGI, Q1, "answer_contents"));
+
+        assertThatThrownBy(() -> question.deleteContentsOf(SANJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("질문을 삭제할 권한이 없습니다.");
     }
 }

@@ -11,9 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static qna.fixture.TestFixture.JAVAJIGI;
 
 @DataJpaTest
-public class AnswerTest {
+public class AnswerRepositoryTest {
 
     @Autowired
     private AnswerRepository answerRepository;
@@ -27,7 +28,7 @@ public class AnswerTest {
 
     @BeforeEach
     void setUp() {
-        user = userRepository.save(new User("kim9418", "123123", "김대겸", "koreatech93@naver.com"));
+        user = userRepository.save(JAVAJIGI);
         question = new Question(1L, "title", "contents");
         question = questionRepository.save(question);
     }

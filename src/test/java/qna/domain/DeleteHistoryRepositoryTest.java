@@ -10,9 +10,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static qna.fixture.TestFixture.JAVAJIGI;
 
 @DataJpaTest
-public class DeleteHistoryTest {
+public class DeleteHistoryRepositoryTest {
     private User user;
 
     @Autowired
@@ -20,7 +21,7 @@ public class DeleteHistoryTest {
 
     @BeforeEach
     void setUp() {
-        user = userRepository.save(new User("kim9418", "123123", "김대겸", "koreatech93@naver.com"));
+        user = userRepository.save(JAVAJIGI);
     }
 
     @Autowired
