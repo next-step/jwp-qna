@@ -30,8 +30,8 @@
 
 ## Step3. 질문 삭제하기 리팩터링
 
-- [ ] Question 삭제하기
-- [ ] DeleteHistory - Question 삭제 히스토리 저장
-- [ ] Answer 삭제하기
-- [ ] DeleteHistory - Answer 삭제 히스토리 저장
+- [X] Question 삭제하기
+- [X] DeleteHistory - Question 삭제 히스토리 저장
+- [X] Answer 삭제하기
+- [X] DeleteHistory - Answer 삭제 히스토리 저장
 

@@ -6,6 +6,7 @@ import static qna.domain.FixtureUtils.*;
 
 import org.junit.jupiter.api.Test;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -57,5 +58,29 @@ public class AnswerTest {
         assertDoesNotThrow(() -> {
             assertThat(ANSWER1_WRITE_BY_JAVAJIGI().toString()).isNotNull();
         });
+    }
+
+    @Test
+    void 답변_삭제_권한없음_CannotDeleteException() {
+        User loginUser = SANJIGI();
+        Question question = QUESTION1(loginUser);
+
+        Answer answer = ANSWER1(JAVAJIGI(), question);
+        assertThatThrownBy(() -> answer.delete(loginUser))
+            .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    void 답변_삭제() throws CannotDeleteException {
+        User loginUser = JAVAJIGI();
+        Question question = QUESTION1(loginUser);
+
+        Answer answer = ANSWER1(loginUser, question);
+        DeleteHistory deleteHistory = answer.delete(loginUser);
+
+        assertAll(
+            () -> assertThat(answer.isDeleted()).isTrue(),
+            () -> assertThat(deleteHistory).isNotNull()
+        );
     }
 }
