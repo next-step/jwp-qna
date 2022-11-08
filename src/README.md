@@ -18,5 +18,4 @@
   - [x] Answer 엔티티 매핑
   - [x] AnswerRepository 저장 및 find
 - DeleteHistory
-  - [ ] DeleteHistory 엔티티 매핑
-  - [ ] DeleteHistoryRepository 저장 및 find
+  - [x] DeleteHistory 엔티티 매핑
