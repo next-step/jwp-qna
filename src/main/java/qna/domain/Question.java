@@ -3,6 +3,8 @@ package qna.domain;
 import qna.exception.CannotDeleteException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -32,6 +34,9 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    @Embedded
+    private Answers answers = new Answers();
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }
@@ -52,7 +57,12 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.addAnswer(answer);
         answer.toQuestion(this);
+    }
+
+    public void clearAnswers() {
+        answers.clear();
     }
 
     public Long getId() {
@@ -83,18 +93,37 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
-    public void delete(User writer) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User writer) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistoryList = new ArrayList<>();
+        deleteQuestion(writer, deleteHistoryList);
+        deleteAnswerList(writer, deleteHistoryList);
+
+
+        // TODO: 질문과 관련된 답변 찾은 후 답변도 삭제(상태 변경)
+
+        // TODO: 질문 삭제(상태 변경)
+        return deleteHistoryList;
+    }
+
+    private void deleteQuestion(User writer, List<DeleteHistory> deleteHistoryList) throws CannotDeleteException {
+        validateOwner(writer);
+        deleted();
+        deleteHistoryList.add(DeleteHistory.ofQuestion(id, writer));
+    }
+
+    private void validateOwner(User writer) throws CannotDeleteException {
         if (!isOwner(writer)) {
             throw new CannotDeleteException("작성자가 아닌 경우 질문을 삭제할 수 없습니다.");
         }
-        this.deleted();
-        // TODO: 질문 삭제 시 본인 확인
-        // TODO: 질문 삭제(상태 변경)
-        // TODO: 질문과 관련된 답변 찾은 후 답변도 삭제(상태 변경)
+    }
+
+    private void deleteAnswerList(User writer, List<DeleteHistory> deleteHistoryList) throws CannotDeleteException {
+        // TODO: 답변자 삭제(작성자와 다를 경우 삭제 불가 리턴)
+        deleteHistoryList.addAll(answers.deleteAnswers(writer));
     }
 
     private void deleted() {
-        this.deleted = true;
+        deleted = true;
     }
 
     @Override

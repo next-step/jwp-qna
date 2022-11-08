@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.exception.CannotDeleteException;
 import qna.exception.NotFoundException;
 import qna.exception.UnAuthorizedException;
 
@@ -40,6 +41,7 @@ public class Answer extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
@@ -61,7 +63,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -91,6 +93,27 @@ public class Answer extends BaseTimeEntity {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+
+    public DeleteHistory delete(User questionWriter) throws CannotDeleteException {
+        validateOwner(questionWriter);
+        return deleteAnswer();
+    }
+
+    private DeleteHistory deleteAnswer() {
+        this.deleted();
+        return DeleteHistory.ofAnswer(id, writer);
+    }
+
+    private void deleted() {
+        deleted = true;
+    }
+
+    private void validateOwner(User questionWriter) throws CannotDeleteException {
+        if (!isOwner(questionWriter)) {
+            throw new CannotDeleteException("질문에 다른 답변 작성자가 있는 경우 삭제 할 수 없습니다.");
+        }
+    }
+
 
     @Override
     public String toString() {
