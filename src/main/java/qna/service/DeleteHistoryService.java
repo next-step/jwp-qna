@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public class DeleteHistoryService {
-    private DeleteHistoryRepository deleteHistoryRepository;
+    private final DeleteHistoryRepository deleteHistoryRepository;
 
     public DeleteHistoryService(DeleteHistoryRepository deleteHistoryRepository) {
         this.deleteHistoryRepository = deleteHistoryRepository;
