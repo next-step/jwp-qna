@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "question")
-public class Question {
+public class Question extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,10 +24,6 @@ public class Question {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
     protected Question(){}
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -37,7 +33,6 @@ public class Question {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.createdAt = LocalDateTime.now();
     }
 
     public Question writeBy(User writer) {

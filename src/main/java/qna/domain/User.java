@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends BaseEntity{
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -28,11 +28,6 @@ public class User {
     @Column(length = 50)
     private String email;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
     protected User() {
     }
 
@@ -46,7 +41,6 @@ public class User {
         this.password = password;
         this.name = name;
         this.email = email;
-        this.createdAt = LocalDateTime.now();
     }
 
     public void update(User loginUser, User target) {
