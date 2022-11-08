@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 public class DeleteHistories {
 
-    private List<DeleteHistory> deleteHistories;
+    private final List<DeleteHistory> deleteHistories;
 
     public DeleteHistories(List<DeleteHistory> deleteHistories) {
         this.deleteHistories = new ArrayList<>(deleteHistories);
@@ -20,10 +20,8 @@ public class DeleteHistories {
     }
 
     public static DeleteHistories merge(DeleteHistories question, DeleteHistories answer) {
-        List<DeleteHistory> questionHistory = question.deleteHistories;
-        List<DeleteHistory> answerHistory = answer.deleteHistories;
         List<DeleteHistory> histories = Stream
-                .concat(questionHistory.stream(), answerHistory.stream())
+                .concat(question.deleteHistories.stream(), answer.deleteHistories.stream())
                 .collect(Collectors.toList());
         return DeleteHistories.create(histories);
     }
