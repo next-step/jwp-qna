@@ -58,13 +58,13 @@ public class Answer extends BaseEntity {
 
 
     public DeleteHistory delete(User loginUser) {
-        validDelete(loginUser);
+        validDeleteOwner(loginUser);
         setDeleted(true);
 
         return DeleteHistory.of(ContentType.ANSWER, id, loginUser);
     }
 
-    private void validDelete(User loginUser) {
+    private void validDeleteOwner(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }

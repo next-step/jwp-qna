@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -47,6 +48,20 @@ public class Question extends BaseEntity {
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
+    }
+
+    public DeleteHistory delete(User loginUser) {
+
+        validDeleteOwner(loginUser);
+        setDeleted(true);
+
+        return DeleteHistory.of(ContentType.QUESTION, id, loginUser);
+    }
+
+    private void validDeleteOwner(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public boolean isOwner(User writer) {
