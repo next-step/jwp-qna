@@ -73,16 +73,26 @@ public class Question extends BaseTimeEntity {
         return writer;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void delete(User writer) {
+        if (!isOwner(writer)) {
+            throw new IllegalArgumentException("작성자가 아닌 경우 질문을 삭제할 수 없습니다.");
+        }
+        this.deleted();
+        // TODO: 질문 삭제 시 본인 확인
+        // TODO: 질문 삭제(상태 변경)
+        // TODO: 질문과 관련된 답변 찾은 후 답변도 삭제(상태 변경)
+    }
+
+    private void deleted() {
+        this.deleted = true;
     }
 
     @Override
