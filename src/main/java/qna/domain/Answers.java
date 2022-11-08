@@ -1,6 +1,7 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
+import sun.jvm.hotspot.types.JShortField;
 
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
@@ -13,9 +14,10 @@ import java.util.List;
 public class Answers {
 
     private static final String NULL_MESSAGE = "질문목록이 없습니다";
+    private static final String OTHER_WRITER_MESSAGE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
-    public final List<Answer> answers;
+    private final List<Answer> answers;
 
     public Answers(List<Answer> answers) {
         validateNull(answers);
@@ -41,12 +43,16 @@ public class Answers {
     public List<DeleteHistory> getDeleteHistories() {
         List<DeleteHistory> deleteHistories = new ArrayList();
         for (Answer answer : answers) {
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+            deleteHistories.add(answer.getDeleteHistory());
         }
         return deleteHistories;
     }
 
     public void deleteAllAnswer(User writer) throws CannotDeleteException {
+        boolean isAllSameWriter = answers.stream().allMatch(answer -> answer.isOwner(writer));
+        if(!isAllSameWriter){
+            throw new CannotDeleteException(OTHER_WRITER_MESSAGE);
+        }
         for (Answer answer : answers) {
             answer.delete(writer);
         }
