@@ -13,6 +13,7 @@ public class Answer extends BaseTimeEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "contents")
+    @Lob
     private String contents;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;

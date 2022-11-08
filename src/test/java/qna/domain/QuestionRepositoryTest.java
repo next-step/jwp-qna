@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
@@ -30,8 +29,8 @@ public class QuestionRepositoryTest {
         Question question = questionRepository.save(QuestionTest.Q1);
         List<Question> questionList = questionRepository.findByDeletedFalse();
         assertAll(
-                () -> assertThat(questionList.size()).isEqualTo(1),
-                () -> assertTrue(questionList.contains(question))
+                () -> assertThat(questionList).hasSize(1),
+                () -> assertThat(questionList).contains(question)
         );
     }
 

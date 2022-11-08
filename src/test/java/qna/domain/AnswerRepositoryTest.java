@@ -8,8 +8,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -22,8 +22,8 @@ public class AnswerRepositoryTest {
         Answer answer = answerRepository.save(AnswerTest.A1);
         assertAll(
                 () -> assertThat(answer.getId()).isNotNull(),
-                () -> assertEquals(UserTest.JAVAJIGI.getId(), answer.getWriterId()),
-                () -> assertEquals(QuestionTest.Q1.getId(), answer.getQuestionId())
+                () -> assertThat(UserTest.JAVAJIGI.getId()).isEqualTo(answer.getWriterId()),
+                () -> assertThat(QuestionTest.Q1.getId()).isEqualTo(answer.getQuestionId())
         );
     }
 
@@ -33,8 +33,8 @@ public class AnswerRepositoryTest {
         Answer answer = answerRepository.save(AnswerTest.A1);
         List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
         assertAll(
-                () -> assertThat(answerList.size()).isEqualTo(1),
-                () -> assertTrue(answerList.contains(answer))
+                () -> assertThat(answerList).hasSize(1),
+                () -> assertThat(answerList).contains(answer)
         );
     }
 
