@@ -1,11 +1,24 @@
 package qna.domain;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "question")
 public class Question {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false, length = 100)
     private String title;
+    @Lob
     private String contents;
     private Long writerId;
     private boolean deleted = false;
+    @Embedded
+    private DefaultTime defaultTime = new DefaultTime();
+
+    public Question() {
+    }
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -28,6 +41,7 @@ public class Question {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.defaultTime.update();
     }
 
     public Long getId() {
