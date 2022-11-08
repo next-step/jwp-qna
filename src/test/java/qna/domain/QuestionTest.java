@@ -19,8 +19,7 @@ public class QuestionTest extends TestBase {
     @DisplayName("save 성공")
     @Test
     void save_question_success() {
-        User user = userRepository.save(MINGVEL);
-        assertThatNoException().isThrownBy(() -> questionRepository.save(provideQuestion(user)));
+        assertThat(userRepository.save(MINGVEL).getId()).isNotNull();
     }
 
     @DisplayName("findByDeletedFalse 메서드 테스트")

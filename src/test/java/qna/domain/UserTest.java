@@ -28,7 +28,7 @@ public class UserTest extends TestBase {
     @DisplayName("생성 성공")
     @Test
     void save_user_success() {
-        assertThatNoException().isThrownBy(() -> userRepository.save(MINGVEL));
+        assertThat(userRepository.save(MINGVEL).getId()).isNotNull();
     }
 
     @DisplayName("findByUserId 메서드 테스트")

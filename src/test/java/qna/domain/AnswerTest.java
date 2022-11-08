@@ -15,7 +15,7 @@ class AnswerTest extends TestBase {
     @Test
     void save_answer_success() {
         //given:
-        assertThatNoException().isThrownBy(() -> answerRepository.save(provideAnswer()));
+        assertThat(answerRepository.save(provideAnswer()).getId()).isNotNull();
     }
 
     @DisplayName("createdAt 자동 생성 여부 테스트")
