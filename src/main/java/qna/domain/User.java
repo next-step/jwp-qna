@@ -33,7 +33,7 @@ public class User extends DateEntity {
     @Column(length = 50, nullable = true)
     private String email;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
     private final List<Answer> answers = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
