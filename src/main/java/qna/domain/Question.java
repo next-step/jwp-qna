@@ -56,7 +56,7 @@ public class Question extends BaseEntity {
     }
 
     private DeleteHistory getDeleteHistory() {
-        if(!this.deleted){
+        if (!this.deleted) {
             throw new IllegalStateException(ONLY_DELETED_STATE);
         }
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());

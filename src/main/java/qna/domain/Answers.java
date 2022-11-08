@@ -1,12 +1,10 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
-import sun.jvm.hotspot.types.JShortField;
 
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +48,7 @@ public class Answers {
 
     public void deleteAllAnswer(User writer) throws CannotDeleteException {
         boolean isAllSameWriter = answers.stream().allMatch(answer -> answer.isOwner(writer));
-        if(!isAllSameWriter){
+        if (!isAllSameWriter) {
             throw new CannotDeleteException(OTHER_WRITER_MESSAGE);
         }
         for (Answer answer : answers) {
