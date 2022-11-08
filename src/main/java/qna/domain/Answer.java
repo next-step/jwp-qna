@@ -59,7 +59,7 @@ public class Answer extends BaseEntity {
 
     public DeleteHistory delete(User loginUser) {
         validDelete(loginUser);
-        makeDeletedTrue();
+        setDeleted(true);
 
         return DeleteHistory.of(ContentType.ANSWER, id, loginUser);
     }
@@ -102,8 +102,8 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void makeDeletedTrue() {
-        this.deleted = true;
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override
