@@ -12,35 +12,36 @@ import qna.UnAuthorizedException;
 public class AnswerTest {
     @Test
     void 객체_생성_유저_null일경우_UnAuthorizedException() {
-        assertThatThrownBy(() -> A1(null, Q1())).isInstanceOf(UnAuthorizedException.class);
+        assertThatThrownBy(() -> ANSWER1(null, QUESTION1_WRITE_BY_JAVAJIGI())).isInstanceOf(
+            UnAuthorizedException.class);
     }
 
     @Test
     void 객체_생성_질문_null일경우_UnAuthorizedException() {
-        assertThatThrownBy(() -> A1(JAVAJIGI(), null)).isInstanceOf(NotFoundException.class);
+        assertThatThrownBy(() -> ANSWER1(JAVAJIGI(), null)).isInstanceOf(NotFoundException.class);
     }
 
     @Test
     void 동등성() {
         assertAll(
-            () -> assertThat(A1()).isEqualTo(A1()),
-            () -> assertThat(A1()).isNotEqualTo(A2())
+            () -> assertThat(ANSWER1_WRITE_BY_JAVAJIGI()).isEqualTo(ANSWER1_WRITE_BY_JAVAJIGI()),
+            () -> assertThat(ANSWER1_WRITE_BY_JAVAJIGI()).isNotEqualTo(ANSWER2_WRITE_BY_JAVAJIGI())
         );
     }
 
     @Test
     void 작성자_확인() {
         assertAll(
-            () -> assertThat(A1().isOwner(JAVAJIGI())).isTrue(),
-            () -> assertThat(A1().isOwner(SANJIGI())).isFalse()
+            () -> assertThat(ANSWER1_WRITE_BY_JAVAJIGI().isOwner(JAVAJIGI())).isTrue(),
+            () -> assertThat(ANSWER1_WRITE_BY_JAVAJIGI().isOwner(SANJIGI())).isFalse()
         );
     }
 
     @Test
     void 질문_변경() {
-        Question q1 = Q1();
-        Question q2 = Q2();
-        Answer a1 = A1();
+        Question q1 = QUESTION1_WRITE_BY_JAVAJIGI();
+        Question q2 = QUESTION2_WRITE_BY_JAVAJIGI();
+        Answer a1 = ANSWER1_WRITE_BY_JAVAJIGI();
         a1.toQuestion(q2);
 
         assertAll(
@@ -54,7 +55,7 @@ public class AnswerTest {
     @Test
     void toString_순환참조_테스트() {
         assertDoesNotThrow(() -> {
-            assertThat(A1().toString()).isNotNull();
+            assertThat(ANSWER1_WRITE_BY_JAVAJIGI().toString()).isNotNull();
         });
     }
 }
