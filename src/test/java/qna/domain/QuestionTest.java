@@ -3,6 +3,7 @@ package qna.domain;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.exception.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -15,12 +16,12 @@ public class QuestionTest {
     public void question_delete_exception_writer_not_same() {
         Question question = Q1.writeBy(UserTest.JAVAJIGI);
         assertThatThrownBy(() -> question.delete(UserTest.SANJIGI))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
     @DisplayName("질문자가 같은 경우 가능")
-    public void question_delete() {
+    public void question_delete() throws CannotDeleteException {
         Question question = Q1.writeBy(UserTest.JAVAJIGI);
         question.delete(UserTest.JAVAJIGI);
         assertThat(question.isDeleted()).isTrue();

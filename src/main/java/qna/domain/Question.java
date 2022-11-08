@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.exception.CannotDeleteException;
+
 import javax.persistence.*;
 
 @Entity
@@ -81,9 +83,9 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
-    public void delete(User writer) {
+    public void delete(User writer) throws CannotDeleteException {
         if (!isOwner(writer)) {
-            throw new IllegalArgumentException("작성자가 아닌 경우 질문을 삭제할 수 없습니다.");
+            throw new CannotDeleteException("작성자가 아닌 경우 질문을 삭제할 수 없습니다.");
         }
         this.deleted();
         // TODO: 질문 삭제 시 본인 확인
