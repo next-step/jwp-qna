@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -18,7 +19,7 @@ import java.util.Objects;
 
 @Entity
 @Table
-public class Answer {
+public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,13 +30,6 @@ public class Answer {
 
     @Lob
     private String contents;
-
-    @Column(nullable = false)
-    @CreationTimestamp
-    private Date createdAt;
-
-    @UpdateTimestamp
-    private Date updatedAt;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -87,14 +81,6 @@ public class Answer {
         return contents;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -110,8 +96,6 @@ public class Answer {
                 ", writerId=" + writerId +
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 ", deleted=" + deleted +
                 '}';
     }

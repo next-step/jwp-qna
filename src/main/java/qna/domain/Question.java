@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,12 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table
-public class Question {
+public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,13 +22,6 @@ public class Question {
     private String contents;
 
     private Long writerId;
-
-    @Column(nullable = false)
-    @CreationTimestamp
-    private Date createdAt;
-
-    @UpdateTimestamp
-    private Date updatedAt;
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -78,14 +68,6 @@ public class Question {
         return writerId;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -101,8 +83,6 @@ public class Question {
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", writerId=" + writerId +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 ", deleted=" + deleted +
                 '}';
     }

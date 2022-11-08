@@ -1,21 +1,17 @@
 package qna.domain;
 
-import java.util.Date;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import qna.UnAuthorizedException;
-
-import java.util.Objects;
 
 @Entity
 @Table
-public class User {
+public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -33,14 +29,6 @@ public class User {
 
     @Column(length = 50)
     private String email;
-
-    @Column(nullable = false)
-    @CreationTimestamp
-    private Date createdAt;
-
-    @Column(nullable = false)
-    @UpdateTimestamp
-    private Date updatedAt;
 
     protected User() {
     }
@@ -111,14 +99,6 @@ public class User {
         return email;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -127,8 +107,6 @@ public class User {
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 '}';
     }
 

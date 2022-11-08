@@ -27,7 +27,7 @@ public class DeleteHistory {
 
     private Long deletedById;
 
-    @CreationTimestamp
+    @CreatedDate
     private LocalDateTime createDate;
 
     protected DeleteHistory() {
