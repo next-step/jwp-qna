@@ -26,7 +26,9 @@ public class QuestionTest {
 
         List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
 
+        assertThat(question.isDeleted()).isTrue();
         assertThat(deleteHistories.size()).isEqualTo(4);
+        assertThat(answers.stream().allMatch(Answer::isDeleted)).isTrue();
     }
 
     @Test
@@ -57,7 +59,7 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("질문을 삭제할 때 답변 또한 삭제해야 하며, 답변의 삭제 또한 삭제 상태(deleted)를 변경한다.")
+    @DisplayName("질문과 답변을 함께 삭제할 때, 이미 삭제된 답변은 제외되어야 함")
     void delete4() throws CannotDeleteException {
 
         Question question = new Question("title", "contets", UserTest.JAVAJIGI);
@@ -65,19 +67,19 @@ public class QuestionTest {
                 new Answer(UserTest.JAVAJIGI, question, "contents"),
                 new Answer(UserTest.JAVAJIGI, question, "contents")
         );
-
+        answers.get(0).delete(UserTest.JAVAJIGI);
         answers.forEach(question::addAnswer);
 
         List<DeleteHistory> deleteHistories = question.delete(UserTest.JAVAJIGI);
 
         assertThat(question.isDeleted()).isTrue();
-        assertThat(deleteHistories.size()).isEqualTo(3);
-        assertThat(answers.stream().allMatch(Answer::isDeleted)).isTrue();
+        assertThat(deleteHistories.size()).isEqualTo(2);
     }
 
 
     @Test
-    void checkOwnerOrThrow() throws CannotDeleteException {
+    @DisplayName("작성자가 다르면 exception 이 발생함.")
+    void checkOwnerOrThrow() {
         assertThatThrownBy(() -> Q1.delete(UserTest.SANJIGI))
                 .isInstanceOf(CannotDeleteException.class);
     }

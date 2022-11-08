@@ -106,7 +106,7 @@ public class Question extends BaseEntity {
         return getDeleteHistory();
     }
 
-    private List<DeleteHistory> getDeleteHistory() {
+    private List<DeleteHistory> getDeleteHistory() throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         deleteHistories.add(this.toDeleteHistory());
         deleteHistories.addAll(this.answers.getAnswerDeleteHistories(this.writer));

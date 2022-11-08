@@ -23,14 +23,17 @@ public class QuestionAnswers {
         answers.add(answer);
     }
 
-    public Collection<DeleteHistory> getAnswerDeleteHistories(User loginUser) {
-        return this.answers.stream().map(answer -> {
-            try {
-                return answer.delete(loginUser);
-            } catch (CannotDeleteException e) {
-                throw new RuntimeException(e);
-            }
-        }).collect(Collectors.toList());
+    public Collection<DeleteHistory> getAnswerDeleteHistories(User loginUser) throws CannotDeleteException {
+        Collection<DeleteHistory> newDeleteHistories = new ArrayList<>();
+        for (Answer answer : getNotDeletedAnswers()) {
+            newDeleteHistories.add(answer.delete(loginUser));
+        }
+        return newDeleteHistories;
+    }
+
+    private List<Answer> getNotDeletedAnswers() {
+        return this.answers.stream()
+                .filter(answer -> !answer.isDeleted()).collect(Collectors.toList());
     }
 
     public boolean isDeletable(User loginUser) throws CannotDeleteException {
