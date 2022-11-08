@@ -1,11 +1,11 @@
 package qna.repository;
 
-import org.hibernate.Hibernate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.Answer;
 import qna.domain.Question;
@@ -75,8 +75,9 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("삭제 되지 않은 question을 조회한다.")
-    void find_all_not_deleted() {
-        Question deleteQuestion = createQuestion("test", "test", user, true);
+    void find_all_not_deleted() throws CannotDeleteException {
+        Question deleteQuestion = createQuestion("test", "test", user);
+        deleteQuestion.delete(user);
         questions.save(deleteQuestion);
         List<Question> saveQuestion = questions.findByDeletedFalse();
         assertThat(saveQuestion).hasSize(1);
@@ -85,7 +86,7 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("question id 로 삭제되지 않은 question을 조회한다")
     void find_by_question_id() {
-        Question notDeleteQuestion = createQuestion("test", "test", user, false);
+        Question notDeleteQuestion = createQuestion("test", "test", user);
         questions.save(notDeleteQuestion);
         Question expect = questions.findByIdAndDeletedFalse(notDeleteQuestion.getId()).orElseThrow(NotFoundException::new);
         assertAll(
@@ -100,19 +101,18 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("answer을 저장하지 않아도 Question을 저장해도 cascade로 둘다 저장 성공")
     void answer_question_cascade_perist() {
-        Question questionTestCase = createQuestion("test", "test", user, false);
+        Question questionTestCase = createQuestion("test", "test", user);
         Answer answerTestCase = new Answer(user, questionTestCase, "contents");
         questionTestCase.addAnswer(answerTestCase);
         questions.saveAndFlush(questionTestCase);
         entityManager.clear();
         Question expect = questions.getOne(questionTestCase.getId());
-        assertThat(expect.getAnswers()).containsExactly(answerTestCase);
+        assertThat(expect.containsAnswer(answerTestCase)).isTrue();
 
     }
 
-    private static Question createQuestion(String title, String contents, User user, boolean isDeleted) {
+    private static Question createQuestion(String title, String contents, User user) {
         Question question = new Question(title, contents).writeBy(user);
-        question.setDeleted(isDeleted);
         return question;
     }
 }

@@ -21,9 +21,9 @@ public class User extends BaseTime {
     private String name;
     @Column(length = 50)
     private String email;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "writer")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "writer")
     List<Answer> answers = new ArrayList<>();
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "writer")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "writer")
     List<Question> questions = new ArrayList<>();
 
     protected User() {

@@ -52,13 +52,15 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("answer 저장")
     void answer_save() {
-        Answer expect = answers.findById(answer.getId()).orElseThrow(NotFoundException::new);
+        Answer test = new Answer(user, question, "test");
+        answers.save(test);
+        Answer expect = answers.findById(test.getId()).orElseThrow(NotFoundException::new);
         assertAll(
-                () -> assertThat(answer.getId()).isEqualTo(expect.getId()),
-                () -> assertThat(answer.getWriter()).isEqualTo(Hibernate.unproxy(expect.getWriter())),
-                () -> assertThat(answer.getQuestion()).isEqualTo(Hibernate.unproxy(expect.getQuestion())),
-                () -> assertThat(answer.getContents()).isEqualTo(expect.getContents()),
-                () -> assertThat(answer.isDeleted()).isEqualTo(expect.isDeleted())
+                () -> assertThat(test.getId()).isEqualTo(expect.getId()),
+                () -> assertThat(test.getWriter()).isEqualTo(Hibernate.unproxy(expect.getWriter())),
+                () -> assertThat(test.getQuestion()).isEqualTo(Hibernate.unproxy(expect.getQuestion())),
+                () -> assertThat(test.getContents()).isEqualTo(expect.getContents()),
+                () -> assertThat(test.isDeleted()).isEqualTo(expect.isDeleted())
         );
     }
 
@@ -82,7 +84,7 @@ public class AnswerRepositoryTest {
     @DisplayName("answer 삭제(deleted 상태 변경)")
     void answer_delete() {
         Answer dbSave = answers.findById(answer.getId()).orElseThrow(NotFoundException::new);
-        dbSave.setDeleted(true);
+        dbSave.delete();
         entityManager.flush();
         entityManager.clear();
         Answer expect = answers.findById(answer.getId()).orElseThrow(NotFoundException::new);
@@ -116,7 +118,7 @@ public class AnswerRepositoryTest {
     @DisplayName("answer id에 일치하는 삭제되지 않은 Answer을 조회(삭제된 Answer 이라 조회결과 없음)")
     void find_answer_id_and_delete_false_return_nothing() {
         Answer dbSave = answers.findById(answer.getId()).orElseThrow(NotFoundException::new);
-        dbSave.setDeleted(true);
+        dbSave.delete();
         entityManager.flush();
         entityManager.clear();
         assertThat(answers.findByIdAndDeletedFalse(answer.getId())).isEmpty();
