@@ -3,15 +3,26 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+@Table(name = "answer")
+public class Answer extends BaseTimeEntity{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+    @Column(name = "contents")
+    @Lob
     private String contents;
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+    @Column(name = "questionId")
+    private Long questionId;
+    @Column(name = "writerId")
+    private Long writerId;
 
+    public Answer() {}
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
