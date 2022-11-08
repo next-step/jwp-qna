@@ -55,7 +55,6 @@ public class Question extends BaseEntity {
     }
 
     private DeleteHistory getDeleteHistory() {
-        this.deleted = true;
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
