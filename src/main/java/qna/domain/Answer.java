@@ -2,6 +2,7 @@ package qna.domain;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -92,18 +93,25 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public void delete(User loginUser) throws CannotDeleteException {
+        valid(loginUser);
         this.deleted = true;
+    }
+
+    private void valid(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writeBy.getId() +
-                ", questionId=" + question +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", writerId=" + writeBy.getId() +
+            ", questionId=" + question +
+            ", contents='" + contents + '\'' +
+            ", deleted=" + deleted +
+            '}';
     }
 }
