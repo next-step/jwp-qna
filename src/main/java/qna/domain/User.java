@@ -40,9 +40,6 @@ public class User extends BaseDateTimeEntity {
     @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
     private final List<Question> questionList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "deletedByUser", fetch = FetchType.LAZY)
-    private final List<DeleteHistory> deleteHistoryList = new ArrayList<>();
-
     protected User() {
 
     }
@@ -146,23 +143,8 @@ public class User extends BaseDateTimeEntity {
         }
     }
 
-    public void addDeleteHistory(DeleteHistory deleteHistory) {
-        if (!deleteHistoryList.contains(deleteHistory)) {
-            deleteHistoryList.add(deleteHistory);
-            deleteHistory.toDeletedUser(this);
-        }
-    }
-
-    public List<Answer> getAnswerList() {
-        return answerList;
-    }
-
     public List<Question> getQuestionList() {
         return questionList;
-    }
-
-    public List<DeleteHistory> getDeleteHistoryList() {
-        return deleteHistoryList;
     }
 
     @Override
