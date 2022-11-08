@@ -71,6 +71,11 @@ public class Answer extends BaseTimeEntity {
         return DeleteHistory.answerOf(this.id, loginUser);
     }
 
+    public void changeQuestion(Question question) {
+        this.question = question;
+        question.addAnswer(this);
+    }
+
     public Long getId() {
         return id;
     }
