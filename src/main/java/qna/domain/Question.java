@@ -9,6 +9,7 @@ import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
+    private static final String ONLY_DELETED_STATE = "삭제된 질문만 허용합니다";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -55,6 +56,9 @@ public class Question extends BaseEntity {
     }
 
     private DeleteHistory getDeleteHistory() {
+        if(!this.deleted){
+            throw new IllegalStateException(ONLY_DELETED_STATE);
+        }
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
