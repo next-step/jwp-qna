@@ -10,12 +10,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.answer.Answer;
 import qna.domain.question.Question;
-import qna.domain.question.title.Title;
+import qna.domain.question.factory.QuestionFactory;
+import qna.domain.question.factory.QuestionFactoryImpl;
 import qna.domain.user.User;
-import qna.domain.user.email.Email;
-import qna.domain.user.name.Name;
-import qna.domain.user.password.Password;
-import qna.domain.user.userid.UserId;
+import qna.domain.user.factory.UserFactory;
+import qna.domain.user.factory.UserFactoryImpl;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -34,7 +33,7 @@ class QuestionRepositoryTest {
 
     @Test
     void 엔티티_저장() {
-        Question expected = getQuestion();
+        Question expected = getQuestion("title", "content1");
         Question actual = questions.save(expected);
         assertThat(actual.getId()).isEqualTo(expected.getId());
         assertThat(actual == expected).isTrue();
@@ -42,7 +41,7 @@ class QuestionRepositoryTest {
 
     @Test
     void Id로_삭제() {
-        Question question = questions.save(getQuestion());
+        Question question = questions.save(getQuestion("title", "content1"));
         questions.delete(question);
         questions.flush();
     }
@@ -50,8 +49,8 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("delete 컬럼이 false 인 질문목록 조회")
     void findByDeletedFalse() {
-        questions.save(new Question(new Title("코드 리뷰 요청드립니다."), "리뷰 잘 부탁드립니다."));
-        questions.save(new Question(new Title("(수정)코드 리뷰 요청드립니다."), "코드 리뷰 잘 부탁드립니다."));
+        questions.save(getQuestion("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다."));
+        questions.save(getQuestion("(수정)코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다."));
         List<Question> questionList = questions.findByDeletedFalse();
         assertThat(questionList).hasSize(2);
     }
@@ -59,7 +58,7 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("메소드명에 And 를 포함하여 And 조건문을 수행할 수 있다")
     void findByIdAndDeletedFalse() {
-        Question expected = questions.save(getQuestion());
+        Question expected = questions.save(getQuestion("title", "content1"));
         Question actual = questions.findByIdAndDeletedFalse(expected.getId()).get();
         assertThat(actual.getId()).isEqualTo(expected.getId());
     }
@@ -67,9 +66,8 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("(지연로딩)Question 에서 User 로 참조할 수 있다")
     void question_to_user_lazy() {
-        User loginUser = users.save(new User(new UserId("writer"), new Password("1111"), new Name("작성자"),
-                new Email("writer@naver.com")));
-        Question question = questions.save(getQuestion().writeBy(loginUser));
+        User loginUser = users.save(getUser(null, "writer", "1111", "작성자", "writer@naver.com"));
+        Question question = questions.save(getQuestion("title", "content1").writeBy(loginUser));
         flushAndClear();
         Question findQuestion = questions.findById(question.getId()).get();
         assertThat(findQuestion.getWriter().getId()).isEqualTo(loginUser.getId());
@@ -78,9 +76,8 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("(지연로딩)Question 에서 Answer 로 참조할 수 있다")
     void question_to_answers() {
-        User writer = users.save(new User(new UserId("writer"), new Password("1111"), new Name("작성자"),
-                new Email("writer@naver.com")));
-        Question question = questions.save(getQuestion().writeBy(writer));
+        User writer = users.save(getUser(null, "writer", "1111", "작성자", "writer@naver.com"));
+        Question question = questions.save(getQuestion("title", "content1").writeBy(writer));
         Answer expected = answers.save(new Answer(writer, question, question.getContents()));
         flushAndClear();
         List<Answer> actual = questions.findById(question.getId()).get().getAnswers();
@@ -91,9 +88,8 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("하나의 트랜잭션 안에서 Question과 Answer는 서로 참조가 가능해야 한다")
     void question_to_answers_no_flush_clear() {
-        User writer = users.save(new User(new UserId("writer"), new Password("1111"), new Name("작성자"),
-                new Email("writer@naver.com")));
-        Question question = questions.save(getQuestion().writeBy(writer));
+        User writer = users.save(getUser(null, "writer", "1111", "작성자", "writer@naver.com"));
+        Question question = questions.save(getQuestion("title", "content1").writeBy(writer));
         Answer expected = answers.save(new Answer(writer, question, question.getContents()));
         question.addAnswer(expected);
         List<Answer> actual = question.getAnswers();
@@ -101,8 +97,14 @@ class QuestionRepositoryTest {
         assertThat(actual.get(0).getId()).isEqualTo(expected.getId());
     }
 
-    private Question getQuestion() {
-        return new Question(new Title("title1"), "contents1");
+    private User getUser(Long id, String userId, String password, String name, String email) {
+        UserFactory factory = new UserFactoryImpl(users);
+        return factory.create(id, userId, password, name, email);
+    }
+
+    private Question getQuestion(String title, String content) {
+        QuestionFactory factory = new QuestionFactoryImpl();
+        return factory.create(title, content);
     }
 
     void flushAndClear() {

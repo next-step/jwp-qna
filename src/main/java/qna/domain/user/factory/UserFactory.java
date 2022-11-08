@@ -4,5 +4,5 @@ import qna.domain.user.User;
 
 public interface UserFactory {
 
-    User create(String userId, String password, String name, String email);
+    User create(Long id, String userId, String password, String name, String email);
 }

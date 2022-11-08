@@ -30,11 +30,11 @@ public class UserFactoryImpl implements UserFactory {
     }
 
     @Override
-    public User create(String userId, String password, String name, String email) {
+    public User create(Long id, String userId, String password, String name, String email) {
         UserId createUserId = userIdFactory.create(userId);
         Password createPassword = passwordFactory.create(password);
         Name createName = nameFactory.create(name);
         Email createEmail = emailFactory.create(email);
-        return new User(createUserId, createPassword, createName, createEmail);
+        return new User(id, createUserId, createPassword, createName, createEmail);
     }
 }
