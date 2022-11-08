@@ -3,14 +3,30 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static java.time.LocalDateTime.*;
+
+@Entity
+@Table(name = "answer")
 public class Answer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long writerId;
     private Long questionId;
+    @Lob
     private String contents;
+    @Column(nullable = false)
     private boolean deleted = false;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = now();
+    private LocalDateTime updatedAt = now();
+
+    public Answer() {
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -30,6 +46,7 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
+        this.createdAt = now();
     }
 
     public boolean isOwner(User writer) {
@@ -38,6 +55,7 @@ public class Answer {
 
     public void toQuestion(Question question) {
         this.questionId = question.getId();
+        this.updatedAt = now();
     }
 
     public Long getId() {
@@ -78,6 +96,10 @@ public class Answer {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     @Override

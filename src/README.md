@@ -15,8 +15,8 @@
   - [x] Question 엔티티 매핑
   - [x] QuestionRepository 저장 및 find
 - Answer
-  - [ ] Answer 엔티티 매핑
-  - [ ] AnswerRepository 저장 및 find
+  - [x] Answer 엔티티 매핑
+  - [x] AnswerRepository 저장 및 find
 - DeleteHistory
   - [ ] DeleteHistory 엔티티 매핑
   - [ ] DeleteHistoryRepository 저장 및 find
