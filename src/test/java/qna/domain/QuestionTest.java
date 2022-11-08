@@ -49,6 +49,27 @@ public class QuestionTest {
     }
 
     @Test
+    @DisplayName("question에서 answer 양방향 매핑 확인")
+    void answer_양방향_매핑_확인() {
+        //given
+        User writer = new User(null, "sangjae", "password", "name", "javajigi@slipp.net");
+        Question question = new Question("title1", "contents1").writeBy(writer);
+        Answer answer = new Answer(writer, question, "Answers Contents");
+
+        entityManager.persist(writer);
+        entityManager.persist(answer);
+        questionRepository.save(question);
+        entityManager.flush();
+        entityManager.clear();
+
+        //when
+        Optional<Question> optionalQuestion = questionRepository.findById(question.getId());
+
+        //then
+        assertThat(optionalQuestion.get().getAnswers()).hasSize(1);
+    }
+
+    @Test
     @DisplayName("findByDeletedFalse 조회")
     void findByDeletedFalse() {
         // given

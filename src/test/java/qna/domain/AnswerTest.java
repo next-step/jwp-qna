@@ -51,6 +51,27 @@ public class AnswerTest {
     }
 
     @Test
+    @DisplayName("answer에서 toQuestion호출 시 연관관계 편의 메소드 작동 성공")
+    void save_question_연관관계_편의_메소드() {
+        //given
+        User writer = new User(null, "sangjae", "password", "name", "javajigi@slipp.net");
+        Question question = new Question("title1", "contents1").writeBy(writer);
+        Answer answer = new Answer(writer, question, "Answers Contents");
+
+        //when
+        answer.toQuestion(question);
+        answer.toQuestion(question);
+        answer.toQuestion(question);
+
+        //then
+        assertAll(
+                () -> assertThat(question.getAnswers()).hasSize(1),
+                () -> assertThat(question.getAnswers().get(0)).isSameAs(answer),
+                () -> assertThat(answer.getQuestion()).isSameAs(question)
+        );
+    }
+
+    @Test
     @DisplayName("findByQuestionIdAndDeletedFalse 조회")
     void findByQuestionIdAndDeletedFalse() {
         // given
