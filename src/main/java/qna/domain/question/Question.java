@@ -1,5 +1,6 @@
 package qna.domain.question;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -66,10 +67,11 @@ public class Question extends BaseEntity {
         }
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(DeleteHistory.createQuestionDeleteHistory(this));
+        LocalDateTime now = LocalDateTime.now();
+        deleteHistories.add(DeleteHistory.createQuestionDeleteHistory(this, now));
 
         Answers answers = new Answers(this.answers);
-        deleteHistories.addAll(answers.deleteAll(loginUser));
+        deleteHistories.addAll(answers.deleteAll(loginUser, now));
 
         this.deleted = true;
 

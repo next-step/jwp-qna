@@ -36,12 +36,12 @@ public class DeleteHistory {
 
     }
 
-    public static DeleteHistory createQuestionDeleteHistory(Question question) {
-        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+    public static DeleteHistory createQuestionDeleteHistory(Question question, LocalDateTime now) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), now);
     }
 
-    public static DeleteHistory createAnswerDeleteHistory(Answer answer) {
-        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
+    public static DeleteHistory createAnswerDeleteHistory(Answer answer, LocalDateTime now) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), now);
     }
 
     public Long getId() {
