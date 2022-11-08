@@ -52,7 +52,7 @@ public class AnswerTest {
         Question question = QuestionTest.Q2;
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
         answer.toQuestion(question);
-        assertThat(answer.getQuestionId()).isEqualTo(question.getId());
+        assertThat(answer.getQuestion()).isEqualTo(question);
     }
 
     @Test

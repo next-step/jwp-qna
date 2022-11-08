@@ -3,6 +3,8 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -19,6 +21,10 @@ public class User extends BaseTime {
     private String name;
     @Column(length = 50)
     private String email;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "writer")
+    List<Answer> answers = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "writer")
+    List<Question> questions = new ArrayList<>();
 
     protected User() {
     }
@@ -89,6 +95,13 @@ public class User extends BaseTime {
         return email;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
 
     @Override
     public String toString() {
@@ -103,17 +116,24 @@ public class User extends BaseTime {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         User user = (User) o;
-        return id.equals(user.id) &&
-                userId.equals(user.userId);
+        if (user.getId() == null || this.getId() == null) {
+            return false;
+        }
+        return Objects.equals(user.getId(), this.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId);
+        return Objects.hash(id);
     }
+
 
     private static class GuestUser extends User {
         @Override
