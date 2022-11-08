@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
@@ -29,5 +30,11 @@ public class Answers {
 
     public boolean isEmpty() {
         return answers.isEmpty();
+    }
+
+    public DeleteHistories delete(User loginUser) {
+        return new DeleteHistories(answers.stream()
+                .map(answer -> answer.delete(loginUser))
+                .collect(Collectors.toList()));
     }
 }
