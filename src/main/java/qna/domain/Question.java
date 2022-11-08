@@ -36,7 +36,7 @@ public class Question {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    public Question() {
+    protected Question() {
     }
 
     public Question(String title, String contents) {

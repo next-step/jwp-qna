@@ -42,7 +42,7 @@ public class User {
     @UpdateTimestamp
     private Date updatedAt;
 
-    public User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
