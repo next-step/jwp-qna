@@ -84,7 +84,7 @@ public class AnswerRepositoryTest {
     @DisplayName("answer 삭제(deleted 상태 변경)")
     void answer_delete() {
         Answer dbSave = answers.findById(answer.getId()).orElseThrow(NotFoundException::new);
-        dbSave.setDeleted(true);
+        dbSave.delete();
         entityManager.flush();
         entityManager.clear();
         Answer expect = answers.findById(answer.getId()).orElseThrow(NotFoundException::new);
@@ -118,7 +118,7 @@ public class AnswerRepositoryTest {
     @DisplayName("answer id에 일치하는 삭제되지 않은 Answer을 조회(삭제된 Answer 이라 조회결과 없음)")
     void find_answer_id_and_delete_false_return_nothing() {
         Answer dbSave = answers.findById(answer.getId()).orElseThrow(NotFoundException::new);
-        dbSave.setDeleted(true);
+        dbSave.delete();
         entityManager.flush();
         entityManager.clear();
         assertThat(answers.findByIdAndDeletedFalse(answer.getId())).isEmpty();

@@ -59,7 +59,7 @@ public class AnswerTest {
     @DisplayName("Answer의 delete 상태 변경")
     void change_delete() {
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-        answer.setDeleted(true);
+        answer.delete();
         assertThat(answer.isDeleted()).isTrue();
     }
 

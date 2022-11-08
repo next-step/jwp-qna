@@ -73,8 +73,9 @@ public class Answer extends BaseTime {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory delete() {
+        this.deleted = true;
+        return DeleteHistory.create(ContentType.ANSWER, this.question, this.writer);
     }
 
     @Override
