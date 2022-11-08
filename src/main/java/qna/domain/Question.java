@@ -1,29 +1,18 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Question {
+public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
     private String contents;
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
     @Column(nullable = false)
     private boolean deleted = false;
     @Column(nullable = false, length = 100)
     private String title;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
     private Long writerId;
 
     protected Question() {
@@ -82,11 +71,10 @@ public class Question {
         return "Question{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
-                ", createdAt=" + createdAt +
                 ", deleted=" + deleted +
                 ", title='" + title + '\'' +
-                ", updatedAt=" + updatedAt +
                 ", writerId=" + writerId +
+                ", " + super.toString() +
                 '}';
     }
 }

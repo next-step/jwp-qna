@@ -1,31 +1,21 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Answer {
+public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
     private String contents;
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
     @Column(nullable = false)
     private boolean deleted = false;
     private Long questionId;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
     private Long writerId;
 
     protected Answer() {
@@ -89,11 +79,10 @@ public class Answer {
         return "Answer{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
-                ", createdAt=" + createdAt +
                 ", deleted=" + deleted +
                 ", questionId=" + questionId +
-                ", updatedAt=" + updatedAt +
                 ", writerId=" + writerId +
+                ", " + super.toString() +
                 '}';
     }
 }

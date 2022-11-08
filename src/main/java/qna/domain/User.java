@@ -1,32 +1,22 @@
 package qna.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class User {
+public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
     @Column(length = 50)
     private String email;
     @Column(nullable = false, length = 20)
     private String name;
     @Column(nullable = false, length = 20)
     private String password;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
     @Column(nullable = false, unique = true, length = 20)
     private String userId;
 
@@ -103,12 +93,11 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", createdAt=" + createdAt +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
-                ", updatedAt=" + updatedAt +
                 ", userId='" + userId + '\'' +
+                ", " + super.toString() +
                 '}';
     }
 
