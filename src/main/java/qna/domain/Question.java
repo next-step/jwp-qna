@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
 
@@ -74,6 +75,12 @@ public class Question extends BaseEntity {
         }
         this.deleted = true;
         return new DeleteHistory(ContentType.QUESTION, id, user, LocalDateTime.now());
+    }
+
+    public List<DeleteHistory> deleteWithAnswers(User user) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = this.answers.deleteAll(user);
+        deleteHistories.add(this.delete(user));
+        return deleteHistories;
     }
 
     public User getWriter() {

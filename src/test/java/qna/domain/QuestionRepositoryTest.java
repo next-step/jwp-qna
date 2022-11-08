@@ -21,6 +21,8 @@ class QuestionRepositoryTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private AnswerRepository answerRepository;
+    @Autowired
     private TestEntityManager testEntityManager;
     private User user;
 
@@ -104,5 +106,17 @@ class QuestionRepositoryTest {
         assertThat(question.isDeleted()).isTrue();
         assertThat(history.getDeleteByUser()).isEqualTo(user);
         assertThat(history.getContentId()).isEqualTo(question.getId());
+    }
+
+    @Test
+    void 질문과_답변을_함께_삭제() throws CannotDeleteException {
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        Answer answer = answerRepository.save(new Answer(user, question, "answer"));
+        question.addAnswer(answer);
+
+        List<DeleteHistory> deleteHistories = question.deleteWithAnswers(user);
+        assertThat(question.isDeleted()).isTrue();
+        assertThat(answer.isDeleted()).isTrue();
+        assertThat(deleteHistories).hasSize(2);
     }
 }
