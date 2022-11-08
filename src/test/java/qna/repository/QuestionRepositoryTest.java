@@ -47,7 +47,7 @@ class QuestionRepositoryTest {
     @Test
     void save_test() {
         Answer a1 = new Answer(u1, q1, "Answers");
-        q1.getAnswers().add(a1);
+        q1.addAnswer(a1);
         Question question = questionRepository.save(q1);
         assertAll(
                 () -> assertNotNull(question),
@@ -60,14 +60,14 @@ class QuestionRepositoryTest {
     @Test
     void find_test() {
         Answer a1 = new Answer(u1, q1, "Answers");
-        q1.getAnswers().add(a1);
+        q1.addAnswer(a1);
         Question question = questionRepository.save(q1);
         manager.flush();
         manager.clear();
         Optional<Question> actual = questionRepository.findById(question.getId());
         assertAll(
                 () -> assertTrue(actual.isPresent()),
-                () -> assertNotNull(actual.get().getAnswers().get(0).getId())
+                () -> assertNotNull(actual.get().getAnswers())
         );
 
     }
@@ -118,7 +118,7 @@ class QuestionRepositoryTest {
     @Test
     void delete_test() {
         Answer actualAnswer = answerRepository.save(new Answer(u1, q1, "Answers"));
-        q1.getAnswers().add(actualAnswer);
+        q1.addAnswer(actualAnswer);
         Question question = questionRepository.save(q1);
 
         Optional<Answer> answer = answerRepository.findById(actualAnswer.getId());
@@ -129,4 +129,6 @@ class QuestionRepositoryTest {
         assertFalse(answer2.isPresent());
 
     }
+
+
 }
