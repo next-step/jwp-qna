@@ -5,12 +5,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.QuestionTest.Q2;
@@ -76,5 +78,32 @@ public class QuestionRepositoryTest {
         Question updatedQuestion = questionRepository.findByIdAndDeletedFalse(question1.getId()).get();
 
         assertThat(question1.getContents()).isEqualTo(updatedQuestion.getContents());
+    }
+
+    @Test
+    @DisplayName("Question 작성자만 삭제할 수 있다.")
+    void question_deleted_validate_writer() throws CannotDeleteException {
+        List<Question> savedQuestions = questionRepository.saveAll(Arrays.asList(Q1, Q2));
+        Question question = savedQuestions.get(0);
+
+        assertThatThrownBy(() -> question.checkWriter(SANJIGI))
+                .isInstanceOf(CannotDeleteException.class);
+        question.checkWriter(JAVAJIGI);
+    }
+
+    @Test
+    @DisplayName("Question은 다른 사람의 답변이 없는 경우만 삭제 가능하다.")
+    void question_deleted_validate_answers() throws CannotDeleteException {
+        List<Question> savedQuestions = questionRepository.saveAll(Arrays.asList(Q1, Q2));
+        Question question1 = savedQuestions.get(0);
+        question1.addAnswer(new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1"));
+
+        Question question2 = savedQuestions.get(1);
+        question2.addAnswer(new Answer(UserTest.JAVAJIGI, QuestionTest.Q2, "Second Answers Contents1"));
+        question2.addAnswer(new Answer(SANJIGI, QuestionTest.Q2, "Second Answers Contents1"));
+
+        question1.validateAnswer(JAVAJIGI);
+        assertThatThrownBy(() -> question2.validateAnswer(SANJIGI))
+                .isInstanceOf(CannotDeleteException.class);
     }
 }

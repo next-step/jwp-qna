@@ -2,16 +2,20 @@ package qna.domain;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static qna.constant.Message.NOT_VALID_DELETE_QUESTION_AUTH;
+import static qna.constant.Message.NOT_VALID_DELETE_QUESTION_WITH_ANSWER;
+
 @Entity
 @Table(name = "question")
 @Where(clause = "deleted = false")
 @SQLDelete(sql = "UPDATE question SET deleted = true WHERE id = ?")
-public class Question extends BaseEntity{
+public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
@@ -24,7 +28,7 @@ public class Question extends BaseEntity{
     private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)      // 외래키를 가지는 다 쪽으로 주인
-    @JoinColumn(name= "writer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    @JoinColumn(name = "writer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
     @OneToMany(mappedBy = "question")
@@ -33,6 +37,7 @@ public class Question extends BaseEntity{
 
     protected Question() {
     }
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }
@@ -72,7 +77,9 @@ public class Question extends BaseEntity{
         return writer;
     }
 
-    public List<Answer> getAnswers() { return answers; }
+    public List<Answer> getAnswers() {
+        return answers;
+    }
 
     public boolean isDeleted() {
         return deleted;
@@ -102,5 +109,28 @@ public class Question extends BaseEntity{
     }
 
 
+    public void deleteByLoginUser(User loginUser) throws CannotDeleteException {
+        checkWriter(loginUser);
+        validateAnswer(loginUser);
+        this.deleted = true;
+    }
 
+    public void validateAnswer(User loginUser) throws CannotDeleteException {
+        List<Answer> answers = this.getAnswers();
+        for (Answer answer : answers) {
+            checkAnswerWriter(answer, loginUser);
+        }
+    }
+
+    public void checkWriter(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(NOT_VALID_DELETE_QUESTION_AUTH);
+        }
+    }
+
+    private void checkAnswerWriter(Answer answer, User loginUser) throws CannotDeleteException {
+        if (!answer.isOwner(loginUser)) {
+            throw new CannotDeleteException(NOT_VALID_DELETE_QUESTION_WITH_ANSWER);
+        }
+    }
 }
