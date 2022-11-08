@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import qna.config.JpaAuditingConfiguration;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,12 @@ public class AnswerTest {
 
     @Autowired
     AnswerRepository answerRepository;
+
+    @Autowired
+    QuestionRepository questionRepository;
+
+    @Autowired
+    EntityManager entityManager;
 
     @Test
     @DisplayName("저장 테스트 : Audit 데이터 Not Null 테스트")
@@ -60,8 +67,8 @@ public class AnswerTest {
 
     @Test
     @DisplayName("auditing 호출시점 테스트 : @PreUpdate 에서 호출되므로 persist 시점(@PrePersist)이 아닌 update 시점(@PreUpdate)에 저장되는지 확인")
-    public void auditingTest() {
-        Answer answer = answerRepository.save(A1);
+    public void auditingLastModifiedDateTest() {
+        Answer answer = answerRepository.saveAndFlush(A1);
         LocalDateTime initialUpdatedAt = answer.getUpdatedAt();
         answer.setContents("test");
         LocalDateTime persistUpdateAt = answer.getUpdatedAt();
@@ -69,5 +76,20 @@ public class AnswerTest {
         answerRepository.flush();
         LocalDateTime updatedUpdateAt = answer.getUpdatedAt();
         assertThat(updatedUpdateAt).isNotEqualTo(persistUpdateAt);
+    }
+
+    @Test
+    @DisplayName("auditing 호출시점 테스트 : commit 시점에 저장되는지 확인")
+    public void auditingCreatedDateTest() {
+        Answer answer = answerRepository.saveAndFlush(A1);
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+        }
+        Question question = questionRepository.save(QuestionTest.Q1);
+        LocalDateTime answerCreatedAt = answer.getCreatedAt();
+        LocalDateTime questionCreatedAt = question.getCreatedAt();
+        entityManager.flush();
+        assertThat(answerCreatedAt).isNotEqualTo(questionCreatedAt);
     }
 }
