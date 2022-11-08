@@ -27,7 +27,8 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("질문 저장 테스트")
     void saveTest(){
-        Question saveQuestion = questionRepository.save(QuestionTest.Q1);
+        User user = userRepository.save(new User("user1", "user1!", "사용자1", ""));
+        Question saveQuestion = questionRepository.save(new Question("질문입니다.", "본문입니다.").writeBy(user));
 
         Question findQuestion = questionRepository.findById(saveQuestion.getId())
                 .orElse(null);
@@ -39,8 +40,9 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 질문 조회 테스트")
     void findByIdAndDeletedFalseTest1(){
-        Question saveQuestion1 = questionRepository.save(QuestionTest.Q1);
-        Question saveQuestion2 = questionRepository.save(QuestionTest.Q2);
+        User user = userRepository.save(new User("user1", "user1!", "사용자1", ""));
+        Question saveQuestion1 = questionRepository.save(new Question("질문입니다 1", "본문입니다 1").writeBy(user));
+        Question saveQuestion2 = questionRepository.save(new Question("질문입니다 2", "본문입니다 2").writeBy(user));
 
         Question findQuestion1 = questionRepository.findByIdAndDeletedFalse(saveQuestion1.getId())
                 .orElse(null);
@@ -68,9 +70,10 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 질문 모두 조회 테스트")
     void findByDeletedFalseTest(){
-        questionRepository.save(QuestionTest.Q1);
-        questionRepository.save(QuestionTest.Q2);
-        questionRepository.save(new Question("질문드립니다.", "답변 부탁드립니다."));
+        User user = userRepository.save(new User("user1", "user1!", "사용자1", ""));
+        questionRepository.save(new Question("질문입니다1", "본문입니다1").writeBy(user));
+        questionRepository.save(new Question("질문입니다2", "본문입니다2").writeBy(user));
+        questionRepository.save(new Question("질문드립니다.", "답변 부탁드립니다.").writeBy(user));
 
         List<Question> questionList = questionRepository.findByDeletedFalse();
 
@@ -80,7 +83,7 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("특정 작성자가 작성한 질문 모두 조회 테스트")
-    void findAllByWriterIdTest(){
+    void findAllByWriterTest(){
         //given
         User user = userRepository.save(new User("user1", "user1!", "사용자1", ""));
 
@@ -89,13 +92,15 @@ public class QuestionRepositoryTest {
         Question question3 = questionRepository.save(new Question("질문 3", "본문 3").writeBy(user));
 
         //when
-        List<Question> questions = questionRepository.findAllByWriterId(user.getId());
+        List<Question> questions = questionRepository.findAllByWriter(user);
+        List<Question> questionsByUser = user.getQuestions();
 
         //then
         assertThat(questions).isNotNull();
         assertThat(questions).containsExactly(
                 question1, question2,question3
         );
+        assertThat(questions).isEqualTo(questionsByUser);
     }
 
 }
