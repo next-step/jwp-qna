@@ -17,7 +17,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends BaseEntity{
+public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
