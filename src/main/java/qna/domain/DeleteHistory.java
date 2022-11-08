@@ -31,7 +31,7 @@ public class DeleteHistory {
     @Column(updatable = false)
     private LocalDateTime createDate;
 
-    public DeleteHistory() {
+    protected DeleteHistory() {
 
     }
 

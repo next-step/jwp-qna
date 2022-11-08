@@ -26,7 +26,7 @@ public class Question extends BaseTimeEntity {
 
     private boolean deleted = false;
 
-    public Question() {
+    protected Question() {
 
     }
 

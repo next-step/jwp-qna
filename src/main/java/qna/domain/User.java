@@ -33,11 +33,11 @@ public class User extends BaseTimeEntity {
     protected User() {
     }
 
-    protected User(String userId, String password, String name, String email) {
+    public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
     }
 
-    protected User(Long id, String userId, String password, String name, String email) {
+    public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
