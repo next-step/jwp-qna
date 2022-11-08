@@ -12,7 +12,7 @@ class DeleteHistoriesTest {
     @Test
     void add() {
         DeleteHistories deleteHistories = new DeleteHistories();
-        DeleteHistory deleteHistory = DeleteHistory.of(ContentType.ANSWER, 1L, UserTest.SANJIGI, LocalDateTime.now());
+        DeleteHistory deleteHistory = DeleteHistory.of(ContentType.ANSWER, 1L, UserTest.SANJIGI);
 
         deleteHistories.add(deleteHistory);
 
@@ -23,7 +23,7 @@ class DeleteHistoriesTest {
     @Test
     void UnmodifiableD() {
         DeleteHistories deleteHistories = new DeleteHistories();
-        DeleteHistory deleteHistory = DeleteHistory.of(ContentType.ANSWER, 1L, UserTest.SANJIGI, LocalDateTime.now());
+        DeleteHistory deleteHistory = DeleteHistory.of(ContentType.ANSWER, 1L, UserTest.SANJIGI);
 
         List<DeleteHistory> unmodifiableDeleteHistories = deleteHistories.getUnmodifiableDeleteHistories();
 

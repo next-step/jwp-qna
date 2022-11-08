@@ -84,7 +84,7 @@ class AnswerRepositoryTest {
         Answer answerA1 = answerRepository.save(new Answer(user, question, ""));
         Answer answerA2 = answerRepository.save(new Answer(user, question, ""));
 
-        answerA1.setDeleted(true);
+        answerA1.makeDeletedTrue();
         List<Answer> expect = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
 
         assertThat(expect).containsExactly(answerA2);
@@ -98,7 +98,7 @@ class AnswerRepositoryTest {
         Answer actual1 = answerRepository.save(new Answer(user, question, ""));
         Answer actual2 = answerRepository.save(new Answer(user, question, ""));
 
-        actual2.setDeleted(true);
+        actual2.makeDeletedTrue();
         Optional<Answer> expect1 = answerRepository.findByIdAndDeletedFalse(actual1.getId());
         Optional<Answer> expect2 = answerRepository.findByIdAndDeletedFalse(actual2.getId());
 
