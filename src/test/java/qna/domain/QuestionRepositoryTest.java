@@ -102,8 +102,11 @@ public class QuestionRepositoryTest {
         question2.addAnswer(new Answer(UserTest.JAVAJIGI, QuestionTest.Q2, "Second Answers Contents1"));
         question2.addAnswer(new Answer(SANJIGI, QuestionTest.Q2, "Second Answers Contents1"));
 
-        question1.validateAnswer(JAVAJIGI);
-        assertThatThrownBy(() -> question2.validateAnswer(SANJIGI))
+        Answers answers1 = new Answers(question1.getAnswers());
+        answers1.validateDeleteAnswer(JAVAJIGI);
+
+        Answers answers2 = new Answers(question2.getAnswers());
+        assertThatThrownBy(() -> answers2.validateDeleteAnswer(SANJIGI))
                 .isInstanceOf(CannotDeleteException.class);
     }
 }

@@ -31,9 +31,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
-
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -58,7 +57,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.addAnswer(answer);
     }
 
     public Long getId() {
@@ -77,9 +76,7 @@ public class Question extends BaseEntity {
         return writer;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
-    }
+    public List<Answer> getAnswers() { return answers.getAnswers(); }
 
     public boolean isDeleted() {
         return deleted;
@@ -111,15 +108,10 @@ public class Question extends BaseEntity {
 
     public void deleteByLoginUser(User loginUser) throws CannotDeleteException {
         checkWriter(loginUser);
-        validateAnswer(loginUser);
-        this.deleted = true;
-    }
+        answers.validateDeleteAnswer(loginUser);
+        updateDeleted(true);
 
-    public void validateAnswer(User loginUser) throws CannotDeleteException {
-        List<Answer> answers = this.getAnswers();
-        for (Answer answer : answers) {
-            checkAnswerWriter(answer, loginUser);
-        }
+        answers.deleteAll();
     }
 
     public void checkWriter(User loginUser) throws CannotDeleteException {
@@ -128,9 +120,7 @@ public class Question extends BaseEntity {
         }
     }
 
-    private void checkAnswerWriter(Answer answer, User loginUser) throws CannotDeleteException {
-        if (!answer.isOwner(loginUser)) {
-            throw new CannotDeleteException(NOT_VALID_DELETE_QUESTION_WITH_ANSWER);
-        }
+    public boolean isContainAnswer(Answer answer) {
+        return getAnswers().contains(answer);
     }
 }

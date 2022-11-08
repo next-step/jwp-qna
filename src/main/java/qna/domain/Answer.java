@@ -62,11 +62,12 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        if (Objects.nonNull(question)) {
-            question.getAnswers().remove(this);
-        }
         this.question = question;
-        question.getAnswers().add(this);
+
+        if (!question.isContainAnswer(this)) {
+            // question이 answer을 중복해서 가지지 않도록
+            question.addAnswer(this);
+        }
     }
 
     public Long getId() {
