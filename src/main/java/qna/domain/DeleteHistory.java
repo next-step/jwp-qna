@@ -38,7 +38,6 @@ public class DeleteHistory {
         this.createDate = createDate;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
