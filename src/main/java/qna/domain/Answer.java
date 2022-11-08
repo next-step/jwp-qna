@@ -7,13 +7,13 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Objects;
@@ -33,16 +33,16 @@ public class Answer extends BaseEntity {
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    public Answer(User writeBy, Question question, String contents) {
+    public Answer(User writeBy, Question question, Contents contents) {
         this(null, writeBy, question, contents);
     }
 
-    public Answer(Long id, User writeBy, Question question, String contents) {
+    public Answer(Long id, User writeBy, Question question, Contents contents) {
         this.id = id;
 
         if (Objects.isNull(writeBy)) {
@@ -85,7 +85,7 @@ public class Answer extends BaseEntity {
         return question;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 

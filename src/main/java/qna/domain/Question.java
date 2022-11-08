@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -25,10 +24,10 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
-    @Column(length = 100, nullable = false)
-    private String title;
-    @Lob
-    private String contents;
+    @Embedded
+    private Title title;
+    @Embedded
+    private Contents contents;
     @Embedded
     private Answers answers = new Answers();
     @ManyToOne
@@ -40,11 +39,11 @@ public class Question extends BaseEntity {
     protected Question() {
     }
 
-    public Question(String title, String contents) {
+    public Question(Title title, Contents contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, Title title, Contents contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -68,15 +67,15 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 
-    public void changeTitle(String title) {
+    public void changeTitle(Title title) {
         this.title = title;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 

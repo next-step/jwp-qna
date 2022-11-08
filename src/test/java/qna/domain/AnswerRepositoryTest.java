@@ -31,14 +31,14 @@ class AnswerRepositoryTest {
         answerRepository.deleteAll();
         userRepository.deleteAll();
         User questionWriter = userRepository.save(new User(new UserId("test1234"), new Password("1234"), new Name("테스트"), new Email("test1234@gmail.com")));
-        question1 = questionRepository.save(new Question("title1", "contents1").writeBy(questionWriter));
-        question2 = questionRepository.save(new Question("title2", "contents2").writeBy(questionWriter));
+        question1 = questionRepository.save(new Question(new Title("title1"), new Contents("contents1")).writeBy(questionWriter));
+        question2 = questionRepository.save(new Question(new Title("title2"), new Contents("contents2")).writeBy(questionWriter));
         answerWriter = userRepository.save(new User(new UserId("test5678"), new Password("5678"), new Name("테스트"), new Email("test5678@gmail.com")));
     }
     @DisplayName("답장을 저장한다.")
     @Test
     void save() {
-        Answer answer =  new Answer(answerWriter, question1, "Answers Contents1");
+        Answer answer = new Answer(answerWriter, question1, new Contents("Answers Contents1"));
         final Answer savedAnswer = answerRepository.save(answer);
         assertThat(savedAnswer.getId()).isNotNull();
 
@@ -53,7 +53,7 @@ class AnswerRepositoryTest {
     @DisplayName("저장한 엔티티와 동일한 id로 조회한 엔티티는 동일성 보장한다.")
     @Test
     void sameEntity() {
-        final Answer saved = answerRepository.save(new Answer(answerWriter, question1, "Answers Contents1"));
+        final Answer saved = answerRepository.save(new Answer(answerWriter, question1, new Contents("Answers Contents1")));
         final Answer answer = answerRepository.findById(saved.getId()).get();
         assertThat(answer.getId()).isEqualTo(saved.getId());
         assertThat(answer).isEqualTo(saved);
@@ -62,7 +62,7 @@ class AnswerRepositoryTest {
     @DisplayName("Answer에 대한 Question을 변경한다.")
     @Test
     void toQuestion() {
-        final Answer answer = new Answer(answerWriter, question1, "test");
+        final Answer answer = new Answer(answerWriter, question1, new Contents("test"));
         answer.updateQuestion(question2);
         final Answer saved = answerRepository.save(answer);
         assertThat(saved.getQuestion()).isEqualTo(question2);
