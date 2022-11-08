@@ -11,3 +11,12 @@
 * [x] Answer로 User를 참조할 수 있게 매핑
 * [x] Answer로 Question을 참조할 수 있게 매핑
 * [x] Question으로 Answer를 참조할 수 있게 매핑
+
+### 질문 삭제하기 리팩터링
+* [ ] 로그인 사용자와 질문한 사람이 같은지 확인
+* [ ] 로그인 사용자와 질문한 사람이 다르면 CannotDeleteException 발생
+* [ ] 답변이 없다면 삭제 상태를 true 로 변경
+* [ ] 답변이 있다면 질문한 사람과 같은지 확인
+* [ ] 답변자와 질문자가 다르면 CannotDeleteException 발생
+* [ ] 답변자와 질문자가 모두 같다면 Question 과  Answer 의 삭제 상태를 모두 true 로 변경
+* [ ] Question 과 Answer 의 삭제 이력을 DeleteHistory 를 활용해 남김
