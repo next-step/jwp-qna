@@ -131,3 +131,84 @@ create table user
 alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ```
+
+## 2단계 - 연관 관계 매핑
+
+### 요구사항
+
+* 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다
+
+### 힌트
+
+* **객체 설계를 테이블 설계에 맞춘 방식**
+
+```
+Question question = findQuestionById(questionId);
+List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
+```
+
+* **관계형 데이터베이스의 외래키 조인 방식**
+
+```
+Question question = findQuestionById(questionId);
+List<Answer> answers = question.getAnswers();
+```
+
+### 구현 사항 DDL
+
+* **H2**
+
+```
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
+```
+
+* **MySql**
+
+```
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question (id)
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user (id)
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user (id)
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user (id)
+```
+* 참조 관계 정리
+  * ```answer``` 테이블은 ```question_id``` 필드로 ```question``` 테이블과 관계를 맺는다
+    * ```하나의 question```에는 ```여러개의 answer```가 발생할 수 있다
+  * ```answer``` 테이블은 ```writer_id``` 필드로 ```user``` 테이블과 관계를 맺는다
+    * ```하나의 user```는 ```여러개의 answer```를 작성할 수 있다
+  * ```delete_history``` 테이블은 ```deleted_by_id``` 필드로 ```user``` 테이블과 관계를 맺는다
+    * ```하나의 user```는 ```여러 개의 삭제 히스토리```를 가질 수 있다
+  * ```question``` 테이블은 ```writer_id``` 필드로 ```user``` 테이블과 관계를 맺는다
+    * ```하나의 user```는 ```여러 개의 question```을 작성할 수 있다

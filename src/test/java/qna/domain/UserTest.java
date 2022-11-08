@@ -6,10 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
@@ -17,22 +16,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.ParameterizedTest.DEFAULT_DISPLAY_NAME;
+import static qna.domain.QuestionTest.Q1;
 
 @DisplayName("user 엔티티 테스트")
-@DataJpaTest
-public class UserTest {
+public class UserTest extends TestBase {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
     public static final User MINGVEL = new User(3L, "mingvel", "password", "name", "dlsqo2005@naver.com");
     public static final User DELETE_SOON_USER = new User(4L, "delete", "password", "deleteSoon", "asdf@naver.com");
 
-    @Autowired
-    private UserRepository userRepository;
-
     @DisplayName("생성 성공")
     @Test
     void save_user_success() {
-        assertThatNoException().isThrownBy(() -> userRepository.save(MINGVEL));
+        assertThat(userRepository.save(MINGVEL).getId()).isNotNull();
     }
 
     @DisplayName("findByUserId 메서드 테스트")
@@ -44,6 +40,17 @@ public class UserTest {
         User expected = userRepository.findByUserId(user.getUserId()).orElse(new User());
         //then:
         assertThat(expected.getUserId()).isEqualTo(user.getUserId());
+    }
+
+    @DisplayName("updatedAt 데이터 변경 여부 테스트")
+    @Test
+    void save_answer_changedUpdatedAt() {
+        final User user = userRepository.save(MINGVEL);
+        final LocalDateTime before = user.getUpdatedAt();
+        user.setName("changedName");
+        final User afterUser = userRepository.save(user);
+        testEntityManager.flush();
+        assertThat(afterUser.getUpdatedAt()).isAfter(before);
     }
 
     @ParameterizedTest(name = "제약 조건 위반 테스트" + DEFAULT_DISPLAY_NAME)
@@ -87,6 +94,24 @@ public class UserTest {
         userRepository.delete(user);
         User deleted = userRepository.findById(user.getId()).orElse(null);
         assertThat(deleted).isNull();
+    }
+
+    @DisplayName("Question 등록 테스트")
+    @Test
+    void addQuestion_user_success() {
+        //given:
+        final User user = userRepository.save(provideUser());
+        final Question question = questionRepository.save(Q1.writeBy(user));
+        //whenL
+        user.addQuestion(question);
+        final User resultUser = userRepository.save(user);
+        flushAndClear();
+        //then:
+        assertThat(resultUser.getQuestionList()).containsExactly(question);
+    }
+
+    static User provideUser() {
+        return new User("mingvel", "password", "name", "dlsqo2005@naver.com");
     }
 
     private static Stream<Arguments> invalidUsers() {
