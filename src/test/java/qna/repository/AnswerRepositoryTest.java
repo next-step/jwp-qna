@@ -3,6 +3,7 @@ package qna.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -74,6 +75,16 @@ public class AnswerRepositoryTest {
         assertThat(optional).isNotEmpty();
         Answer fetched = optional.get();
         assertThat(fetched.getId()).isEqualTo(saved.getId());
+    }
+
+    @Test
+    @DisplayName("목록 조회 by questionId, deleted(false)")
+    public void findByQuestionIdAndDeletedFalse() {
+        saveAndClear(answer1);
+        saveAndClear(answer2);
+        List<Answer> actives = answerRepository.findByQuestionIdAndDeletedFalse(answer1.getQuestion().getId());
+        assertThat(actives).isNotEmpty();
+        assertThat(actives.size()).isEqualTo(2);
     }
 
     @Test
