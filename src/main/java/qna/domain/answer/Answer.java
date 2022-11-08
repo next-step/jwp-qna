@@ -12,9 +12,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.BaseTimeEntity;
+import qna.domain.ContentType;
+import qna.domain.DeleteHistory;
 import qna.domain.question.Question;
 import qna.domain.user.User;
 
@@ -85,18 +88,8 @@ public class Answer extends BaseTimeEntity {
         return question;
     }
 
-
-    public String getContents() {
-        return contents;
-    }
-
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void isDeletedThenChangeTrue() {
-        this.deleted = true;
     }
 
     @Override
@@ -106,5 +99,13 @@ public class Answer extends BaseTimeEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, getId(), getWriter(), getCreatedAt());
     }
 }

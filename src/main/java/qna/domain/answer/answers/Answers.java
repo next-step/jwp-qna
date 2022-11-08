@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
+import qna.domain.DeleteHistory;
 import qna.domain.answer.Answer;
+import qna.domain.user.User;
 
 @Embeddable
 public class Answers {
@@ -18,5 +21,13 @@ public class Answers {
 
     public List<Answer> getAnswers() {
         return answers;
+    }
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(loginUser));
+        }
+        return deleteHistories;
     }
 }

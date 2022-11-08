@@ -13,7 +13,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 import qna.domain.BaseTimeEntity;
+import qna.domain.ContentType;
+import qna.domain.DeleteHistory;
 import qna.domain.answer.Answer;
 import qna.domain.answer.answers.Answers;
 import qna.domain.question.title.Title;
@@ -90,10 +93,6 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void isDeletedThenChangeTrue() {
-        this.deleted = true;
-    }
-
     @Override
     public String toString() {
         return "Question{" +
@@ -102,5 +101,20 @@ public class Question extends BaseTimeEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        List<DeleteHistory> deleteHistories = deleteAnswers(loginUser);
+        this.deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, getWriter(), getCreatedAt()));
+        return deleteHistories;
+    }
+
+    private List<DeleteHistory> deleteAnswers(User loginUser) throws CannotDeleteException {
+        return answers.delete(loginUser);
     }
 }
