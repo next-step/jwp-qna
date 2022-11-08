@@ -1,8 +1,14 @@
 package qna.domain.question;
 
 import qna.domain.BaseEntity;
+import qna.domain.answer.Answers;
+import qna.domain.content.ContentId;
+import qna.domain.content.Contents;
+import qna.domain.deletehistory.DeleteHistory;
+import qna.domain.title.Title;
 import qna.domain.user.User;
 import qna.domain.answer.Answer;
+import qna.exception.CannotDeleteException;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -17,31 +23,32 @@ public class Question extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+    @Embedded
+    private Title title;
 
-    @Lob
-    private String contents;
+    @Embedded
+    private Contents contents;
 
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question"/*외래키는 Answer 객체에 question필드에서 관리하고 있음을 뜻함 */, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    private List<Answer> answers = new ArrayList<Answer>();
+    @Embedded
+    private Answers answers = new Answers();
 
     @Column(length = 20, nullable = false)
     private boolean deleted = false;
 
-    public Question(String title, String contents) {
+    public Question(Title title, Contents contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, Title title, Contents contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
     }
+
 
     protected Question() {
 
@@ -69,14 +76,13 @@ public class Question extends BaseEntity implements Serializable {
         return id;
     }
 
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
-
 
     public User getWriter() {
         return writer;
@@ -90,7 +96,21 @@ public class Question extends BaseEntity implements Serializable {
         this.deleted = deleted;
     }
 
-//    public void setAn
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        deleted = true;
+        return assembleDeleteHistories(loginUser);
+    }
+
+    private List<DeleteHistory> assembleDeleteHistories(User loginUser) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.ofQuestion(ContentId.of(this.id), this.writer));
+        deleteHistories.addAll(answers.deleteAll(loginUser));
+        return deleteHistories;
+    }
 
     @Override
     public String toString() {
@@ -104,7 +124,7 @@ public class Question extends BaseEntity implements Serializable {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.getAnswers();
     }
 
     @Override

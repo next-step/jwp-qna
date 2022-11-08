@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.answer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -9,12 +9,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import qna.domain.QuestionTest;
 import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
+import qna.domain.content.Contents;
 import qna.domain.question.Question;
 import qna.domain.question.QuestionRepository;
 import qna.domain.user.User;
 import qna.domain.user.UserRepository;
+import qna.domain.user.UserTest;
 
 @DataJpaTest
 public class AnswerTest {
@@ -38,14 +41,14 @@ public class AnswerTest {
 
     private Answer answer;
 
-    public  final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public  final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
+    public  final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, new Contents("Answers Contents1"));
+    public  final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, new Contents("Answers Contents2"));
 
     @BeforeEach
     void before() {
         writer = userRepository.save(UserTest.JAVAJIGI);
         question = questionRepository.save(QuestionTest.Q1.writeBy(writer));
-        answer = new Answer(writer, question, "Answers Contents1");
+        answer = new Answer(writer, question, new Contents("Answers Contents1"));
     }
 
 
