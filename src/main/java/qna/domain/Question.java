@@ -30,7 +30,7 @@ public class Question extends DateEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
-    private User user;
+    private User writer;
 
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
     private final List<Answer> answers = new ArrayList<>();
@@ -59,12 +59,12 @@ public class Question extends DateEntity {
     }
 
     public Question writeBy(User writer) {
-        this.user = writer;
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.user.equals(writer);
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -80,7 +80,7 @@ public class Question extends DateEntity {
     }
 
     public User getWriter() {
-        return user;
+        return writer;
     }
 
     public List<Answer> getAnswers() {
@@ -101,7 +101,7 @@ public class Question extends DateEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + user.getUserId() +
+                ", writerId=" + writer.getUserId() +
                 ", deleted=" + deleted +
                 '}';
     }

@@ -36,7 +36,7 @@ public class User extends DateEntity {
     @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
     private final List<Answer> answers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
     private final List<Question> questions = new ArrayList<>();
 
     protected User() { }
