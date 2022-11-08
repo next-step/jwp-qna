@@ -11,8 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.constant.ErrMsg;
+import qna.exception.CannotDeleteException;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseEntity {
@@ -57,10 +59,6 @@ public class Answer extends BaseEntity {
 
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void toQuestion(Question question) {
         this.question = question;
     }
@@ -89,14 +87,51 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    public DeleteHistory delete(User loginUser) {
+        validateDeletable(loginUser);
+        this.deleted = true;
+        return DeleteHistory.of(this);
+    }
+
+    private void validateDeletable(User loginUser) {
+        if (this.deleted) {
+            throw new CannotDeleteException(ErrMsg.CANNOT_DELETE_ALREADY_DELETED);
+        }
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(ErrMsg.CANNOT_DELETE_WRONG_USER);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Answer)) {
+            return false;
+        }
+        Answer answer = (Answer) o;
+        return getId().equals(answer.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writer=" + writer.toString() +
-                ", question=" + question.toString() +
+                ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
