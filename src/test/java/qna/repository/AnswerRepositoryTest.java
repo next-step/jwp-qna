@@ -52,13 +52,15 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("answer 저장")
     void answer_save() {
-        Answer expect = answers.findById(answer.getId()).orElseThrow(NotFoundException::new);
+        Answer test = new Answer(user, question, "test");
+        answers.save(test);
+        Answer expect = answers.findById(test.getId()).orElseThrow(NotFoundException::new);
         assertAll(
-                () -> assertThat(answer.getId()).isEqualTo(expect.getId()),
-                () -> assertThat(answer.getWriter()).isEqualTo(Hibernate.unproxy(expect.getWriter())),
-                () -> assertThat(answer.getQuestion()).isEqualTo(Hibernate.unproxy(expect.getQuestion())),
-                () -> assertThat(answer.getContents()).isEqualTo(expect.getContents()),
-                () -> assertThat(answer.isDeleted()).isEqualTo(expect.isDeleted())
+                () -> assertThat(test.getId()).isEqualTo(expect.getId()),
+                () -> assertThat(test.getWriter()).isEqualTo(Hibernate.unproxy(expect.getWriter())),
+                () -> assertThat(test.getQuestion()).isEqualTo(Hibernate.unproxy(expect.getQuestion())),
+                () -> assertThat(test.getContents()).isEqualTo(expect.getContents()),
+                () -> assertThat(test.isDeleted()).isEqualTo(expect.isDeleted())
         );
     }
 
