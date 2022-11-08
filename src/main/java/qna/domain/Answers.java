@@ -17,7 +17,9 @@ public class Answers {
     }
 
     public void add(Answer answer) {
-        answers.add(answer);
+        if (!answers.contains(answer)) {
+            answers.add(answer);
+        }
     }
 
     public void remove(Answer answer) {
