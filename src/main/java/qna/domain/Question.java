@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -23,8 +22,8 @@ public class Question extends BaseEntity {
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    private final List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private final Answers answers = new Answers();
 
     protected Question() {
     }
@@ -78,7 +77,7 @@ public class Question extends BaseEntity {
     }
 
     public List<Answer> getAnswers() {
-        return Collections.unmodifiableList(this.answers);
+        return Collections.unmodifiableList(this.answers.getAnswers());
     }
 
     @Override
