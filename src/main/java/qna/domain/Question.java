@@ -69,7 +69,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public DeleteHistory delete(User user) throws CannotDeleteException {
+    public DeleteHistory delete(User user) {
         if (!isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
@@ -77,7 +77,7 @@ public class Question extends BaseEntity {
         return new DeleteHistory(ContentType.QUESTION, id, user, LocalDateTime.now());
     }
 
-    public List<DeleteHistory> deleteWithAnswers(User user) throws CannotDeleteException {
+    public List<DeleteHistory> deleteWithAnswers(User user) {
         List<DeleteHistory> deleteHistories = this.answers.deleteAll(user);
         deleteHistories.add(this.delete(user));
         return deleteHistories;
