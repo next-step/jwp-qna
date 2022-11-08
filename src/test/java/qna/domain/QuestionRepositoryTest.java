@@ -1,14 +1,10 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import javax.persistence.EntityManager;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,19 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 class QuestionRepositoryTest extends NewEntityTestBase {
-
-    @Autowired
-    private QuestionRepository questionRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Override
-    @BeforeEach
-    void setUp() {
-        super.setUp();
-        questionRepository.saveAll(Arrays.asList(Q1, Q2));
-    }
 
     @Test
     @DisplayName("조회 후 하나를 Deleted True로 설정하면 Delete False인 것이 하나만 조회됨")

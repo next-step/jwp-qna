@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.hibernate.annotations.DynamicUpdate;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -15,11 +16,11 @@ public class Answer extends BaseEntity {
     private Long id;
     @Lob
     private String contents;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
     @Column(nullable = false)
@@ -43,7 +44,6 @@ public class Answer extends BaseEntity {
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
-
         this.writer = writer;
         this.question = question;
         this.contents = contents;
@@ -55,6 +55,7 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         this.question = question;
+        this.question.addAnswer(this);
     }
 
     public Long getId() {
@@ -92,11 +93,19 @@ public class Answer extends BaseEntity {
         return this.question;
     }
 
-    public void markDeleted(boolean deleted) {
+    private void markDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
     public void updateContents(String updated) {
         this.contents = updated;
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        if(!isOwner(loginUser)){
+            throw new CannotDeleteException("작성자가 아니면 삭제할 수 없습니다");
+        }
+        this.markDeleted(true);
+        return DeleteHistory.ofAnswer(this.getId(), writer);
     }
 }
