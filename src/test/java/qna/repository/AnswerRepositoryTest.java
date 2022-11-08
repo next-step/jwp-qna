@@ -85,6 +85,16 @@ public class AnswerRepositoryTest {
         assertThat(optional).isEmpty();
     }
 
+    @Test
+    @DisplayName("Question 제거시 연관관계에 있는 Answer 모두 제거")
+    public void deleteQuestionWithAnswers() {
+        saveAndRefetch(answer1);
+        saveAndRefetch(answer2);
+        Question question = answer1.getQuestion();
+        questionRepository.delete(question);
+        assertThat(answerRepository.findAll()).isEmpty();
+    }
+
     private Answer saveAndRefetch(Answer answer) {
         Answer saved = saveAndClear(answer);
         return answerRepository.findById(saved.getId())
