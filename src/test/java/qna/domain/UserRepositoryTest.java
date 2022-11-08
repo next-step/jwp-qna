@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class UserRepositoryTest {
@@ -21,8 +22,10 @@ public class UserRepositoryTest {
     void save_user_test() {
         User JAVAJIGI = UserTest.JAVAJIGI;
         User savedUser = users.save(JAVAJIGI);
-        assertThat(savedUser.getId()).isNotNull();
-        assertThat(savedUser.getUserId()).isEqualTo(JAVAJIGI.getUserId());
+        assertAll(
+                () -> assertThat(savedUser.getId()).isNotNull(),
+                () -> assertThat(savedUser.getUserId()).isEqualTo(JAVAJIGI.getUserId())
+        );
     }
 
     @Test
