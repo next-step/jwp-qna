@@ -20,11 +20,10 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
-    @Column(name = "user_id", length = 20, nullable = false, unique = true)
-    private String userId;
-    @Column(name = "password", length = 20, nullable = false)
-    private String password;
-
+    @Embedded
+    private UserId userId;
+    @Embedded
+    private Password password;
     @Embedded
     private Name name;
     @Embedded
@@ -33,11 +32,11 @@ public class User extends BaseEntity {
     protected User() {
     }
 
-    public User(String userId, String password, Name name, Email email) {
+    public User(UserId userId, Password password, Name name, Email email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, Name name, Email email) {
+    public User(Long id, UserId userId, Password password, Name name, Email email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -58,11 +57,11 @@ public class User extends BaseEntity {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    private boolean matchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
+    public boolean matchPassword(Password targetPassword) {
         return this.password.equals(targetPassword);
     }
 
@@ -83,12 +82,8 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public void changeName(String name) {

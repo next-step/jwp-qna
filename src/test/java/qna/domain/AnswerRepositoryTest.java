@@ -30,10 +30,10 @@ class AnswerRepositoryTest {
         questionRepository.deleteAll();
         answerRepository.deleteAll();
         userRepository.deleteAll();
-        User questionWriter = userRepository.save(new User("test1234", "1234", new Name("테스트"), new Email("test1234@gmail.com")));
+        User questionWriter = userRepository.save(new User(new UserId("test1234"), new Password("1234"), new Name("테스트"), new Email("test1234@gmail.com")));
         question1 = questionRepository.save(new Question("title1", "contents1").writeBy(questionWriter));
         question2 = questionRepository.save(new Question("title2", "contents2").writeBy(questionWriter));
-        answerWriter = userRepository.save(new User("test5678", "5678", new Name("테스트"), new Email("test5678@gmail.com")));
+        answerWriter = userRepository.save(new User(new UserId("test5678"), new Password("5678"), new Name("테스트"), new Email("test5678@gmail.com")));
     }
     @DisplayName("답장을 저장한다.")
     @Test
