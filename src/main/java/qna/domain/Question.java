@@ -1,7 +1,6 @@
 package qna.domain;
 
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.*;
 
@@ -69,23 +68,16 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
-        this.deleted = true;
-    }
-
-    public void delete(User user) throws CannotDeleteException {
+    public DeleteHistory delete(User user) throws CannotDeleteException {
         if (!isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         this.deleted = true;
+        return new DeleteHistory(ContentType.QUESTION, id, user, LocalDateTime.now());
     }
 
     public User getWriter() {
         return writer;
-    }
-
-    public List<Answer> getAnswers() {
-        return Collections.unmodifiableList(this.answers.getAnswers());
     }
 
     @Override

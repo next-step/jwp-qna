@@ -98,9 +98,11 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    void 내가_작성한_질문의_경우_삭제할_수_있다() throws CannotDeleteException {
+    void 질문_삭제시_삭제_이력을_반환한다() throws CannotDeleteException {
         Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
-        question.delete(user);
+        DeleteHistory history = question.delete(user);
         assertThat(question.isDeleted()).isTrue();
+        assertThat(history.getDeleteByUser()).isEqualTo(user);
+        assertThat(history.getContentId()).isEqualTo(question.getId());
     }
 }
