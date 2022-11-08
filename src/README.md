@@ -9,8 +9,8 @@
 
 ### Entity
 - User
-  - [ ] User 엔티티 매핑
-  - [ ] UserRepository 저장 및 find
+  - [x] User 엔티티 매핑
+  - [x] UserRepository 저장 및 find
 - Question
   - [ ] Question 엔티티 매핑
   - [ ] QuestionRepository 저장 및 find
