@@ -15,11 +15,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
-import qna.domain.Answer;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
-import qna.domain.Question;
-import qna.domain.QuestionTest;
+import qna.domain.answer.Answer;
+import qna.domain.question.Question;
+import qna.domain.question.QuestionTest;
+import qna.domain.question.title.Title;
 import qna.domain.repository.QuestionRepository;
 import qna.domain.user.UserTest;
 
@@ -39,7 +40,7 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() {
-        question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        question = new Question(1L, new Title("title1"), "contents1").writeBy(UserTest.JAVAJIGI);
         answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
     }

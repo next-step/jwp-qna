@@ -1,5 +1,6 @@
-package qna.domain;
+package qna.domain.answer;
 
+import qna.domain.question.QuestionTest;
 import qna.domain.user.UserTest;
 
 public class AnswerTest {

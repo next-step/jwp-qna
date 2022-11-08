@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.answer;
 
 import java.util.Objects;
 import javax.persistence.Column;
@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.BaseTimeEntity;
+import qna.domain.question.Question;
 import qna.domain.user.User;
 
 @Entity

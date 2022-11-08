@@ -13,8 +13,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-import qna.domain.Answer;
-import qna.domain.Question;
+import qna.domain.answer.Answer;
+import qna.domain.question.Question;
+import qna.domain.question.title.Title;
 import qna.domain.user.User;
 import qna.domain.user.email.Email;
 import qna.domain.user.name.Name;
@@ -40,7 +41,7 @@ class AnswerRepositoryTest {
     void 엔티티_저장() {
         User javajigi = users.save(new User(new UserId("javajigi"), new Password("password"), new Name("name"),
                 new Email("javajigi@slipp.net")));
-        Question question = new Question("title1", "contents1").writeBy(javajigi);
+        Question question = getQuestion().writeBy(javajigi);
         Answer expected = new Answer(javajigi, question, question.getContents());
         Answer actual = answers.save(expected);
         assertThat(actual.getId()).isEqualTo(expected.getId());
@@ -51,7 +52,7 @@ class AnswerRepositoryTest {
     void Id로_삭제() {
         User javajigi = users.save(new User(new UserId("javajigi"), new Password("password"), new Name("name"),
                 new Email("javajigi@slipp.net")));
-        Question question = questions.save(new Question("title1", "contents1").writeBy(javajigi));
+        Question question = questions.save(getQuestion().writeBy(javajigi));
         Answer actual = answers.save(new Answer(javajigi, question, question.getContents()));
         answers.delete(actual);
         answers.flush();
@@ -62,7 +63,7 @@ class AnswerRepositoryTest {
     void findByQuestionIdAndDeletedFalse() {
         User javajigi = users.save(new User(new UserId("javajigi"), new Password("password"), new Name("name"),
                 new Email("javajigi@slipp.net")));
-        Question question = questions.save(new Question("title1", "contents1").writeBy(javajigi));
+        Question question = questions.save(getQuestion().writeBy(javajigi));
         Answer expected = answers.save(new Answer(javajigi, question, question.getContents()));
         List<Answer> findAnswers = answers.findByQuestionIdAndDeletedFalse(expected.getQuestion().getId());
         assertThat(findAnswers).hasSize(1);
@@ -73,7 +74,7 @@ class AnswerRepositoryTest {
     void findByIdAndDeletedFalse() {
         User javajigi = users.save(new User(new UserId("javajigi"), new Password("password"), new Name("name"),
                 new Email("javajigi@slipp.net")));
-        Question question = questions.save(new Question("title1", "contents1").writeBy(javajigi));
+        Question question = questions.save(getQuestion().writeBy(javajigi));
         Answer expected = answers.save(new Answer(javajigi, question, question.getContents()));
         Answer actual = answers.findByIdAndDeletedFalse(expected.getId()).get();
         assertThat(actual.getId()).isEqualTo(expected.getId());
@@ -85,7 +86,7 @@ class AnswerRepositoryTest {
     void 익셉션_테스트() {
         User javajigi = new User(1L, new UserId("javajigi"), new Password("password"), new Name("name"),
                 new Email("javajigi@slipp.net"));
-        Question question = new Question("title1", "contents1").writeBy(javajigi);
+        Question question = getQuestion().writeBy(javajigi);
         assertThatExceptionOfType(UnAuthorizedException.class)
                 .isThrownBy(() -> new Answer(null, question, question.getContents()));
         assertThatExceptionOfType(NotFoundException.class)
@@ -98,12 +99,16 @@ class AnswerRepositoryTest {
     void answer_to_user_question_lazy(String expected) {
         User writer = users.save(new User(new UserId(expected), new Password("password"), new Name("name"),
                 new Email("javajigi@slipp.net")));
-        Question question = questions.save(new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다.").writeBy(writer));
+        Question question = questions.save(getQuestion().writeBy(writer));
         Answer answer = answers.save(new Answer(writer, question, question.getContents()));
         flushAndClear();
         Answer findAnswer = answers.findById(answer.getId()).get();
         assertThat(findAnswer.getWriter().getId()).isEqualTo(writer.getId());
         assertThat(findAnswer.getQuestion().getId()).isEqualTo(question.getId());
+    }
+
+    private Question getQuestion() {
+        return new Question(new Title("title1"), "contents1");
     }
 
     void flushAndClear() {

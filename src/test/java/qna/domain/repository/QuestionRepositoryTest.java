@@ -8,8 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import qna.domain.Answer;
-import qna.domain.Question;
+import qna.domain.answer.Answer;
+import qna.domain.question.Question;
+import qna.domain.question.title.Title;
 import qna.domain.user.User;
 import qna.domain.user.email.Email;
 import qna.domain.user.name.Name;
@@ -33,7 +34,7 @@ class QuestionRepositoryTest {
 
     @Test
     void 엔티티_저장() {
-        Question expected = new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다.");
+        Question expected = getQuestion();
         Question actual = questions.save(expected);
         assertThat(actual.getId()).isEqualTo(expected.getId());
         assertThat(actual == expected).isTrue();
@@ -41,7 +42,7 @@ class QuestionRepositoryTest {
 
     @Test
     void Id로_삭제() {
-        Question question = questions.save(new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다."));
+        Question question = questions.save(getQuestion());
         questions.delete(question);
         questions.flush();
     }
@@ -49,8 +50,8 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("delete 컬럼이 false 인 질문목록 조회")
     void findByDeletedFalse() {
-        questions.save(new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다."));
-        questions.save(new Question("(수정)코드 리뷰 요청드립니다.", "코드 리뷰 잘 부탁드립니다."));
+        questions.save(new Question(new Title("코드 리뷰 요청드립니다."), "리뷰 잘 부탁드립니다."));
+        questions.save(new Question(new Title("(수정)코드 리뷰 요청드립니다."), "코드 리뷰 잘 부탁드립니다."));
         List<Question> questionList = questions.findByDeletedFalse();
         assertThat(questionList).hasSize(2);
     }
@@ -58,7 +59,7 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("메소드명에 And 를 포함하여 And 조건문을 수행할 수 있다")
     void findByIdAndDeletedFalse() {
-        Question expected = questions.save(new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다."));
+        Question expected = questions.save(getQuestion());
         Question actual = questions.findByIdAndDeletedFalse(expected.getId()).get();
         assertThat(actual.getId()).isEqualTo(expected.getId());
     }
@@ -68,7 +69,7 @@ class QuestionRepositoryTest {
     void question_to_user_lazy() {
         User loginUser = users.save(new User(new UserId("writer"), new Password("1111"), new Name("작성자"),
                 new Email("writer@naver.com")));
-        Question question = questions.save(new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다.").writeBy(loginUser));
+        Question question = questions.save(getQuestion().writeBy(loginUser));
         flushAndClear();
         Question findQuestion = questions.findById(question.getId()).get();
         assertThat(findQuestion.getWriter().getId()).isEqualTo(loginUser.getId());
@@ -79,7 +80,7 @@ class QuestionRepositoryTest {
     void question_to_answers() {
         User writer = users.save(new User(new UserId("writer"), new Password("1111"), new Name("작성자"),
                 new Email("writer@naver.com")));
-        Question question = questions.save(new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다.").writeBy(writer));
+        Question question = questions.save(getQuestion().writeBy(writer));
         Answer expected = answers.save(new Answer(writer, question, question.getContents()));
         flushAndClear();
         List<Answer> actual = questions.findById(question.getId()).get().getAnswers();
@@ -92,12 +93,16 @@ class QuestionRepositoryTest {
     void question_to_answers_no_flush_clear() {
         User writer = users.save(new User(new UserId("writer"), new Password("1111"), new Name("작성자"),
                 new Email("writer@naver.com")));
-        Question question = questions.save(new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다.").writeBy(writer));
+        Question question = questions.save(getQuestion().writeBy(writer));
         Answer expected = answers.save(new Answer(writer, question, question.getContents()));
         question.addAnswer(expected);
         List<Answer> actual = question.getAnswers();
         assertThat(actual).hasSize(1);
         assertThat(actual.get(0).getId()).isEqualTo(expected.getId());
+    }
+
+    private Question getQuestion() {
+        return new Question(new Title("title1"), "contents1");
     }
 
     void flushAndClear() {

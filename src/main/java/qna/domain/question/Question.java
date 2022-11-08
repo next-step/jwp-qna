@@ -1,8 +1,8 @@
-package qna.domain;
+package qna.domain.question;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -12,8 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import qna.domain.BaseTimeEntity;
+import qna.domain.answer.Answer;
+import qna.domain.answer.answers.Answers;
+import qna.domain.question.title.Title;
 import qna.domain.user.User;
 
 @Entity
@@ -24,8 +27,8 @@ public class Question extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String title;
+    @Embedded
+    private Title title;
 
     @Lob
     private String contents;
@@ -34,8 +37,8 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -43,11 +46,11 @@ public class Question extends BaseTimeEntity {
     protected Question() {
     }
 
-    public Question(String title, String contents) {
+    public Question(Title title, String contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, Title title, String contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -68,7 +71,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.getAnswers();
     }
 
     public Long getId() {
@@ -95,7 +98,7 @@ public class Question extends BaseTimeEntity {
     public String toString() {
         return "Question{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
+                ", title='" + title.getTitle() + '\'' +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
