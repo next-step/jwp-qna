@@ -15,7 +15,11 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.Answer;
 import qna.domain.Question;
-import qna.domain.User;
+import qna.domain.user.User;
+import qna.domain.user.email.Email;
+import qna.domain.user.name.Name;
+import qna.domain.user.password.Password;
+import qna.domain.user.userid.UserId;
 
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -34,7 +38,8 @@ class AnswerRepositoryTest {
 
     @Test
     void 엔티티_저장() {
-        User javajigi = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        User javajigi = users.save(new User(new UserId("javajigi"), new Password("password"), new Name("name"),
+                new Email("javajigi@slipp.net")));
         Question question = new Question("title1", "contents1").writeBy(javajigi);
         Answer expected = new Answer(javajigi, question, question.getContents());
         Answer actual = answers.save(expected);
@@ -44,7 +49,8 @@ class AnswerRepositoryTest {
 
     @Test
     void Id로_삭제() {
-        User javajigi = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        User javajigi = users.save(new User(new UserId("javajigi"), new Password("password"), new Name("name"),
+                new Email("javajigi@slipp.net")));
         Question question = questions.save(new Question("title1", "contents1").writeBy(javajigi));
         Answer actual = answers.save(new Answer(javajigi, question, question.getContents()));
         answers.delete(actual);
@@ -54,7 +60,8 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("질문 게시글에 달린 답변 목록 조회")
     void findByQuestionIdAndDeletedFalse() {
-        User javajigi = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        User javajigi = users.save(new User(new UserId("javajigi"), new Password("password"), new Name("name"),
+                new Email("javajigi@slipp.net")));
         Question question = questions.save(new Question("title1", "contents1").writeBy(javajigi));
         Answer expected = answers.save(new Answer(javajigi, question, question.getContents()));
         List<Answer> findAnswers = answers.findByQuestionIdAndDeletedFalse(expected.getQuestion().getId());
@@ -64,7 +71,8 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("삭제되지 않은 답변 조회")
     void findByIdAndDeletedFalse() {
-        User javajigi = users.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        User javajigi = users.save(new User(new UserId("javajigi"), new Password("password"), new Name("name"),
+                new Email("javajigi@slipp.net")));
         Question question = questions.save(new Question("title1", "contents1").writeBy(javajigi));
         Answer expected = answers.save(new Answer(javajigi, question, question.getContents()));
         Answer actual = answers.findByIdAndDeletedFalse(expected.getId()).get();
@@ -75,7 +83,8 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("Answer 는 User 와 Question 이 반드시 존재해야한다")
     void 익셉션_테스트() {
-        User javajigi = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+        User javajigi = new User(1L, new UserId("javajigi"), new Password("password"), new Name("name"),
+                new Email("javajigi@slipp.net"));
         Question question = new Question("title1", "contents1").writeBy(javajigi);
         assertThatExceptionOfType(UnAuthorizedException.class)
                 .isThrownBy(() -> new Answer(null, question, question.getContents()));
@@ -87,7 +96,8 @@ class AnswerRepositoryTest {
     @DisplayName("(지연로딩)Answer 에서 User, Question 으로 참조할 수 있다")
     @ValueSource(strings = "writer")
     void answer_to_user_question_lazy(String expected) {
-        User writer = users.save(new User(expected, "1111", "작성자", "writer@naver.com"));
+        User writer = users.save(new User(new UserId(expected), new Password("password"), new Name("name"),
+                new Email("javajigi@slipp.net")));
         Question question = questions.save(new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다.").writeBy(writer));
         Answer answer = answers.save(new Answer(writer, question, question.getContents()));
         flushAndClear();

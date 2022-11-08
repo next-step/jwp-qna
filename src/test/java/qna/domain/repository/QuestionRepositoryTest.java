@@ -10,7 +10,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.Answer;
 import qna.domain.Question;
-import qna.domain.User;
+import qna.domain.user.User;
+import qna.domain.user.email.Email;
+import qna.domain.user.name.Name;
+import qna.domain.user.password.Password;
+import qna.domain.user.userid.UserId;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -62,7 +66,8 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("(지연로딩)Question 에서 User 로 참조할 수 있다")
     void question_to_user_lazy() {
-        User loginUser = users.save(new User("writer", "1111", "작성자", "writer@naver.com"));
+        User loginUser = users.save(new User(new UserId("writer"), new Password("1111"), new Name("작성자"),
+                new Email("writer@naver.com")));
         Question question = questions.save(new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다.").writeBy(loginUser));
         flushAndClear();
         Question findQuestion = questions.findById(question.getId()).get();
@@ -72,7 +77,8 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("(지연로딩)Question 에서 Answer 로 참조할 수 있다")
     void question_to_answers() {
-        User writer = users.save(new User("writer", "1111", "작성자", "writer@naver.com"));
+        User writer = users.save(new User(new UserId("writer"), new Password("1111"), new Name("작성자"),
+                new Email("writer@naver.com")));
         Question question = questions.save(new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다.").writeBy(writer));
         Answer expected = answers.save(new Answer(writer, question, question.getContents()));
         flushAndClear();
@@ -84,7 +90,8 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("하나의 트랜잭션 안에서 Question과 Answer는 서로 참조가 가능해야 한다")
     void question_to_answers_no_flush_clear() {
-        User writer = users.save(new User("writer", "1111", "작성자", "writer@naver.com"));
+        User writer = users.save(new User(new UserId("writer"), new Password("1111"), new Name("작성자"),
+                new Email("writer@naver.com")));
         Question question = questions.save(new Question("코드 리뷰 요청드립니다.", "리뷰 잘 부탁드립니다.").writeBy(writer));
         Answer expected = answers.save(new Answer(writer, question, question.getContents()));
         question.addAnswer(expected);

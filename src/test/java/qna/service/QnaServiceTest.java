@@ -20,8 +20,8 @@ import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionTest;
-import qna.domain.UserTest;
 import qna.domain.repository.QuestionRepository;
+import qna.domain.user.UserTest;
 
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {

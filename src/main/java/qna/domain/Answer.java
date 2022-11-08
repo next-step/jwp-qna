@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.user.User;
 
 @Entity
 @Table(name = "answer")

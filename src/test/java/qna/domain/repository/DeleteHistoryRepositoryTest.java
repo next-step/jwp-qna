@@ -10,7 +10,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
-import qna.domain.User;
+import qna.domain.user.User;
+import qna.domain.user.email.Email;
+import qna.domain.user.name.Name;
+import qna.domain.user.password.Password;
+import qna.domain.user.userid.UserId;
 
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
@@ -27,7 +31,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("@Enumerated 애너테이션으로 ContentType 을 String 값으로 저장한다")
     void 엔티티_저장() {
-        User loginUser = users.save(new User("writer", "1111", "작성자", "writer@naver.com"));
+        User loginUser = users.save(getUser(1L));
         DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, 1L, loginUser, LocalDateTime.now());
         DeleteHistory actual = repository.save(expected);
         assertThat(actual.getId()).isEqualTo(expected.getId());
@@ -37,7 +41,7 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("준영속 엔티티 비교시 equals() hashCode() 활용")
     void equals_hashCode() {
-        User loginUser = users.save(new User("writer", "1111", "작성자", "writer@naver.com"));
+        User loginUser = users.save(getUser(null));
         DeleteHistory expected = repository
                 .save(new DeleteHistory(ContentType.ANSWER, 1L, loginUser, LocalDateTime.now()));
         flushAndClear();
@@ -48,7 +52,7 @@ class DeleteHistoryRepositoryTest {
 
     @Test
     void Id로_삭제() {
-        User loginUser = users.save(new User("writer", "1111", "작성자", "writer@naver.com"));
+        User loginUser = users.save(getUser(null));
         DeleteHistory actual = repository
                 .save(new DeleteHistory(ContentType.ANSWER, 1L, loginUser, LocalDateTime.now()));
         repository.delete(actual);
@@ -58,12 +62,17 @@ class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("(지연로딩)DeleteHistory 에서 User 으로 참조할 수 있다")
     void deleteHistory_to_user_lazy() {
-        User loginUser = users.save(new User("writer", "1111", "작성자", "writer@naver.com"));
+        User loginUser = users.save(getUser(null));
         DeleteHistory deletehistory = repository
                 .save(new DeleteHistory(ContentType.ANSWER, 1L, loginUser, LocalDateTime.now()));
         flushAndClear();
         DeleteHistory findDeleteHistory = repository.findById(deletehistory.getId()).get();
         assertThat(findDeleteHistory.getDeletedBy().getId()).isEqualTo(loginUser.getId());
+    }
+
+    private User getUser(Long id) {
+        return new User(id, new UserId("writer"), new Password("1111"), new Name("작성자"),
+                new Email("writer@slipp.net"));
     }
 
     private void flushAndClear() {

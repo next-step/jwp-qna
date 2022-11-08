@@ -14,6 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import qna.domain.user.User;
 
 @Entity
 @Table(name = "question")

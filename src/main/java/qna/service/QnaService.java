@@ -12,9 +12,9 @@ import qna.domain.Answer;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
-import qna.domain.User;
 import qna.domain.repository.AnswerRepository;
 import qna.domain.repository.QuestionRepository;
+import qna.domain.user.User;
 
 @Service
 public class QnaService {
