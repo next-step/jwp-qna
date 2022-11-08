@@ -22,11 +22,10 @@ public class User {
     @Column(length = 50)
     private String email;
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     public User() {
-        this.createdAt = LocalDateTime.now();
     }
 
     public User(String userId, String password, String name, String email) {
@@ -39,7 +38,6 @@ public class User {
         this.password = password;
         this.name = name;
         this.email = email;
-        this.createdAt = LocalDateTime.now();
     }
 
     public void update(User loginUser, User target) {

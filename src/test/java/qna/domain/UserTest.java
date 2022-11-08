@@ -19,7 +19,7 @@ public class UserTest {
     private TestEntityManager entityManager;
 
     @Test
-    void save() {
+    void saveAndFind() {
         userRepository.save(JAVAJIGI);
         userRepository.save(SANJIGI);
         flushAndClear();
@@ -33,7 +33,8 @@ public class UserTest {
     }
 
     @Test
-    void update() {
+    void updateAndFind() {
+        // TODO : save와 같이 통합테스트 하는 경우 update가 실패함
         userRepository.save(SANJIGI);
         userRepository.save(JAVAJIGI);
         flushAndClear();
