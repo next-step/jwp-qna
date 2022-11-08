@@ -15,8 +15,6 @@ public class QuestionTest extends TestBase {
     public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
     public static final Question Q3 = new Question(3L, "title3", "contents3").writeBy(MINGVEL);
-    public static final Question DELETE_SOON_QUESTION = new Question(4L, "title4", "contents4").writeBy(
-            MINGVEL);
 
     @DisplayName("save 성공")
     @Test

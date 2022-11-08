@@ -5,14 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
-import static qna.domain.QuestionTest.Q1;
 import static qna.domain.QuestionTest.Q3;
 import static qna.domain.UserTest.provideUser;
 
 @DisplayName("answer 엔티티 테스트")
 class AnswerTest extends TestBase {
-    public static final Answer A1 = new Answer(1L, UserTest.JAVAJIGI, Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents2");
 
     @DisplayName("save 성공")
     @Test
