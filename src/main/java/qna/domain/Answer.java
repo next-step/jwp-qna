@@ -45,7 +45,7 @@ public class Answer extends BaseEntity {
     }
 
     private void validateOwner(User writer) throws CannotDeleteException {
-        if (!this.writer.equals(writer)) {
+        if (!isOwner(writer)) {
             throw new CannotDeleteException(NONE_AUTH_DELETE);
         }
     }
@@ -64,6 +64,13 @@ public class Answer extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public boolean isOwner(User writer) {
+        if (this.writer.equals(writer)) {
+            return true;
+        }
+        return false;
     }
 
     public void delete(User writer) throws CannotDeleteException {
@@ -85,4 +92,5 @@ public class Answer extends BaseEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
