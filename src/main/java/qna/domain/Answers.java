@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
@@ -17,11 +18,9 @@ public class Answers {
     }
 
     public List<DeleteHistory> deleteAll(final User user) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : answerList) {
-            deleteHistories.add(answer.delete(user));
-        }
-        return deleteHistories;
+        return this.answerList.stream()
+                .map(answer -> answer.delete(user))
+                .collect(Collectors.toList());
     }
 
     public List<Answer> getAnswers() {
