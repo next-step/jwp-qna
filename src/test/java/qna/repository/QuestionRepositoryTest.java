@@ -32,7 +32,7 @@ public class QuestionRepositoryTest {
 
     @DisplayName("findByDeletedFalse_deleted_false인_데이터들_확인")
     @Test
-    void findByDeletedFalse_01() {
+    void findByDeletedFalse() {
         Question question1 = questionRepository.save(QuestionTest.Q1);
         Question question2 = questionRepository.save(QuestionTest.Q2);
 
@@ -41,7 +41,7 @@ public class QuestionRepositoryTest {
 
     @DisplayName("findByIdAndDeletedFalse_id_기준으로_deleted_false인_값_확인")
     @Test
-    void findByIdAndDeletedFalse_01() {
+    void findByIdAndDeletedFalse() {
         Question question1 = questionRepository.save(QuestionTest.Q1);
         Question expectedResult = questionRepository.findByIdAndDeletedFalse(question1.getId()).orElse(null);
         assertThat(expectedResult).isEqualTo(question1);

@@ -32,7 +32,7 @@ public class UserRepositoryTest {
 
     @DisplayName("findByUserId_user_id_기준으로_User데이터_조회")
     @Test
-    void findByUserId_01() {
+    void findByUserId() {
         User expectedResult = userRepository.save(UserTest.JAVAJIGI);
 
         assertThat(userRepository.findByUserId(expectedResult.getUserId()).orElse(null)).isEqualTo(expectedResult);

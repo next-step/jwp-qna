@@ -20,7 +20,7 @@ public class AnswerRepositoryTest {
 
     @DisplayName("저장_확인")
     @Test
-    void save_01() {
+    void save() {
         Answer answer = answerRepository.save(AnswerTest.A1);
         assertAll(
                 () -> assertThat(answer.getId()).isNotNull(),
@@ -32,7 +32,7 @@ public class AnswerRepositoryTest {
 
     @DisplayName("findByQuestionIdAndDeletedFalse_question_id_기준으로_조회")
     @Test
-    void findByQuestionIdAndDeletedFalse_01() {
+    void findByQuestionIdAndDeletedFalse() {
         Answer answer1 = answerRepository.save(AnswerTest.A1);
         Answer answer2 = answerRepository.save(AnswerTest.A2);
         List<Answer> expectedResults = answerRepository.findByQuestionIdAndDeletedFalse(answer1.getQuestionId());
@@ -41,7 +41,7 @@ public class AnswerRepositoryTest {
 
     @DisplayName("findByIdAndDeletedFalse_deleted_false인_data_조회")
     @Test
-    void findByIdAndDeletedFalse_01() {
+    void findByIdAndDeletedFalse() {
         Answer answer1 = answerRepository.save(AnswerTest.A1);
         Answer expectedResult = answerRepository.findByIdAndDeletedFalse(answer1.getId()).orElse(null);
         assertThat(expectedResult).isEqualTo(answer1);

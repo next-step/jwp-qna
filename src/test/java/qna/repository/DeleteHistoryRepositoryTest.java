@@ -20,7 +20,7 @@ public class DeleteHistoryRepositoryTest {
 
     @DisplayName("저장_확인")
     @Test
-    void save_01() {
+    void save() {
         DeleteHistory dummyData = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
         DeleteHistory expectedResult = deleteHistoryRepository.save(dummyData);
         assertAll(
