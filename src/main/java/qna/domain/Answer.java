@@ -64,7 +64,7 @@ public class Answer extends BaseEntity {
         return this.writeBy.equals(writer);
     }
 
-    public void setQuestion(Question question) {
+    public void updateQuestion(Question question) {
         if (this.question != null) {
             this.question.getAnswers().remove(this);
         }

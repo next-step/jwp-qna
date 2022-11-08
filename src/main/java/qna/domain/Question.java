@@ -17,7 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "question")
@@ -66,7 +65,7 @@ public class Question extends BaseEntity {
         if (!answers.contains(answer)) {
             answers.add(answer);
         }
-        answer.setQuestion(this);
+        answer.updateQuestion(this);
     }
 
     public void deleteAnswer(Answer answer) {
