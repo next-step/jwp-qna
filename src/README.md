@@ -12,8 +12,8 @@
   - [x] User 엔티티 매핑
   - [x] UserRepository 저장 및 find
 - Question
-  - [ ] Question 엔티티 매핑
-  - [ ] QuestionRepository 저장 및 find
+  - [x] Question 엔티티 매핑
+  - [x] QuestionRepository 저장 및 find
 - Answer
   - [ ] Answer 엔티티 매핑
   - [ ] AnswerRepository 저장 및 find
