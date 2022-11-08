@@ -19,7 +19,17 @@ public class Answers {
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
+        if (isNotContains(answer)) {
+            answers.add(answer);
+        }
+    }
+
+    private boolean isNotContains(Answer answer) {
+        return !answers.contains(answer);
+    }
+
+    public void remove(Answer answer) {
+        answers.remove(answer);
     }
 
     public List<DeleteHistory> delete(User loginUser) {

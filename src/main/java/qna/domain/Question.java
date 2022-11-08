@@ -84,6 +84,10 @@ public class Question extends BaseTimeEntity {
         answers.addAnswer(answer);
     }
 
+    public void removeAnswer(Answer answer) {
+        answers.remove(answer);
+    }
+
     public Long getId() {
         return id;
     }
