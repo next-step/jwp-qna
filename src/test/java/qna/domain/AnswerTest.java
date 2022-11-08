@@ -60,8 +60,8 @@ public class AnswerTest {
 
         Assertions.assertAll(
                 () -> assertThat(answer.getQuestion()).isEqualTo(question2),
-                () -> assertThat(question1.getAnswers()).isEmpty(),
-                () -> assertThat(question2.getAnswers()).containsExactly(answer)
+                () -> assertThat(question1.getAnswers().isEmpty()).isTrue(),
+                () -> assertThat(question2.getAnswers().contains(answer)).isTrue()
         );
     }
 }

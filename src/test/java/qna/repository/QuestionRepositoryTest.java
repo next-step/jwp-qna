@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.NotFoundException;
 import qna.domain.Answer;
 import qna.domain.Question;
@@ -26,6 +27,9 @@ class QuestionRepositoryTest {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    TestEntityManager entityManager;
 
     @DisplayName("Question을 저장할 수 있다.")
     @Test
@@ -110,6 +114,6 @@ class QuestionRepositoryTest {
 
         Optional<Question> expect = questionRepository.findById(actual.getId());
 
-        assertThat(expect.orElseThrow(NotFoundException::new).getAnswers()).containsExactly(answer);
+        assertThat(expect.orElseThrow(NotFoundException::new).getAnswers().contains(answer)).isTrue();
     }
 }

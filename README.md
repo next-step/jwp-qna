@@ -219,4 +219,5 @@ alter table question
   - [ ] DeleteHistory 리턴
 - [ ] DeleteHistory를 저장한다.
 - [x] DeleteHistories 일글 컬랙션 생성
+- [x] Answers 일급 컬랙션 생성
 
