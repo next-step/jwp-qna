@@ -13,6 +13,17 @@ public class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
+    @Test
+    @DisplayName("사용자 정보 저장 테스트")
+    void saveTest(){
+        User saveUser = userRepository.save(new User("admin", "admin1!", "관리자", ""));
+
+        User findUser = userRepository.findById(saveUser.getId())
+                .orElse(null);
+
+        assertThat(saveUser.getId()).isNotNull();
+        assertThat(saveUser).isEqualTo(findUser);
+    }
 
     @Test
     @DisplayName("아이디로 사용자 정보 조회 테스트")
