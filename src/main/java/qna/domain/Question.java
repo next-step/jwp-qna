@@ -15,8 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -94,13 +92,12 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         valid(loginUser);
         this.deleted = true;
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
         DeleteHistory deleteHistory = DeleteHistory.ofQuestion(this, loginUser);
-        deleteHistories.add(deleteHistory);
-        deleteHistories.addAll(answers.removeAll(loginUser));
+        DeleteHistories deleteHistories = new DeleteHistories(deleteHistory);
+        deleteHistories.add(answers.removeAll(loginUser));
         return deleteHistories;
     }
 
