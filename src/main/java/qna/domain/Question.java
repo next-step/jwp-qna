@@ -58,7 +58,7 @@ public class Question extends BaseEntity {
         return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
     }
 
-    private List<DeleteHistory> getDeleteHistories() {
+    public List<DeleteHistory> getDeleteHistories() {
         List<DeleteHistory> deleteHistories = new ArrayList();
         deleteHistories.add(getDeleteHistory());
         deleteHistories.addAll(answers.getDeleteHistories());
