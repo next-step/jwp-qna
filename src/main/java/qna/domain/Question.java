@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -53,24 +52,23 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public List<DeleteHistory> delete(User loginUser) {
-        List<DeleteHistory> deleteHistories = new LinkedList<>();
-        deleteQuestion(loginUser, deleteHistories);
+    public DeleteHistories delete(User loginUser) {
+        validDeleted();
+        validWriter(loginUser);
+        DeleteHistory questionDeleteHistory = deleteQuestion(loginUser);
 
         if (answers.isEmpty()) {
-            return deleteHistories;
+            return DeleteHistories.of(questionDeleteHistory);
         }
 
-        deleteHistories.addAll(answers.delete(loginUser));
+        DeleteHistories deleteHistories = answers.delete(loginUser);
+        deleteHistories.add(questionDeleteHistory);
         return deleteHistories;
     }
 
-    private void deleteQuestion(User loginUser, List<DeleteHistory> deleteHistories) {
-        validWriter(loginUser);
-
-        if (isNotDeleted()) {
-            this.deleted = true;
-            deleteHistories.add(DeleteHistory.questionOf(this.getId(), loginUser));
+    private void validDeleted() {
+        if (isDeleted()) {
+            throw new IllegalStateException(ErrorMessage.ALREADY_DELETED);
         }
     }
 
@@ -78,6 +76,11 @@ public class Question extends BaseTimeEntity {
         if (writer.isNotWriter(loginUser)) {
             throw new CannotDeleteException(ErrorMessage.NOT_PERMISSION_DELETE_QUESTION);
         }
+    }
+
+    private DeleteHistory deleteQuestion(User loginUser) {
+        this.deleted = true;
+        return DeleteHistory.questionOf(this.getId(), loginUser);
     }
 
     public void addAnswer(Answer answer) {

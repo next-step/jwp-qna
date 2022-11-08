@@ -6,6 +6,7 @@ public class ErrorMessage {
     public static final String ID_DOES_NOT_EXIST = "아이디가 존재하지 않습니다.";
     public static final String PASSWORD_DOES_NOT_EXIST = "비밀번호가 존재하지 않습니다.";
     public static final String ID_OR_PASSWORD_NOT_MATCH = "아이디 또는 비밀번호가 일치하지 않습니다.";
+    public static final String ALREADY_DELETED = "이미 삭제된 질문입니다.";
 
     private ErrorMessage() {
     }

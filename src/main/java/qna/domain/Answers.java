@@ -32,11 +32,11 @@ public class Answers {
         answers.remove(answer);
     }
 
-    public List<DeleteHistory> delete(User loginUser) {
-        return answers.stream()
+    public DeleteHistories delete(User loginUser) {
+        return DeleteHistories.of(answers.stream()
                 .filter(Answer::isNotDeleted)
                 .map(answer -> answer.delete(loginUser))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     public List<Answer> getAnswers() {
