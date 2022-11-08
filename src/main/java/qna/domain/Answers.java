@@ -23,17 +23,10 @@ public class Answers {
     }
 
     public List<DeleteHistory> delete(User loginUser) {
-        validAnswerWriter(loginUser);
-
         return answers.stream()
+                .filter(Answer::isNotDeleted)
                 .map(answer -> answer.delete(loginUser))
                 .collect(Collectors.toList());
-    }
-
-    private void validAnswerWriter(User loginUser) {
-        for (Answer answer : answers) {
-            answer.isNotWriter(loginUser);
-        }
     }
 
     public List<Answer> getAnswers() {

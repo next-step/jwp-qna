@@ -39,15 +39,6 @@ class AnswerTest {
     }
 
     @Test
-    @DisplayName("답변의 작성자이 아닐 경우 CannotDeleteException 예외 던지기")
-    void is_not_writer_throw_CannotDeleteException() {
-        User loginUser = new User(new UserAuth("user2", "password"), "name2", "email2@email.com");
-        assertThatThrownBy(() -> answer.isNotWriter(loginUser))
-                .isInstanceOf(CannotDeleteException.class)
-                .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-    }
-
-    @Test
     @DisplayName("답변의 작성자일 경우 답변을 삭제하고 삭제 이력을 반환한다.")
     void is_writer_delete_answer_return_delete_history() throws CannotDeleteException {
         DeleteHistory actual = answer.delete(writer);

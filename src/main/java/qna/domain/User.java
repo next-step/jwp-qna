@@ -51,7 +51,7 @@ public class User extends BaseTimeEntity {
                 email.equals(target.email);
     }
 
-    public boolean isNot(User loginUser) {
+    public boolean isNotWriter(User loginUser) {
         return !this.equals(loginUser);
     }
 

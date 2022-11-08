@@ -36,6 +36,6 @@ class UserTest {
     void not_same_user_return_true() {
         User user1 = new User(new UserAuth("user", "password"), "name", "email@email.com");
         User user2 = new User(new UserAuth("user", "password"), "name2", "email2@email.com");
-        assertTrue(user1.isNot(user2));
+        assertTrue(user1.isNotWriter(user2));
     }
 }

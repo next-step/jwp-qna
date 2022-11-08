@@ -53,12 +53,6 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public void isNotWriter(User loginUser) {
-        if (writer.isNot(loginUser)) {
-            throw new CannotDeleteException(ERROR_MESSAGE_IS_NOT_WRITER);
-        }
-    }
-
     public List<DeleteHistory> delete(User loginUser) {
         List<DeleteHistory> deleteHistories = new LinkedList<>();
         deleteQuestion(loginUser, deleteHistories);
@@ -72,9 +66,18 @@ public class Question extends BaseTimeEntity {
     }
 
     private void deleteQuestion(User loginUser, List<DeleteHistory> deleteHistories) {
-        isNotWriter(loginUser);
-        this.deleted = true;
-        deleteHistories.add(DeleteHistory.questionOf(this.getId(), loginUser));
+        validWriter(loginUser);
+
+        if (isNotDeleted()) {
+            this.deleted = true;
+            deleteHistories.add(DeleteHistory.questionOf(this.getId(), loginUser));
+        }
+    }
+
+    private void validWriter(User loginUser) {
+        if (writer.isNotWriter(loginUser)) {
+            throw new CannotDeleteException(ERROR_MESSAGE_IS_NOT_WRITER);
+        }
     }
 
     public void addAnswer(Answer answer) {
@@ -87,6 +90,10 @@ public class Question extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public boolean isNotDeleted() {
+        return !deleted;
     }
 
     public User getWriter() {
