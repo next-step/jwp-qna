@@ -1,7 +1,10 @@
 package qna.domain.deletehistory;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,6 +19,7 @@ import javax.persistence.ManyToOne;
 
 import qna.domain.ContentType;
 import qna.domain.common.BaseEntity;
+import qna.domain.question.Question;
 import qna.domain.user.User;
 
 @Entity
@@ -45,6 +49,31 @@ public class DeleteHistory extends BaseEntity {
 		this.deletedBy = deletedBy;
 		this.createDate = createDate;
 	}
+
+	public static DeleteHistory questionDeleteHistory(Question question) {
+		return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+	}
+
+	private static DeleteHistory answerDeleteHistory(Question question) {
+		return new DeleteHistory(ContentType.ANSWER, question.getId(), question.getWriter(), LocalDateTime.now());
+	}
+
+	public static List<DeleteHistory> questionDeleteHistories(Question question) {
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		if (!question.getAnswers().isEmpty()) {
+			deleteHistories.addAll(answerDeleteHistories(question));
+		}
+		DeleteHistory questionDeleteHistory = questionDeleteHistory(question);
+		deleteHistories.add(questionDeleteHistory);
+		return deleteHistories;
+	}
+
+	private static List<DeleteHistory> answerDeleteHistories(Question question) {
+		return question.getAnswers().stream()
+			.map(answer -> answerDeleteHistory(question))
+			.collect(Collectors.toList());
+	}
+
 
 	@Override
 	public boolean equals(Object o) {
