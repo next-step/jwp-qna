@@ -120,10 +120,12 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    void 내가_작성한_답변_삭제() throws CannotDeleteException {
+    void 답변_삭제시_삭제_이력을_반환한다() throws CannotDeleteException {
         Answer answer = answerRepository.save(new Answer(user, question, "contents"));
-        answer.delete(user);
+        DeleteHistory history = answer.delete(user);
         assertThat(answer.isDeleted()).isTrue();
+        assertThat(history.getDeleteByUser()).isEqualTo(user);
+        assertThat(history.getContentId()).isEqualTo(answer.getId());
     }
 
     private void flushAndClear() {
