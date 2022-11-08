@@ -69,24 +69,23 @@ alter table user
 ~~~~yml
 spring:
   datasource:
-    url: jdbc:h2:~/test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:tcp://localhost/~/test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     driver-class-name: org.h2.Driver
   h2:
     console:
       enabled: true
-      path: /h2
   jpa:
+    hibernate:
+      ddl-auto: create-drop
     properties:
-      hiberate:
-        dialect: org.hibernate.dialect.MySQL57Dialect
+      hibernate:
+        show_sql: true
         format_sql: true
-        ddl-auto: create
-    show-sql: true
-    logging:
-      level:
-        org.hibernate.SQL: debug
-        org.hibernate.type: trace
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.type: trace
 ~~~~
 * Mysql 형식으로 설정
 * H2 콘솔 설정 진행
@@ -94,4 +93,7 @@ spring:
   * 테스트 환경으로 로그 확인하기 위함 
   * application 실행 시 기존 테이블 삭제되고 생성 로그 확인
 * BaseDateEntity 적용
-  * 공통적인 created_at / updated_at 처리 
+  * 공통적인 created_at / updated_at 처리
+* domain / repository 패키지 부리
+* Test 
+  * repository: 조회 저장 삭제 위주의 테스트코드 작성
