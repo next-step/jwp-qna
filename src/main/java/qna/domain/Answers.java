@@ -46,15 +46,9 @@ public class Answers {
         return deleteHistories;
     }
 
-    public void validateOwner(User loginUser) throws CannotDeleteException {
+    public void deleteAllAnswer(User writer) throws CannotDeleteException {
         for (Answer answer : answers) {
-            answer.validateOwner(loginUser);
-        }
-    }
-
-    public void deleteAllAnswer() {
-        for (Answer answer : answers) {
-            answer.delete();
+            answer.delete(writer);
         }
     }
 

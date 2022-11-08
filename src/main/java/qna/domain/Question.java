@@ -45,14 +45,13 @@ public class Question extends BaseEntity {
     public void delete(User writer) throws CannotDeleteException {
         validateOwner(writer);
         this.deleted = true;
-        this.answers.deleteAllAnswer();
+        this.answers.deleteAllAnswer(writer);
     }
 
     private void validateOwner(User writer) throws CannotDeleteException {
         if (!this.writer.equals(writer)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        answers.validateOwner(writer);
     }
 
     private DeleteHistory getDeleteHistory() {
