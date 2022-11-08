@@ -15,12 +15,11 @@ import javax.persistence.Table;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.common.ErrorMessage;
 
 @Entity
 @Table
 public class Answer extends BaseTimeEntity {
-    private static final String ERROR_MESSAGE_IS_NOT_USER = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
-
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -67,7 +66,7 @@ public class Answer extends BaseTimeEntity {
 
     private void validWriter(User loginUser) {
         if (writer.isNotWriter(loginUser)) {
-            throw new CannotDeleteException(ERROR_MESSAGE_IS_NOT_USER);
+            throw new CannotDeleteException(ErrorMessage.WRITTEN_BY_SOMEONE_ELSE_ANSWER);
         }
     }
 

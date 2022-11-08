@@ -16,11 +16,11 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import qna.CannotDeleteException;
+import qna.common.ErrorMessage;
 
 @Entity
 @Table
 public class Question extends BaseTimeEntity {
-    public static final String ERROR_MESSAGE_IS_NOT_WRITER = "질문을 삭제할 권한이 없습니다.";
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -76,7 +76,7 @@ public class Question extends BaseTimeEntity {
 
     private void validWriter(User loginUser) {
         if (writer.isNotWriter(loginUser)) {
-            throw new CannotDeleteException(ERROR_MESSAGE_IS_NOT_WRITER);
+            throw new CannotDeleteException(ErrorMessage.NOT_PERMISSION_DELETE_QUESTION);
         }
     }
 

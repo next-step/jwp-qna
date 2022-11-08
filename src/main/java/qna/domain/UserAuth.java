@@ -4,12 +4,10 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import qna.UnAuthorizedException;
+import qna.common.ErrorMessage;
 
 @Embeddable
 public class UserAuth {
-    public static final String ERROR_MESSAGE_USER_ID_IS_NULL = "아이디가 존재하지 않습니다.";
-    public static final String ERROR_MESSAGE_PASSWORD_IS_NULL = "비밀번호가 존재하지 않습니다.";
-    public static final String ERROR_MESSAGE_UN_AUTHORIZED = "아이디 또는 비밀번호가 일치하지 않습니다.";
     @Column(name = "user_id", unique = true, nullable = false, length = 20)
     private String userId;
 
@@ -28,21 +26,21 @@ public class UserAuth {
 
     private void validUserAuth(String userId, String password) {
         if (Objects.isNull(userId)) {
-            throw new IllegalArgumentException(ERROR_MESSAGE_USER_ID_IS_NULL);
+            throw new IllegalArgumentException(ErrorMessage.ID_DOES_NOT_EXIST);
         }
 
         if (Objects.isNull(password)) {
-            throw new IllegalArgumentException(ERROR_MESSAGE_PASSWORD_IS_NULL);
+            throw new IllegalArgumentException(ErrorMessage.PASSWORD_DOES_NOT_EXIST);
         }
     }
 
     public void validUpdate(UserAuth loginUserAuth, UserAuth targetUserAuth) {
         if (isNotMatchUserId(loginUserAuth.userId)) {
-            throw new UnAuthorizedException(ERROR_MESSAGE_UN_AUTHORIZED);
+            throw new UnAuthorizedException(ErrorMessage.ID_OR_PASSWORD_NOT_MATCH);
         }
 
         if (isNotMatchPassword(targetUserAuth.password)) {
-            throw new UnAuthorizedException(ERROR_MESSAGE_UN_AUTHORIZED);
+            throw new UnAuthorizedException(ErrorMessage.ID_OR_PASSWORD_NOT_MATCH);
         }
     }
 
