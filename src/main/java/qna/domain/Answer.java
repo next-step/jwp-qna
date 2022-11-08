@@ -9,6 +9,7 @@ import java.util.Objects;
 
 @Entity
 public class Answer extends BaseEntity {
+    private static final String NONE_AUTH_DELETE = "답변을 삭제할 권한이 없습니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,7 +46,7 @@ public class Answer extends BaseEntity {
 
     private void validateOwner(User writer) throws CannotDeleteException {
         if (!this.writer.equals(writer)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(NONE_AUTH_DELETE);
         }
     }
 
