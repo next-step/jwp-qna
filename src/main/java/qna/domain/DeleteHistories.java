@@ -1,14 +1,12 @@
 package qna.domain;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class DeleteHistories {
     private final List<DeleteHistory> deleteHistories;
 
     public DeleteHistories(List<DeleteHistory> deleteHistories) {
-        this.deleteHistories = deleteHistories;
+        this.deleteHistories = new ArrayList<>(deleteHistories);
     }
 
     public void add(DeleteHistory deleteHistory) {
@@ -16,13 +14,17 @@ public class DeleteHistories {
     }
 
     public List<DeleteHistory> get() {
-        return this.deleteHistories;
+        return Collections.unmodifiableList(this.deleteHistories);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DeleteHistories that = (DeleteHistories) o;
         return (deleteHistories.size() == that.deleteHistories.size()) &&
                 new HashSet<>(deleteHistories).containsAll(that.deleteHistories);

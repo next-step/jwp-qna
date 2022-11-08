@@ -63,7 +63,7 @@ class QuestionRepositoryTest {
     void deletedFindAll() {
         User writer = userRepository.save(TestUserFactory.create("서정국"));
         Question question = questionRepository.save(TestQuestionFactory.create(writer));
-        question.setDeleted(true);
+        question.softDelete();
 
         assertThat(questionRepository.findByDeletedFalse()).isEmpty();
     }
@@ -84,7 +84,7 @@ class QuestionRepositoryTest {
     void findDeletedById() {
         User writer = userRepository.save(TestUserFactory.create("서정국"));
         Question question = questionRepository.save(TestQuestionFactory.create(writer));
-        question.setDeleted(true);
+        question.softDelete();
 
         Optional<Question> result = questionRepository.findByIdAndDeletedFalse(question.getId());
 

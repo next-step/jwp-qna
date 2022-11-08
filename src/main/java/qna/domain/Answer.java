@@ -74,14 +74,13 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void softDelete() {
+        this.deleted = true;
     }
 
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         validateDeleteAuthority(loginUser);
-
-        setDeleted(true);
+        softDelete();
         return DeleteHistory.createAnswer(id, writer, LocalDateTime.now());
     }
 

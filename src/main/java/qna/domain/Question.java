@@ -73,15 +73,15 @@ public class Question extends BaseEntity  {
         return contents;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void softDelete() {
+        this.deleted = true;
     }
 
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         validateDeleteAuthority(loginUser);
 
-        setDeleted(true);
-        return deleteAnswers(loginUser);
+        softDelete();
+        return allDeleteHistories(deleteAnswers(loginUser));
     }
 
     private void validateDeleteAuthority(User loginUser) throws CannotDeleteException {
@@ -91,8 +91,10 @@ public class Question extends BaseEntity  {
     }
 
     private DeleteHistories deleteAnswers(User loginUser) throws CannotDeleteException {
-        DeleteHistories deleteHistories = this.answers.delete(loginUser);
+        return this.answers.delete(loginUser);
+    }
 
+    private DeleteHistories allDeleteHistories(DeleteHistories deleteHistories) {
         deleteHistories.add(DeleteHistory.createQuestion(id, writer, LocalDateTime.now()));
         return deleteHistories;
     }

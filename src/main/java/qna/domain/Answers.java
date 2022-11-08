@@ -10,7 +10,7 @@ import java.util.List;
 @Embeddable
 public class Answers {
     @OneToMany(mappedBy = "question")
-    List<Answer> answers = new ArrayList<>();
+    private List<Answer> answers = new ArrayList<>();
 
     protected Answers() {}
 

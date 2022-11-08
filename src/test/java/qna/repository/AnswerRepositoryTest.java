@@ -77,7 +77,7 @@ class AnswerRepositoryTest {
         User writer = userRepository.save(TestUserFactory.create("writer"));
         Question question = questionRepository.save(TestQuestionFactory.create(writer));
         Answer answer = answerRepository.save(TestAnswerFactory.create(writer, question));
-        answer.setDeleted(true);
+        answer.softDelete();
 
         Optional<Answer> result = answerRepository.findByIdAndDeletedFalse(answer.getId());
 
@@ -102,7 +102,7 @@ class AnswerRepositoryTest {
         User writer = userRepository.save(TestUserFactory.create("writer"));
         Question question = questionRepository.save(TestQuestionFactory.create(writer));
         Answer answer = answerRepository.save(TestAnswerFactory.create(writer, question));
-        answer.setDeleted(true);
+        answer.softDelete();
 
         List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestion().getId());
 
