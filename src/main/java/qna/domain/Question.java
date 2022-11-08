@@ -10,12 +10,13 @@ public class Question extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Lob
     private String contents;
 
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String title;
 
     private Long writerId;
