@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
 
 @Embeddable
 public class Answers {
@@ -14,6 +15,14 @@ public class Answers {
 
     public void add(final Answer answer) {
         this.answerList.add(answer);
+    }
+
+    public List<DeleteHistory> deleteAll(final User user) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : answerList) {
+            deleteHistories.add(answer.delete(user));
+        }
+        return deleteHistories;
     }
 
     public List<Answer> getAnswers() {
