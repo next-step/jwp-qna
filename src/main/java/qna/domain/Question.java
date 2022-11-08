@@ -41,9 +41,10 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public List<DeleteHistory> delete(User writer) throws CannotDeleteException {
+    public void delete(User writer) throws CannotDeleteException {
         validateOwner(writer);
-        return getDeleteHistories();
+        this.deleted = true;
+        this.answers.deleteAllAnswer();
     }
 
     private void validateOwner(User writer) throws CannotDeleteException {
