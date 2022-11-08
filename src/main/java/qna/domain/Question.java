@@ -22,7 +22,7 @@ public class Question extends DateEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
     private final List<Answer> answers = new ArrayList<>();
 
     @Column(nullable = false)
