@@ -97,3 +97,9 @@ logging.level:
 * domain / repository 패키지 부리
 * Test 
   * repository: 조회 저장 삭제 위주의 테스트코드 작성
+
+## Step2 연관 관계 매핑
+- 하나의 User는 Question을 여러번 올릴 수 있다.
+- 하나의 User는 Answer를 여러번 답변할 수 있다.
+- 하나의 User는 DeleteHistory를 여러개 가질 수 있다.
+- 하나의 Question엔 여러개의 Answer가 생길 수 있다.
