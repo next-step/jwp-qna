@@ -3,14 +3,24 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Answer {
+@Entity
+public class Answer extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+    @Lob
     private String contents;
+    @Column(nullable = false)
     private boolean deleted = false;
+    private Long questionId;
+    private Long writerId;
+
+    protected Answer() {
+
+    }
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -44,32 +54,16 @@ public class Answer {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getWriterId() {
         return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public Long getQuestionId() {
         return questionId;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
@@ -84,10 +78,11 @@ public class Answer {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
+                ", questionId=" + questionId +
+                ", writerId=" + writerId +
+                ", " + super.toString() +
                 '}';
     }
 }
