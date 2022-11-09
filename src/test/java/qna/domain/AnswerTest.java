@@ -54,7 +54,6 @@ public class AnswerTest {
         Answer answer2 = answers.findById(answer1.getId()).get();
         assertThat(answer1).isEqualTo(answer2);
         assertThat(original).isNotEqualTo(answer2.getContents());
-        answers.flush();
     }
 
     @ParameterizedTest(name = "save_후_delete_테스트")
