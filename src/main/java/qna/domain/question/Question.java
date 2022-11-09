@@ -18,7 +18,9 @@ import javax.persistence.OneToMany;
 
 import qna.CannotDeleteException;
 import qna.domain.answer.Answer;
+import qna.domain.answer.Answers;
 import qna.domain.common.BaseEntity;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.user.User;
 
 @Entity
@@ -99,17 +101,24 @@ public class Question extends BaseEntity {
 		this.deleted = deleted;
 	}
 
-	public void delete(User loginUser) throws CannotDeleteException {
+	public List<DeleteHistory> delete(User loginUser) {
+		validateAuthentication(loginUser);
+		List<DeleteHistory> deleteHistories = new ArrayList<>();
+		if (!answers.isEmpty()) {
+			deleteHistories = Answers.of(this).deleteAll(loginUser);
+		}
+		deleteHistories.add(DeleteHistory.ofQuestion(this));
+		delete();
+		return deleteHistories;
+	}
+
+	private void delete() {
+		this.deleted = true;
+	}
+
+	private void validateAuthentication(User loginUser) {
 		if (!writer.equals(loginUser)) {
 			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-		}
-		this.deleted = true;
-
-		boolean notEqualAllAnswerWriter = answers.stream()
-			.anyMatch(answer -> !writer.equals(answer.getWriter()));
-
-		if (notEqualAllAnswerWriter) {
-			throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
 		}
 	}
 

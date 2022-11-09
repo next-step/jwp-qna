@@ -3,11 +3,14 @@ package qna.domain.question;
 import static org.assertj.core.api.Assertions.*;
 import static qna.domain.generator.UserGenerator.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import qna.CannotDeleteException;
 import qna.domain.answer.Answer;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.generator.AnswerGenerator;
 import qna.domain.generator.QuestionGenerator;
 import qna.domain.generator.UserGenerator;
@@ -21,38 +24,38 @@ public class QuestionTest {
 	@Test
 	@DisplayName("새로운 답변 등록 시 답변 목록 추가 테스트")
 	void addAnswer() {
-		// Given
+		// given
 		Question question = new Question("title", "contents");
 		question.writeBy(UserGenerator.questionWriter());
 		Answer answer = new Answer(UserGenerator.answerWriter(), question, "contents");
 
-		// When
+		// when
 		question.addAnswer(answer);
 
-		// Then
+		// then
 		assertThat(question.getAnswers()).containsExactly(answer);
 	}
 
 	@Test
 	@DisplayName("동일 답변 중복 등록 시 목록 추가 제외 테스트")
 	void addDuplicateAnswerTest() {
-		// Given
+		// given
 		Question question = new Question("title", "contents");
 		question.writeBy(UserGenerator.questionWriter());
 		Answer answer = new Answer(UserGenerator.answerWriter(), question, "contents");
 
-		// When
+		// when
 		question.addAnswer(answer);
 		question.addAnswer(answer);
 
-		// Then
+		// then
 		assertThat(question.getAnswers()).containsExactly(answer);
 	}
 
 	@Test
 	@DisplayName("질문 작성자와 로그인 사용자가 다르면 예외 발생")
 	void isOwnerTest() {
-		// Given
+		// given
 		final User questionWriter = questionWriter();
 		final Question question = QuestionGenerator.question(questionWriter);
 
@@ -61,9 +64,9 @@ public class QuestionTest {
 		AnswerGenerator.answer(questionWriter, question, "answer_contents2");
 		AnswerGenerator.answer(answerWriter, question, "answer_contents3");
 
-		final User loginUser = authorizedUser();
+		final User loginUser = anotherUser();
 
-		// When & Then
+		// when & then
 		assertThatExceptionOfType(CannotDeleteException.class)
 			.isThrownBy(() -> question.delete(loginUser));
 	}
@@ -71,6 +74,23 @@ public class QuestionTest {
 	@Test
 	@DisplayName("질문 작성자와 답변 작성자가 다른 경우 예외 발생")
 	void isOwnerTest2() {
+		// given
+		final User questionWriter = questionWriter();
+		final Question question = QuestionGenerator.question(questionWriter);
+
+		final User answerWriter = answerWriter();
+		AnswerGenerator.answer(questionWriter, question, "answer_contents1");
+		AnswerGenerator.answer(questionWriter, question, "answer_contents2");
+		AnswerGenerator.answer(answerWriter, question, "answer_contents3");
+
+		// when & then
+		assertThatExceptionOfType(CannotDeleteException.class)
+			.isThrownBy(() -> question.delete(questionWriter));
+	}
+
+	@Test
+	@DisplayName("질문 작성자와 답변 작성자가 같은 경우 삭제 처리 후 삭제 이력 반환")
+	void deleteTest() {
 		// Given
 		final User questionWriter = questionWriter();
 		final Question question = QuestionGenerator.question(questionWriter);
@@ -80,8 +100,10 @@ public class QuestionTest {
 		AnswerGenerator.answer(questionWriter, question, "answer_contents2");
 		AnswerGenerator.answer(answerWriter, question, "answer_contents3");
 
-		// When & Then
-		assertThatExceptionOfType(CannotDeleteException.class)
-			.isThrownBy(() -> question.delete(questionWriter));
+		// When
+		final List<DeleteHistory> deleteHistories = question.delete(questionWriter);
+
+		// Then
+		assertThat(deleteHistories).isNotNull();
 	}
 }
