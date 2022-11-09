@@ -51,12 +51,12 @@ public class Question extends BaseEntity {
     }
 
     public DeleteHistories delete(User loginUser) {
-
         validDeleteOwner(loginUser);
-        setDeleted(true);
 
         DeleteHistories deleteHistories = new DeleteHistories(DeleteHistory.of(ContentType.QUESTION, id, loginUser));
         deleteHistories.addAll(answers.delete(loginUser));
+
+        setDeleted(true);
 
         return deleteHistories;
     }
