@@ -15,11 +15,14 @@ public class UserTest {
     private UserRepository userRepository;
 
     @Test
-    void 사용자_아이디로_조회() {
-        User user = userRepository.save(JAVAJIGI);
+    void 저장_및_조회() {
+        User user1 = userRepository.save(JAVAJIGI);
+        User user2 = userRepository.save(SANJIGI);
 
-        User retrievedUser = userRepository.findByUserId(user.getUserId()).get();
+        User retrievedUser1 = userRepository.findById(user1.getId()).get();
+        User retrievedUser2 = userRepository.findById(user2.getId()).get();
 
-        assertThat(retrievedUser).isEqualTo(user);
+        assertThat(retrievedUser1.getId()).isEqualTo(retrievedUser1.getId());
+        assertThat(retrievedUser2.getId()).isEqualTo(retrievedUser2.getId());
     }
 }

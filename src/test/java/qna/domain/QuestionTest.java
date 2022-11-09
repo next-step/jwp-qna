@@ -1,13 +1,14 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.List;
-import java.util.Optional;
+import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 public class QuestionTest {
@@ -17,22 +18,29 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
-    @Test
-    void 삭제되지_않은_질문_조회() {
-        questionRepository.save(Q1);
-        questionRepository.save(Q2);
+    @Autowired
+    private UserRepository userRepository;
 
-        List<Question> retrievedQuestions = questionRepository.findByDeletedFalse();
+    @Autowired
+    private EntityManager entityManager;
 
-        assertThat(retrievedQuestions).hasSize(2);
+    @BeforeEach
+    void setUp() {
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
     }
 
     @Test
-    void 삭제되지_않은_질문_아이디로_조회() {
-        Question question = questionRepository.save(Q1);
+    void 저장_및_조회() {
+        Question question1 = questionRepository.save(Q1);
+        Question question2 = questionRepository.save(Q2);
 
-        Question retrievedQuestion = questionRepository.findByIdAndDeletedFalse(question.getId()).get();
+        Question retrievedQuestion1 = questionRepository.findById(question1.getId()).get();
+        Question retrievedQuestion2 = questionRepository.findById(question2.getId()).get();
 
-        assertThat(retrievedQuestion).isEqualTo(question);
+        assertAll(
+                () -> assertThat(retrievedQuestion1.getId()).isEqualTo(Q1.getId()),
+                () -> assertThat(retrievedQuestion2.getId()).isEqualTo(Q2.getId())
+        );
     }
 }
