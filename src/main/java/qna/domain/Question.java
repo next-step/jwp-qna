@@ -14,8 +14,6 @@ public class Question {
     private String contents;
     private Long writerId;
     private boolean deleted = false;
-    @Embedded
-    private DefaultTime defaultTime = new DefaultTime();
 
     public Question() {
     }
@@ -41,7 +39,6 @@ public class Question {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-        this.defaultTime.update();
     }
 
     public Long getId() {

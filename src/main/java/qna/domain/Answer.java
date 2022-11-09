@@ -18,8 +18,6 @@ public class Answer {
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
-    @Embedded
-    private DefaultTime defaultTime = new DefaultTime();
 
     public Answer() {
     }
@@ -89,7 +87,6 @@ public class Answer {
     }
 
     public void setDeleted(boolean deleted) {
-        this.defaultTime.update();
         this.deleted = deleted;
     }
 
