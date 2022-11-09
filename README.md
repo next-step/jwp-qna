@@ -71,8 +71,8 @@ alter table user
 - [ ] Answer Test (CRUD)
 - [ ] DeleteHistory Entity
 - [ ] DeleteHistory Test(CRUD)
-- [ ] Question Entity
-- [ ] Question Test(CRUD)
+- [x] Question Entity
+- [x] Question Test(CRUD)
 - [x] User Entity
 	- [x] 스키마에 맞게 어노테이션 추가
 	- [x] 불필요한 setter 삭제
