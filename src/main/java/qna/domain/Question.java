@@ -1,6 +1,14 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+import qna.constant.ContentType;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static qna.constant.ErrorMessage.*;
 
 @Entity
 public class Question extends BaseTime {
@@ -18,6 +26,9 @@ public class Question extends BaseTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writerId", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -39,12 +50,34 @@ public class Question extends BaseTime {
         return this;
     }
 
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(NOT_QUESTION_DELETE_NO_PERMISSION);
+        }
+        for (Answer answer : answers) {
+            if (!answer.isOwner(loginUser)) {
+                throw new CannotDeleteException(NOT_QUESTION_DELETE_WRITE_OTHER_USER);
+            }
+        }
+        setDeleted(true);
+
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        for (Answer answer : answers) {
+            answer.setDeleted(true);
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+        }
+
+        return deleteHistories;
+    }
+
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
@@ -87,6 +120,14 @@ public class Question extends BaseTime {
         this.deleted = deleted;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -97,4 +138,5 @@ public class Question extends BaseTime {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
