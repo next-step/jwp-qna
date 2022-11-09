@@ -26,7 +26,7 @@ class AnswersTest {
 		AnswerGenerator.answer(user, question, "answer3");
 
 		// when
-		Answers answers = Answers.of(question);
+		Answers answers = question.getAnswers();
 
 		assertThat(answers).isInstanceOf(Answers.class);
 	}
@@ -43,7 +43,7 @@ class AnswersTest {
 		AnswerGenerator.answer(user, question, "answer3");
 
 		// when
-		Answers answers = Answers.of(question);
+		Answers answers = question.getAnswers();
 
 		// then
 		assertThat(answers.allMatchLoginUser(user)).isTrue();
@@ -61,7 +61,7 @@ class AnswersTest {
 		AnswerGenerator.answer(user, question, "answer3");
 
 		// when
-		Answers answers = Answers.of(question);
+		Answers answers = question.getAnswers();
 
 		// then
 		assertThat(answers.allMatchLoginUser(user)).isFalse();

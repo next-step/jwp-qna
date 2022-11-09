@@ -33,23 +33,7 @@ public class QuestionTest {
 		question.addAnswer(answer);
 
 		// then
-		assertThat(question.getAnswers()).containsExactly(answer);
-	}
-
-	@Test
-	@DisplayName("동일 답변 중복 등록 시 목록 추가 제외 테스트")
-	void addDuplicateAnswerTest() {
-		// given
-		Question question = new Question("title", "contents");
-		question.writeBy(UserGenerator.questionWriter());
-		Answer answer = new Answer(UserGenerator.answerWriter(), question, "contents");
-
-		// when
-		question.addAnswer(answer);
-		question.addAnswer(answer);
-
-		// then
-		assertThat(question.getAnswers()).containsExactly(answer);
+		assertThat(question.getAnswers().isEmpty()).isFalse();
 	}
 
 	@Test
@@ -98,7 +82,7 @@ public class QuestionTest {
 		final User answerWriter = answerWriter();
 		AnswerGenerator.answer(questionWriter, question, "answer_contents1");
 		AnswerGenerator.answer(questionWriter, question, "answer_contents2");
-		AnswerGenerator.answer(answerWriter, question, "answer_contents3");
+		AnswerGenerator.answer(questionWriter, question, "answer_contents3");
 
 		// When
 		final List<DeleteHistory> deleteHistories = question.delete(questionWriter);
